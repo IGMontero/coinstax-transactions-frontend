@@ -30,14 +30,14 @@ const Register = () => {
 
         initialValues: {
             email: '',
-            first_name: '',
-            username: '',
+            // first_name: '',
+            // username: '',
             password: '',
             confirm_password: '',
         },
         validationSchema: Yup.object({
             email: Yup.string().required("Please Enter Your Email"),
-            first_name: Yup.string().required("Please Enter Your Username"),
+            // first_name: Yup.string().required("Please Enter Your Username"),
             password: Yup.string().required("Please Enter Your Password"),
             confirm_password: Yup.string().when("password", {
                 is: val => (val && val.length > 0 ? true : false),
@@ -144,7 +144,7 @@ document.title="Basic SignUp | Velzon - React Admin & Dashboard Template";
                                                     ) : null}
                                                    
                                                 </div>
-                                                <div className="mb-3">
+                                                {/* <div className="mb-3">
                                                     <Label htmlFor="username" className="form-label">Username <span className="text-danger">*</span></Label>
                                                     <Input
                                                         name="first_name"
@@ -161,7 +161,7 @@ document.title="Basic SignUp | Velzon - React Admin & Dashboard Template";
                                                         <FormFeedback type="invalid"><div>{validation.errors.first_name}</div></FormFeedback>
                                                     ) : null}
                                                     
-                                                </div>
+                                                </div> */}
 
                                                 <div className="mb-2">
                                                     <Label htmlFor="userpassword" className="form-label">Password <span className="text-danger">*</span></Label>
@@ -215,10 +215,10 @@ document.title="Basic SignUp | Velzon - React Admin & Dashboard Template";
                                                     </div>
 
                                                     <div>
-                                                        <button type="button" className="btn btn-primary btn-icon waves-effect waves-light"><i className="ri-facebook-fill fs-16"></i></button>{" "}
+                                                        {/* <button type="button" className="btn btn-primary btn-icon waves-effect waves-light"><i className="ri-facebook-fill fs-16"></i></button>{" "} */}
                                                         <button type="button" className="btn btn-danger btn-icon waves-effect waves-light"><i className="ri-google-fill fs-16"></i></button>{" "}
-                                                        <button type="button" className="btn btn-dark btn-icon waves-effect waves-light"><i className="ri-github-fill fs-16"></i></button>{" "}
-                                                        <button type="button" className="btn btn-info btn-icon waves-effect waves-light"><i className="ri-twitter-fill fs-16"></i></button>
+                                                        {/* <button type="button" className="btn btn-dark btn-icon waves-effect waves-light"><i className="ri-github-fill fs-16"></i></button>{" "}
+                                                        <button type="button" className="btn btn-info btn-icon waves-effect waves-light"><i className="ri-twitter-fill fs-16"></i></button> */}
                                                     </div>
                                                 </div>
                                             </Form>

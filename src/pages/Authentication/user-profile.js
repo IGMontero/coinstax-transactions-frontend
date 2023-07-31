@@ -29,8 +29,9 @@ import { editProfile, resetProfileFlag } from "../../slices/thunks";
 const UserProfile = () => {
   const dispatch = useDispatch();
 
-  const [email, setemail] = useState("admin@gmail.com");
+  const [email, setemail] = useState("");
   const [idx, setidx] = useState("1");
+  const [photoUrl, setPhotoUrl] = useState();
 
   const [userName, setUserName] = useState("Admin");
 
@@ -41,18 +42,19 @@ const UserProfile = () => {
   }));
 
   useEffect(() => {
-    if (sessionStorage.getItem("authUser")) {
-      const obj = JSON.parse(sessionStorage.getItem("authUser"));
+    if (localStorage.getItem("authUser")) {
+      const obj = JSON.parse(localStorage.getItem("authUser"));
 
       if (!isEmpty(user)) {
-        obj.data.first_name = user.first_name;
-        sessionStorage.removeItem("authUser");
-        sessionStorage.setItem("authUser", JSON.stringify(obj));
+        obj.first_name = user.first_name;
+        localStorage.removeItem("authUser");
+        localStorage.setItem("authUser", JSON.stringify(obj));
       }
 
-      setUserName(obj.data.first_name);
-      setemail(obj.data.email);
-      setidx(obj.data._id || "1");
+      setUserName(obj.first_name);
+      setemail(obj.email);
+      setidx(obj._id || "1");
+      setPhotoUrl(obj.photoURL);
 
       setTimeout(() => {
         dispatch(resetProfileFlag());
@@ -91,16 +93,16 @@ const UserProfile = () => {
                   <div className="d-flex">
                     <div className="mx-3">
                       <img
-                        src={avatar}
+                        src={photoUrl || avatar}
                         alt=""
                         className="avatar-md rounded-circle img-thumbnail"
                       />
                     </div>
                     <div className="flex-grow-1 align-self-center">
                       <div className="text-muted">
-                        <h5>{userName || "Admin"}</h5>
-                        <p className="mb-1">Email Id : {email}</p>
-                        <p className="mb-0">Id No : #{idx}</p>
+                        <h5>{"Member"}</h5>
+                        <p className="mb-1">{email}</p>
+                        {/* <p className="mb-0">Id No : #{idx}</p> */}
                       </div>
                     </div>
                   </div>
@@ -109,7 +111,7 @@ const UserProfile = () => {
             </Col>
           </Row>
 
-          <h4 className="card-title mb-4">Change User Name</h4>
+          <h4 className="card-title mb-4">Update Profile</h4>
 
           <Card>
             <CardBody>

@@ -115,13 +115,14 @@ const Layout = (props) => {
         }
     }
 
-    useEffect(() => {
-        if (sidebarVisibilitytype === 'show' || layoutType === "vertical" || layoutType === "twocolumn") {
-            document.querySelector(".hamburger-icon").classList.remove('open');
-        } else {
-            document.querySelector(".hamburger-icon").classList.add('open');
-        }
-    }, [sidebarVisibilitytype, layoutType]);
+    // FIXME: Commented out 
+    // useEffect(() => {
+    //     if (sidebarVisibilitytype === 'show' || layoutType === "vertical" || layoutType === "twocolumn") {
+    //         document.querySelector(".hamburger-icon").classList.remove('open');
+    //     } else {
+    //         document.querySelector(".hamburger-icon").classList.add('open');
+    //     }
+    // }, [sidebarVisibilitytype, layoutType]);
 
     return (
         <React.Fragment>

@@ -19,7 +19,7 @@ const ParticlesAuth = ({ children }) => {
                 {/* pass the children */}
                 {children}
 
-                <footer className="footer">
+                {/* <footer className="footer">
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-12">
@@ -29,7 +29,7 @@ const ParticlesAuth = ({ children }) => {
                             </div>
                         </div>
                     </div>
-                </footer>
+                </footer> */}
             </div>
         </React.Fragment>
     );
