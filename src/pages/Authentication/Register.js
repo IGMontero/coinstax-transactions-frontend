@@ -9,7 +9,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // action
-import { registerUser, apiError,resetRegisterFlag } from "../../slices/thunks";
+import { registerUser, apiError, resetRegisterFlag } from "../../slices/thunks";
 
 //redux
 import { useSelector, useDispatch } from "react-redux";
@@ -30,14 +30,16 @@ const Register = () => {
 
         initialValues: {
             email: '',
-            // first_name: '',
+            first_name: '',
+            last_name: '',
             // username: '',
             password: '',
             confirm_password: '',
         },
         validationSchema: Yup.object({
             email: Yup.string().required("Please Enter Your Email"),
-            // first_name: Yup.string().required("Please Enter Your Username"),
+            first_name: Yup.string().required("Please Enter Your First Name"),
+            last_name: Yup.string().required("Please Enter Your Last Name"),
             password: Yup.string().required("Please Enter Your Password"),
             confirm_password: Yup.string().when("password", {
                 is: val => (val && val.length > 0 ? true : false),
@@ -47,12 +49,14 @@ const Register = () => {
                 )
             })
         }),
-        onSubmit: (values) => {
-            dispatch(registerUser(values));
+        onSubmit: async (values) => {
+           const submitResponse = await dispatch(registerUser(values));
+
+           console.log("Submit response: ", submitResponse)
         }
     });
 
-    const {  error, success } = useSelector(state => ({
+    const { error, success } = useSelector(state => ({
         success: state.Account.success,
         error: state.Account.error
     }));
@@ -72,7 +76,7 @@ const Register = () => {
 
     }, [dispatch, success, error, history]);
 
-document.title="Basic SignUp | Velzon - React Admin & Dashboard Template";
+    document.title = "Basic SignUp | Velzon - React Admin & Dashboard Template";
 
     return (
         <React.Fragment>
@@ -99,7 +103,7 @@ document.title="Basic SignUp | Velzon - React Admin & Dashboard Template";
                                     <CardBody className="p-4">
                                         <div className="text-center mt-2">
                                             <h5 className="text-primary">Create New Account</h5>
-                                            <p className="text-muted">Get your free velzon account now</p>
+                                            <p className="text-muted">Get your free SalesPulse360 account now</p>
                                         </div>
                                         <div className="p-2 mt-4">
                                             <Form
@@ -142,14 +146,13 @@ document.title="Basic SignUp | Velzon - React Admin & Dashboard Template";
                                                     {validation.touched.email && validation.errors.email ? (
                                                         <FormFeedback type="invalid"><div>{validation.errors.email}</div></FormFeedback>
                                                     ) : null}
-                                                   
                                                 </div>
-                                                {/* <div className="mb-3">
-                                                    <Label htmlFor="username" className="form-label">Username <span className="text-danger">*</span></Label>
+                                                <div className="mb-3">
+                                                    <Label htmlFor="first_name" className="form-label">First Name <span className="text-danger">*</span></Label>
                                                     <Input
                                                         name="first_name"
                                                         type="text"
-                                                        placeholder="Enter username"
+                                                        placeholder="Enter first name"
                                                         onChange={validation.handleChange}
                                                         onBlur={validation.handleBlur}
                                                         value={validation.values.first_name || ""}
@@ -160,8 +163,28 @@ document.title="Basic SignUp | Velzon - React Admin & Dashboard Template";
                                                     {validation.touched.first_name && validation.errors.first_name ? (
                                                         <FormFeedback type="invalid"><div>{validation.errors.first_name}</div></FormFeedback>
                                                     ) : null}
-                                                    
-                                                </div> */}
+
+                                                </div>
+
+                                                <div className="mb-3">
+                                                    <Label htmlFor="last_name" className="form-label">Last Name <span className="text-danger">*</span></Label>
+                                                    <Input
+                                                        name="last_name"
+                                                        type="text"
+                                                        placeholder="Enter last name"
+                                                        onChange={validation.handleChange}
+                                                        onBlur={validation.handleBlur}
+                                                        value={validation.values.last_name || ""}
+                                                        invalid={
+                                                            validation.touched.last_name && validation.errors.last_name ? true : false
+                                                        }
+                                                    />
+                                                    {validation.touched.last_name && validation.errors.last_name ? (
+                                                        <FormFeedback type="invalid"><div>{validation.errors.last_name}</div></FormFeedback>
+                                                    ) : null}
+
+                                                </div>
+
 
                                                 <div className="mb-2">
                                                     <Label htmlFor="userpassword" className="form-label">Password <span className="text-danger">*</span></Label>
@@ -179,7 +202,7 @@ document.title="Basic SignUp | Velzon - React Admin & Dashboard Template";
                                                     {validation.touched.password && validation.errors.password ? (
                                                         <FormFeedback type="invalid"><div>{validation.errors.password}</div></FormFeedback>
                                                     ) : null}
-                                                    
+
                                                 </div>
 
                                                 <div className="mb-2">
@@ -201,8 +224,8 @@ document.title="Basic SignUp | Velzon - React Admin & Dashboard Template";
                                                 </div>
 
                                                 <div className="mb-4">
-                                                    <p className="mb-0 fs-12 text-muted fst-italic">By registering you agree to the Velzon 
-                                                    <Link to="#" className="text-primary text-decoration-underline fst-normal fw-medium">Terms of Use</Link></p>
+                                                    <p className="mb-0 fs-12 text-muted fst-italic">By registering you agree to the Velzon
+                                                        <Link to="#" className="text-primary text-decoration-underline fst-normal fw-medium">Terms of Use</Link></p>
                                                 </div>
 
                                                 <div className="mt-4">

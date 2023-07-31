@@ -1,10 +1,13 @@
 import firebase from 'firebase/compat/app';
+import { updateProfile } from "firebase/auth";
 
 // Add the Firebase products that you want to use
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 
 class FirebaseAuthBackend {
+
+
   constructor(firebaseConfig) {
     if (firebaseConfig) {
       // Initialize Firebase
@@ -16,22 +19,42 @@ class FirebaseAuthBackend {
           localStorage.removeItem("authUser");
         }
       });
+
+      this.auth = firebase.auth()
+      // this.db = firebase.database()
+      this.firestore = firebase.firestore()
     }
   }
 
   /**
    * Registers the user with given details
    */
-  registerUser = (email, password) => {
+  registerUser = (email, password, firstName, lastName, company) => {
+    console.log(email, password, firstName, lastName, company)
     return new Promise((resolve, reject) => {
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(
-          user => {
+          async user => {
+            const addUserObj = {
+              uid: user.user.uid,
+              firstName: firstName,
+              lastName: lastName,
+              email: email,
+            }
+            if (company) {
+              addUserObj.company = company
+            }
+
+            // Add user to firestore collection
+            this.firestore.collection("usersCollection")
+              .add(addUserObj)
+
             resolve(firebase.auth().currentUser);
           },
           error => {
+            console.error(error)
             reject(this._handleError(error));
           }
         );
@@ -119,19 +142,19 @@ class FirebaseAuthBackend {
   socialLoginUser = async (type) => {
     let provider;
     if (type === "google") {
-        provider = new firebase.auth.GoogleAuthProvider();
-      } else if (type === "facebook") {
-        provider = new firebase.auth.FacebookAuthProvider();
-      }
+      provider = new firebase.auth.GoogleAuthProvider();
+    } else if (type === "facebook") {
+      provider = new firebase.auth.FacebookAuthProvider();
+    }
     try {
       const result = await firebase.auth().signInWithPopup(provider);
       const user = result.user;
       return user;
     } catch (error) {
-        throw this._handleError(error);
+      throw this._handleError(error);
     }
   };
-  
+
   addNewUserToFirestore = (user) => {
     const collection = firebase.firestore().collection("users");
     const { profile } = user.additionalUserInfo;
@@ -165,6 +188,7 @@ class FirebaseAuthBackend {
    * @param {*} error
    */
   _handleError(error) {
+    console.error(error)
     // var errorCode = error.code;
     var errorMessage = error.message;
     return errorMessage;
