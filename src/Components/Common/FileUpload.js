@@ -54,7 +54,9 @@ const FileUpload = (props) => {
                     onDrop={acceptedFiles => {
                         handleAcceptedFiles(acceptedFiles);
                     }}
-                    accept={props.acceptedFiles || ".csv"}
+                    accept={{
+                        "text/csv": [".csv"]
+                    }}
                 >
                     {({ getRootProps, getInputProps }) => (
                         <div className="dropzone dz-clickable">
