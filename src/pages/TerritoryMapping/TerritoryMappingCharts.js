@@ -2,7 +2,7 @@ import React from 'react';
 import ReactApexChart from "react-apexcharts";
 import getChartColorsArray from "../../Components/Common/ChartsDynamicColor";
 
-const GroupsChart = ({ dataColors, series, labels }) => {
+const GroupsChart = ({ dataColors, colors, series, labels }) => {
   var donutchartportfolioColors = getChartColorsArray(dataColors);
 
   var options = {
@@ -37,7 +37,7 @@ const GroupsChart = ({ dataColors, series, labels }) => {
               }
             },
             total: {
-              show: true,
+              show: false,
               fontSize: '13px',
               label: 'Total value',
               color: '#9599ad',
@@ -69,7 +69,7 @@ const GroupsChart = ({ dataColors, series, labels }) => {
       lineCap: "round",
       width: 2
     },
-    colors: donutchartportfolioColors,
+    colors: colors || donutchartportfolioColors,
   };
   return (
     <React.Fragment>

@@ -18,7 +18,7 @@ const FileUpload = (props) => {
     const [selectedFiles, setselectedFiles] = useState([]);
     const [files, setFiles] = useState([]);
 
-    const { title } = props;
+    const { onSelectFile } = props;
 
     function handleAcceptedFiles(files) {
         files.map(file =>
@@ -28,6 +28,10 @@ const FileUpload = (props) => {
             })
         );
         setselectedFiles(files);
+
+        if (onSelectFile) {
+            onSelectFile(files[0]);
+        }
     }
 
     /**
@@ -81,7 +85,7 @@ const FileUpload = (props) => {
                             >
                                 <div className="p-2">
                                     <Row className="align-items-center">
-                                        <Col className="col-auto">
+                                        {/* <Col className="col-auto">
                                             <img
                                                 data-dz-thumbnail=""
                                                 height="80"
@@ -89,7 +93,7 @@ const FileUpload = (props) => {
                                                 alt={f.name}
                                                 src={f.preview}
                                             />
-                                        </Col>
+                                        </Col> */}
                                         <Col>
                                             <Link
                                                 to="#"
