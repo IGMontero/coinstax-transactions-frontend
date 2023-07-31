@@ -107,6 +107,9 @@ function divideStatesIntoGroups(statesData, n) {
         };
     });
 
+    // Sort result by perc
+    result.sort((a, b) => b.percentage - a.percentage);
+
     return result;
 }
 
