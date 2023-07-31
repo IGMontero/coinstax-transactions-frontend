@@ -3,12 +3,16 @@ import { useNavigate } from "react-router-dom";
 
 const Navdata = () => {
     const history = useNavigate();
-  
+
     const [isAnalytics, setIsAnalytics] = useState(false);
     const [isTerritory, setIsTerritory] = useState(false);
     const [isResources, setIsResources] = useState(false);
-
-    const [iscurrentState, setIscurrentState] = useState();
+    const [isSummary, setIsSummary] = useState(false);
+    const [isSalesDevelopment, setIsSalesDevelopment] = useState(false);
+    const [isNewSales, setIsNewSales] = useState(false);
+    const [isAccountManagement, setIsAccountManagement] = useState(false);
+    
+    const [iscurrentState, setIscurrentState] = useState('Analytics');
 
     function updateIconSidebar(e) {
         if (e && e.target && e.target.getAttribute("subitems")) {
@@ -35,12 +39,19 @@ const Navdata = () => {
         if (iscurrentState !== 'Resources') {
             setIsResources(false);
         }
+        if (iscurrentState !== 'Summary') {
+            setIsSummary(false);
+        }
+        if (iscurrentState !== 'Sales Development') {
+            setIsSalesDevelopment(false);
+        }
     }, [
         history,
         iscurrentState,
         isAnalytics,
         isTerritory,
-        isResources
+        isResources,
+        isSummary
     ]);
 
     const menuItems = [
@@ -66,12 +77,23 @@ const Navdata = () => {
                     label: "Summary",
                     link: "#",
                     parentId: "analytics",
+                    click: function (e) {
+                        e.preventDefault();
+                        setIsSummary(!isSummary);
+                    },
+                    stateVariables: isSummary,
                 },
                 {
                     id: "sales-development",
                     label: "Sales Development",
                     link: "#",
                     parentId: "analytics",
+                    isChildItem: true,
+                    click: function (e) {
+                        e.preventDefault();
+                        setIsSalesDevelopment(!isSalesDevelopment);
+                    },
+                    stateVariables: isSalesDevelopment,
                     childItems: [
                         { id: 1, label: "Overview", link: "#", parentId: "analytics" },
                         { id: 2, label: "Leaders", link: "#", parentId: "analytics" },
@@ -82,6 +104,12 @@ const Navdata = () => {
                     label: "New Sales",
                     link: "#",
                     parentId: "analytics",
+                    isChildItem: true,
+                    click: function (e) {
+                        e.preventDefault();
+                        setIsNewSales(!isNewSales);
+                    },
+                    stateVariables: isNewSales,
                     childItems: [
                         { id: 1, label: "Overview", link: "#", parentId: "analytics" },
                         { id: 2, label: "Leaders", link: "#", parentId: "analytics" },
@@ -92,6 +120,12 @@ const Navdata = () => {
                     label: 'Account Management',
                     link: '#',
                     parentId: 'analytics',
+                    isChildItem: true,
+                    click: function (e) {
+                        e.preventDefault();
+                        setIsAccountManagement(!isAccountManagement);
+                    },
+                    stateVariables: isAccountManagement,
                     childItems: [
                         { id: 1, label: 'Overview', link: '#', parentId: 'analytics' },
                         { id: 2, label: 'Leaders', link: '#', parentId: 'analytics' },

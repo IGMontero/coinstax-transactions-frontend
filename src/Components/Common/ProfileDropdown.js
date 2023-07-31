@@ -11,15 +11,23 @@ const ProfileDropdown = () => {
         user: state.Profile.user,
     }));
 
-    const [userName, setUserName] = useState("Admin");
+    const [userName, setUserName] = useState(user?.email || "Admin");
+    const [userAvatar, setUserAvatar] = useState(user?.photoURL || avatar1);
 
     useEffect(() => {
-
-        if (sessionStorage.getItem("authUser")) {
-            const obj = JSON.parse(sessionStorage.getItem("authUser"));
-            setUserName(process.env.REACT_APP_DEFAULTAUTH === "fake" ? obj.username === undefined ? user.first_name ? user.first_name : obj.data.first_name : "Admin" || "Admin" :
-                process.env.REACT_APP_DEFAULTAUTH === "firebase" ? obj.providerData[0].email : "Admin"
+        if (localStorage.getItem("authUser")) {
+            const obj = JSON.parse(localStorage.getItem("authUser"));
+            setUserName(
+                process.env.REACT_APP_DEFAULTAUTH === "firebase" ? obj?.providerData?.[0]?.displayName?.split(" ")?.[0] ||
+                    obj?.providerData?.[0]?.email ||
+                    // Get first name from display name
+                    obj?.displayName?.split(" ")[0]
+                    : "Admin"
             );
+
+            if (obj?.photoURL) {
+                setUserAvatar(obj.photoURL)
+            }
         }
     }, [userName, user]);
 
@@ -34,11 +42,11 @@ const ProfileDropdown = () => {
             <Dropdown isOpen={isProfileDropdown} toggle={toggleProfileDropdown} className="ms-sm-3 header-item topbar-user">
                 <DropdownToggle tag="button" type="button" className="btn">
                     <span className="d-flex align-items-center">
-                        <img className="rounded-circle header-profile-user" src={avatar1}
+                        <img className="rounded-circle header-profile-user" src={userAvatar || avatar1}
                             alt="Header Avatar" />
                         <span className="text-start ms-xl-2">
                             <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{userName}</span>
-                            <span className="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">Founder</span>
+                            <span className="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">Member</span>
                         </span>
                     </span>
                 </DropdownToggle>

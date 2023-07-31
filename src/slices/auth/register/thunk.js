@@ -14,12 +14,14 @@ import {
 } from "./reducer";
 
 // initialize relavant method of both Auth
-const fireBaseBackend = getFirebaseBackend();
+let fireBaseBackend = getFirebaseBackend();
 
 // Is user register successfull then direct plot user in redux.
 export const registerUser = (user) => async (dispatch) => {
   try {
     let response;
+
+    fireBaseBackend = getFirebaseBackend();
 
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
       response = fireBaseBackend.registerUser(user.email, user.password);

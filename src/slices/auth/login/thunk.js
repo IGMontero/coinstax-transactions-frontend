@@ -6,6 +6,7 @@ import {
 } from "../../../helpers/fakebackend_helper";
 
 import { loginSuccess, logoutUserSuccess, apiError, reset_login_flag } from './reducer';
+import { profileSuccess } from "../profile/reducer";
 
 export const loginUser = (user, history) => async (dispatch) => {
 
@@ -29,23 +30,25 @@ export const loginUser = (user, history) => async (dispatch) => {
         password: user.password,
       });
     }
-    
+
     var data = await response;
 
     if (data) {
-      sessionStorage.setItem("authUser", JSON.stringify(data));
+      localStorage.setItem("authUser", JSON.stringify(data));
       if (process.env.REACT_APP_DEFAULTAUTH === "fake") {
         var finallogin = JSON.stringify(data);
         finallogin = JSON.parse(finallogin)
         data = finallogin.data;
         if (finallogin.status === "success") {
           dispatch(loginSuccess(data));
+          dispatch(profileSuccess(data));
           history('/dashboard')
         } else {
           dispatch(apiError(finallogin));
         }
-      }else{
+      } else {
         dispatch(loginSuccess(data));
+        dispatch(profileSuccess(data));
         history('/dashboard')
       }
     }
@@ -56,7 +59,7 @@ export const loginUser = (user, history) => async (dispatch) => {
 
 export const logoutUser = () => async (dispatch) => {
   try {
-    sessionStorage.removeItem("authUser");
+    localStorage.removeItem("authUser");
     let fireBaseBackend = getFirebaseBackend();
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
       const response = fireBaseBackend.logout;
@@ -79,13 +82,14 @@ export const socialLogin = (type, history) => async (dispatch) => {
       response = fireBaseBackend.socialLoginUser(type);
     }
     //  else {
-      //   response = postSocialLogin(data);
-      // }
-      
-      const socialdata = await response;
+    //   response = postSocialLogin(data);
+    // }
+
+    const socialdata = await response;
     if (socialdata) {
-      sessionStorage.setItem("authUser", JSON.stringify(response));
-      dispatch(loginSuccess(response));
+      localStorage.setItem("authUser", JSON.stringify(socialdata));
+      dispatch(loginSuccess(socialdata));
+      dispatch(profileSuccess({ data: socialdata }));
       history('/dashboard')
     }
 
@@ -94,7 +98,7 @@ export const socialLogin = (type, history) => async (dispatch) => {
   }
 };
 
-export const resetLoginFlag = () => async (dispatch) =>{
+export const resetLoginFlag = () => async (dispatch) => {
   try {
     const response = dispatch(reset_login_flag());
     return response;

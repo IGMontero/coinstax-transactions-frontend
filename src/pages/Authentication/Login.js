@@ -46,8 +46,8 @@ const Login = (props) => {
         enableReinitialize: true,
 
         initialValues: {
-            email: userLogin.email || "admin@themesbrand.com" || '',
-            password: userLogin.password || "123456" || '',
+            email: userLogin.email || '',
+            password: userLogin.password || '',
         },
         validationSchema: Yup.object({
             email: Yup.string().required("Please Enter Your Email"),
@@ -178,7 +178,7 @@ const Login = (props) => {
                                                         <h5 className="fs-13 mb-4 title">Sign In with</h5>
                                                     </div>
                                                     <div>
-                                                        <Link
+                                                        {/* <Link
                                                             to="#"
                                                             className="btn btn-primary btn-icon me-1"
                                                             onClick={e => {
@@ -187,7 +187,7 @@ const Login = (props) => {
                                                             }}
                                                             >
                                                             <i className="ri-facebook-fill fs-16" />
-                                                        </Link>
+                                                        </Link> */}
                                                         <Link
                                                             to="#"
                                                             className="btn btn-danger btn-icon me-1"
@@ -195,13 +195,13 @@ const Login = (props) => {
                                                                 e.preventDefault();
                                                                 socialResponse("google");
                                                             }}
-                                                            >
+                                                        >
                                                             <i className="ri-google-fill fs-16" />
                                                         </Link>
                                                         {/* <Button color="primary" className="btn-icon"><i className="ri-facebook-fill fs-16"></i></Button>{" "} */}
                                                         {/* <Button color="danger" className="btn-icon"><i className="ri-google-fill fs-16"></i></Button>{" "} */}
-                                                        <Button color="dark" className="btn-icon"><i className="ri-github-fill fs-16"></i></Button>{" "}
-                                                        <Button color="info" className="btn-icon"><i className="ri-twitter-fill fs-16"></i></Button>
+                                                        {/* <Button color="dark" className="btn-icon"><i className="ri-github-fill fs-16"></i></Button>{" "} */}
+                                                        {/* <Button color="info" className="btn-icon"><i className="ri-twitter-fill fs-16"></i></Button> */}
                                                     </div>
                                                 </div>
                                             </Form>
