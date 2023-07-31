@@ -5,13 +5,12 @@ const Navdata = () => {
     const history = useNavigate();
 
     const [isAnalytics, setIsAnalytics] = useState(false);
-    const [isTerritory, setIsTerritory] = useState(false);
     const [isResources, setIsResources] = useState(false);
     const [isSummary, setIsSummary] = useState(false);
     const [isSalesDevelopment, setIsSalesDevelopment] = useState(false);
     const [isNewSales, setIsNewSales] = useState(false);
     const [isAccountManagement, setIsAccountManagement] = useState(false);
-    
+
     const [iscurrentState, setIscurrentState] = useState('Analytics');
 
     function updateIconSidebar(e) {
@@ -33,9 +32,6 @@ const Navdata = () => {
         if (iscurrentState !== 'Analytics') {
             setIsAnalytics(false);
         }
-        if (iscurrentState !== 'Territory') {
-            setIsTerritory(false);
-        }
         if (iscurrentState !== 'Resources') {
             setIsResources(false);
         }
@@ -45,11 +41,15 @@ const Navdata = () => {
         if (iscurrentState !== 'Sales Development') {
             setIsSalesDevelopment(false);
         }
+        if (iscurrentState === 'Territory') {
+            history("/territory-mapping");
+            document.body.classList.add('twocolumn-panel');
+        }
+
     }, [
         history,
         iscurrentState,
         isAnalytics,
-        isTerritory,
         isResources,
         isSummary
     ]);
@@ -77,11 +77,11 @@ const Navdata = () => {
                     label: "Summary",
                     link: "#",
                     parentId: "analytics",
-                    click: function (e) {
-                        e.preventDefault();
-                        setIsSummary(!isSummary);
-                    },
-                    stateVariables: isSummary,
+                    // click: function (e) {
+                    //     e.preventDefault();
+                    //     setIsSummary(!isSummary);
+                    // },
+                    // stateVariables: isSummary,
                 },
                 {
                     id: "sales-development",
@@ -137,14 +137,11 @@ const Navdata = () => {
             id: "territory-mapping",
             label: "Territory Mapping",
             icon: "bx bx-world",
-            link: "/#",
+            link: "/territory-mapping",
             click: function (e) {
                 e.preventDefault();
-                setIsTerritory(!isTerritory);
                 setIscurrentState('Territory');
-                updateIconSidebar(e);
             },
-            stateVariables: isTerritory,
         },
         {
             id: "resources",

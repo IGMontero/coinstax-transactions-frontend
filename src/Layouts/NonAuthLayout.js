@@ -23,7 +23,9 @@ const NonAuthLayout = ({ children }) => {
     }, [layoutModeType]);
     return (
         <div>
-            {children}
+            <React.Suspense fallback={<div />}>
+                {children}
+            </React.Suspense>
         </div>
     );
 };

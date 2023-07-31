@@ -12,11 +12,13 @@ import Register from "../pages/Authentication/Register";
 
 // User Profile
 import UserProfile from "../pages/Authentication/user-profile";
+import TerritoryMapping from "../pages/TerritoryMapping";
 
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <DashboardEcommerce /> },
   { path: "/index", component: <DashboardEcommerce /> },
+  { path: "/territory-mapping", exact: true, component: <TerritoryMapping /> },
 
   //User Profile
   { path: "/profile", component: <UserProfile /> },
