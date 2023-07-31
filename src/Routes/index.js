@@ -14,6 +14,7 @@ const Index = () => {
         <React.Fragment>
             <Routes>
                 <Route>
+
                     {publicRoutes.map((route, idx) => (
                         <Route
                             path={route.path}

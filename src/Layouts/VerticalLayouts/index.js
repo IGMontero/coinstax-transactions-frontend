@@ -73,7 +73,9 @@ const VerticalLayout = (props) => {
             const items = ul.getElementsByTagName("a");
             let itemsArray = [...items]; // converts NodeList to Array
             removeActivation(itemsArray);
-            let matchingMenuItem = itemsArray.find((x) => {
+            let matchingMenuItem = document.getElementById(`${props.router.location.pathname.split("/")[1]}`);
+
+            if (!matchingMenuItem) matchingMenuItem = itemsArray.find((x) => {
                 return x.pathname === pathName;
             });
             if (matchingMenuItem) {
@@ -227,6 +229,7 @@ const VerticalLayout = (props) => {
                                 ) : (
                                     <li className="nav-item">
                                         <Link
+                                            id={item.id}
                                             className="nav-link menu-link"
                                             to={item.link ? item.link : "/#"}>
                                             <i className={item.icon}></i> <span>{props.t(item.label)}</span>

@@ -74,7 +74,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                                         <img src={logoSm} alt="" height="22" />
                                     </span>
                                     <span className="logo-lg">
-                                        <img src={logoDark} alt="" height="17" />
+                                        <img src={logoDark} alt="" height="40" />
                                     </span>
                                 </Link>
 
@@ -83,12 +83,12 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                                         <img src={logoSm} alt="" height="22" />
                                     </span>
                                     <span className="logo-lg">
-                                        <img src={logoLight} alt="" height="17" />
+                                        <img src={logoLight} alt="" height="40" />
                                     </span>
                                 </Link>
                             </div>
 
-                            {/* <button
+                            <button
                                 onClick={toogleMenuBtn}
                                 type="button"
                                 className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger"
@@ -98,7 +98,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                                     <span></span>
                                     <span></span>
                                 </span>
-                            </button> */}
+                            </button>
 
 
                             {/* <SearchOption /> */}

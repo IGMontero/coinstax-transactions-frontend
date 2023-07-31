@@ -62,9 +62,9 @@ const HorizontalLayout = (props) => {
                 parentCollapseDiv.parentElement.closest(".collapse").classList.add("show");
                 var parentElementDiv = parentCollapseDiv.parentElement.closest(".collapse").previousElementSibling;
                 if (parentElementDiv)
-                    if(parentElementDiv.closest(".collapse"))
+                    if (parentElementDiv.closest(".collapse"))
                         parentElementDiv.closest(".collapse").classList.add("show")
-                    parentElementDiv.classList.add("active");
+                parentElementDiv.classList.add("active");
                 var parentElementSibling = parentElementDiv.parentElement.parentElement.parentElement.previousElementSibling;
                 if (parentElementSibling) {
                     parentElementSibling.classList.add("active");
