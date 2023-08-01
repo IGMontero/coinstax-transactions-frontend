@@ -113,7 +113,7 @@ const UserProfile = () => {
 
           <h4 className="card-title mb-4">Update Profile</h4>
 
-          <Card>
+          {/* <Card>
             <CardBody>
               <Form
                 className="form-horizontal"
@@ -150,7 +150,7 @@ const UserProfile = () => {
                 </div>
               </Form>
             </CardBody>
-          </Card>
+          </Card> */}
         </Container>
       </div>
     </React.Fragment>
