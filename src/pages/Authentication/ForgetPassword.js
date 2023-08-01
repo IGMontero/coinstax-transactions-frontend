@@ -43,7 +43,7 @@ const ForgetPasswordPage = props => {
     forgetSuccessMsg: state.ForgetPassword.forgetSuccessMsg,
   }));
 
-document.title="Reset Password | Velzon - React Admin & Dashboard Template";
+document.title="Reset Password | SalesPulse360";
 
   return (
     <ParticlesAuth>
