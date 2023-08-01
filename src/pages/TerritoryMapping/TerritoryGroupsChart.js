@@ -25,7 +25,7 @@ const TerritoryGroupsChart = (props) => {
 
     return (
         <React.Fragment>
-            <Col xl={4}>
+            <Col xl={12}>
                 <Card className="card-height-100">
                     <CardHeader className="align-items-center d-flex">
                         <h4 className="card-title mb-0 flex-grow-1">Grouped Territories</h4>
