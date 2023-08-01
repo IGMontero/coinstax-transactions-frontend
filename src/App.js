@@ -27,8 +27,6 @@ const firebaseConfig = {
 // init firebase backend
 initFirebaseBackend(firebaseConfig);
 
-console.log("app!!");
-
 function App() {
   const dispatch = useDispatch();
 
