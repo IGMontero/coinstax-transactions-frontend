@@ -5,7 +5,7 @@ import FileUpload from "../../Components/Common/FileUpload";
 import Papa from "papaparse";
 
 const TerritoryMapping = () => {
-    document.title = "Territory Mapping | Velzon - React Admin & Dashboard Template";
+    document.title = "Territory Mapping | SalesPulse360";
 
     const [inputValue, setInputValue] = React.useState();
     const [selectedFile, setSelectedFile] = React.useState(null);

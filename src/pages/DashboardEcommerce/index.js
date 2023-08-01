@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "reactstrap";
 
 const DashboardEcommerce = () => {
-  document.title = "Dashboard | Velzon - React Admin & Dashboard Template";
+  document.title = "Dashboard | SalesPulse360";
 
   return (
     <React.Fragment>
