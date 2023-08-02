@@ -12,19 +12,22 @@ import {
   resetRegisterFlagChange,
   apiErrorChange
 } from "./reducer";
+import { useDispatch } from "react-redux";
 
 // initialize relavant method of both Auth
 let fireBaseBackend = getFirebaseBackend();
 
 // Is user register successfull then direct plot user in redux.
-export const registerUser = async (user) => async (dispatch) => {
+export const registerUser = async (user, dispatch) => {
   try {
     let response;
 
     fireBaseBackend = getFirebaseBackend();
 
     if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
-      response = await fireBaseBackend.registerUser(user.email, user.password, user.first_name, user.last_name, user.company);
+      response = await fireBaseBackend.registerUser(user.email, user.password, user.first_name, user.last_name);
+
+      console.log("Response sign up:" , response)
 
       if (response.message === "success") {
         dispatch(registerUserSuccessful(response));

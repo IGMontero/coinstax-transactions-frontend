@@ -29,29 +29,20 @@ class FirebaseAuthBackend {
   /**
    * Registers the user with given details
    */
-  registerUser = (email, password, firstName, lastName, company) => {
-    console.log(email, password, firstName, lastName, company)
+  registerUser = (email, password, firstName, lastName) => {
     return new Promise((resolve, reject) => {
       firebase
         .auth()
         .createUserWithEmailAndPassword(email, password)
         .then(
           async user => {
-            const addUserObj = {
-              uid: user.user.uid,
-              firstName: firstName,
-              lastName: lastName,
-              email: email,
-            }
-            if (company) {
-              addUserObj.company = company
-            }
 
-            // Add user to firestore collection
-            this.firestore.collection("usersCollection")
-              .add(addUserObj)
+            // Set user display name
+            await updateProfile(user.user, {
+              displayName: `${firstName} ${lastName}`
+            })
 
-            resolve(firebase.auth().currentUser);
+            resolve({ message: "success", user: firebase.auth().currentUser });
           },
           error => {
             console.error(error)
