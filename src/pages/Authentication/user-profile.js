@@ -111,7 +111,7 @@ const UserProfile = () => {
             </Col>
           </Row>
 
-          <h4 className="card-title mb-4">Update Profile</h4>
+          {/* <h4 className="card-title mb-4">Update Profile</h4> */}
 
           {/* <Card>
             <CardBody>

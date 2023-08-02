@@ -49,10 +49,8 @@ const Register = () => {
                 )
             })
         }),
-        onSubmit: async (values) => {
-           const submitResponse = await dispatch(registerUser(values));
-
-           console.log("Submit response: ", submitResponse)
+        onSubmit: (values) => {
+           return dispatch(registerUser(values, dispatch));
         }
     });
 
