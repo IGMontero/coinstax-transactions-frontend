@@ -14,13 +14,12 @@ import { profileSuccess } from './slices/auth/profile/reducer';
 import { loginSuccess } from './slices/auth/login/reducer';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAWl41GWOVUThH8StZim3WgeRBR1sIYOCM",
-  authDomain: "salespulse-3d214.firebaseapp.com",
-  projectId: "salespulse-3d214",
-  storageBucket: "salespulse-3d214.appspot.com",
-  messagingSenderId: "1015654820596",
-  appId: "1:1015654820596:web:e8abcb245e090c82748ca1",
-  measurementId: "G-GHDYNNNVVM"
+  apiKey: "AIzaSyCfEYQQmkM9taJQlPAnjk4eAulGgYd3VwE",
+  authDomain: "ifyoulike-7617d.firebaseapp.com",
+  projectId: "ifyoulike-7617d",
+  storageBucket: "ifyoulike-7617d.appspot.com",
+  messagingSenderId: "669545742928",
+  appId: "1:669545742928:web:eef83dfe2812f8fa9f8755"
 };
 
 
