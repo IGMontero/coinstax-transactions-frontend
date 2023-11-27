@@ -2,7 +2,7 @@ import React from "react";
 import { Container } from "reactstrap";
 
 const DashboardEcommerce = () => {
-  document.title = "Dashboard | SalesPulse360";
+  document.title = "Dashboard | CoinsTax";
 
   return (
     <React.Fragment>

@@ -43,7 +43,7 @@ const ForgetPasswordPage = props => {
     forgetSuccessMsg: state.ForgetPassword.forgetSuccessMsg,
   }));
 
-document.title="Reset Password | SalesPulse360";
+  document.title = "Reset Password | CoinsTax";
 
   return (
     <ParticlesAuth>
@@ -77,7 +77,7 @@ document.title="Reset Password | SalesPulse360";
                       colors="primary:#0ab39c"
                       className="avatar-xl"
                       style={{ width: "120px", height: "120px" }}
-                      >
+                    >
                     </lord-icon>
 
                   </div>

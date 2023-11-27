@@ -50,7 +50,7 @@ const Register = () => {
             })
         }),
         onSubmit: (values) => {
-           return dispatch(registerUser(values, dispatch));
+            return dispatch(registerUser(values, dispatch));
         }
     });
 
@@ -74,7 +74,7 @@ const Register = () => {
 
     }, [dispatch, success, error, history]);
 
-    document.title = "Register | SalesPulse360";
+    document.title = "Register | CoinsTax";
 
     return (
         <React.Fragment>
@@ -101,7 +101,7 @@ const Register = () => {
                                     <CardBody className="p-4">
                                         <div className="text-center mt-2">
                                             <h5 className="text-primary">Create New Account</h5>
-                                            <p className="text-muted">Get your free SalesPulse360 account now</p>
+                                            <p className="text-muted">Get your free CoinsTax account now</p>
                                         </div>
                                         <div className="p-2 mt-4">
                                             <Form
