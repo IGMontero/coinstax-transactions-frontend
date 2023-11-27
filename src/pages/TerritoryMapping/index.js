@@ -5,7 +5,7 @@ import FileUpload from "../../Components/Common/FileUpload";
 import Papa from "papaparse";
 
 const TerritoryMapping = () => {
-    document.title = "Territory Mapping | SalesPulse360";
+    document.title = "Territory Mapping | CoinsTax";
 
     const [inputValue, setInputValue] = React.useState();
     const [selectedFile, setSelectedFile] = React.useState(null);

@@ -78,7 +78,7 @@ const UserProfile = () => {
     }
   });
 
-  document.title = "Profile | SalesPulse360";
+  document.title = "Profile | CoinsTax";
   return (
     <React.Fragment>
       <div className="page-content">

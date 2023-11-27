@@ -79,7 +79,7 @@ const Login = (props) => {
         }
     }, [dispatch, errorMsg]);
 
-    document.title = "Basic SignIn | SalesPulse360";
+    document.title = "Basic SignIn | CoinsTax";
 
     return (
         <React.Fragment>
