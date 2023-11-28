@@ -367,7 +367,7 @@ const PerformanceChart = ({ dataColors }) => {
             options={option}
             series={series}
             type="area"
-            height="220"
+            height="237"
             className="apex-charts"
           />
           <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1">
