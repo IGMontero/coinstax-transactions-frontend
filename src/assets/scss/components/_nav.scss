@@ -322,8 +322,10 @@ $value in $theme-colors {
         &.nav-tabs {
             .nav-link {
                 &.active {
-                    color: $value;
-                    background-color: var(--#{$prefix}card-bg-custom);
+                    background-color: transparent;
+                    color: $primary;
+                    // color: $value;
+                    // background-color: var(--#{$prefix}card-bg-custom);
                 }
             }
         }
@@ -331,8 +333,10 @@ $value in $theme-colors {
         &.nav-tabs-custom {
             .nav-link {
                 &.active {
-                    color: $value;
-                    background-color: var(--#{$prefix}card-bg-custom);
+                    // color: $value;
+                    color: $primary;
+                    // background-color: var(--#{$prefix}card-bg-custom);
+                    background-color: transparent;
 
                     &::after {
                         background-color: $value;
