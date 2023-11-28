@@ -20,6 +20,7 @@ import classnames from "classnames";
 import { Link } from "react-router-dom";
 import PerformanceChart from "./components/PerformanceChart";
 import HistorialList from "./components/HistorialList";
+import AcitvesTable from "./components/ActivesTable";
 const DashboardInfo = () => {
   const [customActiveTab, setcustomActiveTab] = useState("1");
   const toggleCustom = (tab) => {
@@ -177,6 +178,9 @@ const DashboardInfo = () => {
                         <Col xxl={4} className="ms-1">
                           <HistorialList />
                         </Col>
+                      </Col>
+                      <Col xxl={12}>
+                        <AcitvesTable />
                       </Col>
                     </div>
                   </div>
