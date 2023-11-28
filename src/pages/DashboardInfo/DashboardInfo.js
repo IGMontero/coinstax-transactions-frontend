@@ -32,7 +32,7 @@ const DashboardInfo = () => {
     <React.Fragment>
       <Container fluid>
         <div className="page-content">
-          <Row className="d-flex justify-content-center align-items-center border-bottom border-2 mb-5">
+          <Row className="d-flex justify-content-center align-items-center  border-2  ">
             <Col
               lg={12}
               className="d-flex jusitfy-content-between align-items-center"
@@ -99,9 +99,9 @@ const DashboardInfo = () => {
                 md={3}
                 sm={3}
                 xs={3}
-                className="d-flex justify-content-center"
+                className="d-flex justify-content-end"
               >
-                <div className="d-flex justify-content-end flex-row">
+                <div className="d-flex justify-content-center flex-row">
                   <Button className="rounded-circle bg-transparent border-1  border-dark btn btn-sm">
                     <i className="ri-share-forward-fill text-dark fs-4 p-1"></i>
                   </Button>
@@ -115,9 +115,9 @@ const DashboardInfo = () => {
               </Col>
             </Col>
           </Row>
-          <Row className="d-flex justify-content-center align-items-center border-bottom border-2 mt-5 mb-3">
+          <Row className="d-flex justify-content-center align-items-center border-bottom border-2 mb-3 mt-3 border-top">
             {" "}
-            <Col xxl={12}>
+            <Col xxl={12} className="mt-3">
               <Col xxl={6}>
                 <Nav
                   tabs
@@ -175,7 +175,7 @@ const DashboardInfo = () => {
                         <Col xxl={6} className="me-1">
                           <PerformanceChart dataColors='["--vz-primary"]' />
                         </Col>
-                        <Col xxl={4} className="ms-1">
+                        <Col xxl={6} className="ms-1">
                           <HistorialList />
                         </Col>
                       </Col>

@@ -56,7 +56,7 @@ const AcitvesTable = () => {
   );
   return (
     <React.Fragment>
-      <div className="mb-3 px-5">
+      <div className="mb-3">
         <div className="flex-grow-1 d-flex justify-content-between">
           <h2 className="ms-1 mb-3">Actives</h2>
           <div className="d-flex justify-content-between align-items-center ">
