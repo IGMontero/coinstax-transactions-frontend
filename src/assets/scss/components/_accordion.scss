@@ -6,6 +6,10 @@
     .accordion-button {
         font-weight: $font-weight-medium;
     }
+    .accordion-button::after {
+        display: none;
+      }
+      
 
     .accordion-body {
         color: $text-muted;
@@ -14,6 +18,7 @@
     &.accordion-icon-none {
         .accordion-button {
             &::after {
+                
                 content: "";
                 background-image: none !important;
             }
@@ -129,13 +134,15 @@ $value in $theme-colors {
     .accordion-#{$color} {
         .accordion-item {
             border-color: rgba($value, 0.6);
+        
 
             .accordion-button {
                 box-shadow: none;
 
                 &:not(.collapsed) {
                     color: $value;
-                    background-color: rgba($value, 0.1) !important;
+                    // background-color: rgba($value, 0.1) !important;
+                    background-color: transparent;
                 }
 
                 &::after {
