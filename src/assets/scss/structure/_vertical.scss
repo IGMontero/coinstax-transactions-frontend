@@ -21,7 +21,10 @@
 }
 
 .page-content {
-    padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} * 0.5) $footer-height calc(#{$grid-gutter-width} * 0.5);
+    // padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} * 0.5) $footer-height calc(#{$grid-gutter-width} * 0.5);
+    padding-top: calc(#{$header-height} + #{$grid-gutter-width});
+    padding-left: 130px;
+    padding-right: 130px;
 }
 
 .navbar-menu {
