@@ -21,6 +21,7 @@ import { Link } from "react-router-dom";
 import PerformanceChart from "./components/PerformanceChart";
 import HistorialList from "./components/HistorialList";
 import AcitvesTable from "./components/ActivesTable";
+import HistorialTable from "./components/HistorialTable";
 const DashboardInfo = () => {
   const [customActiveTab, setcustomActiveTab] = useState("1");
   const toggleCustom = (tab) => {
@@ -187,16 +188,8 @@ const DashboardInfo = () => {
                 </TabPane>
                 <TabPane tabId="2">
                   <div className="d-flex">
-                    <div className="flex-shrink-0">
-                      <i className="ri-checkbox-multiple-blank-fill text-success"></i>
-                    </div>
                     <div className="flex-grow-1 ms-2">
-                      When, while the lovely valley teems with vapour around me,
-                      and the meridian sun strikes the upper surface of the
-                      impenetrable foliage of my trees, and but a few stray
-                      gleams steal into the inner sanctuary, I throw myself down
-                      among the tall grass by the trickling stream; and, as I
-                      lie close to the earth, a thousand unknown.
+                      {/* <NFTS /> */}
                       <div className="mt-2">
                         <Link to="#" className="btn btn-sm btn-soft-primary">
                           Read More{" "}
@@ -208,22 +201,8 @@ const DashboardInfo = () => {
                 </TabPane>
                 <TabPane tabId="3">
                   <div className="d-flex">
-                    <div className="flex-shrink-0">
-                      <i className="ri-checkbox-multiple-blank-fill text-success"></i>
-                    </div>
                     <div className="flex-grow-1 ms-2">
-                      Etsy mixtape wayfarers, ethical wes anderson tofu before
-                      they sold out mcsweeney's organic lomo retro fanny pack
-                      lo-fi farm-to-table readymade. Messenger bag gentrify
-                      pitchfork tattooed craft beer, iphone skateboard locavore
-                      carles etsy salvia banksy hoodie helvetica. DIY synth PBR
-                      banksy irony.
-                      <div className="mt-2">
-                        <Link to="#" className="btn btn-sm btn-soft-primary">
-                          Read More{" "}
-                          <i className="ri-arrow-right-line ms-1 align-middle"></i>
-                        </Link>
-                      </div>
+                      <HistorialTable />
                     </div>
                   </div>
                 </TabPane>
