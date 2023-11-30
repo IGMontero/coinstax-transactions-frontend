@@ -33,16 +33,29 @@ const HistorialTable = () => {
       </Row>
       <Row className="mt-4">
         <Col xxl={6}>
-          <InputGroup className="search-bar mb-3">
-            <i className="ri-search-line text-muted fs-4 position-absolute ms-2"></i>
+          <InputGroup className="py-3 search-bar col-lg-12 col-md-12 pe-3">
+            <span
+              className="search-icon ps-3 position-absolute"
+              onClick={() => inputRef.current.focus()}
+              style={{ zIndex: 1, cursor: "text", paddingTop: ".35rem" }}
+            >
+              <i className="ri-search-line text-muted fs-3"></i>
+            </span>
             <Input
               innerRef={inputRef}
-              className="search-input form-control ps-5"
+              className="search-input py-3"
+              style={{
+                borderRadius: "5px",
+                zIndex: 0,
+                paddingLeft: "47px",
+              }}
               placeholder="Filter for direction, protocol, active, type"
+              // value={searchTerm}
+              // onChange={handleSearch}
             />
           </InputGroup>
         </Col>
-        <Col xxl={6} className="d-flex justify-content-end">
+        <Col xxl={6} className="d-flex btn btn-sm py-4 justify-content-end">
           <Button color="primary" size="sm">
             Descargar CSV
           </Button>
@@ -60,8 +73,10 @@ const HistorialTable = () => {
               </div>
             </Col>
             <div
-              className={`border-top border-bottom rounded${
-                openCollapse === index ? " border border-primary" : " bg-light"
+              className={`border-top border-bottom  bg-transparent${
+                openCollapse === index
+                  ? " border border-primary rounded"
+                  : " bg-light"
               }`}
             >
               <Row
@@ -95,7 +110,7 @@ const HistorialTable = () => {
                       height={40}
                     />
                     <div className="d-flex flex-column text-start justify-content-end">
-                      <h5 className="fw-semibold my-0">
+                      <h5 className="fw-semibold my-0 text-success">
                         {" "}
                         {transaction.number}
                       </h5>
@@ -112,10 +127,7 @@ const HistorialTable = () => {
                     <i className="ri-arrow-right-line text-end fs-4 "></i>
                   </div>
                 </Col>
-                <Col
-                  xxl={3}
-                  className="text-dark d-flex justify-content-center"
-                >
+                <Col xxl={3} className="d-flex justify-content-center">
                   <h5 className="fw-semibold my-0"> {transaction.amount}</h5>
                 </Col>
                 <Col xxl={3} className="d-flex align-items-center">
