@@ -32,7 +32,7 @@ const DashboardInfo = () => {
   return (
     <React.Fragment>
       <Container fluid>
-        <div className="page-content">
+        <div className="page-content ">
           <Row className="d-flex justify-content-center align-items-center  border-2  ">
             <Col
               lg={12}
@@ -116,13 +116,13 @@ const DashboardInfo = () => {
               </Col>
             </Col>
           </Row>
-          <Row className="d-flex justify-content-center align-items-center border-bottom border-2 mb-3 mt-3 border-top">
+          <Row className="d-flex justify-content-center align-items-center  border-2 mb-3 mt-3 border-top">
             {" "}
-            <Col xxl={12} className="mt-3">
+            <Col xxl={12} className="mt-3 ">
               <Col xxl={6}>
                 <Nav
                   tabs
-                  className="nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
+                  className="nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3 border-bottom"
                 >
                   <NavItem>
                     <NavLink
@@ -176,7 +176,7 @@ const DashboardInfo = () => {
                         <Col xxl={6} className="me-1">
                           <PerformanceChart dataColors='["--vz-primary"]' />
                         </Col>
-                        <Col xxl={6} className="ms-1">
+                        <Col xxl={6} className="ms-1 border-0">
                           <HistorialList />
                         </Col>
                       </Col>
