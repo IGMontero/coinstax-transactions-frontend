@@ -6,6 +6,8 @@ import logoSm from "../assets/images/logo-sm.png";
 import logoDark from "../assets/images/logo-dark.png";
 import logoLight from "../assets/images/logo-light.png";
 
+import logo from "../assets/images/logos/logo-dark.png";
+
 //Import Components
 import VerticalLayout from "./VerticalLayouts/index";
 import TwoColumnLayout from "./TwoColumnLayout";
@@ -13,7 +15,6 @@ import { Container } from "reactstrap";
 import HorizontalLayout from "./HorizontalLayout";
 
 const Sidebar = ({ layoutType }) => {
-
   useEffect(() => {
     var verticalOverlay = document.getElementsByClassName("vertical-overlay");
     if (verticalOverlay) {
@@ -25,12 +26,20 @@ const Sidebar = ({ layoutType }) => {
 
   const addEventListenerOnSmHoverMenu = () => {
     // add listener Sidebar Hover icon on change layout from setting
-    if (document.documentElement.getAttribute('data-sidebar-size') === 'sm-hover') {
-      document.documentElement.setAttribute('data-sidebar-size', 'sm-hover-active');
-    } else if (document.documentElement.getAttribute('data-sidebar-size') === 'sm-hover-active') {
-      document.documentElement.setAttribute('data-sidebar-size', 'sm-hover');
+    if (
+      document.documentElement.getAttribute("data-sidebar-size") === "sm-hover"
+    ) {
+      document.documentElement.setAttribute(
+        "data-sidebar-size",
+        "sm-hover-active"
+      );
+    } else if (
+      document.documentElement.getAttribute("data-sidebar-size") ===
+      "sm-hover-active"
+    ) {
+      document.documentElement.setAttribute("data-sidebar-size", "sm-hover");
     } else {
-      document.documentElement.setAttribute('data-sidebar-size', 'sm-hover');
+      document.documentElement.setAttribute("data-sidebar-size", "sm-hover");
     }
   };
   return (
@@ -39,19 +48,19 @@ const Sidebar = ({ layoutType }) => {
         <div className="navbar-brand-box">
           <Link to="/" className="logo logo-dark">
             <span className="logo-sm">
-              <img src={logoSm} alt="" height="30" />
+              <img src={logo} alt="" height="20" width="63" />
             </span>
             <span className="logo-lg">
-              <img src={logoDark} alt="" height="30" />
+              <img src={logo} alt="" height="30" />
             </span>
           </Link>
 
           <Link to="/" className="logo logo-light">
             <span className="logo-sm">
-              <img src={logoSm} alt="" height="30" />
+              <img src={logo} alt="" height="30" />
             </span>
             <span className="logo-lg">
-              <img src={logoLight} alt="" height="30" />
+              <img src={logo} alt="" height="30" />
             </span>
           </Link>
           <button
@@ -72,7 +81,7 @@ const Sidebar = ({ layoutType }) => {
               </ul>
             </Container>
           </div>
-        ) : layoutType === 'twocolumn' ? (
+        ) : layoutType === "twocolumn" ? (
           <React.Fragment>
             <TwoColumnLayout />
             <div className="sidebar-background"></div>
