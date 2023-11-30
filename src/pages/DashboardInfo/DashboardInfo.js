@@ -32,7 +32,7 @@ const DashboardInfo = () => {
   return (
     <React.Fragment>
       <Container fluid>
-        <div className="page-content ">
+        <div className="page-content pb-5">
           <Row className="d-flex justify-content-center align-items-center  border-2  ">
             <Col
               lg={12}
