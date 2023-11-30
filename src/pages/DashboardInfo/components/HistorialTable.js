@@ -43,9 +43,8 @@ const HistorialTable = () => {
             </span>
             <Input
               innerRef={inputRef}
-              className="search-input py-3"
+              className="search-input py-3 rounded"
               style={{
-                borderRadius: "5px",
                 zIndex: 0,
                 paddingLeft: "47px",
               }}
