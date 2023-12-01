@@ -160,7 +160,7 @@ const DashboardInfo = () => {
                         toggleCustom("3");
                       }}
                     >
-                      Historial
+                      History
                     </NavLink>
                   </NavItem>
                 </Nav>
