@@ -22,6 +22,13 @@ import PerformanceChart from "./components/PerformanceChart";
 import HistorialList from "./components/HistorialList";
 import AcitvesTable from "./components/ActivesTable";
 import HistorialTable from "./components/HistorialTable";
+import Nfts from "./components/Nfts";
+import eth from "../../assets/images/svg/crypto-icons/eth.svg";
+import btc from "../../assets/images/svg/crypto-icons/btc.svg";
+import arb from "../../assets/images/svg/crypto-icons/ankr.svg";
+import pol from "../../assets/images/svg/crypto-icons/poly.svg";
+import gnosis from "../../assets/images/svg/crypto-icons/gno.svg";
+import networks from "../../assets/images/svg/crypto-icons/nexo.svg";
 const DashboardInfo = () => {
   const [customActiveTab, setcustomActiveTab] = useState("1");
   const toggleCustom = (tab) => {
@@ -118,53 +125,180 @@ const DashboardInfo = () => {
           </Row>
           <Row className="d-flex justify-content-center align-items-center  border-2 mb-3 mt-3 border-top">
             {" "}
-            <Col xxl={12} className="mt-3 ">
-              <Col xxl={6}>
-                <Nav
-                  tabs
-                  className="nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3 border-bottom"
+            <Col xxl={12}>
+              <div className="d-flex justify-content-between">
+                <Col xxl={6}>
+                  <Nav
+                    tabs
+                    className="nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3 border-bottom"
+                  >
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: customActiveTab === "1",
+                        })}
+                        onClick={() => {
+                          toggleCustom("1");
+                        }}
+                      >
+                        Tokens
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: customActiveTab === "2",
+                        })}
+                        onClick={() => {
+                          toggleCustom("2");
+                        }}
+                      >
+                        NFTs
+                      </NavLink>
+                    </NavItem>
+                    <NavItem>
+                      <NavLink
+                        style={{ cursor: "pointer" }}
+                        className={classnames({
+                          active: customActiveTab === "3",
+                        })}
+                        onClick={() => {
+                          toggleCustom("3");
+                        }}
+                      >
+                        History
+                      </NavLink>
+                    </NavItem>
+                  </Nav>
+                </Col>
+                <Col
+                  xxl={6}
+                  className="d-flex justify-content-end align-items-center"
                 >
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "1",
-                      })}
-                      onClick={() => {
-                        toggleCustom("1");
-                      }}
-                    >
-                      Tokens
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "2",
-                      })}
-                      onClick={() => {
-                        toggleCustom("2");
-                      }}
-                    >
-                      NFTs
-                    </NavLink>
-                  </NavItem>
-                  <NavItem>
-                    <NavLink
-                      style={{ cursor: "pointer" }}
-                      className={classnames({
-                        active: customActiveTab === "3",
-                      })}
-                      onClick={() => {
-                        toggleCustom("3");
-                      }}
-                    >
-                      History
-                    </NavLink>
-                  </NavItem>
-                </Nav>
-              </Col>
+                  <div className="d-flex justify-content-end align-items-center">
+                    <UncontrolledDropdown className="card-header-dropdown">
+                      <DropdownToggle
+                        tag="a"
+                        className="btn btn-sm p-1 btn-soft-primary d-flex align-items-center"
+                        role="button"
+                      >
+                        <span className="ms-2 d-flex align-items-center">
+                          {" "}
+                          <i className="ri-function-line text-primary fs-4 me-2"></i>
+                          All Networks
+                        </span>
+                        <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
+                      </DropdownToggle>
+                      <DropdownMenu className="dropdown-menu-end mt-2 ">
+                        <DropdownItem className="d-flex align-items-center">
+                          {" "}
+                          <i className="ri-function-line text-primary fs-2 me-2"></i>
+                          <div className="d-flex flex-column">
+                            <span className="fw-semibold ">All Networks</span>
+                            <div className="d-flex flex-row align-items-center">
+                              <small>$9k </small>{" "}
+                              <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
+                              <small>$12.7k </small>
+                            </div>
+                          </div>
+                        </DropdownItem>
+                        <DropdownItem className="d-flex align-items-center">
+                          {" "}
+                          <img
+                            src={eth}
+                            alt="btc"
+                            className="ms-n1 me-2"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="d-flex flex-column">
+                            <span className="fw-semibold">Ethereum</span>
+                            <div className="d-flex flex-row align-items-center">
+                              <small>$8.6k </small>{" "}
+                              <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
+                              <small>$12.7k </small>
+                            </div>
+                          </div>
+                        </DropdownItem>
+                        <DropdownItem className="d-flex align-items-center">
+                          {" "}
+                          <img
+                            src={pol}
+                            alt="btc"
+                            className="ms-n1 me-2"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="d-flex flex-column">
+                            <span className="fw-semibold">Polygon</span>
+                            <div className="d-flex flex-row align-items-center">
+                              <small>$434.44k </small>
+                              <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
+                              <small>$0.352901k </small>
+                            </div>
+                          </div>
+                        </DropdownItem>
+                        <DropdownItem className="d-flex align-items-center">
+                          {" "}
+                          <img
+                            src={btc}
+                            alt="btc"
+                            className="ms-n1 me-2"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="d-flex flex-column">
+                            <span className="fw-semibold">BNB Chain</span>
+                            <div className="d-flex flex-row align-items-center">
+                              <small>$0.020028</small>
+                              <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
+                              <small></small>
+                            </div>
+                          </div>
+                        </DropdownItem>
+                        <DropdownItem className="d-flex align-items-center">
+                          {" "}
+                          <img
+                            src={arb}
+                            alt="btc"
+                            className="ms-n1 me-2"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="d-flex flex-column">
+                            <span className="fw-semibold">Arbitrum</span>
+                            <div className="d-flex flex-row align-items-center">
+                              <small>{"<"} $0.0001 </small>
+                              <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
+                              <small>{"<"} $0.0001</small>
+                            </div>
+                          </div>
+                        </DropdownItem>
+                        <DropdownItem className="d-flex align-items-center">
+                          {" "}
+                          <img
+                            src={gnosis}
+                            alt="btc"
+                            className="ms-n1 me-2"
+                            width={30}
+                            height={30}
+                          />
+                          <div className="d-flex flex-column">
+                            <span className="fw-semibold">Gnosis Chain</span>
+                            <div className="d-flex flex-row align-items-center">
+                              <small>{"<"} $0.0001 </small>
+                              <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
+                              <small>{"<"} $0.0001</small>
+                            </div>
+                          </div>
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                  </div>
+                </Col>
+              </div>
               <TabContent activeTab={customActiveTab} className="text-muted">
                 <TabPane tabId="1" id="home1">
                   <div className="d-flex">
@@ -189,13 +323,7 @@ const DashboardInfo = () => {
                 <TabPane tabId="2">
                   <div className="d-flex">
                     <div className="flex-grow-1 ms-2">
-                      {/* <NFTS /> */}
-                      <div className="mt-2">
-                        <Link to="#" className="btn btn-sm btn-soft-primary">
-                          Read More{" "}
-                          <i className="ri-arrow-right-line ms-1 align-middle"></i>
-                        </Link>
-                      </div>
+                      <Nfts />
                     </div>
                   </div>
                 </TabPane>
@@ -203,27 +331,6 @@ const DashboardInfo = () => {
                   <div className="d-flex">
                     <div className="flex-grow-1 ms-2">
                       <HistorialTable />
-                    </div>
-                  </div>
-                </TabPane>
-                <TabPane tabId="4">
-                  <div className="d-flex">
-                    <div className="flex-shrink-0">
-                      <i className="ri-checkbox-multiple-blank-fill text-success"></i>
-                    </div>
-                    <div className="flex-grow-1 ms-2">
-                      when darkness overspreads my eyes, and heaven and earth
-                      seem to dwell in my soul and absorb its power, like the
-                      form of a beloved mistress, then I often think with
-                      longing, Oh, would I could describe these conceptions,
-                      could impress upon paper all that is living so full and
-                      warm within me, that it might be the.
-                      <div className="mt-2">
-                        <Link to="#" className="btn btn-sm btn-soft-primary">
-                          Read More{" "}
-                          <i className="ri-arrow-right-line ms-1 align-middle"></i>
-                        </Link>
-                      </div>
                     </div>
                   </div>
                 </TabPane>
