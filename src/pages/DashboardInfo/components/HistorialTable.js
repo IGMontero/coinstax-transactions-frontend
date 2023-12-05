@@ -156,7 +156,7 @@ const HistorialTable = () => {
                       <Row className="align-items-start g-0 mt-2">
                         <Col xxl={12} className="d-flex mb-2">
                           <Col xxl={3} className="ps-2">
-                            <strong>{transaction.action2[0].title}</strong>
+                            <span>{transaction.action2[0].title}</span>
                           </Col>
                           <Col xxl={9} className="ps-2">
                             <span>Received</span>
