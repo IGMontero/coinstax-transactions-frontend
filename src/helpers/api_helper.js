@@ -1,5 +1,6 @@
 import axios from "axios";
 import { api } from "../config";
+import { dummyUser } from "../slices/auth/login/reducer";
 
 // default
 axios.defaults.baseURL = api.API_URL;
@@ -8,8 +9,8 @@ axios.defaults.headers.post["Content-Type"] = "application/json";
 
 // content type
 const token = JSON.parse(localStorage.getItem("authUser")) ? JSON.parse(localStorage.getItem("authUser")).token : null;
-if(token)
-axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+if (token)
+  axios.defaults.headers.common["Authorization"] = "Bearer " + token;
 
 // intercepting to capture errors
 axios.interceptors.response.use(
@@ -94,11 +95,11 @@ class APIClient {
   };
 }
 const getLoggedinUser = () => {
-  const user = localStorage.getItem("authUser");
+  const user = dummyUser
   if (!user) {
     return null;
   } else {
-    return JSON.parse(user);
+    return dummyUser;
   }
 };
 

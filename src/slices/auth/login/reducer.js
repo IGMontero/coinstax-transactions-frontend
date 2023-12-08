@@ -1,7 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export const dummyUser = {
+  email: "test@a.co",
+  name: "Test User",
+}
+
+
 export const initialState = {
-  user: {},
+  user: dummyUser,
   error: "", // for error message
   loading: false,
   isUserLogout: false,
