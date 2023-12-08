@@ -1,36 +1,37 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { dummyUser } from "../login/reducer";
 
 export const initialState = {
   error: "",
   success: "",
-  user: JSON.parse(localStorage.getItem("authUser")),
+  user: dummyUser,
 };
 
 const ProfileSlice = createSlice({
   name: "Profile",
   initialState,
-  reducers: { 
+  reducers: {
     profileSuccess(state, action) {
       state.success = action.payload.status;
       state.user = action.payload.data
     },
     profileError(state, action) {
-        state.error = action.payload
+      state.error = action.payload
     },
-    editProfileChange(state){
+    editProfileChange(state) {
       state = { ...state };
     },
-    resetProfileFlagChange(state){
+    resetProfileFlagChange(state) {
       state.success = null
     }
   },
 });
 
 export const {
-    profileSuccess,
-    profileError,
-    editProfileChange,
-    resetProfileFlagChange
+  profileSuccess,
+  profileError,
+  editProfileChange,
+  resetProfileFlagChange
 } = ProfileSlice.actions
 
 export default ProfileSlice.reducer;

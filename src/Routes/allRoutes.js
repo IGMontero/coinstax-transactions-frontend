@@ -5,20 +5,18 @@ import { Navigate } from "react-router-dom";
 import DashboardEcommerce from "../pages/DashboardEcommerce";
 
 //login
-import Login from "../pages/Authentication/Login";
 import ForgetPasswordPage from "../pages/Authentication/ForgetPassword";
+import Login from "../pages/Authentication/Login";
 import Logout from "../pages/Authentication/Logout";
 import Register from "../pages/Authentication/Register";
 
 // User Profile
 import UserProfile from "../pages/Authentication/user-profile";
-import TerritoryMapping from "../pages/TerritoryMapping";
 import DashboardInfo from "../pages/DashboardInfo/DashboardInfo";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <DashboardInfo /> },
   { path: "/index", component: <DashboardEcommerce /> },
-  { path: "/territory-mapping", exact: true, component: <TerritoryMapping /> },
 
   //User Profile
   { path: "/profile", component: <UserProfile /> },
