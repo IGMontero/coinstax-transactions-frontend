@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Col,
   Row,
@@ -13,10 +13,34 @@ import {
   Card,
   CardHeader,
   CardBody,
+  Spinner,
 } from "reactstrap";
-import { fakeTransactions } from "../../../helpers/Fake-transactions/faketransactions";
+import { fetchNFTS } from "../../../slices/transactions/thunk";
+import { useDispatch } from "react-redux";
 
 const Nfts = () => {
+  const dispatch = useDispatch();
+
+  const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
+
+  const [loading, setLoading] = React.useState(false);
+
+  const [nftData, setNftData] = React.useState([]);
+
+  useEffect(() => {
+    setLoading(true);
+    dispatch(fetchNFTS(address))
+      .unwrap()
+      .then((response) => {
+        setNftData(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching NFTs:", error);
+        setLoading(false);
+      });
+  }, [dispatch]);
+
   const inputRef = useRef(null);
   return (
     <React.Fragment>
@@ -134,38 +158,51 @@ const Nfts = () => {
           </Col>
         </Col>
       </Row>
-      <Col xxl={12} className="mt-4">
-        <Row>
-          {fakeTransactions.map((transaction, index) => (
-            <Col xxl={3} lg={4} md={4} sm={12} xs={12}>
-              <Card
-                className="border-2 border bg-transparent shadow-none "
-                style={{ height: "350px" }}
-              >
-                <CardHeader className="border-0 border bg-transparent p-2">
-                  <img
-                    src={transaction.img3}
-                    alt=""
-                    className="img-fluid rounded w-100"
-                    style={{ minHeight: "200px", height: "200px" }}
-                  />
-                </CardHeader>
-                <CardBody>
-                  <div className="d-flex flex-column">
-                    <span className="text-muted">{transaction.hour}</span>
-                    <h5 className="text-dark">{transaction.action}</h5>
-                  </div>
+      {loading ? (
+        // Renderiza el spinner cuando está cargando
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "50vh" }}
+        >
+          <Spinner style={{ width: "4rem", height: "4rem" }} />
+        </div>
+      ) : (
+        <Col xxl={12} className="mt-4">
+          <Row>
+            {nftData &&
+              nftData.map((nft, index) => (
+                <Col xxl={3} lg={4} md={4} sm={12} xs={12} key={index}>
+                  <Card
+                    className="border-2 border bg-transparent shadow-none "
+                    style={{ height: "350px" }}
+                  >
+                    <CardHeader className="border-0 border bg-transparent p-2">
+                      <img
+                        src={nft.nft_data[0].external_data.image}
+                        alt=""
+                        className="img-fluid rounded w-100"
+                        style={{ minHeight: "200px", height: "200px" }}
+                      />
+                    </CardHeader>
+                    <CardBody>
+                      <div className="d-flex flex-column">
+                        <h5 className="text-dark">{nft.contract_name}</h5>
+                        <span className="text-muted">
+                          {nft.contract_ticker_symbol}
+                        </span>
+                      </div>
 
-                  <div className="d-flex flex-column">
-                    <span className="text-muted">{transaction.date}</span>
-                    <h5 className="text-dark">{transaction.info}</h5>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Col>
+                      {/* <div className="d-flex flex-column">
+                    <span className="text-muted">{nft.date}</span>
+                    <h5 className="text-dark">{nft.info}</h5>
+                  </div> */}
+                    </CardBody>
+                  </Card>
+                </Col>
+              ))}
+          </Row>
+        </Col>
+      )}
     </React.Fragment>
   );
 };

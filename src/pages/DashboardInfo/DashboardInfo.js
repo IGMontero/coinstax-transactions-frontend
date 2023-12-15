@@ -8,18 +8,14 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
-  CardBody,
   TabPane,
   TabContent,
   Nav,
   NavItem,
   NavLink,
-  Card,
 } from "reactstrap";
 import classnames from "classnames";
-import { Link } from "react-router-dom";
 import PerformanceChart from "./components/PerformanceChart";
-import HistorialList from "./components/HistorialList";
 import AcitvesTable from "./components/ActivesTable";
 import HistorialTable from "./components/HistorialTable";
 import Nfts from "./components/Nfts";
@@ -28,7 +24,6 @@ import btc from "../../assets/images/svg/crypto-icons/btc.svg";
 import arb from "../../assets/images/svg/crypto-icons/ankr.svg";
 import pol from "../../assets/images/svg/crypto-icons/poly.svg";
 import gnosis from "../../assets/images/svg/crypto-icons/gno.svg";
-import networks from "../../assets/images/svg/crypto-icons/nexo.svg";
 const DashboardInfo = () => {
   const [customActiveTab, setcustomActiveTab] = useState("1");
   const toggleCustom = (tab) => {
@@ -36,6 +31,7 @@ const DashboardInfo = () => {
       setcustomActiveTab(tab);
     }
   };
+
   return (
     <React.Fragment>
       <Container fluid>
@@ -307,12 +303,12 @@ const DashboardInfo = () => {
                         xxl={12}
                         className="mt-3 mb-3 d-flex flex-row justify-content-around"
                       >
-                        <Col xxl={6} className="me-1">
+                        <Col xxl={12} className="me-1">
                           <PerformanceChart dataColors='["--vz-primary"]' />
                         </Col>
-                        <Col xxl={6} className="ms-1 border-0">
+                        {/* <Col xxl={6} className="ms-1 border-0">
                           <HistorialList />
-                        </Col>
+                        </Col> */}
                       </Col>
                       <Col xxl={12}>
                         <AcitvesTable />
