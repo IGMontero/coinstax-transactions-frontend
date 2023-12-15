@@ -11,7 +11,7 @@ import {
 
 import { fakeTransactions } from "../../../helpers/Fake-transactions/faketransactions";
 
-const HistorialTable = () => {
+const HistorialTable = ({ address }) => {
   const inputRef = useRef(null);
   const [openCollapse, setOpenCollapse] = useState(null);
 
