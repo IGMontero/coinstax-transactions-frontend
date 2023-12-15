@@ -186,10 +186,14 @@ const Nfts = () => {
                     </CardHeader>
                     <CardBody>
                       <div className="d-flex flex-column">
+                        <span className="text-dark">Unstoppable Domains</span>
                         <h5 className="text-dark">{nft.contract_name}</h5>
-                        <span className="text-muted">
-                          {nft.contract_ticker_symbol}
-                        </span>
+                        <span>Floor Price</span>
+                        <h6 className="text-dark">
+                          {nft.pretty_floor_price_quote
+                            ? nft.pretty_floor_price_quote
+                            : "$0.00"}
+                        </h6>
                       </div>
 
                       {/* <div className="d-flex flex-column">
