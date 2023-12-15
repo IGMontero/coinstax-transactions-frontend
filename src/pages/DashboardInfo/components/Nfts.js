@@ -159,7 +159,6 @@ const Nfts = () => {
         </Col>
       </Row>
       {loading ? (
-        // Renderiza el spinner cuando está cargando
         <div
           className="d-flex justify-content-center align-items-center"
           style={{ height: "50vh" }}
