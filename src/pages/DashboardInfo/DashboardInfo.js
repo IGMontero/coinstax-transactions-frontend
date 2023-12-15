@@ -29,9 +29,9 @@ import pol from "../../assets/images/svg/crypto-icons/poly.svg";
 import gnosis from "../../assets/images/svg/crypto-icons/gno.svg";
 
 import {
-  fetchPerformance,
   fetchAssets,
   fetchNFTS,
+  fetchHistory,
 } from "../../slices/transactions/thunk";
 import DashboardHome from "../DashboardHome/DashboardHome";
 import { useDispatch } from "react-redux";
@@ -44,6 +44,8 @@ const DashboardInfo = () => {
 
   const [nftData, setNftData] = React.useState([]);
   const [assetsData, setAssetsData] = useState([]);
+
+  const [historyData, setHistoryData] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -88,6 +90,21 @@ const DashboardInfo = () => {
       });
   };
 
+  const fecthDataHistory = () => {
+    setLoading(true);
+    dispatch(fetchHistory(addressForSearch))
+      .unwrap()
+      .then((response) => {
+        console.log(response);
+        setHistoryData(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching performance data:", error);
+        setLoading(false);
+      });
+  };
+
   const handleSearchClick = () => {
     setAddressForSearch(searchInput);
   };
@@ -96,6 +113,7 @@ const DashboardInfo = () => {
     if (addressForSearch) {
       fetchDataAssets();
       fetchDataNFTS();
+      fecthDataHistory();
     }
   }, [addressForSearch, dispatch]);
 
@@ -430,7 +448,7 @@ const DashboardInfo = () => {
                     <TabPane tabId="3">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
-                          <HistorialTable address={addressForSearch} />
+                          <HistorialTable data={historyData} />
                         </div>
                       </div>
                     </TabPane>

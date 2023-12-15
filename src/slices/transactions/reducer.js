@@ -1,9 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchNFTS, fetchPerformance, fetchAssets } from "./thunk";
+import {
+  fetchNFTS,
+  fetchPerformance,
+  fetchAssets,
+  fetchHistory,
+} from "./thunk";
 export const initialState = {
   transactions: [],
   performance: [],
   assets: [],
+  history: [],
   error: null,
 };
 
@@ -29,6 +35,12 @@ const TransactionsSlice = createSlice({
         state.assets = action.payload;
       })
       .addCase(fetchAssets.rejected, (state, action) => {
+        state.error = action.payload.error || null;
+      })
+      .addCase(fetchHistory.fulfilled, (state, action) => {
+        state.history = action.payload;
+      })
+      .addCase(fetchHistory.rejected, (state, action) => {
         state.error = action.payload.error || null;
       });
   },
