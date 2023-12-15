@@ -4,21 +4,21 @@ import { fetchPerformance } from "../../../slices/transactions/thunk";
 import { useDispatch } from "react-redux";
 import { Spinner } from "reactstrap";
 
-const PerformanceChart = () => {
+const PerformanceChart = ({ address }) => {
   const dispatch = useDispatch();
-  const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
+  // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
   const [activeFilter, setActiveFilter] = useState("all");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [series, setSeries] = useState([{ data: [] }]);
-
   const fetchAndSetData = (days) => {
-    setLoading(true);
-    dispatch(fetchPerformance({ address, days }))
-      .unwrap()
-      .then((response) => {
-        const candleData = response.total.map((item) => {
-          return {
+    if (address) {
+      setLoading(true);
+      const params = days ? { address, days } : { address };
+      dispatch(fetchPerformance(params))
+        .unwrap()
+        .then((response) => {
+          const candleData = response.total.map((item) => ({
             x: new Date(item.calendarDate).getTime(),
             y: [
               item.open.quote,
@@ -26,20 +26,20 @@ const PerformanceChart = () => {
               item.low.quote,
               item.close.quote,
             ],
-          };
+          }));
+          setSeries([{ data: candleData }]);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching performance data:", error);
+          setLoading(false);
         });
-        setSeries([{ data: candleData }]);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching performance data:", error);
-        setLoading(false);
-      });
+    }
   };
 
   useEffect(() => {
     fetchAndSetData();
-  }, [dispatch]);
+  }, [address, dispatch]);
 
   const handleFilterForDays = (days, filterId) => {
     fetchAndSetData(days);
@@ -50,10 +50,6 @@ const PerformanceChart = () => {
     chart: {
       type: "candlestick",
       height: 350,
-    },
-    title: {
-      text: "Candlestick Chart",
-      align: "left",
     },
     xaxis: {
       type: "datetime",

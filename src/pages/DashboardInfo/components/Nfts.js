@@ -18,28 +18,29 @@ import {
 import { fetchNFTS } from "../../../slices/transactions/thunk";
 import { useDispatch } from "react-redux";
 
-const Nfts = () => {
+const Nfts = ({ address }) => {
   const dispatch = useDispatch();
 
-  const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
+  // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
 
   const [loading, setLoading] = React.useState(false);
 
   const [nftData, setNftData] = React.useState([]);
-
   useEffect(() => {
-    setLoading(true);
-    dispatch(fetchNFTS(address))
-      .unwrap()
-      .then((response) => {
-        setNftData(response);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching NFTs:", error);
-        setLoading(false);
-      });
-  }, [dispatch]);
+    if (address) {
+      setLoading(true);
+      dispatch(fetchNFTS(address))
+        .unwrap()
+        .then((response) => {
+          setNftData(response);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching NFTs:", error);
+          setLoading(false);
+        });
+    }
+  }, [address, dispatch]);
 
   const inputRef = useRef(null);
   return (
