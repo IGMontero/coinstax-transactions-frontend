@@ -1,59 +1,38 @@
-import React, { useMemo } from "react";
-import { Badge, Button, Card, CardBody, CardHeader, Table } from "reactstrap";
-import TableContainer from "../../../Components/Common/TableContainer";
-import { marketStatus } from "../../../common/data";
+import React, { useEffect, useMemo, useState } from "react";
+import { Badge, Button, Spinner } from "reactstrap";
 import { Link } from "react-router-dom";
-
-import { Quantity, AvgPrice, CurrentValue, Returns } from "./ActivesStatus";
+import { fetchAssets } from "../../../slices/transactions/thunk";
+import { useDispatch } from "react-redux";
 
 const AcitvesTable = () => {
-  const columns = useMemo(
-    () => [
-      {
-        Header: "ASSETS",
-        Cell: (wallet) => (
-          <>
-            <div className="d-flex align-items-center fw-medium">
-              <img
-                src={wallet.row.original.img}
-                alt=""
-                className="avatar-xxs me-2"
-              />
-              <Link to="#" className="currency_name">
-                {wallet.row.original.coinName}
-              </Link>
-            </div>
-          </>
-        ),
-      },
+  const dispatch = useDispatch();
+  const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
 
-      {
-        Header: "PRICE",
-        accessor: "avgPrice",
-        filterable: false,
-        Cell: (cellProps) => {
-          return <AvgPrice {...cellProps} />;
-        },
-      },
-      {
-        Header: "BALANCE",
-        accessor: "returns",
-        filterable: false,
-        Cell: (cellProps) => {
-          return <Returns {...cellProps} />;
-        },
-      },
-      {
-        Header: "VALUE",
-        accessor: "value",
-        filterable: false,
-        Cell: (cellProps) => {
-          return <CurrentValue {...cellProps} />;
-        },
-      },
-    ],
-    []
-  );
+  const [assetsData, setAssetsData] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    dispatch(fetchAssets(address))
+      .unwrap()
+      .then((response) => {
+        const transformedData = response.map((asset) => ({
+          logo: asset.logo_url,
+          name: asset.contract_name,
+          price: asset.quote_rate,
+          balance: (asset.balance / 10) ^ asset.contract_decimals,
+          value: asset.pretty_quote,
+        }));
+        setAssetsData(transformedData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching performance data:", error);
+        setLoading(false);
+      });
+  }, [dispatch]);
+
   return (
     <React.Fragment>
       <div className="mb-3">
@@ -81,17 +60,52 @@ const AcitvesTable = () => {
               80,3%
             </Badge>
           </div>
-          <TableContainer
-            columns={columns}
-            data={marketStatus || []}
-            isGlobalFilter={false}
-            isAddUserList={false}
-            customPageSize={6}
-            className="custom-header-css"
-            divClass="table-responsive table-card mb-3"
-            tableClass="align-middle table-nowrap"
-            theadClass="table-light text-muted"
-          />
+
+          <table className="table table-borderless ">
+            <thead>
+              <tr className="text-muted">
+                <th scope="col">ASSETS</th>
+                <th scope="col">PRICE</th>
+                <th scope="col">BALANCE</th>
+                <th scope="col">VALUE</th>
+              </tr>
+            </thead>
+            {loading ? (
+              <tbody>
+                <tr>
+                  <td colSpan="4" className="text-center">
+                    <Spinner
+                      style={{ width: "4rem", height: "4rem" }}
+                      className="mt-5"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            ) : (
+              <tbody>
+                {assetsData &&
+                  assetsData.map((asset, index) => (
+                    <tr key={index}>
+                      <td>
+                        <div className="d-flex align-items-center fw-medium">
+                          <img
+                            src={asset.logo}
+                            alt=""
+                            className="avatar-xxs me-2"
+                          />
+                          <Link to="#" className="currency_name">
+                            {asset.name}
+                          </Link>
+                        </div>
+                      </td>
+                      <td>{asset.price ? "$" + asset.price : "$0.00"}</td>
+                      <td>{asset.balance ? asset.balance : "0.00"}</td>
+                      <td>{asset.value ? "$" + asset.value : "$0.00"}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            )}
+          </table>
         </div>
       </div>
     </React.Fragment>
