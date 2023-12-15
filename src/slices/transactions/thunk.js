@@ -44,13 +44,31 @@ export const fetchAssets = createAsyncThunk(
   async (address, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/balances/current`
+        `${API_BASE}/transactions/eth-mainnet/${address}/balances/current?allowSpam=false`
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
       return data.items;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchHistory = createAsyncThunk(
+  "transactions/fetchHistory",
+  async (address, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${API_BASE}/transactions/eth-mainnet/${address}?count=10`
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.parsed;
     } catch (error) {
       return rejectWithValue(error.message);
     }
