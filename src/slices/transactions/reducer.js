@@ -1,22 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchNFTS } from "./thunk";
+import { fetchNFTS, fetchPerformance } from "./thunk";
 export const initialState = {
   transactions: [],
+  performance: [],
   error: null,
 };
 
-const NftsSlice = createSlice({
-  name: "NftsSlice",
+const TransactionsSlice = createSlice({
+  name: "TransactionsSlice",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchNFTS.fulfilled, (state, action) => {
-      state.transactions = action.payload;
-    });
-    builder.addCase(fetchNFTS.rejected, (state, action) => {
-      state.error = action.payload.error || null;
-    });
+    builder
+      .addCase(fetchNFTS.fulfilled, (state, action) => {
+        state.transactions = action.payload;
+      })
+      .addCase(fetchNFTS.rejected, (state, action) => {
+        state.error = action.payload.error || null;
+      })
+      .addCase(fetchPerformance.fulfilled, (state, action) => {
+        state.performance = action.payload;
+      })
+      .addCase(fetchPerformance.rejected, (state, action) => {
+        state.error = action.payload.error || null;
+      });
   },
 });
 
-export default NftsSlice.reducer;
+export default TransactionsSlice.reducer;
