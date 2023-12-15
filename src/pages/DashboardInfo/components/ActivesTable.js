@@ -1,39 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useState } from "react";
 import { Badge, Button, Spinner } from "reactstrap";
 import { Link } from "react-router-dom";
-import { fetchAssets } from "../../../slices/transactions/thunk";
-import { useDispatch } from "react-redux";
 
-const AcitvesTable = ({ address }) => {
-  const dispatch = useDispatch();
+const AcitvesTable = ({ data }) => {
   // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
 
-  const [assetsData, setAssetsData] = useState([]);
-
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (address) {
-      setLoading(true);
-      dispatch(fetchAssets(address))
-        .unwrap()
-        .then((response) => {
-          const transformedData = response.map((asset) => ({
-            logo: asset.logo_url,
-            name: asset.contract_name,
-            price: asset.quote_rate,
-            balance: (asset.balance / 10) ^ asset.contract_decimals,
-            value: asset.pretty_quote,
-          }));
-          setAssetsData(transformedData);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching performance data:", error);
-          setLoading(false);
-        });
-    }
-  }, [dispatch, address]);
 
   return (
     <React.Fragment>
@@ -85,8 +57,8 @@ const AcitvesTable = ({ address }) => {
               </tbody>
             ) : (
               <tbody>
-                {assetsData &&
-                  assetsData.map((asset, index) => (
+                {data &&
+                  data.map((asset, index) => (
                     <tr key={index}>
                       <td>
                         <div className="d-flex align-items-center fw-medium">

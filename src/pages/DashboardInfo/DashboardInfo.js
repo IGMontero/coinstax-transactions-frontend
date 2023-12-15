@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Col,
@@ -15,6 +15,7 @@ import {
   NavLink,
   InputGroup,
   Input,
+  Spinner,
 } from "reactstrap";
 import classnames from "classnames";
 import PerformanceChart from "./components/PerformanceChart";
@@ -26,12 +27,23 @@ import btc from "../../assets/images/svg/crypto-icons/btc.svg";
 import arb from "../../assets/images/svg/crypto-icons/ankr.svg";
 import pol from "../../assets/images/svg/crypto-icons/poly.svg";
 import gnosis from "../../assets/images/svg/crypto-icons/gno.svg";
+
+import {
+  fetchPerformance,
+  fetchAssets,
+  fetchNFTS,
+} from "../../slices/transactions/thunk";
 import DashboardHome from "../DashboardHome/DashboardHome";
+import { useDispatch } from "react-redux";
 const DashboardInfo = () => {
+  const dispatch = useDispatch();
   const [customActiveTab, setcustomActiveTab] = useState("1");
 
   const [searchInput, setSearchInput] = useState("");
   const [addressForSearch, setAddressForSearch] = useState("");
+
+  const [nftData, setNftData] = React.useState([]);
+  const [assetsData, setAssetsData] = useState([]);
 
   const [loading, setLoading] = useState(false);
 
@@ -41,9 +53,51 @@ const DashboardInfo = () => {
     }
   };
 
+  const fetchDataNFTS = () => {
+    setLoading(true);
+    dispatch(fetchNFTS(addressForSearch))
+      .unwrap()
+      .then((response) => {
+        setNftData(response);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching NFTs:", error);
+        setLoading(false);
+      });
+  };
+
+  const fetchDataAssets = () => {
+    setLoading(true);
+    dispatch(fetchAssets(addressForSearch))
+      .unwrap()
+      .then((response) => {
+        const transformedData = response.map((asset) => ({
+          logo: asset.logo_url,
+          name: asset.contract_name,
+          price: asset.quote_rate,
+          balance: (asset.balance / 10) ^ asset.contract_decimals,
+          value: asset.pretty_quote,
+        }));
+        setAssetsData(transformedData);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching performance data:", error);
+        setLoading(false);
+      });
+  };
+
   const handleSearchClick = () => {
     setAddressForSearch(searchInput);
   };
+
+  useEffect(() => {
+    if (addressForSearch) {
+      fetchDataAssets();
+      fetchDataNFTS();
+    }
+  }, [addressForSearch, dispatch]);
 
   return (
     <React.Fragment>
@@ -59,7 +113,11 @@ const DashboardInfo = () => {
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                   />
-                  <Button color="primary" onClick={handleSearchClick}>
+                  <Button
+                    disabled={!searchInput || loading}
+                    color="primary"
+                    onClick={handleSearchClick}
+                  >
                     Search
                   </Button>
                 </InputGroup>
@@ -70,6 +128,14 @@ const DashboardInfo = () => {
             <DashboardHome />
           ) : (
             <>
+              {loading && (
+                <div
+                  className="d-flex justify-content-center align-items-center"
+                  style={{ height: "50vh" }}
+                >
+                  <Spinner style={{ width: "4rem", height: "4rem" }} />
+                </div>
+              )}
               <Row className="d-flex justify-content-center align-items-center  border-2  ">
                 <Col
                   lg={12}
@@ -349,7 +415,7 @@ const DashboardInfo = () => {
                             </Col>
                           </Col>
                           <Col xxl={12}>
-                            <AcitvesTable address={addressForSearch} />
+                            <AcitvesTable data={assetsData} />
                           </Col>
                         </div>
                       </div>
@@ -357,7 +423,7 @@ const DashboardInfo = () => {
                     <TabPane tabId="2">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
-                          <Nfts address={addressForSearch} />
+                          <Nfts data={nftData} />
                         </div>
                       </div>
                     </TabPane>
