@@ -200,9 +200,14 @@ const HistorialTable = ({ data }) => {
                       width={40}
                       height={40}
                     />
-                    <div className="d-flex flex-column text-start justify-content-end">
-                      <h6 className="fw-semibold my-0 text-success">
-                        {" "}
+                    <div className="d-flex flex-column text-center justify-content-end">
+                      <h6
+                        className={`fw-semibold my-0 ms-2 ${
+                          transaction.ledgers[0].amount < 0
+                            ? "text-dark"
+                            : "text-success"
+                        }`}
+                      >
                         {formatNumber(transaction.ledgers[0].amount)}
                       </h6>
                       <p
