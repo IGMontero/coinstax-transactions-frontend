@@ -60,6 +60,7 @@ const DashboardInfo = () => {
     dispatch(fetchNFTS(addressForSearch))
       .unwrap()
       .then((response) => {
+        console.log(response);
         setNftData(response);
         setLoading(false);
       })
@@ -70,18 +71,10 @@ const DashboardInfo = () => {
   };
 
   const fetchDataAssets = () => {
-    setLoading(true);
     dispatch(fetchAssets(addressForSearch))
       .unwrap()
       .then((response) => {
-        const transformedData = response.map((asset) => ({
-          logo: asset.logo_url,
-          name: asset.contract_name,
-          price: asset.quote_rate,
-          balance: (asset.balance / 10) ^ asset.contract_decimals,
-          value: asset.pretty_quote,
-        }));
-        setAssetsData(transformedData);
+        setAssetsData(response);
         setLoading(false);
       })
       .catch((error) => {
@@ -95,7 +88,6 @@ const DashboardInfo = () => {
     dispatch(fetchHistory(addressForSearch))
       .unwrap()
       .then((response) => {
-        console.log(response);
         setHistoryData(response);
         setLoading(false);
       })
@@ -441,14 +433,14 @@ const DashboardInfo = () => {
                     <TabPane tabId="2">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
-                          <Nfts data={nftData} />
+                          {/* <Nfts data={nftData} /> */}
                         </div>
                       </div>
                     </TabPane>
                     <TabPane tabId="3">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
-                          <HistorialTable data={historyData} />
+                          {/* <HistorialTable data={historyData} /> */}
                         </div>
                       </div>
                     </TabPane>
