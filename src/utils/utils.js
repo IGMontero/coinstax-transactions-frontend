@@ -3,13 +3,13 @@ export const getActionMapping = (action) => {
     case "RECEIVE":
       return { color: "success", icon: "ri-arrow-up-line fs-2" };
     case "SEND":
-      return { color: "white", icon: "ri-arrow-down-line fs-2" };
+      return { color: "dark", icon: "ri-arrow-down-line fs-2" };
     case "WITHDRAW":
-      return { color: "white", icon: "ri-upload-2-line fs-2" };
+      return { color: "dark", icon: "ri-upload-2-line fs-2" };
     case "EXECUTE":
       return { color: "warning", icon: "ri-arrow-down-line fs-2" };
     default:
-      return { color: "white", icon: "ri-arrow-down-line fs-2" };
+      return { color: "dark", icon: "ri-arrow-down-line fs-2" };
   }
 };
 
