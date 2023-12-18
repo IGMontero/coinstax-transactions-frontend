@@ -15,6 +15,7 @@ import {
   CardBody,
   Spinner,
 } from "reactstrap";
+import eth from "../../../assets/images/svg/crypto-icons/eth.svg";
 
 const Nfts = ({ data }) => {
   // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
@@ -22,6 +23,8 @@ const Nfts = ({ data }) => {
   const [loading, setLoading] = React.useState(false);
 
   const inputRef = useRef(null);
+
+  console.log(data);
   return (
     <React.Fragment>
       <Col xxl={12}>
@@ -148,18 +151,41 @@ const Nfts = ({ data }) => {
           <Row>
             {data.items &&
               data?.items.map((nft, index) => (
-                <Col xxl={3} lg={4} md={6} sm={12} xs={12} key={index}>
+                <Col xxl={3} lg={6} md={6} sm={6} xs={12} key={index}>
                   <Card
                     className="border-2 border bg-transparent shadow-none "
-                    style={{ height: "350px" }}
+                    style={{
+                      height: "350px",
+                      minWidth: "225px",
+                      maxWidth: "225px",
+                    }}
                   >
-                    <CardHeader className="border-0 border bg-transparent p-2">
-                      <img
-                        src={nft.logo}
-                        alt=""
-                        className="img-fluid rounded w-100"
-                        style={{ minHeight: "200px", height: "200px" }}
-                      />
+                    <CardHeader className="border-0 bg-transparent p-2">
+                      <div style={{ position: "relative", minHeight: "200px" }}>
+                        {" "}
+                        <img
+                          src={nft.logo}
+                          alt=""
+                          className="img-fluid w-100"
+                          style={{
+                            position: "relative",
+                            height: "200px",
+                            borderRadius: "7px",
+                          }}
+                        />
+                        <img
+                          src={eth}
+                          alt=""
+                          className="img-fluid d-flex justify-content-start border-dark border border-circle border-1 shadow-md rounded-circle"
+                          style={{
+                            position: "absolute",
+                            bottom: "5%",
+                            left: "5%",
+                            width: "10%",
+                            height: "10%",
+                          }}
+                        />
+                      </div>
                     </CardHeader>
                     <CardBody>
                       <div className="d-flex flex-column">
