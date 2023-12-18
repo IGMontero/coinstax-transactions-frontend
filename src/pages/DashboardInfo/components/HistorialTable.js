@@ -8,6 +8,7 @@ import {
   Collapse,
   CardBody,
 } from "reactstrap";
+import { getActionMapping } from "../../../utils/utils";
 
 const HistorialTable = ({ data }) => {
   const inputRef = useRef(null);
@@ -27,6 +28,21 @@ const HistorialTable = ({ data }) => {
     return new Date(dateString).toLocaleTimeString("en-US", options);
   };
 
+  const formatTransactionHash = (
+    address,
+    prefixLength = 4,
+    suffixLength = 4
+  ) => {
+    if (!address || typeof address !== "string") {
+      return null;
+    }
+
+    const prefix = address.slice(0, prefixLength + 2);
+    const suffix = address.slice(-suffixLength);
+
+    return `${prefix}...${suffix}`;
+  };
+
   return (
     <React.Fragment>
       <Row>
@@ -40,7 +56,7 @@ const HistorialTable = ({ data }) => {
         </Col>
       </Row>
       <Row className="mt-4">
-        <Col xxl={6}>
+        <Col lg={6} md={8} sm={10} xs={12}>
           <InputGroup className="py-3 search-bar col-lg-12 col-md-12 pe-3">
             <span
               className="search-icon ps-3 position-absolute"
@@ -62,48 +78,76 @@ const HistorialTable = ({ data }) => {
             />
           </InputGroup>
         </Col>
-        <Col xxl={6} className="d-flex btn btn-sm py-3 justify-content-end">
+        <Col
+          lg={6}
+          md={4}
+          sm={2}
+          xs={12}
+          className="d-flex btn btn-sm py-3 justify-content-end"
+        >
           <Button color="primary" size="sm">
             Download CSV
           </Button>
         </Col>
       </Row>
-      <Col xxl={12}>
+      <Col lg={12}>
         {data &&
-          data.map((transaction, index) => (
+          data?.map((transaction, index) => (
             <div key={index} className="align-items-center">
               <Col
-                xxl={12}
+                lg={12}
+                md={12}
+                sm={12}
+                xs={12}
                 className="d-flex justify-content-start pt-4 pb-1 align-items-center"
               >
-                <div className="d-flex justify-content-center ps-2  align-items-center ">
+                <div className="d-flex justify-content-center ps-2 align-items-center">
                   <h6 className="fw-semibold">
                     {formatDate(transaction.date)}
                   </h6>
                 </div>
               </Col>
               <div
-                className={`border-top border-bottom  bg-transparent${
+                className={`border-top border-bottom bg-transparent${
                   openCollapse === index
                     ? " border border-primary rounded"
                     : " bg-light"
                 }`}
               >
                 <Row
-                  className={`align-items-center  justify-content-between p-3 `}
+                  className={`align-items-center justify-content-between p-3 `}
                   onClick={() => toggleCollapse(index)}
                   style={{ cursor: "pointer" }}
                 >
-                  <Col xxl={3} className="d-flex align-items-center">
-                    <img
-                      src={transaction.ledgers[0].txInfo.logo}
-                      alt=""
-                      className="me-2"
-                      width={40}
-                      height={40}
-                    />
+                  <Col
+                    lg={3}
+                    md={3}
+                    sm={12}
+                    xs={12}
+                    className="d-flex align-items-center mb-lg-0 mb-2"
+                  >
+                    {transaction.blockchainAction && (
+                      <span
+                        className={`rounded-circle border me-3 d-flex justify-content-center border-${
+                          getActionMapping(transaction.blockchainAction).color
+                        } text-${
+                          getActionMapping(transaction.blockchainAction).color
+                        }`}
+                        style={{
+                          width: "45px",
+                          height: "45px",
+                        }}
+                      >
+                        <i
+                          className={`${
+                            getActionMapping(transaction.blockchainAction).icon
+                          } fs-2`}
+                        ></i>
+                      </span>
+                    )}
+
                     <div className="d-flex flex-column text-start justify-content-end">
-                      <h6 className="fw-semibold my-0">
+                      <h6 className="fw-semibold my-0 fs-8">
                         {" "}
                         {transaction.blockchainAction}
                       </h6>
@@ -112,46 +156,61 @@ const HistorialTable = ({ data }) => {
                       </p>
                     </div>
                   </Col>
+
                   <Col
-                    xxl={3}
-                    className="d-flex justify-content-between align-items-center"
+                    lg={3}
+                    md={3}
+                    sm={6}
+                    xs={3}
+                    className="d-flex align-items-center "
                   >
-                    <Col xxl={3} className="d-flex align-items-center">
-                      <img
-                        src={
-                          transaction.ledgers[1] &&
-                          transaction.ledgers[1].txInfo &&
-                          transaction.ledgers[1].txInfo.logo
-                            ? transaction.ledgers[1].txInfo.logo
-                            : ""
-                        }
-                        alt=""
-                        className="me-2"
-                        width={40}
-                        height={40}
-                      />
-                      <div className="d-flex flex-column text-start justify-content-end">
-                        <h6 className="fw-semibold my-0 text-success">
-                          {" "}
-                          {/* {transaction.txHash} */}
-                        </h6>
-                        <p
-                          className="text-start my-0"
-                          style={{ whiteSpace: "nowrap" }}
-                        >
-                          {" "}
-                          {/* {transaction.info} */}
-                        </p>
-                      </div>
-                    </Col>
-                    <div className="justify-content-end ">
-                      <i className="ri-arrow-right-line text-end fs-4 "></i>
+                    <img
+                      src={
+                        transaction.ledgers[1] &&
+                        transaction.ledgers[1].txInfo &&
+                        transaction.ledgers[1].txInfo.logo
+                          ? transaction.ledgers[1].txInfo.logo
+                          : ""
+                      }
+                      alt=""
+                      className="me-0"
+                      width={40}
+                      height={40}
+                    />
+                    <div className="d-flex flex-column text-start justify-content-end">
+                      <h6 className="fw-semibold my-0 text-success">
+                        {" "}
+                        {transaction.ledgers[0].amount}
+                      </h6>
+                      <p
+                        className="text-start my-0"
+                        style={{ whiteSpace: "nowrap" }}
+                      >
+                        {" "}
+                        {/* {transaction.info} */}
+                      </p>
                     </div>
                   </Col>
-                  <Col xxl={3} className="d-flex justify-content-center">
-                    <h6 className="fw-semibold my-0"> {transaction.fee}</h6>
+
+                  <Col
+                    lg={3}
+                    md={3}
+                    className="d-flex justify-content-center d-none d-lg-flex"
+                  >
+                    <h6 className="fw-semibold my-0 d-flex align-items-center">
+                      <div className="justify-content-end ">
+                        <i className="ri-arrow-right-line text-end fs-4 me-2"></i>
+                      </div>{" "}
+                      {transaction.fee}
+                    </h6>
                   </Col>
-                  <Col xxl={3} className="d-flex align-items-center">
+                  <Col
+                    lg={3}
+                    md={3}
+                    sm={6}
+                    xs={9}
+                    className="d-flex justify-content-end align-items-center  "
+                  >
                     {/* <img
                       src={transaction.img3}
                       alt=""
@@ -160,9 +219,9 @@ const HistorialTable = ({ data }) => {
                       width={40}
                       height={40}
                     /> */}
-                    <div className="d-flex flex-column text-start justify-content-end">
+                    <div className="d-flex flex-column text-start justify-content-end me-3">
                       <p className="text-start my-0">From</p>
-                      <h6 className="fw-semibold my-0">
+                      <h6 className="fw-semibold my-0 text-start">
                         {" "}
                         {transaction.ledgers[0].txInfo.name}
                       </h6>
@@ -176,106 +235,26 @@ const HistorialTable = ({ data }) => {
                       openCollapse === index ? "border-info" : ""
                     }`}
                   >
-                    <Col xxl={12} lg={12} className="border-top ">
-                      {transaction.blockchainAction && (
-                        <Row className="align-items-start g-0 mt-2">
-                          <Col xxl={12} className="d-flex mb-2">
-                            <Col xxl={3} className="ps-2">
-                              {/* <span>{transaction.action2[0].title}</span> */}
-                            </Col>
-                            <Col xxl={9} className="ps-2">
-                              <span>Received</span>
-                            </Col>
-                          </Col>
-                          <Col
-                            xxl={2}
-                            className="d-flex align-items-start flex-column ps-2"
-                          >
-                            <div className="d-flex">
-                              <img
-                                src={""}
-                                alt=""
-                                className="me-2"
-                                width={40}
-                                height={40}
-                              />
-                              <div className="d-flex flex-column text-start justify-content-start">
-                                <h6 className="fw-semibold my-0 text-success">
-                                  {transaction.action}
-                                </h6>
-                                <p
-                                  className="text-start my-0"
-                                  style={{ whiteSpace: "nowrap" }}
-                                >
-                                  {transaction.info}
-                                </p>
-                              </div>
-                            </div>
-                          </Col>
+                    {/* cODIGO COMENTADO */}
 
-                          <Col
-                            xxl={1}
-                            className="d-flex justify-content-center align-items-center"
-                          >
-                            <div className="d-flex flex-column align-items-center">
-                              <div
-                                className="bg-dark"
-                                style={{ width: 1.5, height: 50 }}
-                              />
-                              <div
-                                style={{
-                                  marginTop: "-12px",
-                                  marginBottom: "-12px",
-                                }}
-                              >
-                                <i className="ri-arrow-right-circle-line text-success fs-1 mb-0 mt-0"></i>
-                              </div>
-                              <div
-                                className="bg-dark"
-                                style={{ width: 1.5, height: 60 }}
-                              />
-                            </div>
-                          </Col>
-
-                          <Col
-                            xxl={9}
-                            className="d-flex align-items-center flex-column justify-content-center"
-                          >
-                            {transaction.recipient && (
-                              <div className="d-flex align-items-center w-100 ps-2">
-                                <img
-                                  src={transaction.ledgers[0].txInfo.logo}
-                                  alt=""
-                                  className="me-2 rounded mb-3"
-                                  width={40}
-                                  height={40}
-                                />
-                                <h6 className="fw-semibold my-0 text-success">
-                                  {transaction.volume}
-                                </h6>
-                              </div>
-                            )}
-                          </Col>
-                        </Row>
-                      )}
-                    </Col>
-
-                    <Col xxl={12}>
+                    <Col lg={12}>
                       <Row className="d-flex flex-row align-items-center">
-                        <Col xxl={12} className="p-2 d-flex ">
-                          <div className="p-2 mx-2 d-flex flex-column">
-                            <strong className="mb-1">Collection:</strong>
-                            <span>
-                              {transaction.collection
-                                ? transaction.collection
-                                : "0"}
-                            </span>
-                          </div>
+                        <Col lg={12} className="p-2 d-flex ">
+                          {transaction.collection && (
+                            <div className="p-2 mx-2 d-flex flex-column">
+                              <strong className="mb-1">Collection:</strong>
+                              <span>
+                                {transaction.collection
+                                  ? transaction.collection
+                                  : "0"}
+                              </span>
+                            </div>
+                          )}
 
-                          <div className="p-2  mx-2 d-flex flex-column">
+                          <div className="p-2 mx-2 d-flex flex-column">
                             <strong className="mb-1">Fee:</strong>
                             <span>
-                              {transaction.fee ? transaction.fee : "0"}
+                              {transaction.fee ? transaction.fee : "0.00"}
                             </span>
                           </div>
 
@@ -285,7 +264,7 @@ const HistorialTable = ({ data }) => {
                               <div className="d-flex">
                                 <span className="ms-1d -flex align-items-center">
                                   {transaction.txHash
-                                    ? transaction.txHash
+                                    ? formatTransactionHash(transaction.txHash)
                                     : "0"}
                                   <i className="ri-arrow-right-up-line fs-6"></i>
                                 </span>
@@ -293,7 +272,7 @@ const HistorialTable = ({ data }) => {
                             </div>
                             <div>
                               <button className="btn btn-transparent p-0 ">
-                                <i className="ri-file-copy-line ms-2 fs-4"></i>
+                                <i className="ri-file-copy-line ms-2 fs-4 text-dark"></i>
                               </button>
                             </div>
                           </div>
