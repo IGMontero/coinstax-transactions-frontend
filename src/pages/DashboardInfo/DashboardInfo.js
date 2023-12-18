@@ -60,7 +60,6 @@ const DashboardInfo = () => {
     dispatch(fetchNFTS(addressForSearch))
       .unwrap()
       .then((response) => {
-        console.log(response);
         setNftData(response);
         setLoading(false);
       })
@@ -88,6 +87,7 @@ const DashboardInfo = () => {
     dispatch(fetchHistory(addressForSearch))
       .unwrap()
       .then((response) => {
+        console.log(response);
         setHistoryData(response);
         setLoading(false);
       })
@@ -115,7 +115,7 @@ const DashboardInfo = () => {
         <div className="page-content pb-5">
           <Row className="py-3">
             <Col lg={12}>
-              <Col lg={6}>
+              <Col lg={6} md={8} xs={12}>
                 <InputGroup className=" mb-3 ">
                   <Input
                     className="form-control py-2 rounded"
@@ -146,87 +146,89 @@ const DashboardInfo = () => {
                   <Spinner style={{ width: "4rem", height: "4rem" }} />
                 </div>
               )}
-              <Row className="d-flex justify-content-center align-items-center  border-2  ">
+              User
+              <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
                 <Col
-                  lg={12}
-                  className="d-flex jusitfy-content-between align-items-center"
+                  xxl={9}
+                  lg={9}
+                  md={9}
+                  sm={9}
+                  xs={9}
+                  className="d-flex flex-column"
+                  order="1"
                 >
-                  <Col
-                    xxl={9}
-                    lg={9}
-                    md={9}
-                    sm={9}
-                    xs={9}
-                    className="d-flex flex-column"
-                  >
-                    <div className="d-flex flex-row">
-                      <h4>puzzledandamused.eth </h4>
-                      <UncontrolledDropdown className="card-header-dropdown">
-                        <DropdownToggle
-                          tag="a"
-                          className="text-reset"
-                          role="button"
-                        >
-                          <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-end ms-3">
-                          <DropdownItem className="d-flex align-items-center">
-                            {" "}
-                            <i className="ri-qr-code-line fs-2 me-2"></i>
-                            <span className="fw-semibold">Show QR code</span>
-                          </DropdownItem>
-                          <DropdownItem className="d-flex align-items-center">
-                            <i className="ri-file-copy-line fs-2 me-2"></i>{" "}
-                            <span className="fw-semibold">Copy direction</span>
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </div>
-                    <div className="d-flex flex-row ">
-                      <h2 className="fw-bold">7656,01 US$ </h2>
-                      <UncontrolledDropdown className="card-header-dropdown">
-                        <DropdownToggle
-                          tag="a"
-                          className="text-reset"
-                          role="button"
-                        >
-                          <i className="ri-more-fill ms-2 fs-5"></i>
-                        </DropdownToggle>
-                        <DropdownMenu className="dropdown-menu-end ms-3">
-                          <DropdownItem className="d-flex align-items-center">
-                            <span className="fw-semibold">
-                              Include NFTs in Totals
-                              <input
-                                type="checkbox"
-                                className="form-check-input ms-2"
-                              />
-                            </span>
-                          </DropdownItem>
-                        </DropdownMenu>
-                      </UncontrolledDropdown>
-                    </div>
-                    <h5 className="text-danger">-5,6% (452,07 US$)</h5>{" "}
-                  </Col>
-                  <Col
-                    xxl={3}
-                    lg={3}
-                    md={3}
-                    sm={3}
-                    xs={3}
-                    className="d-flex justify-content-end"
-                  >
-                    <div className="d-flex justify-content-center flex-row">
-                      <Button className="rounded-circle bg-transparent border-1  border-dark btn btn-sm">
-                        <i className="ri-share-forward-fill text-dark fs-4 p-1"></i>
-                      </Button>
-                      <Button className="rounded-circle bg-transparent border-1 mx-3 border-dark btn btn-sm">
-                        <i className="ri-send-plane-fill text-dark fs-4 p-1"></i>
-                      </Button>
-                      <Button color="primary" className="btn btn-sm">
-                        Add wallet
-                      </Button>
-                    </div>
-                  </Col>
+                  <div className="d-flex flex-row">
+                    <h4>puzzledandamused.eth </h4>
+                    <UncontrolledDropdown className="card-header-dropdown">
+                      <DropdownToggle
+                        tag="a"
+                        className="text-reset"
+                        role="button"
+                      >
+                        <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
+                      </DropdownToggle>
+                      <DropdownMenu className="dropdown-menu-end ms-3">
+                        <DropdownItem className="d-flex align-items-center">
+                          {" "}
+                          <i className="ri-qr-code-line fs-2 me-2"></i>
+                          <span className="fw-semibold">Show QR code</span>
+                        </DropdownItem>
+                        <DropdownItem className="d-flex align-items-center">
+                          <i className="ri-file-copy-line fs-2 me-2"></i>{" "}
+                          <span className="fw-semibold">Copy direction</span>
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                  </div>
+                  <div className="d-flex flex-row ">
+                    <h2 className="fw-bold">7656,01 US$ </h2>
+                    <UncontrolledDropdown className="card-header-dropdown">
+                      <DropdownToggle
+                        tag="a"
+                        className="text-reset"
+                        role="button"
+                      >
+                        <i className="ri-more-fill ms-2 fs-5"></i>
+                      </DropdownToggle>
+                      <DropdownMenu className="dropdown-menu-end ms-3">
+                        <DropdownItem className="d-flex align-items-center">
+                          <span className="fw-semibold">
+                            Include NFTs in Totals
+                            <input
+                              type="checkbox"
+                              className="form-check-input ms-2"
+                            />
+                          </span>
+                        </DropdownItem>
+                      </DropdownMenu>
+                    </UncontrolledDropdown>
+                  </div>
+                  <h5 className="text-danger">-5,6% (452,07 US$)</h5>{" "}
+                </Col>
+                <Col
+                  xxl={3}
+                  lg={3}
+                  md={3}
+                  sm={12}
+                  xs={12}
+                  className="d-flex justify-content-center mb-3"
+                  order={{
+                    sm: "last",
+                    xs: "last",
+                    md: "2",
+                    lg: "2",
+                    xxl: "2",
+                  }}
+                >
+                  <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
+                    <i className="ri-share-forward-fill text-dark fs-4 p-1"></i>
+                  </Button>
+                  <Button className="rounded-circle bg-transparent border-1 mx-3 border-dark btn btn-sm">
+                    <i className="ri-send-plane-fill text-dark fs-4 p-1"></i>
+                  </Button>
+                  <Button color="primary" className="btn btn-sm">
+                    Add wallet
+                  </Button>
                 </Col>
               </Row>
               <Row className="d-flex justify-content-center align-items-center  border-2 mb-3 mt-3 border-top">
@@ -440,7 +442,7 @@ const DashboardInfo = () => {
                     <TabPane tabId="3">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
-                          {/* <HistorialTable data={historyData} /> */}
+                          <HistorialTable data={historyData} />
                         </div>
                       </div>
                     </TabPane>

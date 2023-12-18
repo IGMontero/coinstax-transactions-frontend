@@ -25,6 +25,11 @@
     padding-top: calc(#{$header-height} + #{$grid-gutter-width});
     padding-left: 130px;
     padding-right: 130px;
+
+    @media (max-width: 768px) {
+        padding-left:0;
+        padding-right: 0;
+    }
 }
 
 .navbar-menu {
@@ -1367,6 +1372,7 @@
 
         .page-content {
             padding: calc(#{$header-height} + #{$grid-gutter-width} * 2) calc(#{$grid-gutter-width} * 0.5) $footer-height calc(#{$grid-gutter-width} * 0.5);
+            
         }
 
         .navbar-menu {
