@@ -87,7 +87,6 @@ const DashboardInfo = () => {
     dispatch(fetchHistory(addressForSearch))
       .unwrap()
       .then((response) => {
-        console.log(response);
         setHistoryData(response);
         setLoading(false);
       })
@@ -146,7 +145,6 @@ const DashboardInfo = () => {
                   <Spinner style={{ width: "4rem", height: "4rem" }} />
                 </div>
               )}
-              User
               <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
                 <Col
                   xxl={9}
