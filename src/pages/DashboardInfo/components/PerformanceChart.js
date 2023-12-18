@@ -46,6 +46,8 @@ const PerformanceChart = ({ address }) => {
     setActiveFilter(filterId);
   };
 
+  // console.log("series", series);
+
   const options = {
     chart: {
       type: "candlestick",

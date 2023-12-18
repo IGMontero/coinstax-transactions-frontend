@@ -50,7 +50,7 @@ export const fetchAssets = createAsyncThunk(
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
-      return data.items;
+      return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
