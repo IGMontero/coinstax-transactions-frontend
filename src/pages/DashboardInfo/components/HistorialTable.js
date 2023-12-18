@@ -311,7 +311,7 @@ const HistorialTable = ({ data }) => {
                                 }}
                               >
                                 {copiedIndex === index ? (
-                                  <i className="ri-check-line ms-2 fs-4 text-dark"></i>
+                                  <i className="ri-check-line mx-2 fs-4 text-dark"></i>
                                 ) : (
                                   <i className="ri-file-copy-line mx-2 fs-4 text-dark"></i>
                                 )}
