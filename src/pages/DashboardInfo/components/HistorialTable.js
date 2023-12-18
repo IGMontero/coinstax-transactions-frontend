@@ -43,6 +43,15 @@ const HistorialTable = ({ data }) => {
     return `${prefix}...${suffix}`;
   };
 
+  const formatNumber = (number) => {
+    if (typeof number !== "number" || isNaN(number)) {
+      return "Invalid Number";
+    }
+
+    let formattedNumber = parseFloat(number.toFixed(4));
+    return formattedNumber.toString();
+  };
+
   return (
     <React.Fragment>
       <Row>
@@ -128,14 +137,16 @@ const HistorialTable = ({ data }) => {
                   >
                     {transaction.blockchainAction && (
                       <span
-                        className={`rounded-circle border me-3 d-flex justify-content-center border-${
+                        className={`rounded-circle align-items-center border me-3 d-flex justify-content-center border-${
                           getActionMapping(transaction.blockchainAction).color
                         } text-${
                           getActionMapping(transaction.blockchainAction).color
                         }`}
                         style={{
                           width: "45px",
+                          minWidth: "45px",
                           height: "45px",
+                          minHeight: "45px",
                         }}
                       >
                         <i
@@ -166,10 +177,10 @@ const HistorialTable = ({ data }) => {
                   >
                     <img
                       src={
-                        transaction.ledgers[1] &&
-                        transaction.ledgers[1].txInfo &&
-                        transaction.ledgers[1].txInfo.logo
-                          ? transaction.ledgers[1].txInfo.logo
+                        transaction.ledgers[0] &&
+                        transaction.ledgers[0].txInfo &&
+                        transaction.ledgers[0].txInfo.logo
+                          ? transaction.ledgers[0].txInfo.logo
                           : ""
                       }
                       alt=""
@@ -180,7 +191,7 @@ const HistorialTable = ({ data }) => {
                     <div className="d-flex flex-column text-start justify-content-end">
                       <h6 className="fw-semibold my-0 text-success">
                         {" "}
-                        {transaction.ledgers[0].amount}
+                        {formatNumber(transaction.ledgers[0].amount)}
                       </h6>
                       <p
                         className="text-start my-0"
