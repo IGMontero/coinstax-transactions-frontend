@@ -298,9 +298,11 @@ const HistorialTable = ({ data }) => {
                                 </span>
                               </div>
                             </div>
+
                             <div>
                               <button
-                                className="btn btn-transparent p-0 "
+                                className="btn btn-light p-0  border-0 "
+                                style={{ zIndex: 2 }}
                                 onClick={(e) => {
                                   handleCopy(e, transaction.txHash, index);
                                   setTimeout(() => {
@@ -311,7 +313,7 @@ const HistorialTable = ({ data }) => {
                                 {copiedIndex === index ? (
                                   <i className="ri-check-line ms-2 fs-4 text-dark"></i>
                                 ) : (
-                                  <i className="ri-file-copy-line ms-2 fs-4 text-dark"></i>
+                                  <i className="ri-file-copy-line mx-2 fs-4 text-dark"></i>
                                 )}
                               </button>
                             </div>
