@@ -13,6 +13,7 @@ import { getActionMapping } from "../../../utils/utils";
 const HistorialTable = ({ data }) => {
   const inputRef = useRef(null);
   const [openCollapse, setOpenCollapse] = useState(null);
+  const [copiedIndex, setCopiedIndex] = useState(null);
 
   const toggleCollapse = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
@@ -50,6 +51,17 @@ const HistorialTable = ({ data }) => {
 
     let formattedNumber = parseFloat(number.toFixed(4));
     return formattedNumber.toString();
+  };
+
+  const handleCopy = async (e, text, index) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log("Text copied to clipboard");
+      setCopiedIndex(index);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
   };
 
   return (
@@ -282,8 +294,20 @@ const HistorialTable = ({ data }) => {
                               </div>
                             </div>
                             <div>
-                              <button className="btn btn-transparent p-0 ">
-                                <i className="ri-file-copy-line ms-2 fs-4 text-dark"></i>
+                              <button
+                                className="btn btn-transparent p-0 "
+                                onClick={(e) => {
+                                  handleCopy(e, transaction.txHash, index);
+                                  setTimeout(() => {
+                                    setCopiedIndex(null);
+                                  }, 10000);
+                                }}
+                              >
+                                {copiedIndex === index ? (
+                                  <i className="ri-check-line ms-2 fs-4 text-dark"></i>
+                                ) : (
+                                  <i className="ri-file-copy-line ms-2 fs-4 text-dark"></i>
+                                )}
                               </button>
                             </div>
                           </div>
