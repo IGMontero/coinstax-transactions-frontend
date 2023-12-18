@@ -14,6 +14,9 @@ const AcitvesTable = ({ data }) => {
   }, [data]);
 
   const formatBalance = (number) => {
+    if (typeof number !== "number" || isNaN(number)) {
+      return "Invalid Number";
+    }
     const hasComma = number > 999;
     const formattedNumber = number.toLocaleString(undefined, {
       minimumFractionDigits: hasComma ? 4 : 0,
@@ -23,11 +26,14 @@ const AcitvesTable = ({ data }) => {
   };
 
   const formatPriceAndValue = (number) => {
+    if (typeof number !== "number" || isNaN(number)) {
+      return "Invalid Number";
+    }
+
     const hasComma = number > 999;
     const hasDecimal = number % 1 !== 0;
     const minimumFractionDigits = hasComma ? 2 : hasDecimal ? 2 : 0;
 
-    // Si el primer número es 0 y tiene decimales, mostrar hasta 6 decimales
     const formattedNumber = number.toLocaleString(undefined, {
       minimumFractionDigits:
         number === 0 && hasDecimal ? 6 : minimumFractionDigits,
@@ -36,6 +42,7 @@ const AcitvesTable = ({ data }) => {
 
     return formattedNumber;
   };
+
   return (
     <React.Fragment>
       <div className="mb-3">
@@ -56,7 +63,7 @@ const AcitvesTable = ({ data }) => {
         <div className="border border-2 rounded p-3">
           <div className="d-flex flex-row align-items-center">
             <h4>
-              <b> Wallet </b>${formatPriceAndValue(data.total)} US${" "}
+              <b> Wallet </b>${formatBalance(data.total)} US${" "}
             </h4>{" "}
             <Badge color="primary" className="mb-2 ms-2">
               {" "}

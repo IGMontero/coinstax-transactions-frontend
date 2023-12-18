@@ -27,9 +27,7 @@ const Nfts = ({ data }) => {
       <Col xxl={12}>
         <span className="text-dark">Total value by floor price</span>
 
-        <h1>
-          $ 12,724<span className="text-muted">.21</span>
-        </h1>
+        <h1>${data.totalValue}</h1>
       </Col>
       <Row>
         <Col xxl={12} className="d-flex justify-content-between flex-row mt-4">
@@ -148,16 +146,16 @@ const Nfts = ({ data }) => {
       ) : (
         <Col xxl={12} className="mt-4">
           <Row>
-            {data &&
-              data.map((nft, index) => (
-                <Col xxl={3} lg={4} md={4} sm={12} xs={12} key={index}>
+            {data.items &&
+              data?.items.map((nft, index) => (
+                <Col xxl={3} lg={4} md={6} sm={12} xs={12} key={index}>
                   <Card
                     className="border-2 border bg-transparent shadow-none "
                     style={{ height: "350px" }}
                   >
                     <CardHeader className="border-0 border bg-transparent p-2">
                       <img
-                        src={nft.nft_data[0].external_data.image}
+                        src={nft.logo}
                         alt=""
                         className="img-fluid rounded w-100"
                         style={{ minHeight: "200px", height: "200px" }}
@@ -165,8 +163,8 @@ const Nfts = ({ data }) => {
                     </CardHeader>
                     <CardBody>
                       <div className="d-flex flex-column">
-                        <span className="text-dark">Unstoppable Domains</span>
-                        <h5 className="text-dark">{nft.contract_name}</h5>
+                        <span className="text-dark">{nft.domain}</span>
+                        <h5 className="text-dark">{nft.name}</h5>
                         <span>Floor Price</span>
                         <h6 className="text-dark">
                           {nft.pretty_floor_price_quote
