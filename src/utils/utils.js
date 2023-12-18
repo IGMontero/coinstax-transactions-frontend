@@ -1,9 +1,9 @@
 export const getActionMapping = (action) => {
   switch (action) {
     case "RECEIVE":
-      return { color: "success", icon: "ri-arrow-up-line fs-2" };
+      return { color: "success", icon: " ri-arrow-down-line fs-2" };
     case "SEND":
-      return { color: "dark", icon: "ri-arrow-down-line fs-2" };
+      return { color: "dark", icon: "ri-arrow-up-line fs-2" };
     case "WITHDRAW":
       return { color: "dark", icon: "ri-upload-2-line fs-2" };
     case "EXECUTE":
