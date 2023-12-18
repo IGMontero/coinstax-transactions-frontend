@@ -433,7 +433,7 @@ const DashboardInfo = () => {
                     <TabPane tabId="2">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
-                          {/* <Nfts data={nftData} /> */}
+                          <Nfts data={nftData} />
                         </div>
                       </div>
                     </TabPane>

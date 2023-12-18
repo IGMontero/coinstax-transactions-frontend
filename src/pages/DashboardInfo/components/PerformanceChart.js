@@ -18,7 +18,7 @@ const PerformanceChart = ({ address }) => {
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
-          const candleData = response.total.map((item) => ({
+          const lineData = response.total.map((item) => ({
             x: new Date(item.calendarDate).getTime(),
             y: [
               item.open.quote,
@@ -27,7 +27,7 @@ const PerformanceChart = ({ address }) => {
               item.close.quote,
             ],
           }));
-          setSeries([{ data: candleData }]);
+          setSeries([{ data: lineData }]);
           setLoading(false);
         })
         .catch((error) => {
@@ -50,7 +50,8 @@ const PerformanceChart = ({ address }) => {
 
   const options = {
     chart: {
-      type: "candlestick",
+      // type: "candlestick",
+      type: "line",
       height: 350,
     },
     xaxis: {
@@ -85,7 +86,8 @@ const PerformanceChart = ({ address }) => {
           <ReactApexChart
             options={options}
             series={series}
-            type="candlestick"
+            // type="candlestick"
+            type="line"
             height={350}
           />
 
