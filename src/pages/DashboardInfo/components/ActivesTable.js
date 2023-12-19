@@ -75,7 +75,7 @@ const AcitvesTable = ({ data }) => {
     <React.Fragment>
       <div className="mb-3">
         <div className="flex-grow-1 d-flex justify-content-between">
-          <h2 className="ms-1 mb-3">Actives</h2>
+          <h2 className="ms-1 mb-3">Assets</h2>
           <div className="d-flex justify-content-between align-items-center ">
             <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
             <Button
@@ -104,11 +104,14 @@ const AcitvesTable = ({ data }) => {
                 <i className="ri-arrow-down-s-line p-1 py-0 btn btn-soft-primary rounded"></i>
               </DropdownToggle>
               <DropdownMenu className="dropdown-menu-end ms-3 mt-2">
-                <DropdownItem className="d-flex align-items-center">
-                  <div
-                    className="form-check mb-0"
-                    onClick={(e) => e.stopPropagation()}
-                  >
+                <DropdownItem
+                  className="d-flex align-items-center"
+                  onClick={(e) => {
+                    handleHideSmallBalancesChange(e);
+                    e.stopPropagation();
+                  }}
+                >
+                  <div className="form-check mb-0">
                     <label
                       className=" d-flex align-items-center mb-0"
                       htmlFor="hideBalances"
