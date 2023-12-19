@@ -25,6 +25,8 @@ export const fetchPerformance = createAsyncThunk(
     let url = `${API_BASE}/transactions/eth-mainnet/${address}/balances/historical`;
     if (days) {
       url += `?days=${days}`;
+    } else {
+      url += `?days=15`;
     }
     try {
       const response = await fetch(url);

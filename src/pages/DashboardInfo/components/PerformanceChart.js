@@ -6,63 +6,39 @@ import { Spinner } from "reactstrap";
 
 const PerformanceChart = ({ address }) => {
   const dispatch = useDispatch();
-  // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
   const [activeFilter, setActiveFilter] = useState("all");
+  const [series, setSeries] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  const [series, setSeries] = useState([{ data: [] }]);
-  const fetchAndSetData = (days) => {
-    if (address) {
-      setLoading(true);
-      const params = days ? { address, days } : { address };
-      dispatch(fetchPerformance(params))
-        .unwrap()
-        .then((response) => {
-          let lineData = response.total.map((item) => ({
-            x: new Date(item.calendarDate).getTime(),
-            y: [item.close.quote],
-          }));
-
-          lineData.sort((a, b) => a.x - b.x);
-
-          setSeries([{ data: lineData }]);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error("Error fetching performance data:", error);
-          setLoading(false);
-        });
-    }
-  };
-
-  useEffect(() => {
-    fetchAndSetData();
-  }, [address, dispatch]);
-
-  const handleFilterForDays = (days, filterId) => {
-    fetchAndSetData(days);
-    setActiveFilter(filterId);
-  };
-
-  console.log("series", series);
-
-  const options = {
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
+  const [options, setOptions] = useState({
     chart: {
-      // type: "candlestick",
       type: "line",
       height: 350,
     },
     title: {
-      text: "", // Inicializamos el texto del título como una cadena vacía
-      align: "left", // Alineamos el título a la izquierda
+      text: "",
+      align: "left",
       margin: 10,
       offsetX: 0,
       offsetY: 0,
       floating: false,
       style: {
-        fontSize: "14px",
-        fontWeight: "bold",
-        color: "#263238",
+        fontSize: "36px",
+        fontWeight: "semibold",
+      },
+    },
+    subtitle: {
+      text: "",
+      align: "left",
+      margin: 10,
+      offsetX: 0,
+      offsetY: 40,
+      floating: false,
+      style: {
+        fontSize: "15px",
+        fontWeight: "normal",
+        color: "#3ac47d",
       },
     },
     xaxis: {
@@ -75,6 +51,9 @@ const PerformanceChart = ({ address }) => {
       },
       axisTicks: {
         show: false,
+      },
+      tooltip: {
+        enabled: false,
       },
     },
     yaxis: {
@@ -105,24 +84,82 @@ const PerformanceChart = ({ address }) => {
       },
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
         const value = series[seriesIndex][dataPointIndex].toLocaleString();
-        return `<div class="p-2 fw-semibold"> $${value}
-        <div class="apexcharts-tooltip-text  "> </div></div>`;
+        const date = new Date(w.globals.seriesX[seriesIndex][dataPointIndex]);
+        const prettyDate = date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        });
+        return `<div class="p-2 fw-semibold text-dark"> $${value}
+          <div class="apexcharts-tooltip-text fs-6 text-muted ">${prettyDate} </div></div>`;
       },
     },
-    // plotOptions: {
-    //   candlestick: {
-    //     colors: {
-    //       upward: "#00B746",
-    //       downward: "#EF403C",
-    //     },
-    //   },
-    // },
+  });
+  const fetchAndSetData = (days) => {
+    if (address) {
+      setLoading(true);
+      const params = days ? { address, days } : { address };
+      dispatch(fetchPerformance(params))
+        .unwrap()
+        .then((response) => {
+          const lineData = response.total.map((item) => ({
+            date: item.calendarDate,
+            x: new Date(item.calendarDate).getTime(),
+            y: item.close.quote,
+          }));
+          setSeries([{ data: lineData }]);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching performance data:", error);
+          setLoading(false);
+        });
+    }
   };
-  const lastDataPoint = series[0].data[series[0].data.length - 1]; // Asume que tienes al menos un punto de datos y que la serie está en el índice 0
-  const lastValue = lastDataPoint.y[0].toLocaleString(); // Asume que 'y' es un array con un solo valor
 
-  options.title.text = ` $${lastValue}`;
+  useEffect(() => {
+    fetchAndSetData();
+  }, [address, dispatch]);
 
+  useEffect(() => {
+    if (series.length > 0 && series[0].data.length > 0) {
+      const firstPointValue = series[0].data[0].y;
+      setTitle(`$${firstPointValue.toLocaleString()}`);
+      const lastPointValue = series[0].data[series[0].data.length - 1].y;
+      const change = lastPointValue - firstPointValue;
+      const changePercentage = (change / firstPointValue) * 100;
+
+      const sign = changePercentage >= 0 ? "+" : "";
+      setSubtitle(
+        `${sign}${changePercentage.toFixed(
+          2
+        )}% (${sign}$${change.toLocaleString()})`
+      );
+      setOptions((prevOptions) => {
+        return {
+          ...prevOptions,
+          title: {
+            ...prevOptions.title,
+            text: title,
+            color: "dark",
+          },
+          subtitle: {
+            ...prevOptions.subtitle,
+            text: subtitle,
+            color: changePercentage >= 0 ? "#3ac47d" : "#f1556c",
+            style: {
+              ...prevOptions.subtitle.style,
+            },
+          },
+        };
+      });
+    }
+  }, [series, title, subtitle]);
+
+  const handleFilterForDays = (days, filterId) => {
+    fetchAndSetData(days);
+    setActiveFilter(filterId);
+  };
   return (
     <div>
       {loading ? (
@@ -137,11 +174,9 @@ const PerformanceChart = ({ address }) => {
           <ReactApexChart
             options={options}
             series={series}
-            // type="candlestick"
             type="line"
             height={350}
           />
-
           <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1">
             <button
               onClick={() => handleFilterForDays(30, "one_month")}

@@ -49,15 +49,15 @@ const AcitvesTable = ({ data }) => {
         <div className="flex-grow-1 d-flex justify-content-between">
           <h2 className="ms-1 mb-3">Actives</h2>
           <div className="d-flex justify-content-between align-items-center ">
-            <i class="ri-arrow-down-s-line p-1 py-0 btn btn-soft-primary rounded"></i>
-
-            <Button className="mx-2 btn btn-sm btn-soft-primary  rounded">
+            <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
+            <Button className="btn ms-2 btn-sm btn-soft-primary  rounded">
               {" "}
               By Platform
             </Button>
-            <Button className=" btn btn-sm btn-soft-primary rounded">
+            <Button className="mx-2 btn btn-sm btn-soft-primary rounded">
               Per Position
             </Button>
+            <i class="ri-arrow-down-s-line p-1 py-0 btn btn-soft-primary rounded"></i>
           </div>
         </div>
         <div className="border border-2 rounded p-3">
@@ -65,9 +65,13 @@ const AcitvesTable = ({ data }) => {
             <h4>
               <b> Wallet </b>${formatBalance(data.total)} US${" "}
             </h4>{" "}
-            <Badge color="primary" className="mb-2 ms-2">
+            <Badge
+              color="soft-dark"
+              className="mb-2 ms-2 p-1 fs-7"
+              style={{ fontWeight: "inherit" }}
+            >
               {" "}
-              80,3%
+              100%
             </Badge>
           </div>
 
@@ -97,22 +101,34 @@ const AcitvesTable = ({ data }) => {
                   data?.items.map((asset, index) => (
                     <tr key={index}>
                       <td>
-                        <div className="d-flex align-items-center fw-medium">
+                        <div className="d-flex align-items-center fw-high">
                           <img
                             src={asset.logo}
                             alt=""
-                            className="avatar-xxs me-2"
+                            className="avatar-xs me-2"
                           />
                           <div className="d-flex flex-column">
-                            {asset.name}
-                            <div className="d-flex align-items-center">
+                            <div className="d-flex flex-row align-items-center">
+                              {asset.name}{" "}
+                              <Badge
+                                color="soft-dark"
+                                style={{ fontWeight: "inherit" }}
+                                className="mx-2 p-1 fs-7"
+                              >
+                                {asset.percentage < 1
+                                  ? "<0.01"
+                                  : asset.percentage}
+                                {"%"}
+                              </Badge>
+                            </div>
+                            <div className="d-flex align-items-center text-muted">
                               <img
                                 src={eth}
                                 width={15}
                                 height={15}
-                                className="me-1"
+                                className="me-1 "
                               />
-                              Ethereum
+                              Ethereum · Wallet
                             </div>
                           </div>
                         </div>
