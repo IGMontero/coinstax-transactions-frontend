@@ -38,8 +38,8 @@
   --#{$prefix}body-color-rgb: #{to-rgb($gray-700)};
 
   //vertical light
-  --#{$prefix}vertical-menu-bg:                      #{$white};
-  --#{$prefix}vertical-menu-item-color:              #{darken($gray-400, 16%)};
+  --#{$prefix}vertical-menu-bg:                      #{$gray-300};
+  --#{$prefix}vertical-menu-item-color:              #{$white};
   --#{$prefix}vertical-menu-item-hover-color:        #{$primary};
   --#{$prefix}vertical-menu-item-active-color:       #{$primary};
   --#{$prefix}vertical-menu-sub-item-color:          #{darken($gray-400, 12%)};

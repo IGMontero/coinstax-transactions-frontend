@@ -36,7 +36,8 @@
     width: $vertical-menu-width;
     z-index: $vertical-menu-z-index;
     background: $vertical-menu-bg;
-    border-right: 1px solid $vertical-menu-border;
+    // background: rgba($color: #2a2f34, $alpha: 1.0);
+    // border-right: 1px solid $vertical-menu-border-dark;
     bottom: 0;
     margin-top: 0;
     position: fixed;
@@ -1306,6 +1307,7 @@
     background-size: cover;
     background-position: 50%;
     opacity: .07;
+    
     // background-color: $gray-500;
 }
 
