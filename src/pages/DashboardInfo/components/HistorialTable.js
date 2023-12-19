@@ -372,6 +372,16 @@ const HistorialTable = ({ address }) => {
           renderTransactionsGroupByDate(date, groupedTransactions[date])
         )}
       </Col>
+      <Col>
+        <div className="d-flex justify-content-center mt-2">
+          <Button
+            color="soft-light"
+            style={{ borderRadius: "10px", border: ".5px solid grey" }}
+          >
+            <h6 className="text-dark fw-semibold my-2 ">More transactions</h6>
+          </Button>
+        </div>
+      </Col>
     </React.Fragment>
   );
 };
