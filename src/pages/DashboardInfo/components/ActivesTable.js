@@ -62,7 +62,6 @@ const AcitvesTable = ({ data }) => {
   };
 
   const handleHideSmallBalancesChange = (event) => {
-    // Detener la propagación para evitar que el Dropdown se cierre
     event.stopPropagation();
     setHideSmallBalances(!hideSmallBalances);
   };
