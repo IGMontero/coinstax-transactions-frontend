@@ -1,15 +1,15 @@
 export const getActionMapping = (action) => {
   switch (action) {
     case "RECEIVE":
-      return { color: "success", icon: " ri-arrow-down-line fs-2" };
+      return { color: "success", icon: " ri-arrow-down-line fs-3" };
     case "SEND":
-      return { color: "dark", icon: "ri-arrow-up-line fs-2" };
+      return { color: "dark", icon: "ri-arrow-up-line fs-3" };
     case "WITHDRAW":
-      return { color: "dark", icon: "ri-upload-2-line fs-2" };
+      return { color: "dark", icon: "ri-upload-2-line fs-3" };
     case "EXECUTE":
-      return { color: "warning", icon: "ri-arrow-down-line fs-2" };
+      return { color: "warning", icon: "ri-arrow-down-line fs-3" };
     default:
-      return { color: "dark", icon: "ri-arrow-down-line fs-2" };
+      return { color: "dark", icon: "ri-arrow-down-line fs-3" };
   }
 };
 
@@ -29,6 +29,7 @@ export const formatIdTransaction = (
 };
 
 {
+  // NO BORRAR ESTO
   /* <Col xxl={12} lg={12} className="border-top ">
                       {transaction.blockchainAction && (
                         <Row className="align-items-start g-0 mt-2">
