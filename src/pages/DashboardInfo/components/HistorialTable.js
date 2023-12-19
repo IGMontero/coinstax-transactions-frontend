@@ -197,9 +197,9 @@ const HistorialTable = ({ address }) => {
                       width={40}
                       height={40}
                     />
-                    <div className="d-flex flex-column text-center justify-content-end">
+                    <div className="d-flex flex-column text-center justify-content-end ms-2 ">
                       <h6
-                        className={`fw-semibold my-0 ms-2 ${
+                        className={`fw-semibold my-0 ${
                           transaction.ledgers[0].amount < 0
                             ? "text-dark"
                             : "text-success"
@@ -209,6 +209,9 @@ const HistorialTable = ({ address }) => {
                         {formatNumber(transaction.ledgers[0].amount)}{" "}
                         {transaction.ledgers[0].currency}
                       </h6>
+                      <p className="text-start my-0">
+                        {transaction.price >= 0 ? "N/A" : transaction.price}
+                      </p>
                     </div>
                   </Col>
 
