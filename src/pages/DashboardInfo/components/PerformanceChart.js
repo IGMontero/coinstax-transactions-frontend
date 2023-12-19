@@ -18,10 +18,13 @@ const PerformanceChart = ({ address }) => {
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
-          const lineData = response.total.map((item) => ({
+          let lineData = response.total.map((item) => ({
             x: new Date(item.calendarDate).getTime(),
             y: [item.close.quote],
           }));
+
+          lineData.sort((a, b) => a.x - b.x);
+
           setSeries([{ data: lineData }]);
           setLoading(false);
         })
@@ -41,7 +44,7 @@ const PerformanceChart = ({ address }) => {
     setActiveFilter(filterId);
   };
 
-  // console.log("series", series);
+  console.log("series", series);
 
   const options = {
     chart: {
@@ -49,28 +52,76 @@ const PerformanceChart = ({ address }) => {
       type: "line",
       height: 350,
     },
+    title: {
+      text: "", // Inicializamos el texto del título como una cadena vacía
+      align: "left", // Alineamos el título a la izquierda
+      margin: 10,
+      offsetX: 0,
+      offsetY: 0,
+      floating: false,
+      style: {
+        fontSize: "14px",
+        fontWeight: "bold",
+        color: "#263238",
+      },
+    },
     xaxis: {
       type: "datetime",
+      labels: {
+        show: false,
+      },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
     },
     yaxis: {
       tooltip: {
-        enabled: true,
+        enabled: false,
       },
       labels: {
         formatter: function (value) {
           return value.toLocaleString();
         },
+        show: false,
+      },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
       },
     },
-    plotOptions: {
-      candlestick: {
-        colors: {
-          upward: "#00B746",
-          downward: "#EF403C",
+    tooltip: {
+      x: {
+        show: false,
+      },
+      y: {
+        formatter: function (value) {
+          return "$" + value;
         },
       },
+      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
+        const value = series[seriesIndex][dataPointIndex].toLocaleString();
+        return `<div class="p-2 fw-semibold"> $${value}
+        <div class="apexcharts-tooltip-text  "> </div></div>`;
+      },
     },
+    // plotOptions: {
+    //   candlestick: {
+    //     colors: {
+    //       upward: "#00B746",
+    //       downward: "#EF403C",
+    //     },
+    //   },
+    // },
   };
+  const lastDataPoint = series[0].data[series[0].data.length - 1]; // Asume que tienes al menos un punto de datos y que la serie está en el índice 0
+  const lastValue = lastDataPoint.y[0].toLocaleString(); // Asume que 'y' es un array con un solo valor
+
+  options.title.text = ` $${lastValue}`;
 
   return (
     <div>
