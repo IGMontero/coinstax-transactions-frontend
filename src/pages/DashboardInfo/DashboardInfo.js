@@ -43,6 +43,8 @@ const DashboardInfo = () => {
 
   const [customActiveTab, setcustomActiveTab] = useState("1");
 
+  const [addressTitle, setAddressTitle] = useState("");
+
   const [searchInput, setSearchInput] = useState("");
   const [addressForSearch, setAddressForSearch] = useState("");
 
@@ -91,6 +93,7 @@ const DashboardInfo = () => {
 
   const handleSearchClick = () => {
     setAddressForSearch(searchInput);
+    setAddressTitle(searchInput);
     navigate(`/address/${searchInput}`);
   };
 
@@ -167,7 +170,7 @@ const DashboardInfo = () => {
                     order="1"
                   >
                     <div className="d-flex flex-row">
-                      <h4>{formatIdTransaction(searchInput)}</h4>
+                      <h4>{formatIdTransaction(addressTitle)}</h4>
                       <UncontrolledDropdown className="card-header-dropdown">
                         <DropdownToggle
                           tag="a"
