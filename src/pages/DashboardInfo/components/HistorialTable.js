@@ -8,7 +8,7 @@ import {
   Collapse,
   CardBody,
 } from "reactstrap";
-import { getActionMapping } from "../../../utils/utils";
+import { formatIdTransaction, getActionMapping } from "../../../utils/utils";
 
 const HistorialTable = ({ data }) => {
   const inputRef = useRef(null);
@@ -57,7 +57,6 @@ const HistorialTable = ({ data }) => {
     e.stopPropagation();
     try {
       await navigator.clipboard.writeText(text);
-      console.log("Text copied to clipboard");
       setCopiedIndex(index);
     } catch (err) {
       console.error("Failed to copy: ", err);
@@ -292,7 +291,7 @@ const HistorialTable = ({ data }) => {
                               <div className="d-flex">
                                 <span className="ms-1d -flex align-items-center">
                                   {transaction.txHash
-                                    ? formatTransactionHash(transaction.txHash)
+                                    ? formatIdTransaction(transaction.txHash)
                                     : "0"}
                                   <i className="ri-arrow-right-up-line fs-6"></i>
                                 </span>

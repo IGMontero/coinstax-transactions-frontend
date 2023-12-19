@@ -25,6 +25,7 @@ const Nfts = ({ data }) => {
   const inputRef = useRef(null);
 
   console.log(data);
+
   return (
     <React.Fragment>
       <Col xxl={12}>

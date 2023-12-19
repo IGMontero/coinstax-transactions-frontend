@@ -35,8 +35,11 @@ import {
 } from "../../slices/transactions/thunk";
 import DashboardHome from "../DashboardHome/DashboardHome";
 import { useDispatch } from "react-redux";
+import { Routes, useNavigate } from "react-router-dom";
+import { formatIdTransaction } from "../../utils/utils";
 const DashboardInfo = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [customActiveTab, setcustomActiveTab] = useState("1");
 
   const [searchInput, setSearchInput] = useState("");
@@ -74,6 +77,7 @@ const DashboardInfo = () => {
       .unwrap()
       .then((response) => {
         setAssetsData(response);
+        console.log(response);
         setLoading(false);
       })
       .catch((error) => {
@@ -98,6 +102,7 @@ const DashboardInfo = () => {
 
   const handleSearchClick = () => {
     setAddressForSearch(searchInput);
+    navigate(`/address/${searchInput}`);
   };
 
   useEffect(() => {
@@ -119,7 +124,10 @@ const DashboardInfo = () => {
                   <Input
                     className="form-control py-2 rounded"
                     placeholder="Assets, wallet, domain, or identify"
-                    value={searchInput}
+                    value={
+                      searchInput ||
+                      "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6"
+                    }
                     onChange={(e) => setSearchInput(e.target.value)}
                   />
                   <Button
@@ -156,7 +164,7 @@ const DashboardInfo = () => {
                   order="1"
                 >
                   <div className="d-flex flex-row">
-                    <h4>puzzledandamused.eth </h4>
+                    <h4>{formatIdTransaction(searchInput)}</h4>
                     <UncontrolledDropdown className="card-header-dropdown">
                       <DropdownToggle
                         tag="a"
@@ -179,14 +187,14 @@ const DashboardInfo = () => {
                     </UncontrolledDropdown>
                   </div>
                   <div className="d-flex flex-row ">
-                    <h2 className="fw-bold">7656,01 US$ </h2>
+                    <h1 className="fw-semibold">$7656,01</h1>
                     <UncontrolledDropdown className="card-header-dropdown">
                       <DropdownToggle
                         tag="a"
-                        className="text-reset"
+                        className="text-reset "
                         role="button"
                       >
-                        <i className="ri-more-fill ms-2 fs-5"></i>
+                        <i className="ri-more-fill ms-2 fs-5 btn btn-light px-1 py-0 ms-3"></i>
                       </DropdownToggle>
                       <DropdownMenu className="dropdown-menu-end ms-3">
                         <DropdownItem className="d-flex align-items-center">

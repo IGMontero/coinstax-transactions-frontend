@@ -20,12 +20,7 @@ const PerformanceChart = ({ address }) => {
         .then((response) => {
           const lineData = response.total.map((item) => ({
             x: new Date(item.calendarDate).getTime(),
-            y: [
-              item.open.quote,
-              item.high.quote,
-              item.low.quote,
-              item.close.quote,
-            ],
+            y: [item.close.quote],
           }));
           setSeries([{ data: lineData }]);
           setLoading(false);
@@ -60,6 +55,11 @@ const PerformanceChart = ({ address }) => {
     yaxis: {
       tooltip: {
         enabled: true,
+      },
+      labels: {
+        formatter: function (value) {
+          return value.toLocaleString();
+        },
       },
     },
     plotOptions: {
