@@ -13,6 +13,21 @@ export const getActionMapping = (action) => {
   }
 };
 
+export const formatIdTransaction = (
+  address,
+  prefixLength = 4,
+  suffixLength = 4
+) => {
+  if (!address || typeof address !== "string") {
+    return null;
+  }
+
+  const prefix = address.slice(0, prefixLength + 2);
+  const suffix = address.slice(-suffixLength);
+
+  return `${prefix}...${suffix}`;
+};
+
 {
   /* <Col xxl={12} lg={12} className="border-top ">
                       {transaction.blockchainAction && (
