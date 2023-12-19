@@ -441,7 +441,7 @@ const DashboardInfo = () => {
                             xxl={12}
                             className="mt-3 mb-3 d-flex flex-row justify-content-around"
                           >
-                            <Col xxl={12} className="me-1">
+                            <Col className="me-1 col-12">
                               <PerformanceChart
                                 address={addressForSearch}
                                 series={series}
