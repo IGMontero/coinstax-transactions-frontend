@@ -131,9 +131,7 @@ const PerformanceChart = ({ address }) => {
 
       const sign = changePercentage >= 0 ? "+" : "";
       setSubtitle(
-        `${sign}${changePercentage.toFixed(
-          2
-        )}% (${sign}$${change.toLocaleString()})`
+        `${sign}${changePercentage.toFixed(2)}% ($${change.toLocaleString()})`
       );
       setOptions((prevOptions) => {
         return {
