@@ -205,16 +205,10 @@ const HistorialTable = ({ address }) => {
                             : "text-success"
                         }`}
                       >
+                        {transaction.ledgers[0].amount > 0 ? "+" : ""}
                         {formatNumber(transaction.ledgers[0].amount)}{" "}
                         {transaction.ledgers[0].currency}
                       </h6>
-                      <p
-                        className="text-start my-0"
-                        style={{ whiteSpace: "nowrap" }}
-                      >
-                        {" "}
-                        {/* {transaction.info} */}
-                      </p>
                     </div>
                   </Col>
 
