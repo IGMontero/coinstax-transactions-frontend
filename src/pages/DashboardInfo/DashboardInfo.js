@@ -40,6 +40,7 @@ import { formatIdTransaction } from "../../utils/utils";
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const [customActiveTab, setcustomActiveTab] = useState("1");
 
   const [searchInput, setSearchInput] = useState("");
@@ -48,9 +49,12 @@ const DashboardInfo = () => {
   const [nftData, setNftData] = React.useState([]);
   const [assetsData, setAssetsData] = useState([]);
 
-  const [historyData, setHistoryData] = useState([]);
-
   const [loading, setLoading] = useState(false);
+
+  const [series, setSeries] = useState([]);
+
+  const [title, setTitle] = useState("");
+  const [subtitle, setSubtitle] = useState("");
 
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
@@ -86,20 +90,6 @@ const DashboardInfo = () => {
       });
   };
 
-  const fecthDataHistory = () => {
-    setLoading(true);
-    dispatch(fetchHistory(addressForSearch))
-      .unwrap()
-      .then((response) => {
-        setHistoryData(response);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching performance data:", error);
-        setLoading(false);
-      });
-  };
-
   const handleSearchClick = () => {
     setAddressForSearch(searchInput);
     navigate(`/address/${searchInput}`);
@@ -109,9 +99,23 @@ const DashboardInfo = () => {
     if (addressForSearch) {
       fetchDataAssets();
       fetchDataNFTS();
-      fecthDataHistory();
     }
   }, [addressForSearch, dispatch]);
+
+  useEffect(() => {
+    if (series.length > 0 && series[0].data.length > 0) {
+      const firstPointValue = series[0].data[0].y;
+      setTitle(`$${firstPointValue.toLocaleString()}`);
+      const lastPointValue = series[0].data[series[0].data.length - 1].y;
+      const change = lastPointValue - firstPointValue;
+      const changePercentage = (change / firstPointValue) * 100;
+
+      const sign = changePercentage >= 0 ? "+" : "";
+      setSubtitle(
+        `${sign}${changePercentage.toFixed(2)}% ($${change.toLocaleString()})`
+      );
+    }
+  }, [series, title, subtitle]);
 
   return (
     <React.Fragment>
@@ -187,7 +191,7 @@ const DashboardInfo = () => {
                     </UncontrolledDropdown>
                   </div>
                   <div className="d-flex flex-row ">
-                    <h1 className="fw-semibold">$7656,01</h1>
+                    <h1 className="fw-semibold">{title}</h1>
                     <UncontrolledDropdown className="card-header-dropdown">
                       <DropdownToggle
                         tag="a"
@@ -209,7 +213,13 @@ const DashboardInfo = () => {
                       </DropdownMenu>
                     </UncontrolledDropdown>
                   </div>
-                  <h5 className="text-danger">-5,6% (452,07 US$)</h5>{" "}
+                  <h5
+                    className={`mt-0 text-${
+                      subtitle <= 0 ? "danger" : "success"
+                    }`}
+                  >
+                    {subtitle}
+                  </h5>{" "}
                 </Col>
                 <Col
                   xxl={3}
@@ -429,7 +439,13 @@ const DashboardInfo = () => {
                             className="mt-3 mb-3 d-flex flex-row justify-content-around"
                           >
                             <Col xxl={12} className="me-1">
-                              <PerformanceChart address={addressForSearch} />
+                              <PerformanceChart
+                                address={addressForSearch}
+                                series={series}
+                                setSeries={setSeries}
+                                title={title}
+                                subtitle={subtitle}
+                              />
                             </Col>
                           </Col>
                           <Col xxl={12}>
@@ -448,7 +464,7 @@ const DashboardInfo = () => {
                     <TabPane tabId="3">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
-                          <HistorialTable data={historyData} />
+                          <HistorialTable address={addressForSearch} />
                         </div>
                       </div>
                     </TabPane>

@@ -4,13 +4,11 @@ import { fetchPerformance } from "../../../slices/transactions/thunk";
 import { useDispatch } from "react-redux";
 import { Spinner } from "reactstrap";
 
-const PerformanceChart = ({ address }) => {
+const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
   const dispatch = useDispatch();
   const [activeFilter, setActiveFilter] = useState("all");
-  const [series, setSeries] = useState([]);
+
   const [loading, setLoading] = useState(false);
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
   const [options, setOptions] = useState({
     chart: {
       type: "line",
@@ -124,15 +122,11 @@ const PerformanceChart = ({ address }) => {
   useEffect(() => {
     if (series.length > 0 && series[0].data.length > 0) {
       const firstPointValue = series[0].data[0].y;
-      setTitle(`$${firstPointValue.toLocaleString()}`);
+
       const lastPointValue = series[0].data[series[0].data.length - 1].y;
       const change = lastPointValue - firstPointValue;
       const changePercentage = (change / firstPointValue) * 100;
 
-      const sign = changePercentage >= 0 ? "+" : "";
-      setSubtitle(
-        `${sign}${changePercentage.toFixed(2)}% ($${change.toLocaleString()})`
-      );
       setOptions((prevOptions) => {
         return {
           ...prevOptions,

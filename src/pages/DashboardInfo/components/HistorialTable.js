@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Input,
@@ -9,11 +9,17 @@ import {
   CardBody,
 } from "reactstrap";
 import { formatIdTransaction, getActionMapping } from "../../../utils/utils";
+import { useDispatch } from "react-redux";
+import { fetchHistory } from "../../../slices/transactions/thunk";
 
-const HistorialTable = ({ data }) => {
+const HistorialTable = ({ address }) => {
   const inputRef = useRef(null);
+  const dispatch = useDispatch();
   const [openCollapse, setOpenCollapse] = useState(null);
   const [copiedIndex, setCopiedIndex] = useState(null);
+  const [data, setData] = useState([]);
+
+  const [loading, setLoading] = useState(false);
 
   const toggleCollapse = (index) => {
     setOpenCollapse(openCollapse === index ? null : index);
@@ -27,21 +33,6 @@ const HistorialTable = ({ data }) => {
   const formatTime = (dateString) => {
     const options = { hour: "numeric", minute: "numeric" };
     return new Date(dateString).toLocaleTimeString("en-US", options);
-  };
-
-  const formatTransactionHash = (
-    address,
-    prefixLength = 4,
-    suffixLength = 4
-  ) => {
-    if (!address || typeof address !== "string") {
-      return null;
-    }
-
-    const prefix = address.slice(0, prefixLength + 2);
-    const suffix = address.slice(-suffixLength);
-
-    return `${prefix}...${suffix}`;
   };
 
   const formatNumber = (number) => {
@@ -62,6 +53,22 @@ const HistorialTable = ({ data }) => {
       console.error("Failed to copy: ", err);
     }
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const response = await dispatch(fetchHistory(address)).unwrap();
+        setData(response);
+      } catch (error) {
+        console.error("Error fetching performance data:", error);
+      }
+      setLoading(false);
+    };
+
+    if (address) {
+      fetchData();
+    }
+  }, [address, dispatch]);
 
   return (
     <React.Fragment>
