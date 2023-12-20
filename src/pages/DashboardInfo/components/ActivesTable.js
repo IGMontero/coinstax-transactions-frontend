@@ -234,24 +234,20 @@ const AcitvesTable = ({ data }) => {
                               {asset.value ? asset.prettyValue : "$0.00"}
                             </span>
                             <small
-                              className={`text-${
-                                asset.prettyDeltaValuePercent[0] === "-"
-                                  ? "danger"
-                                  : "success"
+                              className={`${
+                                asset.prettyDeltaValuePercent === "0.00%"
+                                  ? "text-primary"
+                                  : asset.prettyDeltaValuePercent[0] === "-"
+                                  ? "text-danger"
+                                  : "text-success"
                               }`}
                             >
-                              {asset.prettyDeltaValuePercent == "0.00%"
+                              {asset.prettyDeltaValuePercent === "0.00%"
                                 ? asset.prettyDeltaValuePercent
-                                : asset.prettyDeltaValuePercent[0] === "-"
-                                ? asset.prettyDeltaValuePercent
-                                : "+" + asset.prettyDeltaValuePercent}
-                              {" (" +
-                                // calculateAbsoluteChange(
-                                //   asset.value,
-                                //   asset.prettyDeltaValuePercent)
-                                "$" +
-                                asset.deltaValue.toFixed(2) +
-                                ")"}
+                                : (asset.prettyDeltaValuePercent[0] === "-"
+                                    ? ""
+                                    : "+") + asset.prettyDeltaValuePercent}
+                              {" (" + "$" + asset.deltaValue.toFixed(2) + ")"}
                             </small>
                           </div>
                         </td>

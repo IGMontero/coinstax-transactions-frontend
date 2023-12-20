@@ -71,20 +71,6 @@ const DashboardInfo = () => {
     setShowQrModal(!showQrModal);
   };
 
-  const fetchDataNFTS = () => {
-    setLoading(true);
-    dispatch(fetchNFTS(addressForSearch))
-      .unwrap()
-      .then((response) => {
-        setNftData(response);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching NFTs:", error);
-        setLoading(false);
-      });
-  };
-
   const fetchDataAssets = () => {
     dispatch(fetchAssets(addressForSearch))
       .unwrap()
@@ -107,7 +93,6 @@ const DashboardInfo = () => {
   useEffect(() => {
     if (addressForSearch) {
       fetchDataAssets();
-      fetchDataNFTS();
     }
   }, [addressForSearch, dispatch]);
 
@@ -515,14 +500,20 @@ const DashboardInfo = () => {
                     <TabPane tabId="2">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
-                          <Nfts data={nftData} />
+                          <Nfts
+                            activeTab={customActiveTab}
+                            address={addressForSearch}
+                          />
                         </div>
                       </div>
                     </TabPane>
                     <TabPane tabId="3">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
-                          <HistorialTable address={addressForSearch} />
+                          <HistorialTable
+                            activeTab={customActiveTab}
+                            address={addressForSearch}
+                          />
                         </div>
                       </div>
                     </TabPane>
