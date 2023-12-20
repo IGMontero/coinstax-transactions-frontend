@@ -246,8 +246,8 @@ const HistorialTable = ({ address }) => {
                       <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
                         {" "}
                         {transaction.blockchainAction == "RECEIVE"
-                          ? formatIdTransaction(transaction.sender)
-                          : formatIdTransaction(transaction.recipient)}
+                          ? formatIdTransaction(transaction.sender, 4, 4)
+                          : formatIdTransaction(transaction.recipient, 4, 4)}
                         <i className="ri-arrow-right-up-line fs-5 text-muted ms-1 "></i>
                       </h6>
                     </div>
@@ -289,7 +289,11 @@ const HistorialTable = ({ address }) => {
                               <div className="d-flex">
                                 <span className="ms-1d -flex align-items-center">
                                   {transaction.txHash
-                                    ? formatIdTransaction(transaction.txHash)
+                                    ? formatIdTransaction(
+                                        transaction.txHash,
+                                        4,
+                                        4
+                                      )
                                     : "0"}
                                   <i className="ri-arrow-right-up-line fs-6"></i>
                                 </span>
