@@ -41,6 +41,8 @@ const DashboardInfo = () => {
 
   const [addressTitle, setAddressTitle] = useState("");
 
+  const [isCopied, setIsCopied] = useState(false);
+
   const [searchInput, setSearchInput] = useState(
     "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6"
   );
@@ -117,6 +119,19 @@ const DashboardInfo = () => {
     }
   }, [series, title, subtitle]);
 
+  const handleCopy = async (e, text) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(null);
+      }, 2000);
+    } catch (err) {
+      console.error("Failed to copy: ", err);
+    }
+  };
+
   return (
     <React.Fragment>
       <Container fluid>
@@ -180,8 +195,15 @@ const DashboardInfo = () => {
                             <i className="ri-qr-code-line fs-2 me-2"></i>
                             <span className="fw-semibold">Show QR code</span>
                           </DropdownItem>
-                          <DropdownItem className="d-flex align-items-center">
-                            <i className="ri-file-copy-line fs-2 me-2"></i>{" "}
+                          <DropdownItem
+                            className="d-flex align-items-center"
+                            onClick={(e) => handleCopy(e, addressTitle)}
+                          >
+                            {isCopied ? (
+                              <i className="ri-check-line fs-2 me-2 "></i>
+                            ) : (
+                              <i className="ri-file-copy-line fs-2 me-2"></i>
+                            )}
                             <span className="fw-semibold">Copy direction</span>
                           </DropdownItem>
                         </DropdownMenu>
@@ -245,11 +267,11 @@ const DashboardInfo = () => {
                   </Col>
                 </Row>
               )}
-              <Row className="d-flex justify-content-center align-items-center  border-2 mb-3 mt-3 border-top">
+              <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
                 {" "}
                 <Col className="col-12 ">
                   <div
-                    className=" w-100 d-flex justify-content-between align-items-center "
+                    className=" w-100 ms-1 d-flex justify-content-between align-items-center   "
                     style={{
                       position: "sticky",
                       top: "70px",
@@ -257,7 +279,7 @@ const DashboardInfo = () => {
                       backdropFilter: "blur(5px)",
                     }}
                   >
-                    <Col xxl={6}>
+                    <Col xxl={6} className="">
                       <Nav
                         tabs
                         className="  nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
@@ -326,7 +348,7 @@ const DashboardInfo = () => {
                         <UncontrolledDropdown className="card-header-dropdown ">
                           <DropdownToggle
                             tag="a"
-                            className="btn btn-sm p-1 btn-primary d-flex align-items-center me-n2"
+                            className="btn btn-sm p-1 btn-primary d-flex align-items-center"
                             role="button"
                           >
                             <span className="ms-2 d-flex align-items-center">
