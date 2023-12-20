@@ -13,6 +13,15 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
     chart: {
       type: "line",
       height: 350,
+      toolbar: {
+        show: false,
+      },
+      zoom: {
+        enabled: false,
+      },
+      selection: {
+        enabled: false,
+      },
     },
     title: {
       text: "",
