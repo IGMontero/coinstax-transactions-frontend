@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Col,
   Row,
@@ -16,14 +16,37 @@ import {
   Spinner,
 } from "reactstrap";
 import eth from "../../../assets/images/svg/crypto-icons/eth.svg";
+import { useDispatch } from "react-redux";
+import { fetchNFTS } from "../../../slices/transactions/thunk";
 
-const Nfts = ({ data }) => {
+const Nfts = ({ address, activeTab }) => {
   // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
 
   const [loading, setLoading] = React.useState(false);
+  const dispatch = useDispatch();
 
   const inputRef = useRef(null);
 
+  const [data, setData] = React.useState([]);
+
+  useEffect(() => {
+    const fetchDataNFTS = () => {
+      setLoading(true);
+      dispatch(fetchNFTS(address))
+        .unwrap()
+        .then((response) => {
+          setData(response);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching NFTs:", error);
+          setLoading(false);
+        });
+    };
+    if (address && activeTab == "2") {
+      fetchDataNFTS();
+    }
+  }, [address, activeTab, dispatch]);
   return (
     <React.Fragment>
       <Col xxl={12}>

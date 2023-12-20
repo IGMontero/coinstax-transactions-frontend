@@ -13,7 +13,7 @@ import { formatIdTransaction, getActionMapping } from "../../../utils/utils";
 import { useDispatch } from "react-redux";
 import { fetchHistory } from "../../../slices/transactions/thunk";
 
-const HistorialTable = ({ address }) => {
+const HistorialTable = ({ address, activeTab }) => {
   const inputRef = useRef(null);
   const dispatch = useDispatch();
   const [openCollapse, setopenCollapse] = useState(new Set());
@@ -89,10 +89,10 @@ const HistorialTable = ({ address }) => {
       setLoading(false);
     };
 
-    if (address) {
+    if (address && activeTab === "3") {
       fetchData();
     }
-  }, [address, currentPage, dispatch]);
+  }, [address, activeTab, currentPage, dispatch]);
 
   useEffect(() => {
     const groupByDate = (transactions) => {
@@ -387,7 +387,7 @@ const HistorialTable = ({ address }) => {
           </Button>
         </Col>
       </Row>
-      <Col lg={12} className="position-relative">
+      <Col lg={12} className="position-relative" style={{ minHeight: "50vh" }}>
         {loading && (
           <div
             className="position-absolute d-flex justify-content-center align-items-center bg-transparent"
@@ -404,10 +404,12 @@ const HistorialTable = ({ address }) => {
           </div>
         )}
 
-        {groupedTransactions &&
-          Object.keys(groupedTransactions).map((date, index) =>
-            renderTransactionsGroupByDate(date, groupedTransactions[date])
-          )}
+        <div className="">
+          {groupedTransactions &&
+            Object.keys(groupedTransactions).map((date, index) =>
+              renderTransactionsGroupByDate(date, groupedTransactions[date])
+            )}
+        </div>
       </Col>
       {hasMoreData && (
         <Col>
