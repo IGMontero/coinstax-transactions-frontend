@@ -7,6 +7,7 @@ import {
   InputGroup,
   Collapse,
   CardBody,
+  Spinner,
 } from "reactstrap";
 import { formatIdTransaction, getActionMapping } from "../../../utils/utils";
 import { useDispatch } from "react-redux";
@@ -18,6 +19,10 @@ const HistorialTable = ({ address }) => {
   const [openCollapse, setopenCollapse] = useState(new Set());
   const [copiedIndex, setCopiedIndex] = useState(null);
   const [data, setData] = useState([]);
+
+  const [hasMoreData, setHasMoreData] = useState(true);
+
+  const [currentPage, setCurrentPage] = useState(0);
 
   const [loading, setLoading] = useState(false);
 
@@ -66,12 +71,18 @@ const HistorialTable = ({ address }) => {
       console.error("Failed to copy: ", err);
     }
   };
+
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await dispatch(fetchHistory(address)).unwrap();
-        setData(response);
+        const response = await dispatch(
+          fetchHistory({ address, count: 10, page: currentPage })
+        ).unwrap();
+        setData((prevData) => [...prevData, ...response]);
+        if (response.length < 10) {
+          setHasMoreData(false);
+        }
       } catch (error) {
         console.error("Error fetching performance data:", error);
       }
@@ -81,7 +92,7 @@ const HistorialTable = ({ address }) => {
     if (address) {
       fetchData();
     }
-  }, [address, dispatch]);
+  }, [address, currentPage, dispatch]);
 
   useEffect(() => {
     const groupByDate = (transactions) => {
@@ -104,13 +115,16 @@ const HistorialTable = ({ address }) => {
     if (!text) return text;
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
-
-  console.log(data);
+  const getMoreTransactions = () => {
+    setCurrentPage(currentPage + 1);
+  };
 
   const renderTransactionsGroupByDate = (date, transactions) => {
+    if (!transactions) {
+      return null;
+    }
     return (
       <React.Fragment>
-        {/* <h6 className="fw-semibold">{date}</h6> */}
         <Col
           lg={12}
           md={12}
@@ -186,35 +200,34 @@ const HistorialTable = ({ address }) => {
                     xs={3}
                     className="d-flex align-items-center "
                   >
-                    <img
-                      src={
-                        transaction.ledgers[0] &&
-                        transaction.ledgers[0].txInfo &&
-                        transaction.ledgers[0].txInfo.logo
-                          ? transaction.ledgers[0].txInfo.logo
-                          : ""
-                      }
-                      alt=""
-                      className="me-0"
-                      width={40}
-                      height={40}
-                    />
-                    <div className="d-flex flex-column text-center justify-content-end ms-2 ">
-                      <h6
-                        className={`fw-semibold my-0 ${
-                          transaction.ledgers[0].amount < 0
-                            ? "text-dark"
-                            : "text-success"
-                        }`}
-                      >
-                        {transaction.ledgers[0].amount > 0 ? "+" : ""}
-                        {formatNumber(transaction.ledgers[0].amount)}{" "}
-                        {transaction.ledgers[0].currency}
-                      </h6>
-                      <p className="text-start my-0">
-                        {transaction.price >= 0 ? "N/A" : transaction.price}
-                      </p>
-                    </div>
+                    {transaction.ledgers && transaction.ledgers.length > 0 && (
+                      <>
+                        <img
+                          src={transaction.ledgers[0].txInfo?.logo || ""}
+                          alt=""
+                          className="me-0"
+                          width={40}
+                          height={40}
+                        />
+                        <div className="d-flex flex-column text-center justify-content-end ms-2 ">
+                          <h6
+                            className={`fw-semibold my-0 ${
+                              transaction.ledgers[0].amount < 0
+                                ? "text-dark"
+                                : "text-success"
+                            }`}
+                            style={{ whiteSpace: "nowrap" }}
+                          >
+                            {transaction.ledgers[0].amount > 0 ? "+" : ""}
+                            {formatNumber(transaction.ledgers[0].amount)}{" "}
+                            {transaction.ledgers[0].currency}
+                          </h6>
+                          <p className="text-start my-0">
+                            {transaction.price >= 0 ? "N/A" : transaction.price}
+                          </p>
+                        </div>
+                      </>
+                    )}
                   </Col>
 
                   <Col
@@ -260,7 +273,7 @@ const HistorialTable = ({ address }) => {
                       openCollapse === index ? "border-info" : ""
                     }`}
                   >
-                    {/* cODIGO COMENTADO */}
+                    {/* CODE FOR LIST */}
 
                     <Col lg={12}>
                       <Row className="d-flex flex-row align-items-center">
@@ -374,21 +387,42 @@ const HistorialTable = ({ address }) => {
           </Button>
         </Col>
       </Row>
-      <Col lg={12}>
-        {Object.keys(groupedTransactions).map((date, index) =>
-          renderTransactionsGroupByDate(date, groupedTransactions[date])
-        )}
-      </Col>
-      <Col>
-        <div className="d-flex justify-content-center mt-2">
-          <Button
-            color="soft-light"
-            style={{ borderRadius: "10px", border: ".5px solid grey" }}
+      <Col lg={12} className="position-relative">
+        {loading && (
+          <div
+            className="position-absolute d-flex justify-content-center align-items-center bg-transparent"
+            style={{
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backdropFilter: "blur(5px)",
+              zIndex: 2,
+            }}
           >
-            <h6 className="text-dark fw-semibold my-2 ">More transactions</h6>
-          </Button>
-        </div>
+            <Spinner style={{ width: "3rem", height: "3rem" }} />
+          </div>
+        )}
+
+        {groupedTransactions &&
+          Object.keys(groupedTransactions).map((date, index) =>
+            renderTransactionsGroupByDate(date, groupedTransactions[date])
+          )}
       </Col>
+      {hasMoreData && (
+        <Col>
+          <div className="d-flex justify-content-center mt-2">
+            <Button
+              disabled={loading}
+              onClick={getMoreTransactions}
+              color="soft-light"
+              style={{ borderRadius: "10px", border: ".5px solid grey" }}
+            >
+              <h6 className="text-dark fw-semibold my-2 ">More transactions</h6>
+            </Button>
+          </div>
+        </Col>
+      )}
     </React.Fragment>
   );
 };

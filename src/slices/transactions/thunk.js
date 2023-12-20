@@ -59,10 +59,10 @@ export const fetchAssets = createAsyncThunk(
 
 export const fetchHistory = createAsyncThunk(
   "transactions/fetchHistory",
-  async (address, { rejectWithValue }) => {
+  async ({ address, count = 10, page = 0 }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}?count=10`
+        `${API_BASE}/transactions/eth-mainnet/${address}?count=${count}&page=${page}`
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
