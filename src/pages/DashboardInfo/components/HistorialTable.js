@@ -12,6 +12,7 @@ import {
 import { formatIdTransaction, getActionMapping } from "../../../utils/utils";
 import { useDispatch } from "react-redux";
 import { fetchHistory } from "../../../slices/transactions/thunk";
+import eth from "../../../assets/images/svg/crypto-icons/eth.svg";
 
 const HistorialTable = ({ address, activeTab }) => {
   const inputRef = useRef(null);
@@ -176,7 +177,7 @@ const HistorialTable = ({ address, activeTab }) => {
                   >
                     {transaction.blockchainAction && (
                       <span
-                        className={`rounded-circle align-items-center border me-3 d-flex justify-content-center border-${
+                        className={`rounded-circle position-relative align-items-center border me-3 d-flex justify-content-center border-${
                           getActionMapping(transaction.blockchainAction).color
                         } text-${
                           getActionMapping(transaction.blockchainAction).color
@@ -193,6 +194,17 @@ const HistorialTable = ({ address, activeTab }) => {
                             getActionMapping(transaction.blockchainAction).icon
                           } fs-2`}
                         ></i>
+                        <img
+                          src={eth}
+                          alt="Ethereum"
+                          className="position-absolute"
+                          style={{
+                            bottom: "-3px",
+                            right: "-2px",
+                            width: "15px",
+                            height: "15px",
+                          }}
+                        />
                       </span>
                     )}
 
