@@ -247,16 +247,29 @@ const DashboardInfo = () => {
               )}
               <Row className="d-flex justify-content-center align-items-center  border-2 mb-3 mt-3 border-top">
                 {" "}
-                <Col xxl={12}>
-                  <div className="d-flex justify-content-between">
+                <Col className="col-12">
+                  <div
+                    className=" w-100 d-flex justify-content-between align-items-center "
+                    style={{
+                      position: "sticky",
+                      top: "70px",
+                      zIndex: 5,
+                      backdropFilter: "blur(5px)",
+                    }}
+                  >
                     <Col xxl={6}>
                       <Nav
                         tabs
-                        className="nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3 border-bottom"
+                        className="  nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
                       >
                         <NavItem>
                           <NavLink
-                            style={{ cursor: "pointer" }}
+                            style={{
+                              cursor: "pointer",
+                              paddingTop: ".7rem",
+                              paddingBottom: ".7rem",
+                              fontWeight: "bold",
+                            }}
                             className={classnames({
                               active: customActiveTab === "1",
                             })}
@@ -269,7 +282,12 @@ const DashboardInfo = () => {
                         </NavItem>
                         <NavItem>
                           <NavLink
-                            style={{ cursor: "pointer" }}
+                            style={{
+                              cursor: "pointer",
+                              paddingTop: ".7rem",
+                              paddingBottom: ".7rem",
+                              fontWeight: "bold",
+                            }}
                             className={classnames({
                               active: customActiveTab === "2",
                             })}
@@ -282,7 +300,12 @@ const DashboardInfo = () => {
                         </NavItem>
                         <NavItem>
                           <NavLink
-                            style={{ cursor: "pointer" }}
+                            style={{
+                              cursor: "pointer",
+                              paddingTop: ".7rem",
+                              paddingBottom: ".7rem",
+                              fontWeight: "bold",
+                            }}
                             className={classnames({
                               active: customActiveTab === "3",
                             })}
@@ -299,7 +322,7 @@ const DashboardInfo = () => {
                       xxl={6}
                       className="d-flex justify-content-end align-items-center"
                     >
-                      <div className="d-flex justify-content-end align-items-center">
+                      <div className="d-flex justify-content-end align-items-center me-n2">
                         <UncontrolledDropdown className="card-header-dropdown">
                           <DropdownToggle
                             tag="a"
