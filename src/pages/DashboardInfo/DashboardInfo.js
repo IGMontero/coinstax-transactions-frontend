@@ -353,7 +353,7 @@ const DashboardInfo = () => {
                           >
                             <span className="ms-2 d-flex align-items-center">
                               {" "}
-                              <i className="ri-function-line text-light fs-4 me-2"></i>
+                              <i className="ri-function-line text-white fs-4 me-2"></i>
                               All Networks
                             </span>
                             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
