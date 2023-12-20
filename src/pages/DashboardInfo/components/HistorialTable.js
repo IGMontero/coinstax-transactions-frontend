@@ -123,9 +123,9 @@ const HistorialTable = ({ address, activeTab }) => {
       const response = await dispatch(
         fetchHistory({ address, count: 10, page: nextPage })
       ).unwrap();
-      setData((prevData) => [...prevData, ...response]); // Agregar los nuevos elementos a los datos existentes
-      setHasMoreData(response.length === 10); // Si hay menos de 10, no hay más datos
-      setCurrentPage(nextPage); // Actualizar la página actual solo después de una carga exitosa
+      setData((prevData) => [...prevData, ...response]);
+      setHasMoreData(response.length === 10);
+      setCurrentPage(nextPage);
     } catch (error) {
       console.error("Error fetching more transactions:", error);
     } finally {
