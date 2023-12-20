@@ -73,26 +73,27 @@ const HistorialTable = ({ address, activeTab }) => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const response = await dispatch(
-          fetchHistory({ address, count: 10, page: currentPage })
-        ).unwrap();
-        setData((prevData) => [...prevData, ...response]);
-        if (response.length < 10) {
-          setHasMoreData(false);
+    if (activeTab === "3") {
+      const fetchData = async () => {
+        setLoading(true);
+        try {
+          const response = await dispatch(
+            fetchHistory({ address, count: 10, page: 0 })
+          ).unwrap();
+          setData(response);
+          setHasMoreData(response.length === 10);
+        } catch (error) {
+          console.error("Error fetching performance data:", error);
+        } finally {
+          setLoading(false);
         }
-      } catch (error) {
-        console.error("Error fetching performance data:", error);
-      }
-      setLoading(false);
-    };
+      };
 
-    if (address && activeTab === "3") {
       fetchData();
     }
-  }, [address, activeTab, currentPage, dispatch]);
+    setCurrentPage(0);
+    setHasMoreData(true);
+  }, [address, activeTab, dispatch]);
 
   useEffect(() => {
     const groupByDate = (transactions) => {
@@ -115,8 +116,21 @@ const HistorialTable = ({ address, activeTab }) => {
     if (!text) return text;
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
-  const getMoreTransactions = () => {
-    setCurrentPage(currentPage + 1);
+  const getMoreTransactions = async () => {
+    setLoading(true);
+    try {
+      const nextPage = currentPage + 1;
+      const response = await dispatch(
+        fetchHistory({ address, count: 10, page: nextPage })
+      ).unwrap();
+      setData((prevData) => [...prevData, ...response]); // Agregar los nuevos elementos a los datos existentes
+      setHasMoreData(response.length === 10); // Si hay menos de 10, no hay más datos
+      setCurrentPage(nextPage); // Actualizar la página actual solo después de una carga exitosa
+    } catch (error) {
+      console.error("Error fetching more transactions:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderTransactionsGroupByDate = (date, transactions) => {
