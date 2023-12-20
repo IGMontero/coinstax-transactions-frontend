@@ -13,6 +13,8 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
     chart: {
       type: "line",
       height: 350,
+      maxWidth: "100%",
+      minWidth: "100%",
       toolbar: {
         show: false,
       },
