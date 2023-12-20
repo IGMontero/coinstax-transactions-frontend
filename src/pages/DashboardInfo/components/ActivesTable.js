@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Badge,
   Button,
@@ -7,10 +7,9 @@ import {
   DropdownMenu,
   DropdownToggle,
   Spinner,
-  UncontrolledDropdown,
 } from "reactstrap";
-import { Link } from "react-router-dom";
 import eth from "../../../assets/images/svg/crypto-icons/eth.svg";
+
 const AcitvesTable = ({ data }) => {
   // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
 
@@ -68,24 +67,6 @@ const AcitvesTable = ({ data }) => {
 
   const handleShowMenu = (e) => {
     setShowMenu(!showMenu);
-  };
-
-  const calculateAbsoluteChange = (value, deltaPercent) => {
-    // Elimina el signo de porcentaje y convierte a número
-    const numericPercent = parseFloat(deltaPercent.replace("%", ""));
-
-    // Verifica si el valor es NaN o 0
-    if (isNaN(numericPercent) || numericPercent === 0) {
-      return "$0.00";
-    }
-
-    // Calcula el cambio absoluto y formatea a dólares
-    const absoluteChange = value * (numericPercent / 100);
-    return (
-      (numericPercent > 0 ? "+" : "") +
-      "$" +
-      Math.abs(absoluteChange).toFixed(2)
-    );
   };
 
   return (

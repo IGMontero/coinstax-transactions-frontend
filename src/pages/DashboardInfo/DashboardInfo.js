@@ -33,6 +33,7 @@ import DashboardHome from "../DashboardHome/DashboardHome";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { formatIdTransaction } from "../../utils/utils";
+import QrModal from "./modals/QrModal";
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -58,10 +59,16 @@ const DashboardInfo = () => {
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
 
+  const [showQrModal, setShowQrModal] = useState(false);
+
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
       setcustomActiveTab(tab);
     }
+  };
+
+  const toggleQrModal = () => {
+    setShowQrModal(!showQrModal);
   };
 
   const fetchDataNFTS = () => {
@@ -134,6 +141,11 @@ const DashboardInfo = () => {
 
   return (
     <React.Fragment>
+      <QrModal
+        showQrModal={showQrModal}
+        toggleQrModal={toggleQrModal}
+        addressTitle={addressTitle}
+      />
       <Container fluid>
         <div className="page-content pb-5">
           <Row className="py-3">
@@ -190,7 +202,10 @@ const DashboardInfo = () => {
                           <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
                         </DropdownToggle>
                         <DropdownMenu className="dropdown-menu-end ms-3">
-                          <DropdownItem className="d-flex align-items-center">
+                          <DropdownItem
+                            className="d-flex align-items-center"
+                            onClick={toggleQrModal}
+                          >
                             {" "}
                             <i className="ri-qr-code-line fs-2 me-2"></i>
                             <span className="fw-semibold">Show QR code</span>
