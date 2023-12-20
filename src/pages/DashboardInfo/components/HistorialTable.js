@@ -196,9 +196,10 @@ const HistorialTable = ({ address, activeTab }) => {
                   <Col
                     lg={3}
                     md={3}
-                    sm={6}
-                    xs={3}
+                    sm={8}
+                    xs={7}
                     className="d-flex align-items-center "
+                    style={{ overflow: "hidden" }}
                   >
                     {transaction.ledgers && transaction.ledgers.length > 0 && (
                       <>
@@ -245,8 +246,8 @@ const HistorialTable = ({ address, activeTab }) => {
                   <Col
                     lg={3}
                     md={3}
-                    sm={6}
-                    xs={9}
+                    sm={4}
+                    xs={5}
                     className="d-flex justify-content-end align-items-center  "
                   >
                     <div className="d-flex flex-column text-start justify-content-end  me-3">
