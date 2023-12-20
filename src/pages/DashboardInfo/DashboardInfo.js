@@ -28,14 +28,10 @@ import arb from "../../assets/images/svg/crypto-icons/ankr.svg";
 import pol from "../../assets/images/svg/crypto-icons/poly.svg";
 import gnosis from "../../assets/images/svg/crypto-icons/gno.svg";
 
-import {
-  fetchAssets,
-  fetchNFTS,
-  fetchHistory,
-} from "../../slices/transactions/thunk";
+import { fetchAssets, fetchNFTS } from "../../slices/transactions/thunk";
 import DashboardHome from "../DashboardHome/DashboardHome";
 import { useDispatch } from "react-redux";
-import { Routes, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { formatIdTransaction } from "../../utils/utils";
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -169,7 +165,7 @@ const DashboardInfo = () => {
                     order="1"
                   >
                     <div className="d-flex flex-row">
-                      <h4>{formatIdTransaction(addressTitle)}</h4>
+                      <h4>{formatIdTransaction(addressTitle, 6, 8)}</h4>
                       <UncontrolledDropdown className="card-header-dropdown">
                         <DropdownToggle
                           tag="a"
@@ -237,7 +233,7 @@ const DashboardInfo = () => {
                       xxl: "2",
                     }}
                   >
-                    <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
+                    {/* <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
                       <i className="ri-share-forward-fill text-dark fs-4 p-1"></i>
                     </Button>
                     <Button className="rounded-circle bg-transparent border-1 mx-3 border-dark btn btn-sm">
@@ -245,7 +241,7 @@ const DashboardInfo = () => {
                     </Button>
                     <Button color="primary" className="btn btn-sm">
                       Add wallet
-                    </Button>
+                    </Button> */}
                   </Col>
                 </Row>
               )}

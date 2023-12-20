@@ -13,11 +13,7 @@ export const getActionMapping = (action) => {
   }
 };
 
-export const formatIdTransaction = (
-  address,
-  prefixLength = 4,
-  suffixLength = 4
-) => {
+export const formatIdTransaction = (address, prefixLength, suffixLength) => {
   if (!address || typeof address !== "string") {
     return null;
   }
