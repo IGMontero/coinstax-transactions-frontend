@@ -70,6 +70,24 @@ const AcitvesTable = ({ data }) => {
     setShowMenu(!showMenu);
   };
 
+  const calculateAbsoluteChange = (value, deltaPercent) => {
+    // Elimina el signo de porcentaje y convierte a número
+    const numericPercent = parseFloat(deltaPercent.replace("%", ""));
+
+    // Verifica si el valor es NaN o 0
+    if (isNaN(numericPercent) || numericPercent === 0) {
+      return "$0.00";
+    }
+
+    // Calcula el cambio absoluto y formatea a dólares
+    const absoluteChange = value * (numericPercent / 100);
+    return (
+      (numericPercent > 0 ? "+" : "") +
+      "$" +
+      Math.abs(absoluteChange).toFixed(2)
+    );
+  };
+
   return (
     <React.Fragment>
       <div className="mb-3">
@@ -230,9 +248,31 @@ const AcitvesTable = ({ data }) => {
                           )}
                         </td>
                         <td>
-                          {asset.value
-                            ? "$" + formatPriceAndValue(asset.value)
-                            : "$0.00"}
+                          <div className="d-flex flex-column align-items-center">
+                            <span>
+                              {asset.value ? asset.prettyValue : "$0.00"}
+                            </span>
+                            <small
+                              className={`text-${
+                                asset.prettyDeltaValuePercent[0] === "-"
+                                  ? "danger"
+                                  : "success"
+                              }`}
+                            >
+                              {asset.prettyDeltaValuePercent == "0.00%"
+                                ? asset.prettyDeltaValuePercent
+                                : asset.prettyDeltaValuePercent[0] === "-"
+                                ? asset.prettyDeltaValuePercent
+                                : "+" + asset.prettyDeltaValuePercent}
+                              {" (" +
+                                // calculateAbsoluteChange(
+                                //   asset.value,
+                                //   asset.prettyDeltaValuePercent)
+                                "$" +
+                                asset.deltaValue.toFixed(2) +
+                                ")"}
+                            </small>
+                          </div>
                         </td>
                       </tr>
                     ))}

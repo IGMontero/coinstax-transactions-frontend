@@ -247,7 +247,7 @@ const DashboardInfo = () => {
               )}
               <Row className="d-flex justify-content-center align-items-center  border-2 mb-3 mt-3 border-top">
                 {" "}
-                <Col className="col-12">
+                <Col className="col-12 ">
                   <div
                     className=" w-100 d-flex justify-content-between align-items-center "
                     style={{
@@ -322,16 +322,16 @@ const DashboardInfo = () => {
                       xxl={6}
                       className="d-flex justify-content-end align-items-center"
                     >
-                      <div className="d-flex justify-content-end align-items-center me-n2">
-                        <UncontrolledDropdown className="card-header-dropdown">
+                      <div className="d-flex justify-content-end align-items-center">
+                        <UncontrolledDropdown className="card-header-dropdown ">
                           <DropdownToggle
                             tag="a"
-                            className="btn btn-sm p-1 btn-soft-primary d-flex align-items-center"
+                            className="btn btn-sm p-1 btn-primary d-flex align-items-center me-n2"
                             role="button"
                           >
                             <span className="ms-2 d-flex align-items-center">
                               {" "}
-                              <i className="ri-function-line text-primary fs-4 me-2"></i>
+                              <i className="ri-function-line text-light fs-4 me-2"></i>
                               All Networks
                             </span>
                             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
