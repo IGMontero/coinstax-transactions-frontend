@@ -200,7 +200,7 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
               1Y
             </button>
             <button
-              onClick={() => handleFilterForDays(null, "all")}
+              onClick={() => handleFilterForDays(10000, "all")}
               type="button"
               className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
                 activeFilter === "all" ? "active" : ""

@@ -105,6 +105,8 @@ const HistorialTable = ({ address }) => {
     return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
   }
 
+  console.log(data);
+
   const renderTransactionsGroupByDate = (date, transactions) => {
     return (
       <React.Fragment>
@@ -234,18 +236,19 @@ const HistorialTable = ({ address }) => {
                     xs={9}
                     className="d-flex justify-content-end align-items-center  "
                   >
-                    <div className="d-flex flex-column text-start justify-content-end me-3">
+                    <div className="d-flex flex-column text-start justify-content-end  me-3">
                       <p className="text-start my-0">
                         {" "}
                         {transaction.blockchainAction == "RECEIVE"
                           ? "From"
                           : "To"}
                       </p>
-                      <h6 className="fw-semibold my-0 text-start">
+                      <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
                         {" "}
                         {transaction.blockchainAction == "RECEIVE"
                           ? formatIdTransaction(transaction.sender)
                           : formatIdTransaction(transaction.recipient)}
+                        <i className="ri-arrow-right-up-line fs-5 text-muted ms-1 "></i>
                       </h6>
                     </div>
                   </Col>

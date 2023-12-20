@@ -24,6 +24,8 @@ const Nfts = ({ data }) => {
 
   const inputRef = useRef(null);
 
+  console.log(data);
+
   return (
     <React.Fragment>
       <Col xxl={12}>
@@ -192,8 +194,8 @@ const Nfts = ({ data }) => {
                         <h5 className="text-dark">{nft.name}</h5>
                         <span>Floor Price</span>
                         <h6 className="text-dark">
-                          {nft.pretty_floor_price_quote
-                            ? nft.pretty_floor_price_quote
+                          {nft.prettyFloorPrice
+                            ? nft.prettyFloorPrice
                             : "$0.00"}
                         </h6>
                       </div>
