@@ -8,7 +8,7 @@ import {
   useFilters,
   useExpanded,
   usePagination,
-  useRowSelect
+  useRowSelect,
 } from "react-table";
 import { Table, Row, Col, Button, Input, CardBody } from "reactstrap";
 import { DefaultColumnFilter } from "./filters";
@@ -23,7 +23,7 @@ import {
   InvoiceListGlobalSearch,
   TicketsListGlobalFilter,
   NFTRankingGlobalFilter,
-  TaskListGlobalFilter
+  TaskListGlobalFilter,
 } from "../../Components/Common/GlobalSearchFilter";
 
 // Define a default UI for filtering
@@ -41,7 +41,7 @@ function GlobalFilter({
   isNFTRankingFilter,
   isTaskListFilter,
   isProductsFilter,
-  isLeadsFilter
+  isLeadsFilter,
 }) {
   const count = preGlobalFilteredRows.length;
   const [value, setValue] = React.useState(globalFilter);
@@ -55,7 +55,16 @@ function GlobalFilter({
         <form>
           <Row className="g-3">
             <Col>
-              <div className={(isProductsFilter || isContactsFilter || isCompaniesFilter || isNFTRankingFilter) ? "search-box me-2 mb-2 d-inline-block" : "search-box me-2 mb-2 d-inline-block col-12"}>
+              <div
+                className={
+                  isProductsFilter ||
+                  isContactsFilter ||
+                  isCompaniesFilter ||
+                  isNFTRankingFilter
+                    ? "search-box me-2 mb-2 d-inline-block"
+                    : "search-box me-2 mb-2 d-inline-block col-12"
+                }
+              >
                 <input
                   onChange={(e) => {
                     setValue(e.target.value);
@@ -70,47 +79,23 @@ function GlobalFilter({
                 <i className="bx bx-search-alt search-icon"></i>
               </div>
             </Col>
-            {isProductsFilter && (
-              <ProductsGlobalFilter />
-            )}
-            {isCustomerFilter && (
-              <CustomersGlobalFilter />
-            )}
-            {isOrderFilter && (
-              <OrderGlobalFilter />
-            )}
-            {isContactsFilter && (
-              <ContactsGlobalFilter />
-            )}
-            {isCompaniesFilter && (
-              <CompaniesGlobalFilter />
-            )}
-            {isLeadsFilter && (
-              <LeadsGlobalFilter />
-            )}
-            {isCryptoOrdersFilter && (
-              <CryptoOrdersGlobalFilter />
-            )}
-            {isInvoiceListFilter && (
-              <InvoiceListGlobalSearch />
-            )}
-            {isTicketsListFilter && (
-              <TicketsListGlobalFilter />
-            )}
-            {isNFTRankingFilter && (
-              <NFTRankingGlobalFilter />
-            )}
-            {isTaskListFilter && (
-              <TaskListGlobalFilter />
-            )}
+            {isProductsFilter && <ProductsGlobalFilter />}
+            {isCustomerFilter && <CustomersGlobalFilter />}
+            {isOrderFilter && <OrderGlobalFilter />}
+            {isContactsFilter && <ContactsGlobalFilter />}
+            {isCompaniesFilter && <CompaniesGlobalFilter />}
+            {isLeadsFilter && <LeadsGlobalFilter />}
+            {isCryptoOrdersFilter && <CryptoOrdersGlobalFilter />}
+            {isInvoiceListFilter && <InvoiceListGlobalSearch />}
+            {isTicketsListFilter && <TicketsListGlobalFilter />}
+            {isNFTRankingFilter && <NFTRankingGlobalFilter />}
+            {isTaskListFilter && <TaskListGlobalFilter />}
           </Row>
         </form>
       </CardBody>
-
     </React.Fragment>
   );
 }
-
 
 const TableContainer = ({
   columns,
@@ -164,7 +149,10 @@ const TableContainer = ({
       data,
       defaultColumn: { Filter: DefaultColumnFilter },
       initialState: {
-        pageIndex: 0, pageSize: customPageSize, selectedRowIds: 0, sortBy: [
+        pageIndex: 0,
+        pageSize: customPageSize,
+        selectedRowIds: 0,
+        sortBy: [
           {
             desc: true,
           },
@@ -274,14 +262,21 @@ const TableContainer = ({
         )}
       </Row>
 
-
       <div className={divClass}>
         <Table hover {...getTableProps()} className={tableClass}>
           <thead className={theadClass}>
             {headerGroups.map((headerGroup) => (
-              <tr className={trClass} key={headerGroup.id}  {...headerGroup.getHeaderGroupProps()}>
+              <tr
+                className={trClass}
+                key={headerGroup.id}
+                {...headerGroup.getHeaderGroupProps()}
+              >
                 {headerGroup.headers.map((column) => (
-                  <th key={column.id} className={thClass} {...column.getSortByToggleProps()}>
+                  <th
+                    key={column.id}
+                    className={thClass}
+                    {...column.getSortByToggleProps()}
+                  >
                     {column.render("Header")}
                     {generateSortingIndicator(column)}
                     {/* <Filter column={column} /> */}
@@ -312,7 +307,7 @@ const TableContainer = ({
         </Table>
       </div>
 
-      <Row className="justify-content-md-end justify-content-center align-items-center p-2">
+      {/* <Row className="justify-content-md-end justify-content-center align-items-center p-2">
         <Col className="col-md-auto">
           <div className="d-flex gap-1">
             <Button
@@ -348,7 +343,7 @@ const TableContainer = ({
             </Button>
           </div>
         </Col>
-      </Row>
+      </Row> */}
     </Fragment>
   );
 };

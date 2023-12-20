@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   Col,
   Row,
@@ -13,19 +13,46 @@ import {
   Card,
   CardHeader,
   CardBody,
+  Spinner,
 } from "reactstrap";
-import { fakeTransactions } from "../../../helpers/Fake-transactions/faketransactions";
+import eth from "../../../assets/images/svg/crypto-icons/eth.svg";
+import { useDispatch } from "react-redux";
+import { fetchNFTS } from "../../../slices/transactions/thunk";
 
-const Nfts = () => {
+const Nfts = ({ address, activeTab }) => {
+  // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
+
+  const [loading, setLoading] = React.useState(false);
+  const dispatch = useDispatch();
+
   const inputRef = useRef(null);
+
+  const [data, setData] = React.useState([]);
+
+  useEffect(() => {
+    const fetchDataNFTS = () => {
+      setLoading(true);
+      dispatch(fetchNFTS(address))
+        .unwrap()
+        .then((response) => {
+          setData(response);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching NFTs:", error);
+          setLoading(false);
+        });
+    };
+    if (address && activeTab == "2") {
+      fetchDataNFTS();
+    }
+  }, [address, activeTab, dispatch]);
   return (
     <React.Fragment>
       <Col xxl={12}>
         <span className="text-dark">Total value by floor price</span>
 
-        <h1>
-          $ 12,724<span className="text-muted">.21</span>
-        </h1>
+        <h1>${data?.totalValue?.toFixed(2)}</h1>
       </Col>
       <Row>
         <Col xxl={12} className="d-flex justify-content-between flex-row mt-4">
@@ -134,38 +161,77 @@ const Nfts = () => {
           </Col>
         </Col>
       </Row>
-      <Col xxl={12} className="mt-4">
-        <Row>
-          {fakeTransactions.map((transaction, index) => (
-            <Col xxl={3} lg={4} md={4} sm={12} xs={12}>
-              <Card
-                className="border-2 border bg-transparent shadow-none "
-                style={{ height: "350px" }}
-              >
-                <CardHeader className="border-0 border bg-transparent p-2">
-                  <img
-                    src={transaction.img3}
-                    alt=""
-                    className="img-fluid rounded w-100"
-                    style={{ minHeight: "200px", height: "200px" }}
-                  />
-                </CardHeader>
-                <CardBody>
-                  <div className="d-flex flex-column">
-                    <span className="text-muted">{transaction.hour}</span>
-                    <h5 className="text-dark">{transaction.action}</h5>
-                  </div>
+      {loading ? (
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "50vh" }}
+        >
+          <Spinner style={{ width: "4rem", height: "4rem" }} />
+        </div>
+      ) : (
+        <Col xxl={12} className="mt-4">
+          <Row>
+            {data.items &&
+              data?.items.map((nft, index) => (
+                <Col xxl={3} lg={6} md={6} sm={6} xs={12} key={index}>
+                  <Card
+                    className="border-2 border bg-transparent shadow-none "
+                    style={{
+                      height: "350px",
+                      minWidth: "225px",
+                      maxWidth: "225px",
+                    }}
+                  >
+                    <CardHeader className="border-0 bg-transparent p-2">
+                      <div style={{ position: "relative", minHeight: "200px" }}>
+                        {" "}
+                        <img
+                          src={nft.logo}
+                          alt=""
+                          className="img-fluid w-100"
+                          style={{
+                            position: "relative",
+                            height: "200px",
+                            borderRadius: "7px",
+                          }}
+                        />
+                        <img
+                          src={eth}
+                          alt=""
+                          className="img-fluid d-flex justify-content-start border-dark border border-circle border-1 shadow-md rounded-circle"
+                          style={{
+                            position: "absolute",
+                            bottom: "5%",
+                            left: "5%",
+                            width: "10%",
+                            height: "10%",
+                          }}
+                        />
+                      </div>
+                    </CardHeader>
+                    <CardBody>
+                      <div className="d-flex flex-column">
+                        <span className="text-dark">{nft.domain}</span>
+                        <h5 className="text-dark">{nft.name}</h5>
+                        <span>Floor Price</span>
+                        <h6 className="text-dark">
+                          {nft.prettyFloorPrice
+                            ? nft.prettyFloorPrice
+                            : "$0.00"}
+                        </h6>
+                      </div>
 
-                  <div className="d-flex flex-column">
-                    <span className="text-muted">{transaction.date}</span>
-                    <h5 className="text-dark">{transaction.info}</h5>
-                  </div>
-                </CardBody>
-              </Card>
-            </Col>
-          ))}
-        </Row>
-      </Col>
+                      {/* <div className="d-flex flex-column">
+                    <span className="text-muted">{nft.date}</span>
+                    <h5 className="text-dark">{nft.info}</h5>
+                  </div> */}
+                    </CardBody>
+                  </Card>
+                </Col>
+              ))}
+          </Row>
+        </Col>
+      )}
     </React.Fragment>
   );
 };

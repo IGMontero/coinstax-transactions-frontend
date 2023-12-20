@@ -57,15 +57,15 @@
     fill: $white !important;
 }
 
-.apexcharts-title-text, .apexcharts-subtitle-text{
-    fill: $gray-500;
-}
+// .apexcharts-title-text, .apexcharts-subtitle-text{
+//     fill: $gray-500;
+// }
 
 .apexcharts-yaxis,
 .apexcharts-xaxis {
     text {
         font-family: $font-family-base !important;
-        fill: $gray-500;
+        // fill: $gray-500;
     }
 }
 
