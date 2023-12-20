@@ -16,6 +16,7 @@ import DashboardInfo from "../pages/DashboardInfo/DashboardInfo";
 
 const authProtectedRoutes = [
   { path: "/dashboard", component: <DashboardInfo /> },
+  { path: "/address/:address", component: <DashboardInfo /> },
   { path: "/index", component: <DashboardEcommerce /> },
 
   //User Profile
