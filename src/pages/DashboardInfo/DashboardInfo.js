@@ -107,7 +107,7 @@ const DashboardInfo = () => {
       const firstPointValue = series[0].data[0].y;
       setTitle(`$${firstPointValue.toLocaleString()}`);
       const lastPointValue = series[0].data[series[0].data.length - 1].y;
-      const change = lastPointValue - firstPointValue;
+      const change = firstPointValue - lastPointValue;
       const changePercentage = (change / firstPointValue) * 100;
 
       const sign = changePercentage >= 0 ? "+" : "";
@@ -212,7 +212,7 @@ const DashboardInfo = () => {
                     </div>
                     <h5
                       className={`mt-0 text-${
-                        subtitle <= 0 ? "danger" : "success"
+                        subtitle[0] == "+" ? "success" : "danger"
                       }`}
                     >
                       {subtitle}
