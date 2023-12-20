@@ -29,7 +29,7 @@ const Nfts = ({ data }) => {
       <Col xxl={12}>
         <span className="text-dark">Total value by floor price</span>
 
-        <h1>${data.totalValue.toFixed(2)}</h1>
+        <h1>${data?.totalValue?.toFixed(2)}</h1>
       </Col>
       <Row>
         <Col xxl={12} className="d-flex justify-content-between flex-row mt-4">
