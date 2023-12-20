@@ -32,11 +32,9 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
       offsetX: 0,
       offsetY: 0,
       floating: false,
-      fill: "light",
       style: {
         fontSize: "36px",
         fontWeight: "semibold",
-        fill: `light`,
       },
     },
     subtitle: {
@@ -142,6 +140,7 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
             text: title,
             style: {
               ...prevOptions.title.style,
+              color: "#878a99",
             },
           },
           subtitle: {
