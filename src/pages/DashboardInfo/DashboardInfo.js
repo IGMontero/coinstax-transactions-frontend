@@ -45,7 +45,9 @@ const DashboardInfo = () => {
 
   const [addressTitle, setAddressTitle] = useState("");
 
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState(
+    "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6"
+  );
   const [addressForSearch, setAddressForSearch] = useState("");
 
   const [nftData, setNftData] = React.useState([]);
@@ -130,10 +132,7 @@ const DashboardInfo = () => {
                   <Input
                     className="form-control py-2 rounded"
                     placeholder="Assets, wallet, domain, or identify"
-                    value={
-                      searchInput ||
-                      "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6"
-                    }
+                    value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                   />
                   <Button
