@@ -149,7 +149,7 @@ const AcitvesTable = ({ data }) => {
 
           <table className="table table-borderless ">
             <thead>
-              <tr className="text-muted">
+              <tr className="text-muted ">
                 <th scope="col">ASSETS</th>
                 <th scope="col">PRICE</th>
                 <th scope="col">BALANCE</th>
@@ -229,7 +229,7 @@ const AcitvesTable = ({ data }) => {
                           )}
                         </td>
                         <td>
-                          <div className="d-flex flex-column align-items-center">
+                          <div className="d-flex flex-column align-items-start">
                             <span>
                               {asset.value ? asset.prettyValue : "$0.00"}
                             </span>

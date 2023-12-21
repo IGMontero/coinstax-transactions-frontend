@@ -27,6 +27,8 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const [loading, setLoading] = useState(false);
 
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
   const [groupedTransactions, setGroupedTransactions] = useState({});
 
   const toggleCollapse = (id) => {
@@ -86,6 +88,7 @@ const HistorialTable = ({ address, activeTab }) => {
         } catch (error) {
           console.error("Error fetching performance data:", error);
         } finally {
+          setIsInitialLoad(false);
           setLoading(false);
         }
       };
@@ -415,7 +418,7 @@ const HistorialTable = ({ address, activeTab }) => {
         </Col>
       </Row>
       <Col lg={12} className="position-relative" style={{ minHeight: "50vh" }}>
-        {loading && (
+        {loading && isInitialLoad && (
           <div
             className="position-absolute d-flex justify-content-center align-items-center bg-transparent"
             style={{
@@ -447,7 +450,13 @@ const HistorialTable = ({ address, activeTab }) => {
               color="soft-light"
               style={{ borderRadius: "10px", border: ".5px solid grey" }}
             >
-              <h6 className="text-dark fw-semibold my-2 ">More transactions</h6>
+              {loading && !isInitialLoad ? (
+                <Spinner size="sm" />
+              ) : (
+                <h6 className="text-dark fw-semibold my-2">
+                  More transactions
+                </h6>
+              )}
             </Button>
           </div>
         </Col>
