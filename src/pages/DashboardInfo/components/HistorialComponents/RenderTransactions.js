@@ -3,6 +3,7 @@ import { formatIdTransaction, getActionMapping } from "../../../../utils/utils";
 import { Col, Row, Collapse, CardBody } from "reactstrap";
 
 import eth from "../../../../assets/images/svg/crypto-icons/eth.svg";
+import assetsIcon from "../../../../assets/images/svg/assets.svg";
 import ListTransactions from "./ListTransactions";
 
 const RenderTransactions = ({ date, transactions }) => {
@@ -157,8 +158,8 @@ const RenderTransactions = ({ date, transactions }) => {
                           src={transaction.ledgers[0].txInfo?.logo || ""}
                           alt=""
                           className="me-0"
-                          width={40}
-                          height={40}
+                          width={35}
+                          height={35}
                         />
                         <div className="d-flex flex-column text-center justify-content-end ms-2 ">
                           <h6
@@ -191,16 +192,16 @@ const RenderTransactions = ({ date, transactions }) => {
                     (transaction.blockchainAction === ACTION_WITHDRAW ||
                       transaction.blockchainAction === ACTION_TRADE) && (
                       <div className="d-flex align-items-center">
-                        <i className="ri-arrow-right-line text-end fs-4 me-1"></i>
+                        <i className="ri-arrow-right-line text-dark text-end fs-4 me-1"></i>
                         <h6 className="fw-semibold my-0 d-flex align-items-center justify-content-center">
                           {transaction.ledgers.length - 2 === 1 ? (
                             <>
                               <img
                                 src={transaction.ledgers[0].txInfo?.logo}
                                 alt={transaction.ledgers[0].txInfo?.name}
-                                className="me-1"
-                                width={35}
-                                height={35}
+                                className="me-2"
+                                width={40}
+                                height={40}
                               />
                               <div className="d-flex flex-column">
                                 {formatNumber(transaction.ledgers[0].amount)}{" "}
@@ -213,7 +214,20 @@ const RenderTransactions = ({ date, transactions }) => {
                               </div>
                             </>
                           ) : (
-                            `${transaction.ledgers.length - 2} Assets`
+                            <>
+                              <div className="bg-primary rounded-circle align-items-center justify-content-center d-flex">
+                                <img
+                                  src={assetsIcon}
+                                  alt=""
+                                  className="p-1"
+                                  width={35}
+                                  height={35}
+                                />
+                              </div>
+                              <div className="ms-2 ">
+                                {transaction.ledgers.length - 2} Assets
+                              </div>
+                            </>
                           )}
                         </h6>
                       </div>

@@ -107,7 +107,6 @@ const HistorialTable = ({ address, activeTab }) => {
       setLoading(false);
     }
   };
-  console.log(data);
   return (
     <React.Fragment>
       <Row>
