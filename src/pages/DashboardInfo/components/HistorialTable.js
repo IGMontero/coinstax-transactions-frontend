@@ -141,6 +141,8 @@ const HistorialTable = ({ address, activeTab }) => {
     if (!transactions) {
       return null;
     }
+
+    console.log(data);
     return (
       <React.Fragment>
         <Col
@@ -230,34 +232,38 @@ const HistorialTable = ({ address, activeTab }) => {
                     className="d-flex align-items-center "
                     style={{ overflow: "hidden" }}
                   >
-                    {transaction.ledgers && transaction.ledgers.length > 0 && (
-                      <>
-                        <img
-                          src={transaction.ledgers[0].txInfo?.logo || ""}
-                          alt=""
-                          className="me-0"
-                          width={40}
-                          height={40}
-                        />
-                        <div className="d-flex flex-column text-center justify-content-end ms-2 ">
-                          <h6
-                            className={`fw-semibold my-0 ${
-                              transaction.ledgers[0].amount < 0
-                                ? "text-dark"
-                                : "text-success"
-                            }`}
-                            style={{ whiteSpace: "nowrap" }}
-                          >
-                            {transaction.ledgers[0].amount > 0 ? "+" : ""}
-                            {formatNumber(transaction.ledgers[0].amount)}{" "}
-                            {transaction.ledgers[0].currency}
-                          </h6>
-                          <p className="text-start my-0">
-                            {transaction.price >= 0 ? "N/A" : transaction.price}
-                          </p>
-                        </div>
-                      </>
-                    )}
+                    {transaction.ledgers &&
+                      transaction.ledgers.length > 0 &&
+                      transaction.blockchainAction !== "EXECUTE" && (
+                        <>
+                          <img
+                            src={transaction.ledgers[0].txInfo?.logo || ""}
+                            alt=""
+                            className="me-0"
+                            width={40}
+                            height={40}
+                          />
+                          <div className="d-flex flex-column text-center justify-content-end ms-2 ">
+                            <h6
+                              className={`fw-semibold my-0 ${
+                                transaction.ledgers[0].amount < 0
+                                  ? "text-dark"
+                                  : "text-success"
+                              }`}
+                              style={{ whiteSpace: "nowrap" }}
+                            >
+                              {transaction.ledgers[0].amount > 0 ? "+" : ""}
+                              {formatNumber(transaction.ledgers[0].amount)}{" "}
+                              {transaction.ledgers[0].currency}
+                            </h6>
+                            <p className="text-start my-0">
+                              {transaction.price >= 0
+                                ? "N/A"
+                                : transaction.price}
+                            </p>
+                          </div>
+                        </>
+                      )}
                   </Col>
 
                   <Col
@@ -282,8 +288,10 @@ const HistorialTable = ({ address, activeTab }) => {
                     <div className="d-flex flex-column text-start justify-content-end  me-3">
                       <p className="text-start my-0">
                         {" "}
-                        {transaction.blockchainAction == "RECEIVE"
+                        {transaction.blockchainAction === "RECEIVE"
                           ? "From"
+                          : transaction.blockchainAction === "EXECUTE"
+                          ? "Application"
                           : "To"}
                       </p>
                       <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
@@ -322,7 +330,11 @@ const HistorialTable = ({ address, activeTab }) => {
                           <div className="p-2 mx-2 d-flex flex-column">
                             <strong className="mb-1">Fee:</strong>
                             <span>
-                              {transaction.fee ? transaction.fee : "0.00"}
+                              {transaction.blockchainAction == "RECEIVE"
+                                ? "N/A"
+                                : transaction.fee
+                                ? `${transaction.fee} ${transaction.feeCurrency}`
+                                : "0.00"}
                             </span>
                           </div>
 
