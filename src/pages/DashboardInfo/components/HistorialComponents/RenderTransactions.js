@@ -190,7 +190,6 @@ const RenderTransactions = ({ date, transactions }) => {
                       </>
                     </Col>
                   ))}
-
                 {(transaction.blockchainAction === blockchainActions.WITHDRAW ||
                   transaction.blockchainAction === blockchainActions.TRADE) &&
                   negativeLedgers.length > 0 && (
