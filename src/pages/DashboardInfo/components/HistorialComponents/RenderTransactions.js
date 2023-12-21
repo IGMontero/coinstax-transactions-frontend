@@ -82,11 +82,17 @@ const RenderTransactions = ({ date, transactions }) => {
         if (!transaction.ledgers) {
           return null;
         }
-        const positiveLedgers = transaction.ledgers?.filter(
-          (ledger) => !ledger.isFee && ledger.amount > 0
+        const positiveLedgers = transaction.ledgers.filter(
+          (ledger) =>
+            (ledger.isFee &&
+              transaction.blockchainAction === blockchainActions.APPROVE) ||
+            (!ledger.isFee && ledger.amount > 0)
         );
-        const negativeLedgers = transaction.ledgers?.filter(
-          (ledger) => !ledger.isFee && ledger.amount < 0
+        const negativeLedgers = transaction.ledgers.filter(
+          (ledger) =>
+            (ledger.isFee &&
+              transaction.blockchainAction === blockchainActions.APPROVE) ||
+            (!ledger.isFee && ledger.amount < 0)
         );
 
         const allLedgers = positiveLedgers.concat(negativeLedgers);
@@ -191,7 +197,8 @@ const RenderTransactions = ({ date, transactions }) => {
                     </Col>
                   ))}
                 {(transaction.blockchainAction === blockchainActions.WITHDRAW ||
-                  transaction.blockchainAction === blockchainActions.TRADE) &&
+                  transaction.blockchainAction === blockchainActions.TRADE ||
+                  transaction.blockchainAction === blockchainActions.APPROVE) &&
                   negativeLedgers.length > 0 && (
                     <Col
                       lg={3}
@@ -220,7 +227,10 @@ const RenderTransactions = ({ date, transactions }) => {
                                 {negativeLedgers[0].currency}
                               </h6>
                               <p className="text-start my-0">
-                                {transaction.price >= 0
+                                {transaction.blockchainAction ===
+                                blockchainActions.APPROVE
+                                  ? "Unlimited"
+                                  : transaction.price >= 0
                                   ? "N/A"
                                   : transaction.price}
                               </p>
@@ -289,6 +299,11 @@ const RenderTransactions = ({ date, transactions }) => {
                               </div>
                               <div className="ms-2 ">
                                 {positiveLedgers.length} Assets
+                                <p className="text-start my-0 text-muted">
+                                  {transaction.price >= 0
+                                    ? "N/A"
+                                    : transaction.price}
+                                </p>
                               </div>
                             </>
                           )}
@@ -364,11 +379,18 @@ const RenderTransactions = ({ date, transactions }) => {
                         <div className="p-2 mx-2 d-flex flex-column">
                           <strong className="mb-1">Fee:</strong>
                           <span>
-                            {transaction.blockchainAction ==
+                            {transaction.blockchainAction ===
                             blockchainActions.RECEIVE
                               ? "N/A"
-                              : transaction.fee
-                              ? `${transaction.fee} ${transaction.feeCurrency}`
+                              : transaction.ledgers &&
+                                transaction.ledgers.find(
+                                  (ledger) => ledger.isFee
+                                )
+                              ? `${
+                                  transaction.ledgers.find(
+                                    (ledger) => ledger.isFee
+                                  ).amount
+                                } ${transaction.feeCurrency}`
                               : "0.00"}
                           </span>
                         </div>
