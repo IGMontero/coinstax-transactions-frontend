@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Col, Row } from "reactstrap";
 
-const ListTransactions = ({ transaction }) => {
+const ListTransactionss = ({ transactions }) => {
+  const [positiveLedgers, setPositiveLedgers] = useState([]);
+  const [negativeLedgers, setNegativeLedgers] = useState([]);
   const formatNumber = (number) => {
     if (typeof number !== "number" || isNaN(number)) {
       return "Invalid Number";
@@ -10,42 +12,59 @@ const ListTransactions = ({ transaction }) => {
     let formattedNumber = parseFloat(number.toFixed(4));
     return formattedNumber.toString();
   };
+
+  useEffect(() => {
+    if (transactions && transactions.ledgers) {
+      const posLedgers = transactions.ledgers.filter(
+        (ledger) => !ledger.isFee && ledger.amount > 0
+      );
+      const negLedgers = transactions.ledgers.filter(
+        (ledger) => !ledger.isFee && ledger.amount < 0
+      );
+
+      setPositiveLedgers(posLedgers);
+      setNegativeLedgers(negLedgers);
+    }
+  }, [transactions]);
+  console.log();
   return (
     <Col xxl={12} lg={12} className="border-top ">
       <Row className="align-items-start g-0 mt-2">
-        <Col xxl={12} className="d-flex mb-2">
-          <Col xxl={3} className="ps-2">
-            <span>Sent</span>
-          </Col>
-          <Col xxl={9} className="ps-2">
-            <span>Received</span>
-          </Col>
-        </Col>
+        <Col xxl={12} className="d-flex mb-2"></Col>
         <Col xxl={2} className="d-flex align-items-start flex-column ps-2">
-          <div className="d-flex">
-            <img src={""} alt="" className="me-2" width={40} height={40} />
-            <div className="d-flex flex-column text-start justify-content-start">
-              <h6
-                className={`fw-semibold my-0 `}
-                style={{ whiteSpace: "nowrap" }}
-              >
-                {transaction.ledgers[0].amount > 0 ? "+" : ""}
-                {formatNumber(transaction.ledgers[0].amount)}{" "}
-                {transaction.ledgers[0].currency}
-              </h6>
-              <p className="text-start my-0">
-                {transaction.price >= 0 ? "N/A" : transaction.price}
-              </p>
-            </div>
-          </div>
+          <span className="mb-3 mt-n2">Sent</span>
+          {negativeLedgers &&
+            negativeLedgers.map((ledger, index) => (
+              <div className="d-flex">
+                <img
+                  src={ledger.txInfo.logo}
+                  alt=""
+                  className="me-2"
+                  width={35}
+                  height={35}
+                />
+                <div className="d-flex flex-column text-start justify-content-start">
+                  <div key={index}>
+                    <h6
+                      className={`fw-semibold my-0 `}
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      {ledger.amount > 0 ? "+" : ""}
+                      {formatNumber(ledger.amount)} {ledger.currency}
+                    </h6>
+                    <p>{ledger.price >= 0 ? "N/A" : ledger.price}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
         </Col>
 
         <Col
           xxl={1}
           className="d-flex justify-content-center align-items-center"
         >
-          <div className="d-flex flex-column align-items-center">
-            <div className="bg-dark" style={{ width: 1.0, height: 50 }} />
+          <div className="d-none d-xxl-flex flex-column align-items-center">
+            <div className="bg-dark" style={{ width: 0.5, height: 50 }} />
             <div
               style={{
                 marginTop: "-12px",
@@ -54,42 +73,55 @@ const ListTransactions = ({ transaction }) => {
             >
               <i className="ri-arrow-right-circle-line text-success fs-1 mb-0 mt-0"></i>
             </div>
-            <div className="bg-dark" style={{ width: 1.0, height: 60 }} />
+            <div className="bg-dark" style={{ width: 0.5, height: 60 }} />
+          </div>
+
+          <div className="d-xxl-none d-flex align-items-center flex-row justify-content-center w-100 my-4">
+            <div className="bg-dark" style={{ height: 0.5, width: "45%" }} />
+            <div
+              style={{
+                marginTop: "-12px",
+                marginBottom: "-12px",
+                zIndex: 1,
+              }}
+            >
+              <i className="ri-arrow-down-circle-line text-success fs-1 mb-0 mt-0"></i>
+            </div>
+            <div className="bg-dark" style={{ height: 0.5, width: "45%" }} />
           </div>
         </Col>
+
         <Col
           xxl={9}
-          className="d-flex align-items-center flex-column justify-content-center"
+          className="d-flex align-items-center flex-column justify-content-start"
         >
-          <>
-            {transaction.ledgers &&
-              transaction.ledgers.map((ledger, index) => {
-                if (index === 0 || index === transaction.ledgers.length - 1)
-                  return null;
+          <span className="mb-3 mt-n2  align-self-start">Received</span>
 
-                return (
-                  <div
-                    key={index}
-                    className="d-flex align-items-center w-100 ps-2"
-                  >
-                    <img
-                      src={ledger.txInfo.logo}
-                      alt=""
-                      className="me-2 rounded mb-3"
-                      width={40}
-                      height={40}
-                    />
-                    <h6 className={`fw-semibold my-0`}>
-                      {formatNumber(ledger.amount)} {ledger.currency}
-                    </h6>
-                  </div>
-                );
-              })}
-          </>
+          <div className="w-100">
+            {positiveLedgers &&
+              positiveLedgers.map((ledger, index) => (
+                <div
+                  key={index}
+                  className="d-flex align-items-center w-100 ps-2"
+                >
+                  <img
+                    src={ledger.txInfo.logo}
+                    alt="Ledger Image"
+                    className="me-2 rounded mb-3"
+                    width={35}
+                    height={35}
+                  />
+                  <h6 className={`fw-semibold my-0`}>
+                    {ledger.amount > 0 ? "+" : ""}
+                    {formatNumber(ledger.amount)} {ledger.currency}
+                  </h6>
+                </div>
+              ))}
+          </div>
         </Col>
       </Row>
     </Col>
   );
 };
 
-export default ListTransactions;
+export default ListTransactionss;

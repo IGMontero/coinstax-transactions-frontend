@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { formatIdTransaction, getActionMapping } from "../../../../utils/utils";
 import { Col, Row, Collapse, CardBody } from "reactstrap";
 
@@ -6,13 +6,16 @@ import eth from "../../../../assets/images/svg/crypto-icons/eth.svg";
 import assetsIcon from "../../../../assets/images/svg/assets.svg";
 import ListTransactions from "./ListTransactions";
 
-const RenderTransactions = ({ date, transactions }) => {
-  const ACTION_EXECUTE = "EXECUTE";
-  const ACTION_WITHDRAW = "WITHDRAW";
-  const ACTION_TRADE = "TRADE";
-  const ACTION_APRPROVE = "APPROVE";
-  const ACTION_RECEIVE = "RECEIVE";
+const blockchainActions = {
+  EXECUTE: "EXECUTE",
+  WITHDRAW: "WITHDRAW",
+  TRADE: "TRADE",
+  APPROVE: "APPROVE",
+  RECEIVE: "RECEIVE",
+  SEND: "SEND",
+};
 
+const RenderTransactions = ({ date, transactions }) => {
   const [openCollapse, setopenCollapse] = useState(new Set());
 
   const [copiedIndex, setCopiedIndex] = useState(null);
@@ -76,6 +79,17 @@ const RenderTransactions = ({ date, transactions }) => {
       </Col>
       {transactions.map((transaction, index) => {
         const collapseId = `${date}-${index}`;
+        if (!transaction.ledgers) {
+          return null;
+        }
+        const positiveLedgers = transaction.ledgers?.filter(
+          (ledger) => !ledger.isFee && ledger.amount > 0
+        );
+        const negativeLedgers = transaction.ledgers?.filter(
+          (ledger) => !ledger.isFee && ledger.amount < 0
+        );
+
+        const allLedgers = positiveLedgers.concat(negativeLedgers);
 
         return (
           <div key={index} className="align-items-center">
@@ -142,70 +156,120 @@ const RenderTransactions = ({ date, transactions }) => {
                   </div>
                 </Col>
 
-                <Col
-                  lg={3}
-                  md={3}
-                  sm={8}
-                  xs={7}
-                  className="d-flex align-items-center "
-                  style={{ overflow: "hidden" }}
-                >
-                  {transaction.ledgers &&
-                    transaction.ledgers.length > 0 &&
-                    transaction.blockchainAction !== ACTION_EXECUTE && (
+                {(blockchainActions.RECEIVE === transaction.blockchainAction ||
+                  blockchainActions.SEND === transaction.blockchainAction) &&
+                  allLedgers.map((ledger, index) => (
+                    <Col
+                      lg={3}
+                      md={3}
+                      sm={8}
+                      xs={7}
+                      key={index}
+                      className="d-flex align-items-center"
+                      style={{ overflow: "hidden" }}
+                    >
                       <>
                         <img
-                          src={transaction.ledgers[0].txInfo?.logo || ""}
+                          src={ledger.txInfo?.logo || ""}
                           alt=""
                           className="me-0"
                           width={35}
                           height={35}
                         />
-                        <div className="d-flex flex-column text-center justify-content-end ms-2 ">
+                        <div className="d-flex flex-column text-center justify-content-end ms-2">
                           <h6
-                            className={`fw-semibold my-0 ${
-                              transaction.ledgers[0].amount < 0
-                                ? "text-dark"
-                                : "text-success"
-                            }`}
+                            className="fw-semibold my-0 text-dark"
                             style={{ whiteSpace: "nowrap" }}
                           >
-                            {transaction.ledgers[0].amount > 0 ? "+" : ""}
-                            {formatNumber(transaction.ledgers[0].amount)}{" "}
-                            {transaction.ledgers[0].currency}
+                            {formatNumber(ledger.amount)} {ledger.currency}
                           </h6>
                           <p className="text-start my-0">
                             {transaction.price >= 0 ? "N/A" : transaction.price}
                           </p>
                         </div>
                       </>
-                    )}
-                </Col>
+                    </Col>
+                  ))}
 
+                {(transaction.blockchainAction === blockchainActions.WITHDRAW ||
+                  transaction.blockchainAction === blockchainActions.TRADE) &&
+                  negativeLedgers.length > 0 && (
+                    <Col
+                      lg={3}
+                      md={3}
+                      sm={8}
+                      xs={7}
+                      className="d-flex align-items-center"
+                      style={{ overflow: "hidden" }}
+                    >
+                      <>
+                        {negativeLedgers.length === 1 ? (
+                          <>
+                            <img
+                              src={negativeLedgers[0].txInfo?.logo || ""}
+                              alt=""
+                              className="me-0"
+                              width={35}
+                              height={35}
+                            />
+                            <div className="d-flex flex-column text-center justify-content-end ms-2">
+                              <h6
+                                className="fw-semibold my-0 text-dark"
+                                style={{ whiteSpace: "nowrap" }}
+                              >
+                                {formatNumber(negativeLedgers[0].amount)}{" "}
+                                {negativeLedgers[0].currency}
+                              </h6>
+                              <p className="text-start my-0">
+                                {transaction.price >= 0
+                                  ? "N/A"
+                                  : transaction.price}
+                              </p>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="bg-primary rounded-circle align-items-center justify-content-center d-flex">
+                              <img
+                                src={assetsIcon}
+                                alt=""
+                                className="p-1"
+                                width={35}
+                                height={35}
+                              />
+                            </div>
+                            <div className="ms-2 ">
+                              {negativeLedgers.length} Assets
+                            </div>
+                          </>
+                        )}
+                      </>
+                    </Col>
+                  )}
                 <Col
                   lg={3}
                   md={3}
                   className="d-flex justify-content-start d-none d-lg-flex"
                 >
-                  {transaction.ledgers &&
-                    transaction.ledgers.length > 1 &&
-                    (transaction.blockchainAction === ACTION_WITHDRAW ||
-                      transaction.blockchainAction === ACTION_TRADE) && (
+                  {(transaction.blockchainAction ===
+                    blockchainActions.WITHDRAW ||
+                    transaction.blockchainAction === blockchainActions.TRADE) &&
+                    positiveLedgers.length > 0 && (
                       <div className="d-flex align-items-center">
                         <i className="ri-arrow-right-line text-dark text-end fs-4 me-1"></i>
                         <h6 className="fw-semibold my-0 d-flex align-items-center justify-content-center">
-                          {transaction.ledgers.length - 2 === 1 ? (
+                          {positiveLedgers.length === 1 ? (
                             <>
                               <img
-                                src={transaction.ledgers[0].txInfo?.logo}
-                                alt={transaction.ledgers[0].txInfo?.name}
+                                src={positiveLedgers[0].txInfo?.logo}
+                                alt={positiveLedgers[0].txInfo?.name}
                                 className="me-2"
-                                width={40}
-                                height={40}
+                                width={35}
+                                height={35}
                               />
                               <div className="d-flex flex-column">
-                                {formatNumber(transaction.ledgers[0].amount)}{" "}
-                                {transaction.ledgers[0].currency}
+                                {formatNumber(positiveLedgers[0].amount)}{" "}
+                                {positiveLedgers[0].currency}
                                 <p className="text-start my-0 text-muted">
                                   {transaction.price >= 0
                                     ? "N/A"
@@ -225,7 +289,7 @@ const RenderTransactions = ({ date, transactions }) => {
                                 />
                               </div>
                               <div className="ms-2 ">
-                                {transaction.ledgers.length - 2} Assets
+                                {positiveLedgers.length} Assets
                               </div>
                             </>
                           )}
@@ -243,18 +307,23 @@ const RenderTransactions = ({ date, transactions }) => {
                   <div className="d-flex flex-column text-start justify-content-end  me-3">
                     <p className="text-start my-0">
                       {" "}
-                      {transaction.blockchainAction === ACTION_RECEIVE
+                      {transaction.blockchainAction ===
+                      blockchainActions.RECEIVE
                         ? "From"
-                        : transaction.blockchainAction === ACTION_EXECUTE ||
-                          transaction.blockchainAction === ACTION_TRADE ||
-                          transaction.blockchainAction === ACTION_APRPROVE ||
-                          transaction.blockchainAction === ACTION_WITHDRAW
+                        : transaction.blockchainAction ===
+                            blockchainActions.EXECUTE ||
+                          transaction.blockchainAction ===
+                            blockchainActions.TRADE ||
+                          transaction.blockchainAction ===
+                            blockchainActions.APPROVE ||
+                          transaction.blockchainAction ===
+                            blockchainActions.WITHDRAW
                         ? "Contract Address:"
                         : "To"}
                     </p>
                     <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
                       {" "}
-                      {transaction.blockchainAction == ACTION_RECEIVE
+                      {transaction.blockchainAction == blockchainActions.RECEIVE
                         ? formatIdTransaction(transaction.sender, 4, 4)
                         : formatIdTransaction(transaction.recipient, 4, 4)}
                       <i className="ri-arrow-right-up-line fs-5 text-muted ms-1 "></i>
@@ -272,9 +341,11 @@ const RenderTransactions = ({ date, transactions }) => {
                   {/* CODE FOR LIST */}
                   {transaction.ledgers &&
                     transaction.ledgers.length - 2 >= 2 &&
-                    (transaction.blockchainAction === ACTION_WITHDRAW ||
-                      transaction.blockchainAction === ACTION_TRADE) && (
-                      <ListTransactions transaction={transaction} />
+                    (transaction.blockchainAction ===
+                      blockchainActions.WITHDRAW ||
+                      transaction.blockchainAction ===
+                        blockchainActions.TRADE) && (
+                      <ListTransactions transactions={transaction} />
                     )}
 
                   <Col lg={12}>
@@ -294,7 +365,8 @@ const RenderTransactions = ({ date, transactions }) => {
                         <div className="p-2 mx-2 d-flex flex-column">
                           <strong className="mb-1">Fee:</strong>
                           <span>
-                            {transaction.blockchainAction == ACTION_RECEIVE
+                            {transaction.blockchainAction ==
+                            blockchainActions.RECEIVE
                               ? "N/A"
                               : transaction.fee
                               ? `${transaction.fee} ${transaction.feeCurrency}`
