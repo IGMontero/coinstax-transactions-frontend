@@ -52,7 +52,7 @@ const ListTransactionss = ({ transactions }) => {
                       {ledger.amount > 0 ? "+" : ""}
                       {formatNumber(ledger.amount)} {ledger.currency}
                     </h6>
-                    <p>{ledger.price >= 0 ? "N/A" : ledger.price}</p>
+                    <p>{"N/A"}</p>
                   </div>
                 </div>
               </div>
@@ -111,10 +111,13 @@ const ListTransactionss = ({ transactions }) => {
                     width={35}
                     height={35}
                   />
-                  <h6 className={`fw-semibold my-0`}>
-                    {ledger.amount > 0 ? "+" : ""}
-                    {formatNumber(ledger.amount)} {ledger.currency}
-                  </h6>
+                  <div className="d-flex flex-column">
+                    <h6 className={`fw-semibold my-0`}>
+                      {ledger.amount > 0 ? "+" : ""}
+                      {formatNumber(ledger.amount)} {ledger.currency}{" "}
+                    </h6>
+                    <p className="text-muted">{"N/A"}</p>
+                  </div>
                 </div>
               ))}
           </div>
