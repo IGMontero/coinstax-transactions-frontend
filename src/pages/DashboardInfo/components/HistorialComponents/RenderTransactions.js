@@ -185,10 +185,18 @@ const RenderTransactions = ({ date, transactions }) => {
                         />
                         <div className="d-flex flex-column text-center justify-content-end ms-2">
                           <h6
-                            className="fw-semibold my-0 text-dark"
+                            className={`fw-semibold my-0 text-${
+                              ledger.amount > 0 ? "success" : "dark"
+                            }`}
                             style={{ whiteSpace: "nowrap" }}
                           >
-                            {formatNumber(ledger.amount)} {ledger.currency}
+                            {ledger.amount > 0
+                              ? `+${formatNumber(ledger.amount)} ${
+                                  ledger.currency
+                                }`
+                              : `${formatNumber(ledger.amount)} ${
+                                  ledger.currency
+                                }`}
                           </h6>
                           <p className="text-start my-0">
                             {transaction.price >= 0 ? "N/A" : transaction.price}
@@ -224,7 +232,13 @@ const RenderTransactions = ({ date, transactions }) => {
                                 className="fw-semibold my-0 text-dark"
                                 style={{ whiteSpace: "nowrap" }}
                               >
-                                {formatNumber(negativeLedgers[0].amount)}{" "}
+                                <span
+                                  className={`text-${
+                                    negativeLedgers[0] > 0 ? "success" : ""
+                                  }`}
+                                >
+                                  {formatNumber(negativeLedgers[0].amount)}{" "}
+                                </span>
                                 {negativeLedgers[0].currency}
                               </h6>
                               <p className="text-start my-0">
