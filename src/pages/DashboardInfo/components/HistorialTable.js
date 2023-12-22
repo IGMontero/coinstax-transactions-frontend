@@ -8,6 +8,11 @@ import {
   Collapse,
   CardBody,
   Spinner,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
+  Badge,
 } from "reactstrap";
 import { formatIdTransaction, getActionMapping } from "../../../utils/utils";
 import { useDispatch } from "react-redux";
@@ -21,6 +26,11 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const [data, setData] = useState([]);
 
+  const [showTransactionFilterMenu, setShowTransactionFilterMenu] =
+    useState(false);
+
+  const [showAssetsMenu, setShowAssetsMenu] = useState(false);
+
   const [hasMoreData, setHasMoreData] = useState(true);
 
   const [currentPage, setCurrentPage] = useState(0);
@@ -31,23 +41,23 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const [groupedTransactions, setGroupedTransactions] = useState({});
 
+  const [selectedFilters, setSelectedFilters] = useState({
+    Trade: false,
+    Mint: false,
+    Send: false,
+    Receive: false,
+    Others: false,
+  });
+
+  const [selectedAssets, setSelectedAssets] = useState({
+    "All Assets": true,
+    Tokens: false,
+    NFTs: false,
+  });
+
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString("en-US", options);
-  };
-
-  const formatTime = (dateString) => {
-    const options = { hour: "numeric", minute: "numeric" };
-    return new Date(dateString).toLocaleTimeString("en-US", options);
-  };
-
-  const formatNumber = (number) => {
-    if (typeof number !== "number" || isNaN(number)) {
-      return "Invalid Number";
-    }
-
-    let formattedNumber = parseFloat(number.toFixed(4));
-    return formattedNumber.toString();
   };
 
   useEffect(() => {
@@ -108,20 +118,156 @@ const HistorialTable = ({ address, activeTab }) => {
     }
   };
 
-  console.log(data);
+  const handleShowAssetsMenu = (e) => {
+    setShowAssetsMenu(!showAssetsMenu);
+  };
+
+  const handleAssetChange = (asset) => {
+    setSelectedAssets((prevAssets) => {
+      const resetAssets = Object.keys(prevAssets).reduce((acc, key) => {
+        acc[key] = false;
+        return acc;
+      }, {});
+
+      return { ...resetAssets, [asset]: true };
+    });
+  };
+
+  const handleShowTransactionFilterMenu = (e) => {
+    setShowTransactionFilterMenu(!showTransactionFilterMenu);
+  };
+
+  const handleTransactionFilterChange = (filter) => {
+    setSelectedFilters((prevFilters) => ({
+      ...prevFilters,
+      [filter]: !prevFilters[filter],
+    }));
+  };
+
+  const hasActiveFilters = Object.values(selectedFilters).some(
+    (value) => value
+  );
+
+  const handleDeselectFilter = (filter) => {
+    setSelectedFilters((prevFilters) => ({
+      ...prevFilters,
+      [filter]: false,
+    }));
+  };
+
+  const renderBadges = () => {
+    return Object.entries(selectedFilters)
+      .filter(([filter, isSelected]) => isSelected)
+      .map(([filter]) => (
+        <Badge key={filter} color="soft-dark" className="p-2 my-2 me-2">
+          <span className="fs-6 d-flex align-items-center fw-semibold">
+            {filter}
+            <button
+              onClick={() => handleDeselectFilter(filter)}
+              className="bg-transparent p-0 border-0 text-dark ms-2 fs-5"
+            >
+              <i className="ri-close-line"></i>
+            </button>
+          </span>
+        </Badge>
+      ));
+  };
 
   return (
     <React.Fragment>
       <Row>
-        <Col>
-          <Button color="soft-primary" size="sm">
-            Transactions
-          </Button>
-          <Button color="soft-primary" size="sm" className="ms-2">
-            All Assets
-          </Button>
+        <Col className="d-flex">
+          <Dropdown
+            isOpen={showTransactionFilterMenu}
+            toggle={handleShowTransactionFilterMenu}
+            className=""
+          >
+            <DropdownToggle
+              tag="a"
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${
+                showTransactionFilterMenu ? "active" : ""
+              }`}
+              role="button"
+            >
+              <span className="fs-6">Transactions</span>
+            </DropdownToggle>
+            <DropdownMenu className="dropdown-menu-end mt-1">
+              {Object.keys(selectedFilters).map((filter) => (
+                <DropdownItem
+                  key={filter}
+                  className={`d-flex align-items-center justify-content-between w-100`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTransactionFilterChange(filter);
+                  }}
+                >
+                  <label className="w-100 py-1 d-flex align-items-center justify-content-start m-0 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="form-check-input me-3"
+                      checked={!!selectedFilters[filter]}
+                      onChange={() => handleTransactionFilterChange(filter)}
+                    />
+                    {filter}
+                  </label>
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+
+          <Dropdown
+            isOpen={showAssetsMenu}
+            toggle={handleShowAssetsMenu}
+            className=""
+          >
+            <DropdownToggle
+              tag="a"
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${
+                showAssetsMenu ? "active" : ""
+              }`}
+              role="button"
+            >
+              <span className="fs-6">Assets</span>
+            </DropdownToggle>
+            <DropdownMenu className="dropdown-menu-end mt-1">
+              {Object.keys(selectedAssets).map((asset) => (
+                <DropdownItem
+                  key={asset}
+                  className="d-flex align-items-center justify-content-between w-100"
+                  onClick={() => handleAssetChange(asset)}
+                >
+                  <label className="w-100 py-1 d-flex align-items-center justify-content-start m-0 cursor-pointer">
+                    {asset}
+                    {selectedAssets[asset] ? (
+                      <i className="ri-check-line fs-5 ms-4"></i>
+                    ) : (
+                      ""
+                    )}
+                  </label>
+                </DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
         </Col>
       </Row>
+      <Col className="col-12">
+        {renderBadges()}
+        {hasActiveFilters && (
+          <span
+            className="text-primary ms-2 cursor-pointer "
+            onClick={() =>
+              setSelectedFilters(
+                Object.keys(selectedFilters).reduce(
+                  (acc, filter) => ({ ...acc, [filter]: false }),
+                  {}
+                )
+              )
+            }
+          >
+            <span className="text-hover-dark">Reset</span>
+          </span>
+        )}
+      </Col>
       <Row className="mt-4">
         <Col lg={6} md={8} sm={10} xs={12}>
           <InputGroup className="py-3 search-bar col-lg-12 col-md-12 pe-3">
