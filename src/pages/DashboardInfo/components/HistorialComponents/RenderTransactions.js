@@ -101,16 +101,16 @@ const RenderTransactions = ({ date, transactions }) => {
         return (
           <div key={index} className="align-items-center">
             <div
-              className={` border-bottom bg-transparent ${
+              className={` border-bottom bg-transparent px-2 ${
                 openCollapse.has(collapseId)
                   ? "border border-primary rounded mb-2"
                   : "bg-light"
               }`}
             >
               <Row
-                className={`align-items-center justify-content-between p-3 `}
+                className={`align-items-center justify-content-between`}
                 onClick={() => toggleCollapse(collapseId)}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: "pointer", padding: ".7rem" }}
               >
                 <Col
                   lg={3}
@@ -364,7 +364,7 @@ const RenderTransactions = ({ date, transactions }) => {
               <Collapse isOpen={openCollapse.has(collapseId)}>
                 <CardBody
                   onClick={() => toggleCollapse(collapseId)}
-                  className={`ps-2 cursor-pointer ${
+                  className={`cursor-pointer ${
                     openCollapse === index ? "border-info" : ""
                   }`}
                 >
