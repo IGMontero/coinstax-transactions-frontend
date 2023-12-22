@@ -232,13 +232,7 @@ const RenderTransactions = ({ date, transactions }) => {
                                 className="fw-semibold my-0 text-dark"
                                 style={{ whiteSpace: "nowrap" }}
                               >
-                                <span
-                                  className={`text-${
-                                    negativeLedgers[0] > 0 ? "success" : ""
-                                  }`}
-                                >
-                                  {formatNumber(negativeLedgers[0].amount)}{" "}
-                                </span>
+                                {formatNumber(negativeLedgers[0].amount)}{" "}
                                 {negativeLedgers[0].currency}
                               </h6>
                               <p className="text-start my-0">
