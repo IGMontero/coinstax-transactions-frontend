@@ -278,3 +278,12 @@
   --#{$prefix}vertical-menu-border-gradient: var(--#{$prefix}primary);
   --#{$prefix}twocolumn-menu-bg-dark:                var(--#{$prefix}primary);
 }
+
+// text
+.text-hover-dark:hover {
+  color: var(--#{$prefix}dark);
+}
+
+.text-hover-underline:hover {
+  text-decoration: underline;
+}
