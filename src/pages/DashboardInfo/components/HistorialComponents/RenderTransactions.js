@@ -286,7 +286,12 @@ const RenderTransactions = ({ date, transactions }) => {
                                 height={35}
                               />
                               <div className="d-flex flex-column">
-                                {formatNumber(positiveLedgers[0].amount)}{" "}
+                                <span className="text-success">
+                                  {" "}
+                                  +{formatNumber(
+                                    positiveLedgers[0].amount
+                                  )}{" "}
+                                </span>
                                 {positiveLedgers[0].currency}
                                 <p className="text-start my-0 text-muted">
                                   {transaction.price >= 0
@@ -307,7 +312,9 @@ const RenderTransactions = ({ date, transactions }) => {
                                 />
                               </div>
                               <div className="ms-2 ">
-                                {positiveLedgers.length} Assets
+                                <span className="text-success">
+                                  {positiveLedgers.length} Assets
+                                </span>
                                 <p className="text-start my-0 text-muted">
                                   {transaction.price >= 0
                                     ? "N/A"
@@ -414,13 +421,16 @@ const RenderTransactions = ({ date, transactions }) => {
                                     to={`https://etherscan.io/tx/${transaction.txHash}`}
                                     target="_blank"
                                     onClick={(e) => e.stopPropagation()}
-                                    className="text-decoration-underlined text-muted"
+                                    className="text-decoration-none text-muted  "
                                   >
-                                    {formatIdTransaction(
-                                      transaction.txHash,
-                                      4,
-                                      4
-                                    )}
+                                    {" "}
+                                    <span className=" text-hover-dark  text-hover-underline">
+                                      {formatIdTransaction(
+                                        transaction.txHash,
+                                        4,
+                                        4
+                                      )}
+                                    </span>
                                   </Link>
                                 ) : (
                                   "0"
