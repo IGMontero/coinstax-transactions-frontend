@@ -93,7 +93,7 @@ const RenderTransactions = ({ date, transactions }) => {
               }`}
             >
               <Row
-                className={`align-items-center justify-content-between`}
+                className={`align-items-center justify-content-between col-12`}
                 onClick={() => toggleCollapse(collapseId)}
                 style={{ cursor: "pointer", padding: ".7rem" }}
               >
