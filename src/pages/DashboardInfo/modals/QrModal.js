@@ -29,7 +29,7 @@ const QrModal = ({ showQrModal, toggleQrModal, addressTitle }) => {
             style={{ borderRadius: "10px", border: ".5px solid grey" }}
             onClick={toggleQrModal}
           >
-            <span className="mx-5  fs-5">Cancel</span>
+            <span className="mx-5 text-dark  fs-5">Cancel</span>
           </Button>
         </div>
       </ModalBody>
