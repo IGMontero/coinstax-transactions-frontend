@@ -5,6 +5,7 @@ import { Col, Row, Collapse, CardBody } from "reactstrap";
 import eth from "../../../../assets/images/svg/crypto-icons/eth.svg";
 import assetsIcon from "../../../../assets/images/svg/assets.svg";
 import ListTransactions from "./ListTransactions";
+import { Link } from "react-router-dom";
 
 const blockchainActions = {
   EXECUTE: "EXECUTE",
@@ -399,14 +400,23 @@ const RenderTransactions = ({ date, transactions }) => {
                           <div className="p-2 d-flex flex-column">
                             <strong>Transaction Hash:</strong>
                             <div className="d-flex">
-                              <span className="ms-1d -flex align-items-center">
-                                {transaction.txHash
-                                  ? formatIdTransaction(
+                              <span className="ms-1d -flex align-items-center ">
+                                {transaction.txHash ? (
+                                  <Link
+                                    to={`https://etherscan.io/tx/${transaction.txHash}`}
+                                    target="_blank"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="text-decoration-underlined text-muted"
+                                  >
+                                    {formatIdTransaction(
                                       transaction.txHash,
                                       4,
                                       4
-                                    )
-                                  : "0"}
+                                    )}
+                                  </Link>
+                                ) : (
+                                  "0"
+                                )}
                                 <i className="ri-arrow-right-up-line fs-6"></i>
                               </span>
                             </div>
