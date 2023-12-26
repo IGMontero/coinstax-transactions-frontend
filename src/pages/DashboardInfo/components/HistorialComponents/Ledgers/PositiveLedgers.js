@@ -1,4 +1,5 @@
 import React from "react";
+import { UncontrolledPopover, PopoverBody } from "reactstrap";
 import { formatNumber } from "../../../../../utils/utils";
 import assetsIcon from "../../../../../assets/images/svg/assets.svg";
 
@@ -19,8 +20,13 @@ const PositiveLedgers = ({ positiveLedgers }) => {
                   height={35}
                 />
                 <div className="d-flex flex-column">
-                  <span className="text-success">
-                    +{formatNumber(positiveLedgers[0].amount)}{" "}
+                  <span className="text-success d-flex">
+                    <span
+                      id={`positive-ledger-${positiveLedgers.amount}`}
+                      className="me-2"
+                    >
+                      +{formatNumber(positiveLedgers[0].amount)}{" "}
+                    </span>
                     {positiveLedgers[0].currency}
                   </span>
 
@@ -32,6 +38,16 @@ const PositiveLedgers = ({ positiveLedgers }) => {
                       : ""}
                   </p>
                 </div>
+                {/* <UncontrolledPopover
+                  onClick={(e) => e.stopPropagation()}
+                  placement="bottom"
+                  target={`positive-ledger-${positiveLedgers.amount}`}
+                  trigger="hover"
+                >
+                  <PopoverBody className="p-1">
+                    {positiveLedgers[0].amount}
+                  </PopoverBody>
+                </UncontrolledPopover> */}
               </>
             ) : (
               <>
