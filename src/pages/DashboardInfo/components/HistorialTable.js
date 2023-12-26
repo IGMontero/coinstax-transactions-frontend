@@ -18,6 +18,7 @@ import { useDispatch } from "react-redux";
 import {
   fetchHistory,
   fetchSearchHistoryTable,
+  fetchTransactionsFilter,
 } from "../../../slices/transactions/thunk";
 import RenderTransactions from "./HistorialComponents/RenderTransactions";
 
@@ -164,9 +165,10 @@ const HistorialTable = ({ address, activeTab }) => {
       setIsInitialLoad(true);
       setLoading(true);
       try {
-        await dispatch(
+        const response = await dispatch(
           fetchSearchHistoryTable({ address, query: e.target.value })
         ).unwrap();
+        setData(response);
       } catch (error) {
         console.error("Error during search:", error);
       } finally {
@@ -184,9 +186,26 @@ const HistorialTable = ({ address, activeTab }) => {
       }
     }
   };
+
   const handleClearSearch = () => {
     setSearchTerm("");
     dispatch(fetchHistory({ address, count: 10, page: 0 }));
+  };
+
+  const handleApplyFilters = async () => {
+    try {
+      setLoading(true);
+      const response = await dispatch(
+        fetchTransactionsFilter({
+          address,
+          filters: selectedFilters,
+        })
+      );
+      setData(response);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching filtered transactions:", error);
+    }
   };
 
   const renderBadges = () => {
@@ -233,6 +252,7 @@ const HistorialTable = ({ address, activeTab }) => {
                   onClick={(e) => {
                     e.stopPropagation();
                     handleTransactionFilterChange(filter);
+                    handleApplyFilters();
                   }}
                 >
                   <label className="w-100 py-1 d-flex align-items-center justify-content-start m-0 cursor-pointer">
@@ -240,6 +260,7 @@ const HistorialTable = ({ address, activeTab }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={!!selectedFilters[filter]}
+                      onClick={handleApplyFilters}
                       onChange={() => handleTransactionFilterChange(filter)}
                     />
                     {filter}
