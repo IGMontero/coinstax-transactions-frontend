@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { formatIdTransaction, getActionMapping } from "../../../../utils/utils";
-import { Col, Row, Collapse, CardBody } from "reactstrap";
+import { Col, Row, Collapse, CardBody, Badge } from "reactstrap";
 
 import eth from "../../../../assets/images/svg/crypto-icons/eth.svg";
 import ListTransactions from "./ListTransactions";
@@ -145,6 +145,19 @@ const RenderTransactions = ({ date, transactions }) => {
                     <p className="text-start my-0">
                       {formatTime(transaction.date)}
                     </p>
+                  </div>
+                  <div className="ms-3">
+                    {" "}
+                    {transaction.successful &&
+                    transaction.successful === true ? (
+                      ""
+                    ) : (
+                      <Badge color="soft-danger" className="rounded-pill">
+                        <span className="text-danger fs-6 fw-normal p-1">
+                          X Failed
+                        </span>
+                      </Badge>
+                    )}
                   </div>
                 </Col>
 
