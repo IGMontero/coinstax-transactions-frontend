@@ -154,7 +154,7 @@ const RenderTransactions = ({ date, transactions }) => {
                     ) : (
                       <Badge color="soft-danger" className="rounded-pill">
                         <div className="text-danger fw-normal p-0 d-flex align-items-center">
-                          <i className="ri-close-line px-0 me-1 fs-5  p-0"></i>{" "}
+                          <i className="ri-close-line px-0  fs-5  p-0"></i>{" "}
                           <span className="fs-6"> Failed</span>
                         </div>
                       </Badge>
