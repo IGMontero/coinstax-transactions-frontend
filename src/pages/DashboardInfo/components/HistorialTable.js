@@ -14,10 +14,11 @@ import {
   DropdownItem,
   Badge,
 } from "reactstrap";
-import { formatIdTransaction, getActionMapping } from "../../../utils/utils";
 import { useDispatch } from "react-redux";
-import { fetchHistory } from "../../../slices/transactions/thunk";
-import eth from "../../../assets/images/svg/crypto-icons/eth.svg";
+import {
+  fetchHistory,
+  fetchSearchHistoryTable,
+} from "../../../slices/transactions/thunk";
 import RenderTransactions from "./HistorialComponents/RenderTransactions";
 
 const HistorialTable = ({ address, activeTab }) => {
@@ -28,6 +29,8 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const [showTransactionFilterMenu, setShowTransactionFilterMenu] =
     useState(false);
+
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [showAssetsMenu, setShowAssetsMenu] = useState(false);
 
@@ -155,6 +158,37 @@ const HistorialTable = ({ address, activeTab }) => {
     }));
   };
 
+  const handleSearch = async (e) => {
+    setSearchTerm(e.target.value);
+    if (e.target.value.length > 65) {
+      setIsInitialLoad(true);
+      setLoading(true);
+      try {
+        await dispatch(
+          fetchSearchHistoryTable({ address, query: e.target.value })
+        ).unwrap();
+      } catch (error) {
+        console.error("Error during search:", error);
+      } finally {
+        setIsInitialLoad(false);
+        setLoading(false);
+      }
+    } else {
+      setLoading(true);
+      try {
+        await dispatch(fetchHistory({ address, count: 10, page: 0 })).unwrap();
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+  const handleClearSearch = () => {
+    setSearchTerm("");
+    dispatch(fetchHistory({ address, count: 10, page: 0 }));
+  };
+
   const renderBadges = () => {
     return Object.entries(selectedFilters)
       .filter(([filter, isSelected]) => isSelected)
@@ -172,8 +206,6 @@ const HistorialTable = ({ address, activeTab }) => {
         </Badge>
       ));
   };
-
-  console.log(data);
 
   return (
     <React.Fragment>
@@ -286,11 +318,24 @@ const HistorialTable = ({ address, activeTab }) => {
               style={{
                 zIndex: 0,
                 paddingLeft: "47px",
+                paddingRight: "30px",
               }}
               placeholder="Filter by Address, Protocol, Assets, Type"
-              // value={searchTerm}
-              // onChange={handleSearch}
+              value={searchTerm}
+              onChange={handleSearch}
             />
+            {searchTerm && (
+              <Button
+                color="link"
+                className="btn-close position-absolute btn btn-sm  border-0"
+                style={{
+                  right: "25px",
+                  top: "25px",
+                  zIndex: 2,
+                }}
+                onClick={handleClearSearch}
+              />
+            )}
           </InputGroup>
         </Col>
         <Col

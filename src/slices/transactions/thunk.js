@@ -74,3 +74,21 @@ export const fetchHistory = createAsyncThunk(
     }
   }
 );
+
+export const fetchSearchHistoryTable = createAsyncThunk(
+  "transactions/fetchSearchHistoryTable",
+  async ({ address, query }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${API_BASE}/transactions/eth-mainnet/${address}?query=${query}`
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.parsed;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
