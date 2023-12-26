@@ -92,3 +92,28 @@ export const fetchSearchHistoryTable = createAsyncThunk(
     }
   }
 );
+
+export const fetchTransactionsFilter = createAsyncThunk(
+  "transactions/fetchTransactionsFilter",
+  async ({ address, filters }, { rejectWithValue }) => {
+    try {
+      const query = Object.entries(filters)
+        .filter(([key, value]) => value)
+        .map(([key]) => `type=${key}`)
+        .join("&");
+
+      const response = await fetch(
+        `${API_BASE}/transactions/eth-mainnet/${address}/?${query}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);

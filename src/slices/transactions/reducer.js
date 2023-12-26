@@ -5,6 +5,7 @@ import {
   fetchAssets,
   fetchHistory,
   fetchSearchHistoryTable,
+  fetchTransactionsFilter,
 } from "./thunk";
 export const initialState = {
   transactions: [],
@@ -57,6 +58,13 @@ const TransactionsSlice = createSlice({
         state.history = action.payload;
       })
       .addCase(fetchSearchHistoryTable.rejected, (state, action) => {
+        state.error = action.payload.error || null;
+      })
+      // TRANSACTIONS HISTORY FILTERS
+      .addCase(fetchTransactionsFilter.fulfilled, (state, action) => {
+        state.history = action.payload;
+      })
+      .addCase(fetchTransactionsFilter.rejected, (state, action) => {
         state.error = action.payload.error || null;
       });
   },
