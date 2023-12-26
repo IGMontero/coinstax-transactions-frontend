@@ -21,8 +21,9 @@ const PositiveLedgers = ({ positiveLedgers }) => {
                 <div className="d-flex flex-column">
                   <span className="text-success">
                     +{formatNumber(positiveLedgers[0].amount)}{" "}
+                    {positiveLedgers[0].currency}
                   </span>
-                  {positiveLedgers[0].currency}
+
                   <p className="text-start my-0 text-muted">
                     {positiveLedgers
                       ? positiveLedgers.price >= 0

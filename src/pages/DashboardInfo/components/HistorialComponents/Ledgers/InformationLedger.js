@@ -5,6 +5,7 @@ import {
   blockchainActions,
 } from "../../../../../utils/utils";
 import { Link } from "react-router-dom";
+import { formatNumber } from "../../../../../utils/utils";
 
 const InformationLedger = ({
   transaction,
@@ -15,6 +16,15 @@ const InformationLedger = ({
   const handleCopy = (e) => {
     onCopy(e, transaction.txHash, collapseId);
   };
+
+  const removeLeadingMinus = (fee) => {
+    const feeStr = String(fee);
+    if (feeStr.startsWith("-")) {
+      return parseFloat(feeStr.slice(1));
+    }
+    return parseFloat(feeStr);
+  };
+
   return (
     <Col lg={12}>
       <Row className="d-flex flex-row align-items-center">
@@ -35,9 +45,11 @@ const InformationLedger = ({
                 ? "N/A"
                 : transaction.ledgers &&
                   transaction.ledgers.find((ledger) => ledger.isFee)
-                ? `${
-                    transaction.ledgers.find((ledger) => ledger.isFee).amount
-                  } ${transaction.feeCurrency}`
+                ? formatNumber(
+                    removeLeadingMinus(
+                      transaction.ledgers.find((ledger) => ledger.isFee).amount
+                    )
+                  ) + ` ${transaction.feeCurrency}`
                 : "0.00"}
             </span>
           </div>
