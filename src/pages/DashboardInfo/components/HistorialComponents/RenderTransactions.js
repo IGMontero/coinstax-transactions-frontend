@@ -86,7 +86,7 @@ const RenderTransactions = ({ date, transactions }) => {
         return (
           <div key={index} className="align-items-center">
             <div
-              className={` border-bottom bg-transparent px-2 ${
+              className={` border-bottom bg-transparent px-0 ${
                 openCollapse.has(collapseId)
                   ? "border border-primary rounded mb-2"
                   : "bg-light"
