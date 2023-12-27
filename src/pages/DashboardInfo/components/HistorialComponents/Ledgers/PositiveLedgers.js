@@ -23,7 +23,7 @@ const PositiveLedgers = ({ positiveLedgers }) => {
                   <span className="text-success d-flex">
                     <span
                       id={`positive-ledger-${positiveLedgers.amount}`}
-                      className="me-2"
+                      className="me-1"
                     >
                       +{formatNumber(positiveLedgers[0].amount)}{" "}
                     </span>
