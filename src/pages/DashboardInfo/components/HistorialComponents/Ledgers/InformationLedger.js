@@ -49,7 +49,11 @@ const InformationLedger = ({
                     removeLeadingMinus(
                       transaction.ledgers.find((ledger) => ledger.isFee).amount
                     )
-                  ) + ` ${transaction.feeCurrency}`
+                  ) +
+                  ` ${transaction.feeCurrency} ($${removeLeadingMinus(
+                    transaction.ledgers.find((ledger) => ledger.isFee)
+                      .nativeamount
+                  ).toFixed(2)})`
                 : "0.00"}
             </span>
           </div>
