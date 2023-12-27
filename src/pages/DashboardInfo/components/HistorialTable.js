@@ -90,6 +90,13 @@ const HistorialTable = ({ address, activeTab }) => {
 
   useEffect(() => {
     const groupByDate = (transactions) => {
+      if (!Array.isArray(transactions)) {
+        console.error(
+          "Expected an array of transactions, received:",
+          transactions
+        );
+        return {};
+      }
       return transactions.reduce((acc, transaction) => {
         const date = formatDate(transaction.date);
         if (!acc[date]) {
@@ -152,11 +159,13 @@ const HistorialTable = ({ address, activeTab }) => {
     (value) => value
   );
 
-  const handleDeselectFilter = (filter) => {
+  const handleDeselectFilter = async (filter) => {
     setSelectedFilters((prevFilters) => ({
       ...prevFilters,
       [filter]: false,
     }));
+
+    await dispatch(fetchHistory({ address, count: 10, page: 0 }));
   };
 
   const handleSearch = async (e) => {
@@ -189,23 +198,44 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const handleClearSearch = () => {
     setSearchTerm("");
-    dispatch(fetchHistory({ address, count: 10, page: 0 }));
+    // dispatch(fetchHistory({ address, count: 10, page: 0 }));
+  };
+  const handleApplyFilters = async () => {
+    const isAnyFilterActive = Object.values(selectedFilters).some(
+      (value) => value
+    );
+    setLoading(true);
+
+    // if (isAnyFilterActive) {
+    //   try {
+    //     const response = await dispatch(
+    //       fetchTransactionsFilter({
+    //         address,
+    //         filters: selectedFilters,
+    //       })
+    //     ).unwrap();
+    //     setData(response);
+    //   } catch (error) {
+    //     console.error("Error fetching filtered transactions:", error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // } else {
+    //   await dispatch(fetchHistory({ address, count: 10, page: 0 }));
+    // }
+    setLoading(false);
   };
 
-  const handleApplyFilters = async () => {
-    try {
-      setLoading(true);
-      const response = await dispatch(
-        fetchTransactionsFilter({
-          address,
-          filters: selectedFilters,
-        })
-      );
-      setData(response);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching filtered transactions:", error);
-    }
+  const handleResetFilters = () => {
+    setSelectedFilters({
+      Trade: false,
+      Mint: false,
+      Send: false,
+      Receive: false,
+      Others: false,
+    });
+
+    // dispatch(fetchHistory({ address, count: 10, page: 0 }));
   };
 
   const renderBadges = () => {
@@ -310,14 +340,7 @@ const HistorialTable = ({ address, activeTab }) => {
         {hasActiveFilters && (
           <span
             className="text-primary ms-2 cursor-pointer "
-            onClick={() =>
-              setSelectedFilters(
-                Object.keys(selectedFilters).reduce(
-                  (acc, filter) => ({ ...acc, [filter]: false }),
-                  {}
-                )
-              )
-            }
+            onClick={handleResetFilters}
           >
             <span className="text-hover-dark">Reset</span>
           </span>
