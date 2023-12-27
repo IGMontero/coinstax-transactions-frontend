@@ -102,9 +102,9 @@ export const fetchTransactionsFilter = createAsyncThunk(
         .map(([key]) => `type=${key}`)
         .join("&");
 
-      const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/?${query}`
-      );
+      const url = `${API_BASE}/transactions/eth-mainnet/${address}/?${query}`;
+
+      const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
