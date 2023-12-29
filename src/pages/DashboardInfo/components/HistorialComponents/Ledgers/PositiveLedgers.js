@@ -8,7 +8,7 @@ const PositiveLedgers = ({ positiveLedgers }) => {
     <>
       {positiveLedgers.length > 0 && (
         <div className="d-flex align-items-center">
-          <i className="ri-arrow-right-line text-dark text-end fs-4 me-1"></i>
+          <i className="ri-arrow-right-line text-dark text-end fs-4 me-3"></i>
           <h6 className="fw-semibold my-0 d-flex align-items-center justify-content-center">
             {positiveLedgers.length === 1 ? (
               <>
@@ -51,7 +51,7 @@ const PositiveLedgers = ({ positiveLedgers }) => {
               </>
             ) : (
               <>
-                <div className="bg-primary rounded-circle align-items-center justify-content-center d-flex">
+                <div className="bg-primary rounded-circle align-items-center justify-content-center d-flex ">
                   <img
                     src={assetsIcon}
                     alt=""
