@@ -44,6 +44,15 @@ export const formatNumber = (number) => {
     return "Invalid Number";
   }
 
-  let formattedNumber = parseFloat(number.toFixed(4));
-  return formattedNumber.toString();
+  let shift = 0;
+  let tempNumber = Math.abs(number);
+  while (tempNumber < 1 && tempNumber > 0) {
+    tempNumber *= 10;
+    shift++;
+  }
+
+  const roundedNumber =
+    Math.round(number * Math.pow(10, shift + 1)) / Math.pow(10, shift + 1);
+
+  return roundedNumber.toFixed(shift + 1);
 };
