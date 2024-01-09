@@ -47,12 +47,13 @@ const Nfts = ({ address, activeTab }) => {
       fetchDataNFTS();
     }
   }, [address, activeTab, dispatch]);
+
   return (
     <React.Fragment>
       <Col xxl={12}>
         <span className="text-dark">Total value by floor price</span>
 
-        <h1>${data?.totalValue?.toFixed(2)}</h1>
+        <h1>{data?.prettyTotalNativeValue}</h1>
       </Col>
       <Row>
         <Col xxl={12} className="d-flex justify-content-between flex-row mt-4">
@@ -175,12 +176,14 @@ const Nfts = ({ address, activeTab }) => {
               data?.items.map((nft, index) => (
                 <Col xxl={3} lg={6} md={6} sm={6} xs={12} key={index}>
                   <Card
-                    className="border-2 border bg-transparent shadow-none "
-                    style={{
-                      height: "350px",
-                      minWidth: "225px",
-                      maxWidth: "225px",
-                    }}
+                    className="border-2 border bg-transparent shadow-none  "
+                    style={
+                      {
+                        // height: "350px",
+                        // minWidth: "225px",
+                        // maxWidth: "225px",
+                      }
+                    }
                   >
                     <CardHeader className="border-0 bg-transparent p-2">
                       <div style={{ position: "relative", minHeight: "200px" }}>
@@ -214,10 +217,13 @@ const Nfts = ({ address, activeTab }) => {
                         <span className="text-dark">{nft.domain}</span>
                         <h5 className="text-dark">{nft.name}</h5>
                         <span>Floor Price</span>
-                        <h6 className="text-dark">
-                          {nft.prettyFloorPrice
-                            ? nft.prettyFloorPrice
-                            : "$0.00"}
+                        <h6 className="text-dark d-flex mb-0">
+                          {nft.floorPrice ? nft.floorPrice : "$0.00"}{" "}
+                          {nft.floorPriceSymbol ? nft.floorPriceSymbol : ""} (
+                          {nft.prettyFloorPriceUsd
+                            ? nft.prettyFloorPriceUsd
+                            : ""}
+                          )
                         </h6>
                       </div>
 
