@@ -73,7 +73,7 @@ const HistorialTable = ({ address, activeTab }) => {
             fetchHistory({ address, count: 10, page: 0 })
           ).unwrap();
           setData(response);
-          setHasMoreData(response.length === 10);
+          setHasMoreData(response.length > 0);
         } catch (error) {
           console.error("Error fetching performance data:", error);
         } finally {
@@ -120,7 +120,7 @@ const HistorialTable = ({ address, activeTab }) => {
         fetchHistory({ address, count: 10, page: nextPage })
       ).unwrap();
       setData((prevData) => [...prevData, ...response]);
-      setHasMoreData(response.length === 10);
+      setHasMoreData(response.length > 0);
       setCurrentPage(nextPage);
     } catch (error) {
       console.error("Error fetching more transactions:", error);
