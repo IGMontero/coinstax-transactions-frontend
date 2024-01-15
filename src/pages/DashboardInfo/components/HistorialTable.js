@@ -113,8 +113,8 @@ const HistorialTable = ({ address, activeTab }) => {
   }, [data]);
 
   const getMoreTransactions = async () => {
-    setLoading(true);
     try {
+      setLoading(true);
       const nextPage = currentPage + 1;
       const response = await dispatch(
         fetchHistory({ address, count: 10, page: nextPage })
@@ -122,9 +122,10 @@ const HistorialTable = ({ address, activeTab }) => {
       setData((prevData) => [...prevData, ...response]);
       setHasMoreData(response.length > 0);
       setCurrentPage(nextPage);
+      setLoading(false);
     } catch (error) {
+      setLoading(true);
       console.error("Error fetching more transactions:", error);
-    } finally {
       setLoading(false);
     }
   };
@@ -421,25 +422,21 @@ const HistorialTable = ({ address, activeTab }) => {
             ))}
         </div>
       </Col>
-      {hasMoreData && (
-        <Col>
-          <div className="d-flex justify-content-center mt-2">
-            <Button
-              disabled={loading}
-              onClick={getMoreTransactions}
-              color="soft-light"
-              style={{ borderRadius: "10px", border: ".5px solid grey" }}
-            >
-              {loading && !isInitialLoad ? (
-                <Spinner size="sm" />
-              ) : (
-                <h6 className="text-dark fw-semibold my-2">
-                  More transactions
-                </h6>
-              )}
-            </Button>
-          </div>
-        </Col>
+      {!isInitialLoad && (hasMoreData || !loading) && (
+        <div className="d-flex justify-content-center mt-2">
+          <Button
+            disabled={loading}
+            onClick={getMoreTransactions}
+            color="soft-light"
+            style={{ borderRadius: "10px", border: ".5px solid grey" }}
+          >
+            {loading ? (
+              <Spinner size="sm" />
+            ) : (
+              <h6 className="text-dark fw-semibold my-2">More transactions</h6>
+            )}
+          </Button>
+        </div>
       )}
     </React.Fragment>
   );
