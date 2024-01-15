@@ -14,15 +14,6 @@ const Info = ({ currentUser }) => {
                 </th>
                 <td className="text-muted">{currentUser.email}</td>
               </tr>
-
-              <tr>
-                <th className="ps-0" scope="row">
-                  Phone number:
-                </th>
-                <td className="text-muted">
-                  {currentUser.phoneNumber || "Incomplete"}
-                </td>
-              </tr>
             </tbody>
           </Table>
         </div>

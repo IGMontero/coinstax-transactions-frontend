@@ -11,7 +11,7 @@ import {
   TabPane,
 } from "reactstrap";
 import * as Yup from "yup";
-import { states } from "../../../../utils/utils";
+
 import { useDispatch } from "react-redux";
 // Formk validation
 
@@ -26,35 +26,6 @@ const Details = ({
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [phoneNumber, setPhoneNumber] = React.useState(
-    currentUser?.phoneNumber
-  );
-  const [state, setState] = React.useState(currentUser?.state);
-  const [companyName, setCompanyName] = React.useState(
-    currentUser?.companyName
-  );
-  const [companyAddress, setCompanyAddress] = React.useState(
-    currentUser?.companyAddress
-  );
-  const [email, setEmail] = React.useState(currentUser?.email);
-  const [firstName, setFirstName] = React.useState(currentUser?.firstName);
-  const [lastName, setLastName] = React.useState(currentUser?.lastName);
-  const [zipCode, setZipCode] = React.useState(currentUser?.zipCode);
-
-  const [loadingCode, setLoadingCode] = React.useState(false);
-
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  useEffect(() => {
-    setEmail(currentUser?.email);
-    setFirstName(currentUser?.firstName);
-    setLastName(currentUser?.lastName);
-    setPhoneNumber(currentUser?.phoneNumber);
-  }, [currentUser]);
-
-  const handleChangeInput = (setState) => (e) => {
-    setState(e.target.value);
-  };
 
   const initialValues = {
     email: currentUser?.email || "",
@@ -121,26 +92,6 @@ const Details = ({
                     />
                     <ErrorMessage
                       name="lastName"
-                      component="div"
-                      className="text-danger"
-                    />
-                  </div>
-                </Row>
-              </Col>
-
-              <Col lg={12} className="mb-4">
-                <Row>
-                  <div className="col-6">
-                    <Label htmlFor="phoneNumber" className="form-label">
-                      Phone Number
-                    </Label>
-                    <Field
-                      type="text"
-                      name="phoneNumber"
-                      className="form-control"
-                    />
-                    <ErrorMessage
-                      name="phoneNumber"
                       component="div"
                       className="text-danger"
                     />
