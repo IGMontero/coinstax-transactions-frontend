@@ -56,8 +56,8 @@ const Nfts = ({ address, activeTab }) => {
         <h1>{data?.prettyTotalNativeValue}</h1>
       </Col>
       <Row>
-        <Col xxl={12} className="d-flex justify-content-between flex-row mt-4">
-          <Col xxl={6}>
+        <Col xxl={12} className="d-flex justify-content-between flex-row mt-0">
+          {/* <Col xxl={6}>
             <div className="d-flex justify-content-start">
               <UncontrolledDropdown className="card-header-dropdown me-2">
                 <DropdownToggle
@@ -97,7 +97,6 @@ const Nfts = ({ address, activeTab }) => {
                   className="dropdown-menu-end mt-1"
                   style={{ width: "300px" }}
                 >
-                  {/* <DropdownItem className="d-flex align-items-center"> */}
                   <InputGroup className="px-3 search-bar  col-md-12 mt-2">
                     <span
                       className="search-icon ps-1 position-absolute"
@@ -114,11 +113,11 @@ const Nfts = ({ address, activeTab }) => {
                         paddingLeft: "25px",
                       }}
                       placeholder="Search..."
-                      // value={searchTerm}
-                      // onChange={handleSearch}
+                       value={searchTerm}
+                     onChange={handleSearch}
                     />
                   </InputGroup>
-                  {/* </DropdownItem> */}
+               
 
                   <DropdownItem className="d-flex align-items-center my-2">
                     <Input type="checkbox" className="form-check-input me-2" />
@@ -144,7 +143,7 @@ const Nfts = ({ address, activeTab }) => {
                 </DropdownMenu>
               </UncontrolledDropdown>
             </div>
-          </Col>
+          </Col> 
           <Col xxl={6}>
             <div className="d-flex  justify-content-end align-items-center">
               <Button className="btn btn-sm rounded btn-soft-primary me-2">
@@ -159,7 +158,7 @@ const Nfts = ({ address, activeTab }) => {
                 </Button>
               </div>
             </div>
-          </Col>
+          </Col>*/}
         </Col>
       </Row>
       {loading ? (
