@@ -31,14 +31,16 @@ import gnosis from "../../assets/images/svg/crypto-icons/gno.svg";
 import { fetchAssets, fetchNFTS } from "../../slices/transactions/thunk";
 import DashboardHome from "../DashboardHome/DashboardHome";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { formatIdTransaction } from "../../utils/utils";
 import QrModal from "./modals/QrModal";
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const [customActiveTab, setcustomActiveTab] = useState("1");
+  const { address, type } = useParams();
+
+  const [customActiveTab, setCustomActiveTab] = useState("1");
 
   const [addressTitle, setAddressTitle] = useState("");
 
@@ -63,7 +65,7 @@ const DashboardInfo = () => {
 
   const toggleCustom = (tab) => {
     if (customActiveTab !== tab) {
-      setcustomActiveTab(tab);
+      setCustomActiveTab(tab);
     }
   };
 
@@ -87,7 +89,7 @@ const DashboardInfo = () => {
   const handleSearchClick = () => {
     setAddressForSearch(searchInput);
     setAddressTitle(searchInput);
-    navigate(`/address/${searchInput}`);
+    navigate(`/address/${searchInput}/tokens`);
   };
 
   useEffect(() => {
@@ -122,6 +124,22 @@ const DashboardInfo = () => {
     } catch (err) {
       console.error("Failed to copy: ", err);
     }
+  };
+  useEffect(() => {
+    if (type) {
+      setCustomActiveTab(
+        type === "nfts" ? "2" : type === "history" ? "3" : "1"
+      );
+    }
+    if (address) {
+      setAddressForSearch(address);
+      setAddressTitle(address);
+    }
+  }, [type, address]);
+
+  const handleNavLinkClick = (route, toggle) => {
+    setCustomActiveTab(toggle);
+    navigate(`/address/${addressForSearch}/${route}`);
   };
 
   return (
@@ -296,7 +314,7 @@ const DashboardInfo = () => {
                               active: customActiveTab === "1",
                             })}
                             onClick={() => {
-                              toggleCustom("1");
+                              handleNavLinkClick("tokens", "1");
                             }}
                           >
                             Tokens
@@ -314,7 +332,7 @@ const DashboardInfo = () => {
                               active: customActiveTab === "2",
                             })}
                             onClick={() => {
-                              toggleCustom("2");
+                              handleNavLinkClick("nfts", "2");
                             }}
                           >
                             NFTs
@@ -332,7 +350,7 @@ const DashboardInfo = () => {
                               active: customActiveTab === "3",
                             })}
                             onClick={() => {
-                              toggleCustom("3");
+                              handleNavLinkClick("history", "3");
                             }}
                           >
                             History
@@ -497,6 +515,7 @@ const DashboardInfo = () => {
                         </div>
                       </div>
                     </TabPane>
+
                     <TabPane tabId="2">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
@@ -507,6 +526,7 @@ const DashboardInfo = () => {
                         </div>
                       </div>
                     </TabPane>
+
                     <TabPane tabId="3">
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
