@@ -12,13 +12,27 @@ const PositiveLedgers = ({ positiveLedgers }) => {
           <h6 className="fw-semibold my-0 d-flex align-items-center justify-content-center">
             {positiveLedgers.length === 1 ? (
               <>
-                <img
-                  src={positiveLedgers[0].txInfo?.logo}
-                  alt={positiveLedgers[0].txInfo?.name}
-                  className="me-2"
-                  width={35}
-                  height={35}
-                />
+                <div className="image-container">
+                  <img
+                    src={
+                      positiveLedgers[0].txInfo?.logo ||
+                      positiveLedgers[0].currency
+                    }
+                    alt={positiveLedgers[0].txInfo?.name}
+                    className="me-2"
+                    width={35}
+                    height={35}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.style.display = "none";
+                      const container = e.target.parentNode;
+                      const textNode = document.createElement("div");
+                      textNode.textContent = positiveLedgers[0].currency;
+                      textNode.className = "currency-placeholder";
+                      container.appendChild(textNode);
+                    }}
+                  />{" "}
+                </div>
                 <div className="d-flex flex-column">
                   <span className="text-success d-flex">
                     <span
