@@ -72,6 +72,7 @@ const HistorialTable = ({ address, activeTab }) => {
           const response = await dispatch(
             fetchHistory({ address, count: 10, page: 0 })
           ).unwrap();
+          console.log(response);
           setData(response);
           setHasMoreData(response.length === 10);
         } catch (error) {
@@ -180,6 +181,7 @@ const HistorialTable = ({ address, activeTab }) => {
         const response = await dispatch(
           fetchSearchHistoryTable({ address, query: e.target.value })
         ).unwrap();
+
         setData(response);
       } catch (error) {
         console.error("Error during search:", error);
