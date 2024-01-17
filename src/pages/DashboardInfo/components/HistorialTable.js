@@ -73,7 +73,7 @@ const HistorialTable = ({ address, activeTab }) => {
             fetchHistory({ address, count: 10, page: 0 })
           ).unwrap();
           setData(response);
-          setHasMoreData(response.length > 0);
+          setHasMoreData(response.length === 10);
         } catch (error) {
           console.error("Error fetching performance data:", error);
         } finally {
@@ -119,13 +119,15 @@ const HistorialTable = ({ address, activeTab }) => {
       const response = await dispatch(
         fetchHistory({ address, count: 10, page: nextPage })
       ).unwrap();
+
+      console.log(response);
       setData((prevData) => [...prevData, ...response]);
-      setHasMoreData(response.length > 0);
+      setHasMoreData(response.length < 8);
       setCurrentPage(nextPage);
       setLoading(false);
     } catch (error) {
-      setLoading(true);
       console.error("Error fetching more transactions:", error);
+    } finally {
       setLoading(false);
     }
   };
@@ -422,7 +424,7 @@ const HistorialTable = ({ address, activeTab }) => {
             ))}
         </div>
       </Col>
-      {!isInitialLoad && (hasMoreData || !loading) && (
+      {!isInitialLoad && !hasMoreData && (
         <div className="d-flex justify-content-center mt-2">
           <Button
             disabled={loading}

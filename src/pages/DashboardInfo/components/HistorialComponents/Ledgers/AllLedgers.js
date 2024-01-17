@@ -14,13 +14,25 @@ const AllLedgers = ({ ledger, index }) => {
       style={{ overflow: "hidden" }}
     >
       <>
-        <img
-          src={ledger.txInfo?.logo || ""}
-          alt=""
-          className="me-0"
-          width={35}
-          height={35}
-        />
+        <div className="image-container me-2">
+          <img
+            src={ledger.txInfo?.logo || ledger.currency}
+            alt={ledger.txInfo?.name}
+            className="me-0"
+            width={35}
+            height={35}
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.style.display = "none";
+              const container = e.target.parentNode;
+              const textNode = document.createElement("div");
+              textNode.textContent = ledger.currency;
+              textNode.className = "currency-placeholder";
+              container.appendChild(textNode);
+            }}
+          />{" "}
+        </div>
+
         <div className="d-flex flex-column text-center justify-content-end ms-2">
           <h6
             className={`fw-semibold my-0 text-${

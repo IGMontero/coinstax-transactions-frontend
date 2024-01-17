@@ -169,48 +169,58 @@ const Nfts = ({ address, activeTab }) => {
           <Spinner style={{ width: "4rem", height: "4rem" }} />
         </div>
       ) : (
-        <Col xxl={12} className="mt-4">
+        <Col xxl={12} className="mt-4 ">
           <Row>
             {data.items &&
               data?.items.map((nft, index) => (
-                <Col xxl={3} lg={6} md={6} sm={6} xs={12} key={index}>
+                <Col
+                  xxl={3}
+                  lg={6}
+                  md={6}
+                  sm={12}
+                  xs={12}
+                  key={index}
+                  className="d-flex justify-content-center"
+                >
                   <Card
-                    className="border-2 border bg-transparent shadow-none  "
-                    style={
-                      {
-                        // height: "350px",
-                        // minWidth: "225px",
-                        // maxWidth: "225px",
-                      }
-                    }
+                    className="border-2 border bg-transparent shadow-none mx-2  "
+                    style={{
+                      maxHeight: "350px",
+                      height: "350px",
+                      minWidth: "225px",
+                      maxWidth: "225px",
+                    }}
                   >
                     <CardHeader className="border-0 bg-transparent p-2">
                       <div style={{ position: "relative", minHeight: "200px" }}>
-                        {" "}
                         <img
                           src={nft.logo}
                           alt=""
-                          className="img-fluid w-100"
+                          className="img-fluid w-100 position-realative"
                           style={{
-                            position: "relative",
+                            minHeight: "200px",
+                            maxHeight: "200px",
                             height: "200px",
                             borderRadius: "7px",
                           }}
                         />
-                        <img
-                          src={eth}
-                          alt=""
-                          className="img-fluid d-flex justify-content-start border-dark border border-circle border-1 shadow-md rounded-circle"
-                          style={{
-                            position: "absolute",
-                            bottom: "5%",
-                            left: "5%",
-                            width: "10%",
-                            height: "10%",
-                          }}
-                        />
+                        <div className="">
+                          <img
+                            src={eth}
+                            alt=""
+                            className="img-fluid border-dark border border-circle border-1 d-flex justify-content-start  shadow-md rounded-circle"
+                            style={{
+                              position: "absolute",
+                              bottom: "5%",
+                              left: "5%",
+                              width: "10%",
+                              height: "10%",
+                            }}
+                          />
+                        </div>
                       </div>
                     </CardHeader>
+
                     <CardBody>
                       <div className="d-flex flex-column">
                         <span className="text-dark">{nft.domain}</span>
