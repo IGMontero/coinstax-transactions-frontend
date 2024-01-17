@@ -36,13 +36,25 @@ const ListTransactionss = ({ transactions }) => {
           {negativeLedgers &&
             negativeLedgers.map((ledger, index) => (
               <div className="d-flex">
-                <img
-                  src={ledger.txInfo.logo}
-                  alt=""
-                  className="me-2"
-                  width={35}
-                  height={35}
-                />
+                <div className="image-container me-2">
+                  <img
+                    src={ledger.txInfo?.logo || ledger.currency}
+                    alt={ledger.txInfo?.name}
+                    className="me-2"
+                    width={35}
+                    height={35}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.style.display = "none";
+                      const container = e.target.parentNode;
+                      const textNode = document.createElement("div");
+                      textNode.textContent = ledger.currency;
+                      textNode.className = "currency-placeholder";
+                      container.appendChild(textNode);
+                    }}
+                  />{" "}
+                </div>
+
                 <div className="d-flex flex-column text-start justify-content-start">
                   <div key={index}>
                     <h6
@@ -104,13 +116,25 @@ const ListTransactionss = ({ transactions }) => {
                   key={index}
                   className="d-flex align-items-center w-100 ps-2"
                 >
-                  <img
-                    src={ledger.txInfo.logo}
-                    alt="Ledger Image"
-                    className="me-2 rounded mb-3"
-                    width={35}
-                    height={35}
-                  />
+                  <div className="image-container me-2">
+                    <img
+                      src={ledger.txInfo?.logo || ledger.currency}
+                      alt={ledger.txInfo?.name}
+                      className=" rounded mb-3"
+                      width={35}
+                      height={35}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.style.display = "none";
+                        const container = e.target.parentNode;
+                        const textNode = document.createElement("div");
+                        textNode.textContent = ledger.currency;
+                        textNode.className = "currency-placeholder";
+                        container.appendChild(textNode);
+                      }}
+                    />{" "}
+                  </div>
+
                   <div className="d-flex flex-column">
                     <h6 className={`fw-semibold my-0`}>
                       {ledger.amount > 0 ? "+" : ""}
