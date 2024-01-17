@@ -1,6 +1,7 @@
 import React from "react";
 import { Col } from "reactstrap";
 import { formatNumber, blockchainActions } from "../../../../../utils/utils";
+import assetsIcon from "../../../../../assets/images/svg/assets.svg";
 
 const Negativeledgers = ({ negativeLedgers }) => {
   return (
@@ -34,8 +35,8 @@ const Negativeledgers = ({ negativeLedgers }) => {
                 {negativeLedgers.blockchainAction === blockchainActions.APPROVE
                   ? "Unlimited"
                   : negativeLedgers.price >= 0
-                  ? "N/A"
-                  : negativeLedgers.price}
+                    ? "N/A"
+                    : negativeLedgers.price}
               </p>
             </div>
           </>
