@@ -74,7 +74,10 @@ const HistorialTable = ({ address, activeTab }) => {
           ).unwrap();
           console.log(response);
           setData(response);
-          setHasMoreData(response.length === 10);
+
+          if (response.length === 0) {
+            setHasMoreData(false);
+          }
         } catch (error) {
           console.error("Error fetching performance data:", error);
         } finally {
@@ -123,7 +126,9 @@ const HistorialTable = ({ address, activeTab }) => {
 
       console.log(response);
       setData((prevData) => [...prevData, ...response]);
-      setHasMoreData(response.length < 8);
+      if (response.length === 0) {
+        setHasMoreData(false);
+      }
       setCurrentPage(nextPage);
       setLoading(false);
     } catch (error) {
@@ -272,9 +277,8 @@ const HistorialTable = ({ address, activeTab }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${
-                showTransactionFilterMenu ? "active" : ""
-              }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${showTransactionFilterMenu ? "active" : ""
+                }`}
               role="button"
             >
               <span className="fs-6">Transactions</span>
@@ -312,9 +316,8 @@ const HistorialTable = ({ address, activeTab }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${
-                showAssetsMenu ? "active" : ""
-              }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${showAssetsMenu ? "active" : ""
+                }`}
               role="button"
             >
               <span className="fs-6">Assets</span>
@@ -426,7 +429,7 @@ const HistorialTable = ({ address, activeTab }) => {
             ))}
         </div>
       </Col>
-      {!isInitialLoad && !hasMoreData && (
+      {!isInitialLoad && hasMoreData && (
         <div className="d-flex justify-content-center mt-2">
           <Button
             disabled={loading}
