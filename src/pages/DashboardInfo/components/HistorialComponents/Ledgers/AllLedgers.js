@@ -40,9 +40,11 @@ const AllLedgers = ({ ledger, index }) => {
             }`}
             style={{ whiteSpace: "nowrap" }}
           >
-            {ledger.amount > 0
-              ? `+${formatNumber(ledger.amount)} ${ledger.currency}`
-              : `${formatNumber(ledger.amount)} ${ledger.currency}`}
+            {ledger.isNfts
+              ? ledger.amount > 0
+                ? `+${formatNumber(ledger.amount)} ${ledger.currency}`
+                : `${formatNumber(ledger.amount)} ${ledger.currency}`
+              : ledger.currency}
           </h6>
           <p className="text-start my-0">
             {ledger.price >= 0 ? "N/A" : ledger.price}
