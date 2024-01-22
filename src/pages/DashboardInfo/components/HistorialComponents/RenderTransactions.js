@@ -81,6 +81,9 @@ const RenderTransactions = ({ date, transactions }) => {
             (!ledger.isFee && ledger.amount < 0)
         );
 
+        const sentTxSummary = transaction.txSummary.sent;
+        const receivedTxSummary = transaction.txSummary.received;
+
         const allLedgers = positiveLedgers.concat(negativeLedgers);
 
         return (
@@ -169,15 +172,18 @@ const RenderTransactions = ({ date, transactions }) => {
                     <AllLedgers ledger={ledger} index={index} />
                   ))}
 
-                {/* NEGATIVE LEDGERS  */}
+                {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 {(transaction.blockchainAction === blockchainActions.WITHDRAW ||
                   transaction.blockchainAction === blockchainActions.TRADE ||
                   transaction.blockchainAction === blockchainActions.APPROVE) &&
                   negativeLedgers.length > 0 && (
-                    <Negativeledgers negativeLedgers={negativeLedgers} />
+                    <Negativeledgers
+                      blockchainAction={transaction.blockchainAction}
+                      negativeLedgers={sentTxSummary}
+                    />
                   )}
 
-                {/* POSITIVE LEDGERS  */}
+                {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
                   lg={3}
                   md={3}
@@ -187,7 +193,10 @@ const RenderTransactions = ({ date, transactions }) => {
                     blockchainActions.WITHDRAW ||
                     transaction.blockchainAction ===
                       blockchainActions.TRADE) && (
-                    <PositiveLedgers positiveLedgers={positiveLedgers} />
+                    <PositiveLedgers
+                      positiveLedgers={receivedTxSummary}
+                      blockchainAction={transaction.blockchainAction}
+                    />
                   )}
                 </Col>
                 <Col

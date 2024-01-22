@@ -4,21 +4,21 @@ import { formatNumber } from "../../../../../utils/utils";
 import assetsIcon from "../../../../../assets/images/svg/assets.svg";
 
 const PositiveLedgers = ({ positiveLedgers }) => {
+  const currency = positiveLedgers?.currency || "";
+  const value = positiveLedgers?.value || 0;
+
   return (
     <>
-      {positiveLedgers.length > 0 && (
+      {positiveLedgers && (
         <div className="d-flex align-items-center">
           <i className="ri-arrow-right-line text-dark text-end fs-4 me-3"></i>
           <h6 className="fw-semibold my-0 d-flex align-items-center justify-content-center">
-            {positiveLedgers.length === 1 ? (
+            {positiveLedgers?.displayName !== "2 Assets" ? (
               <>
                 <div className="image-container">
                   <img
-                    src={
-                      positiveLedgers[0].txInfo?.logo ||
-                      positiveLedgers[0].currency
-                    }
-                    alt={positiveLedgers[0].txInfo?.name}
+                    src={positiveLedgers?.logo || currency}
+                    alt={positiveLedgers?.displayName}
                     className="me-2"
                     width={35}
                     height={35}
@@ -27,7 +27,7 @@ const PositiveLedgers = ({ positiveLedgers }) => {
                       e.target.style.display = "none";
                       const container = e.target.parentNode;
                       const textNode = document.createElement("div");
-                      textNode.textContent = positiveLedgers[0].currency;
+                      textNode.textContent = currency;
                       textNode.className = "currency-placeholder";
                       container.appendChild(textNode);
                     }}
@@ -35,13 +35,10 @@ const PositiveLedgers = ({ positiveLedgers }) => {
                 </div>
                 <div className="d-flex flex-column">
                   <span className="text-success d-flex">
-                    <span
-                      id={`positive-ledger-${positiveLedgers.amount}`}
-                      className="me-1"
-                    >
-                      +{formatNumber(positiveLedgers[0].amount)}{" "}
+                    <span id={`positive-ledger-${value}`} className="me-1">
+                      +{formatNumber(value)}{" "}
                     </span>
-                    {positiveLedgers[0].currency}
+                    {currency}
                   </span>
 
                   <p className="text-start my-0 text-muted">
@@ -76,7 +73,7 @@ const PositiveLedgers = ({ positiveLedgers }) => {
                 </div>
                 <div className="ms-2 ">
                   <span className="text-success">
-                    {positiveLedgers.length} Assets
+                    {positiveLedgers.displayName}
                   </span>
                   <p className="text-start my-0 text-muted">
                     {positiveLedgers
