@@ -16,7 +16,7 @@ const AllLedgers = ({ ledger, index }) => {
       <>
         <div className="image-container me-2">
           <img
-            src={ledger.txInfo?.logo || ledger.currency}
+            src={ledger.txInfo?.logo || ledger?.currency}
             alt={ledger.txInfo?.name}
             className="me-0"
             width={35}
@@ -40,11 +40,11 @@ const AllLedgers = ({ ledger, index }) => {
             }`}
             style={{ whiteSpace: "nowrap" }}
           >
-            {ledger.isNfts
-              ? ledger.amount > 0
-                ? `+${formatNumber(ledger.amount)} ${ledger.currency}`
-                : `${formatNumber(ledger.amount)} ${ledger.currency}`
-              : ledger.currency}
+            {ledger.isNft && ledger.amount < 0
+              ? `${ledger.currency}`
+              : ledger.amount > 0
+              ? `+${formatNumber(ledger.amount)} ${ledger.currency}`
+              : `${formatNumber(ledger.amount)} ${ledger.currency}`}
           </h6>
           <p className="text-start my-0">
             {ledger.price >= 0 ? "N/A" : ledger.price}
