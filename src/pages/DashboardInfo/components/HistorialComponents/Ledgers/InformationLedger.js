@@ -29,11 +29,13 @@ const InformationLedger = ({
     <Col lg={12}>
       <Row className="d-flex flex-row align-items-center">
         <Col lg={12} className="p-2 d-flex ">
-          {transaction.collection && (
+          {transaction.txSummary?.received?.collectionName && (
             <div className="p-2 mx-2 d-flex flex-column">
               <strong className="mb-1">Collection:</strong>
               <span>
-                {transaction.collection ? transaction.collection : "0"}
+                {transaction.txSummary.received.collectionName
+                  ? transaction.txSummary?.received.collectionName
+                  : "0"}
               </span>
             </div>
           )}
