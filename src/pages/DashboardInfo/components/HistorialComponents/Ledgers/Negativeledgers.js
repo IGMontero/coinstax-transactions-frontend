@@ -3,7 +3,10 @@ import { Col } from "reactstrap";
 import { formatNumber, blockchainActions } from "../../../../../utils/utils";
 import assetsIcon from "../../../../../assets/images/svg/assets.svg";
 
-const Negativeledgers = ({ negativeLedgers }) => {
+const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
+  const currency = negativeLedgers?.currency || "";
+  const value = negativeLedgers?.value || 1;
+
   return (
     <Col
       lg={3}
@@ -14,14 +17,12 @@ const Negativeledgers = ({ negativeLedgers }) => {
       style={{ overflow: "hidden" }}
     >
       <>
-        {negativeLedgers.length === 1 ? (
+        {negativeLedgers?.displayName !== "2 Assets" ? (
           <>
             <div className="image-container">
               <img
-                src={
-                  negativeLedgers[0].txInfo?.logo || negativeLedgers[0].currency
-                }
-                alt={negativeLedgers[0].txInfo?.name}
+                src={negativeLedgers?.logo || currency}
+                alt={negativeLedgers?.displayName}
                 className="me-2"
                 width={35}
                 height={35}
@@ -30,7 +31,7 @@ const Negativeledgers = ({ negativeLedgers }) => {
                   e.target.style.display = "none";
                   const container = e.target.parentNode;
                   const textNode = document.createElement("div");
-                  textNode.textContent = negativeLedgers[0].currency;
+                  textNode.textContent = currency;
                   textNode.className = "currency-placeholder";
                   container.appendChild(textNode);
                 }}
@@ -41,15 +42,14 @@ const Negativeledgers = ({ negativeLedgers }) => {
                 className="fw-semibold my-0 text-dark"
                 style={{ whiteSpace: "nowrap" }}
               >
-                {formatNumber(negativeLedgers[0].amount)}{" "}
-                {negativeLedgers[0].currency}
+                {formatNumber(value)} {currency}
               </h6>
               <p className="text-start my-0">
-                {negativeLedgers.blockchainAction === blockchainActions.APPROVE
+                {blockchainAction === blockchainActions.APPROVE
                   ? "Unlimited"
                   : negativeLedgers.price >= 0
-                    ? "N/A"
-                    : negativeLedgers.price}
+                  ? "N/A"
+                  : negativeLedgers.price}
               </p>
             </div>
           </>
@@ -64,7 +64,7 @@ const Negativeledgers = ({ negativeLedgers }) => {
                 height={35}
               />
             </div>
-            <div className="ms-2 ">{negativeLedgers.length} Assets</div>
+            <div className="ms-2 ">{negativeLedgers.displayName} </div>
           </>
         )}
       </>
