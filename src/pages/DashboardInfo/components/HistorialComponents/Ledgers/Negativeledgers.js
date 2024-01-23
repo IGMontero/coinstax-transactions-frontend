@@ -6,6 +6,7 @@ import assetsIcon from "../../../../../assets/images/svg/assets.svg";
 const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
   const currency = negativeLedgers?.currency || "";
   const value = negativeLedgers?.value || 1;
+  const hasMoreThanOne = negativeLedgers?.logo === "assets";
 
   return (
     <Col
@@ -17,7 +18,7 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
       style={{ overflow: "hidden" }}
     >
       <>
-        {negativeLedgers?.displayName !== "2 Assets" ? (
+        {!hasMoreThanOne ? (
           <>
             <div className="image-container">
               <img
@@ -42,7 +43,7 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
                 className="fw-semibold my-0 text-dark"
                 style={{ whiteSpace: "nowrap" }}
               >
-                {formatNumber(value)} {currency}
+                {negativeLedgers?.displayName}
               </h6>
               <p className="text-start my-0">
                 {blockchainAction === blockchainActions.APPROVE

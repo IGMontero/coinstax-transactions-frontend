@@ -82,6 +82,7 @@ const RenderTransactions = ({ date, transactions }) => {
         );
 
         const sentTxSummary = transaction.txSummary.sent;
+
         const receivedTxSummary = transaction.txSummary.received;
 
         const allLedgers = positiveLedgers.concat(negativeLedgers);
@@ -194,6 +195,7 @@ const RenderTransactions = ({ date, transactions }) => {
                     transaction.blockchainAction ===
                       blockchainActions.TRADE) && (
                     <PositiveLedgers
+                      negativeLedgers={sentTxSummary}
                       positiveLedgers={receivedTxSummary}
                       blockchainAction={transaction.blockchainAction}
                     />
