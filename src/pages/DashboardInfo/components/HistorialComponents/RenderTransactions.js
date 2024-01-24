@@ -69,7 +69,9 @@ const RenderTransactions = ({ date, transactions }) => {
         }
         const sentTxSummary = transaction.txSummary.sent;
         const receivedTxSummary = transaction.txSummary.received;
-
+        const hasList =
+          transaction.txSummary?.receivedAssetsCount > 1 ||
+          transaction.txSummary?.sentAssetsCount > 1;
         return (
           <div key={index} className="align-items-center">
             <div
@@ -162,7 +164,10 @@ const RenderTransactions = ({ date, transactions }) => {
                   md={3}
                   className="d-flex justify-content-start  d-none d-lg-flex"
                 >
-                  <PositiveLedgers positiveLedgers={receivedTxSummary} />
+                  <PositiveLedgers
+                    positiveLedgers={receivedTxSummary}
+                    negativeLedgers={sentTxSummary}
+                  />
                 </Col>
 
                 <Col
@@ -207,10 +212,7 @@ const RenderTransactions = ({ date, transactions }) => {
                   }`}
                 >
                   {/* CODE FOR LIST */}
-                  {(transaction.txSummary?.receivedAssetsCount > 1 ||
-                    transaction.txSummary?.sentAssetsCount > 1) && (
-                    <ListTransactions transactions={transaction} />
-                  )}
+                  {hasList && <ListTransactions transactions={transaction} />}
 
                   {/* HASH AND FEE  */}
                   <InformationLedger

@@ -1,9 +1,8 @@
 import React from "react";
-import { UncontrolledPopover, PopoverBody } from "reactstrap";
-import { formatNumber } from "../../../../../utils/utils";
+
 import assetsIcon from "../../../../../assets/images/svg/assets.svg";
 
-const PositiveLedgers = ({ positiveLedgers }) => {
+const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
   const currency = positiveLedgers?.currency || "";
   const value = positiveLedgers?.value || 0;
 
@@ -19,8 +18,14 @@ const PositiveLedgers = ({ positiveLedgers }) => {
                 ""
               ) : (
                 <>
-                  <i className="ri-arrow-right-line text-dark text-end fs-4 me-3"></i>
-                  <div className="image-container me-2">
+                  {!negativeLedgers ? null : (
+                    <i className="ri-arrow-right-line text-dark text-end fs-4 me-3"></i>
+                  )}
+                  <div
+                    className={`image-container me-2 ${
+                      negativeLedgers ? "" : "ms-4 ps-3"
+                    }`}
+                  >
                     <img
                       src={positiveLedgers?.logo || currency}
                       alt={positiveLedgers?.displayName}
