@@ -30,6 +30,8 @@ export const blockchainActions = {
   APPROVE: "APPROVE",
   RECEIVE: "RECEIVE",
   SEND: "SEND",
+  BURN: "BURN",
+  MINT: "MINT",
 };
 
 export const formatIdTransaction = (address, prefixLength, suffixLength) => {
