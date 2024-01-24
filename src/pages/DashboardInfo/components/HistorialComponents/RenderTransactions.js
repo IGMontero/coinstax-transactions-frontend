@@ -181,7 +181,11 @@ const RenderTransactions = ({ date, transactions }) => {
                     <p className="text-start my-0">
                       {" "}
                       {transaction.blockchainAction ===
-                      blockchainActions.RECEIVE
+                        blockchainActions.BURN ||
+                      transaction.blockchainAction === blockchainActions.MINT
+                        ? ""
+                        : transaction.blockchainAction ===
+                          blockchainActions.RECEIVE
                         ? "From"
                         : transaction.blockchainAction ===
                             blockchainActions.EXECUTE ||
@@ -196,10 +200,22 @@ const RenderTransactions = ({ date, transactions }) => {
                     </p>
                     <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
                       {" "}
-                      {transaction.blockchainAction == blockchainActions.RECEIVE
-                        ? formatIdTransaction(transaction.sender, 4, 4)
-                        : formatIdTransaction(transaction.recipient, 4, 4)}
-                      <i className="ri-arrow-right-up-line fs-5 text-muted ms-1 "></i>
+                      {transaction.blockchainAction !==
+                        blockchainActions.BURN &&
+                        transaction.blockchainAction !==
+                          blockchainActions.MINT && (
+                          <>
+                            {transaction.blockchainAction ===
+                            blockchainActions.RECEIVE
+                              ? formatIdTransaction(transaction.sender, 4, 4)
+                              : formatIdTransaction(
+                                  transaction.recipient,
+                                  4,
+                                  4
+                                )}
+                            <i className="ri-arrow-right-up-line fs-5 text-muted ms-1 "></i>
+                          </>
+                        )}
                     </h6>
                   </div>
                 </Col>
