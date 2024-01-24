@@ -6,7 +6,6 @@ import eth from "../../../../assets/images/svg/crypto-icons/eth.svg";
 import ListTransactions from "./ListTransactions";
 import { blockchainActions } from "../../../../utils/utils";
 import Negativeledgers from "./Ledgers/Negativeledgers";
-import AllLedgers from "./Ledgers/AllLedgers";
 import PositiveLedgers from "./Ledgers/PositiveLedgers";
 import InformationLedger from "./Ledgers/InformationLedger";
 
@@ -68,24 +67,8 @@ const RenderTransactions = ({ date, transactions }) => {
         if (!transaction.ledgers) {
           return null;
         }
-
-        const positiveLedgers = transaction.ledgers.filter(
-          (ledger) =>
-            (ledger.isFee &&
-              transaction.blockchainAction === blockchainActions.APPROVE) ||
-            (!ledger.isFee && ledger.amount > 0)
-        );
-        const negativeLedgers = transaction.ledgers.filter(
-          (ledger) =>
-            (ledger.isFee &&
-              transaction.blockchainAction === blockchainActions.APPROVE) ||
-            (!ledger.isFee && ledger.amount < 0)
-        );
-
         const sentTxSummary = transaction.txSummary.sent;
         const receivedTxSummary = transaction.txSummary.received;
-
-        const allLedgers = positiveLedgers.concat(negativeLedgers);
 
         return (
           <div key={index} className="align-items-center">
@@ -102,11 +85,11 @@ const RenderTransactions = ({ date, transactions }) => {
                 style={{ cursor: "pointer", padding: ".7rem" }}
               >
                 <Col
-                  lg={3}
-                  md={3}
+                  lg={2}
+                  md={2}
                   sm={12}
                   xs={12}
-                  className="d-flex align-items-center mb-lg-0 mb-2"
+                  className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-2"
                 >
                   {transaction.blockchainAction && (
                     <span
@@ -166,44 +149,25 @@ const RenderTransactions = ({ date, transactions }) => {
                   </div>
                 </Col>
 
-                {/* ALL LEDGERS      */}
-                {(blockchainActions.RECEIVE === transaction.blockchainAction ||
-                  blockchainActions.SEND === transaction.blockchainAction) &&
-                  allLedgers.map((ledger, index) => (
-                    <AllLedgers ledger={ledger} index={index} />
-                  ))}
-
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
-                {(transaction.blockchainAction === blockchainActions.WITHDRAW ||
-                  transaction.blockchainAction === blockchainActions.TRADE ||
-                  transaction.blockchainAction === blockchainActions.APPROVE) &&
-                  negativeLedgers.length > 0 && (
-                    <Negativeledgers
-                      blockchainAction={transaction.blockchainAction}
-                      negativeLedgers={sentTxSummary}
-                    />
-                  )}
+
+                <Negativeledgers
+                  blockchainAction={transaction.blockchainAction}
+                  negativeLedgers={sentTxSummary}
+                />
 
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
                   lg={3}
                   md={3}
-                  className="d-flex justify-content-start d-none d-lg-flex"
+                  className="d-flex justify-content-start  d-none d-lg-flex"
                 >
-                  {(transaction.blockchainAction ===
-                    blockchainActions.WITHDRAW ||
-                    transaction.blockchainAction ===
-                      blockchainActions.TRADE) && (
-                    <PositiveLedgers
-                      negativeLedgers={sentTxSummary}
-                      positiveLedgers={receivedTxSummary}
-                      blockchainAction={transaction.blockchainAction}
-                    />
-                  )}
+                  <PositiveLedgers positiveLedgers={receivedTxSummary} />
                 </Col>
+
                 <Col
-                  lg={3}
-                  md={3}
+                  lg={2}
+                  md={2}
                   sm={4}
                   xs={5}
                   className="d-flex justify-content-end align-items-center  "
@@ -243,14 +207,10 @@ const RenderTransactions = ({ date, transactions }) => {
                   }`}
                 >
                   {/* CODE FOR LIST */}
-                  {transaction.ledgers &&
-                    transaction.ledgers.length - 2 >= 2 &&
-                    (transaction.blockchainAction ===
-                      blockchainActions.WITHDRAW ||
-                      transaction.blockchainAction ===
-                        blockchainActions.TRADE) && (
-                      <ListTransactions transactions={transaction} />
-                    )}
+                  {(transaction.txSummary?.receivedAssetsCount > 1 ||
+                    transaction.txSummary?.sentAssetsCount > 1) && (
+                    <ListTransactions transactions={transaction} />
+                  )}
 
                   {/* HASH AND FEE  */}
                   <InformationLedger

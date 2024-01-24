@@ -24,11 +24,11 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
               ""
             ) : (
               <>
-                <div className="image-container">
+                <div className="image-container me-2">
                   <img
                     src={negativeLedgers?.logo || currency}
                     alt={negativeLedgers?.displayName}
-                    className="me-2"
+                    className=""
                     width={35}
                     height={35}
                     onError={(e) => {
@@ -71,7 +71,9 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
                 height={35}
               />
             </div>
-            <div className="ms-2 ">{negativeLedgers.displayName} </div>
+            <div className="ms-2 ">
+              <span className="text-dark">{negativeLedgers.displayName}</span>{" "}
+            </div>
           </>
         )}
       </>

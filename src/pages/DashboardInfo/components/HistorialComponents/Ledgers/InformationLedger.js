@@ -29,12 +29,12 @@ const InformationLedger = ({
     <Col lg={12}>
       <Row className="d-flex flex-row align-items-center">
         <Col lg={12} className="p-2 d-flex ">
-          {transaction.txSummary?.received?.collectionName && (
+          {transaction.txSummary?.collectionName && (
             <div className="p-2 mx-2 d-flex flex-column">
               <strong className="mb-1">Collection:</strong>
               <span>
-                {transaction.txSummary.received.collectionName
-                  ? transaction.txSummary?.received.collectionName
+                {transaction.txSummary.collectionName
+                  ? transaction.txSummary?.collectionName
                   : "0"}
               </span>
             </div>
@@ -45,9 +45,13 @@ const InformationLedger = ({
             <span>
               {transaction.blockchainAction === blockchainActions.RECEIVE
                 ? "N/A"
-                : transaction.txSummary && transaction.txSummary.fee
+                : transaction.txSummary &&
+                  transaction.txSummary.fee &&
+                  transaction.txSummary.fee.prettyAmount !== "0" &&
+                  transaction.txSummary.fee.prettyAmount !== null
                 ? `${transaction.txSummary.fee.prettyAmount} ($${transaction.txSummary.fee.prettyNativeAmount})`
-                : "0.00"}
+                : "N/A"}
+
               {/* {transaction.blockchainAction === blockchainActions.RECEIVE
                 ? "N/A"
                 : transaction.ledgers &&
