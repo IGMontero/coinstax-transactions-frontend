@@ -7,9 +7,7 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
   const currency = positiveLedgers?.currency || "";
   const value = positiveLedgers?.value || 0;
 
-  const hasMoreThanOne =
-    positiveLedgers?.logo === "assets" ||
-    positiveLedgers?.logo === "+4 .crypto";
+  const hasMoreThanOne = positiveLedgers?.logo === "assets";
 
   return (
     <>

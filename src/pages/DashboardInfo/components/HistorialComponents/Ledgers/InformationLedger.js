@@ -45,6 +45,11 @@ const InformationLedger = ({
             <span>
               {transaction.blockchainAction === blockchainActions.RECEIVE
                 ? "N/A"
+                : transaction.txSummary && transaction.txSummary.fee
+                ? `${transaction.txSummary.fee.prettyAmount} ($${transaction.txSummary.fee.prettyNativeAmount})`
+                : "0.00"}
+              {/* {transaction.blockchainAction === blockchainActions.RECEIVE
+                ? "N/A"
                 : transaction.ledgers &&
                   transaction.ledgers.find((ledger) => ledger.isFee)
                 ? formatNumber(
@@ -56,7 +61,7 @@ const InformationLedger = ({
                     transaction.ledgers.find((ledger) => ledger.isFee)
                       .nativeamount
                   ).toFixed(2)})`
-                : "0.00"}
+                : "0.00"} */}
             </span>
           </div>
 
