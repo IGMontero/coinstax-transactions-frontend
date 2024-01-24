@@ -51,8 +51,18 @@ const ListTransactionss = ({ transactions }) => {
 
         <div className="d-flex flex-column ">
           <h6 className={`fw-semibold my-0 `}>
-            {ledger.amount > 0 ? "+" : ""}
-            {formatNumber(ledger.amount)} {ledger.currency}{" "}
+            <>
+              {!(
+                ledger.isNft === true &&
+                (ledger.amount === 1 || ledger.amount === -1)
+              ) && (
+                <>
+                  {ledger.amount > 0 ? "+" : ""}
+                  {formatNumber(ledger.amount)}
+                </>
+              )}{" "}
+              {ledger.currency}
+            </>
           </h6>
           <p className="text-muted">{"N/A"}</p>
         </div>
