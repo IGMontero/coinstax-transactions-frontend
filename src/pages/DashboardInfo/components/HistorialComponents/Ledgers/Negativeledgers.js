@@ -20,39 +20,45 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
       <>
         {!hasMoreThanOne ? (
           <>
-            <div className="image-container">
-              <img
-                src={negativeLedgers?.logo || currency}
-                alt={negativeLedgers?.displayName}
-                className="me-2"
-                width={35}
-                height={35}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.style.display = "none";
-                  const container = e.target.parentNode;
-                  const textNode = document.createElement("div");
-                  textNode.textContent = currency;
-                  textNode.className = "currency-placeholder";
-                  container.appendChild(textNode);
-                }}
-              />{" "}
-            </div>
-            <div className="d-flex flex-column text-center justify-content-end ms-2">
-              <h6
-                className="fw-semibold my-0 text-dark"
-                style={{ whiteSpace: "nowrap" }}
-              >
-                {negativeLedgers?.displayName}
-              </h6>
-              <p className="text-start my-0">
-                {blockchainAction === blockchainActions.APPROVE
-                  ? "Unlimited"
-                  : negativeLedgers.price >= 0
-                  ? "N/A"
-                  : negativeLedgers.price}
-              </p>
-            </div>
+            {!negativeLedgers ? (
+              ""
+            ) : (
+              <>
+                <div className="image-container">
+                  <img
+                    src={negativeLedgers?.logo || currency}
+                    alt={negativeLedgers?.displayName}
+                    className="me-2"
+                    width={35}
+                    height={35}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.style.display = "none";
+                      const container = e.target.parentNode;
+                      const textNode = document.createElement("div");
+                      textNode.textContent = currency;
+                      textNode.className = "currency-placeholder";
+                      container.appendChild(textNode);
+                    }}
+                  />{" "}
+                </div>
+                <div className="d-flex flex-column text-center justify-content-end ms-2">
+                  <h6
+                    className="fw-semibold my-0 text-dark"
+                    style={{ whiteSpace: "nowrap" }}
+                  >
+                    {negativeLedgers?.displayName}
+                  </h6>
+                  <p className="text-start my-0">
+                    {blockchainAction === blockchainActions.APPROVE
+                      ? "Unlimited"
+                      : negativeLedgers.price >= 0
+                      ? "N/A"
+                      : negativeLedgers.price}
+                  </p>
+                </div>
+              </>
+            )}
           </>
         ) : (
           <>
