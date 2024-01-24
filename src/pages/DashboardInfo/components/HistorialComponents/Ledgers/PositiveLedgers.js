@@ -16,49 +16,45 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
         <h6 className="fw-semibold my-0 d-flex align-items-center justify-content-center">
           {!hasMoreThanOne ? (
             <>
-              <div className="image-container">
-                <img
-                  src={positiveLedgers?.logo || currency}
-                  alt={positiveLedgers?.displayName}
-                  className=""
-                  width={35}
-                  height={35}
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.style.display = "none";
-                    const container = e.target.parentNode;
-                    const textNode = document.createElement("div");
-                    textNode.textContent = currency;
-                    textNode.className = "currency-placeholder";
-                    container.appendChild(textNode);
-                  }}
-                />{" "}
-              </div>
-              <div className="d-flex flex-column">
-                <span className="text-success d-flex ms-2">
-                  <span id={`positive-ledger-${value}`} className="me-1">
-                    {positiveLedgers?.displayName}
-                  </span>
-                </span>
+              {!positiveLedgers ? (
+                ""
+              ) : (
+                <>
+                  <div className="image-container">
+                    <img
+                      src={positiveLedgers?.logo || currency}
+                      alt={positiveLedgers?.displayName}
+                      className=""
+                      width={35}
+                      height={35}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.style.display = "none";
+                        const container = e.target.parentNode;
+                        const textNode = document.createElement("div");
+                        textNode.textContent = currency;
+                        textNode.className = "currency-placeholder";
+                        container.appendChild(textNode);
+                      }}
+                    />{" "}
+                  </div>
+                  <div className="d-flex flex-column">
+                    <span className="text-success d-flex ms-2">
+                      <span id={`positive-ledger-${value}`} className="me-1">
+                        {positiveLedgers?.displayName}
+                      </span>
+                    </span>
 
-                <p className="text-start my-0 text-muted">
-                  {positiveLedgers
-                    ? positiveLedgers.price >= 0
-                      ? "N/A"
-                      : positiveLedgers.price
-                    : ""}
-                </p>
-              </div>
-              {/* <UncontrolledPopover
-                  onClick={(e) => e.stopPropagation()}
-                  placement="bottom"
-                  target={`positive-ledger-${positiveLedgers.amount}`}
-                  trigger="hover"
-                >
-                  <PopoverBody className="p-1">
-                    {positiveLedgers[0].amount}
-                  </PopoverBody>
-                </UncontrolledPopover> */}
+                    <p className="text-start my-0 text-muted">
+                      {positiveLedgers
+                        ? positiveLedgers.price >= 0
+                          ? "N/A"
+                          : positiveLedgers.price
+                        : ""}
+                    </p>
+                  </div>
+                </>
+              )}
             </>
           ) : (
             <>
