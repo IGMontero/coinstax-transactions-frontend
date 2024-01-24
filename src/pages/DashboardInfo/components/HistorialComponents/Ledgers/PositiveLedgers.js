@@ -3,7 +3,7 @@ import { UncontrolledPopover, PopoverBody } from "reactstrap";
 import { formatNumber } from "../../../../../utils/utils";
 import assetsIcon from "../../../../../assets/images/svg/assets.svg";
 
-const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
+const PositiveLedgers = ({ positiveLedgers }) => {
   const currency = positiveLedgers?.currency || "";
   const value = positiveLedgers?.value || 0;
 
@@ -11,8 +11,7 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
 
   return (
     <>
-      <div className="d-flex align-items-center">
-        <i className="ri-arrow-right-line text-dark text-end fs-4 me-3"></i>
+      <div className="d-flex align-items-center justify-content-start">
         <h6 className="fw-semibold my-0 d-flex align-items-center justify-content-center">
           {!hasMoreThanOne ? (
             <>
@@ -20,7 +19,8 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
                 ""
               ) : (
                 <>
-                  <div className="image-container">
+                  <i className="ri-arrow-right-line text-dark text-end fs-4 me-3"></i>
+                  <div className="image-container me-2">
                     <img
                       src={positiveLedgers?.logo || currency}
                       alt={positiveLedgers?.displayName}
@@ -39,7 +39,7 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
                     />{" "}
                   </div>
                   <div className="d-flex flex-column">
-                    <span className="text-success d-flex ms-2">
+                    <span className="text-success d-flex">
                       <span id={`positive-ledger-${value}`} className="me-1">
                         {positiveLedgers?.displayName}
                       </span>
@@ -58,26 +58,29 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
             </>
           ) : (
             <>
-              <div className="bg-primary rounded-circle align-items-center justify-content-center d-flex ">
-                <img
-                  src={assetsIcon}
-                  alt=""
-                  className="p-1 "
-                  width={35}
-                  height={35}
-                />
-              </div>
-              <div className="ms-2 ">
-                <span className="text-success">
-                  {positiveLedgers.displayName}
-                </span>
-                <p className="text-start my-0 text-muted">
-                  {positiveLedgers
-                    ? positiveLedgers.price >= 0
-                      ? "N/A"
-                      : positiveLedgers.price
-                    : ""}
-                </p>
+              <div className="d-flex justify-content-center text-start align-items-center ">
+                <i className="ri-arrow-right-line text-dark text-start fs-4 me-3"></i>
+                <div className="bg-primary  rounded-circle align-items-center justify-content-center d-flex ">
+                  <img
+                    src={assetsIcon}
+                    alt=""
+                    className="p-1 "
+                    width={35}
+                    height={35}
+                  />
+                </div>
+                <div className="ms-2 ">
+                  <span className="text-success">
+                    {positiveLedgers.displayName}
+                  </span>
+                  <p className="text-start my-0 text-muted">
+                    {positiveLedgers
+                      ? positiveLedgers.price >= 0
+                        ? "N/A"
+                        : positiveLedgers.price
+                      : ""}
+                  </p>
+                </div>
               </div>
             </>
           )}
