@@ -14,6 +14,10 @@ export const getActionMapping = (action) => {
       return { color: "dark", icon: "ri-upload-2-line fs-3" };
     case "EXECUTE":
       return { color: "warning", icon: "ri-file-3-line fs-3" };
+    case "BURN":
+      return { color: "dark", icon: "ri-fire-line fs-3" };
+    case "MINT":
+      return { color: "dark", icon: "ri-vip-diamond-line fs-3" };
     default:
       return { color: "dark", icon: "ri-arrow-down-line fs-3" };
   }
