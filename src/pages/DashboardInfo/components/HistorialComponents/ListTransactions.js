@@ -105,7 +105,7 @@ const ListTransactionss = ({ transactions }) => {
 
         <Col
           xxl={9}
-          className="d-flex align-items-center flex-column justify-content-start"
+          className="d-flex align-items-center ps-2 flex-column justify-content-start"
         >
           <span className="mb-3 mt-n2  align-self-start">Received</span>
 
@@ -135,8 +135,8 @@ const ListTransactionss = ({ transactions }) => {
                     />{" "}
                   </div>
 
-                  <div className="d-flex flex-column">
-                    <h6 className={`fw-semibold my-0`}>
+                  <div className="d-flex flex-column ">
+                    <h6 className={`fw-semibold my-0 `}>
                       {ledger.amount > 0 ? "+" : ""}
                       {formatNumber(ledger.amount)} {ledger.currency}{" "}
                     </h6>

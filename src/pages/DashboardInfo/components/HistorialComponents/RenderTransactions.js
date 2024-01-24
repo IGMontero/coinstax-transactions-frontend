@@ -68,6 +68,7 @@ const RenderTransactions = ({ date, transactions }) => {
         if (!transaction.ledgers) {
           return null;
         }
+
         const positiveLedgers = transaction.ledgers.filter(
           (ledger) =>
             (ledger.isFee &&
@@ -82,7 +83,6 @@ const RenderTransactions = ({ date, transactions }) => {
         );
 
         const sentTxSummary = transaction.txSummary.sent;
-
         const receivedTxSummary = transaction.txSummary.received;
 
         const allLedgers = positiveLedgers.concat(negativeLedgers);
