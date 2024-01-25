@@ -405,33 +405,30 @@ const HistorialTable = ({ address, activeTab }) => {
           </Button>
         </Col>
       </Row>
-      <Col lg={12} className="position-relative" style={{ minHeight: "50vh" }}>
-        {loading && isInitialLoad && (
-          <div
-            className="position-absolute d-flex justify-content-center align-items-center bg-transparent"
-            style={{
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backdropFilter: "blur(5px)",
-              zIndex: 2,
-            }}
-          >
-            <Spinner style={{ width: "3rem", height: "3rem" }} />
-          </div>
-        )}
-
-        <div className="">
-          {groupedTransactions &&
-            Object.keys(groupedTransactions).map((date, index) => (
-              <RenderTransactions
-                date={date}
-                transactions={groupedTransactions[date]}
-              />
-            ))}
+      {loading && isInitialLoad ? (
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "50vh" }}
+        >
+          <Spinner style={{ width: "4rem", height: "4rem" }} />
         </div>
-      </Col>
+      ) : (
+        <Col
+          lg={12}
+          className="position-relative"
+          style={{ minHeight: "50vh" }}
+        >
+          <div className="">
+            {groupedTransactions &&
+              Object.keys(groupedTransactions).map((date, index) => (
+                <RenderTransactions
+                  date={date}
+                  transactions={groupedTransactions[date]}
+                />
+              ))}
+          </div>
+        </Col>
+      )}
       {!isInitialLoad && hasMoreData && (
         <div className="d-flex justify-content-center mt-2">
           <Button
