@@ -64,32 +64,33 @@ const HistorialTable = ({ address, activeTab }) => {
     return new Date(dateString).toLocaleDateString("en-US", options);
   };
 
-  useEffect(() => {
-    if (activeTab === "3") {
-      const fetchData = async () => {
-        setLoading(true);
-        try {
-          const response = await dispatch(
-            fetchHistory({ address, count: 10, page: 0 })
-          ).unwrap();
-          console.log(response);
-          setData(response);
+  const fetchData = async () => {
+    try {
+      setIsInitialLoad(true);
+      setLoading(true);
+      const response = await dispatch(
+        fetchHistory({ address, count: 10, page: 0 })
+      ).unwrap();
+      setData(response);
 
-          if (response.length === 0) {
-            setHasMoreData(false);
-          }
-        } catch (error) {
-          console.error("Error fetching performance data:", error);
-        } finally {
-          setIsInitialLoad(false);
-          setLoading(false);
-        }
-      };
-
-      fetchData();
+      if (response.length === 0) {
+        setHasMoreData(false);
+      }
+      setLoading(false);
+      setIsInitialLoad(false);
+    } catch (error) {
+      setLoading(true);
+      console.error("Error fetching performance data:", error);
+      setLoading(false);
     }
-    setCurrentPage(0);
-    setHasMoreData(true);
+  };
+
+  useEffect(() => {
+    if (activeTab == "3") {
+      fetchData();
+      setCurrentPage(0);
+      setHasMoreData(true);
+    }
   }, [address, activeTab, dispatch]);
 
   useEffect(() => {
@@ -277,8 +278,9 @@ const HistorialTable = ({ address, activeTab }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${showTransactionFilterMenu ? "active" : ""
-                }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${
+                showTransactionFilterMenu ? "active" : ""
+              }`}
               role="button"
             >
               <span className="fs-6">Transactions</span>
@@ -316,8 +318,9 @@ const HistorialTable = ({ address, activeTab }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${showAssetsMenu ? "active" : ""
-                }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${
+                showAssetsMenu ? "active" : ""
+              }`}
               role="button"
             >
               <span className="fs-6">Assets</span>
