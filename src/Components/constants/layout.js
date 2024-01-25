@@ -2,16 +2,16 @@ const layoutTypes = {
   HORIZONTAL: "horizontal",
   VERTICAL: "vertical",
   TWOCOLUMN: "twocolumn",
-  SEMIBOX: "semibox"
+  SEMIBOX: "semibox",
 };
 
 const layoutModeTypes = {
-  LIGHTMODE: "light",
+  LIGHTMODE: "dark",
   DARKMODE: "dark",
 };
 
 const leftSidebarTypes = {
-  LIGHT: "light",
+  LIGHT: "dark",
   DARK: "dark",
   GRADIENT: "gradient",
   GRADIENT_2: "gradient-2",
@@ -30,7 +30,7 @@ const layoutPositionTypes = {
 };
 
 const topbarThemeTypes = {
-  LIGHT: "light",
+  LIGHT: "dark",
   DARK: "dark",
 };
 
@@ -38,12 +38,12 @@ const leftsidbarSizeTypes = {
   DEFAULT: "lg",
   COMPACT: "md",
   SMALLICON: "sm",
-  SMALLHOVER: "sm-hover"
+  SMALLHOVER: "sm-hover",
 };
 
 const leftSidebarViewTypes = {
   DEFAULT: "default",
-  DETACHED: "detached"
+  DETACHED: "detached",
 };
 
 const leftSidebarImageTypes = {
@@ -56,12 +56,12 @@ const leftSidebarImageTypes = {
 
 const preloaderTypes = {
   ENABLE: "enable",
-  DISABLE: "disable"
+  DISABLE: "disable",
 };
 
 const sidebarVisibilitytypes = {
   SHOW: "show",
-  HIDDEN: "hidden"
+  HIDDEN: "hidden",
 };
 
 export {
@@ -75,5 +75,5 @@ export {
   leftSidebarViewTypes,
   leftSidebarImageTypes,
   preloaderTypes,
-  sidebarVisibilitytypes
+  sidebarVisibilitytypes,
 };

@@ -28,8 +28,9 @@
     align-items: center;
     margin: 0 auto;
     height: $header-height;
-    padding: 0 $grid-gutter-width 0 calc(#{$grid-gutter-width} / 2)
+    padding: 0 $grid-gutter-width 0 calc(#{$grid-gutter-width} / 2);
     /*rtl: 0 0 0 calc(#{$grid-gutter-width} / 2) */
+    background-color: $header-bg;
     ;
 
     @media (max-width: 767.98px) {
@@ -139,7 +140,7 @@
 
 .topbar-user {
     @media (min-width: 768px) {
-        background-color: $topbar-user-bg;
+        background-color:  $header-bg-dark;
     }
 
     .dropdown-menu {
@@ -204,7 +205,7 @@
 
 [data-topbar="dark"] {
     #page-topbar {
-        background-color: $header-bg-dark;
+        background-color: $header-bg-dark !important;
         border-color: $header-bg-dark;
     }
 
@@ -222,7 +223,7 @@
 
     .topbar-user {
         @media (min-width: 767.99px) {
-            background-color: $topbar-user-bg-dark;
+            background-color: $header-bg-dark !important;
         }
 
         .user-name-text {
