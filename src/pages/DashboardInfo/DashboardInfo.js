@@ -51,7 +51,6 @@ const DashboardInfo = () => {
   );
   const [addressForSearch, setAddressForSearch] = useState("");
 
-  const [nftData, setNftData] = React.useState([]);
   const [assetsData, setAssetsData] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -87,9 +86,17 @@ const DashboardInfo = () => {
   };
 
   const handleSearchClick = () => {
+    setAssetsData([]);
+    setSeries([]);
+    setTitle("");
+    setSubtitle("");
+    setAddressTitle("");
+    setCustomActiveTab("1");
+
     setAddressForSearch(searchInput);
     setAddressTitle(searchInput);
     navigate(`/address/${searchInput}/tokens`);
+    setLoading(true);
   };
 
   useEffect(() => {
