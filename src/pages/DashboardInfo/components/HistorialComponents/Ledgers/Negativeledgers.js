@@ -9,14 +9,7 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
   const hasMoreThanOne = negativeLedgers?.logo === "assets";
 
   return (
-    <Col
-      lg={3}
-      md={3}
-      sm={8}
-      xs={7}
-      className="d-flex align-items-center"
-      style={{ overflow: "hidden" }}
-    >
+    <div className="d-flex align-items-center" style={{ overflow: "hidden" }}>
       <>
         {!hasMoreThanOne ? (
           <>
@@ -77,7 +70,7 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
           </>
         )}
       </>
-    </Col>
+    </div>
   );
 };
 

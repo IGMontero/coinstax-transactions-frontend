@@ -87,10 +87,15 @@ const RenderTransactions = ({ date, transactions }) => {
                 style={{ cursor: "pointer", padding: ".7rem" }}
               >
                 <Col
-                  lg={2}
-                  md={2}
+                  lg={3}
+                  md={3}
                   sm={12}
                   xs={12}
+                  // className={`${
+                  //   !sentTxSummary
+                  //     ? "d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-2 "
+                  //     : ""
+                  // }`}
                   className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-2"
                 >
                   {transaction.blockchainAction && (
@@ -152,17 +157,24 @@ const RenderTransactions = ({ date, transactions }) => {
                 </Col>
 
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
-
-                <Negativeledgers
-                  blockchainAction={transaction.blockchainAction}
-                  negativeLedgers={sentTxSummary}
-                />
+                <Col
+                  lg={sentTxSummary ? 3 : 0}
+                  md={sentTxSummary ? 3 : 0}
+                  className={`${
+                    sentTxSummary ? "d-flex justify-content-start" : "d-none"
+                  }`}
+                >
+                  <Negativeledgers
+                    blockchainAction={transaction.blockchainAction}
+                    negativeLedgers={sentTxSummary}
+                  />
+                </Col>
 
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={3}
-                  md={3}
-                  className="d-flex justify-content-start  d-none d-lg-flex"
+                  lg={sentTxSummary ? 3 : 6}
+                  md={sentTxSummary ? 3 : 6}
+                  className="d-flex justify-content-start d-none d-lg-flex"
                 >
                   <PositiveLedgers
                     positiveLedgers={receivedTxSummary}
@@ -171,11 +183,11 @@ const RenderTransactions = ({ date, transactions }) => {
                 </Col>
 
                 <Col
-                  lg={2}
-                  md={2}
+                  lg={3}
+                  md={3}
                   sm={4}
                   xs={5}
-                  className="d-flex justify-content-end align-items-center  "
+                  className="d-flex justify-content-end align-items-center"
                 >
                   <div className="d-flex flex-column text-start justify-content-end  me-3">
                     <p className="text-start my-0">
