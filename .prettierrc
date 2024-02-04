@@ -1,0 +1,12 @@
+{
+  "singleQuote": true,
+  "trailingComma": "all",
+  "overrides": [
+    {
+      "files": ["*.js", "*.mts"],
+      "options": {
+        "parser": "babel"
+      }
+    }
+  ]
+}

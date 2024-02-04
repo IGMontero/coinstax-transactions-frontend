@@ -13,31 +13,22 @@ const Footer = () => {
         dispatch(fetchApiVersion())
             .unwrap()
             .then((response) => {
-
                 setApiVersion(response.version);
-
             })
             .catch((error) => {
-                console.error("Error fetching api version:", error);
+                console.error('Error fetching api version:', error);
             });
-
-
-
     }, []);
-
 
     return (
         <React.Fragment>
             <footer className="footer">
                 <Container fluid>
                     <Row>
-                        <Col sm={6}>
-                            {new Date().getFullYear()} © CoinsTax
-                        </Col>
+                        <Col sm={6}>{new Date().getFullYear()} © CoinsTax</Col>
                         <Col sm={6}>
                             <div className="text-sm-end d-none d-sm-block">
                                 Version {appVersion} ({apiVersion})
-
                             </div>
                         </Col>
                     </Row>
