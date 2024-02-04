@@ -1,12 +1,12 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk } from '@reduxjs/toolkit';
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const fetchNFTS = createAsyncThunk(
-  "transactions/fetchNFTS",
+  'transactions/fetchNFTS',
   async (address, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/nfts?allowSpam=false`
+        `${API_BASE}/transactions/eth-mainnet/${address}/nfts?allowSpam=false`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -16,11 +16,11 @@ export const fetchNFTS = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const fetchPerformance = createAsyncThunk(
-  "transactions/fetchPerformance",
+  'transactions/fetchPerformance',
   async ({ address, days }, { rejectWithValue }) => {
     let url = `${API_BASE}/transactions/eth-mainnet/${address}/balances/historical`;
     if (days) {
@@ -36,15 +36,15 @@ export const fetchPerformance = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const fetchAssets = createAsyncThunk(
-  "transactions/fetchAssets",
+  'transactions/fetchAssets',
   async (address, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/balances/current?allowSpam=false`
+        `${API_BASE}/transactions/eth-mainnet/${address}/balances/current?allowSpam=false`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -54,15 +54,15 @@ export const fetchAssets = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const fetchHistory = createAsyncThunk(
-  "transactions/fetchHistory",
-  async ({ address, count = 10, page = 0 }, { rejectWithValue }) => {
+  'transactions/fetchHistory',
+  async ({ address, page = 0 }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/new?page=${page}`
+        `${API_BASE}/transactions/eth-mainnet/${address}/new?page=${page}`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -72,15 +72,15 @@ export const fetchHistory = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const fetchSearchHistoryTable = createAsyncThunk(
-  "transactions/fetchSearchHistoryTable",
+  'transactions/fetchSearchHistoryTable',
   async ({ address, query }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}?query=${query}`
+        `${API_BASE}/transactions/eth-mainnet/${address}?query=${query}`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -90,17 +90,17 @@ export const fetchSearchHistoryTable = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );
 
 export const fetchTransactionsFilter = createAsyncThunk(
-  "transactions/fetchTransactionsFilter",
+  'transactions/fetchTransactionsFilter',
   async ({ address, filters }, { rejectWithValue }) => {
     try {
       const query = Object.entries(filters)
         .filter(([key, value]) => value)
         .map(([key]) => `type=${key}`)
-        .join("&");
+        .join('&');
 
       const url = `${API_BASE}/transactions/eth-mainnet/${address}/?${query}`;
 
@@ -115,5 +115,5 @@ export const fetchTransactionsFilter = createAsyncThunk(
     } catch (error) {
       return rejectWithValue(error.message);
     }
-  }
+  },
 );

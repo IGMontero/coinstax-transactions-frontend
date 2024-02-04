@@ -1,17 +1,16 @@
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 
 // Front
-import LayoutReducer from "./layouts/reducer";
+import LayoutReducer from './layouts/reducer';
 
 // Authentication
-import ForgetPasswordReducer from "./auth/forgetpwd/reducer";
-import LoginReducer from "./auth/login/reducer";
-import ProfileReducer from "./auth/profile/reducer";
-import AccountReducer from "./auth/register/reducer";
-
+import ForgetPasswordReducer from './auth/forgetpwd/reducer';
+import LoginReducer from './auth/login/reducer';
+import ProfileReducer from './auth/profile/reducer';
+import AccountReducer from './auth/register/reducer';
 
 // API Key
-import APIKeyReducer from "./apiKey/reducer";
+import APIKeyReducer from './apiKey/reducer';
 
 const rootReducer = combineReducers({
     Layout: LayoutReducer,
@@ -20,7 +19,7 @@ const rootReducer = combineReducers({
     ForgetPassword: ForgetPasswordReducer,
     Profile: ProfileReducer,
 
-    APIKey: APIKeyReducer
+    APIKey: APIKeyReducer,
 });
 
 export default rootReducer;
