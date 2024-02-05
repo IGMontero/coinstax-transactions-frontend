@@ -1,20 +1,22 @@
-import React from "react";
-import { Col } from "reactstrap";
-import { formatNumber, blockchainActions } from "../../../../../utils/utils";
-import assetsIcon from "../../../../../assets/images/svg/assets.svg";
+import React from 'react';
+import { Col, PopoverBody, UncontrolledPopover } from 'reactstrap';
+import { formatNumber, blockchainActions } from '../../../../../utils/utils';
+import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 
-const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
-  const currency = negativeLedgers?.currency || "";
+const Negativeledgers = ({ negativeLedgers, blockchainAction, ledgerFee }) => {
+  const currency = negativeLedgers?.currency || '';
   const value = negativeLedgers?.value || 1;
-  const hasMoreThanOne = negativeLedgers?.logo === "assets";
+  const hasMoreThanOne = negativeLedgers?.logo === 'assets';
+
+  console.log('ledgerfee', ledgerFee);
 
   return (
-    <div className="d-flex align-items-center" style={{ overflow: "hidden" }}>
+    <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
       <>
         {!hasMoreThanOne ? (
           <>
             {!negativeLedgers ? (
-              ""
+              ''
             ) : (
               <>
                 <div className="image-container me-2">
@@ -26,28 +28,51 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
                     height={35}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.style.display = "none";
+                      e.target.style.display = 'none';
                       const container = e.target.parentNode;
-                      const textNode = document.createElement("div");
+                      const textNode = document.createElement('div');
                       textNode.textContent = currency;
-                      textNode.className = "currency-placeholder";
+                      textNode.className = 'currency-placeholder';
                       container.appendChild(textNode);
                     }}
-                  />{" "}
+                  />{' '}
                 </div>
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <h6
                     className="fw-semibold my-0 text-dark"
-                    style={{ whiteSpace: "nowrap" }}
+                    style={{ whiteSpace: 'nowrap' }}
                   >
                     {negativeLedgers?.displayName}
                   </h6>
                   <p className="text-start my-0">
-                    {blockchainAction === blockchainActions.APPROVE
-                      ? "Unlimited"
-                      : negativeLedgers.price >= 0
-                      ? "N/A"
-                      : negativeLedgers.price}
+                    {ledgerFee && ledgerFee.prettyNativeAmount ? (
+                      <p className="text-star d-flex align-items-center my-0 text-muted ">
+                        {ledgerFee.prettyNativeAmount}
+                      </p>
+                    ) : (
+                      <>
+                        <p className="text-star d-flex align-items-center my-0 text-muted ">
+                          N/A
+                          <i
+                            id={`nativeAmmount-id-${negativeLedgers.blockHash}`}
+                            class="ri-information-line ms-2  fs-4 text-muted"
+                          ></i>
+                          <UncontrolledPopover
+                            onClick={(e) => e.stopPropagation()}
+                            placement="bottom"
+                            target={`nativeAmmount-id-${negativeLedgers.blockHash}`}
+                            trigger="hover"
+                          >
+                            <PopoverBody>
+                              <span className="fs-8">
+                                The price is not available at the time of the
+                                transaction
+                              </span>
+                            </PopoverBody>
+                          </UncontrolledPopover>
+                        </p>
+                      </>
+                    )}
                   </p>
                 </div>
               </>
@@ -65,7 +90,7 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction }) => {
               />
             </div>
             <div className="ms-2 ">
-              <span className="text-dark">{negativeLedgers.displayName}</span>{" "}
+              <span className="text-dark">{negativeLedgers.displayName}</span>{' '}
             </div>
           </>
         )}

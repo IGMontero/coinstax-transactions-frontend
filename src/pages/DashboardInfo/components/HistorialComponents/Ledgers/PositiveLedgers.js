@@ -1,12 +1,21 @@
-import React from "react";
+import React from 'react';
 
-import assetsIcon from "../../../../../assets/images/svg/assets.svg";
+import assetsIcon from '../../../../../assets/images/svg/assets.svg';
+import { blockchainActions } from '../../../../../utils/utils';
+import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 
-const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
-  const currency = positiveLedgers?.currency || "";
+const PositiveLedgers = ({
+  positiveLedgers,
+  negativeLedgers,
+  ledgerFee,
+  blockchainAction,
+}) => {
+  const currency = positiveLedgers?.currency || '';
   const value = positiveLedgers?.value || 0;
 
-  const hasMoreThanOne = positiveLedgers?.logo === "assets";
+  const hasMoreThanOne = positiveLedgers?.logo === 'assets';
+
+  console.log(positiveLedgers);
 
   return (
     <div className="d-flex align-items-center justify-content-start">
@@ -17,7 +26,7 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
         {!hasMoreThanOne ? (
           <>
             {!positiveLedgers ? (
-              ""
+              ''
             ) : (
               <>
                 {!negativeLedgers ? null : (
@@ -25,7 +34,7 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
                 )}
                 <div
                   className={`image-container me-2 ${
-                    negativeLedgers ? "" : ""
+                    negativeLedgers ? '' : ''
                   }`}
                 >
                   <img
@@ -36,14 +45,14 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
                     height={35}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.style.display = "none";
+                      e.target.style.display = 'none';
                       const container = e.target.parentNode;
-                      const textNode = document.createElement("div");
+                      const textNode = document.createElement('div');
                       textNode.textContent = currency;
-                      textNode.className = "currency-placeholder";
+                      textNode.className = 'currency-placeholder';
                       container.appendChild(textNode);
                     }}
-                  />{" "}
+                  />{' '}
                 </div>
                 <div className="d-flex flex-column">
                   <span className="text-success d-flex">
@@ -52,13 +61,28 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
                     </span>
                   </span>
 
-                  <p className="text-start my-0 text-muted">
-                    {positiveLedgers
-                      ? positiveLedgers.price >= 0
-                        ? "N/A"
-                        : positiveLedgers.price
-                      : ""}
-                  </p>
+                  <>
+                    <p className="text-star d-flex align-items-center my-0 text-muted ">
+                      N/A
+                      <i
+                        id={`nativeAmmount-id-${positiveLedgers.blockHash}`}
+                        class="ri-information-line ms-2  fs-4 text-muted"
+                      ></i>
+                      <UncontrolledPopover
+                        onClick={(e) => e.stopPropagation()}
+                        placement="bottom"
+                        target={`nativeAmmount-id-${positiveLedgers.blockHash}`}
+                        trigger="hover"
+                      >
+                        <PopoverBody>
+                          <span className="fs-8">
+                            The price is not available at the time of the
+                            transaction
+                          </span>
+                        </PopoverBody>
+                      </UncontrolledPopover>
+                    </p>
+                  </>
                 </div>
               </>
             )}
@@ -83,9 +107,9 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
                 <p className="text-start my-0 text-muted">
                   {positiveLedgers
                     ? positiveLedgers.price >= 0
-                      ? "N/A"
+                      ? 'N/A'
                       : positiveLedgers.price
-                    : ""}
+                    : ''}
                 </p>
               </div>
             </div>
