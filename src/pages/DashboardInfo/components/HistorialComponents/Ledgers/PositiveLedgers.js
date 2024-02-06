@@ -1,21 +1,11 @@
 import React from 'react';
-
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
-import { blockchainActions } from '../../../../../utils/utils';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 
-const PositiveLedgers = ({
-  positiveLedgers,
-  negativeLedgers,
-  ledgerFee,
-  blockchainAction,
-}) => {
+const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
   const currency = positiveLedgers?.currency || '';
-  const value = positiveLedgers?.value || 0;
 
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
-
-  console.log(positiveLedgers);
 
   return (
     <div className="d-flex align-items-center justify-content-start">
@@ -56,32 +46,36 @@ const PositiveLedgers = ({
                 </div>
                 <div className="d-flex flex-column">
                   <span className="text-success d-flex">
-                    <span id={`positive-ledger-${value}`} className="me-1">
-                      {positiveLedgers?.displayName}
-                    </span>
+                    <span className="me-1">{positiveLedgers?.displayName}</span>
                   </span>
 
                   <>
-                    <p className="text-star d-flex align-items-center my-0 text-muted ">
-                      N/A
-                      <i
-                        id={`nativeAmmount-id-${positiveLedgers.blockHash}`}
-                        class="ri-information-line ms-2  fs-4 text-muted"
-                      ></i>
-                      <UncontrolledPopover
-                        onClick={(e) => e.stopPropagation()}
-                        placement="bottom"
-                        target={`nativeAmmount-id-${positiveLedgers.blockHash}`}
-                        trigger="hover"
-                      >
-                        <PopoverBody>
-                          <span className="fs-8">
-                            The price is not available at the time of the
-                            transaction
-                          </span>
-                        </PopoverBody>
-                      </UncontrolledPopover>
-                    </p>
+                    {positiveLedgers && positiveLedgers.prettyNativeAmount ? (
+                      <p className="text-star d-flex align-items-center my-0 text-muted ">
+                        {positiveLedgers.prettyNativeAmount}
+                      </p>
+                    ) : (
+                      <p className="text-star d-flex align-items-center my-0 text-muted ">
+                        N/A
+                        <i
+                          id={`nativeAmmount-id-${positiveLedgers.blockHash}`}
+                          class="ri-information-line ms-2  fs-4 text-muted"
+                        ></i>
+                        <UncontrolledPopover
+                          onClick={(e) => e.stopPropagation()}
+                          placement="bottom"
+                          target={`nativeAmmount-id-${positiveLedgers.blockHash}`}
+                          trigger="hover"
+                        >
+                          <PopoverBody>
+                            <span className="fs-8">
+                              The price is not available at the time of the
+                              transaction
+                            </span>
+                          </PopoverBody>
+                        </UncontrolledPopover>
+                      </p>
+                    )}
                   </>
                 </div>
               </>
@@ -105,11 +99,7 @@ const PositiveLedgers = ({
                   {positiveLedgers.displayName}
                 </span>
                 <p className="text-start my-0 text-muted">
-                  {positiveLedgers
-                    ? positiveLedgers.price >= 0
-                      ? 'N/A'
-                      : positiveLedgers.price
-                    : ''}
+                  {positiveLedgers.prettyNativeAmount || ''}
                 </p>
               </div>
             </div>
