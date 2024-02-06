@@ -68,9 +68,7 @@ const RenderTransactions = ({ date, transactions }) => {
           return null;
         }
         const sentTxSummary = transaction.txSummary.sent;
-        const sentTxSummaryFee = transaction.txSummary.fee;
 
-        const receivedTxSummaryFee = transaction.txSummary.fee;
         const receivedTxSummary = transaction.txSummary.received;
         const hasList =
           transaction.txSummary?.receivedAssetsCount > 1 ||
@@ -167,11 +165,7 @@ const RenderTransactions = ({ date, transactions }) => {
                     sentTxSummary ? 'd-flex justify-content-start' : 'd-none'
                   }`}
                 >
-                  <Negativeledgers
-                    blockchainAction={transaction.blockchainAction}
-                    negativeLedgers={sentTxSummary}
-                    ledgerFee={sentTxSummaryFee}
-                  />
+                  <Negativeledgers negativeLedgers={sentTxSummary} />
                 </Col>
 
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
@@ -181,10 +175,8 @@ const RenderTransactions = ({ date, transactions }) => {
                   className="d-flex justify-content-start d-none d-lg-flex"
                 >
                   <PositiveLedgers
-                    blockchainAction={transaction.blockchainAction}
                     positiveLedgers={receivedTxSummary}
                     negativeLedgers={sentTxSummary}
-                    ledgerFee={receivedTxSummaryFee}
                   />
                 </Col>
 
@@ -199,22 +191,12 @@ const RenderTransactions = ({ date, transactions }) => {
                     <p className="text-start my-0">
                       {' '}
                       {transaction.blockchainAction ===
-                        blockchainActions.BURN ||
-                      transaction.blockchainAction === blockchainActions.MINT
-                        ? ''
+                      blockchainActions.RECEIVE
+                        ? 'From'
                         : transaction.blockchainAction ===
-                            blockchainActions.RECEIVE
-                          ? 'From'
-                          : transaction.blockchainAction ===
-                                blockchainActions.EXECUTE ||
-                              transaction.blockchainAction ===
-                                blockchainActions.TRADE ||
-                              transaction.blockchainAction ===
-                                blockchainActions.APPROVE ||
-                              transaction.blockchainAction ===
-                                blockchainActions.WITHDRAW
-                            ? 'Contract Address:'
-                            : 'To'}
+                            blockchainActions.SEND
+                          ? 'To'
+                          : 'Aplication'}
                     </p>
                     <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
                       {' '}

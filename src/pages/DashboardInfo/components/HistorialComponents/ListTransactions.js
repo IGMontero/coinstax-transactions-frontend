@@ -1,25 +1,17 @@
-import React, { useState, useEffect } from "react";
-import { Col, Row } from "reactstrap";
+import React, { useState, useEffect } from 'react';
+import { Col, Row } from 'reactstrap';
 
 const ListTransactionss = ({ transactions }) => {
   const [positiveLedgers, setPositiveLedgers] = useState([]);
   const [negativeLedgers, setNegativeLedgers] = useState([]);
-  const formatNumber = (number) => {
-    if (typeof number !== "number" || isNaN(number)) {
-      return "Invalid Number";
-    }
-
-    let formattedNumber = parseFloat(number.toFixed(4));
-    return formattedNumber.toString();
-  };
 
   useEffect(() => {
     if (transactions && transactions.ledgers) {
       const posLedgers = transactions.ledgers.filter(
-        (ledger) => !ledger.isFee && ledger.amount > 0
+        (ledger) => !ledger.isFee && ledger.amount > 0,
       );
       const negLedgers = transactions.ledgers.filter(
-        (ledger) => !ledger.isFee && ledger.amount < 0
+        (ledger) => !ledger.isFee && ledger.amount < 0,
       );
 
       setPositiveLedgers(posLedgers);
@@ -27,28 +19,41 @@ const ListTransactionss = ({ transactions }) => {
     }
   }, [transactions]);
 
-  function renderLedger(ledger, index) {
+  const formatNumber = (number) => {
+    if (typeof number !== 'number' || isNaN(number)) {
+      return 'Invalid Number';
+    }
+
+    let formattedNumber = parseFloat(number.toFixed(4));
+    return formattedNumber.toString();
+  };
+
+  const sentAmount = transactions.txSummary?.sent?.prettyNativeAmount || 'N/A';
+  const receivedAmount =
+    transactions.txSummary?.received?.prettyNativeAmount || 'N/A';
+
+  function renderLedger(ledger, index, isReceived = false) {
+    const ledgerAmount = isReceived ? receivedAmount : sentAmount;
     return (
       <div key={index} className="d-flex align-items-center w-100 ps-2">
         <div className="image-container me-2">
           <img
             src={ledger.txInfo?.logo || ledger.currency}
             alt={ledger.txInfo?.name}
-            className=" rounded mb-3"
+            className="rounded mb-3"
             width={35}
             height={35}
             onError={(e) => {
               e.target.onerror = null;
-              e.target.style.display = "none";
+              e.target.style.display = 'none';
               const container = e.target.parentNode;
-              const textNode = document.createElement("div");
+              const textNode = document.createElement('div');
               textNode.textContent = ledger.currency;
-              textNode.className = "currency-placeholder";
+              textNode.className = 'currency-placeholder';
               container.appendChild(textNode);
             }}
-          />{" "}
+          />
         </div>
-
         <div className="d-flex flex-column ">
           <h6 className={`fw-semibold my-0 `}>
             <>
@@ -57,14 +62,14 @@ const ListTransactionss = ({ transactions }) => {
                 (ledger.amount === 1 || ledger.amount === -1)
               ) && (
                 <>
-                  {ledger.amount > 0 ? "+" : ""}
+                  {ledger.amount > 0 ? '+' : ''}
                   {formatNumber(ledger.amount)}
                 </>
-              )}{" "}
+              )}{' '}
               {ledger.currency}
             </>
           </h6>
-          <p className="text-muted">{"N/A"}</p>
+          <p className="text-muted">{ledgerAmount}</p>
         </div>
       </div>
     );
@@ -78,7 +83,7 @@ const ListTransactionss = ({ transactions }) => {
           <Col xxl={2} className="d-flex align-items-start flex-column ps-2">
             <span className="mb-3 mt-n2">Sent</span>
             {negativeLedgers.map((ledger, index) =>
-              renderLedger(ledger, index)
+              renderLedger(ledger, index),
             )}
           </Col>
         )}
@@ -92,8 +97,8 @@ const ListTransactionss = ({ transactions }) => {
               <div className="bg-dark" style={{ width: 0.5, height: 50 }} />
               <div
                 style={{
-                  marginTop: "-12px",
-                  marginBottom: "-12px",
+                  marginTop: '-12px',
+                  marginBottom: '-12px',
                 }}
               >
                 <i className="ri-arrow-right-circle-line text-success fs-1 mb-0 mt-0"></i>
@@ -102,29 +107,30 @@ const ListTransactionss = ({ transactions }) => {
             </div>
 
             <div className="d-xxl-none d-flex align-items-center flex-row justify-content-center w-100 my-4">
-              <div className="bg-dark" style={{ height: 0.5, width: "45%" }} />
+              <div className="bg-dark" style={{ height: 0.5, width: '45%' }} />
               <div
                 style={{
-                  marginTop: "-12px",
-                  marginBottom: "-12px",
+                  marginTop: '-12px',
+                  marginBottom: '-12px',
                   zIndex: 1,
                 }}
               >
                 <i className="ri-arrow-down-circle-line text-success fs-1 mb-0 mt-0"></i>
               </div>
-              <div className="bg-dark" style={{ height: 0.5, width: "45%" }} />
+              <div className="bg-dark" style={{ height: 0.5, width: '45%' }} />
             </div>
           </Col>
         ) : null}
+
         {positiveLedgers && positiveLedgers.length > 0 && (
           <Col
             xxl={9}
             className="d-flex align-items-center ps-2 flex-column justify-content-start"
           >
-            <span className="mb-3 mt-n2  align-self-start">Received</span>
+            <span className="mb-3 mt-n2 align-self-start">Received</span>
             <div className="w-100">
               {positiveLedgers.map((ledger, index) =>
-                renderLedger(ledger, index)
+                renderLedger(ledger, index, true),
               )}
             </div>
           </Col>
