@@ -1,14 +1,11 @@
 import React from 'react';
-import { Col, PopoverBody, UncontrolledPopover } from 'reactstrap';
-import { formatNumber, blockchainActions } from '../../../../../utils/utils';
+import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 
-const Negativeledgers = ({ negativeLedgers, blockchainAction, ledgerFee }) => {
+const Negativeledgers = ({ negativeLedgers }) => {
   const currency = negativeLedgers?.currency || '';
   const value = negativeLedgers?.value || 1;
   const hasMoreThanOne = negativeLedgers?.logo === 'assets';
-
-  console.log('ledgerfee', ledgerFee);
 
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
@@ -45,9 +42,9 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction, ledgerFee }) => {
                     {negativeLedgers?.displayName}
                   </h6>
                   <p className="text-start my-0">
-                    {ledgerFee && ledgerFee.prettyNativeAmount ? (
+                    {negativeLedgers && negativeLedgers.prettyNativeAmount ? (
                       <p className="text-star d-flex align-items-center my-0 text-muted ">
-                        {ledgerFee.prettyNativeAmount}
+                        {negativeLedgers.prettyNativeAmount}
                       </p>
                     ) : (
                       <>
@@ -91,6 +88,9 @@ const Negativeledgers = ({ negativeLedgers, blockchainAction, ledgerFee }) => {
             </div>
             <div className="ms-2 ">
               <span className="text-dark">{negativeLedgers.displayName}</span>{' '}
+              <p className="text-start my-0 text-muted">
+                {negativeLedgers.prettyNativeAmount || ''}
+              </p>
             </div>
           </>
         )}
