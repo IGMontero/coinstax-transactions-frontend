@@ -1,11 +1,11 @@
-import React from "react";
-import { Col, Row } from "reactstrap";
+import React from 'react';
+import { Col, Row } from 'reactstrap';
 import {
   formatIdTransaction,
   blockchainActions,
-} from "../../../../../utils/utils";
-import { Link } from "react-router-dom";
-import { formatNumber } from "../../../../../utils/utils";
+} from '../../../../../utils/utils';
+import { Link } from 'react-router-dom';
+import { formatNumber } from '../../../../../utils/utils';
 
 const InformationLedger = ({
   transaction,
@@ -19,7 +19,7 @@ const InformationLedger = ({
 
   const removeLeadingMinus = (fee) => {
     const feeStr = String(fee);
-    if (feeStr.startsWith("-")) {
+    if (feeStr.startsWith('-')) {
       return parseFloat(feeStr.slice(1));
     }
     return parseFloat(feeStr);
@@ -35,7 +35,7 @@ const InformationLedger = ({
               <span>
                 {transaction.txSummary.collectionName
                   ? transaction.txSummary?.collectionName
-                  : "0"}
+                  : '0'}
               </span>
             </div>
           )}
@@ -44,13 +44,13 @@ const InformationLedger = ({
             <strong className="mb-1">Fee:</strong>
             <span>
               {transaction.blockchainAction === blockchainActions.RECEIVE
-                ? "N/A"
+                ? 'N/A'
                 : transaction.txSummary &&
-                  transaction.txSummary.fee &&
-                  transaction.txSummary.fee.prettyAmount !== "0" &&
-                  transaction.txSummary.fee.prettyAmount !== null
-                ? `${transaction.txSummary.fee.prettyAmount} ($${transaction.txSummary.fee.prettyNativeAmount})`
-                : "N/A"}
+                    transaction.txSummary.fee &&
+                    transaction.txSummary.fee.prettyAmount !== '0' &&
+                    transaction.txSummary.fee.prettyAmount !== null
+                  ? `${transaction.txSummary.fee.prettyAmount} (${transaction.txSummary.fee.prettyNativeAmount})`
+                  : 'N/A'}
 
               {/* {transaction.blockchainAction === blockchainActions.RECEIVE
                 ? "N/A"
@@ -81,13 +81,13 @@ const InformationLedger = ({
                       onClick={(e) => e.stopPropagation()}
                       className="text-decoration-none text-muted  "
                     >
-                      {" "}
+                      {' '}
                       <span className=" text-hover-dark  text-hover-underline">
                         {formatIdTransaction(transaction.txHash, 4, 4)}
                       </span>
                     </Link>
                   ) : (
-                    "0"
+                    '0'
                   )}
                   <i className="ri-arrow-right-up-line fs-6"></i>
                 </span>
