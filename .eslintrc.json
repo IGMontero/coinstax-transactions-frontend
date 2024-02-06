@@ -7,9 +7,7 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    // "airbnb/base",
-    "eslint-config-prettier"
+    "plugin:react-hooks/recommended"
   ],
   "parserOptions": {
     "ecmaVersion": 12,
