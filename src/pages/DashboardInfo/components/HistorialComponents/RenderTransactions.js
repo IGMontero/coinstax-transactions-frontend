@@ -157,8 +157,8 @@ const RenderTransactions = ({ date, transactions }) => {
 
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={transaction.txSummary.sent ? 3 : 0}
-                  md={transaction.txSummary.sent ? 3 : 0}
+                  lg={transaction.txSummary.sent ? 4 : 0}
+                  md={transaction.txSummary.sent ? 4 : 0}
                   className={`${
                     transaction.txSummary.sent
                       ? 'd-flex justify-content-start'
@@ -170,9 +170,9 @@ const RenderTransactions = ({ date, transactions }) => {
 
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={transaction.txSummary.sent ? 3 : 6}
-                  md={transaction.txSummary.sent ? 3 : 6}
-                  className="d-flex justify-content-start d-none d-lg-flex"
+                  lg={transaction.txSummary.sent ? 2 : 6}
+                  md={transaction.txSummary.sent ? 2 : 6}
+                  className="d-flex justify-content-start d-none d-md-flex"
                 >
                   <PositiveLedgers
                     ledger={receivedTxSummary}
@@ -203,10 +203,16 @@ const RenderTransactions = ({ date, transactions }) => {
                         <Link
                           target="_blank"
                           className="text-decoration-none"
-                          to={`https://etherscan.io/address/${transaction.txSummary.marketplaceName}`}
+                          to={`https://etherscan.io/address/${transaction.recipient}`}
                         >
                           <span className="text-hover-underline">
-                            {transaction.txSummary.marketplaceName}
+                            {transaction.txSummary.marketplaceName !== ''
+                              ? transaction.txSummary.marketplaceName
+                              : formatIdTransaction(
+                                  transaction.recipient,
+                                  4,
+                                  4,
+                                )}
                           </span>
                           <i className="ri-arrow-right-up-line fs-5 ms-1"></i>
                         </Link>
@@ -248,7 +254,9 @@ const RenderTransactions = ({ date, transactions }) => {
                               </Link>
                               <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
                             </>
-                          ) : null}
+                          ) : (
+                            formatIdTransaction(transaction.recipient, 4, 4)
+                          )}
                         </>
                       )}
                     </h6>

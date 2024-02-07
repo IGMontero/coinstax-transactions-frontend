@@ -46,9 +46,7 @@ const DashboardInfo = () => {
 
   const [isCopied, setIsCopied] = useState(false);
 
-  const [searchInput, setSearchInput] = useState(
-    '0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6',
-  );
+  const [searchInput, setSearchInput] = useState('');
   const [addressForSearch, setAddressForSearch] = useState('');
 
   const [assetsData, setAssetsData] = useState([]);

@@ -40,13 +40,13 @@ const InformationLedger = ({
                   ? transaction.txSummary?.collectionName
                   : '0'}
                 <i
-                  id={`nativeAmmount-id-${transaction.txHash}`}
+                  id={`collection-id-${transaction.blockHash}`}
                   class="ri-information-line ms-2 fs-5 mb-text-muted"
                 ></i>
                 <UncontrolledPopover
                   onClick={(e) => e.stopPropagation()}
                   placement="top"
-                  target={`nativeAmmount-id-${transaction.txHash}`}
+                  target={`collection-id-${transaction.blockHash}`}
                   trigger="hover"
                 >
                   <PopoverBody className="p-2">
