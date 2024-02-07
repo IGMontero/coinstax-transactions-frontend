@@ -5,12 +5,7 @@ import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 const Negativeledgers = ({ ledger }) => {
   const negativeLedgers = ledger.txSummary.sent;
   const currency = negativeLedgers?.currency || '';
-  const value = negativeLedgers?.value || 1;
   const hasMoreThanOne = negativeLedgers?.logo === 'assets';
-
-  console.log(ledger);
-
-  const id = negativeLedgers?.id || 0;
 
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
