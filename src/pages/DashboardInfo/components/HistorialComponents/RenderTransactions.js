@@ -67,9 +67,11 @@ const RenderTransactions = ({ date, transactions }) => {
         if (!transaction.ledgers) {
           return null;
         }
-        const sentTxSummary = transaction.txSummary.sent;
+        const sentTxSummary = transaction;
 
-        const receivedTxSummary = transaction.txSummary.received;
+        const isRecived = transaction.txSummary.sent;
+
+        const receivedTxSummary = transaction;
         const hasList =
           transaction.txSummary?.receivedAssetsCount > 1 ||
           transaction.txSummary?.sentAssetsCount > 1;
@@ -92,11 +94,6 @@ const RenderTransactions = ({ date, transactions }) => {
                   md={3}
                   sm={12}
                   xs={12}
-                  // className={`${
-                  //   !sentTxSummary
-                  //     ? "d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-2 "
-                  //     : ""
-                  // }`}
                   className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-2"
                 >
                   {transaction.blockchainAction && (
@@ -159,24 +156,26 @@ const RenderTransactions = ({ date, transactions }) => {
 
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={sentTxSummary ? 3 : 0}
-                  md={sentTxSummary ? 3 : 0}
+                  lg={transaction.txSummary.sent ? 3 : 0}
+                  md={transaction.txSummary.sent ? 3 : 0}
                   className={`${
-                    sentTxSummary ? 'd-flex justify-content-start' : 'd-none'
+                    transaction.txSummary.sent
+                      ? 'd-flex justify-content-start'
+                      : 'd-none'
                   }`}
                 >
-                  <Negativeledgers negativeLedgers={sentTxSummary} />
+                  <Negativeledgers ledger={sentTxSummary} />
                 </Col>
 
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={sentTxSummary ? 3 : 6}
-                  md={sentTxSummary ? 3 : 6}
+                  lg={transaction.txSummary.sent ? 3 : 6}
+                  md={transaction.txSummary.sent ? 3 : 6}
                   className="d-flex justify-content-start d-none d-lg-flex"
                 >
                   <PositiveLedgers
-                    positiveLedgers={receivedTxSummary}
-                    negativeLedgers={sentTxSummary}
+                    ledger={receivedTxSummary}
+                    negativeLedgers={sentTxSummary.txSummary.sent}
                   />
                 </Col>
 
