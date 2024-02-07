@@ -2,7 +2,8 @@ import React from 'react';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 
-const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
+const PositiveLedgers = ({ ledger, negativeLedgers }) => {
+  const positiveLedgers = ledger.txSummary.received;
   const currency = positiveLedgers?.currency || '';
 
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
@@ -58,17 +59,26 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
                       <p className="text-star d-flex align-items-center my-0 text-muted ">
                         N/A
                         <i
-                          id={`nativeAmmount-id-${positiveLedgers.blockHash}`}
+                          id={`nativeammount-id-${ledger.txHash}`}
                           class="ri-information-line ms-2  fs-4 text-muted"
                         ></i>
                         <UncontrolledPopover
                           onClick={(e) => e.stopPropagation()}
                           placement="bottom"
-                          target={`nativeAmmount-id-${positiveLedgers.blockHash}`}
+                          target={`nativeammount-id-${ledger.txHash}`}
                           trigger="hover"
                         >
-                          <PopoverBody>
-                            <span className="fs-8">
+                          <PopoverBody
+                            style={{
+                              width: 'auto',
+                            }}
+                            className="text-center w-auto p-2 "
+                          >
+                            <span
+                              style={{
+                                fontSize: '0.70rem',
+                              }}
+                            >
                               The price is not available at the time of the
                               transaction
                             </span>

@@ -2,10 +2,15 @@ import React from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 
-const Negativeledgers = ({ negativeLedgers }) => {
+const Negativeledgers = ({ ledger }) => {
+  const negativeLedgers = ledger.txSummary.sent;
   const currency = negativeLedgers?.currency || '';
   const value = negativeLedgers?.value || 1;
   const hasMoreThanOne = negativeLedgers?.logo === 'assets';
+
+  console.log(ledger);
+
+  const id = negativeLedgers?.id || 0;
 
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
@@ -51,17 +56,26 @@ const Negativeledgers = ({ negativeLedgers }) => {
                         <p className="text-star d-flex align-items-center my-0 text-muted ">
                           N/A
                           <i
-                            id={`nativeAmmount-id-${negativeLedgers.blockHash}`}
+                            id={`nativeAmmount-id-${ledger.txHash}`}
                             class="ri-information-line ms-2  fs-4 text-muted"
                           ></i>
                           <UncontrolledPopover
                             onClick={(e) => e.stopPropagation()}
                             placement="bottom"
-                            target={`nativeAmmount-id-${negativeLedgers.blockHash}`}
+                            target={`nativeAmmount-id-${ledger.txHash}`}
                             trigger="hover"
                           >
-                            <PopoverBody>
-                              <span className="fs-8">
+                            <PopoverBody
+                              style={{
+                                width: 'auto',
+                              }}
+                              className="w-auto p-2 text-center "
+                            >
+                              <span
+                                style={{
+                                  fontSize: '0.70rem',
+                                }}
+                              >
                                 The price is not available at the time of the
                                 transaction
                               </span>
