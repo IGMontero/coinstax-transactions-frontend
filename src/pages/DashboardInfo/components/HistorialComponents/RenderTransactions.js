@@ -8,6 +8,7 @@ import { blockchainActions } from '../../../../utils/utils';
 import Negativeledgers from './Ledgers/Negativeledgers';
 import PositiveLedgers from './Ledgers/PositiveLedgers';
 import InformationLedger from './Ledgers/InformationLedger';
+import { Link } from 'react-router-dom';
 
 const RenderTransactions = ({ date, transactions }) => {
   const [openCollapse, setopenCollapse] = useState(new Set());
@@ -199,22 +200,52 @@ const RenderTransactions = ({ date, transactions }) => {
                     </p>
                     <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
                       {transaction.txSummary.marketplaceName ? (
-                        <>
-                          {transaction.txSummary.marketplaceName}
-                          <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
-                        </>
+                        <Link
+                          target="_blank"
+                          className="text-decoration-none"
+                          to={`https://etherscan.io/address/${transaction.txSummary.marketplaceName}`}
+                        >
+                          <span className="text-hover-underline">
+                            {transaction.txSummary.marketplaceName}
+                          </span>
+                          <i className="ri-arrow-right-up-line fs-5 ms-1"></i>
+                        </Link>
                       ) : (
                         <>
                           {transaction.blockchainAction ===
                           blockchainActions.RECEIVE ? (
                             <>
-                              {formatIdTransaction(transaction.sender, 4, 4)}
+                              <Link
+                                target="_blank"
+                                className="text-decoration-none"
+                                to={`https://etherscan.io/address/${transaction.sender}`}
+                              >
+                                <span className="text-hover-underline">
+                                  {formatIdTransaction(
+                                    transaction.sender,
+                                    4,
+                                    4,
+                                  )}
+                                </span>
+                              </Link>
                               <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
                             </>
                           ) : transaction.blockchainAction ===
                             blockchainActions.SEND ? (
                             <>
-                              {formatIdTransaction(transaction.recipient, 4, 4)}
+                              <Link
+                                target="_blank"
+                                className="text-decoration-none"
+                                to={`https://etherscan.io/address/${transaction.recipient}`}
+                              >
+                                <span className="text-hover-underline">
+                                  {formatIdTransaction(
+                                    transaction.recipient,
+                                    4,
+                                    4,
+                                  )}
+                                </span>
+                              </Link>
                               <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
                             </>
                           ) : null}
