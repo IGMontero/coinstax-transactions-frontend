@@ -29,7 +29,6 @@ const ListTransactionss = ({ transactions }) => {
   };
 
   function renderLedger(ledger, index) {
-    // console.log('ledger', ledger);
     return (
       <div key={index} className="d-flex align-items-center w-100 ps-2">
         <div className="image-container me-2">

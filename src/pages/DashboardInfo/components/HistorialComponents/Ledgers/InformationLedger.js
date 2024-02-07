@@ -1,11 +1,10 @@
 import React from 'react';
-import { Col, Row } from 'reactstrap';
+import { Col, Row, PopoverBody, UncontrolledPopover } from 'reactstrap';
 import {
   formatIdTransaction,
   blockchainActions,
 } from '../../../../../utils/utils';
 import { Link } from 'react-router-dom';
-import { formatNumber } from '../../../../../utils/utils';
 
 const InformationLedger = ({
   transaction,
@@ -16,6 +15,10 @@ const InformationLedger = ({
   const handleCopy = (e) => {
     onCopy(e, transaction.txHash, collapseId);
   };
+
+  const posLedgers = transaction.ledgers.filter(
+    (ledger) => !ledger.isFee && ledger.amount > 0,
+  );
 
   const removeLeadingMinus = (fee) => {
     const feeStr = String(fee);
@@ -30,12 +33,39 @@ const InformationLedger = ({
       <Row className="d-flex flex-row align-items-center">
         <Col lg={12} className="p-2 d-flex ">
           {transaction.txSummary?.collectionName && (
-            <div className="p-2 mx-2 d-flex flex-column">
+            <div className="p-2 mx-2 d-flex flex-column align-items-center">
               <strong className="mb-1">Collection:</strong>
-              <span>
+              <span className="d-flex align-items-center">
                 {transaction.txSummary.collectionName
                   ? transaction.txSummary?.collectionName
                   : '0'}
+                <i
+                  id={`nativeAmmount-id-${transaction.txHash}`}
+                  class="ri-information-line ms-2 fs-5 mb-text-muted"
+                ></i>
+                <UncontrolledPopover
+                  onClick={(e) => e.stopPropagation()}
+                  placement="top"
+                  target={`nativeAmmount-id-${transaction.txHash}`}
+                  trigger="hover"
+                >
+                  <PopoverBody className="p-2">
+                    <span
+                      style={{
+                        fontSize: '0.70rem',
+                      }}
+                    >
+                      {transaction.txSummary.allCollectionNames.length &&
+                        transaction.txSummary.allCollectionNames.map(
+                          (ledger, index) => (
+                            <div key={index}>
+                              <li>{ledger}</li>
+                            </div>
+                          ),
+                        )}
+                    </span>
+                  </PopoverBody>
+                </UncontrolledPopover>
               </span>
             </div>
           )}
