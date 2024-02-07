@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   Col,
@@ -16,40 +16,40 @@ import {
   InputGroup,
   Input,
   Spinner,
-} from "reactstrap";
-import classnames from "classnames";
-import PerformanceChart from "./components/PerformanceChart";
-import AcitvesTable from "./components/ActivesTable";
-import HistorialTable from "./components/HistorialTable";
-import Nfts from "./components/Nfts";
-import eth from "../../assets/images/svg/crypto-icons/eth.svg";
-import btc from "../../assets/images/svg/crypto-icons/btc.svg";
-import arb from "../../assets/images/svg/crypto-icons/ankr.svg";
-import pol from "../../assets/images/svg/crypto-icons/poly.svg";
-import gnosis from "../../assets/images/svg/crypto-icons/gno.svg";
+} from 'reactstrap';
+import classnames from 'classnames';
+import PerformanceChart from './components/PerformanceChart';
+import AcitvesTable from './components/ActivesTable';
+import HistorialTable from './components/HistorialTable';
+import Nfts from './components/Nfts';
+import eth from '../../assets/images/svg/crypto-icons/eth.svg';
+import btc from '../../assets/images/svg/crypto-icons/btc.svg';
+import arb from '../../assets/images/svg/crypto-icons/ankr.svg';
+import pol from '../../assets/images/svg/crypto-icons/poly.svg';
+import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
 
-import { fetchAssets, fetchNFTS } from "../../slices/transactions/thunk";
-import DashboardHome from "../DashboardHome/DashboardHome";
-import { useDispatch } from "react-redux";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { formatIdTransaction } from "../../utils/utils";
-import QrModal from "./modals/QrModal";
+import { fetchAssets, fetchNFTS } from '../../slices/transactions/thunk';
+import DashboardHome from '../DashboardHome/DashboardHome';
+import { useDispatch } from 'react-redux';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { formatIdTransaction } from '../../utils/utils';
+import QrModal from './modals/QrModal';
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const { address, type } = useParams();
 
-  const [customActiveTab, setCustomActiveTab] = useState("1");
+  const [customActiveTab, setCustomActiveTab] = useState('1');
 
-  const [addressTitle, setAddressTitle] = useState("");
+  const [addressTitle, setAddressTitle] = useState('');
 
   const [isCopied, setIsCopied] = useState(false);
 
   const [searchInput, setSearchInput] = useState(
-    "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6"
+    '0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6',
   );
-  const [addressForSearch, setAddressForSearch] = useState("");
+  const [addressForSearch, setAddressForSearch] = useState('');
 
   const [assetsData, setAssetsData] = useState([]);
 
@@ -57,8 +57,8 @@ const DashboardInfo = () => {
 
   const [series, setSeries] = useState([]);
 
-  const [title, setTitle] = useState("");
-  const [subtitle, setSubtitle] = useState("");
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
 
   const [showQrModal, setShowQrModal] = useState(false);
 
@@ -80,7 +80,7 @@ const DashboardInfo = () => {
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching performance data:", error);
+        console.error('Error fetching performance data:', error);
         setLoading(false);
       });
   };
@@ -88,10 +88,10 @@ const DashboardInfo = () => {
   const handleSearchClick = () => {
     setAssetsData([]);
     setSeries([]);
-    setTitle("");
-    setSubtitle("");
-    setAddressTitle("");
-    setCustomActiveTab("1");
+    setTitle('');
+    setSubtitle('');
+    setAddressTitle('');
+    setCustomActiveTab('1');
 
     setAddressForSearch(searchInput);
     setAddressTitle(searchInput);
@@ -111,12 +111,18 @@ const DashboardInfo = () => {
       setTitle(`$${firstPointValue.toLocaleString()}`);
       const lastPointValue = series[0].data[series[0].data.length - 1].y;
       const change = firstPointValue - lastPointValue;
-      const changePercentage = (change / firstPointValue) * 100;
+      let changePercentage = (change / firstPointValue) * 100;
 
-      const sign = changePercentage >= 0 ? "+" : "";
+      if (isNaN(changePercentage)) {
+        changePercentage = 0;
+      }
+      const formattedChange = isNaN(change) ? 0 : change.toLocaleString();
+      const sign = changePercentage >= 0 ? '+' : '';
       setSubtitle(
-        `${sign}${changePercentage.toFixed(2)}% ($${change.toLocaleString()})`
+        `${sign}${changePercentage.toFixed(2)}% ($${formattedChange})`,
       );
+
+      console.log(subtitle);
     }
   }, [series, title, subtitle]);
 
@@ -129,13 +135,13 @@ const DashboardInfo = () => {
         setIsCopied(null);
       }, 2000);
     } catch (err) {
-      console.error("Failed to copy: ", err);
+      console.error('Failed to copy: ', err);
     }
   };
   useEffect(() => {
     if (type) {
       setCustomActiveTab(
-        type === "nfts" ? "2" : type === "history" ? "3" : "1"
+        type === 'nfts' ? '2' : type === 'history' ? '3' : '1',
       );
     }
     if (address) {
@@ -186,9 +192,9 @@ const DashboardInfo = () => {
               {loading ? (
                 <div
                   className="d-flex justify-content-start align-items-center"
-                  style={{ height: "10vh" }}
+                  style={{ height: '10vh' }}
                 >
-                  <Spinner style={{ width: "2rem", height: "2rem" }} />
+                  <Spinner style={{ width: '2rem', height: '2rem' }} />
                 </div>
               ) : (
                 <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
@@ -216,7 +222,7 @@ const DashboardInfo = () => {
                             className="d-flex align-items-center"
                             onClick={toggleQrModal}
                           >
-                            {" "}
+                            {' '}
                             <i className="ri-qr-code-line fs-2 me-2"></i>
                             <span className="fw-semibold">Show QR code</span>
                           </DropdownItem>
@@ -259,11 +265,11 @@ const DashboardInfo = () => {
                     </div>
                     <h5
                       className={`mt-0 text-${
-                        subtitle[0] == "+" ? "success" : "danger"
+                        subtitle[0] == '+' ? 'success' : 'danger'
                       }`}
                     >
                       {subtitle}
-                    </h5>{" "}
+                    </h5>{' '}
                   </Col>
                   <Col
                     xxl={3}
@@ -273,11 +279,11 @@ const DashboardInfo = () => {
                     xs={12}
                     className="d-flex justify-content-center mb-3"
                     order={{
-                      sm: "last",
-                      xs: "last",
-                      md: "2",
-                      lg: "2",
-                      xxl: "2",
+                      sm: 'last',
+                      xs: 'last',
+                      md: '2',
+                      lg: '2',
+                      xxl: '2',
                     }}
                   >
                     {/* <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
@@ -293,15 +299,15 @@ const DashboardInfo = () => {
                 </Row>
               )}
               <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
-                {" "}
+                {' '}
                 <Col className="col-12 ">
                   <div
                     className=" w-100 ms-1 d-flex justify-content-between align-items-center   "
                     style={{
-                      position: "sticky",
-                      top: "70px",
+                      position: 'sticky',
+                      top: '70px',
                       zIndex: 5,
-                      backdropFilter: "blur(5px)",
+                      backdropFilter: 'blur(5px)',
                     }}
                   >
                     <Col xxl={6} className="">
@@ -312,16 +318,16 @@ const DashboardInfo = () => {
                         <NavItem>
                           <NavLink
                             style={{
-                              cursor: "pointer",
-                              paddingTop: ".7rem",
-                              paddingBottom: ".7rem",
-                              fontWeight: "bold",
+                              cursor: 'pointer',
+                              paddingTop: '.7rem',
+                              paddingBottom: '.7rem',
+                              fontWeight: 'bold',
                             }}
                             className={classnames({
-                              active: customActiveTab === "1",
+                              active: customActiveTab === '1',
                             })}
                             onClick={() => {
-                              handleNavLinkClick("tokens", "1");
+                              handleNavLinkClick('tokens', '1');
                             }}
                           >
                             Tokens
@@ -330,16 +336,16 @@ const DashboardInfo = () => {
                         <NavItem>
                           <NavLink
                             style={{
-                              cursor: "pointer",
-                              paddingTop: ".7rem",
-                              paddingBottom: ".7rem",
-                              fontWeight: "bold",
+                              cursor: 'pointer',
+                              paddingTop: '.7rem',
+                              paddingBottom: '.7rem',
+                              fontWeight: 'bold',
                             }}
                             className={classnames({
-                              active: customActiveTab === "2",
+                              active: customActiveTab === '2',
                             })}
                             onClick={() => {
-                              handleNavLinkClick("nfts", "2");
+                              handleNavLinkClick('nfts', '2');
                             }}
                           >
                             NFTs
@@ -348,16 +354,16 @@ const DashboardInfo = () => {
                         <NavItem>
                           <NavLink
                             style={{
-                              cursor: "pointer",
-                              paddingTop: ".7rem",
-                              paddingBottom: ".7rem",
-                              fontWeight: "bold",
+                              cursor: 'pointer',
+                              paddingTop: '.7rem',
+                              paddingBottom: '.7rem',
+                              fontWeight: 'bold',
                             }}
                             className={classnames({
-                              active: customActiveTab === "3",
+                              active: customActiveTab === '3',
                             })}
                             onClick={() => {
-                              handleNavLinkClick("history", "3");
+                              handleNavLinkClick('history', '3');
                             }}
                           >
                             History
@@ -377,7 +383,7 @@ const DashboardInfo = () => {
                             role="button"
                           >
                             <span className="ms-2 d-flex align-items-center">
-                              {" "}
+                              {' '}
                               <i className="ri-function-line text-white fs-4 me-2"></i>
                               All Networks
                             </span>
@@ -385,21 +391,21 @@ const DashboardInfo = () => {
                           </DropdownToggle>
                           <DropdownMenu className="dropdown-menu-end mt-2 ">
                             <DropdownItem className="d-flex align-items-center">
-                              {" "}
+                              {' '}
                               <i className="ri-function-line text-primary fs-2 me-2"></i>
                               <div className="d-flex flex-column">
                                 <span className="fw-semibold ">
                                   All Networks
                                 </span>
                                 <div className="d-flex flex-row align-items-center">
-                                  <small>$9k </small>{" "}
+                                  <small>$9k </small>{' '}
                                   <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
                                   <small>$12.7k </small>
                                 </div>
                               </div>
                             </DropdownItem>
                             <DropdownItem className="d-flex align-items-center">
-                              {" "}
+                              {' '}
                               <img
                                 src={eth}
                                 alt="btc"
@@ -410,14 +416,14 @@ const DashboardInfo = () => {
                               <div className="d-flex flex-column">
                                 <span className="fw-semibold">Ethereum</span>
                                 <div className="d-flex flex-row align-items-center">
-                                  <small>$8.6k </small>{" "}
+                                  <small>$8.6k </small>{' '}
                                   <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
                                   <small>$12.7k </small>
                                 </div>
                               </div>
                             </DropdownItem>
                             <DropdownItem className="d-flex align-items-center">
-                              {" "}
+                              {' '}
                               <img
                                 src={pol}
                                 alt="btc"
@@ -435,7 +441,7 @@ const DashboardInfo = () => {
                               </div>
                             </DropdownItem>
                             <DropdownItem className="d-flex align-items-center">
-                              {" "}
+                              {' '}
                               <img
                                 src={btc}
                                 alt="btc"
@@ -453,7 +459,7 @@ const DashboardInfo = () => {
                               </div>
                             </DropdownItem>
                             <DropdownItem className="d-flex align-items-center">
-                              {" "}
+                              {' '}
                               <img
                                 src={arb}
                                 alt="btc"
@@ -464,14 +470,14 @@ const DashboardInfo = () => {
                               <div className="d-flex flex-column">
                                 <span className="fw-semibold">Arbitrum</span>
                                 <div className="d-flex flex-row align-items-center">
-                                  <small>{"<"} $0.0001 </small>
+                                  <small>{'<'} $0.0001 </small>
                                   <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                                  <small>{"<"} $0.0001</small>
+                                  <small>{'<'} $0.0001</small>
                                 </div>
                               </div>
                             </DropdownItem>
                             <DropdownItem className="d-flex align-items-center">
-                              {" "}
+                              {' '}
                               <img
                                 src={gnosis}
                                 alt="btc"
@@ -484,9 +490,9 @@ const DashboardInfo = () => {
                                   Gnosis Chain
                                 </span>
                                 <div className="d-flex flex-row align-items-center">
-                                  <small>{"<"} $0.0001 </small>
+                                  <small>{'<'} $0.0001 </small>
                                   <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                                  <small>{"<"} $0.0001</small>
+                                  <small>{'<'} $0.0001</small>
                                 </div>
                               </div>
                             </DropdownItem>
