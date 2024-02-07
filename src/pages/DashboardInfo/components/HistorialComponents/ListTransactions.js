@@ -28,12 +28,8 @@ const ListTransactionss = ({ transactions }) => {
     return formattedNumber.toString();
   };
 
-  const sentAmount = transactions.txSummary?.sent?.prettyNativeAmount || 'N/A';
-  const receivedAmount =
-    transactions.txSummary?.received?.prettyNativeAmount || 'N/A';
-
-  function renderLedger(ledger, index, isReceived = false) {
-    const ledgerAmount = isReceived ? receivedAmount : sentAmount;
+  function renderLedger(ledger, index) {
+    // console.log('ledger', ledger);
     return (
       <div key={index} className="d-flex align-items-center w-100 ps-2">
         <div className="image-container me-2">
@@ -69,7 +65,7 @@ const ListTransactionss = ({ transactions }) => {
               {ledger.currency}
             </>
           </h6>
-          <p className="text-muted">{ledgerAmount}</p>
+          <p className="text-muted">{ledger.nativeamount || 'N/A'}</p>
         </div>
       </div>
     );
