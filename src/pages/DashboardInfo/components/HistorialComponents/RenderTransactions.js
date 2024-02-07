@@ -199,23 +199,28 @@ const RenderTransactions = ({ date, transactions }) => {
                           : 'Aplication'}
                     </p>
                     <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
-                      {' '}
-                      {transaction.blockchainAction !==
-                        blockchainActions.BURN &&
-                        transaction.blockchainAction !==
-                          blockchainActions.MINT && (
-                          <>
-                            {transaction.blockchainAction ===
-                            blockchainActions.RECEIVE
-                              ? formatIdTransaction(transaction.sender, 4, 4)
-                              : formatIdTransaction(
-                                  transaction.recipient,
-                                  4,
-                                  4,
-                                )}
-                            <i className="ri-arrow-right-up-line fs-5 text-muted ms-1 "></i>
-                          </>
-                        )}
+                      {transaction.txSummary.marketplaceName ? (
+                        <>
+                          {transaction.txSummary.marketplaceName}
+                          <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
+                        </>
+                      ) : (
+                        <>
+                          {transaction.blockchainAction ===
+                          blockchainActions.RECEIVE ? (
+                            <>
+                              {formatIdTransaction(transaction.sender, 4, 4)}
+                              <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
+                            </>
+                          ) : transaction.blockchainAction ===
+                            blockchainActions.SEND ? (
+                            <>
+                              {formatIdTransaction(transaction.recipient, 4, 4)}
+                              <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
+                            </>
+                          ) : null}
+                        </>
+                      )}
                     </h6>
                   </div>
                 </Col>
