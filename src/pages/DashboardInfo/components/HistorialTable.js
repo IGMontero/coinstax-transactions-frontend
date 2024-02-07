@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Button,
   Input,
@@ -13,14 +13,14 @@ import {
   DropdownMenu,
   DropdownItem,
   Badge,
-} from "reactstrap";
-import { useDispatch } from "react-redux";
+} from 'reactstrap';
+import { useDispatch } from 'react-redux';
 import {
   fetchHistory,
   fetchSearchHistoryTable,
   fetchTransactionsFilter,
-} from "../../../slices/transactions/thunk";
-import RenderTransactions from "./HistorialComponents/RenderTransactions";
+} from '../../../slices/transactions/thunk';
+import RenderTransactions from './HistorialComponents/RenderTransactions';
 
 const HistorialTable = ({ address, activeTab }) => {
   const inputRef = useRef(null);
@@ -31,7 +31,8 @@ const HistorialTable = ({ address, activeTab }) => {
   const [showTransactionFilterMenu, setShowTransactionFilterMenu] =
     useState(false);
 
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTimeout, setSearchTimeout] = useState(null);
 
   const [showAssetsMenu, setShowAssetsMenu] = useState(false);
 
@@ -54,14 +55,14 @@ const HistorialTable = ({ address, activeTab }) => {
   });
 
   const [selectedAssets, setSelectedAssets] = useState({
-    "All Assets": true,
+    'All Assets': true,
     Tokens: false,
     NFTs: false,
   });
 
   const formatDate = (dateString) => {
-    const options = { year: "numeric", month: "long", day: "numeric" };
-    return new Date(dateString).toLocaleDateString("en-US", options);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
   const fetchData = async () => {
@@ -69,7 +70,7 @@ const HistorialTable = ({ address, activeTab }) => {
       setIsInitialLoad(true);
       setLoading(true);
       const response = await dispatch(
-        fetchHistory({ address, count: 10, page: 0 })
+        fetchHistory({ address, count: 10, page: 0 }),
       ).unwrap();
       setData(response);
 
@@ -80,13 +81,13 @@ const HistorialTable = ({ address, activeTab }) => {
       setIsInitialLoad(false);
     } catch (error) {
       setLoading(true);
-      console.error("Error fetching performance data:", error);
+      console.error('Error fetching performance data:', error);
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (activeTab == "3") {
+    if (activeTab == '3') {
       fetchData();
       setCurrentPage(0);
       setHasMoreData(true);
@@ -97,8 +98,8 @@ const HistorialTable = ({ address, activeTab }) => {
     const groupByDate = (transactions) => {
       if (!Array.isArray(transactions)) {
         console.error(
-          "Expected an array of transactions, received:",
-          transactions
+          'Expected an array of transactions, received:',
+          transactions,
         );
         return {};
       }
@@ -122,7 +123,7 @@ const HistorialTable = ({ address, activeTab }) => {
       setLoading(true);
       const nextPage = currentPage + 1;
       const response = await dispatch(
-        fetchHistory({ address, count: 10, page: nextPage })
+        fetchHistory({ address, count: 10, page: nextPage }),
       ).unwrap();
 
       console.log(response);
@@ -133,7 +134,7 @@ const HistorialTable = ({ address, activeTab }) => {
       setCurrentPage(nextPage);
       setLoading(false);
     } catch (error) {
-      console.error("Error fetching more transactions:", error);
+      console.error('Error fetching more transactions:', error);
     } finally {
       setLoading(false);
     }
@@ -166,7 +167,7 @@ const HistorialTable = ({ address, activeTab }) => {
   };
 
   const hasActiveFilters = Object.values(selectedFilters).some(
-    (value) => value
+    (value) => value,
   );
 
   const handleDeselectFilter = async (filter) => {
@@ -177,63 +178,43 @@ const HistorialTable = ({ address, activeTab }) => {
 
     await dispatch(fetchHistory({ address, count: 10, page: 0 }));
   };
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
 
-  const handleSearch = async (e) => {
-    setSearchTerm(e.target.value);
-    if (e.target.value.length > 65) {
+    if (searchTimeout) {
+      clearTimeout(searchTimeout);
+    }
+
+    const newTimeout = setTimeout(async () => {
       setIsInitialLoad(true);
       setLoading(true);
       try {
         const response = await dispatch(
-          fetchSearchHistoryTable({ address, query: e.target.value })
+          fetchSearchHistoryTable({ address, query: value }),
         ).unwrap();
 
         setData(response);
       } catch (error) {
-        console.error("Error during search:", error);
+        console.error('Error during search:', error);
       } finally {
         setIsInitialLoad(false);
         setLoading(false);
       }
-    } else {
-      setLoading(true);
-      try {
-        await dispatch(fetchHistory({ address, count: 10, page: 0 })).unwrap();
-      } catch (error) {
-        console.error("Error fetching initial data:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    }, 500);
+
+    setSearchTimeout(newTimeout);
   };
 
   const handleClearSearch = () => {
-    setSearchTerm("");
+    setSearchTerm('');
     // dispatch(fetchHistory({ address, count: 10, page: 0 }));
   };
   const handleApplyFilters = async () => {
     const isAnyFilterActive = Object.values(selectedFilters).some(
-      (value) => value
+      (value) => value,
     );
     setLoading(true);
-
-    // if (isAnyFilterActive) {
-    //   try {
-    //     const response = await dispatch(
-    //       fetchTransactionsFilter({
-    //         address,
-    //         filters: selectedFilters,
-    //       })
-    //     ).unwrap();
-    //     setData(response);
-    //   } catch (error) {
-    //     console.error("Error fetching filtered transactions:", error);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // } else {
-    //   await dispatch(fetchHistory({ address, count: 10, page: 0 }));
-    // }
     setLoading(false);
   };
 
@@ -279,7 +260,7 @@ const HistorialTable = ({ address, activeTab }) => {
             <DropdownToggle
               tag="a"
               className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${
-                showTransactionFilterMenu ? "active" : ""
+                showTransactionFilterMenu ? 'active' : ''
               }`}
               role="button"
             >
@@ -319,7 +300,7 @@ const HistorialTable = ({ address, activeTab }) => {
             <DropdownToggle
               tag="a"
               className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${
-                showAssetsMenu ? "active" : ""
+                showAssetsMenu ? 'active' : ''
               }`}
               role="button"
             >
@@ -337,7 +318,7 @@ const HistorialTable = ({ address, activeTab }) => {
                     {selectedAssets[asset] ? (
                       <i className="ri-check-line fs-5 ms-4"></i>
                     ) : (
-                      ""
+                      ''
                     )}
                   </label>
                 </DropdownItem>
@@ -363,7 +344,7 @@ const HistorialTable = ({ address, activeTab }) => {
             <span
               className="search-icon ps-3 position-absolute"
               onClick={() => inputRef.current.focus()}
-              style={{ zIndex: 1, cursor: "text" }}
+              style={{ zIndex: 1, cursor: 'text' }}
             >
               <i className="ri-search-line text-muted fs-3"></i>
             </span>
@@ -372,8 +353,8 @@ const HistorialTable = ({ address, activeTab }) => {
               className="search-input py-2 rounded"
               style={{
                 zIndex: 0,
-                paddingLeft: "47px",
-                paddingRight: "30px",
+                paddingLeft: '47px',
+                paddingRight: '30px',
               }}
               placeholder="Filter by Address, Protocol, Assets, Type"
               value={searchTerm}
@@ -384,8 +365,8 @@ const HistorialTable = ({ address, activeTab }) => {
                 color="link"
                 className="btn-close position-absolute btn btn-sm  border-0"
                 style={{
-                  right: "25px",
-                  top: "25px",
+                  right: '25px',
+                  top: '25px',
                   zIndex: 2,
                 }}
                 onClick={handleClearSearch}
@@ -408,15 +389,15 @@ const HistorialTable = ({ address, activeTab }) => {
       {loading && isInitialLoad ? (
         <div
           className="d-flex justify-content-center align-items-center"
-          style={{ height: "50vh" }}
+          style={{ height: '50vh' }}
         >
-          <Spinner style={{ width: "4rem", height: "4rem" }} />
+          <Spinner style={{ width: '4rem', height: '4rem' }} />
         </div>
       ) : (
         <Col
           lg={12}
           className="position-relative"
-          style={{ minHeight: "50vh" }}
+          style={{ minHeight: '50vh' }}
         >
           <div className="">
             {groupedTransactions &&
@@ -435,7 +416,7 @@ const HistorialTable = ({ address, activeTab }) => {
             disabled={loading}
             onClick={getMoreTransactions}
             color="soft-light"
-            style={{ borderRadius: "10px", border: ".5px solid grey" }}
+            style={{ borderRadius: '10px', border: '.5px solid grey' }}
           >
             {loading ? (
               <Spinner size="sm" />
