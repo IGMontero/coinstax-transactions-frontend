@@ -1,23 +1,31 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Dropdown, DropdownMenu, DropdownToggle, Form } from "reactstrap";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Button,
+  Dropdown,
+  DropdownMenu,
+  DropdownToggle,
+  Form,
+} from 'reactstrap';
 
 //import images
-import logoDark from "../assets/images/logo-dark.png";
-import logoLight from "../assets/images/logo-light.png";
-import logoSm from "../assets/images/logo-sm.png";
+import logoDark from '../assets/images/logo-dark.png';
+import logoLight from '../assets/images/logo-light.png';
+import logoSm from '../assets/images/logo-sm.png';
 
+import logo from '../assets/images/logos/logo-dark.png';
 //import Components
-import LightDark from "../Components/Common/LightDark";
-import NotificationDropdown from "../Components/Common/NotificationDropdown";
-import ProfileDropdown from "../Components/Common/ProfileDropdown";
-import SearchOption from "../Components/Common/SearchOption";
+import LightDark from '../Components/Common/LightDark';
+import NotificationDropdown from '../Components/Common/NotificationDropdown';
+import ProfileDropdown from '../Components/Common/ProfileDropdown';
+import SearchOption from '../Components/Common/SearchOption';
 
-import { useDispatch, useSelector } from "react-redux";
-import { changeSidebarVisibility } from "../slices/thunks";
+import { useDispatch, useSelector } from 'react-redux';
+import { changeSidebarVisibility } from '../slices/thunks';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { sidebarVisibilitytype } = useSelector((state) => ({
     sidebarVisibilitytype: state.Layout.sidebarVisibilitytype,
@@ -35,72 +43,59 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       // document.querySelector(".hamburger-icon").classList.toggle('open');
       return;
     }
-    dispatch(changeSidebarVisibility("show"));
+    dispatch(changeSidebarVisibility('show'));
 
     //For collapse horizontal menu
-    if (document.documentElement.getAttribute("data-layout") === "horizontal") {
-      document.body.classList.contains("menu")
-        ? document.body.classList.remove("menu")
-        : document.body.classList.add("menu");
+    if (document.documentElement.getAttribute('data-layout') === 'horizontal') {
+      document.body.classList.contains('menu')
+        ? document.body.classList.remove('menu')
+        : document.body.classList.add('menu');
     }
 
     //For collapse vertical and semibox menu
     if (
-      sidebarVisibilitytype === "show" &&
-      (document.documentElement.getAttribute("data-layout") === "vertical" ||
-        document.documentElement.getAttribute("data-layout") === "semibox")
+      sidebarVisibilitytype === 'show' &&
+      (document.documentElement.getAttribute('data-layout') === 'vertical' ||
+        document.documentElement.getAttribute('data-layout') === 'semibox')
     ) {
       if (windowSize < 1025 && windowSize > 767) {
-        document.body.classList.remove("vertical-sidebar-enable");
-        document.documentElement.getAttribute("data-sidebar-size") === "sm"
-          ? document.documentElement.setAttribute("data-sidebar-size", "")
-          : document.documentElement.setAttribute("data-sidebar-size", "sm");
+        document.body.classList.remove('vertical-sidebar-enable');
+        document.documentElement.getAttribute('data-sidebar-size') === 'sm'
+          ? document.documentElement.setAttribute('data-sidebar-size', '')
+          : document.documentElement.setAttribute('data-sidebar-size', 'sm');
       } else if (windowSize > 1025) {
-        document.body.classList.remove("vertical-sidebar-enable");
-        document.documentElement.getAttribute("data-sidebar-size") === "lg"
-          ? document.documentElement.setAttribute("data-sidebar-size", "sm")
-          : document.documentElement.setAttribute("data-sidebar-size", "lg");
+        document.body.classList.remove('vertical-sidebar-enable');
+        document.documentElement.getAttribute('data-sidebar-size') === 'lg'
+          ? document.documentElement.setAttribute('data-sidebar-size', 'sm')
+          : document.documentElement.setAttribute('data-sidebar-size', 'lg');
       } else if (windowSize <= 767) {
-        document.body.classList.add("vertical-sidebar-enable");
-        document.documentElement.setAttribute("data-sidebar-size", "lg");
+        document.body.classList.add('vertical-sidebar-enable');
+        document.documentElement.setAttribute('data-sidebar-size', 'lg');
       }
     }
 
     //Two column menu
-    if (document.documentElement.getAttribute("data-layout") === "twocolumn") {
-      document.body.classList.contains("twocolumn-panel")
-        ? document.body.classList.remove("twocolumn-panel")
-        : document.body.classList.add("twocolumn-panel");
+    if (document.documentElement.getAttribute('data-layout') === 'twocolumn') {
+      document.body.classList.contains('twocolumn-panel')
+        ? document.body.classList.remove('twocolumn-panel')
+        : document.body.classList.add('twocolumn-panel');
     }
   };
 
   return (
     <React.Fragment>
-      <header id="page-topbar" className={headerClass}>
+      {/* <header id="page-topbar" className={headerClass}> */}
+      <header id="page" className={headerClass}>
         <div className="layout-width">
           <div className="navbar-header">
             <div className="d-flex">
-              <div className="navbar-brand-box horizontal-logo">
-                <Link to="/" className="logo logo-dark">
-                  <span className="logo-sm">
-                    <img src={logoSm} alt="" height="22" />
-                  </span>
-                  <span className="logo-lg">
-                    <img src={logoDark} alt="" height="40" />
-                  </span>
-                </Link>
-
-                <Link to="/" className="logo logo-light">
-                  <span className="logo-sm">
-                    <img src={logoSm} alt="" height="22" />
-                  </span>
-                  <span className="logo-lg">
-                    <img src={logoLight} alt="" height="40" />
-                  </span>
-                </Link>
+              <div className="navbar-brand-bo horizonta-logo">
+                <span className="logo-lgs">
+                  <img src={logo} alt="" height="40" />
+                </span>
               </div>
 
-              <button
+              {/* <button
                 onClick={toogleMenuBtn}
                 type="button"
                 className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
@@ -111,7 +106,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   <span></span>
                   <span></span>
                 </span>
-              </button>
+              </button> */}
 
               {/* <SearchOption /> */}
             </div>
@@ -134,17 +129,32 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                                     </Form>
                                 </DropdownMenu>
                             </Dropdown> */}
-              {/* 
-              <LightDark
+
+              {/* <LightDark
                 layoutMode={layoutModeType}
                 onChangeLayoutMode={onChangeLayoutMode}
               /> */}
 
               {/* NotificationDropdown */}
-              <NotificationDropdown />
+              {/* <NotificationDropdown /> */}
+              {/* <div>
+                <Button
+                  onClick={() => navigate('/')}
+                  className="bg bg-transparent  border-0 btn btn-transparent"
+                >
+                  <i className="bx bx-world fs-3"></i>
+                </Button>
+              </div> */}
+              {/* <div className="">
+                <Link to="/" className="log">
+                  <span className="logo-lg">
+                    <img src={logo} alt="" height="30" />
+                  </span>
+                </Link>
+              </div> */}
 
               {/* ProfileDropdown */}
-              <ProfileDropdown />
+              {/* <ProfileDropdown /> */}
             </div>
           </div>
         </div>

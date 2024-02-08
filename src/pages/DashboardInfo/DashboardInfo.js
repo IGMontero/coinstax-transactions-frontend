@@ -162,25 +162,23 @@ const DashboardInfo = () => {
       />
       <Container fluid>
         <div className="page-content pb-5">
-          <Row className="py-3">
-            <Col lg={12}>
-              <Col lg={6} md={8} xs={12}>
-                <InputGroup className=" mb-3 ">
-                  <Input
-                    className="form-control py-2 rounded"
-                    placeholder="Assets, wallet, domain, or identify"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                  />
-                  <Button
-                    disabled={!searchInput || loading}
-                    color="primary"
-                    onClick={handleSearchClick}
-                  >
-                    Search
-                  </Button>
-                </InputGroup>
-              </Col>
+          <Row className="py-3 d-flex justify-content-center ">
+            <Col lg={6}>
+              <InputGroup className=" mb-3 ">
+                <Input
+                  className="form-control py-2 rounded"
+                  placeholder="Assets, wallet, domain, or identify"
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                />
+                <Button
+                  disabled={!searchInput || loading}
+                  color="primary"
+                  onClick={handleSearchClick}
+                >
+                  Search
+                </Button>
+              </InputGroup>
             </Col>
           </Row>
           {!addressForSearch ? (
@@ -369,7 +367,7 @@ const DashboardInfo = () => {
                         </NavItem>
                       </Nav>
                     </Col>
-                    <Col
+                    {/* <Col
                       xxl={6}
                       className="d-flex justify-content-end align-items-center"
                     >
@@ -497,7 +495,7 @@ const DashboardInfo = () => {
                           </DropdownMenu>
                         </UncontrolledDropdown>
                       </div>
-                    </Col>
+                    </Col> */}
                   </div>
                   <TabContent
                     activeTab={customActiveTab}

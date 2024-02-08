@@ -1,33 +1,38 @@
-import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-} from "reactstrap";
+} from 'reactstrap';
 //import images
-import avatar1 from "../../assets/images/users/avatar-1.jpg";
-
+import avatar1 from '../../assets/images/users/avatar-1.jpg';
+import { logoutUser } from '../../slices/thunks';
 const ProfileDropdown = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => ({
     user: state.Profile.user,
   }));
 
-  const [userName, setUserName] = useState(user?.email || "Admin");
+  const handleLogout = () => {
+    dispatch(logoutUser());
+  };
+
+  const [userName, setUserName] = useState(user?.email || 'Admin');
   const [userAvatar, setUserAvatar] = useState(user?.photoURL || avatar1);
 
   useEffect(() => {
-    if (localStorage.getItem("authUser")) {
-      const obj = JSON.parse(localStorage.getItem("authUser"));
+    if (localStorage.getItem('authUser')) {
+      const obj = JSON.parse(localStorage.getItem('authUser'));
       setUserName(
-        process.env.REACT_APP_DEFAULTAUTH === "firebase"
-          ? obj?.providerData?.[0]?.displayName?.split(" ")?.[0] ||
+        process.env.REACT_APP_DEFAULTAUTH === 'firebase'
+          ? obj?.providerData?.[0]?.displayName?.split(' ')?.[0] ||
               obj?.providerData?.[0]?.email ||
               // Get first name from display name
-              obj?.displayName?.split(" ")[0]
-          : "Admin"
+              obj?.displayName?.split(' ')[0]
+          : 'Admin',
       );
 
       if (obj?.photoURL) {
@@ -70,7 +75,7 @@ const ProfileDropdown = () => {
           <h6 className="dropdown-header">Welcome {userName}!</h6>
           <DropdownItem className="p-0">
             <Link
-              to={process.env.PUBLIC_URL + "/profile"}
+              to={process.env.PUBLIC_URL + '/profile'}
               className="dropdown-item"
             >
               <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
@@ -79,27 +84,27 @@ const ProfileDropdown = () => {
           </DropdownItem>
 
           <DropdownItem className="p-0">
-            <Link to={process.env.PUBLIC_URL + "#"} className="dropdown-item">
-              <i className="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>{" "}
+            <Link to={process.env.PUBLIC_URL + '#'} className="dropdown-item">
+              <i className="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>{' '}
               <span className="align-middle">Help</span>
             </Link>
           </DropdownItem>
           <div className="dropdown-divider"></div>
           <DropdownItem className="p-0">
-            <Link to={process.env.PUBLIC_URL + "#"} className="dropdown-item">
+            <Link to={process.env.PUBLIC_URL + '#'} className="dropdown-item">
               {/* <span
                                 className="badge bg-soft-success text-success mt-1 float-end">New</span> */}
-              <i className="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>{" "}
+              <i className="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>{' '}
               <span className="align-middle">Settings</span>
             </Link>
           </DropdownItem>
 
-          <DropdownItem className="p-0">
+          <DropdownItem onClick={handleLogout} className="p-0">
             <Link
-              to={process.env.PUBLIC_URL + "/logout"}
+              to={process.env.PUBLIC_URL + '/logout'}
               className="dropdown-item"
             >
-              <i className="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>{" "}
+              <i className="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>{' '}
               <span className="align-middle" data-key="t-logout">
                 Logout
               </span>
