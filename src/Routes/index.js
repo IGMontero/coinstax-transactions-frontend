@@ -1,25 +1,34 @@
 import React from 'react';
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route } from 'react-router-dom';
 
 //Layouts
-import NonAuthLayout from "../Layouts/NonAuthLayout";
-import VerticalLayout from "../Layouts/index";
+import NonAuthLayout from '../Layouts/NonAuthLayout';
+import VerticalLayout from '../Layouts/index';
 
 //routes
-import { authProtectedRoutes, publicRoutes } from "./allRoutes";
+import { authProtectedRoutes, publicRoutes, allRoutes } from './allRoutes';
 import { AuthProtected } from './AuthProtected';
 import { useProfile } from '../Components/Hooks/UserHooks';
+import Header from '../Layouts/Header';
 
 const Index = () => {
+  const { userProfile } = useProfile();
 
-    const { userProfile } = useProfile();
+  const isAuth = userProfile ? true : false;
 
-    const isAuth = userProfile ? true : false;
-
-    return (
-        <React.Fragment>
-            <Routes>
-                {!isAuth && (
+  return (
+    <React.Fragment>
+      <Header onChangeLayoutMode={''} layoutModeType={''} headerClass={''} />
+      <Routes>
+        {allRoutes.map((route, idx) => (
+          <Route
+            path={route.path}
+            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+            key={idx}
+            exact={true}
+          />
+        ))}
+        {/* {!isAuth && (
                     <Route>
 
                         {publicRoutes.map((route, idx) => (
@@ -36,24 +45,25 @@ const Index = () => {
                         ))}
                     </Route>
                 )}
+*/}
 
-
-                <Route>
-                    {authProtectedRoutes.map((route, idx) => (
-                        <Route
-                            path={route.path}
-                            element={
-                                <AuthProtected>
-                                    <VerticalLayout>{route.component}</VerticalLayout>
-                                </AuthProtected>}
-                            key={idx}
-                            exact={true}
-                        />
-                    ))}
-                </Route>
-            </Routes>
-        </React.Fragment>
-    );
+        <Route>
+          {allRoutes.map((route, idx) => (
+            <Route
+              path={route.path}
+              element={
+                <AuthProtected>
+                  <VerticalLayout>{route.component}</VerticalLayout>
+                </AuthProtected>
+              }
+              key={idx}
+              exact={true}
+            />
+          ))}
+        </Route>
+      </Routes>
+    </React.Fragment>
+  );
 };
 
 export default Index;
