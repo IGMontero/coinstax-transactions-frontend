@@ -35,12 +35,38 @@ const Negativeledgers = ({ ledger }) => {
                   />{' '}
                 </div>
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
-                  <h6
-                    className="fw-semibold my-0 text-dark"
-                    style={{ whiteSpace: 'nowrap' }}
-                  >
-                    {negativeLedgers?.displayName}
-                  </h6>
+                  <span className="text-dark d-flex">
+                    <span
+                      id={`amount-left-${ledger.txHash}`}
+                      className="me-1"
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      {negativeLedgers?.displayName}
+                    </span>
+                    {negativeLedgers?.value !== -1 && (
+                      <UncontrolledPopover
+                        onClick={(e) => e.stopPropagation()}
+                        placement="bottom"
+                        target={`amount-left-${ledger.txHash}`}
+                        trigger="hover"
+                      >
+                        <PopoverBody
+                          style={{
+                            width: 'auto',
+                          }}
+                          className="text-center w-auto p-2 "
+                        >
+                          <span
+                            style={{
+                              fontSize: '0.70rem',
+                            }}
+                          >
+                            {negativeLedgers.value}
+                          </span>
+                        </PopoverBody>
+                      </UncontrolledPopover>
+                    )}
+                  </span>
                   <p className="text-start my-0">
                     {negativeLedgers && negativeLedgers.prettyNativeAmount ? (
                       <p className="text-star d-flex align-items-center my-0 text-muted ">
@@ -48,11 +74,11 @@ const Negativeledgers = ({ ledger }) => {
                       </p>
                     ) : (
                       <>
-                        <p className="text-star d-flex align-items-center my-0 text-muted ">
+                        <p className="text-start d-flex fs-6 align-items-center my-0 text-muted ">
                           N/A
                           <i
                             id={`nativeAmmount-id-${ledger.txHash}`}
-                            class="ri-information-line ms-2  fs-4 text-muted"
+                            class="ri-information-line ms-1 fs-6 text-muted"
                           ></i>
                           <UncontrolledPopover
                             onClick={(e) => e.stopPropagation()}

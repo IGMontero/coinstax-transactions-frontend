@@ -21,7 +21,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
             ) : (
               <>
                 {!negativeLedgers ? null : (
-                  <i className="ri-arrow-right-line text-dark text-end fs-4 me-3"></i>
+                  <i className="ri-arrow-right-line text-dark text-end fs-4 me-2"></i>
                 )}
                 <div
                   className={`image-container me-2 ${
@@ -47,14 +47,45 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                 </div>
                 <div className="d-flex flex-column">
                   <span className="text-success d-flex">
-                    <span className="me-1">{positiveLedgers?.displayName}</span>
+                    <span
+                      id={`amount-${ledger.txHash}`}
+                      className="me-1"
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      {positiveLedgers?.displayName}
+                    </span>
+                    {positiveLedgers?.value && (
+                      <UncontrolledPopover
+                        onClick={(e) => e.stopPropagation()}
+                        placement="bottom"
+                        target={`amount-${ledger.txHash}`}
+                        trigger="hover"
+                      >
+                        <PopoverBody
+                          style={{
+                            width: 'auto',
+                          }}
+                          className="text-center w-auto p-2 "
+                        >
+                          <span
+                            style={{
+                              fontSize: '0.70rem',
+                            }}
+                          >
+                            {positiveLedgers.value}
+                          </span>
+                        </PopoverBody>
+                      </UncontrolledPopover>
+                    )}
                   </span>
 
                   <>
                     {positiveLedgers && positiveLedgers.prettyNativeAmount ? (
-                      <p className="text-star d-flex align-items-center my-0 text-muted ">
-                        {positiveLedgers.prettyNativeAmount}
-                      </p>
+                      <>
+                        <p className="text-star d-flex align-items-center my-0 text-muted ">
+                          {positiveLedgers.prettyNativeAmount}
+                        </p>
+                      </>
                     ) : (
                       <p className="text-star d-flex align-items-center my-0 text-muted ">
                         N/A
@@ -94,7 +125,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
         ) : (
           <>
             <div className="d-flex justify-content-center text-start align-items-center ">
-              <i className="ri-arrow-right-line text-dark text-start fs-4 me-3"></i>
+              <i className="ri-arrow-right-line text-dark text-start fs-4 me-2"></i>
               <div className="bg-primary  rounded-circle align-items-center justify-content-center d-flex ">
                 <img
                   src={assetsIcon}
