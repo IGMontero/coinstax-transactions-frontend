@@ -84,7 +84,7 @@ const ListTransactionss = ({ transactions }) => {
           </h6>
           {!ledger.isNft && (
             <p className="text-muted mb-0 d-flex align-items-center">
-              {ledger.nativeamount || (
+              {ledger.prettyNativeAmount || (
                 <>
                   N/A
                   <i
