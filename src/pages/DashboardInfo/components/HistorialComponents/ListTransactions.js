@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Col, PopoverBody, Row, UncontrolledPopover } from 'reactstrap';
+import { formatNumber } from '../../../../utils/utils';
 
 const ListTransactionss = ({ transactions }) => {
   const [positiveLedgers, setPositiveLedgers] = useState([]);
@@ -19,16 +20,9 @@ const ListTransactionss = ({ transactions }) => {
     }
   }, [transactions]);
 
-  const formatNumber = (number) => {
-    if (typeof number !== 'number' || isNaN(number)) {
-      return 'Invalid Number';
-    }
-
-    let formattedNumber = parseFloat(number.toFixed(4));
-    return formattedNumber.toString();
-  };
   function renderLedger(ledger, index, isReceived) {
-    const targetId = `amount-list-${index}-${transactions.txHash}`;
+    const prefix = isReceived ? 'received' : 'sent';
+    const targetId = `amount-list-${prefix}-${index}-${transactions.txHash}`;
     return (
       <div
         key={index}
@@ -63,11 +57,11 @@ const ListTransactionss = ({ transactions }) => {
             {!(
               ledger.isNft === true &&
               (ledger.amount === 1 || ledger.amount === -1)
-            ) ? (
+            ) && (
               <>
                 {ledger.amount > 0 ? '+' : ''}
-                <span id={targetId}>{ledger.prettyNativeAmount}</span>
-                {ledger.nativeamount && (
+                <span id={targetId}>{formatNumber(ledger.amount)}</span>
+                {ledger.amount && (
                   <UncontrolledPopover
                     onClick={(e) => e.stopPropagation()}
                     placement="bottom"
@@ -79,19 +73,49 @@ const ListTransactionss = ({ transactions }) => {
                       className="text-center w-auto p-2 "
                     >
                       <span style={{ fontSize: '0.70rem' }}>
-                        {ledger.nativeamount}
+                        {ledger.amount}
                       </span>
                     </PopoverBody>
                   </UncontrolledPopover>
                 )}
               </>
-            ) : (
-              ''
             )}{' '}
             {ledger.currency}
           </h6>
-          {!isReceived && !ledger.isNft && (
-            <p className="text-muted mb-0">{ledger.prettyNativeAmount || ''}</p>
+          {!ledger.isNft && (
+            <p className="text-muted mb-0 d-flex align-items-center">
+              {ledger.nativeamount || (
+                <>
+                  N/A
+                  <i
+                    id={`nativeAmount-na-${targetId}`}
+                    className="ri-information-line ms-1 fs-6 text-muted"
+                  ></i>
+                  <UncontrolledPopover
+                    onClick={(e) => e.stopPropagation()}
+                    placement="bottom"
+                    target={`nativeAmount-na-${targetId}`}
+                    trigger="hover"
+                  >
+                    <PopoverBody
+                      style={{
+                        width: 'auto',
+                      }}
+                      className="w-auto p-2 text-center"
+                    >
+                      <span
+                        style={{
+                          fontSize: '0.70rem',
+                        }}
+                      >
+                        The price is not available at the time of the
+                        transaction
+                      </span>
+                    </PopoverBody>
+                  </UncontrolledPopover>
+                </>
+              )}
+            </p>
           )}
         </div>
       </div>
@@ -153,7 +177,7 @@ const ListTransactionss = ({ transactions }) => {
             <span className="mb-0 mt-n2 align-self-start">Received</span>
             <div className="w-100">
               {positiveLedgers.map((ledger, index) =>
-                renderLedger(ledger, index, false),
+                renderLedger(ledger, index, true),
               )}
             </div>
           </Col>
