@@ -162,9 +162,9 @@ const DashboardInfo = () => {
       />
       <Container fluid>
         <div className="page-content pb-5">
-          <Row className="py-3 d-flex justify-content-center ">
-            <Col lg={6}>
-              <InputGroup className=" mb-3 ">
+          <Row className="pb-3 mt-n4 d-flex justify-content-center ">
+            <Col lg={8}>
+              <InputGroup className="mb-5">
                 <Input
                   className="form-control py-2 rounded"
                   placeholder="Assets, wallet, domain, or identify"
@@ -298,12 +298,11 @@ const DashboardInfo = () => {
                 {' '}
                 <Col className="col-12 ">
                   <div
-                    className=" w-100 ms-1 d-flex justify-content-between align-items-center   "
+                    className=" w-100 ms-1 top-0 d-flex justify-content-between position-sticky align-items-center  "
                     style={{
-                      position: 'sticky',
-                      top: '70px',
                       zIndex: 5,
-                      backdropFilter: 'blur(5px)',
+                      backgroundColor: '#1a1d21',
+                      // backdropFilter: 'blur(5px)',
                     }}
                   >
                     <Col xxl={6} className="">
