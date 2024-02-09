@@ -16,11 +16,11 @@ const Negativeledgers = ({ ledger }) => {
               ''
             ) : (
               <>
-                <div className="image-container me-2">
+                <div className="image-container me-1">
                   <img
                     src={negativeLedgers?.logo || currency}
                     alt={negativeLedgers?.displayName}
-                    className=""
+                    className="rounded"
                     width={35}
                     height={35}
                     onError={(e) => {
@@ -38,7 +38,7 @@ const Negativeledgers = ({ ledger }) => {
                   <span className="text-dark d-flex">
                     <span
                       id={`amount-left-${ledger.txHash}`}
-                      className="me-1"
+                      className=""
                       style={{ whiteSpace: 'nowrap' }}
                     >
                       {negativeLedgers?.displayName}
@@ -69,43 +69,45 @@ const Negativeledgers = ({ ledger }) => {
                       )}
                   </span>
                   <p className="text-start my-0">
-                    {negativeLedgers && negativeLedgers.prettyNativeAmount ? (
-                      <p className="text-star d-flex align-items-center my-0 text-muted ">
-                        {negativeLedgers.prettyNativeAmount}
-                      </p>
-                    ) : (
-                      <>
-                        <p className="text-start d-flex fs-6 align-items-center my-0 text-muted ">
-                          N/A
-                          <i
-                            id={`nativeAmmount-id-${ledger.txHash}`}
-                            class="ri-information-line ms-1 fs-6 text-muted"
-                          ></i>
-                          <UncontrolledPopover
-                            onClick={(e) => e.stopPropagation()}
-                            placement="bottom"
-                            target={`nativeAmmount-id-${ledger.txHash}`}
-                            trigger="hover"
-                          >
-                            <PopoverBody
-                              style={{
-                                width: 'auto',
-                              }}
-                              className="w-auto p-2 text-center "
-                            >
-                              <span
-                                style={{
-                                  fontSize: '0.70rem',
-                                }}
-                              >
-                                The price is not available at the time of the
-                                transaction
-                              </span>
-                            </PopoverBody>
-                          </UncontrolledPopover>
+                    {negativeLedgers &&
+                      negativeLedgers.hideNativeAmount !== true &&
+                      (negativeLedgers.prettyNativeAmount ? (
+                        <p className="text-start d-flex align-items-center my-0 text-muted">
+                          {negativeLedgers.prettyNativeAmount}
                         </p>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
+                            N/A
+                            <i
+                              id={`nativeAmount-id-${ledger.txHash}`}
+                              className="ri-information-line ms-1 fs-6 text-muted"
+                            ></i>
+                            <UncontrolledPopover
+                              onClick={(e) => e.stopPropagation()}
+                              placement="bottom"
+                              target={`nativeAmount-id-${ledger.txHash}`}
+                              trigger="hover"
+                            >
+                              <PopoverBody
+                                style={{
+                                  width: 'auto',
+                                }}
+                                className="w-auto p-2 text-center"
+                              >
+                                <span
+                                  style={{
+                                    fontSize: '0.70rem',
+                                  }}
+                                >
+                                  The price is not available at the time of the
+                                  transaction
+                                </span>
+                              </PopoverBody>
+                            </UncontrolledPopover>
+                          </p>
+                        </>
+                      ))}
                   </p>
                 </div>
               </>
