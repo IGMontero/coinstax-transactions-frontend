@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { formatIdTransaction, getActionMapping } from '../../../../utils/utils';
-import { Col, Row, Collapse, CardBody, Badge } from 'reactstrap';
+import {
+  Col,
+  Row,
+  Collapse,
+  CardBody,
+  Badge,
+  UncontrolledPopover,
+  PopoverBody,
+} from 'reactstrap';
 
 import eth from '../../../../assets/images/svg/crypto-icons/eth.svg';
 import ListTransactions from './ListTransactions';
@@ -14,6 +22,21 @@ const RenderTransactions = ({ date, transactions }) => {
   const [openCollapse, setopenCollapse] = useState(new Set());
 
   const [copiedIndex, setCopiedIndex] = useState(null);
+
+  const [copiedIndex2, setCopiedIndex2] = useState(null);
+
+  const handleCopyToClipboard = async (e, text, index) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex2(index);
+      setTimeout(() => {
+        setCopiedIndex2(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
 
   const toggleCollapse = (id) => {
     setopenCollapse((prevopenCollapse) => {
@@ -202,22 +225,26 @@ const RenderTransactions = ({ date, transactions }) => {
                     </p>
                     <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
                       {transaction.txSummary.marketplaceName ? (
-                        <Link
-                          target="_blank"
+                        <span
                           className="text-decoration-none"
-                          to={`https://etherscan.io/address/${transaction.recipient}`}
+                          onClick={(e) => {
+                            handleCopyToClipboard(
+                              e,
+                              transaction.recipient,
+                              index,
+                            );
+                          }}
                         >
                           <span className="text-hover-underline">
-                            {transaction.txSummary.marketplaceName !== ''
-                              ? transaction.txSummary.marketplaceName
-                              : formatIdTransaction(
-                                  transaction.recipient,
-                                  4,
-                                  4,
-                                )}
+                            {copiedIndex2 === index ? (
+                              <span className="text-dark">Copied!</span>
+                            ) : transaction.txSummary.marketplaceName !== '' ? (
+                              transaction.txSummary.marketplaceName
+                            ) : (
+                              formatIdTransaction(transaction.recipient, 4, 4)
+                            )}
                           </span>
-                          {/* <i className="ri-arrow-right-up-line fs-5 ms-1"></i> */}
-                        </Link>
+                        </span>
                       ) : (
                         <>
                           {transaction.blockchainAction ===
@@ -257,7 +284,28 @@ const RenderTransactions = ({ date, transactions }) => {
                               <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
                             </>
                           ) : (
-                            formatIdTransaction(transaction.recipient, 4, 4)
+                            <span
+                              className="text-decoration-none"
+                              onClick={(e) => {
+                                handleCopyToClipboard(
+                                  e,
+                                  transaction.recipient,
+                                  index,
+                                );
+                              }}
+                            >
+                              <span className="text-hover-underline">
+                                {copiedIndex2 === index ? (
+                                  <span className="text-dark">Copied!</span>
+                                ) : (
+                                  formatIdTransaction(
+                                    transaction.recipient,
+                                    4,
+                                    4,
+                                  )
+                                )}
+                              </span>
+                            </span>
                           )}
                         </>
                       )}
