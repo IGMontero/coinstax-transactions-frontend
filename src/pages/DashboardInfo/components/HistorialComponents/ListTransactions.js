@@ -31,7 +31,7 @@ const ListTransactionss = ({ transactions }) => {
   function renderLedger(ledger, index) {
     return (
       <div key={index} className="d-flex align-items-center w-100 ps-2">
-        <div className="image-container me-2">
+        <div className="image-container mb-3 me-2">
           <img
             src={ledger.txInfo?.logo || ledger.currency}
             alt={ledger.txInfo?.name}
