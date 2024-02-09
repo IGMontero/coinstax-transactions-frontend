@@ -214,7 +214,7 @@ const RenderTransactions = ({ date, transactions }) => {
                                   4,
                                 )}
                           </span>
-                          <i className="ri-arrow-right-up-line fs-5 ms-1"></i>
+                          {/* <i className="ri-arrow-right-up-line fs-5 ms-1"></i> */}
                         </Link>
                       ) : (
                         <>
