@@ -27,21 +27,29 @@ const ListTransactionss = ({ transactions }) => {
     let formattedNumber = parseFloat(number.toFixed(4));
     return formattedNumber.toString();
   };
-
-  function renderLedger(ledger, index) {
+  function renderLedger(ledger, index, isReceived) {
     return (
-      <div key={index} className="d-flex align-items-center w-100 ps-2">
-        <div className="image-container mb-3 me-2">
+      <div
+        key={index}
+        className="d-flex align-items-center mb-2 w-100 ps-2"
+        style={{ minHeight: '50px' }}
+      >
+        <div className="image-container me-2 d-flex align-items-center justify-content-center">
           <img
             src={ledger.txInfo?.logo || ledger.currency}
             alt={ledger.txInfo?.name}
-            className="rounded mb-3"
+            className="rounded"
             width={35}
             height={35}
             onError={(e) => {
               e.target.onerror = null;
               e.target.style.display = 'none';
               const container = e.target.parentNode;
+              container.classList.add(
+                'd-flex',
+                'align-items-center',
+                'justify-content-center',
+              );
               const textNode = document.createElement('div');
               textNode.textContent = ledger.currency;
               textNode.className = 'currency-placeholder';
@@ -49,22 +57,24 @@ const ListTransactionss = ({ transactions }) => {
             }}
           />
         </div>
-        <div className="d-flex flex-column ">
-          <h6 className={`fw-semibold my-0 `}>
-            <>
-              {!(
-                ledger.isNft === true &&
-                (ledger.amount === 1 || ledger.amount === -1)
-              ) && (
-                <>
-                  {ledger.amount > 0 ? '+' : ''}
-                  {formatNumber(ledger.amount)}
-                </>
-              )}{' '}
-              {ledger.currency}
-            </>
+        <div className="d-flex flex-column justify-content-center">
+          <h6 className="fw-semibold my-0">
+            {!(
+              ledger.isNft === true &&
+              (ledger.amount === 1 || ledger.amount === -1)
+            ) ? (
+              <>
+                {ledger.amount > 0 ? '+' : ''}
+                {formatNumber(ledger.amount)}
+              </>
+            ) : (
+              'NFT'
+            )}{' '}
+            {ledger.currency}
           </h6>
-          <p className="text-muted">{ledger.nativeamount || 'N/A'}</p>
+          {!isReceived && !ledger.isNft && (
+            <p className="text-muted mb-0">{ledger.nativeamount || 'N/A'}</p>
+          )}
         </div>
       </div>
     );
@@ -76,9 +86,9 @@ const ListTransactionss = ({ transactions }) => {
         <Col xxl={12} className="d-flex mb-2"></Col>
         {negativeLedgers && negativeLedgers.length > 0 && (
           <Col xxl={2} className="d-flex align-items-start flex-column ps-2">
-            <span className="mb-3 mt-n2">Sent</span>
+            <span className=" mt-n2">Sent</span>
             {negativeLedgers.map((ledger, index) =>
-              renderLedger(ledger, index),
+              renderLedger(ledger, index, true),
             )}
           </Col>
         )}
@@ -122,10 +132,10 @@ const ListTransactionss = ({ transactions }) => {
             xxl={9}
             className="d-flex align-items-center ps-2 flex-column justify-content-start"
           >
-            <span className="mb-3 mt-n2 align-self-start">Received</span>
+            <span className="mb-0 mt-n2 align-self-start">Received</span>
             <div className="w-100">
               {positiveLedgers.map((ledger, index) =>
-                renderLedger(ledger, index, true),
+                renderLedger(ledger, index, false),
               )}
             </div>
           </Col>
