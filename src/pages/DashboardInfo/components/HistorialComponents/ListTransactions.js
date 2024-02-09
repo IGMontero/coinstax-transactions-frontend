@@ -68,7 +68,7 @@ const ListTransactionss = ({ transactions }) => {
                 {formatNumber(ledger.amount)}
               </>
             ) : (
-              'NFT'
+              ''
             )}{' '}
             {ledger.currency}
           </h6>

@@ -160,9 +160,9 @@ const RenderTransactions = ({ date, transactions }) => {
                   lg={transaction.txSummary.sent ? 3 : 0}
                   md={transaction.txSummary.sent ? 3 : 0}
                   xs={6}
-                  className={`${
+                  className={`mb-lg-0 mb-3 ${
                     transaction.txSummary.sent
-                      ? 'd-flex justify-content-start'
+                      ? 'd-flex justify-content-start '
                       : 'd-none'
                   }`}
                 >
