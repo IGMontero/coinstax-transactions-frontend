@@ -91,9 +91,7 @@ const ListTransactionss = ({ transactions }) => {
             {ledger.currency}
           </h6>
           {!isReceived && !ledger.isNft && (
-            <p className="text-muted mb-0">
-              {ledger.prettyNativeAmount || 'N/A'}
-            </p>
+            <p className="text-muted mb-0">{ledger.prettyNativeAmount || ''}</p>
           )}
         </div>
       </div>
@@ -108,7 +106,7 @@ const ListTransactionss = ({ transactions }) => {
           <Col xxl={2} className="d-flex align-items-start flex-column ps-2">
             <span className=" mt-n2">Sent</span>
             {negativeLedgers.map((ledger, index) =>
-              renderLedger(ledger, index, true),
+              renderLedger(ledger, index, false),
             )}
           </Col>
         )}
