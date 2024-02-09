@@ -90,12 +90,13 @@ const RenderTransactions = ({ date, transactions }) => {
                 onClick={() => toggleCollapse(collapseId)}
                 style={{ cursor: 'pointer', padding: '.7rem' }}
               >
+                {' '}
                 <Col
                   lg={3}
-                  md={3}
+                  md={12}
                   sm={12}
                   xs={12}
-                  className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-2"
+                  className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-3"
                 >
                   {transaction.blockchainAction && (
                     <span
@@ -154,11 +155,11 @@ const RenderTransactions = ({ date, transactions }) => {
                     )}
                   </div>
                 </Col>
-
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={transaction.txSummary.sent ? 4 : 0}
-                  md={transaction.txSummary.sent ? 4 : 0}
+                  lg={transaction.txSummary.sent ? 3 : 0}
+                  md={transaction.txSummary.sent ? 3 : 0}
+                  xs={6}
                   className={`${
                     transaction.txSummary.sent
                       ? 'd-flex justify-content-start'
@@ -167,27 +168,28 @@ const RenderTransactions = ({ date, transactions }) => {
                 >
                   <Negativeledgers ledger={sentTxSummary} />
                 </Col>
-
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={transaction.txSummary.sent ? 2 : 6}
-                  md={transaction.txSummary.sent ? 2 : 6}
-                  className="d-flex justify-content-start d-none d-md-flex"
+                  lg={transaction.txSummary.sent ? 4 : 7}
+                  md={transaction.txSummary.sent ? 4 : 7}
+                  xs={6}
+                  className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3 ${
+                    transaction.txSummary.sent ? '' : 'ms-n2'
+                  }`}
                 >
                   <PositiveLedgers
                     ledger={receivedTxSummary}
                     negativeLedgers={sentTxSummary.txSummary.sent}
                   />
                 </Col>
-
                 <Col
-                  lg={3}
-                  md={3}
-                  sm={4}
-                  xs={5}
-                  className="d-flex justify-content-end align-items-center"
+                  lg={2}
+                  md={12}
+                  sm={12}
+                  xs={12}
+                  className="d-flex justify-content-start me-n4 align-items-center  mt-lg-0 mt-3"
                 >
-                  <div className="d-flex flex-column text-start justify-content-end  me-3">
+                  <div className="d-flex flex-column text-start">
                     <p className="text-start my-0">
                       {' '}
                       {transaction.blockchainAction ===
