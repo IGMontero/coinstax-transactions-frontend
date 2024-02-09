@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 //constants
 import {
   layoutTypes,
@@ -11,21 +11,21 @@ import {
   leftSidebarViewTypes,
   leftSidebarImageTypes,
   preloaderTypes,
-  sidebarVisibilitytypes
-} from "../../Components/constants/layout";
+  sidebarVisibilitytypes,
+} from '../../Components/constants/layout';
 
 export const initialState = {
   layoutType: layoutTypes.VERTICAL,
-  leftSidebarType: leftSidebarTypes.LIGHT,
-  layoutModeType: layoutModeTypes.LIGHTMODE,
+  leftSidebarType: leftSidebarTypes.DARK,
+  layoutModeType: layoutModeTypes.DARKMODE,
   layoutWidthType: layoutWidthTypes.FLUID,
   layoutPositionType: layoutPositionTypes.FIXED,
-  topbarThemeType: topbarThemeTypes.LIGHT,
+  topbarThemeType: topbarThemeTypes.DARK,
   leftsidbarSizeType: leftsidbarSizeTypes.COMPACT,
   leftSidebarViewType: leftSidebarViewTypes.DEFAULT,
   leftSidebarImageType: leftSidebarImageTypes.NONE,
   preloader: preloaderTypes.DISABLE,
-  sidebarVisibilitytype: sidebarVisibilitytypes.SHOW
+  sidebarVisibilitytype: sidebarVisibilitytypes.SHOW,
 };
 
 const LayoutSlice = createSlice({
@@ -64,8 +64,8 @@ const LayoutSlice = createSlice({
     },
     changeSidebarVisibilityAction(state, action) {
       state.sidebarVisibilitytype = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -79,7 +79,7 @@ export const {
   changeLeftsidebarViewTypeAction,
   changeSidebarImageTypeAction,
   changePreLoaderAction,
-  changeSidebarVisibilityAction
+  changeSidebarVisibilityAction,
 } = LayoutSlice.actions;
 
 export default LayoutSlice.reducer;

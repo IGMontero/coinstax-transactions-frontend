@@ -2,7 +2,8 @@ import React from 'react';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 
-const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
+const PositiveLedgers = ({ ledger, negativeLedgers }) => {
+  const positiveLedgers = ledger.txSummary.received;
   const currency = positiveLedgers?.currency || '';
 
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
@@ -11,7 +12,6 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
     <div className="d-flex align-items-center justify-content-start">
       <h6
         className={`fw-semibold my-0  d-flex align-items-center justify-content-start`}
-        // className="fw-semibold my-0 ms-n3 d-flex align-items-center justify-content-start">
       >
         {!hasMoreThanOne ? (
           <>
@@ -20,7 +20,7 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
             ) : (
               <>
                 {!negativeLedgers ? null : (
-                  <i className="ri-arrow-right-line text-dark text-end fs-4 me-3"></i>
+                  <i className="ri-arrow-right-line text-dark text-end fs-4 me-2"></i>
                 )}
                 <div
                   className={`image-container me-2 ${
@@ -30,7 +30,7 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
                   <img
                     src={positiveLedgers?.logo || currency}
                     alt={positiveLedgers?.displayName}
-                    className="ps-0"
+                    className="ps-0 rounded"
                     width={35}
                     height={35}
                     onError={(e) => {
@@ -46,37 +46,77 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
                 </div>
                 <div className="d-flex flex-column">
                   <span className="text-success d-flex">
-                    <span className="me-1">{positiveLedgers?.displayName}</span>
+                    <span
+                      id={`amount-${ledger.txHash}`}
+                      className="me-1"
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      {positiveLedgers?.displayName}
+                    </span>
+                    {positiveLedgers?.value ? (
+                      <UncontrolledPopover
+                        onClick={(e) => e.stopPropagation()}
+                        placement="bottom"
+                        target={`amount-${ledger.txHash}`}
+                        trigger="hover"
+                      >
+                        <PopoverBody
+                          style={{
+                            width: 'auto',
+                          }}
+                          className="text-center w-auto p-2 "
+                        >
+                          <span
+                            style={{
+                              fontSize: '0.70rem',
+                            }}
+                          >
+                            {positiveLedgers.value}
+                          </span>
+                        </PopoverBody>
+                      </UncontrolledPopover>
+                    ) : null}
                   </span>
 
-                  <>
-                    {positiveLedgers && positiveLedgers.prettyNativeAmount ? (
-                      <p className="text-star d-flex align-items-center my-0 text-muted ">
+                  {positiveLedgers &&
+                    positiveLedgers.hideNativeAmount !== true &&
+                    (positiveLedgers.prettyNativeAmount ? (
+                      <p className="text-start d-flex align-items-center my-0 text-muted">
                         {positiveLedgers.prettyNativeAmount}
                       </p>
                     ) : (
-                      <p className="text-star d-flex align-items-center my-0 text-muted ">
-                        N/A
-                        <i
-                          id={`nativeAmmount-id-${positiveLedgers.blockHash}`}
-                          class="ri-information-line ms-2  fs-4 text-muted"
-                        ></i>
-                        <UncontrolledPopover
-                          onClick={(e) => e.stopPropagation()}
-                          placement="bottom"
-                          target={`nativeAmmount-id-${positiveLedgers.blockHash}`}
-                          trigger="hover"
-                        >
-                          <PopoverBody>
-                            <span className="fs-8">
-                              The price is not available at the time of the
-                              transaction
-                            </span>
-                          </PopoverBody>
-                        </UncontrolledPopover>
-                      </p>
-                    )}
-                  </>
+                      <>
+                        <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
+                          N/A
+                          <i
+                            id={`nativeAmount-${ledger.txHash}`}
+                            className="ri-information-line ms-1 fs-6 text-muted"
+                          ></i>
+                          <UncontrolledPopover
+                            onClick={(e) => e.stopPropagation()}
+                            placement="bottom"
+                            target={`nativeAmount-${ledger.txHash}`}
+                            trigger="hover"
+                          >
+                            <PopoverBody
+                              style={{
+                                width: 'auto',
+                              }}
+                              className="w-auto p-2 text-center"
+                            >
+                              <span
+                                style={{
+                                  fontSize: '0.70rem',
+                                }}
+                              >
+                                The price is not available at the time of the
+                                transaction
+                              </span>
+                            </PopoverBody>
+                          </UncontrolledPopover>
+                        </p>
+                      </>
+                    ))}
                 </div>
               </>
             )}
@@ -84,7 +124,7 @@ const PositiveLedgers = ({ positiveLedgers, negativeLedgers }) => {
         ) : (
           <>
             <div className="d-flex justify-content-center text-start align-items-center ">
-              <i className="ri-arrow-right-line text-dark text-start fs-4 me-3"></i>
+              <i className="ri-arrow-right-line text-dark text-start fs-4 me-2"></i>
               <div className="bg-primary  rounded-circle align-items-center justify-content-center d-flex ">
                 <img
                   src={assetsIcon}

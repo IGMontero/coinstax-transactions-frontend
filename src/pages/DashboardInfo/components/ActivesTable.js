@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Badge,
   Button,
@@ -7,14 +7,16 @@ import {
   DropdownMenu,
   DropdownToggle,
   Spinner,
-} from "reactstrap";
-import eth from "../../../assets/images/svg/crypto-icons/eth.svg";
+} from 'reactstrap';
+import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 
 const AcitvesTable = ({ data }) => {
   // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
 
+  console.log(data);
+
   const [loading, setLoading] = useState(false);
-  const [viewMode, setViewMode] = useState("byPlatform");
+  const [viewMode, setViewMode] = useState('byPlatform');
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -27,8 +29,8 @@ const AcitvesTable = ({ data }) => {
   }, [data]);
 
   const formatBalance = (number) => {
-    if (typeof number !== "number" || isNaN(number)) {
-      return "Invalid Number";
+    if (typeof number !== 'number' || isNaN(number)) {
+      return 'Invalid Number';
     }
     const hasComma = number > 999;
     const formattedNumber = number.toLocaleString(undefined, {
@@ -39,8 +41,8 @@ const AcitvesTable = ({ data }) => {
   };
 
   const formatPriceAndValue = (number) => {
-    if (typeof number !== "number" || isNaN(number)) {
-      return "Invalid Number";
+    if (typeof number !== 'number' || isNaN(number)) {
+      return 'Invalid Number';
     }
 
     const hasComma = number > 999;
@@ -78,17 +80,17 @@ const AcitvesTable = ({ data }) => {
             <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
             <Button
               className={`btn btn-sm btn-soft-primary rounded ${
-                viewMode === "byPlatform" ? "active" : ""
+                viewMode === 'byPlatform' ? 'active' : ''
               }`}
-              onClick={() => handleViewModeChange("byPlatform")}
+              onClick={() => handleViewModeChange('byPlatform')}
             >
               By Platform
             </Button>
             <Button
               className={`mx-2 btn btn-sm btn-soft-primary rounded ${
-                viewMode === "perPosition" ? "active" : ""
+                viewMode === 'perPosition' ? 'active' : ''
               }`}
-              onClick={() => handleViewModeChange("perPosition")}
+              onClick={() => handleViewModeChange('perPosition')}
             >
               Per Position
             </Button>
@@ -113,7 +115,7 @@ const AcitvesTable = ({ data }) => {
                     <label
                       className=" d-flex align-items-center mb-0"
                       htmlFor="hideBalances"
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: 'pointer' }}
                     >
                       Hide small balances
                       <input
@@ -131,131 +133,144 @@ const AcitvesTable = ({ data }) => {
           </div>
         </div>
         <div className="border border-2 rounded p-3">
-          {viewMode === "byPlatform" && (
-            <div className="d-flex flex-row align-items-center">
-              <h4>
-                <b> Wallet </b>${formatBalance(data.total)} US${" "}
-              </h4>{" "}
-              <Badge
-                color="soft-dark"
-                className="mb-2 ms-2 p-1 fs-7"
-                style={{ fontWeight: "inherit" }}
-              >
-                {" "}
-                <span className="text-dark">100%</span>
-              </Badge>
+          {data.items && data.items.length === 0 ? (
+            <div className="text-center py-2 mt-3">
+              <h4>No Assets Found</h4>
             </div>
-          )}
+          ) : (
+            <>
+              {viewMode === 'byPlatform' && (
+                <div className="d-flex flex-row align-items-center">
+                  <h4>
+                    <b> Wallet </b>${formatBalance(data.total)} US${' '}
+                  </h4>{' '}
+                  <Badge
+                    color="soft-dark"
+                    className="mb-2 ms-2 p-1 fs-7"
+                    style={{ fontWeight: 'inherit' }}
+                  >
+                    {' '}
+                    <span className="text-dark">100%</span>
+                  </Badge>
+                </div>
+              )}
 
-          <table className="table table-borderless ">
-            <thead>
-              <tr className="text-muted ">
-                <th scope="col">ASSETS</th>
-                <th scope="col">PRICE</th>
-                <th scope="col">BALANCE</th>
-                <th scope="col">VALUE</th>
-              </tr>
-            </thead>
-            {loading ? (
-              <tbody>
-                <tr>
-                  <td colSpan="4" className="text-center">
-                    <Spinner
-                      style={{ width: "4rem", height: "4rem" }}
-                      className="mt-5"
-                    />
-                  </td>
-                </tr>
-              </tbody>
-            ) : (
-              <tbody>
-                {data.items &&
-                  data?.items
-                    .filter((asset) => !hideSmallBalances || asset.value >= 1)
-                    .map((asset, index) => (
-                      <tr key={index}>
-                        <td>
-                          <div className="d-flex align-items-center fw-high">
-                            <img
-                              src={asset.logo}
-                              alt=""
-                              className="avatar-xs me-2"
-                            />
-                            <div className="d-flex flex-column">
-                              <div className="d-flex flex-row align-items-center">
-                                {asset.name}{" "}
-                                {viewMode === "perPosition" && (
-                                  <Badge
-                                    color="soft-dark"
-                                    style={{ fontWeight: "inherit" }}
-                                    className="mx-2 p-1 fs-7"
-                                  >
-                                    <span className="text-dark">
-                                      {" "}
-                                      {asset.percentage < 1
-                                        ? "<0.01"
-                                        : asset.percentage}
-                                      {"%"}
-                                    </span>
-                                  </Badge>
-                                )}
-                              </div>
-                              <div className="d-flex align-items-center text-muted">
+              <table className="table table-borderless ">
+                <thead>
+                  <tr className="text-muted ">
+                    <th scope="col">ASSETS</th>
+                    <th scope="col">PRICE</th>
+                    <th scope="col">BALANCE</th>
+                    <th scope="col">VALUE</th>
+                  </tr>
+                </thead>
+                {loading ? (
+                  <tbody>
+                    <tr>
+                      <td colSpan="4" className="text-center">
+                        <Spinner
+                          style={{ width: '4rem', height: '4rem' }}
+                          className="mt-5"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                ) : (
+                  <tbody>
+                    {data.items &&
+                      data?.items
+                        .filter(
+                          (asset) => !hideSmallBalances || asset.value >= 1,
+                        )
+                        .map((asset, index) => (
+                          <tr key={index}>
+                            <td>
+                              <div className="d-flex align-items-center fw-high">
                                 <img
-                                  src={eth}
-                                  width={15}
-                                  height={15}
-                                  className="me-1 "
+                                  src={asset.logo}
+                                  alt=""
+                                  className="avatar-xs me-2"
                                 />
-                                Ethereum · Wallet
+                                <div className="d-flex flex-column">
+                                  <div className="d-flex flex-row align-items-center">
+                                    {asset.name}{' '}
+                                    {viewMode === 'perPosition' && (
+                                      <Badge
+                                        color="soft-dark"
+                                        style={{ fontWeight: 'inherit' }}
+                                        className="mx-2 p-1 fs-7"
+                                      >
+                                        <span className="text-dark">
+                                          {' '}
+                                          {asset.percentage < 1
+                                            ? '<0.01'
+                                            : asset.percentage}
+                                          {'%'}
+                                        </span>
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  <div className="d-flex align-items-center text-muted">
+                                    <img
+                                      src={eth}
+                                      width={15}
+                                      height={15}
+                                      className="me-1 "
+                                    />
+                                    Ethereum · Wallet
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td>
-                          {asset.price
-                            ? "$" + formatPriceAndValue(asset.price)
-                            : "$0.00"}
-                        </td>
-                        <td>
-                          {asset.balance ? (
-                            <span>
-                              {formatBalance(asset.balance) +
-                                " " +
-                                asset.symbol}
-                            </span>
-                          ) : (
-                            "0.00"
-                          )}
-                        </td>
-                        <td>
-                          <div className="d-flex flex-column align-items-start">
-                            <span>
-                              {asset.value ? asset.prettyValue : "$0.00"}
-                            </span>
-                            <small
-                              className={`${
-                                asset.prettyDeltaValuePercent === "0.00%"
-                                  ? "text-primary"
-                                  : asset.prettyDeltaValuePercent[0] === "-"
-                                  ? "text-danger"
-                                  : "text-success"
-                              }`}
-                            >
-                              {asset.prettyDeltaValuePercent === "0.00%"
-                                ? asset.prettyDeltaValuePercent
-                                : (asset.prettyDeltaValuePercent[0] === "-"
-                                    ? ""
-                                    : "+") + asset.prettyDeltaValuePercent}
-                              {" (" + "$" + asset.deltaValue.toFixed(2) + ")"}
-                            </small>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-              </tbody>
-            )}
-          </table>
+                            </td>
+                            <td>
+                              {asset.price
+                                ? '$' + formatPriceAndValue(asset.price)
+                                : '$0.00'}
+                            </td>
+                            <td>
+                              {asset.balance ? (
+                                <span>
+                                  {formatBalance(asset.balance) +
+                                    ' ' +
+                                    asset.symbol}
+                                </span>
+                              ) : (
+                                '0.00'
+                              )}
+                            </td>
+                            <td>
+                              <div className="d-flex flex-column align-items-start">
+                                <span>
+                                  {asset.value ? asset.prettyValue : '$0.00'}
+                                </span>
+                                <small
+                                  className={`${
+                                    asset.prettyDeltaValuePercent === '0.00%'
+                                      ? 'text-primary'
+                                      : asset.prettyDeltaValuePercent[0] === '-'
+                                        ? 'text-danger'
+                                        : 'text-success'
+                                  }`}
+                                >
+                                  {asset.prettyDeltaValuePercent === '0.00%'
+                                    ? asset.prettyDeltaValuePercent
+                                    : (asset.prettyDeltaValuePercent[0] === '-'
+                                        ? ''
+                                        : '+') + asset.prettyDeltaValuePercent}
+                                  {' (' +
+                                    '$' +
+                                    asset.deltaValue.toFixed(2) +
+                                    ')'}
+                                </small>
+                              </div>
+                            </td>
+                          </tr>
+                        ))}
+                  </tbody>
+                )}
+              </table>
+            </>
+          )}
         </div>
       </div>
     </React.Fragment>
