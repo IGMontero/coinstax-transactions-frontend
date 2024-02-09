@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { formatIdTransaction, getActionMapping } from '../../../../utils/utils';
-import { Col, Row, Collapse, CardBody, Badge } from 'reactstrap';
+import {
+  Col,
+  Row,
+  Collapse,
+  CardBody,
+  Badge,
+  UncontrolledPopover,
+  PopoverBody,
+} from 'reactstrap';
 
 import eth from '../../../../assets/images/svg/crypto-icons/eth.svg';
 import ListTransactions from './ListTransactions';
@@ -8,11 +16,27 @@ import { blockchainActions } from '../../../../utils/utils';
 import Negativeledgers from './Ledgers/Negativeledgers';
 import PositiveLedgers from './Ledgers/PositiveLedgers';
 import InformationLedger from './Ledgers/InformationLedger';
+import { Link } from 'react-router-dom';
 
 const RenderTransactions = ({ date, transactions }) => {
   const [openCollapse, setopenCollapse] = useState(new Set());
 
   const [copiedIndex, setCopiedIndex] = useState(null);
+
+  const [copiedIndex2, setCopiedIndex2] = useState(null);
+
+  const handleCopyToClipboard = async (e, text, index) => {
+    e.stopPropagation();
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedIndex2(index);
+      setTimeout(() => {
+        setCopiedIndex2(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
 
   const toggleCollapse = (id) => {
     setopenCollapse((prevopenCollapse) => {
@@ -67,9 +91,11 @@ const RenderTransactions = ({ date, transactions }) => {
         if (!transaction.ledgers) {
           return null;
         }
-        const sentTxSummary = transaction.txSummary.sent;
+        const sentTxSummary = transaction;
 
-        const receivedTxSummary = transaction.txSummary.received;
+        const isRecived = transaction.txSummary.sent;
+
+        const receivedTxSummary = transaction;
         const hasList =
           transaction.txSummary?.receivedAssetsCount > 1 ||
           transaction.txSummary?.sentAssetsCount > 1;
@@ -87,17 +113,13 @@ const RenderTransactions = ({ date, transactions }) => {
                 onClick={() => toggleCollapse(collapseId)}
                 style={{ cursor: 'pointer', padding: '.7rem' }}
               >
+                {' '}
                 <Col
                   lg={3}
-                  md={3}
+                  md={12}
                   sm={12}
                   xs={12}
-                  // className={`${
-                  //   !sentTxSummary
-                  //     ? "d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-2 "
-                  //     : ""
-                  // }`}
-                  className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-2"
+                  className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-3"
                 >
                   {transaction.blockchainAction && (
                     <span
@@ -156,38 +178,41 @@ const RenderTransactions = ({ date, transactions }) => {
                     )}
                   </div>
                 </Col>
-
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={sentTxSummary ? 3 : 0}
-                  md={sentTxSummary ? 3 : 0}
-                  className={`${
-                    sentTxSummary ? 'd-flex justify-content-start' : 'd-none'
+                  lg={transaction.txSummary.sent ? 3 : 0}
+                  md={transaction.txSummary.sent ? 3 : 0}
+                  xs={6}
+                  className={`mb-lg-0 mb-3 ${
+                    transaction.txSummary.sent
+                      ? 'd-flex justify-content-start '
+                      : 'd-none'
                   }`}
                 >
-                  <Negativeledgers negativeLedgers={sentTxSummary} />
+                  <Negativeledgers ledger={sentTxSummary} />
                 </Col>
-
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={sentTxSummary ? 3 : 6}
-                  md={sentTxSummary ? 3 : 6}
-                  className="d-flex justify-content-start d-none d-lg-flex"
+                  lg={transaction.txSummary.sent ? 4 : 7}
+                  md={transaction.txSummary.sent ? 4 : 7}
+                  xs={6}
+                  className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3 ${
+                    transaction.txSummary.sent ? '' : 'ms-n2'
+                  }`}
                 >
                   <PositiveLedgers
-                    positiveLedgers={receivedTxSummary}
-                    negativeLedgers={sentTxSummary}
+                    ledger={receivedTxSummary}
+                    negativeLedgers={sentTxSummary.txSummary.sent}
                   />
                 </Col>
-
                 <Col
-                  lg={3}
-                  md={3}
-                  sm={4}
-                  xs={5}
-                  className="d-flex justify-content-end align-items-center"
+                  lg={2}
+                  md={12}
+                  sm={12}
+                  xs={12}
+                  className="d-flex justify-content-start me-n4 align-items-center  mt-lg-0 mt-3"
                 >
-                  <div className="d-flex flex-column text-start justify-content-end  me-3">
+                  <div className="d-flex flex-column text-start">
                     <p className="text-start my-0">
                       {' '}
                       {transaction.blockchainAction ===
@@ -199,23 +224,91 @@ const RenderTransactions = ({ date, transactions }) => {
                           : 'Aplication'}
                     </p>
                     <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
-                      {' '}
-                      {transaction.blockchainAction !==
-                        blockchainActions.BURN &&
-                        transaction.blockchainAction !==
-                          blockchainActions.MINT && (
-                          <>
-                            {transaction.blockchainAction ===
-                            blockchainActions.RECEIVE
-                              ? formatIdTransaction(transaction.sender, 4, 4)
-                              : formatIdTransaction(
+                      {transaction.txSummary.marketplaceName ? (
+                        <span
+                          className="text-decoration-none"
+                          onClick={(e) => {
+                            handleCopyToClipboard(
+                              e,
+                              transaction.recipient,
+                              index,
+                            );
+                          }}
+                        >
+                          <span className="text-hover-underline">
+                            {copiedIndex2 === index ? (
+                              <span className="text-dark">Copied!</span>
+                            ) : transaction.txSummary.marketplaceName !== '' ? (
+                              transaction.txSummary.marketplaceName
+                            ) : (
+                              formatIdTransaction(transaction.recipient, 4, 4)
+                            )}
+                          </span>
+                        </span>
+                      ) : (
+                        <>
+                          {transaction.blockchainAction ===
+                          blockchainActions.RECEIVE ? (
+                            <>
+                              <Link
+                                target="_blank"
+                                className="text-decoration-none"
+                                to={`https://etherscan.io/address/${transaction.sender}`}
+                              >
+                                <span className="text-hover-underline">
+                                  {formatIdTransaction(
+                                    transaction.sender,
+                                    4,
+                                    4,
+                                  )}
+                                </span>
+                              </Link>
+                              <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
+                            </>
+                          ) : transaction.blockchainAction ===
+                            blockchainActions.SEND ? (
+                            <>
+                              <Link
+                                target="_blank"
+                                className="text-decoration-none"
+                                to={`https://etherscan.io/address/${transaction.recipient}`}
+                              >
+                                <span className="text-hover-underline">
+                                  {formatIdTransaction(
+                                    transaction.recipient,
+                                    4,
+                                    4,
+                                  )}
+                                </span>
+                              </Link>
+                              <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
+                            </>
+                          ) : (
+                            <span
+                              className="text-decoration-none"
+                              onClick={(e) => {
+                                handleCopyToClipboard(
+                                  e,
                                   transaction.recipient,
-                                  4,
-                                  4,
+                                  index,
+                                );
+                              }}
+                            >
+                              <span className="text-hover-underline">
+                                {copiedIndex2 === index ? (
+                                  <span className="text-dark">Copied!</span>
+                                ) : (
+                                  formatIdTransaction(
+                                    transaction.recipient,
+                                    4,
+                                    4,
+                                  )
                                 )}
-                            <i className="ri-arrow-right-up-line fs-5 text-muted ms-1 "></i>
-                          </>
-                        )}
+                              </span>
+                            </span>
+                          )}
+                        </>
+                      )}
                     </h6>
                   </div>
                 </Col>

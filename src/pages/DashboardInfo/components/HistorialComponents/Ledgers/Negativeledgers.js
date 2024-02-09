@@ -2,9 +2,9 @@ import React from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 
-const Negativeledgers = ({ negativeLedgers }) => {
+const Negativeledgers = ({ ledger }) => {
+  const negativeLedgers = ledger.txSummary.sent;
   const currency = negativeLedgers?.currency || '';
-  const value = negativeLedgers?.value || 1;
   const hasMoreThanOne = negativeLedgers?.logo === 'assets';
 
   return (
@@ -16,11 +16,11 @@ const Negativeledgers = ({ negativeLedgers }) => {
               ''
             ) : (
               <>
-                <div className="image-container me-2">
+                <div className="image-container me-1">
                   <img
                     src={negativeLedgers?.logo || currency}
                     alt={negativeLedgers?.displayName}
-                    className=""
+                    className="rounded"
                     width={35}
                     height={35}
                     onError={(e) => {
@@ -35,41 +35,79 @@ const Negativeledgers = ({ negativeLedgers }) => {
                   />{' '}
                 </div>
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
-                  <h6
-                    className="fw-semibold my-0 text-dark"
-                    style={{ whiteSpace: 'nowrap' }}
-                  >
-                    {negativeLedgers?.displayName}
-                  </h6>
-                  <p className="text-start my-0">
-                    {negativeLedgers && negativeLedgers.prettyNativeAmount ? (
-                      <p className="text-star d-flex align-items-center my-0 text-muted ">
-                        {negativeLedgers.prettyNativeAmount}
-                      </p>
-                    ) : (
-                      <>
-                        <p className="text-star d-flex align-items-center my-0 text-muted ">
-                          N/A
-                          <i
-                            id={`nativeAmmount-id-${negativeLedgers.blockHash}`}
-                            class="ri-information-line ms-2  fs-4 text-muted"
-                          ></i>
-                          <UncontrolledPopover
-                            onClick={(e) => e.stopPropagation()}
-                            placement="bottom"
-                            target={`nativeAmmount-id-${negativeLedgers.blockHash}`}
-                            trigger="hover"
+                  <span className="text-dark d-flex">
+                    <span
+                      id={`amount-left-${ledger.txHash}`}
+                      className=""
+                      style={{ whiteSpace: 'nowrap' }}
+                    >
+                      {negativeLedgers?.displayName}
+                    </span>
+                    {negativeLedgers?.value !== -1 &&
+                    negativeLedgers?.value !== 0 ? (
+                      <UncontrolledPopover
+                        onClick={(e) => e.stopPropagation()}
+                        placement="bottom"
+                        target={`amount-left-${ledger.txHash}`}
+                        trigger="hover"
+                      >
+                        <PopoverBody
+                          style={{
+                            width: 'auto',
+                          }}
+                          className="text-center w-auto p-2 "
+                        >
+                          <span
+                            style={{
+                              fontSize: '0.70rem',
+                            }}
                           >
-                            <PopoverBody>
-                              <span className="fs-8">
-                                The price is not available at the time of the
-                                transaction
-                              </span>
-                            </PopoverBody>
-                          </UncontrolledPopover>
+                            {negativeLedgers.value}
+                          </span>
+                        </PopoverBody>
+                      </UncontrolledPopover>
+                    ) : null}
+                  </span>
+                  <p className="text-start my-0">
+                    {negativeLedgers &&
+                      negativeLedgers.hideNativeAmount !== true &&
+                      (negativeLedgers.prettyNativeAmount ? (
+                        <p className="text-start d-flex align-items-center my-0 text-muted">
+                          {negativeLedgers.prettyNativeAmount}
                         </p>
-                      </>
-                    )}
+                      ) : (
+                        <>
+                          <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
+                            N/A
+                            <i
+                              id={`nativeAmount-id-${ledger.txHash}`}
+                              className="ri-information-line ms-1 fs-6 text-muted"
+                            ></i>
+                            <UncontrolledPopover
+                              onClick={(e) => e.stopPropagation()}
+                              placement="bottom"
+                              target={`nativeAmount-id-${ledger.txHash}`}
+                              trigger="hover"
+                            >
+                              <PopoverBody
+                                style={{
+                                  width: 'auto',
+                                }}
+                                className="w-auto p-2 text-center"
+                              >
+                                <span
+                                  style={{
+                                    fontSize: '0.70rem',
+                                  }}
+                                >
+                                  The price is not available at the time of the
+                                  transaction
+                                </span>
+                              </PopoverBody>
+                            </UncontrolledPopover>
+                          </p>
+                        </>
+                      ))}
                   </p>
                 </div>
               </>
