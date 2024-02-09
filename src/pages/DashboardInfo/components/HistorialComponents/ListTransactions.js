@@ -21,7 +21,8 @@ const ListTransactionss = ({ transactions }) => {
   }, [transactions]);
 
   function renderLedger(ledger, index, isReceived) {
-    const targetId = `amount-list-${index}-${transactions.txHash}`;
+    const prefix = isReceived ? 'received' : 'sent';
+    const targetId = `amount-list-${prefix}-${index}-${transactions.txHash}`;
     return (
       <div
         key={index}
@@ -60,7 +61,7 @@ const ListTransactionss = ({ transactions }) => {
               <>
                 {ledger.amount > 0 ? '+' : ''}
                 <span id={targetId}>{formatNumber(ledger.amount)}</span>
-                {ledger.nativeamount && (
+                {ledger.amount && (
                   <UncontrolledPopover
                     onClick={(e) => e.stopPropagation()}
                     placement="bottom"
@@ -72,7 +73,7 @@ const ListTransactionss = ({ transactions }) => {
                       className="text-center w-auto p-2 "
                     >
                       <span style={{ fontSize: '0.70rem' }}>
-                        {ledger.nativeamount}
+                        {ledger.amount}
                       </span>
                     </PopoverBody>
                   </UncontrolledPopover>
@@ -176,7 +177,7 @@ const ListTransactionss = ({ transactions }) => {
             <span className="mb-0 mt-n2 align-self-start">Received</span>
             <div className="w-100">
               {positiveLedgers.map((ledger, index) =>
-                renderLedger(ledger, index, false),
+                renderLedger(ledger, index, true),
               )}
             </div>
           </Col>
