@@ -12,7 +12,6 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
     <div className="d-flex align-items-center justify-content-start">
       <h6
         className={`fw-semibold my-0  d-flex align-items-center justify-content-start`}
-        // className="fw-semibold my-0 ms-n3 d-flex align-items-center justify-content-start">
       >
         {!hasMoreThanOne ? (
           <>
@@ -31,7 +30,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   <img
                     src={positiveLedgers?.logo || currency}
                     alt={positiveLedgers?.displayName}
-                    className="ps-0"
+                    className="ps-0 rounded"
                     width={35}
                     height={35}
                     onError={(e) => {
@@ -79,45 +78,45 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                     )}
                   </span>
 
-                  <>
-                    {positiveLedgers && positiveLedgers.prettyNativeAmount ? (
+                  {positiveLedgers &&
+                    positiveLedgers.hideNativeAmount !== true &&
+                    (positiveLedgers.prettyNativeAmount ? (
+                      <p className="text-start d-flex align-items-center my-0 text-muted">
+                        {positiveLedgers.prettyNativeAmount}
+                      </p>
+                    ) : (
                       <>
-                        <p className="text-star d-flex align-items-center my-0 text-muted ">
-                          {positiveLedgers.prettyNativeAmount}
+                        <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
+                          N/A
+                          <i
+                            id={`nativeAmount-${ledger.txHash}`}
+                            className="ri-information-line ms-1 fs-6 text-muted"
+                          ></i>
+                          <UncontrolledPopover
+                            onClick={(e) => e.stopPropagation()}
+                            placement="bottom"
+                            target={`nativeAmount-${ledger.txHash}`}
+                            trigger="hover"
+                          >
+                            <PopoverBody
+                              style={{
+                                width: 'auto',
+                              }}
+                              className="w-auto p-2 text-center"
+                            >
+                              <span
+                                style={{
+                                  fontSize: '0.70rem',
+                                }}
+                              >
+                                The price is not available at the time of the
+                                transaction
+                              </span>
+                            </PopoverBody>
+                          </UncontrolledPopover>
                         </p>
                       </>
-                    ) : (
-                      <p className="text-star d-flex align-items-center my-0 text-muted ">
-                        N/A
-                        <i
-                          id={`nativeammount-id-${ledger.txHash}`}
-                          class="ri-information-line ms-2  fs-4 text-muted"
-                        ></i>
-                        <UncontrolledPopover
-                          onClick={(e) => e.stopPropagation()}
-                          placement="bottom"
-                          target={`nativeammount-id-${ledger.txHash}`}
-                          trigger="hover"
-                        >
-                          <PopoverBody
-                            style={{
-                              width: 'auto',
-                            }}
-                            className="text-center w-auto p-2 "
-                          >
-                            <span
-                              style={{
-                                fontSize: '0.70rem',
-                              }}
-                            >
-                              The price is not available at the time of the
-                              transaction
-                            </span>
-                          </PopoverBody>
-                        </UncontrolledPopover>
-                      </p>
-                    )}
-                  </>
+                    ))}
                 </div>
               </>
             )}
