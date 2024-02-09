@@ -44,29 +44,29 @@ const Negativeledgers = ({ ledger }) => {
                       {negativeLedgers?.displayName}
                     </span>
                     {negativeLedgers?.value !== -1 &&
-                      negativeLedgers?.value !== 0 && (
-                        <UncontrolledPopover
-                          onClick={(e) => e.stopPropagation()}
-                          placement="bottom"
-                          target={`amount-left-${ledger.txHash}`}
-                          trigger="hover"
+                    negativeLedgers?.value !== 0 ? (
+                      <UncontrolledPopover
+                        onClick={(e) => e.stopPropagation()}
+                        placement="bottom"
+                        target={`amount-left-${ledger.txHash}`}
+                        trigger="hover"
+                      >
+                        <PopoverBody
+                          style={{
+                            width: 'auto',
+                          }}
+                          className="text-center w-auto p-2 "
                         >
-                          <PopoverBody
+                          <span
                             style={{
-                              width: 'auto',
+                              fontSize: '0.70rem',
                             }}
-                            className="text-center w-auto p-2 "
                           >
-                            <span
-                              style={{
-                                fontSize: '0.70rem',
-                              }}
-                            >
-                              {negativeLedgers.value}
-                            </span>
-                          </PopoverBody>
-                        </UncontrolledPopover>
-                      )}
+                            {negativeLedgers.value}
+                          </span>
+                        </PopoverBody>
+                      </UncontrolledPopover>
+                    ) : null}
                   </span>
                   <p className="text-start my-0">
                     {negativeLedgers &&

@@ -53,7 +53,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                     >
                       {positiveLedgers?.displayName}
                     </span>
-                    {positiveLedgers?.value && (
+                    {positiveLedgers?.value ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
@@ -75,7 +75,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                           </span>
                         </PopoverBody>
                       </UncontrolledPopover>
-                    )}
+                    ) : null}
                   </span>
 
                   {positiveLedgers &&
