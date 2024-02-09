@@ -31,47 +31,50 @@ const InformationLedger = ({
   return (
     <Col lg={12}>
       <Row className="d-flex flex-row align-items-center">
-        <Col lg={12} className="p-2 d-flex ">
+        <Col lg={12} className="p-2 d-flex">
           {transaction.txSummary?.collectionName && (
-            <div className="p-2 mx-2 d-flex flex-column align-items-center">
-              <strong className="mb-1">Collection:</strong>
+            <div className="p-2 mx-2 d-flex align-items-center">
               <span className="d-flex align-items-center">
-                {transaction.txSummary.collectionName
-                  ? transaction.txSummary?.collectionName
-                  : '0'}
-                <i
-                  id={`collection-id-${transaction.blockHash}`}
-                  class="ri-information-line ms-2 fs-5 mb-text-muted"
-                ></i>
-                <UncontrolledPopover
-                  onClick={(e) => e.stopPropagation()}
-                  placement="top"
-                  target={`collection-id-${transaction.blockHash}`}
-                  trigger="hover"
-                >
-                  <PopoverBody className="p-2">
-                    <span
-                      style={{
-                        fontSize: '0.70rem',
-                      }}
+                <div className="d-flex flex-column">
+                  <strong className="text-start">Collection:</strong>
+                  <div id={`collection-id-${transaction.blockHash}`}>
+                    {transaction.txSummary.collectionName
+                      ? transaction.txSummary?.collectionName
+                      : '0'}
+                  </div>
+                </div>
+                {transaction.txSummary.allCollectionNames.length > 1 && (
+                  <>
+                    <UncontrolledPopover
+                      onClick={(e) => e.stopPropagation()}
+                      placement="top"
+                      target={`collection-id-${transaction.blockHash}`}
+                      trigger="hover"
                     >
-                      {transaction.txSummary.allCollectionNames.length &&
-                        transaction.txSummary.allCollectionNames.map(
-                          (ledger, index) => (
-                            <div key={index}>
-                              <li>{ledger}</li>
-                            </div>
-                          ),
-                        )}
-                    </span>
-                  </PopoverBody>
-                </UncontrolledPopover>
+                      <PopoverBody className="p-2">
+                        <span
+                          style={{
+                            fontSize: '0.70rem',
+                          }}
+                        >
+                          {transaction.txSummary.allCollectionNames.map(
+                            (ledger, index) => (
+                              <div key={index}>
+                                <li>{ledger}</li>
+                              </div>
+                            ),
+                          )}
+                        </span>
+                      </PopoverBody>
+                    </UncontrolledPopover>
+                  </>
+                )}
               </span>
             </div>
           )}
 
           <div className="p-2 mx-2 d-flex flex-column">
-            <strong className="mb-1">Fee:</strong>
+            <strong className="">Fee:</strong>
             <span>
               {transaction.blockchainAction === blockchainActions.RECEIVE
                 ? 'N/A'
@@ -81,21 +84,6 @@ const InformationLedger = ({
                     transaction.txSummary.fee.prettyAmount !== null
                   ? `${transaction.txSummary.fee.prettyAmount} (${transaction.txSummary.fee.prettyNativeAmount})`
                   : 'N/A'}
-
-              {/* {transaction.blockchainAction === blockchainActions.RECEIVE
-                ? "N/A"
-                : transaction.ledgers &&
-                  transaction.ledgers.find((ledger) => ledger.isFee)
-                ? formatNumber(
-                    removeLeadingMinus(
-                      transaction.ledgers.find((ledger) => ledger.isFee).amount
-                    )
-                  ) +
-                  ` ${transaction.feeCurrency} ($${removeLeadingMinus(
-                    transaction.ledgers.find((ledger) => ledger.isFee)
-                      .nativeamount
-                  ).toFixed(2)})`
-                : "0.00"} */}
             </span>
           </div>
 
@@ -103,7 +91,7 @@ const InformationLedger = ({
             <div className="p-2 d-flex flex-column">
               <strong>Transaction Hash:</strong>
               <div className="d-flex">
-                <span className="ms-1d -flex align-items-center ">
+                <span className="ms-1 d-flex align-items-center ">
                   {transaction.txHash ? (
                     <Link
                       to={`https://etherscan.io/tx/${transaction.txHash}`}
