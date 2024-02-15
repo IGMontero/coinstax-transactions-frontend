@@ -239,7 +239,21 @@ const RenderTransactions = ({ date, transactions }) => {
                             {copiedIndex2 === index ? (
                               <span className="text-dark">Copied!</span>
                             ) : transaction.txSummary.marketplaceName !== '' ? (
-                              transaction.txSummary.marketplaceName
+                              <div className="d-flex align-items-center ">
+                                {transaction.txSummary.marketplaceLogo ? (
+                                  <img
+                                    src={transaction.txSummary.marketplaceLogo}
+                                    alt={transaction.txSummary.marketplaceName}
+                                    style={{
+                                      width: '20px',
+                                      height: '20px',
+                                      borderRadius: '10px',
+                                      marginRight: '5px',
+                                    }}
+                                  />
+                                ) : null}
+                                {transaction.txSummary.marketplaceName}
+                              </div>
                             ) : (
                               formatIdTransaction(transaction.recipient, 4, 4)
                             )}
