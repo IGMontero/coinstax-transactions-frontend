@@ -10,6 +10,7 @@ import { authProtectedRoutes, publicRoutes, allRoutes } from './allRoutes';
 import { AuthProtected } from './AuthProtected';
 import { useProfile } from '../Components/Hooks/UserHooks';
 import Header from '../Layouts/Header';
+import Footer from '../Layouts/Footer';
 
 const Index = () => {
   const { userProfile } = useProfile();
@@ -62,6 +63,7 @@ const Index = () => {
           ))}
         </Route>
       </Routes>
+      <Footer />
     </React.Fragment>
   );
 };
