@@ -15,11 +15,8 @@ import {
   Badge,
 } from 'reactstrap';
 import { useDispatch } from 'react-redux';
-import {
-  fetchHistory,
-  fetchSearchHistoryTable,
-  fetchTransactionsFilter,
-} from '../../../slices/transactions/thunk';
+import { fetchHistory } from '../../../slices/transactions/thunk';
+import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
 
 const HistorialTable = ({ address, activeTab }) => {
@@ -46,13 +43,7 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const [groupedTransactions, setGroupedTransactions] = useState({});
 
-  const [selectedFilters, setSelectedFilters] = useState({
-    Trade: false,
-    Mint: false,
-    Send: false,
-    Receive: false,
-    Others: false,
-  });
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
   const [selectedAssets, setSelectedAssets] = useState({
     'All Assets': true,
@@ -64,25 +55,20 @@ const HistorialTable = ({ address, activeTab }) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
-
   const fetchData = async () => {
     try {
       setIsInitialLoad(true);
       setLoading(true);
       const response = await dispatch(
-        fetchHistory({ address, count: 10, page: 0 }),
+        fetchHistory({ address, page: 0 }),
       ).unwrap();
       setData(response);
-
-      if (response.length === 0) {
-        setHasMoreData(false);
-      }
+      setHasMoreData(response.length > 0);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
       setLoading(false);
       setIsInitialLoad(false);
-    } catch (error) {
-      setLoading(true);
-      console.error('Error fetching performance data:', error);
-      setLoading(false);
     }
   };
 
@@ -117,22 +103,16 @@ const HistorialTable = ({ address, activeTab }) => {
       setGroupedTransactions(groupByDate(data));
     }
   }, [data]);
-
   const getMoreTransactions = async () => {
     try {
       setLoading(true);
       const nextPage = currentPage + 1;
       const response = await dispatch(
-        fetchHistory({ address, count: 10, page: nextPage }),
+        fetchHistory({ address, page: nextPage }),
       ).unwrap();
-
-      console.log(response);
-      setData((prevData) => [...prevData, ...response]);
-      if (response.length === 0) {
-        setHasMoreData(false);
-      }
+      if (response.length === 0) setHasMoreData(false);
+      else setData((prevData) => [...prevData, ...response]);
       setCurrentPage(nextPage);
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching more transactions:', error);
     } finally {
@@ -159,25 +139,57 @@ const HistorialTable = ({ address, activeTab }) => {
     setShowTransactionFilterMenu(!showTransactionFilterMenu);
   };
 
-  const handleTransactionFilterChange = (filter) => {
-    setSelectedFilters((prevFilters) => ({
-      ...prevFilters,
-      [filter]: !prevFilters[filter],
-    }));
+  const handleTransactionFilterChange = async (filter) => {
+    let updatedFilters = [...selectedFilters];
+    if (selectedFilters.includes(filter)) {
+      updatedFilters = updatedFilters.filter((f) => f !== filter);
+    } else {
+      updatedFilters.push(filter);
+    }
+    setSelectedFilters(updatedFilters);
+
+    setLoading(true);
+    try {
+      const response = await dispatch(
+        fetchHistory({
+          address,
+          filters: { blockchainAction: updatedFilters },
+          page: 0,
+        }),
+      ).unwrap();
+      setData(response);
+    } catch (error) {
+      console.error('Error applying filters:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const hasActiveFilters = Object.values(selectedFilters).some(
     (value) => value,
   );
 
-  const handleDeselectFilter = async (filter) => {
-    setSelectedFilters((prevFilters) => ({
-      ...prevFilters,
-      [filter]: false,
-    }));
+  const handleDeselectFilter = async (filterName) => {
+    const updatedFilters = selectedFilters.filter((f) => f !== filterName);
+    setSelectedFilters(updatedFilters);
 
-    await dispatch(fetchHistory({ address, count: 10, page: 0 }));
+    setLoading(true);
+    try {
+      const response = await dispatch(
+        fetchHistory({
+          address,
+          filters: { blockchainAction: updatedFilters },
+          page: 0,
+        }),
+      ).unwrap();
+      setData(response);
+    } catch (error) {
+      console.error('Error applying filters:', error);
+    } finally {
+      setLoading(false);
+    }
   };
+
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -208,44 +220,28 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const handleClearSearch = () => {
     setSearchTerm('');
-    // dispatch(fetchHistory({ address, count: 10, page: 0 }));
-  };
-  const handleApplyFilters = async () => {
-    const isAnyFilterActive = Object.values(selectedFilters).some(
-      (value) => value,
-    );
-    setLoading(true);
-    setLoading(false);
   };
 
   const handleResetFilters = () => {
-    setSelectedFilters({
-      Trade: false,
-      Mint: false,
-      Send: false,
-      Receive: false,
-      Others: false,
-    });
-
-    // dispatch(fetchHistory({ address, count: 10, page: 0 }));
+    setSelectedFilters([]);
+    setLoading(true);
+    fetchData();
   };
 
   const renderBadges = () => {
-    return Object.entries(selectedFilters)
-      .filter(([filter, isSelected]) => isSelected)
-      .map(([filter]) => (
-        <Badge key={filter} color="soft-dark" className="p-2 my-2 me-2">
-          <span className="fs-6 d-flex align-items-center fw-semibold">
-            {filter}
-            <button
-              onClick={() => handleDeselectFilter(filter)}
-              className="bg-transparent p-0 border-0 text-dark ms-2 fs-5"
-            >
-              <i className="ri-close-line"></i>
-            </button>
-          </span>
-        </Badge>
-      ));
+    return selectedFilters.map((filterName) => (
+      <Badge key={filterName} color="soft-dark" className="p-2 my-2 me-2">
+        <span className="fs-6 d-flex align-items-center fw-semibold">
+          {capitalizeFirstLetter(filterName)}
+          <button
+            onClick={() => handleDeselectFilter(filterName)}
+            className="bg-transparent p-0 border-0 text-dark ms-2 fs-5"
+          >
+            <i className="ri-close-line"></i>
+          </button>
+        </span>
+      </Badge>
+    ));
   };
 
   return (
@@ -267,25 +263,23 @@ const HistorialTable = ({ address, activeTab }) => {
               <span className="fs-6">Transactions</span>
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-end mt-1">
-              {Object.keys(selectedFilters).map((filter) => (
+              {FILTER_NAMES.map((filter) => (
                 <DropdownItem
                   key={filter}
                   className={`d-flex align-items-center justify-content-between w-100`}
                   onClick={(e) => {
                     e.stopPropagation();
                     handleTransactionFilterChange(filter);
-                    handleApplyFilters();
                   }}
                 >
                   <label className="w-100 py-1 d-flex align-items-center justify-content-start m-0 cursor-pointer">
                     <input
                       type="checkbox"
                       className="form-check-input me-3"
-                      checked={!!selectedFilters[filter]}
-                      onClick={handleApplyFilters}
-                      onChange={() => handleTransactionFilterChange(filter)}
+                      checked={selectedFilters.includes(filter)}
+                      onChange={() => {}}
                     />
-                    {filter}
+                    {capitalizeFirstLetter(filter)}
                   </label>
                 </DropdownItem>
               ))}
@@ -338,9 +332,21 @@ const HistorialTable = ({ address, activeTab }) => {
           </span>
         )}
       </Col>
+      <Row>
+        <Col lg={12} className="mt-3 mb-0 d-flex ">
+          <Input
+            id="customCheck1"
+            type="checkbox"
+            className="form-check-input me-2"
+          />
+          <label className="form-check-label" htmlFor="customCheck1">
+            Include Spam Transactions
+          </label>
+        </Col>
+      </Row>
       <Row className="mt-4">
         <Col lg={6} md={8} sm={10} xs={12}>
-          <InputGroup className="py-3 search-bar col-lg-12 col-md-12 pe-3">
+          <InputGroup className="py-3 pt-0 search-bar col-lg-12 col-md-12 pe-3">
             <span
               className="search-icon ps-3 position-absolute"
               onClick={() => inputRef.current.focus()}
