@@ -72,10 +72,6 @@ const HistorialTable = ({ address, activeTab }) => {
           page: currentPage,
         }),
       ).unwrap();
-      // if (response.message) {
-      //   setErrorData(response.message);
-      //   return;
-      // }
       setData(response);
       setHasMoreData(response.length > 0);
     } catch (error) {
@@ -92,10 +88,10 @@ const HistorialTable = ({ address, activeTab }) => {
   useEffect(() => {
     if (activeTab == '3') {
       fetchData();
-      setCurrentPage(0);
       setHasMoreData(true);
     }
-  }, [address, activeTab, dispatch, searchTerm, selectedFilters, includeSpam]);
+    setCurrentPage(0);
+  }, [address, activeTab, dispatch, searchTerm, includeSpam]);
 
   useEffect(() => {
     const groupByDate = (transactions) => {
