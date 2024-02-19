@@ -4,6 +4,7 @@ import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 
 const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   const positiveLedgers = ledger.txSummary.received;
+
   const currency = positiveLedgers?.currency || '';
 
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
@@ -53,7 +54,8 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                     >
                       {positiveLedgers?.displayName}
                     </span>
-                    {positiveLedgers?.value ? (
+                    {positiveLedgers?.value &&
+                    !positiveLedgers.marketplaceName ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
