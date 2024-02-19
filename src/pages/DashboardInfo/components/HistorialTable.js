@@ -25,11 +25,15 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const [data, setData] = useState([]);
 
+  const [errorData, setErrorData] = useState(null);
+
   const [showTransactionFilterMenu, setShowTransactionFilterMenu] =
     useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [searchTimeout, setSearchTimeout] = useState(null);
+
+  const [includeSpam, setIncludeSpam] = useState(false);
 
   const [showAssetsMenu, setShowAssetsMenu] = useState(false);
 
@@ -55,22 +59,35 @@ const HistorialTable = ({ address, activeTab }) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
+
   const fetchData = async () => {
     try {
       setIsInitialLoad(true);
       setLoading(true);
       const response = await dispatch(
-        fetchHistory({ address, page: 0 }),
+        fetchHistory({
+          address,
+          query: searchTerm,
+          filters: { ...selectedFilters, includeSpam: includeSpam },
+          page: currentPage,
+        }),
       ).unwrap();
+      // if (response.message) {
+      //   setErrorData(response.message);
+      //   return;
+      // }
+
+      console.log(response);
       setData(response);
       setHasMoreData(response.length > 0);
     } catch (error) {
-      console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
       setIsInitialLoad(false);
     }
   };
+
+  console.log(errorData);
 
   useEffect(() => {
     if (activeTab == '3') {
@@ -78,7 +95,7 @@ const HistorialTable = ({ address, activeTab }) => {
       setCurrentPage(0);
       setHasMoreData(true);
     }
-  }, [address, activeTab, dispatch]);
+  }, [address, activeTab, dispatch, searchTerm, selectedFilters, includeSpam]);
 
   useEffect(() => {
     const groupByDate = (transactions) => {
@@ -103,6 +120,7 @@ const HistorialTable = ({ address, activeTab }) => {
       setGroupedTransactions(groupByDate(data));
     }
   }, [data]);
+
   const getMoreTransactions = async () => {
     try {
       setLoading(true);
@@ -203,7 +221,7 @@ const HistorialTable = ({ address, activeTab }) => {
       setLoading(true);
       try {
         const response = await dispatch(
-          fetchSearchHistoryTable({ address, query: value }),
+          fetchHistory({ address, query: value }),
         ).unwrap();
 
         setData(response);
@@ -224,6 +242,13 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const handleResetFilters = () => {
     setSelectedFilters([]);
+    setLoading(true);
+    fetchData();
+  };
+
+  const handleShowSpamTransactions = (e) => {
+    const checked = e.target.checked;
+    setIncludeSpam(checked);
     setLoading(true);
     fetchData();
   };
@@ -333,11 +358,13 @@ const HistorialTable = ({ address, activeTab }) => {
         )}
       </Col>
       <Row>
-        <Col lg={12} className="mt-3 mb-0 d-flex ">
+        <Col lg={12} className="mt-3 mb-0 d-flex">
           <Input
             id="customCheck1"
             type="checkbox"
             className="form-check-input me-2"
+            onChange={handleShowSpamTransactions}
+            checked={includeSpam}
           />
           <label className="form-check-label" htmlFor="customCheck1">
             Include Spam Transactions
@@ -399,38 +426,50 @@ const HistorialTable = ({ address, activeTab }) => {
         >
           <Spinner style={{ width: '4rem', height: '4rem' }} />
         </div>
-      ) : (
+      ) : Object.keys(groupedTransactions).length > 0 ? (
         <Col
           lg={12}
           className="position-relative"
           style={{ minHeight: '50vh' }}
         >
-          <div className="">
-            {groupedTransactions &&
-              Object.keys(groupedTransactions).map((date, index) => (
-                <RenderTransactions
-                  date={date}
-                  transactions={groupedTransactions[date]}
-                />
-              ))}
+          <div>
+            {Object.keys(groupedTransactions).map((date, index) => (
+              <RenderTransactions
+                key={index}
+                date={date}
+                transactions={groupedTransactions[date]}
+              />
+            ))}
+            {!isInitialLoad && hasMoreData && (
+              <div className="d-flex justify-content-center mt-2">
+                <Button
+                  disabled={loading}
+                  onClick={getMoreTransactions}
+                  color="soft-light"
+                  style={{ borderRadius: '10px', border: '.5px solid grey' }}
+                >
+                  {loading ? (
+                    <Spinner size="sm" />
+                  ) : (
+                    <h6 className="text-dark fw-semibold my-2">
+                      More transactions
+                    </h6>
+                  )}
+                </Button>
+              </div>
+            )}
           </div>
         </Col>
-      )}
-      {!isInitialLoad && hasMoreData && (
-        <div className="d-flex justify-content-center mt-2">
-          <Button
-            disabled={loading}
-            onClick={getMoreTransactions}
-            color="soft-light"
-            style={{ borderRadius: '10px', border: '.5px solid grey' }}
-          >
-            {loading ? (
-              <Spinner size="sm" />
-            ) : (
-              <h6 className="text-dark fw-semibold my-2">More transactions</h6>
-            )}
-          </Button>
-        </div>
+      ) : (
+        <Col
+          lg={12}
+          className="position-relative d-flex justify-content-center align-items-center"
+          style={{ minHeight: '50vh' }}
+        >
+          <div>
+            <h1>No data found</h1>
+          </div>
+        </Col>
       )}
     </React.Fragment>
   );
