@@ -76,8 +76,6 @@ const HistorialTable = ({ address, activeTab }) => {
       //   setErrorData(response.message);
       //   return;
       // }
-
-      console.log(response);
       setData(response);
       setHasMoreData(response.length > 0);
     } catch (error) {
@@ -87,7 +85,9 @@ const HistorialTable = ({ address, activeTab }) => {
     }
   };
 
-  console.log(errorData);
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
 
   useEffect(() => {
     if (activeTab == '3') {
@@ -125,12 +125,16 @@ const HistorialTable = ({ address, activeTab }) => {
     try {
       setLoading(true);
       const nextPage = currentPage + 1;
+
       const response = await dispatch(
         fetchHistory({ address, page: nextPage }),
       ).unwrap();
-      if (response.length === 0) setHasMoreData(false);
-      else setData((prevData) => [...prevData, ...response]);
-      setCurrentPage(nextPage);
+      if (response.length === 0) {
+        setHasMoreData(false);
+      } else {
+        setData((prevData) => [...prevData, ...response]);
+        setCurrentPage(nextPage);
+      }
     } catch (error) {
       console.error('Error fetching more transactions:', error);
     } finally {
