@@ -1,42 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { formatIdTransaction, getActionMapping } from '../../../../utils/utils';
-import {
-  Col,
-  Row,
-  Collapse,
-  CardBody,
-  Badge,
-  UncontrolledPopover,
-  PopoverBody,
-} from 'reactstrap';
+import React, { useState } from 'react';
+import { getActionMapping } from '../../../../utils/utils';
+import { Col, Row, Collapse, CardBody, Badge } from 'reactstrap';
 
 import eth from '../../../../assets/images/svg/crypto-icons/eth.svg';
 import ListTransactions from './ListTransactions';
-import { blockchainActions } from '../../../../utils/utils';
 import Negativeledgers from './Ledgers/Negativeledgers';
 import PositiveLedgers from './Ledgers/PositiveLedgers';
 import InformationLedger from './Ledgers/InformationLedger';
-import { Link } from 'react-router-dom';
+import Thirdcolumn from './Thirdcolumn';
 
 const RenderTransactions = ({ date, transactions }) => {
   const [openCollapse, setopenCollapse] = useState(new Set());
 
   const [copiedIndex, setCopiedIndex] = useState(null);
-
-  const [copiedIndex2, setCopiedIndex2] = useState(null);
-
-  const handleCopyToClipboard = async (e, text, index) => {
-    e.stopPropagation();
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopiedIndex2(index);
-      setTimeout(() => {
-        setCopiedIndex2(null);
-      }, 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-    }
-  };
 
   const toggleCollapse = (id) => {
     setopenCollapse((prevopenCollapse) => {
@@ -212,119 +188,7 @@ const RenderTransactions = ({ date, transactions }) => {
                   xs={12}
                   className="d-flex justify-content-start me-n4 align-items-center  mt-lg-0 mt-3"
                 >
-                  <div className="d-flex flex-column text-start">
-                    <p className="text-start my-0">
-                      {' '}
-                      {transaction.blockchainAction ===
-                      blockchainActions.RECEIVE
-                        ? 'From'
-                        : transaction.blockchainAction ===
-                            blockchainActions.SEND
-                          ? 'To'
-                          : 'Aplication'}
-                    </p>
-                    <h6 className="fw-semibold my-0 text-start d-flex align-items-center">
-                      {transaction.txSummary.marketplaceName ? (
-                        <span
-                          className="text-decoration-none"
-                          onClick={(e) => {
-                            handleCopyToClipboard(
-                              e,
-                              transaction.recipient,
-                              index,
-                            );
-                          }}
-                        >
-                          <span className="text-hover-underline">
-                            {copiedIndex2 === index ? (
-                              <span className="text-dark">Copied!</span>
-                            ) : transaction.txSummary.marketplaceName !== '' ? (
-                              <div className="d-flex align-items-center ">
-                                {transaction.txSummary.marketplaceLogo ? (
-                                  <img
-                                    src={transaction.txSummary.marketplaceLogo}
-                                    alt={transaction.txSummary.marketplaceName}
-                                    style={{
-                                      width: '20px',
-                                      height: '20px',
-                                      borderRadius: '10px',
-                                      marginRight: '5px',
-                                    }}
-                                  />
-                                ) : null}
-                                {transaction.txSummary.marketplaceName}
-                              </div>
-                            ) : (
-                              formatIdTransaction(transaction.recipient, 4, 4)
-                            )}
-                          </span>
-                        </span>
-                      ) : (
-                        <>
-                          {transaction.blockchainAction ===
-                          blockchainActions.RECEIVE ? (
-                            <>
-                              <Link
-                                target="_blank"
-                                className="text-decoration-none"
-                                to={`https://etherscan.io/address/${transaction.sender}`}
-                              >
-                                <span className="text-hover-underline">
-                                  {formatIdTransaction(
-                                    transaction.sender,
-                                    4,
-                                    4,
-                                  )}
-                                </span>
-                              </Link>
-                              <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
-                            </>
-                          ) : transaction.blockchainAction ===
-                            blockchainActions.SEND ? (
-                            <>
-                              <Link
-                                target="_blank"
-                                className="text-decoration-none"
-                                to={`https://etherscan.io/address/${transaction.recipient}`}
-                              >
-                                <span className="text-hover-underline">
-                                  {formatIdTransaction(
-                                    transaction.recipient,
-                                    4,
-                                    4,
-                                  )}
-                                </span>
-                              </Link>
-                              <i className="ri-arrow-right-up-line fs-5 text-muted ms-1"></i>
-                            </>
-                          ) : (
-                            <span
-                              className="text-decoration-none"
-                              onClick={(e) => {
-                                handleCopyToClipboard(
-                                  e,
-                                  transaction.recipient,
-                                  index,
-                                );
-                              }}
-                            >
-                              <span className="text-hover-underline">
-                                {copiedIndex2 === index ? (
-                                  <span className="text-dark">Copied!</span>
-                                ) : (
-                                  formatIdTransaction(
-                                    transaction.recipient,
-                                    4,
-                                    4,
-                                  )
-                                )}
-                              </span>
-                            </span>
-                          )}
-                        </>
-                      )}
-                    </h6>
-                  </div>
+                  <Thirdcolumn transaction={transaction} index={index} />
                 </Col>
               </Row>
               <Collapse isOpen={openCollapse.has(collapseId)}>

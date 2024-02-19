@@ -100,6 +100,7 @@ const HistorialTable = ({ address, activeTab }) => {
 
   useEffect(() => {
     if (activeTab == '3') {
+      setSelectedAssets('All Assets');
       fetchData();
       setHasMoreData(true);
     }
