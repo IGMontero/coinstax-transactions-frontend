@@ -49,11 +49,7 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const [selectedFilters, setSelectedFilters] = useState([]);
 
-  const [selectedAssets, setSelectedAssets] = useState({
-    'All Assets': true,
-    Tokens: false,
-    NFTs: false,
-  });
+  const [selectedAssets, setSelectedAssets] = useState('All Assets');
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -61,6 +57,23 @@ const HistorialTable = ({ address, activeTab }) => {
   };
 
   const fetchData = async () => {
+    let selectAsset = '';
+
+    switch (selectedAssets) {
+      case 'All Assets':
+        selectAsset = '';
+        break;
+      case 'Tokens':
+        selectAsset = '&erc20Only=true';
+        break;
+      case 'NFTs':
+        selectAsset = '&nftOnly=true';
+        break;
+      default:
+        selectAsset = '';
+        break;
+    }
+
     try {
       setIsInitialLoad(true);
       setLoading(true);
@@ -68,7 +81,11 @@ const HistorialTable = ({ address, activeTab }) => {
         fetchHistory({
           address,
           query: searchTerm,
-          filters: { ...selectedFilters, includeSpam: includeSpam },
+          filters: {
+            ...selectedFilters,
+            includeSpam: includeSpam,
+          },
+          assetsFilters: selectAsset,
           page: currentPage,
         }),
       ).unwrap();
@@ -81,17 +98,13 @@ const HistorialTable = ({ address, activeTab }) => {
     }
   };
 
-  const handleChangePage = (page) => {
-    setCurrentPage(page);
-  };
-
   useEffect(() => {
     if (activeTab == '3') {
       fetchData();
       setHasMoreData(true);
     }
     setCurrentPage(0);
-  }, [address, activeTab, dispatch, searchTerm, includeSpam]);
+  }, [address, activeTab, dispatch, selectedAssets, searchTerm, includeSpam]);
 
   useEffect(() => {
     const groupByDate = (transactions) => {
@@ -143,14 +156,8 @@ const HistorialTable = ({ address, activeTab }) => {
   };
 
   const handleAssetChange = (asset) => {
-    setSelectedAssets((prevAssets) => {
-      const resetAssets = Object.keys(prevAssets).reduce((acc, key) => {
-        acc[key] = false;
-        return acc;
-      }, {});
-
-      return { ...resetAssets, [asset]: true };
-    });
+    setSelectedAssets(asset);
+    fetchData();
   };
 
   const handleShowTransactionFilterMenu = (e) => {
@@ -326,7 +333,7 @@ const HistorialTable = ({ address, activeTab }) => {
               <span className="fs-6">Assets</span>
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-end mt-1">
-              {Object.keys(selectedAssets).map((asset) => (
+              {['All Assets', 'Tokens', 'NFTs'].map((asset) => (
                 <DropdownItem
                   key={asset}
                   className="d-flex align-items-center justify-content-between w-100"
@@ -334,7 +341,7 @@ const HistorialTable = ({ address, activeTab }) => {
                 >
                   <label className="w-100 py-1 d-flex align-items-center justify-content-start m-0 cursor-pointer">
                     {asset}
-                    {selectedAssets[asset] ? (
+                    {selectedAssets === asset ? (
                       <i className="ri-check-line fs-5 ms-4"></i>
                     ) : (
                       ''

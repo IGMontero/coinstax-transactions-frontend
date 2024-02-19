@@ -60,13 +60,19 @@ export const fetchAssets = createAsyncThunk(
 export const fetchHistory = createAsyncThunk(
   'transactions/fetchTransactions',
   async (
-    { address, query = '', filters = {}, page = 0 },
+    { address, query = '', filters = {}, page = 0, assetsFilters },
     { rejectWithValue },
   ) => {
     try {
       let queryString = `page=${page}`;
       if (query) {
         queryString += `&query=${encodeURIComponent(query)}`;
+      }
+
+      if (assetsFilters) {
+        `&${assetsFilters}`;
+      } else {
+        assetsFilters = '';
       }
 
       for (const [key, value] of Object.entries(filters)) {
@@ -80,7 +86,7 @@ export const fetchHistory = createAsyncThunk(
       }
 
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/new?${queryString}`,
+        `${API_BASE}/transactions/eth-mainnet/${address}/new?${queryString}${assetsFilters}`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
