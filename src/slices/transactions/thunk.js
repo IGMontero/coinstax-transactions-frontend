@@ -85,6 +85,8 @@ export const fetchHistory = createAsyncThunk(
         }
       }
 
+      console.log(filters);
+
       const response = await fetch(
         `${API_BASE}/transactions/eth-mainnet/${address}/new?${queryString}${assetsFilters}`,
       );

@@ -82,7 +82,7 @@ const HistorialTable = ({ address, activeTab }) => {
           address,
           query: searchTerm,
           filters: {
-            ...selectedFilters,
+            blockchainAction: selectedFilters,
             includeSpam: includeSpam,
           },
           assetsFilters: selectAsset,
@@ -97,7 +97,7 @@ const HistorialTable = ({ address, activeTab }) => {
       setIsInitialLoad(false);
     }
   };
-
+  console.log(selectedFilters);
   useEffect(() => {
     if (activeTab == '3') {
       setSelectedAssets('All Assets');
@@ -137,7 +137,11 @@ const HistorialTable = ({ address, activeTab }) => {
       const nextPage = currentPage + 1;
 
       const response = await dispatch(
-        fetchHistory({ address, page: nextPage }),
+        fetchHistory({
+          filters: { blockchainAction: selectedFilters },
+          address,
+          page: nextPage,
+        }),
       ).unwrap();
       if (response.length === 0) {
         setHasMoreData(false);
@@ -158,7 +162,6 @@ const HistorialTable = ({ address, activeTab }) => {
 
   const handleAssetChange = (asset) => {
     setSelectedAssets(asset);
-    fetchData();
   };
 
   const handleShowTransactionFilterMenu = (e) => {
@@ -251,14 +254,12 @@ const HistorialTable = ({ address, activeTab }) => {
   const handleResetFilters = () => {
     setSelectedFilters([]);
     setLoading(true);
-    fetchData();
   };
 
   const handleShowSpamTransactions = (e) => {
     const checked = e.target.checked;
     setIncludeSpam(checked);
     setLoading(true);
-    fetchData();
   };
 
   const renderBadges = () => {
