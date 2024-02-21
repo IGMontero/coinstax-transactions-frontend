@@ -49,6 +49,8 @@ const DashboardInfo = () => {
   const [searchInput, setSearchInput] = useState('');
   const [addressForSearch, setAddressForSearch] = useState('');
 
+  const [historyData, setHistoryData] = useState([]);
+
   const [assetsData, setAssetsData] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -86,6 +88,7 @@ const DashboardInfo = () => {
   const handleSearchClick = () => {
     setAssetsData([]);
     setSeries([]);
+    setHistoryData([]);
     setTitle('');
     setSubtitle('');
     setAddressTitle('');
@@ -119,8 +122,6 @@ const DashboardInfo = () => {
       setSubtitle(
         `${sign}${changePercentage.toFixed(2)}% ($${formattedChange})`,
       );
-
-      console.log(subtitle);
     }
   }, [series, title, subtitle]);
 
@@ -172,7 +173,7 @@ const DashboardInfo = () => {
                   onChange={(e) => setSearchInput(e.target.value)}
                 />
                 <Button
-                  disabled={!searchInput || loading}
+                  disabled={!searchInput || loading || address === searchInput}
                   color="primary"
                   onClick={handleSearchClick}
                 >
@@ -539,6 +540,8 @@ const DashboardInfo = () => {
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
                           <HistorialTable
+                            data={historyData}
+                            setData={setHistoryData}
                             activeTab={customActiveTab}
                             address={addressForSearch}
                           />
