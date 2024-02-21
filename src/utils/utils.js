@@ -68,3 +68,14 @@ export const formatNumber = (number) => {
 export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
+
+export const getSelectedAssetFilters = (selectedAssets) => {
+  switch (selectedAssets) {
+    case 'Tokens':
+      return '&erc20Only=true';
+    case 'NFTs':
+      return '&nftOnly=true';
+    default:
+      return '';
+  }
+};

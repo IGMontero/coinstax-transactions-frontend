@@ -70,7 +70,7 @@ export const fetchHistory = createAsyncThunk(
       }
 
       if (assetsFilters) {
-        `&${assetsFilters}`;
+        `${assetsFilters}`;
       } else {
         assetsFilters = '';
       }

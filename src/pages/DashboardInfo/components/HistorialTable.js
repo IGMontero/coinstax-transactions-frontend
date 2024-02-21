@@ -14,16 +14,15 @@ import {
   DropdownItem,
   Badge,
 } from 'reactstrap';
+import { getSelectedAssetFilters } from '../../../utils/utils';
 import { useDispatch } from 'react-redux';
 import { fetchHistory } from '../../../slices/transactions/thunk';
 import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
 
-const HistorialTable = ({ address, activeTab }) => {
+const HistorialTable = ({ address, activeTab, data, setData }) => {
   const inputRef = useRef(null);
   const dispatch = useDispatch();
-
-  const [data, setData] = useState([]);
 
   const [errorData, setErrorData] = useState(null);
 
@@ -57,22 +56,7 @@ const HistorialTable = ({ address, activeTab }) => {
   };
 
   const fetchData = async () => {
-    let selectAsset = '';
-
-    switch (selectedAssets) {
-      case 'All Assets':
-        selectAsset = '';
-        break;
-      case 'Tokens':
-        selectAsset = '&erc20Only=true';
-        break;
-      case 'NFTs':
-        selectAsset = '&nftOnly=true';
-        break;
-      default:
-        selectAsset = '';
-        break;
-    }
+    const selectAsset = getSelectedAssetFilters(selectedAssets);
 
     try {
       setIsInitialLoad(true);
@@ -102,12 +86,19 @@ const HistorialTable = ({ address, activeTab }) => {
 
   useEffect(() => {
     if (activeTab == '3') {
-      setSelectedAssets('All Assets');
       fetchData();
       setHasMoreData(true);
     }
-    setCurrentPage(0);
-  }, [address, activeTab, dispatch, selectedAssets, searchTerm, includeSpam]);
+    setData([]);
+  }, [
+    address,
+    activeTab,
+    dispatch,
+    selectedAssets,
+    selectedFilters,
+    searchTerm,
+    includeSpam,
+  ]);
 
   useEffect(() => {
     const groupByDate = (transactions) => {
@@ -134,17 +125,24 @@ const HistorialTable = ({ address, activeTab }) => {
   }, [data]);
 
   const getMoreTransactions = async () => {
+    const selectAsset = getSelectedAssetFilters(selectedAssets);
     try {
       setLoading(true);
       const nextPage = currentPage + 1;
 
       const response = await dispatch(
         fetchHistory({
-          filters: { blockchainAction: selectedFilters },
           address,
+          query: searchTerm,
+          filters: {
+            blockchainAction: selectedFilters,
+            includeSpam: includeSpam,
+          },
+          assetsFilters: selectAsset,
           page: nextPage,
         }),
       ).unwrap();
+
       if (response.length === 0) {
         setHasMoreData(false);
       } else {
@@ -163,6 +161,7 @@ const HistorialTable = ({ address, activeTab }) => {
   };
 
   const handleAssetChange = (asset) => {
+    setCurrentPage(0);
     setSelectedAssets(asset);
   };
 
@@ -178,22 +177,8 @@ const HistorialTable = ({ address, activeTab }) => {
       updatedFilters.push(filter);
     }
     setSelectedFilters(updatedFilters);
-
+    setCurrentPage(0);
     setLoading(true);
-    try {
-      const response = await dispatch(
-        fetchHistory({
-          address,
-          filters: { blockchainAction: updatedFilters },
-          page: 0,
-        }),
-      ).unwrap();
-      setData(response);
-    } catch (error) {
-      console.error('Error applying filters:', error);
-    } finally {
-      setLoading(false);
-    }
   };
 
   const hasActiveFilters = Object.values(selectedFilters).some(
