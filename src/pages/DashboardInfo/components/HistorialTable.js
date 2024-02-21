@@ -50,6 +50,18 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   const [selectedAssets, setSelectedAssets] = useState('All Assets');
 
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [searchTerm]);
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return new Date(dateString).toLocaleDateString('en-US', options);
@@ -64,7 +76,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       const response = await dispatch(
         fetchHistory({
           address,
-          query: searchTerm,
+          query: debouncedSearchTerm,
           filters: {
             blockchainAction: selectedFilters,
             includeSpam: includeSpam,
@@ -89,15 +101,14 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       fetchData();
       setHasMoreData(true);
     }
-    setData([]);
   }, [
     address,
     activeTab,
     dispatch,
     selectedAssets,
     selectedFilters,
-    searchTerm,
     includeSpam,
+    debouncedSearchTerm,
   ]);
 
   useEffect(() => {
@@ -209,29 +220,6 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
-
-    if (searchTimeout) {
-      clearTimeout(searchTimeout);
-    }
-
-    const newTimeout = setTimeout(async () => {
-      setIsInitialLoad(true);
-      setLoading(true);
-      try {
-        const response = await dispatch(
-          fetchHistory({ address, query: value }),
-        ).unwrap();
-
-        setData(response);
-      } catch (error) {
-        console.error('Error during search:', error);
-      } finally {
-        setIsInitialLoad(false);
-        setLoading(false);
-      }
-    }, 500);
-
-    setSearchTimeout(newTimeout);
   };
 
   const handleClearSearch = () => {
@@ -369,13 +357,13 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       </Row>
       <Row className="mt-4">
         <Col lg={6} md={8} sm={10} xs={12}>
-          <InputGroup className="py-3 pt-0 search-bar col-lg-12 col-md-12 pe-3">
+          <InputGroup className="py-3 d-flex align-items-center pt-0 search-bar col-lg-12 col-md-12 pe-3">
             <span
               className="search-icon ps-3 position-absolute"
               onClick={() => inputRef.current.focus()}
               style={{ zIndex: 1, cursor: 'text' }}
             >
-              <i className="ri-search-line text-muted fs-3"></i>
+              <i className="ri-search-line text-muted  fs-3"></i>
             </span>
             <Input
               innerRef={inputRef}
@@ -392,10 +380,10 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
             {searchTerm && (
               <Button
                 color="link"
-                className="btn-close position-absolute btn btn-sm  border-0"
+                className="btn-close
+                position-absolute btn btn-sm  border-0"
                 style={{
                   right: '25px',
-                  top: '25px',
                   zIndex: 2,
                 }}
                 onClick={handleClearSearch}
