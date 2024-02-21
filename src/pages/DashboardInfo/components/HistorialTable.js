@@ -92,12 +92,14 @@ const HistorialTable = ({ address, activeTab }) => {
       setData(response);
       setHasMoreData(response.length > 0);
     } catch (error) {
+      setErrorData(error);
+      console.log(error);
     } finally {
       setLoading(false);
       setIsInitialLoad(false);
     }
   };
-  console.log(selectedFilters);
+
   useEffect(() => {
     if (activeTab == '3') {
       setSelectedAssets('All Assets');
@@ -476,7 +478,7 @@ const HistorialTable = ({ address, activeTab }) => {
           style={{ minHeight: '50vh' }}
         >
           <div>
-            <h1>No data found</h1>
+            <h1>{errorData}</h1>
           </div>
         </Col>
       )}
