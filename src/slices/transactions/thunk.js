@@ -85,13 +85,12 @@ export const fetchHistory = createAsyncThunk(
         }
       }
 
-      console.log(filters);
-
       const response = await fetch(
         `${API_BASE}/transactions/eth-mainnet/${address}/new?${queryString}${assetsFilters}`,
       );
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        const errorBody = await response.json();
+        throw new Error(errorBody.message || `Error: ${response.status}`);
       }
       const data = await response.json();
       return data.parsed;
