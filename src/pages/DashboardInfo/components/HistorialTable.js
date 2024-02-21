@@ -99,6 +99,17 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   };
 
   useEffect(() => {
+    setCurrentPage(0);
+  }, [
+    address,
+    activeTab,
+    selectedAssets,
+    selectedFilters,
+    includeSpam,
+    debouncedSearchTerm,
+  ]);
+
+  useEffect(() => {
     if (activeTab == '3') {
       fetchData();
       setHasMoreData(true);
