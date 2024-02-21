@@ -52,6 +52,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
 
+  const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -190,6 +192,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     setSelectedFilters(updatedFilters);
     setCurrentPage(0);
     setLoading(true);
+    setHasAppliedFilters(true);
   };
 
   const hasActiveFilters = Object.values(selectedFilters).some(
@@ -220,10 +223,12 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const handleSearch = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
+    setHasAppliedFilters(true);
   };
 
   const handleClearSearch = () => {
     setSearchTerm('');
+    setHasAppliedFilters(false);
   };
 
   const handleResetFilters = () => {
@@ -445,15 +450,30 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           </div>
         </Col>
       ) : (
-        <Col
-          lg={12}
-          className="position-relative d-flex justify-content-center align-items-center"
-          style={{ minHeight: '50vh' }}
-        >
-          <div>
-            <h1>{errorData}</h1>
-          </div>
-        </Col>
+        <>
+          {!loading && hasAppliedFilters && !errorData && (
+            <Col
+              lg={12}
+              className="position-relative d-flex justify-content-center align-items-center"
+              style={{ minHeight: '50vh' }}
+            >
+              <div>
+                <h1>No results found </h1>
+              </div>
+            </Col>
+          )}
+          {errorData && (
+            <Col
+              lg={12}
+              className="position-relative d-flex justify-content-center align-items-center"
+              style={{ minHeight: '50vh' }}
+            >
+              <div>
+                <h1>{errorData}</h1>
+              </div>
+            </Col>
+          )}
+        </>
       )}
     </React.Fragment>
   );
