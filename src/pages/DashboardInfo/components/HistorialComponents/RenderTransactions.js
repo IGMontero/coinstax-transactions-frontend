@@ -171,8 +171,8 @@ const RenderTransactions = ({ date, transactions }) => {
                 </Col>
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={transaction.txSummary.sent ? 4 : 7}
-                  md={transaction.txSummary.sent ? 4 : 7}
+                  lg={transaction.txSummary.sent ? 4 : 8}
+                  md={transaction.txSummary.sent ? 4 : 8}
                   xs={6}
                   className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3 ${
                     transaction.txSummary.sent ? '' : 'ms-n2'
