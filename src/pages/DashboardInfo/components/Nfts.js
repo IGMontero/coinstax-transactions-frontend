@@ -179,7 +179,7 @@ const Nfts = ({ address, activeTab }) => {
             <div
               className="d-grid position-relative justify-content-center "
               style={{
-                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(214px, 1fr))',
                 gap: '30px',
               }}
             >
