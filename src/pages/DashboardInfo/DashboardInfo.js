@@ -289,7 +289,7 @@ const DashboardInfo = () => {
           toggleQrModal={toggleQrModal}
           addressTitle={addressTitle}
         />
-        <Row>
+        <Row className="d-flex justify-content-center align-items-center">
           <Col lg={8} className="pb-3 mt-n4 d-flex justify-content-center ">
             <InputGroup className="mb-5">
               <Input

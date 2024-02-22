@@ -177,7 +177,7 @@ const Nfts = ({ address, activeTab }) => {
 
           <Col className="mt-4 col-12">
             <div
-              className="d-grid position-relative justify-content-center px-4"
+              className="d-grid position-relative justify-content-center "
               style={{
                 gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
                 gap: '30px',
@@ -197,7 +197,7 @@ const Nfts = ({ address, activeTab }) => {
                         maxWidth: '200px',
                       }}
                     >
-                      <CardHeader className="border-0  bg-transparent p-2">
+                      <CardHeader className="border-0  bg-transparent p-1">
                         <div
                           style={{ position: 'relative', minHeight: '200px' }}
                         >
@@ -206,6 +206,7 @@ const Nfts = ({ address, activeTab }) => {
                             alt=""
                             className="img-fluid w-100 position-realative"
                             style={{
+                              // paddingTop: '0px',
                               minHeight: '200px',
                               maxHeight: '200px',
                               height: '200px',
