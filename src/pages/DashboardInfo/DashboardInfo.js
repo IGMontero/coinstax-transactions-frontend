@@ -283,7 +283,7 @@ const DashboardInfo = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content  pb-5">
+      <div className="page-content pb-5">
         <QrModal
           showQrModal={showQrModal}
           toggleQrModal={toggleQrModal}
@@ -309,7 +309,9 @@ const DashboardInfo = () => {
           </Col>
         </Row>
         {!addressForSearch ? (
-          <DashboardHome />
+          <Container>
+            <DashboardHome />
+          </Container>
         ) : (
           <>
             {loading ? (
@@ -429,7 +431,6 @@ const DashboardInfo = () => {
                   style={{
                     zIndex: 5,
                     backgroundColor: '#16161a',
-                    // backdropFilter: 'blur(5px)',
                   }}
                 >
                   <Col xxl={6} className="">
