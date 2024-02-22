@@ -185,7 +185,8 @@ const Nfts = ({ address, activeTab }) => {
                 gap: '30px',
               }}
             >
-              {data.items && data.items.length > 0 ? (
+              {data.items &&
+                data.items.length > 0 &&
                 data.items.map((nft, index) => (
                   <div
                     key={index}
@@ -253,16 +254,18 @@ const Nfts = ({ address, activeTab }) => {
                       </CardBody>
                     </Card>
                   </div>
-                ))
-              ) : (
-                <Col
-                  className="d-flex justify-content-center align-items-center"
-                  style={{ height: '50vh' }}
-                >
-                  <h4>No NFTs found 😴</h4>
-                </Col>
-              )}
+                ))}
             </div>
+
+            {/* No NFTs found */}
+            {data.items && data.items.length === 0 && (
+              <Col
+                className="d-flex text-center col-12 justify-content-center align-items-center"
+                style={{ display: 'flex', height: '50vh', width: '100%' }}
+              >
+                <h4 className="text-center">No NFTs found 😴</h4>
+              </Col>
+            )}
           </Col>
         </>
       )}
