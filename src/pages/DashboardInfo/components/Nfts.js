@@ -175,26 +175,34 @@ const Nfts = ({ address, activeTab }) => {
             </Col>
           </Row>
 
-          <Col xxl={12} className="mt-4 ">
-            <Row>
+          <Col className="mt-4 col-12">
+            <div
+              style={{
+                display: 'grid',
+                position: 'relative',
+                justifyContent: 'center',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                gap: '30px',
+              }}
+            >
               {data.items && data.items.length > 0 ? (
                 data.items.map((nft, index) => (
-                  <Col
-                    xxl={3}
-                    lg={6}
-                    md={6}
-                    sm={12}
-                    xs={12}
+                  <div
                     key={index}
-                    className="d-flex justify-content-center"
+                    className="d-flex justify-content-center m-auto"
+                    style={{
+                      maxWidth: '100%',
+                      maxHeight: 'auto',
+                      height: '320px',
+                    }}
                   >
                     <Card
-                      className="border-2 border bg-transparent shadow-none mx-2"
+                      className="border-2 border bg-transparent shadow-none"
                       style={{
-                        maxHeight: '350px',
-                        height: '350px',
-                        minWidth: '225px',
-                        maxWidth: '225px',
+                        maxHeight: 'auto',
+                        height: '320px',
+                        minWidth: '200px',
+                        maxWidth: 'auto',
                       }}
                     >
                       <CardHeader className="border-0 bg-transparent p-2">
@@ -244,7 +252,7 @@ const Nfts = ({ address, activeTab }) => {
                         </div>
                       </CardBody>
                     </Card>
-                  </Col>
+                  </div>
                 ))
               ) : (
                 <Col
@@ -254,7 +262,7 @@ const Nfts = ({ address, activeTab }) => {
                   <h4>No NFTs found 😴</h4>
                 </Col>
               )}
-            </Row>
+            </div>
           </Col>
         </>
       )}
