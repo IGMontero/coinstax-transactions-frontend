@@ -30,7 +30,6 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchTimeout, setSearchTimeout] = useState(null);
 
   const [includeSpam, setIncludeSpam] = useState(false);
 
@@ -108,6 +107,18 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     includeSpam,
     debouncedSearchTerm,
   ]);
+
+  const handleClearAllFilters = () => {
+    setSelectedFilters([]);
+    setSelectedAssets('All Assets');
+    setIncludeSpam(false);
+    setSearchTerm('');
+    setHasAppliedFilters(false);
+  };
+
+  useEffect(() => {
+    handleClearAllFilters();
+  }, [activeTab, address]);
 
   useEffect(() => {
     if (activeTab == '3') {
