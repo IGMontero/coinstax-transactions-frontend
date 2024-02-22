@@ -58,60 +58,42 @@ export const fetchAssets = createAsyncThunk(
 );
 
 export const fetchHistory = createAsyncThunk(
-  'transactions/fetchHistory',
-  async ({ address, page = 0, query }, { rejectWithValue }) => {
+  'transactions/fetchTransactions',
+  async (
+    { address, query = '', filters = {}, page = 0, assetsFilters },
+    { rejectWithValue },
+  ) => {
     try {
+      let queryString = `page=${page}`;
+      if (query) {
+        queryString += `&query=${encodeURIComponent(query)}`;
+      }
+
+      if (assetsFilters) {
+        `${assetsFilters}`;
+      } else {
+        assetsFilters = '';
+      }
+
+      for (const [key, value] of Object.entries(filters)) {
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
+          });
+        } else if (value) {
+          queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        }
+      }
+
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/new?page=${page}&query=${query}`,
+        `${API_BASE}/transactions/eth-mainnet/${address}/new?${queryString}${assetsFilters}`,
       );
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        const errorBody = await response.json();
+        throw new Error(errorBody.message || `Error: ${response.status}`);
       }
       const data = await response.json();
       return data.parsed;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  },
-);
-
-export const fetchSearchHistoryTable = createAsyncThunk(
-  'transactions/fetchSearchHistoryTable',
-  async ({ address, query }, { rejectWithValue }) => {
-    try {
-      const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}?query=${query}`,
-      );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      return data.parsed;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  },
-);
-
-export const fetchTransactionsFilter = createAsyncThunk(
-  'transactions/fetchTransactionsFilter',
-  async ({ address, filters }, { rejectWithValue }) => {
-    try {
-      const query = Object.entries(filters)
-        .filter(([key, value]) => value)
-        .map(([key]) => `type=${key}`)
-        .join('&');
-
-      const url = `${API_BASE}/transactions/eth-mainnet/${address}/?${query}`;
-
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
