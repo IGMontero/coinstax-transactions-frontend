@@ -244,6 +244,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   const handleResetFilters = () => {
     setSelectedFilters([]);
+    setSelectedAssets('All Assets');
     setLoading(true);
   };
 
@@ -323,7 +324,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
               }`}
               role="button"
             >
-              <span className="fs-6">Assets</span>
+              <span className="fs-6">
+                {selectedAssets === 'All Assets' ? 'Assets' : selectedAssets}
+              </span>
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-end mt-1">
               {['All Assets', 'Tokens', 'NFTs'].map((asset) => (

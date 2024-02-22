@@ -503,7 +503,7 @@ const DashboardInfo = () => {
                   >
                     <TabPane tabId="1" id="home1">
                       <div className="d-flex">
-                        <div className="flex-grow-1 ms-2">
+                        <div className="flex-grow-1">
                           <Col
                             xxl={12}
                             className="mt-3 mb-3 d-flex flex-row justify-content-around"
