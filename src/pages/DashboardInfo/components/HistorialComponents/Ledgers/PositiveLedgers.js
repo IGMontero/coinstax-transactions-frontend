@@ -10,7 +10,10 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
 
   return (
-    <div className="d-flex align-items-center justify-content-start">
+    <div
+      className="d-flex align-items-center justify-content-start"
+      style={{ overflow: 'hidden' }}
+    >
       <h6
         className={`fw-semibold my-0  d-flex align-items-center justify-content-start`}
       >
