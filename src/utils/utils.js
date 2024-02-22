@@ -1,41 +1,43 @@
 export const getActionMapping = (action) => {
   switch (action) {
-    case "RECEIVE":
-      return { color: "success", icon: " ri-arrow-down-line fs-3" };
-    case "SEND":
-      return { color: "dark", icon: "ri-arrow-up-line fs-3" };
-    case "APPROVE":
-      return { color: "dark", icon: "ri-lock-unlock-line fs-3" };
-    case "DESPOSIT":
-      return { color: "dark", icon: "ri-download-2-line fs-3" };
-    case "TRADE":
-      return { color: "dark", icon: "ri-arrow-left-right-line fs-3" };
-    case "WITHDRAW":
-      return { color: "dark", icon: "ri-upload-2-line fs-3" };
-    case "EXECUTE":
-      return { color: "warning", icon: "ri-file-3-line fs-3" };
-    case "BURN":
-      return { color: "dark", icon: "ri-fire-line fs-3" };
-    case "MINT":
-      return { color: "dark", icon: "ri-vip-diamond-line fs-3" };
+    case 'RECEIVE':
+      return { color: 'success', icon: ' ri-arrow-down-line fs-3' };
+    case 'SEND':
+      return { color: 'dark', icon: 'ri-arrow-up-line fs-3' };
+    case 'APPROVE':
+      return { color: 'dark', icon: 'ri-lock-unlock-line fs-3' };
+    case 'DESPOSIT':
+      return { color: 'dark', icon: 'ri-download-2-line fs-3' };
+    case 'TRADE':
+      return { color: 'dark', icon: 'ri-arrow-left-right-line fs-3' };
+    case 'WITHDRAW':
+      return { color: 'dark', icon: 'ri-upload-2-line fs-3' };
+    case 'EXECUTE':
+      return { color: 'warning', icon: 'ri-file-3-line fs-3' };
+    case 'BURN':
+      return { color: 'dark', icon: 'ri-fire-line fs-3' };
+    case 'MINT':
+      return { color: 'dark', icon: 'ri-vip-diamond-line fs-3' };
     default:
-      return { color: "dark", icon: "ri-arrow-down-line fs-3" };
+      return { color: 'dark', icon: 'ri-arrow-down-line fs-3' };
   }
 };
 
 export const blockchainActions = {
-  EXECUTE: "EXECUTE",
-  WITHDRAW: "WITHDRAW",
-  TRADE: "TRADE",
-  APPROVE: "APPROVE",
-  RECEIVE: "RECEIVE",
-  SEND: "SEND",
-  BURN: "BURN",
-  MINT: "MINT",
+  EXECUTE: 'EXECUTE',
+  WITHDRAW: 'WITHDRAW',
+  TRADE: 'TRADE',
+  APPROVE: 'APPROVE',
+  RECEIVE: 'RECEIVE',
+  SEND: 'SEND',
+  BURN: 'BURN',
+  MINT: 'MINT',
 };
 
+export const FILTER_NAMES = ['TRADE', 'MINT', 'SEND', 'RECEIVE', 'OTHERS'];
+
 export const formatIdTransaction = (address, prefixLength, suffixLength) => {
-  if (!address || typeof address !== "string") {
+  if (!address || typeof address !== 'string') {
     return null;
   }
 
@@ -46,8 +48,8 @@ export const formatIdTransaction = (address, prefixLength, suffixLength) => {
 };
 
 export const formatNumber = (number) => {
-  if (typeof number !== "number" || isNaN(number)) {
-    return "Invalid Number";
+  if (typeof number !== 'number' || isNaN(number)) {
+    return 'Invalid Number';
   }
 
   let shift = 0;
@@ -61,4 +63,19 @@ export const formatNumber = (number) => {
     Math.round(number * Math.pow(10, shift + 1)) / Math.pow(10, shift + 1);
 
   return roundedNumber.toFixed(shift + 1);
+};
+
+export const capitalizeFirstLetter = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
+export const getSelectedAssetFilters = (selectedAssets) => {
+  switch (selectedAssets) {
+    case 'Tokens':
+      return '&erc20Only=true';
+    case 'NFTs':
+      return '&nftOnly=true';
+    default:
+      return '';
+  }
 };
