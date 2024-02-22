@@ -281,8 +281,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     ));
   };
 
-  return (
-    <React.Fragment>
+  const renderFiltersDropdown = () => {
+    return (
       <Row>
         <Col className="d-flex">
           <Dropdown
@@ -360,6 +360,13 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           </Dropdown>
         </Col>
       </Row>
+    );
+  };
+
+  return (
+    <React.Fragment>
+      {renderFiltersDropdown()}
+
       <Col className="col-12">
         {renderBadges()}
         {hasActiveFilters && (
@@ -371,6 +378,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           </span>
         )}
       </Col>
+
       <Row>
         <Col lg={12} className="mt-3 mb-0 d-flex">
           <Input
