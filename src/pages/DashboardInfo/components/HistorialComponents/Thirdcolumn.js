@@ -45,7 +45,10 @@ const ThirdColumn = ({ transaction, index }) => {
   };
 
   return (
-    <div className="d-flex flex-column text-start">
+    <div
+      className="d-flex flex-column text-start"
+      style={{ overflow: 'hidden' }}
+    >
       <p className="text-start my-0">
         {transaction.blockchainAction === blockchainActions.RECEIVE
           ? 'From'

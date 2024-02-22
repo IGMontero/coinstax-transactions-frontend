@@ -191,19 +191,14 @@ const Nfts = ({ address, activeTab }) => {
                   <div
                     key={index}
                     className="d-flex justify-content-center m-auto"
-                    style={{
-                      maxWidth: '100%',
-                      maxHeight: 'auto',
-                      height: '320px',
-                    }}
                   >
                     <Card
                       className="border-2 border bg-transparent shadow-none"
                       style={{
                         maxHeight: 'auto',
-                        height: '320px',
+                        minHeight: '350px',
                         minWidth: '200px',
-                        maxWidth: 'auto',
+                        maxWidth: '200px',
                       }}
                     >
                       <CardHeader className="border-0 bg-transparent p-2">
@@ -238,18 +233,28 @@ const Nfts = ({ address, activeTab }) => {
                         </div>
                       </CardHeader>
                       <CardBody>
-                        <div className="d-flex flex-column">
-                          <span className="text-dark">{nft.domain}</span>
-                          <h5 className="text-dark">{nft.name}</h5>
-                          <span>Floor Price</span>
-                          <h6 className="text-dark d-flex mb-0">
-                            {nft.floorPrice ? nft.floorPrice : '$0.00'}{' '}
-                            {nft.floorPriceSymbol ? nft.floorPriceSymbol : ''} (
-                            {nft.prettyFloorPriceUsd
-                              ? nft.prettyFloorPriceUsd
-                              : ''}
-                            )
-                          </h6>
+                        <div
+                          className="d-flex flex-column justify-content-between"
+                          style={{ height: '100%' }}
+                        >
+                          <div>
+                            <span className="text-dark">
+                              {nft.domain || ' '}
+                            </span>
+                            <h5 className="text-dark">{nft.name || ' '}</h5>
+                          </div>
+                          <div>
+                            <span>Floor Price</span>
+                            <h6 className="text-dark d-flex mb-0">
+                              {nft.floorPrice ? nft.floorPrice : '$0.00'}{' '}
+                              {nft.floorPriceSymbol ? nft.floorPriceSymbol : ''}{' '}
+                              (
+                              {nft.prettyFloorPriceUsd
+                                ? nft.prettyFloorPriceUsd
+                                : ''}
+                              )
+                            </h6>
+                          </div>
                         </div>
                       </CardBody>
                     </Card>
