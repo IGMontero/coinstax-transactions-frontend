@@ -281,7 +281,7 @@ const DashboardInfo = () => {
     );
   };
 
-  document.title = `${capitalizeFirstLetter(type)} - ${addressTitle}`;
+  document.title = `${type ? capitalizeFirstLetter(type) : 'Dashboard'} ${addressTitle ? '- ' + addressTitle : ''}`;
 
   return (
     <React.Fragment>
