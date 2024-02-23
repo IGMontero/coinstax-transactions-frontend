@@ -69,8 +69,6 @@ const RenderTransactions = ({ date, transactions }) => {
         }
         const sentTxSummary = transaction;
 
-        const isRecived = transaction.txSummary.sent;
-
         const receivedTxSummary = transaction;
         const hasList =
           transaction.txSummary?.receivedAssetsCount > 1 ||
@@ -87,7 +85,11 @@ const RenderTransactions = ({ date, transactions }) => {
               <Row
                 className={`align-items-center justify-content-between col-12`}
                 onClick={() => toggleCollapse(collapseId)}
-                style={{ cursor: 'pointer', padding: '.7rem' }}
+                style={{
+                  cursor: 'pointer',
+                  padding: '.7rem',
+                  paddingRight: '1rem',
+                }}
               >
                 {' '}
                 <Col
@@ -156,8 +158,9 @@ const RenderTransactions = ({ date, transactions }) => {
                 </Col>
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={transaction.txSummary.sent ? 3 : 0}
-                  md={transaction.txSummary.sent ? 3 : 0}
+                  lg={transaction.txSummary.sent ? 4 : 0}
+                  md={transaction.txSummary.sent ? 4 : 0}
+                  sm={6}
                   xs={6}
                   className={`mb-lg-0 mb-3 ${
                     transaction.txSummary.sent
@@ -169,12 +172,11 @@ const RenderTransactions = ({ date, transactions }) => {
                 </Col>
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={transaction.txSummary.sent ? 4 : 7}
-                  md={transaction.txSummary.sent ? 4 : 7}
-                  xs={6}
-                  className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3 ${
-                    transaction.txSummary.sent ? '' : 'ms-n2'
-                  }`}
+                  lg={transaction.txSummary.sent ? 4 : 8}
+                  md={transaction.txSummary.sent ? 4 : 8}
+                  sm={transaction.txSummary.sent ? 6 : 12}
+                  xs={transaction.txSummary.sent ? 6 : 12}
+                  className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3`}
                 >
                   <PositiveLedgers
                     ledger={receivedTxSummary}
@@ -182,11 +184,11 @@ const RenderTransactions = ({ date, transactions }) => {
                   />
                 </Col>
                 <Col
-                  lg={2}
+                  lg={1}
                   md={12}
                   sm={12}
                   xs={12}
-                  className="d-flex justify-content-start me-n4 align-items-center  mt-lg-0 mt-3"
+                  className="d-flex justify-content-start  align-items-center  mt-lg-0 mt-3"
                 >
                   <Thirdcolumn transaction={transaction} index={index} />
                 </Col>

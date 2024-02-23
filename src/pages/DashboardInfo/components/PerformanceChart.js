@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from "react";
-import ReactApexChart from "react-apexcharts";
-import { fetchPerformance } from "../../../slices/transactions/thunk";
-import { useDispatch, useSelector } from "react-redux";
-import { Spinner } from "reactstrap";
+import React, { useEffect, useState } from 'react';
+import ReactApexChart from 'react-apexcharts';
+import { fetchPerformance } from '../../../slices/transactions/thunk';
+import { useDispatch, useSelector } from 'react-redux';
+import { Spinner } from 'reactstrap';
 
 const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
   const dispatch = useDispatch();
-  const [activeFilter, setActiveFilter] = useState("one_week");
+  const [activeFilter, setActiveFilter] = useState('one_week');
 
   const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({
     chart: {
-      type: "line",
+      type: 'line',
       height: 350,
-      maxWidth: "100%",
-      minWidth: "100%",
+      maxWidth: '100%',
+      minWidth: '100%',
       toolbar: {
         show: false,
       },
@@ -26,32 +26,32 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
       },
     },
     title: {
-      text: "",
-      align: "left",
+      text: '',
+      align: 'left',
       margin: 10,
       offsetX: 0,
       offsetY: 0,
       floating: false,
       style: {
-        fontSize: "36px",
-        fontWeight: "semibold",
+        fontSize: '36px',
+        fontWeight: 'semibold',
       },
     },
     subtitle: {
-      text: "",
-      align: "left",
+      text: '',
+      align: 'left',
       margin: 10,
       offsetX: 0,
       offsetY: 45,
       floating: false,
       style: {
-        fontSize: "15px",
-        fontWeight: "normal",
+        fontSize: '15px',
+        fontWeight: 'normal',
         color: ``,
       },
     },
     xaxis: {
-      type: "datetime",
+      type: 'datetime',
       labels: {
         show: false,
       },
@@ -88,16 +88,16 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
       },
       y: {
         formatter: function (value) {
-          return "$" + value;
+          return '$' + value;
         },
       },
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
         const value = series[seriesIndex][dataPointIndex].toLocaleString();
         const date = new Date(w.globals.seriesX[seriesIndex][dataPointIndex]);
-        const prettyDate = date.toLocaleDateString("en-US", {
-          month: "short",
-          day: "2-digit",
-          year: "numeric",
+        const prettyDate = date.toLocaleDateString('en-US', {
+          month: 'short',
+          day: '2-digit',
+          year: 'numeric',
         });
         return `<div class="p-2 fw-semibold text-dark"> $${value}
           <div class="apexcharts-tooltip-text fs-6 text-muted ">${prettyDate} </div></div>`;
@@ -120,7 +120,7 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
           setLoading(false);
         })
         .catch((error) => {
-          console.error("Error fetching performance data:", error);
+          console.error('Error fetching performance data:', error);
           setLoading(false);
         });
     }
@@ -140,7 +140,7 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
             text: title,
             style: {
               ...prevOptions.title.style,
-              color: "#878a99",
+              color: '#878a99',
             },
           },
           subtitle: {
@@ -148,7 +148,7 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
             text: subtitle,
             style: {
               ...prevOptions.subtitle.style,
-              color: subtitle[0] == "+" ? "#3ac47d" : "#f1556c",
+              color: subtitle[0] == '+' ? '#3ac47d' : '#f1556c',
             },
           },
         };
@@ -161,7 +161,7 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
     setActiveFilter(filterId);
   };
   return (
-    <div className="position-relative">
+    <div className="position-relative ">
       {loading && (
         <div
           className="d-flex justify-content-center align-items-center position-absolute"
@@ -170,12 +170,12 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundColor: "transparent",
-            backdropFilter: "blur(5px)",
+            backgroundColor: 'transparent',
+            backdropFilter: 'blur(5px)',
             zIndex: 2,
           }}
         >
-          <Spinner style={{ width: "4rem", height: "4rem" }} />
+          <Spinner style={{ width: '4rem', height: '4rem' }} />
         </div>
       )}
       <div
@@ -190,50 +190,50 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
         />
         <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1 p-2">
           <button
-            onClick={() => handleFilterForDays(7, "one_week")}
+            onClick={() => handleFilterForDays(7, 'one_week')}
             type="button"
             className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-              activeFilter === "one_week" ? "active" : ""
+              activeFilter === 'one_week' ? 'active' : ''
             }`}
             id="one_week"
           >
             7D
           </button>
           <button
-            onClick={() => handleFilterForDays(30, "one_month")}
+            onClick={() => handleFilterForDays(30, 'one_month')}
             type="button"
             className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-              activeFilter === "one_month" ? "active" : ""
+              activeFilter === 'one_month' ? 'active' : ''
             }`}
             id="one_month"
           >
             1M
           </button>
           <button
-            onClick={() => handleFilterForDays(180, "six_months")}
+            onClick={() => handleFilterForDays(180, 'six_months')}
             type="button"
             className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-              activeFilter === "six_months" ? "active" : ""
+              activeFilter === 'six_months' ? 'active' : ''
             }`}
             id="six_months"
           >
             6M
           </button>
           <button
-            onClick={() => handleFilterForDays(365, "one_year")}
+            onClick={() => handleFilterForDays(365, 'one_year')}
             type="button"
             className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-              activeFilter === "one_year" ? "active" : ""
+              activeFilter === 'one_year' ? 'active' : ''
             }`}
             id="one_year"
           >
             1Y
           </button>
           <button
-            onClick={() => handleFilterForDays(10000, "all")}
+            onClick={() => handleFilterForDays(10000, 'all')}
             type="button"
             className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-              activeFilter === "all" ? "active" : ""
+              activeFilter === 'all' ? 'active' : ''
             }`}
             id="all"
           >
