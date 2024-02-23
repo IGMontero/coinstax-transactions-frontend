@@ -303,3 +303,19 @@
   padding: 0 4px; 
   overflow: hidden;
 }
+
+// text ellipsis
+
+.text-displayName {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px; 
+}
+
+
+@media (max-width: 576px) {
+  .text-displayName {
+    max-width: 100px; 
+  }
+}

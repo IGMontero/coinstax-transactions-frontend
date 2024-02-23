@@ -52,8 +52,13 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   <span className="text-success d-flex">
                     <span
                       id={`amount-${ledger.txHash}`}
-                      className="me-1"
-                      style={{ whiteSpace: 'nowrap' }}
+                      className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
+                      // style={{
+                      //   whiteSpace: 'nowrap',
+                      //   textOverflow: 'ellipsis',
+                      //   overflow: 'hidden',
+                      //   maxWidth: 'auto',
+                      // }}
                     >
                       {positiveLedgers?.displayName}
                     </span>
