@@ -54,7 +54,6 @@ const Nfts = ({ address, activeTab }) => {
   const handleVisitNFT = (nft, index) => {
     navigate(`/nfts/ethereum/${index + 1}?address=${address}`);
   };
-
   return (
     <React.Fragment>
       {loading ? (

@@ -32,7 +32,7 @@ import { fetchAssets, fetchNFTS } from '../../slices/transactions/thunk';
 import DashboardHome from '../DashboardHome/DashboardHome';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { formatIdTransaction } from '../../utils/utils';
+import { capitalizeFirstLetter, formatIdTransaction } from '../../utils/utils';
 import QrModal from './modals/QrModal';
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -280,6 +280,8 @@ const DashboardInfo = () => {
       </Col>
     );
   };
+
+  document.title = `${capitalizeFirstLetter(type)} - ${addressTitle}`;
 
   return (
     <React.Fragment>

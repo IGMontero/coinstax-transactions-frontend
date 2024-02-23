@@ -153,6 +153,8 @@ const DashboardNFT = () => {
     );
   };
 
+  document.title = 'NFTs';
+
   return (
     <React.Fragment>
       <div className="page-content">
