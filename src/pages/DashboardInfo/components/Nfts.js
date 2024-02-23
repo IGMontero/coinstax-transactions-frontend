@@ -285,15 +285,15 @@ const Nfts = ({ address, activeTab }) => {
                             <h5 className="text-dark">{nft.name || ' '}</h5>
                           </div>
                           <div>
-                            <span>Floor Price</span>
+                            <span>{nft.floorPrice ? 'Floor Price' : ' '}</span>
                             <h6 className="text-dark d-flex mb-0">
-                              {nft.floorPrice ? nft.floorPrice : '$0.00'}{' '}
-                              {nft.floorPriceSymbol ? nft.floorPriceSymbol : ''}{' '}
-                              (
+                              {nft.floorPrice ? nft.floorPrice : ' '}{' '}
+                              {nft.floorPriceSymbol
+                                ? nft.floorPriceSymbol
+                                : ' '}{' '}
                               {nft.prettyFloorPriceUsd
-                                ? nft.prettyFloorPriceUsd
+                                ? `(${nft.prettyFloorPriceUsd})`
                                 : ''}
-                              )
                             </h6>
                           </div>
                         </div>
