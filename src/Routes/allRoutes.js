@@ -13,6 +13,7 @@ import Register from '../pages/Authentication/Register';
 // User Profile
 import UserProfile from '../pages/Authentication/user-profile';
 import DashboardInfo from '../pages/DashboardInfo/DashboardInfo';
+import DashboardNFT from '../pages/DashboardNFT/DashboardNFT';
 
 const authProtectedRoutes = [
   { path: '/dashboard', component: <DashboardInfo /> },
@@ -46,6 +47,7 @@ const allRoutes = [
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
   { path: '/dashboard', component: <DashboardInfo /> },
+  { path: '/nfts/ethereum/:nftId', component: <DashboardNFT /> },
   { path: '/address/:address/:type', component: <DashboardInfo /> },
   { path: '/index', component: <DashboardEcommerce /> },
 

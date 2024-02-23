@@ -22,7 +22,9 @@
 
 .page-content {
     // padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} * 0.5) $footer-height calc(#{$grid-gutter-width} * 0.5);
-    padding-top: calc(#{$header-height} + #{$grid-gutter-width});
+    // padding-top: calc(#{$header-height} + #{$grid-gutter-width});
+    padding-top: 30px;
+    padding-bottom: 50px;
     padding-left: 20px;
     padding-right: 20px;
     margin-left: auto;
