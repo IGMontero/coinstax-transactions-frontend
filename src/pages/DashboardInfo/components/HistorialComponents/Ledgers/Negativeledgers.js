@@ -38,8 +38,7 @@ const Negativeledgers = ({ ledger }) => {
                   <span className="text-dark d-flex">
                     <span
                       id={`amount-left-${ledger.txHash}`}
-                      className=""
-                      style={{ whiteSpace: 'nowrap' }}
+                      className="text-displayName"
                     >
                       {negativeLedgers?.displayName}
                     </span>

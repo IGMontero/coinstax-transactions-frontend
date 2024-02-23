@@ -160,6 +160,7 @@ const RenderTransactions = ({ date, transactions }) => {
                 <Col
                   lg={transaction.txSummary.sent ? 4 : 0}
                   md={transaction.txSummary.sent ? 4 : 0}
+                  sm={6}
                   xs={6}
                   className={`mb-lg-0 mb-3 ${
                     transaction.txSummary.sent
@@ -173,10 +174,9 @@ const RenderTransactions = ({ date, transactions }) => {
                 <Col
                   lg={transaction.txSummary.sent ? 4 : 8}
                   md={transaction.txSummary.sent ? 4 : 8}
-                  xs={6}
-                  className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3 ${
-                    transaction.txSummary.sent ? '' : 'ms-n2'
-                  }`}
+                  sm={transaction.txSummary.sent ? 6 : 12}
+                  xs={transaction.txSummary.sent ? 6 : 12}
+                  className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3`}
                 >
                   <PositiveLedgers
                     ledger={receivedTxSummary}
