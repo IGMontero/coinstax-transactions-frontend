@@ -18,12 +18,15 @@ import {
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import { useDispatch } from 'react-redux';
 import { fetchNFTS } from '../../../slices/transactions/thunk';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Nfts = ({ address, activeTab }) => {
   // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
 
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const inputRef = useRef(null);
 
@@ -47,6 +50,10 @@ const Nfts = ({ address, activeTab }) => {
       fetchDataNFTS();
     }
   }, [address, activeTab, dispatch]);
+
+  const handleVisitNFT = (nft, index) => {
+    navigate(`/nfts/ethereum/${index + 1}?address=${address}`);
+  };
 
   return (
     <React.Fragment>
@@ -188,7 +195,8 @@ const Nfts = ({ address, activeTab }) => {
                 data.items.map((nft, index) => (
                   <div key={index} className="d-flex justify-content-center">
                     <Card
-                      className="border-2 border bg-transparent shadow-none"
+                      onClick={() => handleVisitNFT(nft, index)}
+                      className="cursor-pointer border-2 border bg-transparent shadow-none"
                       style={{
                         borderRadius: '10px',
                         minWidth: '100%',

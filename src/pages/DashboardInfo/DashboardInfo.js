@@ -283,14 +283,14 @@ const DashboardInfo = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content pb-5">
+      <div className="page-content">
         <QrModal
           showQrModal={showQrModal}
           toggleQrModal={toggleQrModal}
           addressTitle={addressTitle}
         />
         <Row className="d-flex justify-content-start align-items-center">
-          <Col lg={6} className="pb-3 mt-n5 d-flex justify-content-center ">
+          <Col lg={6} className="pb-3  d-flex justify-content-center ">
             <InputGroup className="mb-3">
               <Input
                 className="form-control py-2 rounded"
