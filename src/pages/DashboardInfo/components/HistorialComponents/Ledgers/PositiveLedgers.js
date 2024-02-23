@@ -9,6 +9,17 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
 
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
 
+  const [isCopied, setIsCopied] = React.useState(false);
+
+  const handleCopyValue = (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(positiveLedgers?.value);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+  };
+
   return (
     <div
       className="d-flex align-items-center justify-content-start"
@@ -51,14 +62,9 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                 <div className="d-flex flex-column">
                   <span className="text-success d-flex">
                     <span
+                      onClick={handleCopyValue}
                       id={`amount-${ledger.txHash}`}
                       className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
-                      // style={{
-                      //   whiteSpace: 'nowrap',
-                      //   textOverflow: 'ellipsis',
-                      //   overflow: 'hidden',
-                      //   maxWidth: 'auto',
-                      // }}
                     >
                       {positiveLedgers?.displayName}
                     </span>
@@ -81,7 +87,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                               fontSize: '0.70rem',
                             }}
                           >
-                            {positiveLedgers.value}
+                            {isCopied ? 'Copied' : positiveLedgers?.value}
                           </span>
                         </PopoverBody>
                       </UncontrolledPopover>
