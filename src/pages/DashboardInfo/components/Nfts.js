@@ -18,12 +18,15 @@ import {
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import { useDispatch } from 'react-redux';
 import { fetchNFTS } from '../../../slices/transactions/thunk';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Nfts = ({ address, activeTab }) => {
   // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
 
   const [loading, setLoading] = React.useState(false);
   const dispatch = useDispatch();
+
+  const navigate = useNavigate();
 
   const inputRef = useRef(null);
 
@@ -48,6 +51,9 @@ const Nfts = ({ address, activeTab }) => {
     }
   }, [address, activeTab, dispatch]);
 
+  const handleVisitNFT = (nft, index) => {
+    navigate(`/nfts/ethereum/${index + 1}?address=${address}`);
+  };
   return (
     <React.Fragment>
       {loading ? (
@@ -175,29 +181,27 @@ const Nfts = ({ address, activeTab }) => {
             </Col>
           </Row>
 
-          <Col xxl={12} className="mt-4 ">
-            <Row>
-              {data.items && data.items.length > 0 ? (
+          <Col className="mt-4 col-12">
+            <div
+              className="d-grid position-relative justify-content-center "
+              style={{
+                gridTemplateColumns: 'repeat(auto-fill, minmax(186px, 1fr))',
+                gap: '30px',
+              }}
+            >
+              {data.items &&
+                data.items.length > 0 &&
                 data.items.map((nft, index) => (
-                  <Col
-                    xxl={3}
-                    lg={6}
-                    md={6}
-                    sm={12}
-                    xs={12}
-                    key={index}
-                    className="d-flex justify-content-center"
-                  >
+                  <div key={index} className="d-flex justify-content-center">
                     <Card
-                      className="border-2 border bg-transparent shadow-none mx-2"
+                      // onClick={() => handleVisitNFT(nft, index)}
+                      className="cursor-pointer border-2 border bg-transparent shadow-none"
                       style={{
-                        maxHeight: '350px',
-                        height: '350px',
-                        minWidth: '225px',
-                        maxWidth: '225px',
+                        borderRadius: '10px',
+                        minWidth: '100%',
                       }}
                     >
-                      <CardHeader className="border-0 bg-transparent p-2">
+                      <CardHeader className="border-0  bg-transparent p-1">
                         <div
                           style={{ position: 'relative', minHeight: '200px' }}
                         >
@@ -206,10 +210,11 @@ const Nfts = ({ address, activeTab }) => {
                             alt=""
                             className="img-fluid w-100 position-realative"
                             style={{
-                              minHeight: '200px',
-                              maxHeight: '200px',
-                              height: '200px',
-                              borderRadius: '7px',
+                              maxWidth: '100%',
+                              maxHeight: '100%',
+                              aspectRatio: '1 / 1',
+                              objectFit: 'cover',
+                              borderRadius: '8px',
                             }}
                           />
                           <div className="">
@@ -229,32 +234,44 @@ const Nfts = ({ address, activeTab }) => {
                         </div>
                       </CardHeader>
                       <CardBody>
-                        <div className="d-flex flex-column">
-                          <span className="text-dark">{nft.domain}</span>
-                          <h5 className="text-dark">{nft.name}</h5>
-                          <span>Floor Price</span>
-                          <h6 className="text-dark d-flex mb-0">
-                            {nft.floorPrice ? nft.floorPrice : '$0.00'}{' '}
-                            {nft.floorPriceSymbol ? nft.floorPriceSymbol : ''} (
-                            {nft.prettyFloorPriceUsd
-                              ? nft.prettyFloorPriceUsd
-                              : ''}
-                            )
-                          </h6>
+                        <div
+                          className="d-flex flex-column justify-content-between"
+                          style={{ height: '100%' }}
+                        >
+                          <div>
+                            <span className="text-dark">
+                              {nft.domain || ' '}
+                            </span>
+                            <h5 className="text-dark">{nft.name || ' '}</h5>
+                          </div>
+                          <div>
+                            <span>Floor Price</span>
+                            <h6 className="text-dark d-flex mb-0">
+                              {nft.floorPrice ? nft.floorPrice : '$0.00'}{' '}
+                              {nft.floorPriceSymbol ? nft.floorPriceSymbol : ''}{' '}
+                              (
+                              {nft.prettyFloorPriceUsd
+                                ? nft.prettyFloorPriceUsd
+                                : ''}
+                              )
+                            </h6>
+                          </div>
                         </div>
                       </CardBody>
                     </Card>
-                  </Col>
-                ))
-              ) : (
-                <Col
-                  className="d-flex justify-content-center align-items-center"
-                  style={{ height: '50vh' }}
-                >
-                  <h4>No NFTs found 😴</h4>
-                </Col>
-              )}
-            </Row>
+                  </div>
+                ))}
+            </div>
+
+            {/* No NFTs found */}
+            {data.items && data.items.length === 0 && (
+              <Col
+                className="d-flex text-center col-12 justify-content-center align-items-center"
+                style={{ display: 'flex', height: '50vh', width: '100%' }}
+              >
+                <h4 className="text-center">No NFTs found </h4>
+              </Col>
+            )}
           </Col>
         </>
       )}

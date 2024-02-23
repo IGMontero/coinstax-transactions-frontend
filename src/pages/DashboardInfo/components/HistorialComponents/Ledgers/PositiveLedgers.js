@@ -10,7 +10,10 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
 
   return (
-    <div className="d-flex align-items-center justify-content-start">
+    <div
+      className="d-flex align-items-center justify-content-start"
+      style={{ overflow: 'hidden' }}
+    >
       <h6
         className={`fw-semibold my-0  d-flex align-items-center justify-content-start`}
       >
@@ -49,8 +52,13 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   <span className="text-success d-flex">
                     <span
                       id={`amount-${ledger.txHash}`}
-                      className="me-1"
-                      style={{ whiteSpace: 'nowrap' }}
+                      className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
+                      // style={{
+                      //   whiteSpace: 'nowrap',
+                      //   textOverflow: 'ellipsis',
+                      //   overflow: 'hidden',
+                      //   maxWidth: 'auto',
+                      // }}
                     >
                       {positiveLedgers?.displayName}
                     </span>

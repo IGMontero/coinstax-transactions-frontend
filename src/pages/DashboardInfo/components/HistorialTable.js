@@ -30,7 +30,6 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     useState(false);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const [searchTimeout, setSearchTimeout] = useState(null);
 
   const [includeSpam, setIncludeSpam] = useState(false);
 
@@ -108,6 +107,18 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     includeSpam,
     debouncedSearchTerm,
   ]);
+
+  const handleClearAllFilters = () => {
+    setSelectedFilters([]);
+    setSelectedAssets('All Assets');
+    setIncludeSpam(false);
+    setSearchTerm('');
+    setHasAppliedFilters(false);
+  };
+
+  useEffect(() => {
+    handleClearAllFilters();
+  }, [activeTab, address]);
 
   useEffect(() => {
     if (activeTab == '3') {
@@ -244,6 +255,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   const handleResetFilters = () => {
     setSelectedFilters([]);
+    setSelectedAssets('All Assets');
     setLoading(true);
   };
 
@@ -269,8 +281,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     ));
   };
 
-  return (
-    <React.Fragment>
+  const renderFiltersDropdown = () => {
+    return (
       <Row>
         <Col className="d-flex">
           <Dropdown
@@ -323,7 +335,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
               }`}
               role="button"
             >
-              <span className="fs-6">Assets</span>
+              <span className="fs-6">
+                {selectedAssets === 'All Assets' ? 'Assets' : selectedAssets}
+              </span>
             </DropdownToggle>
             <DropdownMenu className="dropdown-menu-end mt-1">
               {['All Assets', 'Tokens', 'NFTs'].map((asset) => (
@@ -346,6 +360,13 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           </Dropdown>
         </Col>
       </Row>
+    );
+  };
+
+  return (
+    <React.Fragment>
+      {renderFiltersDropdown()}
+
       <Col className="col-12">
         {renderBadges()}
         {hasActiveFilters && (
@@ -357,6 +378,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           </span>
         )}
       </Col>
+
       <Row>
         <Col lg={12} className="mt-3 mb-0 d-flex">
           <Input
