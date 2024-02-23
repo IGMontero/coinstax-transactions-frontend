@@ -179,7 +179,7 @@ const Nfts = ({ address, activeTab }) => {
             <div
               className="d-grid position-relative justify-content-center "
               style={{
-                gridTemplateColumns: 'repeat(auto-fill, minmax(214px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(186px, 1fr))',
                 gap: '30px',
               }}
             >
@@ -191,10 +191,10 @@ const Nfts = ({ address, activeTab }) => {
                       className="border-2 border bg-transparent shadow-none"
                       style={{
                         borderRadius: '10px',
-                        maxHeight: 'auto',
-                        minHeight: '350px',
-                        minWidth: '200px',
-                        maxWidth: '200px',
+                        // maxHeight: 'auto',
+                        // minHeight: '350px',
+                        minWidth: '100%',
+                        // maxWidth: '200px',
                       }}
                     >
                       <CardHeader className="border-0  bg-transparent p-1">
@@ -205,12 +205,18 @@ const Nfts = ({ address, activeTab }) => {
                             src={nft.logo}
                             alt=""
                             className="img-fluid w-100 position-realative"
+                            // style={{
+                            //   minHeight: '200px',
+                            //   maxHeight: '200px',
+                            //   height: '200px',
+                            //   borderRadius: '7px',
+                            // }}
                             style={{
-                              // paddingTop: '0px',
-                              minHeight: '200px',
-                              maxHeight: '200px',
-                              height: '200px',
-                              borderRadius: '7px',
+                              maxWidth: '100%',
+                              maxHeight: '100%',
+                              aspectRatio: '1 / 1',
+                              objectFit: 'cover',
+                              borderRadius: '8px',
                             }}
                           />
                           <div className="">
@@ -265,7 +271,7 @@ const Nfts = ({ address, activeTab }) => {
                 className="d-flex text-center col-12 justify-content-center align-items-center"
                 style={{ display: 'flex', height: '50vh', width: '100%' }}
               >
-                <h4 className="text-center">No NFTs found 😴</h4>
+                <h4 className="text-center">No NFTs found </h4>
               </Col>
             )}
           </Col>
