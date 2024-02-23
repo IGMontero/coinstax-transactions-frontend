@@ -191,10 +191,7 @@ const Nfts = ({ address, activeTab }) => {
                       className="border-2 border bg-transparent shadow-none"
                       style={{
                         borderRadius: '10px',
-                        // maxHeight: 'auto',
-                        // minHeight: '350px',
                         minWidth: '100%',
-                        // maxWidth: '200px',
                       }}
                     >
                       <CardHeader className="border-0  bg-transparent p-1">
@@ -205,12 +202,6 @@ const Nfts = ({ address, activeTab }) => {
                             src={nft.logo}
                             alt=""
                             className="img-fluid w-100 position-realative"
-                            // style={{
-                            //   minHeight: '200px',
-                            //   maxHeight: '200px',
-                            //   height: '200px',
-                            //   borderRadius: '7px',
-                            // }}
                             style={{
                               maxWidth: '100%',
                               maxHeight: '100%',

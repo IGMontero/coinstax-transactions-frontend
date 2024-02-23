@@ -289,9 +289,9 @@ const DashboardInfo = () => {
           toggleQrModal={toggleQrModal}
           addressTitle={addressTitle}
         />
-        <Row className="d-flex justify-content-center align-items-center">
-          <Col lg={8} className="pb-3 mt-n4 d-flex justify-content-center ">
-            <InputGroup className="mb-5">
+        <Row className="d-flex justify-content-start align-items-center">
+          <Col lg={6} className="pb-3 mt-n5 d-flex justify-content-center ">
+            <InputGroup className="mb-3">
               <Input
                 className="form-control py-2 rounded"
                 placeholder="Assets, wallet, domain, or identify"
