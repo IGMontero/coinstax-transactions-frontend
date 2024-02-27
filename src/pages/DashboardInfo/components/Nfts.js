@@ -44,6 +44,9 @@ const Nfts = ({ address, activeTab }) => {
 
   const [currencySymbol, setCurrencySymbol] = useState('ETH');
 
+  const showFiatValues = currencySymbol === '$';
+  const showNativeTokenValues = currencySymbol === 'ETH';
+
   const handleChangeSymbol = () => {
     setCurrencySymbol((prevSymbol) => (prevSymbol === 'ETH' ? '$' : 'ETH'));
   };
@@ -224,76 +227,111 @@ const Nfts = ({ address, activeTab }) => {
             >
               {data.items &&
                 data.items.length > 0 &&
-                data.items.map((nft, index) => (
-                  <div key={index} className="d-flex justify-content-center">
-                    <Card
-                      // onClick={() => handleVisitNFT(nft, index)}
-                      className="cursor-pointer border-2 border bg-transparent shadow-none"
-                      style={{
-                        borderRadius: '10px',
-                        minWidth: '100%',
-                      }}
-                    >
-                      <CardHeader className="border-0  bg-transparent p-1">
-                        <div
-                          style={{ position: 'relative', minHeight: '200px' }}
-                        >
-                          <img
-                            src={nft.logo}
-                            alt=""
-                            className="img-fluid w-100 position-realative"
-                            style={{
-                              maxWidth: '100%',
-                              maxHeight: '100%',
-                              aspectRatio: '1 / 1',
-                              objectFit: 'cover',
-                              borderRadius: '8px',
-                            }}
-                          />
-                          <div className="">
+                data.items.map((nft, index) => {
+                  const {
+                    floorPriceFiat,
+                    floorPriceNativeToken,
+                    prettyFiatFloorPrice, prettyNativeTokenFloorPrice } = nft;
+
+                  const hasFiatFloorPrice = floorPriceFiat && Number(floorPriceFiat) > 0;
+                  const hasNativeTokenFloorPrice = floorPriceNativeToken && Number(floorPriceNativeToken) > 0;
+
+
+                  const hasFloorPrice = showFiatValues ? hasFiatFloorPrice : hasNativeTokenFloorPrice;
+
+                  const floorPrice = showFiatValues
+                    ? prettyFiatFloorPrice
+                    : prettyNativeTokenFloorPrice;
+
+                  return (
+                    <div key={index} className="d-flex justify-content-center">
+                      <Card
+                        // onClick={() => handleVisitNFT(nft, index)}
+                        className="cursor-pointer border-2 border bg-transparent shadow-none"
+                        style={{
+                          borderRadius: '10px',
+                          minWidth: '100%',
+                        }}
+                      >
+                        <CardHeader className="border-0  bg-transparent p-1">
+                          <div
+                            style={{ position: 'relative', minHeight: '200px' }}
+                          >
                             <img
-                              src={eth}
+                              src={nft.logo}
                               alt=""
-                              className="img-fluid border-dark border border-circle border-1 d-flex justify-content-start  shadow-md rounded-circle"
+                              className="img-fluid w-100 position-realative"
                               style={{
-                                position: 'absolute',
-                                bottom: '5%',
-                                left: '5%',
-                                width: '10%',
-                                height: '10%',
+                                maxWidth: '100%',
+                                maxHeight: '100%',
+                                aspectRatio: '1 / 1',
+                                objectFit: 'cover',
+                                borderRadius: '8px',
                               }}
                             />
+                            <div className="">
+                              <img
+                                src={eth}
+                                alt=""
+                                className="img-fluid border-dark border border-circle border-1 d-flex justify-content-start  shadow-md rounded-circle"
+                                style={{
+                                  position: 'absolute',
+                                  bottom: '5%',
+                                  left: '5%',
+                                  width: '10%',
+                                  height: '10%',
+                                }}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      </CardHeader>
-                      <CardBody>
-                        <div
-                          className="d-flex flex-column justify-content-between"
-                          style={{ height: '100%' }}
+                        </CardHeader>
+                        <CardBody
+                          className='pt-1'
                         >
-                          <div>
-                            <span className="text-dark">
-                              {nft.domain || ' '}
-                            </span>
-                            <h5 className="text-dark">{nft.name || ' '}</h5>
+                          <div
+                            className="d-flex flex-column justify-content-between"
+                            style={{ height: '100%' }}
+                          >
+                            <div>
+                              {nft?.collection?.name && (
+                                <span
+                                  style={{
+                                    fontSize: '11px',
+                                    marginBottom: '6px',
+                                    display: 'block',
+                                  }}
+                                  className="text-dark">
+                                  {nft?.collection?.name || ' '}
+                                </span>
+                              )}
+
+                              <h6
+                                style={{ fontSize: '14px' }}
+                                className="text-dark">{nft.name || ' '}</h6>
+                            </div>
+                            {hasFloorPrice ? (
+                              <div>
+                                <span>{hasFloorPrice ? 'Floor Price' : ' '}</span>
+                                <h6 className="text-dark d-flex mb-0">
+                                  {/* {nft.floorPrice ? nft.floorPrice : ' '}{' '}
+                                {nft.floorPriceSymbol
+                                  ? nft.floorPriceSymbol
+                                  : ' '}{' '}
+                                {nft.prettyFloorPriceUsd
+                                  ? `(${nft.prettyFloorPriceUsd})`
+                                  : ''} */}
+
+                                  {floorPrice}
+                                </h6>
+                              </div>
+                            ) : null}
+
                           </div>
-                          <div>
-                            <span>{nft.floorPrice ? 'Floor Price' : ' '}</span>
-                            <h6 className="text-dark d-flex mb-0">
-                              {nft.floorPrice ? nft.floorPrice : ' '}{' '}
-                              {nft.floorPriceSymbol
-                                ? nft.floorPriceSymbol
-                                : ' '}{' '}
-                              {nft.prettyFloorPriceUsd
-                                ? `(${nft.prettyFloorPriceUsd})`
-                                : ''}
-                            </h6>
-                          </div>
-                        </div>
-                      </CardBody>
-                    </Card>
-                  </div>
-                ))}
+                        </CardBody>
+                      </Card>
+                    </div>
+                  )
+                })}
             </div>
 
             {/* No NFTs found */}
