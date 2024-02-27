@@ -11,16 +11,14 @@ import {
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 
 const AcitvesTable = ({ data }) => {
-  // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
-
-  console.log(data);
-
   const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState('byPlatform');
 
   const [showMenu, setShowMenu] = useState(false);
 
   const [hideSmallBalances, setHideSmallBalances] = useState(false);
+
+  const [hideZeroBalances, setHideZeroBalances] = useState(true);
 
   useEffect(() => {
     if (data) {
@@ -67,6 +65,11 @@ const AcitvesTable = ({ data }) => {
     setHideSmallBalances(!hideSmallBalances);
   };
 
+  const handleHideZeroBalancesChange = (event) => {
+    event.stopPropagation();
+    setHideZeroBalances(!hideZeroBalances);
+  };
+
   const handleShowMenu = (e) => {
     setShowMenu(!showMenu);
   };
@@ -79,17 +82,15 @@ const AcitvesTable = ({ data }) => {
           <div className="d-flex justify-content-between align-items-center ">
             <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
             <Button
-              className={`btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'byPlatform' ? 'active' : ''
-              }`}
+              className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
+                }`}
               onClick={() => handleViewModeChange('byPlatform')}
             >
               By Platform
             </Button>
             <Button
-              className={`mx-2 btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'perPosition' ? 'active' : ''
-              }`}
+              className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
+                }`}
               onClick={() => handleViewModeChange('perPosition')}
             >
               Per Position
@@ -97,36 +98,57 @@ const AcitvesTable = ({ data }) => {
 
             <Dropdown
               isOpen={showMenu}
-              toggle={handleShowMenu}
+              toggle={(e) => {
+                if (
+                  e.target.tagName !== 'INPUT' &&
+                  e.target.tagName !== 'LABEL'
+                ) {
+                  handleShowMenu();
+                }
+              }}
               className="card-header-dropdown"
             >
               <DropdownToggle tag="a" className="text-reset" role="button">
                 <i className="ri-arrow-down-s-line p-1 py-0 btn btn-soft-primary rounded"></i>
               </DropdownToggle>
-              <DropdownMenu className="dropdown-menu-end ms-3 mt-2">
+              <DropdownMenu className="dropdown-menu-start mt-2">
                 <DropdownItem
-                  className="d-flex align-items-center"
-                  onClick={(e) => {
-                    handleHideSmallBalancesChange(e);
-                    e.stopPropagation();
-                  }}
+                  toggle={false}
+                  className="d-flex justify-content-start align-items-center"
                 >
-                  <div className="form-check mb-0">
-                    <label
-                      className=" d-flex align-items-center mb-0"
-                      htmlFor="hideBalances"
-                      style={{ cursor: 'pointer' }}
-                    >
-                      Hide small balances
-                      <input
-                        className="form-check-input ms-2 mb-1"
-                        type="checkbox"
-                        id="hideBalances"
-                        checked={hideSmallBalances}
-                        onChange={handleHideSmallBalancesChange}
-                      />
-                    </label>
-                  </div>
+                  <input
+                    className="form-check-input me-2"
+                    type="checkbox"
+                    id="hideBalances"
+                    checked={hideSmallBalances}
+                    onChange={handleHideSmallBalancesChange}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor="hideBalances"
+                    style={{ cursor: 'pointer', margin: 0 }}
+                  >
+                    Hide small balances
+                  </label>
+                </DropdownItem>
+                <DropdownItem
+                  toggle={false}
+                  className="d-flex justify-content-start align-items-center"
+                >
+                  <input
+                    className="form-check-input me-2"
+                    type="checkbox"
+                    id="hideZeroBalances"
+                    checked={hideZeroBalances}
+                    onChange={handleHideZeroBalancesChange}
+                  />
+                  <label
+                    className="form-check-label"
+                    htmlFor="hideZeroBalances"
+                    style={{ cursor: 'pointer', margin: 0 }}
+                  >
+                    Hide zero balances
+                  </label>
                 </DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -180,7 +202,10 @@ const AcitvesTable = ({ data }) => {
                     {data.items &&
                       data?.items
                         .filter(
-                          (asset) => !hideSmallBalances || asset.value >= 1,
+                          (asset) =>
+                            (!hideSmallBalances || asset.value >= 1) &&
+                            (!hideZeroBalances ||
+                              (asset.value !== 0 && asset.value !== null)),
                         )
                         .map((asset, index) => (
                           <tr key={index}>
@@ -244,19 +269,18 @@ const AcitvesTable = ({ data }) => {
                                   {asset.value ? asset.prettyValue : '$0.00'}
                                 </span>
                                 <small
-                                  className={`${
-                                    asset.prettyDeltaValuePercent === '0.00%'
+                                  className={`${asset.prettyDeltaValuePercent === '0.00%'
                                       ? 'text-primary'
                                       : asset.prettyDeltaValuePercent[0] === '-'
                                         ? 'text-danger'
                                         : 'text-success'
-                                  }`}
+                                    }`}
                                 >
                                   {asset.prettyDeltaValuePercent === '0.00%'
                                     ? asset.prettyDeltaValuePercent
                                     : (asset.prettyDeltaValuePercent[0] === '-'
-                                        ? ''
-                                        : '+') + asset.prettyDeltaValuePercent}
+                                      ? ''
+                                      : '+') + asset.prettyDeltaValuePercent}
                                   {' (' +
                                     '$' +
                                     asset.deltaValue.toFixed(2) +
