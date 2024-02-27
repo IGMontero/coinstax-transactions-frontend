@@ -46,10 +46,12 @@ const ThirdColumn = ({ transaction, index }) => {
 
   return (
     <div
-      className="d-flex flex-column "
-      // style={{ overflow: 'hidden' }}
+      className="d-flex flex-column w-100"
+    // style={{ overflow: 'hidden' }}
     >
-      <p className="text-start  my-0">
+      <p
+        style={{ fontSize: '12px', marginBottom: '4px' }}
+        className="text-start  mb-1">
         {transaction.blockchainAction === blockchainActions.RECEIVE
           ? 'From'
           : transaction.blockchainAction === blockchainActions.SEND
@@ -59,7 +61,12 @@ const ThirdColumn = ({ transaction, index }) => {
       <h6
         id={`popoverMarketplace-${index}`}
         className="fw-semibold my-0 text-start d-flex align-items-center"
-        style={{ cursor: 'pointer' }}
+        style={{
+          cursor: 'pointer',
+          fontSize: '12px',
+          display: 'flex',
+          // justifyContent: 'center'
+        }}
         onClick={(e) =>
           handleClick(e, transaction, `popoverMarketplace-${index}`)
         }
@@ -73,8 +80,8 @@ const ThirdColumn = ({ transaction, index }) => {
                 style={{
                   width: '20px',
                   height: '20px',
-                  borderRadius: '10px',
-                  marginRight: '5px',
+                  borderRadius: '6px',
+                  marginRight: '6px',
                 }}
               />
             )}
