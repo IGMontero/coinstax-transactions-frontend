@@ -18,7 +18,7 @@ const AcitvesTable = ({ data }) => {
 
   const [hideSmallBalances, setHideSmallBalances] = useState(false);
 
-  const [hideZeroBalances, setHideZeroBalances] = useState(false);
+  const [hideZeroBalances, setHideZeroBalances] = useState(true);
 
   useEffect(() => {
     if (data) {
@@ -82,17 +82,15 @@ const AcitvesTable = ({ data }) => {
           <div className="d-flex justify-content-between align-items-center ">
             <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
             <Button
-              className={`btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'byPlatform' ? 'active' : ''
-              }`}
+              className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
+                }`}
               onClick={() => handleViewModeChange('byPlatform')}
             >
               By Platform
             </Button>
             <Button
-              className={`mx-2 btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'perPosition' ? 'active' : ''
-              }`}
+              className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
+                }`}
               onClick={() => handleViewModeChange('perPosition')}
             >
               Per Position
@@ -271,19 +269,18 @@ const AcitvesTable = ({ data }) => {
                                   {asset.value ? asset.prettyValue : '$0.00'}
                                 </span>
                                 <small
-                                  className={`${
-                                    asset.prettyDeltaValuePercent === '0.00%'
+                                  className={`${asset.prettyDeltaValuePercent === '0.00%'
                                       ? 'text-primary'
                                       : asset.prettyDeltaValuePercent[0] === '-'
                                         ? 'text-danger'
                                         : 'text-success'
-                                  }`}
+                                    }`}
                                 >
                                   {asset.prettyDeltaValuePercent === '0.00%'
                                     ? asset.prettyDeltaValuePercent
                                     : (asset.prettyDeltaValuePercent[0] === '-'
-                                        ? ''
-                                        : '+') + asset.prettyDeltaValuePercent}
+                                      ? ''
+                                      : '+') + asset.prettyDeltaValuePercent}
                                   {' (' +
                                     '$' +
                                     asset.deltaValue.toFixed(2) +
