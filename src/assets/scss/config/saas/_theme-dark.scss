@@ -284,6 +284,10 @@
   color: var(--#{$prefix}dark);
 }
 
+.text-hover-primary:hover {
+  color: var(--#{$prefix}primary);
+}
+
 .text-hover-underline:hover {
   text-decoration: underline;
 }
