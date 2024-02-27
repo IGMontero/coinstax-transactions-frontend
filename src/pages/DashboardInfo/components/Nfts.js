@@ -1,15 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Col,
   Row,
   Button,
-  UncontrolledDropdown,
-  DropdownMenu,
-  DropdownItem,
-  DropdownToggle,
-  Input,
-  InputGroup,
-  Badge,
   Card,
   CardHeader,
   CardBody,
@@ -20,6 +13,26 @@ import { useDispatch } from 'react-redux';
 import { fetchNFTS } from '../../../slices/transactions/thunk';
 import { Link, useNavigate } from 'react-router-dom';
 
+const ethIcon = (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M9.999 3.757v4.73l3.998 1.787L10 3.757z"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M10 3.757l-4 6.517 4-1.786V3.757zM9.999 13.34v3.214l4-5.535-4 2.32zM9.999 16.554V13.34l-4-2.32 4 5.535zM9.999 12.596l3.998-2.322L10 8.49v4.107z"
+      fill="currentColor"
+    ></path>
+    <path d="M6 10.274l3.999 2.322V8.489l-4 1.785z" fill="currentColor"></path>
+  </svg>
+);
+
 const Nfts = ({ address, activeTab }) => {
   // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
 
@@ -27,10 +40,13 @@ const Nfts = ({ address, activeTab }) => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-
-  const inputRef = useRef(null);
-
   const [data, setData] = React.useState([]);
+
+  const [currencySymbol, setCurrencySymbol] = useState('ETH');
+
+  const handleChangeSymbol = () => {
+    setCurrencySymbol((prevSymbol) => (prevSymbol === 'ETH' ? '$' : 'ETH'));
+  };
 
   useEffect(() => {
     const fetchDataNFTS = () => {
@@ -66,9 +82,26 @@ const Nfts = ({ address, activeTab }) => {
       ) : (
         <>
           {data.items && data.items.length > 0 ? (
-            <Col xxl={12}>
-              <span className="text-dark">Total value by floor price</span>
-              <h1>{data.prettyTotalNativeValue}</h1>
+            <Col xxl={12} className="d-flex align-items-center">
+              <div className="d-flex flex-column">
+                <span className="text-dark">Total value by floor price</span>
+                <h1>{data.prettyTotalNativeValue}</h1>
+              </div>
+              <div className="ms-auto">
+                <Button
+                  style={{
+                    padding: '5px',
+                    minWidth: '0px',
+                    height: '32px',
+                    width: '32px',
+                  }}
+                  color="transparent"
+                  className="btn btn-sm rounded text-white border border-1 me-2"
+                  onClick={handleChangeSymbol}
+                >
+                  {currencySymbol === 'ETH' ? ethIcon : '$'}
+                </Button>
+              </div>
             </Col>
           ) : null}
           <Row>
@@ -245,15 +278,15 @@ const Nfts = ({ address, activeTab }) => {
                             <h5 className="text-dark">{nft.name || ' '}</h5>
                           </div>
                           <div>
-                            <span>Floor Price</span>
+                            <span>{nft.floorPrice ? 'Floor Price' : ' '}</span>
                             <h6 className="text-dark d-flex mb-0">
-                              {nft.floorPrice ? nft.floorPrice : '$0.00'}{' '}
-                              {nft.floorPriceSymbol ? nft.floorPriceSymbol : ''}{' '}
-                              (
+                              {nft.floorPrice ? nft.floorPrice : ' '}{' '}
+                              {nft.floorPriceSymbol
+                                ? nft.floorPriceSymbol
+                                : ' '}{' '}
                               {nft.prettyFloorPriceUsd
-                                ? nft.prettyFloorPriceUsd
+                                ? `(${nft.prettyFloorPriceUsd})`
                                 : ''}
-                              )
                             </h6>
                           </div>
                         </div>

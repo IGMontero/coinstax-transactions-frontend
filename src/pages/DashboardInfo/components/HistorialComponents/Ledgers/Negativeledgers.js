@@ -1,11 +1,29 @@
 import React from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
+import { useNavigate } from 'react-router-dom';
 
 const Negativeledgers = ({ ledger }) => {
+  const navigate = useNavigate();
+  const queryParams = new URLSearchParams(location.search);
+  const address = queryParams.get('address');
+
+  const randomNumber = Math.floor(Math.random() * 100) + 1;
+
   const negativeLedgers = ledger.txSummary.sent;
   const currency = negativeLedgers?.currency || '';
   const hasMoreThanOne = negativeLedgers?.logo === 'assets';
+
+  const [isCopied, setIsCopied] = React.useState(false);
+
+  const handleCopyValue = (e) => {
+    e.stopPropagation();
+    navigator.clipboard.writeText(negativeLedgers?.value);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+  };
 
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
@@ -36,12 +54,30 @@ const Negativeledgers = ({ ledger }) => {
                 </div>
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
-                    <span
-                      id={`amount-left-${ledger.txHash}`}
-                      className="text-displayName"
-                    >
-                      {negativeLedgers?.displayName}
-                    </span>
+                    {negativeLedgers?.value !== -1 &&
+                    negativeLedgers?.value !== 0 ? (
+                      <span
+                        onClick={handleCopyValue}
+                        id={`amount-left-${ledger.txHash}`}
+                        className={`text-displayName`}
+                      >
+                        {negativeLedgers?.displayName}
+                      </span>
+                    ) : (
+                      <span
+                        onClick={() =>
+                          navigate(
+                            `/nfts/ethereum/${randomNumber}/?address=${address}`,
+                          )
+                        }
+                        className={`text-displayName 
+                             text-hover-underline text-hover-primary
+                          `}
+                      >
+                        {negativeLedgers?.displayName}
+                      </span>
+                    )}
+
                     {negativeLedgers?.value !== -1 &&
                     negativeLedgers?.value !== 0 ? (
                       <UncontrolledPopover
@@ -61,7 +97,7 @@ const Negativeledgers = ({ ledger }) => {
                               fontSize: '0.70rem',
                             }}
                           >
-                            {negativeLedgers.value}
+                            {isCopied ? 'Copied' : negativeLedgers?.value}
                           </span>
                         </PopoverBody>
                       </UncontrolledPopover>
