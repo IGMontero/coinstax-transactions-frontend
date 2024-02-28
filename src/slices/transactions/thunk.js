@@ -93,7 +93,7 @@ export const fetchHistory = createAsyncThunk(
         throw new Error(errorBody.message || `Error: ${response.status}`);
       }
       const data = await response.json();
-      return data.parsed;
+      return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }

@@ -36,32 +36,52 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const [showAssetsMenu, setShowAssetsMenu] = useState(false);
 
   const [hasMoreData, setHasMoreData] = useState(true);
-
   const [currentPage, setCurrentPage] = useState(0);
+  const [unsupportedAddress, setUnsupportedAddress] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-
-  const [groupedTransactions, setGroupedTransactions] = useState({});
-
+  // const [groupedTransactions, setGroupedTransactions] = useState({});
   const [selectedFilters, setSelectedFilters] = useState([]);
-
   const [selectedAssets, setSelectedAssets] = useState('All Assets');
-
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
-
   const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
 
+
+  const [debouncedDisableGetMore, setDebouncedDisableGetMore] = useState(false);
+
+  // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show 
+  // custom text in the button "Downloading more transactions..."
   useEffect(() => {
+    if (!isProcessing) {
+      return setDebouncedDisableGetMore(false);
+    }
+
+    setDebouncedDisableGetMore(true);
+
     const timeout = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, 500);
+      setIsProcessing(false);
+    }, 5000);
 
     return () => {
       clearTimeout(timeout);
-    };
-  }, [searchTerm]);
+    }
+  }, [isProcessing]);
+
+
+
+
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     setDebouncedSearchTerm(searchTerm);
+  //   }, 500);
+
+  //   return () => {
+  //     clearTimeout(timeout);
+  //   };
+  // }, [searchTerm]);
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -71,9 +91,15 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const fetchData = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
 
+    const isInitialFetch = currentPage === 0;
+    const dataLength = data?.length;
+
     try {
-      setIsInitialLoad(true);
-      setLoading(true);
+      if (isInitialFetch && dataLength === 0) {
+        setIsInitialLoad(true);
+        setLoading(true);
+      }
+
       const response = await dispatch(
         fetchHistory({
           address,
@@ -86,8 +112,25 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           page: currentPage,
         }),
       ).unwrap();
-      setData(response);
-      setHasMoreData(response.length > 0);
+
+      const { parsed, unsupported, isProcessing } = response;
+
+      if (unsupported) {
+        setUnsupportedAddress(true);
+      } else {
+        setUnsupportedAddress(false);
+      }
+
+      if (isProcessing) {
+        setIsProcessing(true);
+      } else {
+        setIsProcessing(false);
+      }
+
+      const trasactions = parsed || [];
+
+      setData(trasactions);
+      setHasMoreData(trasactions.length > 0 || isProcessing);
     } catch (error) {
       setErrorData(error);
       console.log(error);
@@ -135,29 +178,27 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     debouncedSearchTerm,
   ]);
 
-  useEffect(() => {
-    const groupByDate = (transactions) => {
-      if (!Array.isArray(transactions)) {
-        console.error(
-          'Expected an array of transactions, received:',
-          transactions,
-        );
-        return {};
-      }
-      return transactions.reduce((acc, transaction) => {
-        const date = formatDate(transaction.date);
-        if (!acc[date]) {
-          acc[date] = [];
-        }
-        acc[date].push(transaction);
-        return acc;
-      }, {});
-    };
-
-    if (data) {
-      setGroupedTransactions(groupByDate(data));
+  const groupTxsByDate = (transactions) => {
+    if (!Array.isArray(transactions)) {
+      console.error(
+        'Expected an array of transactions, received:',
+        transactions,
+      );
+      return {};
     }
-  }, [data]);
+    return transactions.reduce((acc, transaction) => {
+      const date = formatDate(transaction.date);
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(transaction);
+      return acc;
+    }, {});
+  };
+
+
+
+  const groupedTransactions = data ? groupTxsByDate(data) : {};
 
   const getMoreTransactions = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
@@ -178,10 +219,28 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
         }),
       ).unwrap();
 
-      if (response.length === 0) {
+      const { parsed, unsupported, isProcessing } = response;
+
+      if (unsupported) {
+        setUnsupportedAddress(true);
+      } else {
+        setUnsupportedAddress(false);
+      }
+
+      if (isProcessing) {
+        setIsProcessing(true);
+      } else {
+        setIsProcessing(false);
+      }
+
+      const trasactions = parsed || [];
+
+      if (trasactions.length === 0 && !isProcessing
+      ) {
         setHasMoreData(false);
       } else {
-        setData((prevData) => [...prevData, ...response]);
+        // setData((prevData) => [...prevData, ...response]);
+        setData((prevData) => [...prevData, ...trasactions]);
         setCurrentPage(nextPage);
       }
     } catch (error) {
@@ -292,9 +351,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${
-                showTransactionFilterMenu ? 'active' : ''
-              }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${showTransactionFilterMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">Transactions</span>
@@ -314,7 +372,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -330,9 +388,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -363,6 +420,41 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     );
   };
 
+  const renderGetMoreButton = () => {
+
+
+    return (
+      <div className="d-flex justify-content-center mt-4">
+        {unsupportedAddress ? <h6 className="text-danger">Unsupported Address</h6> : (
+          <Button
+            disabled={loading || debouncedDisableGetMore || unsupportedAddress}
+            onClick={getMoreTransactions}
+            color="soft-light"
+            style={{ borderRadius: '10px', border: '.5px solid grey' }}
+          >
+            {loading ? (
+              <Spinner size="sm" />
+            ) : (
+
+              <h6 className="text-dark fw-semibold my-2">
+                {(isProcessing) ?
+                  <>
+                    <span className="me-2">Downloading more transactions...</span>
+                    <Spinner size="sm" />
+                  </>
+                  :
+                  unsupportedAddress ? 'Unsupported Address' :
+                    'More Transactions'}
+              </h6>
+            )}
+          </Button>
+        )}
+
+
+      </div>
+    );
+  }
+
   return (
     <React.Fragment>
       {renderFiltersDropdown()}
@@ -380,7 +472,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       </Col>
 
       <Row>
-        <Col lg={12} className="mt-3 mb-0 d-flex">
+        <Col className="mt-3 mb-0 d-flex">
           <Input
             id="customCheck1"
             type="checkbox"
@@ -392,8 +484,15 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
             Include Spam Transactions
           </label>
         </Col>
+        <Col
+          className="d-flex  py-3 justify-content-end"
+        >
+          <Button className="btn btn-sm" color="primary" size="sm">
+            Download CSV
+          </Button>
+        </Col>
       </Row>
-      <Row className="mt-4">
+      {/* <Row className="mt-4">
         <Col lg={6} md={8} sm={10} xs={12}>
           <InputGroup className="py-3 d-flex align-items-center pt-0 search-bar col-lg-12 col-md-12 pe-3">
             <span
@@ -434,13 +533,13 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           md={4}
           sm={2}
           xs={12}
-          className="d-flex btn btn-sm py-3 justify-content-end"
+          className="d-flex  py-3 justify-content-end"
         >
-          <Button color="primary" size="sm">
+          <Button className="btn btn-sm" color="primary" size="sm">
             Download CSV
           </Button>
         </Col>
-      </Row>
+      </Row> */}
       {loading && isInitialLoad ? (
         <div
           className="d-flex justify-content-center align-items-center"
@@ -463,22 +562,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
               />
             ))}
             {!isInitialLoad && hasMoreData && (
-              <div className="d-flex justify-content-center mt-2">
-                <Button
-                  disabled={loading}
-                  onClick={getMoreTransactions}
-                  color="soft-light"
-                  style={{ borderRadius: '10px', border: '.5px solid grey' }}
-                >
-                  {loading ? (
-                    <Spinner size="sm" />
-                  ) : (
-                    <h6 className="text-dark fw-semibold my-2">
-                      More transactions
-                    </h6>
-                  )}
-                </Button>
-              </div>
+              renderGetMoreButton()
             )}
           </div>
         </Col>

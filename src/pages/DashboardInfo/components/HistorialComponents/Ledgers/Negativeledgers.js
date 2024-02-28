@@ -55,7 +55,7 @@ const Negativeledgers = ({ ledger }) => {
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {negativeLedgers?.value !== -1 &&
-                    negativeLedgers?.value !== 0 ? (
+                      negativeLedgers?.value !== 0 ? (
                       <span
                         onClick={handleCopyValue}
                         id={`amount-left-${ledger.txHash}`}
@@ -65,21 +65,20 @@ const Negativeledgers = ({ ledger }) => {
                       </span>
                     ) : (
                       <span
-                        onClick={() =>
-                          navigate(
-                            `/nfts/ethereum/${randomNumber}/?address=${address}`,
-                          )
-                        }
-                        className={`text-displayName 
-                             text-hover-underline text-hover-primary
-                          `}
+                        // onClick={() =>
+                        //   navigate(
+                        //     `/nfts/ethereum/${randomNumber}/?address=${address}`,
+                        //   )
+                        // }
+                        className={`text-displayName `}
+                      //  text-hover-underline text-hover-primary
                       >
                         {negativeLedgers?.displayName}
                       </span>
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                    negativeLedgers?.value !== 0 ? (
+                      negativeLedgers?.value !== 0 ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
