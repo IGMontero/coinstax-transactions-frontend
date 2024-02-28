@@ -74,7 +74,9 @@ const RenderTransactions = ({ date, transactions }) => {
           transaction.txSummary?.receivedAssetsCount > 1 ||
           transaction.txSummary?.sentAssetsCount > 1;
         return (
-          <div key={index} className="align-items-center">
+          <div
+            key={transaction.txHash}
+            className="align-items-center">
             <div
               className={` border-bottom bg-transparent px-0 ${openCollapse.has(collapseId)
                 ? 'border border-primary rounded mb-2'
