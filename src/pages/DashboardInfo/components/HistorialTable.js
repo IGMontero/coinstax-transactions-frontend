@@ -91,14 +91,12 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const fetchData = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
 
-    const isInitialFetch = currentPage === 0;
-    const dataLength = data?.length;
+    // const isInitialFetch = currentPage === 0;
+    // const dataLength = data?.length;
 
     try {
-      if (isInitialFetch && dataLength === 0) {
-        setIsInitialLoad(true);
-        setLoading(true);
-      }
+      setIsInitialLoad(true);
+      setLoading(true);
 
       const response = await dispatch(
         fetchHistory({

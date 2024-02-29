@@ -2,6 +2,7 @@ import React from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
+import { copyToClipboard } from '../../../../../utils/utils';
 
 const Negativeledgers = ({ ledger }) => {
   const navigate = useNavigate();
@@ -18,7 +19,8 @@ const Negativeledgers = ({ ledger }) => {
 
   const handleCopyValue = (e) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(negativeLedgers?.value);
+    // navigator?.clipboard?.writeText(negativeLedgers.value);
+    copyToClipboard(negativeLedgers.value);
     setIsCopied(true);
     setTimeout(() => {
       setIsCopied(false);
