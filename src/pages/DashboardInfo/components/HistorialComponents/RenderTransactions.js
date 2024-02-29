@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getActionMapping } from '../../../../utils/utils';
+import { copyToClipboard, getActionMapping } from '../../../../utils/utils';
 import { Col, Row, Collapse, CardBody, Badge } from 'reactstrap';
 
 import eth from '../../../../assets/images/svg/crypto-icons/eth.svg';
@@ -29,7 +29,7 @@ const RenderTransactions = ({ date, transactions }) => {
   const handleCopy = async (e, text, index) => {
     e.stopPropagation();
     try {
-      await navigator.clipboard.writeText(text);
+      copyToClipboard(text);
       setCopiedIndex(index);
       setTimeout(() => {
         setCopiedIndex(null);
@@ -74,7 +74,9 @@ const RenderTransactions = ({ date, transactions }) => {
           transaction.txSummary?.receivedAssetsCount > 1 ||
           transaction.txSummary?.sentAssetsCount > 1;
         return (
-          <div key={index} className="align-items-center">
+          <div
+            key={transaction.txHash}
+            className="align-items-center">
             <div
               className={` border-bottom bg-transparent px-0 ${openCollapse.has(collapseId)
                 ? 'border border-primary rounded mb-2'
