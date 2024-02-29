@@ -32,7 +32,7 @@ import { fetchAssets, fetchNFTS } from '../../slices/transactions/thunk';
 import DashboardHome from '../DashboardHome/DashboardHome';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { capitalizeFirstLetter, formatIdTransaction } from '../../utils/utils';
+import { capitalizeFirstLetter, copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import QrModal from './modals/QrModal';
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -128,7 +128,7 @@ const DashboardInfo = () => {
   const handleCopy = async (e, text) => {
     e.stopPropagation();
     try {
-      await navigator.clipboard.writeText(text);
+      copyToClipboard(text);
       setIsCopied(true);
       setTimeout(() => {
         setIsCopied(null);

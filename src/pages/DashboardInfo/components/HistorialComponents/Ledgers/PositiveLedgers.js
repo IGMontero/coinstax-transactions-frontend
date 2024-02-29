@@ -1,6 +1,7 @@
 import React from 'react';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
+import { copyToClipboard } from '../../../../../utils/utils';
 
 const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   const positiveLedgers = ledger.txSummary.received;
@@ -13,7 +14,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
 
   const handleCopyValue = (e) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(positiveLedgers?.value);
+    copyToClipboard(positiveLedgers.value);
     setIsCopied(true);
     setTimeout(() => {
       setIsCopied(false);
@@ -38,9 +39,8 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   <i className="ri-arrow-right-line text-dark text-end fs-4 me-2"></i>
                 )}
                 <div
-                  className={`image-container me-2 ${
-                    negativeLedgers ? '' : ''
-                  }`}
+                  className={`image-container me-2 ${negativeLedgers ? '' : ''
+                    }`}
                 >
                   <img
                     src={positiveLedgers?.logo || currency}
@@ -69,7 +69,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                       {positiveLedgers?.displayName}
                     </span>
                     {positiveLedgers?.value &&
-                    !positiveLedgers.marketplaceName ? (
+                      !positiveLedgers.marketplaceName ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
