@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Popover, PopoverBody } from 'reactstrap';
 import {
   blockchainActions,
+  copyToClipboard,
   formatIdTransaction,
 } from '../../../../utils/utils';
 import { Link } from 'react-router-dom';
@@ -21,7 +22,8 @@ const ThirdColumn = ({ transaction, index }) => {
     e.preventDefault();
     e.stopPropagation();
     try {
-      await navigator.clipboard.writeText(text);
+      copyToClipboard(text);
+
       setTargetId(targetId);
       setPopoverOpen(true);
       const newTimeoutId = setTimeout(() => {
