@@ -49,11 +49,12 @@ const ThirdColumn = ({ transaction, index }) => {
   return (
     <div
       className="d-flex flex-column w-100"
-    // style={{ overflow: 'hidden' }}
+      // style={{ overflow: 'hidden' }}
     >
       <p
         style={{ fontSize: '12px', marginBottom: '4px' }}
-        className="text-start  mb-1">
+        className="text-start  mb-1"
+      >
         {transaction.blockchainAction === blockchainActions.RECEIVE
           ? 'From'
           : transaction.blockchainAction === blockchainActions.SEND
@@ -88,7 +89,7 @@ const ThirdColumn = ({ transaction, index }) => {
               />
             )}
             <span className="text-hover-underline">
-              {transaction.txSummary.marketplaceName}
+              {formatIdTransaction(transaction.txSummary.marketplaceName, 4, 4)}
             </span>
           </>
         ) : transaction.blockchainAction === blockchainActions.RECEIVE ||

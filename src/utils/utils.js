@@ -36,9 +36,18 @@ export const blockchainActions = {
 
 export const FILTER_NAMES = ['TRADE', 'MINT', 'SEND', 'RECEIVE', 'OTHERS'];
 
-export const formatIdTransaction = (address, prefixLength, suffixLength) => {
-  if (!address || typeof address !== 'string') {
-    return null;
+export const formatIdTransaction = (
+  address,
+  prefixLength = 6,
+  suffixLength = 4,
+) => {
+  if (
+    !address ||
+    typeof address !== 'string' ||
+    !address.startsWith('0x') ||
+    address.length !== 42
+  ) {
+    return address;
   }
 
   const prefix = address.slice(0, prefixLength + 2);
@@ -84,19 +93,18 @@ export const getSelectedAssetFilters = (selectedAssets) => {
   }
 };
 
-
 export async function copyToClipboard(textToCopy) {
   // Navigator clipboard api needs a secure context (https)
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(textToCopy);
   } else {
     // Use the 'out of viewport hidden text area' trick
-    const textArea = document.createElement("textarea");
+    const textArea = document.createElement('textarea');
     textArea.value = textToCopy;
 
     // Move textarea out of the viewport so it's not visible
-    textArea.style.position = "absolute";
-    textArea.style.left = "-999999px";
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-999999px';
 
     document.body.prepend(textArea);
     textArea.select();

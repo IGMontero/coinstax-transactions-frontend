@@ -74,14 +74,13 @@ const RenderTransactions = ({ date, transactions }) => {
           transaction.txSummary?.receivedAssetsCount > 1 ||
           transaction.txSummary?.sentAssetsCount > 1;
         return (
-          <div
-            key={transaction.txHash}
-            className="align-items-center">
+          <div key={transaction.txHash} className="align-items-center">
             <div
-              className={` border-bottom bg-transparent px-0 ${openCollapse.has(collapseId)
-                ? 'border border-primary rounded mb-2'
-                : 'bg-light'
-                }`}
+              className={` border-bottom bg-transparent px-0 ${
+                openCollapse.has(collapseId)
+                  ? 'border border-primary rounded mb-2'
+                  : 'bg-light'
+              }`}
             >
               <Row
                 className={`align-items-center justify-content-between col-12`}
@@ -102,9 +101,11 @@ const RenderTransactions = ({ date, transactions }) => {
                 >
                   {transaction.blockchainAction && (
                     <span
-                      className={`rounded-circle position-relative align-items-center border me-3 d-flex justify-content-center border-${getActionMapping(transaction.blockchainAction).color
-                        } text-${getActionMapping(transaction.blockchainAction).color
-                        }`}
+                      className={`rounded-circle position-relative align-items-center border me-3 d-flex justify-content-center border-${
+                        getActionMapping(transaction.blockchainAction).color
+                      } text-${
+                        getActionMapping(transaction.blockchainAction).color
+                      }`}
                       style={{
                         width: '35px',
                         minWidth: '35px',
@@ -113,8 +114,9 @@ const RenderTransactions = ({ date, transactions }) => {
                       }}
                     >
                       <i
-                        className={`${getActionMapping(transaction.blockchainAction).icon
-                          } fs-2`}
+                        className={`${
+                          getActionMapping(transaction.blockchainAction).icon
+                        } fs-2`}
                       ></i>
                       <img
                         src={eth}
@@ -142,7 +144,7 @@ const RenderTransactions = ({ date, transactions }) => {
                   <div className="ms-3">
                     {' '}
                     {transaction.successful &&
-                      transaction.successful === true ? (
+                    transaction.successful === true ? (
                       ''
                     ) : (
                       <Badge color="soft-danger" className="rounded-pill">
@@ -160,10 +162,11 @@ const RenderTransactions = ({ date, transactions }) => {
                   md={transaction.txSummary.sent ? 4 : 0}
                   sm={6}
                   xs={6}
-                  className={`mb-lg-0 mb-3 ${transaction.txSummary.sent
-                    ? 'd-flex justify-content-start '
-                    : 'd-none'
-                    }`}
+                  className={`mb-lg-0 mb-3 ${
+                    transaction.txSummary.sent
+                      ? 'd-flex justify-content-start '
+                      : 'd-none'
+                  }`}
                 >
                   <Negativeledgers ledger={sentTxSummary} />
                 </Col>
@@ -193,8 +196,9 @@ const RenderTransactions = ({ date, transactions }) => {
               <Collapse isOpen={openCollapse.has(collapseId)}>
                 <CardBody
                   onClick={() => toggleCollapse(collapseId)}
-                  className={`cursor-pointer ${openCollapse === index ? 'border-info' : ''
-                    }`}
+                  className={`cursor-pointer ${
+                    openCollapse === index ? 'border-info' : ''
+                  }`}
                 >
                   {/* CODE FOR LIST */}
                   {hasList && <ListTransactions transactions={transaction} />}
