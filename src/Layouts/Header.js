@@ -27,6 +27,12 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { user } = useSelector((state) => state.Login);
+
+  const currentUser = localStorage.getItem('currentUser');
+
+  console.log(currentUser, 'currentUser');
+
   const { sidebarVisibilitytype } = useSelector((state) => ({
     sidebarVisibilitytype: state.Layout.sidebarVisibilitytype,
   }));
@@ -154,7 +160,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               </div> */}
 
               {/* ProfileDropdown */}
-              {/* <ProfileDropdown /> */}
+              {currentUser && <ProfileDropdown />}
             </div>
           </div>
         </div>
