@@ -12,6 +12,8 @@ const ThirdColumn = ({ transaction, index }) => {
   const [targetId, setTargetId] = useState('');
   const [timeoutId, setTimeoutId] = useState(null);
 
+  const currentUser = localStorage.getItem('currentUser');
+
   useEffect(() => {
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
@@ -47,10 +49,7 @@ const ThirdColumn = ({ transaction, index }) => {
   };
 
   return (
-    <div
-      className="d-flex flex-column w-100"
-      // style={{ overflow: 'hidden' }}
-    >
+    <div className="d-flex flex-column w-100">
       <p
         style={{ fontSize: '12px', marginBottom: '4px' }}
         className="text-start  mb-1"
@@ -61,67 +60,80 @@ const ThirdColumn = ({ transaction, index }) => {
             ? 'To'
             : 'Application'}
       </p>
-      <h6
-        id={`popoverMarketplace-${index}`}
-        className="fw-semibold my-0 text-start d-flex align-items-center"
-        style={{
-          cursor: 'pointer',
-          fontSize: '12px',
-          display: 'flex',
-          // justifyContent: 'center'
-        }}
-        onClick={(e) =>
-          handleClick(e, transaction, `popoverMarketplace-${index}`)
-        }
-      >
-        {transaction.txSummary && transaction.txSummary.marketplaceName ? (
-          <>
-            {transaction.txSummary.marketplaceLogo && (
-              <img
-                src={transaction.txSummary.marketplaceLogo}
-                alt={transaction.txSummary.marketplaceName}
-                style={{
-                  width: '20px',
-                  height: '20px',
-                  borderRadius: '6px',
-                  marginRight: '6px',
-                }}
-              />
-            )}
-            <span className="text-hover-underline">
-              {formatIdTransaction(transaction.txSummary.marketplaceName, 4, 4)}
-            </span>
-          </>
-        ) : transaction.blockchainAction === blockchainActions.RECEIVE ||
-          transaction.blockchainAction === blockchainActions.SEND ? (
-          <Link
-            target="_blank"
-            className="text-decoration-none"
-            to={`https://etherscan.io/address/${transaction.blockchainAction === blockchainActions.RECEIVE ? transaction.sender : transaction.recipient}`}
-          >
-            <span className="text-hover-underline">
-              {formatIdTransaction(
-                transaction.blockchainAction === blockchainActions.RECEIVE
-                  ? transaction.sender
-                  : transaction.recipient,
-                4,
-                4,
-              )}
-            </span>
-          </Link>
-        ) : (
-          <span className="text-hover-underline">
-            {formatIdTransaction(transaction.recipient, 4, 4)}
-          </span>
-        )}
-        <Popover
-          placement="right"
-          isOpen={popoverOpen && targetId === `popoverMarketplace-${index}`}
-          target={`popoverMarketplace-${index}`}
+      <div className="d-flex align-items-end">
+        <h6
+          id={`popoverMarketplace-${transaction.blockHash}`}
+          className="fw-semibold my-0 text-start d-flex align-items-center"
+          style={{
+            cursor: 'pointer',
+            fontSize: '12px',
+            display: 'flex',
+          }}
+          onClick={(e) =>
+            handleClick(
+              e,
+              transaction,
+              `popoverMarketplace-${transaction.blockHash}`,
+            )
+          }
         >
-          <PopoverBody className="p-1">Copied</PopoverBody>
-        </Popover>
-      </h6>
+          {transaction.txSummary && transaction.txSummary.marketplaceName ? (
+            <>
+              {transaction.txSummary.marketplaceLogo && (
+                <img
+                  src={transaction.txSummary.marketplaceLogo}
+                  alt={transaction.txSummary.marketplaceName}
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '6px',
+                    marginRight: '6px',
+                  }}
+                />
+              )}
+              <span className="text-hover-underline">
+                {formatIdTransaction(
+                  transaction.txSummary.marketplaceName,
+                  4,
+                  4,
+                )}
+              </span>
+            </>
+          ) : transaction.blockchainAction === blockchainActions.RECEIVE ||
+            transaction.blockchainAction === blockchainActions.SEND ? (
+            <Link
+              target="_blank"
+              className="text-decoration-none"
+              to={`https://etherscan.io/address/${transaction.blockchainAction === blockchainActions.RECEIVE ? transaction.sender : transaction.recipient}`}
+            >
+              <span className="text-hover-underline">
+                {formatIdTransaction(
+                  transaction.blockchainAction === blockchainActions.RECEIVE
+                    ? transaction.sender
+                    : transaction.recipient,
+                  4,
+                  4,
+                )}
+              </span>
+            </Link>
+          ) : (
+            <span className="text-hover-underline">
+              {formatIdTransaction(transaction.recipient, 4, 4)}
+            </span>
+          )}
+          <Popover
+            placement="right"
+            isOpen={
+              popoverOpen &&
+              targetId === `popoverMarketplace-${transaction.blockHash}`
+            }
+            target={`popoverMarketplace-${transaction.blockHash}`}
+          >
+            <PopoverBody className="p-1">Copied</PopoverBody>
+          </Popover>
+        </h6>
+        {currentUser && <i className="ri-pencil-line ms-2"></i>}
+      </div>
     </div>
   );
 };
