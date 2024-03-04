@@ -158,8 +158,8 @@ const RenderTransactions = ({ date, transactions }) => {
                 </Col>
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={transaction.txSummary.sent ? 4 : 0}
-                  md={transaction.txSummary.sent ? 4 : 0}
+                  lg={transaction.txSummary.sent ? 3 : 0}
+                  md={transaction.txSummary.sent ? 3 : 0}
                   sm={6}
                   xs={6}
                   className={`mb-lg-0 mb-3 ${
@@ -172,8 +172,8 @@ const RenderTransactions = ({ date, transactions }) => {
                 </Col>
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={transaction.txSummary.sent ? 4 : 8}
-                  md={transaction.txSummary.sent ? 4 : 8}
+                  lg={transaction.txSummary.sent ? 4 : 7}
+                  md={transaction.txSummary.sent ? 4 : 7}
                   sm={transaction.txSummary.sent ? 6 : 12}
                   xs={transaction.txSummary.sent ? 6 : 12}
                   className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3`}
@@ -184,7 +184,7 @@ const RenderTransactions = ({ date, transactions }) => {
                   />
                 </Col>
                 <Col
-                  lg={1}
+                  lg={2}
                   md={12}
                   sm={12}
                   xs={12}

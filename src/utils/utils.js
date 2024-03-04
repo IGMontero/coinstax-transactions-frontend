@@ -36,17 +36,8 @@ export const blockchainActions = {
 
 export const FILTER_NAMES = ['TRADE', 'MINT', 'SEND', 'RECEIVE', 'OTHERS'];
 
-export const formatIdTransaction = (
-  address,
-  prefixLength = 6,
-  suffixLength = 4,
-) => {
-  if (
-    !address ||
-    typeof address !== 'string' ||
-    !address.startsWith('0x') ||
-    address.length !== 42
-  ) {
+export const formatIdTransaction = (address, prefixLength, suffixLength) => {
+  if (!address || typeof address !== 'string' || !address.startsWith('0x')) {
     return address;
   }
 
