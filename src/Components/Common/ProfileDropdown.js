@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Dropdown,
   DropdownItem,
@@ -12,12 +12,15 @@ import avatar1 from '../../assets/images/users/avatar-1.jpg';
 import { logoutUser } from '../../slices/thunks';
 const ProfileDropdown = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user } = useSelector((state) => ({
     user: state.Profile.user,
   }));
 
   const handleLogout = () => {
     dispatch(logoutUser());
+    localStorage.removeItem('currentUser');
+    navigate({ pathname: '/dashboard', replace: true });
   };
 
   const [userName, setUserName] = useState(user?.email || 'Admin');
