@@ -18,6 +18,8 @@ export const getActionMapping = (action) => {
       return { color: 'dark', icon: 'ri-fire-line fs-3' };
     case 'MINT':
       return { color: 'dark', icon: 'ri-vip-diamond-line fs-3' };
+    case 'OTHER':
+      return { color: 'dark', icon: 'ri-question-mark fs-3' };
     default:
       return { color: 'dark', icon: 'ri-arrow-down-line fs-3' };
   }
