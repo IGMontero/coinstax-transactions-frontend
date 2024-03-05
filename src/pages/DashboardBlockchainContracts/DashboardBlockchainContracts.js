@@ -75,7 +75,7 @@ const DashboardBlockchainContracts = () => {
         <div className="mb-5 mt-2 d-flex justify-content-center align-items-center">
           <Input
             type="text"
-            placeholder="Search"
+            placeholder="Search By Address"
             className="form-control"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -127,8 +127,8 @@ const DashboardBlockchainContracts = () => {
                         e.target.style.display = 'none';
                         const container = e.target.parentNode;
                         const textNode = document.createElement('div');
-                        textNode.textContent = contract.Blockchain;
-                        textNode.className = 'currency-placeholder';
+                        // textNode.textContent = ;
+                        textNode.className = '';
                         container.appendChild(textNode);
                       }}
                     />
