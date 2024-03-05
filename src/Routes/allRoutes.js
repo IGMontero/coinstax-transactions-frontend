@@ -14,6 +14,7 @@ import Register from '../pages/Authentication/Register';
 import UserProfile from '../pages/Authentication/user-profile';
 import DashboardInfo from '../pages/DashboardInfo/DashboardInfo';
 import DashboardNFT from '../pages/DashboardNFT/DashboardNFT';
+import DashboardBlockchainContracts from '../pages/DashboardBlockchainContracts/DashboardBlockchainContracts';
 
 const authProtectedRoutes = [
   { path: '/dashboard', component: <DashboardInfo /> },
@@ -49,7 +50,7 @@ const allRoutes = [
   { path: '/dashboard', component: <DashboardInfo /> },
   { path: '/nfts/ethereum/:nftId', component: <DashboardNFT /> },
   { path: '/address/:address/:type', component: <DashboardInfo /> },
-  { path: '/index', component: <DashboardEcommerce /> },
+  { path: '/blockchain', component: <DashboardBlockchainContracts /> },
 
   //User Profile
   { path: '/profile', component: <UserProfile /> },

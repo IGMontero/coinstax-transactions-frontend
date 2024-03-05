@@ -53,6 +53,16 @@ const Navdata = () => {
     //   },
     // },
     {
+      id: 'home',
+      label: 'Home',
+      icon: 'bx bx-home',
+      link: '/dashboard',
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('Home');
+      },
+    },
+    {
       id: 'blockchain',
       label: 'Blockchain Contracts',
       icon: ' bx bx-link fs-3',
