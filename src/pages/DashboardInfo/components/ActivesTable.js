@@ -82,15 +82,17 @@ const AcitvesTable = ({ data }) => {
           <div className="d-flex justify-content-between align-items-center ">
             <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
             <Button
-              className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
-                }`}
+              className={`btn btn-sm btn-soft-primary rounded ${
+                viewMode === 'byPlatform' ? 'active' : ''
+              }`}
               onClick={() => handleViewModeChange('byPlatform')}
             >
               By Platform
             </Button>
             <Button
-              className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
-                }`}
+              className={`mx-2 btn btn-sm btn-soft-primary rounded ${
+                viewMode === 'perPosition' ? 'active' : ''
+              }`}
               onClick={() => handleViewModeChange('perPosition')}
             >
               Per Position
@@ -114,6 +116,7 @@ const AcitvesTable = ({ data }) => {
               <DropdownMenu className="dropdown-menu-start mt-2">
                 <DropdownItem
                   toggle={false}
+                  onClick={handleHideSmallBalancesChange}
                   className="d-flex justify-content-start align-items-center"
                 >
                   <input
@@ -121,7 +124,6 @@ const AcitvesTable = ({ data }) => {
                     type="checkbox"
                     id="hideBalances"
                     checked={hideSmallBalances}
-                    onChange={handleHideSmallBalancesChange}
                   />
                   <label
                     className="form-check-label"
@@ -133,6 +135,7 @@ const AcitvesTable = ({ data }) => {
                 </DropdownItem>
                 <DropdownItem
                   toggle={false}
+                  onClick={handleHideZeroBalancesChange}
                   className="d-flex justify-content-start align-items-center"
                 >
                   <input
@@ -140,7 +143,6 @@ const AcitvesTable = ({ data }) => {
                     type="checkbox"
                     id="hideZeroBalances"
                     checked={hideZeroBalances}
-                    onChange={handleHideZeroBalancesChange}
                   />
                   <label
                     className="form-check-label"
@@ -212,10 +214,45 @@ const AcitvesTable = ({ data }) => {
                             <td>
                               <div className="d-flex align-items-center fw-high">
                                 <img
-                                  src={asset.logo}
-                                  alt=""
+                                  src={asset.logo || asset.name}
+                                  alt={asset.logo}
                                   className="avatar-xs me-2"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.style.display = 'none';
+
+                                    const siblingDiv =
+                                      e.target.nextElementSibling;
+                                    if (
+                                      siblingDiv &&
+                                      siblingDiv.classList.contains(
+                                        'img-assets-placeholder',
+                                      )
+                                    ) {
+                                      siblingDiv.style.display = 'block';
+                                    }
+                                  }}
                                 />
+                                <div
+                                  className=""
+                                  style={{
+                                    display: 'none',
+                                    width: '35px',
+                                    height: '35px',
+                                    overflow: 'hidden',
+                                    backgroundColor: '#333',
+                                    borderRadius: '10%',
+                                    whiteSpace: 'nowrap',
+                                    textAlign: 'center',
+                                    marginRight: '10px',
+                                    fontSize: '10px',
+                                    paddingLeft: '5px',
+                                    textOverflow: 'ellipsis',
+                                    lineHeight: '35px',
+                                  }}
+                                >
+                                  {asset.name}
+                                </div>
                                 <div className="d-flex flex-column">
                                   <div className="d-flex flex-row align-items-center">
                                     {asset.name}{' '}
@@ -269,18 +306,19 @@ const AcitvesTable = ({ data }) => {
                                   {asset.value ? asset.prettyValue : '$0.00'}
                                 </span>
                                 <small
-                                  className={`${asset.prettyDeltaValuePercent === '0.00%'
+                                  className={`${
+                                    asset.prettyDeltaValuePercent === '0.00%'
                                       ? 'text-primary'
                                       : asset.prettyDeltaValuePercent[0] === '-'
                                         ? 'text-danger'
                                         : 'text-success'
-                                    }`}
+                                  }`}
                                 >
                                   {asset.prettyDeltaValuePercent === '0.00%'
                                     ? asset.prettyDeltaValuePercent
                                     : (asset.prettyDeltaValuePercent[0] === '-'
-                                      ? ''
-                                      : '+') + asset.prettyDeltaValuePercent}
+                                        ? ''
+                                        : '+') + asset.prettyDeltaValuePercent}
                                   {' (' +
                                     '$' +
                                     asset.deltaValue.toFixed(2) +
