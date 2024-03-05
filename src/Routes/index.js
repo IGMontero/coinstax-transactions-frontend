@@ -14,11 +14,7 @@ import Footer from '../Layouts/Footer';
 import Sidebar from '../Layouts/Sidebar';
 
 const Index = () => {
-  const { userProfile } = useProfile();
-
   const currentUser = localStorage.getItem('currentUser');
-
-  const isAuth = userProfile ? true : false;
 
   return (
     <React.Fragment>
