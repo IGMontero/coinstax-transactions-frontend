@@ -3,27 +3,37 @@ import { Button, Input, Spinner, Table } from 'reactstrap';
 import { fetchBlockchainContracts } from '../../slices/blockchainContracts/thunk';
 import { useDispatch } from 'react-redux';
 import { formatIdTransaction } from '../../utils/utils';
+import TablePagination from '../../Components/Pagination/TablePagination';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
   const [contracts, setContracts] = useState([]);
+  const [hasMore, setHasMore] = useState(false);
+  const [pageSize, setPageSize] = useState();
+  const [total, setTotal] = useState();
   const [currentPage, setCurrentPage] = useState(0);
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
 
   const [search, setSearch] = useState('');
 
   const [debouncedSearch, setDebouncedSearch] = useState('');
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      setDebouncedSearch(search);
+      if (search !== debouncedSearch) {
+        setDebouncedSearch(search);
+        setCurrentPage(0);
+      }
     }, 500);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [search]);
+  }, [search, debouncedSearch]);
 
   const getBlockchainContracts = async () => {
     try {
@@ -35,12 +45,23 @@ const DashboardBlockchainContracts = () => {
           address: debouncedSearch,
         }),
       );
-      console.log(response);
-      setContracts(response.payload);
+
+      const responseData = response.payload.data || response.payload;
+
+      if (responseData && Array.isArray(responseData)) {
+        setContracts(responseData);
+        setHasMore(response.payload.hasMore || false);
+        setTotal(response.payload.total || responseData.length);
+        setPageSize(response.payload.pageSize);
+      } else {
+        setContracts([]);
+      }
+
       setLoading(false);
     } catch (error) {
       console.error('Error fetching blockchain contracts', error);
       setLoading(false);
+      setContracts([]);
     }
   };
 
@@ -50,7 +71,7 @@ const DashboardBlockchainContracts = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div className="page-content" style={{ minHeight: '100vh' }}>
         <div className="mb-5 mt-2 d-flex justify-content-center align-items-center">
           <Input
             type="text"
@@ -61,7 +82,7 @@ const DashboardBlockchainContracts = () => {
           />
         </div>
 
-        <Table hover shadow responsive>
+        <Table shadow responsive>
           <thead>
             <tr>
               <th>ID</th>
@@ -77,12 +98,12 @@ const DashboardBlockchainContracts = () => {
           </thead>
           <tbody>
             {loading ? (
-              <tr style={{ height: '100vh' }}>
+              <tr style={{ height: '50vh' }}>
                 <td colSpan="9" className="text-center">
                   <Spinner style={{ width: '3rem', height: '3rem' }} />
                 </td>
               </tr>
-            ) : contracts !== null ? (
+            ) : contracts.length > 0 ? (
               contracts.map((contract) => (
                 <tr key={contract.Id}>
                   <td className="align-middle">{contract.Id}</td>
@@ -128,6 +149,13 @@ const DashboardBlockchainContracts = () => {
               </tr>
             )}
           </tbody>
+          {contracts.length > 0 && (
+            <TablePagination
+              onChangePage={handleChangePage}
+              currentPage={currentPage}
+              totalPages={total}
+            />
+          )}
         </Table>
       </div>
     </React.Fragment>
