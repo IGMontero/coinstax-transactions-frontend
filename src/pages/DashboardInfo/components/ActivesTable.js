@@ -233,24 +233,7 @@ const AcitvesTable = ({ data }) => {
                                     }
                                   }}
                                 />
-                                <div
-                                  className=""
-                                  style={{
-                                    display: 'none',
-                                    width: '35px',
-                                    height: '35px',
-                                    overflow: 'hidden',
-                                    backgroundColor: '#333',
-                                    borderRadius: '10%',
-                                    whiteSpace: 'nowrap',
-                                    textAlign: 'center',
-                                    marginRight: '10px',
-                                    fontSize: '10px',
-                                    paddingLeft: '5px',
-                                    textOverflow: 'ellipsis',
-                                    lineHeight: '35px',
-                                  }}
-                                >
+                                <div className="label-assets-placeholder">
                                   {asset.name}
                                 </div>
                                 <div className="d-flex flex-column">
