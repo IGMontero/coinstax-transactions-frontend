@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Spinner, Table } from 'reactstrap';
+import { Button, Input, Spinner, Table } from 'reactstrap';
 import { fetchBlockchainContracts } from '../../slices/blockchainContracts/thunk';
 import { useDispatch } from 'react-redux';
 import { formatIdTransaction } from '../../utils/utils';
@@ -11,17 +11,34 @@ const DashboardBlockchainContracts = () => {
   const [contracts, setContracts] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
 
+  const [search, setSearch] = useState('');
+
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [search]);
+
   const getBlockchainContracts = async () => {
     try {
       setLoading(true);
       const response = await dispatch(
-        fetchBlockchainContracts({ blockchain: 'ethereum', page: currentPage }),
+        fetchBlockchainContracts({
+          blockchain: 'ethereum',
+          page: currentPage,
+          address: debouncedSearch,
+        }),
       );
       console.log(response);
       setContracts(response.payload);
       setLoading(false);
     } catch (error) {
-      setLoading(true);
       console.error('Error fetching blockchain contracts', error);
       setLoading(false);
     }
@@ -29,22 +46,21 @@ const DashboardBlockchainContracts = () => {
 
   useEffect(() => {
     getBlockchainContracts();
-  }, []);
-
-  if (loading || !contracts) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: '100vh' }}
-      >
-        <Spinner style={{ width: '4rem', height: '4rem' }} />
-      </div>
-    );
-  }
+  }, [currentPage, debouncedSearch]);
 
   return (
     <React.Fragment>
       <div className="page-content">
+        <div className="mb-5 mt-2 d-flex justify-content-center align-items-center">
+          <Input
+            type="text"
+            placeholder="Search"
+            className="form-control"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+
         <Table hover shadow responsive>
           <thead>
             <tr>
@@ -60,7 +76,13 @@ const DashboardBlockchainContracts = () => {
             </tr>
           </thead>
           <tbody>
-            {contracts &&
+            {loading ? (
+              <tr style={{ height: '100vh' }}>
+                <td colSpan="9" className="text-center">
+                  <Spinner style={{ width: '3rem', height: '3rem' }} />
+                </td>
+              </tr>
+            ) : contracts !== null ? (
               contracts.map((contract) => (
                 <tr key={contract.Id}>
                   <td className="align-middle">{contract.Id}</td>
@@ -97,7 +119,14 @@ const DashboardBlockchainContracts = () => {
                     <i className="ri-delete-bin-line text-danger cursor-pointer border rounded border-light p-2 ms-2"></i>
                   </td>
                 </tr>
-              ))}
+              ))
+            ) : (
+              <tr>
+                <td colSpan="9" className="text-center">
+                  <h4>No contracts found</h4>
+                </td>
+              </tr>
+            )}
           </tbody>
         </Table>
       </div>
