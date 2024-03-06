@@ -66,10 +66,17 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
   const handleEditBlockChainContract = async (data) => {
     try {
       setLoadingUpdate(true);
+      const address = transactionToEdit.txSummary.mainContractAddress;
+      if (!address) {
+        Swal.fire('Error', 'No Address found ', 'error');
+        setLoadingUpdate(false);
+        return;
+      }
+
       await dispatch(
         editBlockChainContract({
           blockchain: 'ethereum',
-          address: transactionToEdit.txSummary.mainContractAddress,
+          address: address,
           data,
         }),
       );
