@@ -7,10 +7,14 @@ import {
 } from '../../../../utils/utils';
 import { Link } from 'react-router-dom';
 import EditBlockChainContract from './modals/EditBlockChainContract';
+import Swal from 'sweetalert2';
+import { editBlockChainContract } from '../../../../slices/blockchainContracts/thunk';
 
 const ThirdColumn = ({ transaction, index }) => {
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
+
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
 
   const handleOpenModalEdit = (contract) => {
     setOpenModalEdit(!openModalEdit);
@@ -57,11 +61,34 @@ const ThirdColumn = ({ transaction, index }) => {
     handleCopyToClipboard(e, transaction.recipient, targetId);
   };
 
+  const handleEditBlockChainContract = async (data) => {
+    try {
+      setLoadingUpdate(true);
+      await dispatch(
+        editBlockChainContract({
+          blockchain: 'ethereum',
+          address: transactionToEdit.id, // Check this
+          data,
+        }),
+      );
+      Swal.fire('Success', 'Contract updated successfully', 'success');
+      setLoadingUpdate(false);
+      setOpenModalEdit(false);
+    } catch (error) {
+      setLoadingUpdate(true);
+      console.error('Error editing blockchain contract', error);
+      Swal.fire('Error', 'Error editing blockchain contract', 'error');
+      setLoadingUpdate(false);
+    }
+  };
+
   return (
     <>
       <EditBlockChainContract
         transactionToEdit={transactionToEdit}
         open={openModalEdit}
+        loading={loadingUpdate}
+        onEdit={handleEditBlockChainContract}
         setOpen={setOpenModalEdit}
       />
       <div className="d-flex flex-column w-100">
@@ -150,7 +177,7 @@ const ThirdColumn = ({ transaction, index }) => {
           {currentUser && (
             <i
               onClick={(e) =>
-                handleOpenModalEdit(transaction.txSummary, e.stopPropagation())
+                handleOpenModalEdit(transaction, e.stopPropagation())
               }
               className="ri-pencil-line ms-2"
             ></i>
