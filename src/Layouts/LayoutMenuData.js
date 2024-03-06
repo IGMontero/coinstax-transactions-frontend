@@ -66,7 +66,7 @@ const Navdata = () => {
       id: 'blockchain',
       label: 'Blockchain Contracts',
       icon: ' bx bx-link fs-3',
-      link: '/blockchain',
+      link: '/blockchain-contracts',
       click: function (e) {
         e.preventDefault();
         setIscurrentState('Investment');
