@@ -13,22 +13,33 @@ import {
 import {
   fetchBlockchainContracts,
   setAllAsDirty,
+  editBlockChainContract,
 } from '../../slices/blockchainContracts/thunk';
 import { useDispatch } from 'react-redux';
 import { formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import EditBlockChainContract from '../DashboardInfo/components/HistorialComponents/modals/EditBlockChainContract';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
 
   const [loading, setLoading] = useState(false);
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
   const [contracts, setContracts] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const [pageSize, setPageSize] = useState();
   const [total, setTotal] = useState();
   const [currentPage, setCurrentPage] = useState(0);
+
+  const [modalEdit, setModalEdit] = useState(false);
+  const [selectedContract, setSelectedContract] = useState(null);
+
+  const handleOpenModalEdit = (contract) => {
+    setModalEdit(!modalEdit);
+    setSelectedContract(contract);
+  };
 
   const handleChangePage = (page) => {
     setCurrentPage(page);
@@ -109,6 +120,28 @@ const DashboardBlockchainContracts = () => {
     }
   };
 
+  const handleEditBlockChainContract = async (data) => {
+    try {
+      setLoadingUpdate(true);
+      await dispatch(
+        editBlockChainContract({
+          blockchain: 'ethereum',
+          address: selectedContract.Address,
+          data,
+        }),
+      );
+      Swal.fire('Success', 'Contract updated successfully', 'success');
+      setLoadingUpdate(false);
+      setModalEdit(false);
+      await getBlockchainContracts();
+    } catch (error) {
+      setLoadingUpdate(true);
+      console.error('Error editing blockchain contract', error);
+      Swal.fire('Error', 'Error editing blockchain contract', 'error');
+      setLoadingUpdate(false);
+    }
+  };
+
   const renderDropdown = (contract) => {
     return (
       <UncontrolledDropdown>
@@ -116,8 +149,10 @@ const DashboardBlockchainContracts = () => {
           <i className="ri-more-2-fill"></i>
         </DropdownToggle>
         <DropdownMenu>
-          <DropdownItem>Edit</DropdownItem>
-          <DropdownItem>Update Trusted</DropdownItem>
+          <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
+            Edit
+          </DropdownItem>
+          <DropdownItem>Update Trusted State</DropdownItem>
           <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
             Set All Tx as Dirty
           </DropdownItem>
@@ -128,6 +163,13 @@ const DashboardBlockchainContracts = () => {
 
   return (
     <React.Fragment>
+      <EditBlockChainContract
+        open={modalEdit}
+        loading={loadingUpdate}
+        onEdit={handleEditBlockChainContract}
+        setOpen={handleOpenModalEdit}
+        transactionToEdit={selectedContract}
+      />
       <div className="page-content" style={{ minHeight: '100vh' }}>
         <div className="mb-5 mt-2 d-flex justify-content-center align-items-center">
           <Input

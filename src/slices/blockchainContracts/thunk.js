@@ -23,6 +23,29 @@ export const fetchBlockchainContracts = createAsyncThunk(
   },
 );
 
+export const editBlockChainContract = createAsyncThunk(
+  'blockchainContracts/editBlockChainContract',
+  async ({ blockchain, address, data }, { rejectWithValue }) => {
+    try {
+      let url = `${API_BASE}/admin/contracts/${blockchain}/${address}`;
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const responseData = await response.json();
+      return responseData;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const setAllAsDirty = createAsyncThunk(
   'blockchainContracts/setAllAsDirty',
   async ({ blockchain, address }, { rejectWithValue }) => {
