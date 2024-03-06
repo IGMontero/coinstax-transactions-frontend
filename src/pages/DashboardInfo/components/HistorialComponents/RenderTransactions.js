@@ -9,7 +9,7 @@ import PositiveLedgers from './Ledgers/PositiveLedgers';
 import InformationLedger from './Ledgers/InformationLedger';
 import Thirdcolumn from './Thirdcolumn';
 
-const RenderTransactions = ({ date, transactions }) => {
+const RenderTransactions = ({ date, transactions, onRefresh }) => {
   const [openCollapse, setopenCollapse] = useState(new Set());
 
   const [copiedIndex, setCopiedIndex] = useState(null);
@@ -190,7 +190,11 @@ const RenderTransactions = ({ date, transactions }) => {
                   xs={12}
                   className="d-flex justify-content-end  align-items-center  mt-lg-0 mt-3"
                 >
-                  <Thirdcolumn transaction={transaction} index={index} />
+                  <Thirdcolumn
+                    transaction={transaction}
+                    index={index}
+                    onRefresh={onRefresh}
+                  />
                 </Col>
               </Row>
               <Collapse isOpen={openCollapse.has(collapseId)}>

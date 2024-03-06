@@ -49,10 +49,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
 
-
   const [debouncedDisableGetMore, setDebouncedDisableGetMore] = useState(false);
 
-  // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show 
+  // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
   useEffect(() => {
     if (!isProcessing) {
@@ -67,11 +66,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
     return () => {
       clearTimeout(timeout);
-    }
+    };
   }, [isProcessing]);
-
-
-
 
   // useEffect(() => {
   //   const timeout = setTimeout(() => {
@@ -194,8 +190,6 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     }, {});
   };
 
-
-
   const groupedTransactions = data ? groupTxsByDate(data) : {};
 
   const getMoreTransactions = async () => {
@@ -233,8 +227,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
       const trasactions = parsed || [];
 
-      if (trasactions.length === 0 && !isProcessing
-      ) {
+      if (trasactions.length === 0 && !isProcessing) {
         setHasMoreData(false);
       } else {
         // setData((prevData) => [...prevData, ...response]);
@@ -349,8 +342,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${showTransactionFilterMenu ? 'active' : ''
-                }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${
+                showTransactionFilterMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">Transactions</span>
@@ -370,7 +364,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -386,8 +380,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${showAssetsMenu ? 'active' : ''
-                }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -419,11 +414,11 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   };
 
   const renderGetMoreButton = () => {
-
-
     return (
       <div className="d-flex justify-content-center mt-4">
-        {unsupportedAddress ? <h6 className="text-danger">Unsupported Address</h6> : (
+        {unsupportedAddress ? (
+          <h6 className="text-danger">Unsupported Address</h6>
+        ) : (
           <Button
             disabled={loading || debouncedDisableGetMore || unsupportedAddress}
             onClick={getMoreTransactions}
@@ -433,25 +428,26 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
             {loading ? (
               <Spinner size="sm" />
             ) : (
-
               <h6 className="text-dark fw-semibold my-2">
-                {(isProcessing) ?
+                {isProcessing ? (
                   <>
-                    <span className="me-2">Downloading more transactions...</span>
+                    <span className="me-2">
+                      Downloading more transactions...
+                    </span>
                     <Spinner size="sm" />
                   </>
-                  :
-                  unsupportedAddress ? 'Unsupported Address' :
-                    'More Transactions'}
+                ) : unsupportedAddress ? (
+                  'Unsupported Address'
+                ) : (
+                  'More Transactions'
+                )}
               </h6>
             )}
           </Button>
         )}
-
-
       </div>
     );
-  }
+  };
 
   return (
     <React.Fragment>
@@ -482,9 +478,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
             Include Spam Transactions
           </label>
         </Col>
-        <Col
-          className="d-flex  py-3 justify-content-end"
-        >
+        <Col className="d-flex  py-3 justify-content-end">
           <Button className="btn btn-sm" color="primary" size="sm">
             Download CSV
           </Button>
@@ -557,11 +551,10 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
                 key={index}
                 date={date}
                 transactions={groupedTransactions[date]}
+                onRefresh={fetchData}
               />
             ))}
-            {!isInitialLoad && hasMoreData && (
-              renderGetMoreButton()
-            )}
+            {!isInitialLoad && hasMoreData && renderGetMoreButton()}
           </div>
         </Col>
       ) : (

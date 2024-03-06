@@ -30,12 +30,12 @@ const EditBlockChainContract = ({
     if (transactionToEdit) {
       setBlockchainLogo(
         isHistoryPage
-          ? transactionToEdit?.txSummary.marketplaceLogo
+          ? transactionToEdit?.txSummary.mainContractAddressInfo.logo
           : transactionToEdit?.Logo || '',
       );
       setBlockchainName(
         isHistoryPage
-          ? transactionToEdit?.txSummary.marketplaceName
+          ? transactionToEdit?.txSummary.mainContractAddressInfo.name
           : transactionToEdit?.Name || '',
       );
     }
@@ -55,8 +55,8 @@ const EditBlockChainContract = ({
       };
     } else {
       data = {
-        marketplaceLogo: blockchainLogo,
-        marketplaceName: blockchainName,
+        Logo: blockchainLogo,
+        Name: blockchainName,
       };
     }
     onEdit(data);
@@ -76,7 +76,7 @@ const EditBlockChainContract = ({
           />
         </div>
         <div className="form-group mt-3">
-          <label htmlFor="Logo">Logo URL</label>
+          <label htmlFor="Logo">Logo</label>
           <Input
             type="text"
             id="Logo"
