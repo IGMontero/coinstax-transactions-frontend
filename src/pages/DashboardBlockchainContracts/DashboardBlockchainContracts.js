@@ -84,8 +84,7 @@ const DashboardBlockchainContracts = () => {
     getBlockchainContracts();
   }, [currentPage, debouncedSearch]);
 
-  const handleSetAllAsDirty = async () => {
-    // first show a modal to confirmation and then call the action
+  const handleSetAllAsDirty = async (address) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: 'You are about to set all transactions as dirty',
@@ -100,7 +99,7 @@ const DashboardBlockchainContracts = () => {
         await dispatch(
           setAllAsDirty({
             blockchain: 'ethereum',
-            address: debouncedSearch,
+            address: address,
           }),
         );
         await getBlockchainContracts();
@@ -120,7 +119,6 @@ const DashboardBlockchainContracts = () => {
           <DropdownItem>Edit</DropdownItem>
           <DropdownItem>Update Trusted</DropdownItem>
           <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
-            {' '}
             Set All Tx as Dirty
           </DropdownItem>
         </DropdownMenu>
