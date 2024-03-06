@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Input, Spinner, Table } from 'reactstrap';
+import {
+  Button,
+  ButtonGroup,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Input,
+  Spinner,
+  Table,
+  UncontrolledDropdown,
+} from 'reactstrap';
 import { fetchBlockchainContracts } from '../../slices/blockchainContracts/thunk';
 import { useDispatch } from 'react-redux';
 import { formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
+import { Link } from 'react-router-dom';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
@@ -68,6 +79,21 @@ const DashboardBlockchainContracts = () => {
   useEffect(() => {
     getBlockchainContracts();
   }, [currentPage, debouncedSearch]);
+
+  const renderDropdown = (contract) => {
+    return (
+      <UncontrolledDropdown>
+        <DropdownToggle tag="a" className="nav-link">
+          <i className="ri-more-2-fill"></i>
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem>Edit</DropdownItem>
+          <DropdownItem>Update Trusted</DropdownItem>
+          <DropdownItem>Set All Tx as Dirty</DropdownItem>
+        </DropdownMenu>
+      </UncontrolledDropdown>
+    );
+  };
 
   return (
     <React.Fragment>
@@ -135,9 +161,10 @@ const DashboardBlockchainContracts = () => {
                   </td>
                   <td className="align-middle">{contract.Symbol}</td>
                   <td className="align-middle">{contract.TrustedState}</td>
-                  <td className="align-middle">
-                    <i className="ri-pencil-line text-primary cursor-pointer border rounded border-light p-2"></i>
-                    <i className="ri-delete-bin-line text-danger cursor-pointer border rounded border-light p-2 ms-2"></i>
+                  <td className="align-middle text-center">
+                    <span className="cursor-pointer">
+                      {renderDropdown(contract)}{' '}
+                    </span>
                   </td>
                 </tr>
               ))
