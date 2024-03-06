@@ -99,3 +99,44 @@ export const fetchHistory = createAsyncThunk(
     }
   },
 );
+
+export const downloadTransactions = createAsyncThunk(
+  'transactions/downloadTransactions',
+  async (
+    { blockchain, address, query = '', filters = {}, assetsFilters },
+    { rejectWithValue },
+  ) => {
+    try {
+      let queryString = '';
+      if (query) {
+        queryString += `query=${encodeURIComponent(query)}`;
+      }
+
+      if (assetsFilters) {
+        queryString += `&${assetsFilters}`;
+      }
+
+      for (const [key, value] of Object.entries(filters)) {
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
+          });
+        } else if (value) {
+          queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        }
+      }
+
+      let url = `${API_BASE}/transactions/${blockchain}/${address}/export-csv?${queryString}`;
+      const response = await fetch(url, {
+        method: 'GET',
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.blob();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
