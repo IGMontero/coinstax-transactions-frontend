@@ -6,6 +6,8 @@ const TablePagination = ({ onChangePage, currentPage, totalPages }) => {
     onChangePage(page);
   };
 
+  console.log(totalPages);
+
   return (
     <tr>
       <td colSpan="12">
@@ -26,18 +28,19 @@ const TablePagination = ({ onChangePage, currentPage, totalPages }) => {
               </Button>
             )}
             <span className="mx-2">
-              Page {currentPage + 1} of {totalPages}
+              Page {currentPage + 1} of {isNaN(totalPages) ? 1 : totalPages}
             </span>
-            {currentPage !== totalPages - 1 && (
-              <Button
-                disabled={currentPage === totalPages - 1}
-                onClick={() => handleChangePage(currentPage + 1)}
-                color="soft-primary"
-                className="btn btn-sm btn-pills me-1"
-              >
-                <i className="ri-arrow-right-line"></i>
-              </Button>
-            )}
+            {currentPage !== totalPages - 1 ||
+              (isNaN(totalPages) && (
+                <Button
+                  disabled={currentPage === totalPages - 1}
+                  onClick={() => handleChangePage(currentPage + 1)}
+                  color="soft-primary"
+                  className="btn btn-sm btn-pills me-1"
+                >
+                  <i className="ri-arrow-right-line"></i>
+                </Button>
+              ))}
 
             {/* <Button
               disabled={currentPage === totalPages - 1}
