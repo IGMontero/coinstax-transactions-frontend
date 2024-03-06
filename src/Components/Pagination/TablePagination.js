@@ -6,8 +6,6 @@ const TablePagination = ({ onChangePage, currentPage, totalPages }) => {
     onChangePage(page);
   };
 
-  console.log(totalPages);
-
   return (
     <tr>
       <td colSpan="12">
