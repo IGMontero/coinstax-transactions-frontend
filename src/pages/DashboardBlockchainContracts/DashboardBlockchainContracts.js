@@ -10,11 +10,15 @@ import {
   Table,
   UncontrolledDropdown,
 } from 'reactstrap';
-import { fetchBlockchainContracts } from '../../slices/blockchainContracts/thunk';
+import {
+  fetchBlockchainContracts,
+  setAllAsDirty,
+} from '../../slices/blockchainContracts/thunk';
 import { useDispatch } from 'react-redux';
 import { formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import { Link } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
@@ -80,6 +84,32 @@ const DashboardBlockchainContracts = () => {
     getBlockchainContracts();
   }, [currentPage, debouncedSearch]);
 
+  const handleSetAllAsDirty = async () => {
+    // first show a modal to confirmation and then call the action
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: 'You are about to set all transactions as dirty',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, set all as dirty!',
+      cancelButtonText: 'No, cancel!',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await dispatch(
+          setAllAsDirty({
+            blockchain: 'ethereum',
+            address: debouncedSearch,
+          }),
+        );
+        await getBlockchainContracts();
+      } catch (error) {
+        console.error('Error setting all as dirty', error);
+      }
+    }
+  };
+
   const renderDropdown = (contract) => {
     return (
       <UncontrolledDropdown>
@@ -89,7 +119,10 @@ const DashboardBlockchainContracts = () => {
         <DropdownMenu>
           <DropdownItem>Edit</DropdownItem>
           <DropdownItem>Update Trusted</DropdownItem>
-          <DropdownItem>Set All Tx as Dirty</DropdownItem>
+          <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
+            {' '}
+            Set All Tx as Dirty
+          </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
     );
