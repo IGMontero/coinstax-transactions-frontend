@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import {
   Button,
   Input,
@@ -16,16 +17,26 @@ const EditBlockChainContract = ({
   onEdit,
   loading,
 }) => {
+  const location = useLocation();
+
+  console.log(transactionToEdit);
+
+  const isHistoryPage = location.pathname.includes('history');
+
   const [blockchainLogo, setBlockchainLogo] = useState('');
   const [blockchainName, setBlockchainName] = useState('');
 
   useEffect(() => {
     if (transactionToEdit) {
       setBlockchainLogo(
-        transactionToEdit.blockchainLogo || transactionToEdit.Logo || '',
+        isHistoryPage
+          ? transactionToEdit?.txSummary.marketplaceLogo
+          : transactionToEdit?.Logo || '',
       );
       setBlockchainName(
-        transactionToEdit.blockchainName || transactionToEdit.Name || '',
+        isHistoryPage
+          ? transactionToEdit?.txSummary.marketplaceName
+          : transactionToEdit?.Name || '',
       );
     }
   }, [transactionToEdit]);
@@ -35,10 +46,19 @@ const EditBlockChainContract = ({
   };
 
   const handleEditBlockChainContract = () => {
-    const data = {
-      Logo: blockchainLogo,
-      Name: blockchainName,
-    };
+    let data = {};
+
+    if (!isHistoryPage) {
+      data = {
+        Logo: blockchainLogo,
+        Name: blockchainName,
+      };
+    } else {
+      data = {
+        marketplaceLogo: blockchainLogo,
+        marketplaceName: blockchainName,
+      };
+    }
     onEdit(data);
   };
 
