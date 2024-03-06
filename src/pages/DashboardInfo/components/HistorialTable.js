@@ -16,9 +16,13 @@ import {
 } from 'reactstrap';
 import { getSelectedAssetFilters } from '../../../utils/utils';
 import { useDispatch } from 'react-redux';
-import { fetchHistory } from '../../../slices/transactions/thunk';
+import {
+  fetchHistory,
+  downloadTransactions,
+} from '../../../slices/transactions/thunk';
 import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
+import Swal from 'sweetalert2';
 
 const HistorialTable = ({ address, activeTab, data, setData }) => {
   const inputRef = useRef(null);
@@ -50,6 +54,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
 
   const [debouncedDisableGetMore, setDebouncedDisableGetMore] = useState(false);
+
+  const [loadingDownload, setLoadingDownload] = useState(false);
 
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
@@ -449,6 +455,80 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     );
   };
 
+  const handleDownloadTransactions = async () => {
+    try {
+      setLoadingDownload(true);
+
+      const selectAsset = getSelectedAssetFilters(selectedAssets);
+      Swal.fire({
+        title: 'Downloading',
+        html: 'Your file is being prepared for download.',
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      const response = await dispatch(
+        downloadTransactions({
+          blockchain: 'eth-mainnet',
+          address: address,
+          query: debouncedSearchTerm,
+          filters: {
+            blockchainAction: selectedFilters,
+            includeSpam: includeSpam,
+          },
+          assetsFilters: selectAsset,
+        }),
+      ).unwrap();
+
+      console.log(response);
+
+      if (response.isProcessing) {
+        Swal.fire({
+          title: 'Processing...',
+          text: "We're processing the address transactions. Please try again in a few minutes.",
+          icon: 'info',
+          confirmButtonText: 'Ok',
+        });
+
+        setTimeout(() => {
+          setLoadingDownload(false);
+        }, 10000);
+      } else {
+        Swal.fire({
+          title: 'Downloading',
+          html: 'Your file is being prepared for download.',
+          timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        const url = window.URL.createObjectURL(new Blob([response]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'transactions.csv');
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+
+        setTimeout(() => {
+          Swal.close();
+          setLoadingDownload(false);
+        }, 1000);
+      }
+      Swal.close();
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong with the download. Please try again.',
+      });
+      setLoadingDownload(false);
+    }
+  };
+
   return (
     <React.Fragment>
       {renderFiltersDropdown()}
@@ -479,7 +559,13 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           </label>
         </Col>
         <Col className="d-flex  py-3 justify-content-end">
-          <Button className="btn btn-sm" color="primary" size="sm">
+          <Button
+            disabled={loadingDownload}
+            onClick={handleDownloadTransactions}
+            className="btn btn-sm"
+            color="primary"
+            size="sm"
+          >
             Download CSV
           </Button>
         </Col>

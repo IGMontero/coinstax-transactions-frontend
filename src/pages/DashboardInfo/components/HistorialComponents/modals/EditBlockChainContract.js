@@ -19,8 +19,6 @@ const EditBlockChainContract = ({
 }) => {
   const location = useLocation();
 
-  console.log(transactionToEdit);
-
   const isHistoryPage = location.pathname.includes('history');
 
   const [blockchainLogo, setBlockchainLogo] = useState('');
