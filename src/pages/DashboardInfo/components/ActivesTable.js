@@ -62,11 +62,13 @@ const AcitvesTable = ({ data }) => {
 
   const handleHideSmallBalancesChange = (event) => {
     event.stopPropagation();
+    event.preventDefault();
     setHideSmallBalances(!hideSmallBalances);
   };
 
   const handleHideZeroBalancesChange = (event) => {
     event.stopPropagation();
+    event.preventDefault();
     setHideZeroBalances(!hideZeroBalances);
   };
 
@@ -128,6 +130,7 @@ const AcitvesTable = ({ data }) => {
                   <label
                     className="form-check-label"
                     htmlFor="hideBalances"
+                    onClick={handleHideSmallBalancesChange}
                     style={{ cursor: 'pointer', margin: 0 }}
                   >
                     Hide small balances
@@ -148,6 +151,7 @@ const AcitvesTable = ({ data }) => {
                     className="form-check-label"
                     htmlFor="hideZeroBalances"
                     style={{ cursor: 'pointer', margin: 0 }}
+                    onClick={handleHideZeroBalancesChange}
                   >
                     Hide zero balances
                   </label>
