@@ -12,6 +12,7 @@ import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import { useDispatch } from 'react-redux';
 import { fetchNFTS } from '../../../slices/transactions/thunk';
 import { Link, useNavigate } from 'react-router-dom';
+import { formatDate } from '../../../utils/utils';
 
 const ethIcon = (
   <svg
@@ -44,6 +45,8 @@ const Nfts = ({ address, activeTab }) => {
 
   const [currencySymbol, setCurrencySymbol] = useState('ETH');
 
+  const [updatedAt, setUpdatedAt] = useState();
+
   const showFiatValues = currencySymbol === '$';
   const showNativeTokenValues = currencySymbol === 'ETH';
 
@@ -57,7 +60,9 @@ const Nfts = ({ address, activeTab }) => {
       dispatch(fetchNFTS(address))
         .unwrap()
         .then((response) => {
+          console.log(response);
           setData(response);
+          setUpdatedAt(response.updatedAt);
           setLoading(false);
         })
         .catch((error) => {
@@ -87,6 +92,7 @@ const Nfts = ({ address, activeTab }) => {
           {data.items && data.items.length > 0 ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
+                <h3>As of Date: {formatDate(updatedAt)}</h3>
                 <span className="text-dark">Total value by floor price</span>
                 <h1>{data.prettyTotalNativeValue}</h1>
               </div>
@@ -231,13 +237,18 @@ const Nfts = ({ address, activeTab }) => {
                   const {
                     floorPriceFiat,
                     floorPriceNativeToken,
-                    prettyFiatFloorPrice, prettyNativeTokenFloorPrice } = nft;
+                    prettyFiatFloorPrice,
+                    prettyNativeTokenFloorPrice,
+                  } = nft;
 
-                  const hasFiatFloorPrice = floorPriceFiat && Number(floorPriceFiat) > 0;
-                  const hasNativeTokenFloorPrice = floorPriceNativeToken && Number(floorPriceNativeToken) > 0;
+                  const hasFiatFloorPrice =
+                    floorPriceFiat && Number(floorPriceFiat) > 0;
+                  const hasNativeTokenFloorPrice =
+                    floorPriceNativeToken && Number(floorPriceNativeToken) > 0;
 
-
-                  const hasFloorPrice = showFiatValues ? hasFiatFloorPrice : hasNativeTokenFloorPrice;
+                  const hasFloorPrice = showFiatValues
+                    ? hasFiatFloorPrice
+                    : hasNativeTokenFloorPrice;
 
                   const floorPrice = showFiatValues
                     ? prettyFiatFloorPrice
@@ -285,9 +296,7 @@ const Nfts = ({ address, activeTab }) => {
                             </div>
                           </div>
                         </CardHeader>
-                        <CardBody
-                          className='pt-1'
-                        >
+                        <CardBody className="pt-1">
                           <div
                             className="d-flex flex-column justify-content-between"
                             style={{ height: '100%' }}
@@ -300,18 +309,24 @@ const Nfts = ({ address, activeTab }) => {
                                     marginBottom: '6px',
                                     display: 'block',
                                   }}
-                                  className="text-dark">
+                                  className="text-dark"
+                                >
                                   {nft?.collection?.name || ' '}
                                 </span>
                               )}
 
                               <h6
                                 style={{ fontSize: '14px' }}
-                                className="text-dark">{nft.name || ' '}</h6>
+                                className="text-dark"
+                              >
+                                {nft.name || ' '}
+                              </h6>
                             </div>
                             {hasFloorPrice ? (
                               <div>
-                                <span>{hasFloorPrice ? 'Floor Price' : ' '}</span>
+                                <span>
+                                  {hasFloorPrice ? 'Floor Price' : ' '}
+                                </span>
                                 <h6 className="text-dark d-flex mb-0">
                                   {/* {nft.floorPrice ? nft.floorPrice : ' '}{' '}
                                 {nft.floorPriceSymbol
@@ -325,12 +340,11 @@ const Nfts = ({ address, activeTab }) => {
                                 </h6>
                               </div>
                             ) : null}
-
                           </div>
                         </CardBody>
                       </Card>
                     </div>
-                  )
+                  );
                 })}
             </div>
 
