@@ -77,7 +77,7 @@ const ThirdColumn = ({ transaction, index }) => {
         </p>
         <div className="d-flex align-items-end">
           <h6
-            id={`popoverMarketplace-${transaction.blockHash}`}
+            id={`popoverMarketplace-${transaction.txHash}`}
             className="fw-semibold my-0 text-start d-flex align-items-center"
             style={{
               cursor: 'pointer',
@@ -88,7 +88,7 @@ const ThirdColumn = ({ transaction, index }) => {
               handleClick(
                 e,
                 transaction,
-                `popoverMarketplace-${transaction.blockHash}`,
+                `popoverMarketplace-${transaction.txHash}`,
               )
             }
           >
@@ -140,9 +140,9 @@ const ThirdColumn = ({ transaction, index }) => {
               placement="right"
               isOpen={
                 popoverOpen &&
-                targetId === `popoverMarketplace-${transaction.blockHash}`
+                targetId === `popoverMarketplace-${transaction.txHash}`
               }
-              target={`popoverMarketplace-${transaction.blockHash}`}
+              target={`popoverMarketplace-${transaction.txHash}`}
             >
               <PopoverBody className="p-1">Copied</PopoverBody>
             </Popover>
