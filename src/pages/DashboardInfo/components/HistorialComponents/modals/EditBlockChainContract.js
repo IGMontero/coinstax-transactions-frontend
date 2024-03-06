@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Button,
   Input,
@@ -6,15 +6,40 @@ import {
   ModalBody,
   ModalFooter,
   ModalHeader,
+  Spinner,
 } from 'reactstrap';
 
-const EditBlockChainContract = ({ open, setOpen, transactionToEdit }) => {
-  console.log('transaction to edit', transactionToEdit);
-  const [marketplaceLogo, setMarketplaceLogo] = useState('');
-  const [marketplaceName, setMarketplaceName] = useState('');
+const EditBlockChainContract = ({
+  open,
+  setOpen,
+  transactionToEdit,
+  onEdit,
+  loading,
+}) => {
+  const [blockchainLogo, setBlockchainLogo] = useState('');
+  const [blockchainName, setBlockchainName] = useState('');
+
+  useEffect(() => {
+    if (transactionToEdit) {
+      setBlockchainLogo(
+        transactionToEdit.blockchainLogo || transactionToEdit.Logo || '',
+      );
+      setBlockchainName(
+        transactionToEdit.blockchainName || transactionToEdit.Name || '',
+      );
+    }
+  }, [transactionToEdit]);
 
   const toggleModal = () => {
     setOpen(!open);
+  };
+
+  const handleEditBlockChainContract = () => {
+    const data = {
+      Logo: blockchainLogo,
+      Name: blockchainName,
+    };
+    onEdit(data);
   };
 
   return (
@@ -22,27 +47,31 @@ const EditBlockChainContract = ({ open, setOpen, transactionToEdit }) => {
       <ModalHeader toggle={toggleModal}>Edit BlockChain Contract</ModalHeader>
       <ModalBody>
         <div className="form-group ">
-          <label htmlFor="marketplaceName"> Name</label>
+          <label htmlFor="Name"> Name</label>
           <Input
             type="text"
-            id="marketplaceName"
-            value={transactionToEdit?.marketplaceName || ''}
-            onChange={(e) => setMarketplaceName(e.target.value)}
+            id="Name"
+            value={blockchainName}
+            onChange={(e) => setBlockchainName(e.target.value)}
           />
         </div>
         <div className="form-group mt-3">
-          <label htmlFor="marketplaceLogo">Marketplace Logo URL</label>
+          <label htmlFor="Logo">Logo URL</label>
           <Input
             type="text"
-            id="marketplaceLogo"
-            value={transactionToEdit?.marketplaceLogo || ''}
-            onChange={(e) => setMarketplaceLogo(e.target.value)}
+            id="Logo"
+            value={blockchainLogo}
+            onChange={(e) => setBlockchainLogo(e.target.value)}
           />
         </div>
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={() => {}}>
-          Save Changes
+        <Button
+          disabled={loading}
+          color="primary"
+          onClick={handleEditBlockChainContract}
+        >
+          {loading ? <Spinner size="sm" color="light" /> : 'Save'}
         </Button>{' '}
         <Button color="soft-danger" onClick={toggleModal}>
           Cancel
