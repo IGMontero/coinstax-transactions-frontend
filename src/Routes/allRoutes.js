@@ -50,7 +50,10 @@ const allRoutes = [
   { path: '/dashboard', component: <DashboardInfo /> },
   { path: '/nfts/ethereum/:nftId', component: <DashboardNFT /> },
   { path: '/address/:address/:type', component: <DashboardInfo /> },
-  { path: '/blockchain', component: <DashboardBlockchainContracts /> },
+  {
+    path: '/blockchain-contracts',
+    component: <DashboardBlockchainContracts />,
+  },
 
   //User Profile
   { path: '/profile', component: <UserProfile /> },

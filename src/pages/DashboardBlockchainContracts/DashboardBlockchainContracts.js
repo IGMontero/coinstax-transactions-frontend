@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button,
-  ButtonGroup,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
@@ -9,9 +7,9 @@ import {
   Spinner,
   Table,
   UncontrolledDropdown,
-  Popover,
   PopoverBody,
   UncontrolledPopover,
+  Button,
 } from 'reactstrap';
 import {
   fetchBlockchainContracts,
@@ -21,10 +19,8 @@ import {
 import { useDispatch } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
-import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import EditBlockChainContract from '../DashboardInfo/components/HistorialComponents/modals/EditBlockChainContract';
-import { concat } from 'lodash';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
@@ -42,6 +38,9 @@ const DashboardBlockchainContracts = () => {
   const [modalEdit, setModalEdit] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
 
+  const [search, setSearch] = useState('');
+
+  const [triggerSearch, setTriggerSearch] = useState(false);
   const handleOpenModalEdit = (contract) => {
     setModalEdit(!modalEdit);
     setSelectedContract(contract);
@@ -51,22 +50,6 @@ const DashboardBlockchainContracts = () => {
     setCurrentPage(page);
   };
 
-  const [search, setSearch] = useState('');
-
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (search !== debouncedSearch) {
-        setDebouncedSearch(search);
-        setCurrentPage(0);
-      }
-    }, 500);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [search, debouncedSearch]);
-
   const getBlockchainContracts = async () => {
     try {
       setLoading(true);
@@ -74,7 +57,7 @@ const DashboardBlockchainContracts = () => {
         fetchBlockchainContracts({
           blockchain: 'ethereum',
           page: currentPage,
-          address: debouncedSearch,
+          address: search,
         }),
       );
 
@@ -97,9 +80,28 @@ const DashboardBlockchainContracts = () => {
     }
   };
 
+  const handleSearch = () => {
+    setTriggerSearch(true);
+  };
+  const handleClearSearch = () => {
+    setSearch('');
+    setCurrentPage(0);
+    setTriggerSearch(true);
+  };
+
   useEffect(() => {
-    getBlockchainContracts();
-  }, [currentPage, debouncedSearch]);
+    if (triggerSearch) {
+      getBlockchainContracts();
+      setTriggerSearch(false);
+    }
+  }, [triggerSearch]);
+
+  useEffect(() => {
+    if (triggerSearch || currentPage === 0) {
+      getBlockchainContracts();
+      setTriggerSearch(false);
+    }
+  }, [currentPage, triggerSearch]);
 
   const handleSetAllAsDirty = async (address) => {
     const result = await Swal.fire({
@@ -197,6 +199,17 @@ const DashboardBlockchainContracts = () => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
+          <Button
+            className="mx-2"
+            disabled={loading || !search}
+            color="primary"
+            onClick={handleSearch}
+          >
+            Search
+          </Button>
+          <Button disabled={!search} color="danger" onClick={handleClearSearch}>
+            Clear
+          </Button>
         </div>
 
         <Table shadow responsive className="position-relative">
