@@ -9,8 +9,10 @@ import { Link } from 'react-router-dom';
 import EditBlockChainContract from './modals/EditBlockChainContract';
 import Swal from 'sweetalert2';
 import { editBlockChainContract } from '../../../../slices/blockchainContracts/thunk';
+import { useDispatch } from 'react-redux';
 
-const ThirdColumn = ({ transaction, index }) => {
+const ThirdColumn = ({ transaction, index, onRefresh }) => {
+  const dispatch = useDispatch();
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
 
@@ -67,16 +69,17 @@ const ThirdColumn = ({ transaction, index }) => {
       await dispatch(
         editBlockChainContract({
           blockchain: 'ethereum',
-          address: transactionToEdit.id, // Check this
+          address: transactionToEdit.txSummary.mainContractAddress,
           data,
         }),
       );
       Swal.fire('Success', 'Contract updated successfully', 'success');
       setLoadingUpdate(false);
       setOpenModalEdit(false);
+      onRefresh();
     } catch (error) {
       setLoadingUpdate(true);
-      console.error('Error editing blockchain contract', error);
+      console.log('Error editing blockchain contract', error);
       Swal.fire('Error', 'Error editing blockchain contract', 'error');
       setLoadingUpdate(false);
     }
