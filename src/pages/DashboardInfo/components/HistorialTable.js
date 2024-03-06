@@ -140,17 +140,6 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     }
   };
 
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [
-    address,
-    activeTab,
-    selectedAssets,
-    selectedFilters,
-    includeSpam,
-    debouncedSearchTerm,
-  ]);
-
   const handleClearAllFilters = () => {
     setSelectedFilters([]);
     setSelectedAssets('All Assets');
@@ -160,7 +149,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   };
 
   useEffect(() => {
-    handleClearAllFilters();
+    if (activeTab != '3') {
+      handleClearAllFilters();
+    }
   }, [activeTab, address]);
 
   useEffect(() => {
@@ -168,6 +159,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       fetchData();
       setHasMoreData(true);
     }
+    setCurrentPage(0);
   }, [
     address,
     activeTab,
