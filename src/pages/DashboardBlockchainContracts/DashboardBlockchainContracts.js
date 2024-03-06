@@ -9,6 +9,9 @@ import {
   Spinner,
   Table,
   UncontrolledDropdown,
+  Popover,
+  PopoverBody,
+  UncontrolledPopover,
 } from 'reactstrap';
 import {
   fetchBlockchainContracts,
@@ -16,11 +19,12 @@ import {
   editBlockChainContract,
 } from '../../slices/blockchainContracts/thunk';
 import { useDispatch } from 'react-redux';
-import { formatIdTransaction } from '../../utils/utils';
+import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import { Link } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import EditBlockChainContract from '../DashboardInfo/components/HistorialComponents/modals/EditBlockChainContract';
+import { concat } from 'lodash';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
@@ -32,6 +36,8 @@ const DashboardBlockchainContracts = () => {
   const [pageSize, setPageSize] = useState();
   const [total, setTotal] = useState();
   const [currentPage, setCurrentPage] = useState(0);
+
+  const [isCopied, setIsCopied] = useState(false);
 
   const [modalEdit, setModalEdit] = useState(false);
   const [selectedContract, setSelectedContract] = useState(null);
@@ -161,6 +167,15 @@ const DashboardBlockchainContracts = () => {
     );
   };
 
+  const handleCopyValue = (e, text) => {
+    e.stopPropagation();
+    copyToClipboard(text);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+  };
+
   document.title = 'Blockchain Contracts';
 
   return (
@@ -223,7 +238,33 @@ const DashboardBlockchainContracts = () => {
                   <td className="align-middle">{contract.Id}</td>
                   <td className="align-middle">{contract.Blockchain}</td>
                   <td className="align-middle">
-                    {formatIdTransaction(contract.Address, 4, 4)}
+                    <span
+                      id={`popoverAddress-${contract.Id}-${contract.Address}`}
+                      style={{ cursor: 'pointer' }}
+                      onClick={(e) => handleCopyValue(e, contract.Address)}
+                    >
+                      {formatIdTransaction(contract.Address, 4, 4)}
+                    </span>
+                    <UncontrolledPopover
+                      trigger="hover"
+                      placement="bottom"
+                      target={`popoverAddress-${contract.Id}-${contract.Address}`}
+                    >
+                      <PopoverBody
+                        style={{
+                          width: 'auto',
+                        }}
+                        className="text-center w-auto p-2 "
+                      >
+                        <span
+                          style={{
+                            fontSize: '0.70rem',
+                          }}
+                        >
+                          {isCopied ? 'Copied' : contract.Address}
+                        </span>
+                      </PopoverBody>
+                    </UncontrolledPopover>
                   </td>
                   <td className="align-middle">{contract.Type}</td>
                   <td className="align-middle">
