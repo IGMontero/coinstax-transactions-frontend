@@ -28,18 +28,22 @@ const EditBlockChainContract = ({
 
   useEffect(() => {
     if (transactionToEdit) {
-      setBlockchainLogo(
-        isHistoryPage
-          ? transactionToEdit?.txSummary.mainContractAddressInfo.logo
-          : transactionToEdit?.Logo || '',
-      );
-      setBlockchainName(
-        isHistoryPage
-          ? transactionToEdit?.txSummary.mainContractAddressInfo.name
-          : transactionToEdit?.Name || '',
-      );
+      const defaultLogo = '';
+      const defaultName = '';
+
+      const logo = isHistoryPage
+        ? transactionToEdit?.txSummary.mainContractAddressInfo?.logo ||
+          defaultLogo
+        : transactionToEdit?.Logo || defaultLogo;
+      setBlockchainLogo(logo);
+
+      const name = isHistoryPage
+        ? transactionToEdit?.txSummary.mainContractAddressInfo?.name ||
+          defaultName
+        : transactionToEdit?.Name || defaultName;
+      setBlockchainName(name);
     }
-  }, [transactionToEdit]);
+  }, [transactionToEdit, isHistoryPage]);
 
   const toggleModal = () => {
     setOpen(!open);
