@@ -161,6 +161,8 @@ const DashboardBlockchainContracts = () => {
     );
   };
 
+  document.title = 'Blockchain Contracts';
+
   return (
     <React.Fragment>
       <EditBlockChainContract
@@ -171,7 +173,8 @@ const DashboardBlockchainContracts = () => {
         transactionToEdit={selectedContract}
       />
       <div className="page-content" style={{ minHeight: '100vh' }}>
-        <div className="mb-5 mt-2 d-flex justify-content-center align-items-center">
+        <h3>Blockchain Contracts</h3>
+        <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
           <Input
             type="text"
             placeholder="Search By Address"
@@ -181,7 +184,7 @@ const DashboardBlockchainContracts = () => {
           />
         </div>
 
-        <Table shadow responsive>
+        <Table shadow responsive className="position-relative">
           <thead>
             <tr>
               <th>ID</th>
@@ -196,13 +199,25 @@ const DashboardBlockchainContracts = () => {
             </tr>
           </thead>
           <tbody>
-            {loading ? (
-              <tr style={{ height: '50vh' }}>
-                <td colSpan="9" className="text-center">
-                  <Spinner style={{ width: '3rem', height: '3rem' }} />
-                </td>
-              </tr>
-            ) : contracts.length > 0 ? (
+            {loading && (
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  backdropFilter: 'blur(5px)',
+                  zIndex: 10,
+                }}
+              >
+                <Spinner style={{ width: '3rem', height: '3rem' }} />
+              </div>
+            )}
+            {contracts.length > 0 ? (
               contracts.map((contract) => (
                 <tr key={contract.Id}>
                   <td className="align-middle">{contract.Id}</td>
@@ -253,7 +268,7 @@ const DashboardBlockchainContracts = () => {
             <TablePagination
               onChangePage={handleChangePage}
               currentPage={currentPage}
-              totalPages={total}
+              totalPages={Math.ceil(total / pageSize)}
             />
           )}
         </Table>
