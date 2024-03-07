@@ -135,7 +135,11 @@ const DashboardBlockchainContracts = () => {
           data,
         }),
       );
-      Swal.fire('Success', 'Blockchain Contract updated successfully', 'success');
+      Swal.fire(
+        'Success',
+        'Blockchain Contract updated successfully',
+        'success',
+      );
       setLoadingUpdate(false);
       setModalEdit(false);
       await getBlockchainContracts();
@@ -209,7 +213,12 @@ const DashboardBlockchainContracts = () => {
           </Button>
         </div>
 
-        <Table stlyle={{ overflow: 'auto' }} shadow responsive className="position-relative">
+        <Table
+          stlyle={{ overflow: 'auto' }}
+          shadow
+          responsive
+          className="position-relative"
+        >
           <thead>
             <tr>
               <th>ID</th>
@@ -257,7 +266,7 @@ const DashboardBlockchainContracts = () => {
                     </span>
                     <UncontrolledPopover
                       trigger="hover"
-                      placement="bottom"
+                      placement="right"
                       target={`popoverAddress-${contract.Id}-${contract.Address}`}
                     >
                       <PopoverBody
