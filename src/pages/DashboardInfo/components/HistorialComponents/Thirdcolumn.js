@@ -170,6 +170,9 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
                     borderRadius: '6px',
                     marginRight: '6px',
                   }}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
                 />
               )}
               <span className="text-hover-underline">
