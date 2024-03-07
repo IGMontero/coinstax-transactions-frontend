@@ -97,20 +97,17 @@ const DashboardBlockchainContracts = () => {
   }, [triggerSearch]);
 
   useEffect(() => {
-    if (triggerSearch || currentPage === 0) {
-      getBlockchainContracts();
-      setTriggerSearch(false);
-    }
-  }, [currentPage, triggerSearch]);
+    getBlockchainContracts();
+  }, [currentPage]);
 
   const handleSetAllAsDirty = async (address) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: 'You are about to set all transactions as dirty',
+      text: `All transactions linked to address ${address} will be set as dirty.`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, set all as dirty!',
-      cancelButtonText: 'No, cancel!',
+      confirmButtonText: 'Continue',
+      cancelButtonText: 'Cancel',
     });
 
     if (result.isConfirmed) {
@@ -138,7 +135,7 @@ const DashboardBlockchainContracts = () => {
           data,
         }),
       );
-      Swal.fire('Success', 'Contract updated successfully', 'success');
+      Swal.fire('Success', 'Blockchain Contract updated successfully', 'success');
       setLoadingUpdate(false);
       setModalEdit(false);
       await getBlockchainContracts();
@@ -212,7 +209,7 @@ const DashboardBlockchainContracts = () => {
           </Button>
         </div>
 
-        <Table shadow responsive className="position-relative">
+        <Table stlyle={{ overflow: 'auto' }} shadow responsive className="position-relative">
           <thead>
             <tr>
               <th>ID</th>
@@ -226,7 +223,7 @@ const DashboardBlockchainContracts = () => {
               <th>Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody style={{ position: 'relative' }}>
             {loading && (
               <div
                 style={{
@@ -247,7 +244,7 @@ const DashboardBlockchainContracts = () => {
             )}
             {contracts.length > 0 ? (
               contracts.map((contract) => (
-                <tr key={contract.Id}>
+                <tr style={{ height: 60 }} key={contract.Id}>
                   <td className="align-middle">{contract.Id}</td>
                   <td className="align-middle">{contract.Blockchain}</td>
                   <td className="align-middle">

@@ -131,7 +131,7 @@ export const downloadTransactions = createAsyncThunk(
         method: 'GET',
       });
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        return response.json()
       }
       const data = await response.blob();
       return data;

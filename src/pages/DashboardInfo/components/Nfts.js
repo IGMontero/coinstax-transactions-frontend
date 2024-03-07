@@ -13,6 +13,7 @@ import { useDispatch } from 'react-redux';
 import { fetchNFTS } from '../../../slices/transactions/thunk';
 import { Link, useNavigate } from 'react-router-dom';
 import { formatDate } from '../../../utils/utils';
+import moment from 'moment';
 
 const ethIcon = (
   <svg
@@ -92,7 +93,7 @@ const Nfts = ({ address, activeTab }) => {
           {data.items && data.items.length > 0 ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
-                <h3>As of Date: {formatDate(updatedAt)}</h3>
+                <h6>As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}</h6>
                 <span className="text-dark">Total value by floor price</span>
                 <h1>{data.prettyTotalNativeValue}</h1>
               </div>

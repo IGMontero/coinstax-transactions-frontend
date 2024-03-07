@@ -340,9 +340,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${
-                showTransactionFilterMenu ? 'active' : ''
-              }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${showTransactionFilterMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">Transactions</span>
@@ -362,7 +361,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -378,9 +377,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -473,12 +471,11 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
         }),
       ).unwrap();
 
-      console.log(response);
 
       if (response.isProcessing) {
         Swal.fire({
           title: 'Processing...',
-          text: "We're processing the address transactions. Please try again in a few minutes.",
+          text: "Address transactions are processing. Please try again in a few minutes.",
           icon: 'info',
           confirmButtonText: 'Ok',
         });
@@ -487,19 +484,19 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           setLoadingDownload(false);
         }, 10000);
       } else {
-        Swal.fire({
-          title: 'Downloading',
-          html: 'Your file is being prepared for download.',
-          timerProgressBar: true,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-        });
+        // Swal.fire({
+        //   title: 'Downloading',
+        //   html: 'Your file is being prepared for download.',
+        //   timerProgressBar: true,
+        //   didOpen: () => {
+        //     Swal.showLoading();
+        //   },
+        // });
 
         const url = window.URL.createObjectURL(new Blob([response]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', 'transactions.csv');
+        link.setAttribute('download', `transactions-${address}.csv`);
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link);
@@ -507,15 +504,15 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
         setTimeout(() => {
           Swal.close();
           setLoadingDownload(false);
-        }, 1000);
+        }, 500);
       }
-      Swal.close();
     } catch (error) {
       console.error(error);
+      console.log(error.response)
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
-        text: 'Something went wrong with the download. Please try again.',
+        text: 'Something went wrong. Please try again later.',
       });
       setLoadingDownload(false);
     }
