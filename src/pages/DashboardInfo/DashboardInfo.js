@@ -76,10 +76,17 @@ const DashboardInfo = () => {
     setShowQrModal(!showQrModal);
   };
 
+  const [isUnsupported, setIsUnsupported] = useState(false);
+
   const fetchDataAssets = () => {
     dispatch(fetchAssets(addressForSearch))
       .unwrap()
       .then((response) => {
+        if (response.unsupported == true) {
+          setIsUnsupported(true);
+        } else {
+          setIsUnsupported(false);
+        }
         setAssetsData(response);
         setLoading(false);
       })
@@ -108,7 +115,7 @@ const DashboardInfo = () => {
     if (addressForSearch) {
       fetchDataAssets();
     }
-  }, [addressForSearch, dispatch]);
+  }, [addressForSearch, dispatch, isUnsupported]);
 
   useEffect(() => {
     if (series.length > 0 && series[0].data.length > 0) {
@@ -373,6 +380,16 @@ const DashboardInfo = () => {
                   </div>
                   <div className="d-flex flex-row ">
                     <h1 className="fw-semibold">{title}</h1>
+                    {isUnsupported && (
+                      <div>
+                        <h1 className="fw-semibold text-danger">
+                          Unsupported Address
+                        </h1>
+                        <h5 className="text-primary">
+                          Contact our support team{' '}
+                        </h5>
+                      </div>
+                    )}
                     {/* <UncontrolledDropdown className="card-header-dropdown">
                       <DropdownToggle
                         tag="a"
@@ -431,126 +448,134 @@ const DashboardInfo = () => {
             )}
             <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
               {' '}
-              <Col className="col-12 ">
-                <div
-                  className=" w-100 top-0 d-flex justify-content-between position-sticky align-items-center  "
-                  style={{
-                    zIndex: 5,
-                    backgroundColor: '#16161a',
-                  }}
-                >
-                  <Col xxl={6} className="">
-                    <Nav
-                      tabs
-                      className="  nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
-                    >
-                      <NavItem>
-                        <NavLink
-                          style={{
-                            cursor: 'pointer',
-                            paddingTop: '.7rem',
-                            paddingBottom: '.7rem',
-                            fontWeight: 'bold',
-                          }}
-                          className={classnames({
-                            active: customActiveTab === '1',
-                          })}
-                          onClick={() => {
-                            handleNavLinkClick('tokens', '1');
-                          }}
-                        >
-                          Tokens
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          style={{
-                            cursor: 'pointer',
-                            paddingTop: '.7rem',
-                            paddingBottom: '.7rem',
-                            fontWeight: 'bold',
-                          }}
-                          className={classnames({
-                            active: customActiveTab === '2',
-                          })}
-                          onClick={() => {
-                            handleNavLinkClick('nfts', '2');
-                          }}
-                        >
-                          NFTs
-                        </NavLink>
-                      </NavItem>
-                      <NavItem>
-                        <NavLink
-                          style={{
-                            cursor: 'pointer',
-                            paddingTop: '.7rem',
-                            paddingBottom: '.7rem',
-                            fontWeight: 'bold',
-                          }}
-                          className={classnames({
-                            active: customActiveTab === '3',
-                          })}
-                          onClick={() => {
-                            handleNavLinkClick('history', '3');
-                          }}
-                        >
-                          History
-                        </NavLink>
-                      </NavItem>
-                    </Nav>
-                  </Col>
-                  {/* Dropdown Menu  here  renderDropdownMenu()*/}
-                </div>
-                <TabContent activeTab={customActiveTab} className="text-muted">
-                  <TabPane tabId="1" id="home1">
-                    <div className="d-flex">
-                      <div className="flex-grow-1">
-                        <Col xxl={12} className="mt-3 mb-4">
-                          <div className="d-flex justify-content-start">
-                            <Col className="col-12 ">
-                              <PerformanceChart
-                                address={addressForSearch}
-                                series={series}
-                                setSeries={setSeries}
-                                title={title}
-                                subtitle={subtitle}
-                              />
-                            </Col>
-                          </div>
-                        </Col>
-                        <Col xxl={12}>
-                          <AcitvesTable data={assetsData} />
-                        </Col>
-                      </div>
-                    </div>
-                  </TabPane>
+              {!isUnsupported ? (
+                <Col className="col-12 ">
+                  <div
+                    className=" w-100 top-0 d-flex justify-content-between position-sticky align-items-center  "
+                    style={{
+                      zIndex: 5,
+                      backgroundColor: '#16161a',
+                    }}
+                  >
+                    <Col xxl={6} className="">
+                      <Nav
+                        tabs
+                        className="  nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
+                      >
+                        <NavItem>
+                          <NavLink
+                            style={{
+                              cursor: 'pointer',
+                              paddingTop: '.7rem',
+                              paddingBottom: '.7rem',
+                              fontWeight: 'bold',
+                            }}
+                            className={classnames({
+                              active: customActiveTab === '1',
+                            })}
+                            onClick={() => {
+                              handleNavLinkClick('tokens', '1');
+                            }}
+                          >
+                            Tokens
+                          </NavLink>
+                        </NavItem>
+                        <NavItem>
+                          <NavLink
+                            style={{
+                              cursor: 'pointer',
+                              paddingTop: '.7rem',
+                              paddingBottom: '.7rem',
+                              fontWeight: 'bold',
+                            }}
+                            className={classnames({
+                              active: customActiveTab === '2',
+                            })}
+                            onClick={() => {
+                              handleNavLinkClick('nfts', '2');
+                            }}
+                          >
+                            NFTs
+                          </NavLink>
+                        </NavItem>
+                        <NavItem>
+                          <NavLink
+                            style={{
+                              cursor: 'pointer',
+                              paddingTop: '.7rem',
+                              paddingBottom: '.7rem',
+                              fontWeight: 'bold',
+                            }}
+                            className={classnames({
+                              active: customActiveTab === '3',
+                            })}
+                            onClick={() => {
+                              handleNavLinkClick('history', '3');
+                            }}
+                          >
+                            History
+                          </NavLink>
+                        </NavItem>
+                      </Nav>
+                    </Col>
 
-                  <TabPane tabId="2">
-                    <div className="d-flex">
-                      <div className="flex-grow-1 ms-2">
-                        <Nfts
-                          activeTab={customActiveTab}
-                          address={addressForSearch}
-                        />
+                    {/* Dropdown Menu  here  renderDropdownMenu()*/}
+                  </div>
+                  <TabContent
+                    activeTab={customActiveTab}
+                    className="text-muted"
+                  >
+                    <TabPane tabId="1" id="home1">
+                      <div className="d-flex">
+                        <div className="flex-grow-1">
+                          <Col xxl={12} className="mt-3 mb-4">
+                            <div className="d-flex justify-content-start">
+                              <Col className="col-12 ">
+                                <PerformanceChart
+                                  address={addressForSearch}
+                                  series={series}
+                                  setSeries={setSeries}
+                                  title={title}
+                                  subtitle={subtitle}
+                                />
+                              </Col>
+                            </div>
+                          </Col>
+                          <Col xxl={12}>
+                            <AcitvesTable data={assetsData} />
+                          </Col>
+                        </div>
                       </div>
-                    </div>
-                  </TabPane>
+                    </TabPane>
 
-                  <TabPane tabId="3">
-                    <div className="d-flex">
-                      <div className="flex-grow-1 ms-2">
-                        <HistorialTable
-                          data={historyData}
-                          setData={setHistoryData}
-                          activeTab={customActiveTab}
-                          address={addressForSearch}
-                        />
+                    <TabPane tabId="2">
+                      <div className="d-flex">
+                        <div className="flex-grow-1 ms-2">
+                          <Nfts
+                            activeTab={customActiveTab}
+                            address={addressForSearch}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </TabPane>
-                </TabContent>
-              </Col>
+                    </TabPane>
+
+                    <TabPane tabId="3">
+                      <div className="d-flex">
+                        <div className="flex-grow-1 ms-2">
+                          <HistorialTable
+                            data={historyData}
+                            setData={setHistoryData}
+                            activeTab={customActiveTab}
+                            address={addressForSearch}
+                          />
+                        </div>
+                      </div>
+                    </TabPane>
+                  </TabContent>
+                </Col>
+              ) : (
+                <div style={{ minHeight: '100vh' }}></div>
+              )}
             </Row>
           </>
         )}
