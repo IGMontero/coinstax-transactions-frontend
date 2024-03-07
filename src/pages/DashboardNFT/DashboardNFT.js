@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Col, Row } from 'reactstrap';
 import { formatIdTransaction } from '../../utils/utils';
+import { getNftsByContractAddress } from '../../slices/transactions/thunk';
+import { useDispatch } from 'react-redux';
 
 const DashboardNFT = () => {
-  const { nftId } = useParams();
+  const { contractAddress } = useParams();
   const location = useLocation();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const queryParams = new URLSearchParams(location.search);
-  const address = queryParams.get('address');
+  const tokenId = queryParams.get('tokenId');
+
+  const address = 'asd';
+
+  console.log(tokenId);
 
   const attributes = [
     {
@@ -42,9 +49,28 @@ const DashboardNFT = () => {
     },
   ];
 
-  const handleSeeProfile = () => {
-    navigate(`/address/${address}/tokens`);
+  const fetchNftByContractAddress = async () => {
+    try {
+      const response = await dispatch(
+        getNftsByContractAddress({
+          blockchain: 'ethereum',
+          contractAddress,
+          tokenId,
+        }),
+      );
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  useEffect(() => {
+    fetchNftByContractAddress();
+  }, []);
+
+  // const handleSeeProfile = () => {
+  //   navigate(`/address/${address}/tokens`);
+  // };
 
   const renderCardProfile = () => {
     return (
@@ -65,7 +91,7 @@ const DashboardNFT = () => {
 
           <div className="ms-auto">
             <p
-              onClick={handleSeeProfile}
+              // onClick={handleSeeProfile}
               className="m-0 cursor-pointer text-primary"
             >
               See profile

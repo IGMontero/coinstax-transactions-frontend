@@ -49,7 +49,7 @@ const allRoutes = [
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
   { path: '/dashboard', component: <DashboardInfo /> },
-  { path: '/nfts/ethereum/:nftId', component: <DashboardNFT /> },
+  { path: '/contract/:contractAddress', component: <DashboardNFT /> },
   { path: '/address/:address/:type', component: <DashboardInfo /> },
   {
     path: '/blockchain-contracts',
