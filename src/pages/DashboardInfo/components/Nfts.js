@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardBody,
   Spinner,
+  Input,
 } from 'reactstrap';
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import { useDispatch } from 'react-redux';
@@ -55,30 +56,37 @@ const Nfts = ({ address, activeTab }) => {
     setCurrencySymbol((prevSymbol) => (prevSymbol === 'ETH' ? '$' : 'ETH'));
   };
 
+  const [includeSpam, setIncludeSpam] = useState(false);
+
+  const fetchDataNFTS = () => {
+    setLoading(true);
+    dispatch(fetchNFTS({ address: address, spam: includeSpam }))
+      .unwrap()
+      .then((response) => {
+        console.log(response);
+        setData(response);
+        setUpdatedAt(response.updatedAt);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error('Error fetching NFTs:', error);
+        setLoading(false);
+      });
+  };
   useEffect(() => {
-    const fetchDataNFTS = () => {
-      setLoading(true);
-      dispatch(fetchNFTS(address))
-        .unwrap()
-        .then((response) => {
-          console.log(response);
-          setData(response);
-          setUpdatedAt(response.updatedAt);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.error('Error fetching NFTs:', error);
-          setLoading(false);
-        });
-    };
     if (address && activeTab == '2') {
       fetchDataNFTS();
     }
-  }, [address, activeTab, dispatch]);
+  }, [address, activeTab, dispatch, includeSpam]);
 
   const handleVisitNFT = (nft, index) => {
     navigate(`/nfts/ethereum/${index + 1}?address=${address}`);
   };
+
+  const handleShowSpam = () => {
+    setIncludeSpam(!includeSpam);
+  };
+
   return (
     <React.Fragment>
       {loading ? (
@@ -93,9 +101,23 @@ const Nfts = ({ address, activeTab }) => {
           {data.items && data.items.length > 0 ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
-                <h6>As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}</h6>
+                <h6>
+                  As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}
+                </h6>
                 <span className="text-dark">Total value by floor price</span>
                 <h1>{data.prettyTotalNativeValue}</h1>
+                <div className="d-flex">
+                  <Input
+                    id="customCheck1"
+                    type="checkbox"
+                    className="form-check-input me-2"
+                    onChange={handleShowSpam}
+                    checked={includeSpam}
+                  />
+                  <label className="form-check-label" htmlFor="customCheck1">
+                    Include Spam
+                  </label>
+                </div>
               </div>
               <div className="ms-auto">
                 <Button

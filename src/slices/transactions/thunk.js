@@ -3,10 +3,10 @@ const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const fetchNFTS = createAsyncThunk(
   'transactions/fetchNFTS',
-  async (address, { rejectWithValue }) => {
+  async ({ address, spam }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/nfts?allowSpam=false`,
+        `${API_BASE}/transactions/eth-mainnet/${address}/nfts?allowSpam=${spam}`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -131,7 +131,7 @@ export const downloadTransactions = createAsyncThunk(
         method: 'GET',
       });
       if (!response.ok) {
-        return response.json()
+        return response.json();
       }
       const data = await response.blob();
       return data;
