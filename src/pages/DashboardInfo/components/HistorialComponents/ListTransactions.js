@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Col, PopoverBody, Row, UncontrolledPopover } from 'reactstrap';
-import { formatNumber } from '../../../../utils/utils';
+import { copyToClipboard, formatNumber } from '../../../../utils/utils';
 
 const ListTransactionss = ({ transactions }) => {
   const [positiveLedgers, setPositiveLedgers] = useState([]);
   const [negativeLedgers, setNegativeLedgers] = useState([]);
+
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyValue = (e, text) => {
+    e.stopPropagation();
+    copyToClipboard(text);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+  };
 
   useEffect(() => {
     if (transactions && transactions.ledgers) {
@@ -60,7 +71,12 @@ const ListTransactionss = ({ transactions }) => {
             ) && (
               <>
                 {ledger.amount > 0 ? '+' : ''}
-                <span id={targetId}>{formatNumber(ledger.amount)}</span>
+                <span
+                  id={targetId}
+                  onClick={(e) => handleCopyValue(e, ledger.amount)}
+                >
+                  {formatNumber(ledger.amount)}
+                </span>
                 {ledger.amount && (
                   <UncontrolledPopover
                     onClick={(e) => e.stopPropagation()}
@@ -73,7 +89,7 @@ const ListTransactionss = ({ transactions }) => {
                       className="text-center w-auto p-2 "
                     >
                       <span style={{ fontSize: '0.70rem' }}>
-                        {ledger.amount}
+                        {isCopied ? 'Copied' : ledger.amount}
                       </span>
                     </PopoverBody>
                   </UncontrolledPopover>

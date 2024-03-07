@@ -1,21 +1,21 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 export const dummyUser = {
-  email: "test@a.co",
-  name: "Test User",
-}
-
+  email: 'test@a.co',
+  name: 'Test User',
+  role: 'admin',
+};
 
 export const initialState = {
-  user: dummyUser,
-  error: "", // for error message
+  user: null,
+  error: '', // for error message
   loading: false,
   isUserLogout: false,
   errorMsg: false, // for error
 };
 
 const loginSlice = createSlice({
-  name: "login",
+  name: 'login',
   initialState,
   reducers: {
     apiError(state, action) {
@@ -25,26 +25,22 @@ const loginSlice = createSlice({
       state.errorMsg = true;
     },
     loginSuccess(state, action) {
-      state.user = action.payload
+      state.user = action.payload;
       state.loading = false;
       state.errorMsg = false;
     },
     logoutUserSuccess(state, action) {
-      state.isUserLogout = true
+      state.isUserLogout = true;
     },
     reset_login_flag(state) {
-      state.error = null
+      state.error = null;
       state.loading = false;
       state.errorMsg = false;
-    }
+    },
   },
 });
 
-export const {
-  apiError,
-  loginSuccess,
-  logoutUserSuccess,
-  reset_login_flag
-} = loginSlice.actions
+export const { apiError, loginSuccess, logoutUserSuccess, reset_login_flag } =
+  loginSlice.actions;
 
 export default loginSlice.reducer;

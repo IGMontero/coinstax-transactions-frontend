@@ -27,6 +27,10 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const { user } = useSelector((state) => state.Login);
+
+  const currentUser = localStorage.getItem('currentUser');
+
   const { sidebarVisibilitytype } = useSelector((state) => ({
     sidebarVisibilitytype: state.Layout.sidebarVisibilitytype,
   }));
@@ -85,28 +89,31 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   return (
     <React.Fragment>
       {/* <header id="page-topbar" className={headerClass}> */}
-      <header id="page" className={headerClass}>
+      <header id={`${currentUser ? 'page' : 'page'}`} className={headerClass}>
         <div className="layout-width">
           <div className="navbar-header">
             <div className="d-flex">
-              <div className="navbar-brand-bo horizonta-logo">
-                <span className="logo-lgs">
-                  <img src={logo} alt="" height="40" />
-                </span>
-              </div>
-
-              {/* <button
-                onClick={toogleMenuBtn}
-                type="button"
-                className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
-                id="topnav-hamburger-icon"
-              >
-                <span className="hamburger-icon">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </span>
-              </button> */}
+              {!currentUser && (
+                <div className="navbar-brand-bo horizonta-logo">
+                  <span className="logo-lgs">
+                    <img src={logo} alt="" height="40" />
+                  </span>
+                </div>
+              )}
+              {currentUser ? (
+                <button
+                  onClick={toogleMenuBtn}
+                  type="button"
+                  className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
+                  id="topnav-hamburger-icon"
+                >
+                  <span className="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                </button>
+              ) : null}
 
               {/* <SearchOption /> */}
             </div>
@@ -154,7 +161,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               </div> */}
 
               {/* ProfileDropdown */}
-              {/* <ProfileDropdown /> */}
+              {currentUser && <ProfileDropdown />}
             </div>
           </div>
         </div>

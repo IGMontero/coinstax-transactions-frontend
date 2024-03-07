@@ -12,13 +12,15 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
 
   const [isCopied, setIsCopied] = React.useState(false);
 
-  const handleCopyValue = (e) => {
-    e.stopPropagation();
-    copyToClipboard(positiveLedgers.value);
-    setIsCopied(true);
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 2000);
+  const handleCopyValue = (e, value) => {
+    if (value) {
+      e.stopPropagation();
+      copyToClipboard(value);
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(false);
+      }, 2000);
+    }
   };
 
   return (
@@ -39,8 +41,9 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   <i className="ri-arrow-right-line text-dark text-end fs-4 me-2"></i>
                 )}
                 <div
-                  className={`image-container me-2 ${negativeLedgers ? '' : ''
-                    }`}
+                  className={`image-container me-2 ${
+                    negativeLedgers ? '' : ''
+                  }`}
                 >
                   <img
                     src={positiveLedgers?.logo || currency}
@@ -62,14 +65,16 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                 <div className="d-flex flex-column">
                   <span className="text-success d-flex">
                     <span
-                      onClick={handleCopyValue}
+                      onClick={(e) =>
+                        handleCopyValue(e, positiveLedgers?.value)
+                      }
                       id={`amount-${ledger.txHash}`}
                       className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
                     >
                       {positiveLedgers?.displayName}
                     </span>
                     {positiveLedgers?.value &&
-                      !positiveLedgers.marketplaceName ? (
+                    !positiveLedgers.marketplaceName ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
