@@ -6,6 +6,9 @@ const TablePagination = ({ onChangePage, currentPage, totalPages }) => {
     onChangePage(page);
   };
 
+  const hasNextPage = currentPage !== totalPages - 1;
+  const hasPrevPage = currentPage !== 0;
+
   return (
     <tr>
       <td colSpan="12">
@@ -15,7 +18,7 @@ const TablePagination = ({ onChangePage, currentPage, totalPages }) => {
             <span className="font-weight-bold">{totalItems}</span> entries
           </span> */}
           <div className="d-flex align-items-center jusitfy-content-end">
-            {currentPage !== 0 && (
+            {hasPrevPage && (
               <Button
                 onClick={() => handleChangePage(currentPage - 1)}
                 color="soft-primary"
@@ -28,8 +31,8 @@ const TablePagination = ({ onChangePage, currentPage, totalPages }) => {
             <span className="mx-2">
               Page {currentPage + 1} of {isNaN(totalPages) ? 1 : totalPages}
             </span>
-            {currentPage !== totalPages - 1 ||
-              (isNaN(totalPages) && (
+            {
+              hasNextPage && (
                 <Button
                   disabled={currentPage === totalPages - 1}
                   onClick={() => handleChangePage(currentPage + 1)}
@@ -38,7 +41,8 @@ const TablePagination = ({ onChangePage, currentPage, totalPages }) => {
                 >
                   <i className="ri-arrow-right-line"></i>
                 </Button>
-              ))}
+              )
+            }
 
             {/* <Button
               disabled={currentPage === totalPages - 1}

@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const getActionMapping = (action) => {
   switch (action) {
     case 'RECEIVE':
@@ -113,10 +115,5 @@ export async function copyToClipboard(textToCopy) {
 }
 
 export const formatDate = (date) => {
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = d.getMonth() + 1;
-  const day = d.getDate();
-
-  return `${month}/${day}/${year}`;
+  return moment(date).format("MM/DD/YYYY")
 };
