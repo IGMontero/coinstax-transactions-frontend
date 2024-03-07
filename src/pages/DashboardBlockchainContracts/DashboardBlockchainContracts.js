@@ -180,10 +180,25 @@ const DashboardBlockchainContracts = () => {
       if (
         !response.payload ||
         response.payload.error ||
-        response.payload == null
+        response.payload === null ||
+        !response.payload.Id ||
+        !response.payload.Blockchain ||
+        !response.payload.Address
       ) {
-        Swal.fire('Error', 'Error updating Trusted state', 'error');
+        Swal.fire(
+          'Error',
+          'Error updating Trusted state. Incomplete data received.',
+          'error',
+        );
       } else {
+        const updatedContract = response.payload;
+
+        setContracts(
+          contracts.map((c) =>
+            c.Id === updatedContract.Id ? updatedContract : c,
+          ),
+        );
+
         Swal.fire('Success', 'Trusted state update!', 'success');
       }
     } catch (error) {
