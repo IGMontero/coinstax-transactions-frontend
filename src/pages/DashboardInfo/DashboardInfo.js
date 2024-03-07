@@ -532,6 +532,7 @@ const DashboardInfo = () => {
                             <div className="d-flex justify-content-start">
                               <Col className="col-12 ">
                                 <PerformanceChart
+                                  setIsUnsupported={setIsUnsupported}
                                   address={addressForSearch}
                                   series={series}
                                   setSeries={setSeries}

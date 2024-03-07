@@ -4,7 +4,14 @@ import { fetchPerformance } from '../../../slices/transactions/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { Spinner } from 'reactstrap';
 
-const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
+const PerformanceChart = ({
+  address,
+  series,
+  setSeries,
+  title,
+  subtitle,
+  setIsUnsupported,
+}) => {
   const dispatch = useDispatch();
   const [activeFilter, setActiveFilter] = useState('one_week');
 
@@ -111,13 +118,17 @@ const PerformanceChart = ({ address, series, setSeries, title, subtitle }) => {
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
-          const lineData = response.total.map((item) => ({
-            date: item.calendarDate,
-            x: new Date(item.calendarDate).getTime(),
-            y: item.close.quote,
-          }));
-          setSeries([{ data: lineData }]);
-          setLoading(false);
+          if (response.unsupported) {
+            setIsUnsupported(true);
+          } else {
+            const lineData = response.total.map((item) => ({
+              date: item.calendarDate,
+              x: new Date(item.calendarDate).getTime(),
+              y: item.close.quote,
+            }));
+            setSeries([{ data: lineData }]);
+            setLoading(false);
+          }
         })
         .catch((error) => {
           console.error('Error fetching performance data:', error);
