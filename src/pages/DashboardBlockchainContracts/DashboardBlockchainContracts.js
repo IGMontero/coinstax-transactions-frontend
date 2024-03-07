@@ -122,13 +122,23 @@ const DashboardBlockchainContracts = () => {
 
     if (result.isConfirmed) {
       try {
-        await dispatch(
+        const response = await dispatch(
           setAllAsDirty({
             blockchain: 'ethereum',
             address: address,
           }),
         );
-        await getBlockchainContracts();
+
+        if (!response.payload || response.payload == false) {
+          Swal.fire('Error', 'Error to set address as dirty', 'error');
+        } else if (response.payload == true) {
+          Swal.fire(
+            'Success',
+            `All transactions with address ${address} sets as dirty `,
+            'success',
+          );
+          await getBlockchainContracts();
+        }
       } catch (error) {
         console.error('Error setting all as dirty', error);
       }
