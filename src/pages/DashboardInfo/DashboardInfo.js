@@ -32,7 +32,11 @@ import { fetchAssets, fetchNFTS } from '../../slices/transactions/thunk';
 import DashboardHome from '../DashboardHome/DashboardHome';
 import { useDispatch } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { capitalizeFirstLetter, copyToClipboard, formatIdTransaction } from '../../utils/utils';
+import {
+  capitalizeFirstLetter,
+  copyToClipboard,
+  formatIdTransaction,
+} from '../../utils/utils';
 import QrModal from './modals/QrModal';
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -369,7 +373,7 @@ const DashboardInfo = () => {
                   </div>
                   <div className="d-flex flex-row ">
                     <h1 className="fw-semibold">{title}</h1>
-                    <UncontrolledDropdown className="card-header-dropdown">
+                    {/* <UncontrolledDropdown className="card-header-dropdown">
                       <DropdownToggle
                         tag="a"
                         className="text-reset "
@@ -388,11 +392,12 @@ const DashboardInfo = () => {
                           </span>
                         </DropdownItem>
                       </DropdownMenu>
-                    </UncontrolledDropdown>
+                    </UncontrolledDropdown> */}
                   </div>
                   <h5
-                    className={`mt-0 text-${subtitle[0] == '+' ? 'success' : 'danger'
-                      }`}
+                    className={`mt-0 text-${
+                      subtitle[0] == '+' ? 'success' : 'danger'
+                    }`}
                   >
                     {subtitle}
                   </h5>{' '}

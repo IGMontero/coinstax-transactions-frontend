@@ -11,20 +11,27 @@ import { AuthProtected } from './AuthProtected';
 import { useProfile } from '../Components/Hooks/UserHooks';
 import Header from '../Layouts/Header';
 import Footer from '../Layouts/Footer';
+import Sidebar from '../Layouts/Sidebar';
 
 const Index = () => {
-  const { userProfile } = useProfile();
-
-  const isAuth = userProfile ? true : false;
+  const currentUser = localStorage.getItem('currentUser');
 
   return (
     <React.Fragment>
-      <Header onChangeLayoutMode={''} layoutModeType={''} headerClass={''} />
       <Routes>
         {allRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+            element={
+              currentUser ? (
+                <VerticalLayout>{route.component}</VerticalLayout>
+              ) : (
+                <>
+                  <Header />
+                  <NonAuthLayout>{route.component}</NonAuthLayout>
+                </>
+              )
+            }
             key={idx}
             exact={true}
           />
@@ -48,7 +55,7 @@ const Index = () => {
                 )}
 */}
 
-        <Route>
+        {/* <Route>
           {allRoutes.map((route, idx) => (
             <Route
               path={route.path}
@@ -61,9 +68,9 @@ const Index = () => {
               exact={true}
             />
           ))}
-        </Route>
+        </Route> */}
       </Routes>
-      <Footer />
+      {/* <Footer /> */}
     </React.Fragment>
   );
 };

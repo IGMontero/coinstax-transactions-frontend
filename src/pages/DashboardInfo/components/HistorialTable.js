@@ -16,9 +16,13 @@ import {
 } from 'reactstrap';
 import { getSelectedAssetFilters } from '../../../utils/utils';
 import { useDispatch } from 'react-redux';
-import { fetchHistory } from '../../../slices/transactions/thunk';
+import {
+  fetchHistory,
+  downloadTransactions,
+} from '../../../slices/transactions/thunk';
 import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
+import Swal from 'sweetalert2';
 
 const HistorialTable = ({ address, activeTab, data, setData }) => {
   const inputRef = useRef(null);
@@ -49,10 +53,11 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
 
-
   const [debouncedDisableGetMore, setDebouncedDisableGetMore] = useState(false);
 
-  // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show 
+  const [loadingDownload, setLoadingDownload] = useState(false);
+
+  // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
   useEffect(() => {
     if (!isProcessing) {
@@ -67,11 +72,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
     return () => {
       clearTimeout(timeout);
-    }
+    };
   }, [isProcessing]);
-
-
-
 
   // useEffect(() => {
   //   const timeout = setTimeout(() => {
@@ -138,17 +140,6 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     }
   };
 
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [
-    address,
-    activeTab,
-    selectedAssets,
-    selectedFilters,
-    includeSpam,
-    debouncedSearchTerm,
-  ]);
-
   const handleClearAllFilters = () => {
     setSelectedFilters([]);
     setSelectedAssets('All Assets');
@@ -158,7 +149,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   };
 
   useEffect(() => {
-    handleClearAllFilters();
+    if (activeTab != '3') {
+      handleClearAllFilters();
+    }
   }, [activeTab, address]);
 
   useEffect(() => {
@@ -166,6 +159,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       fetchData();
       setHasMoreData(true);
     }
+    setCurrentPage(0);
   }, [
     address,
     activeTab,
@@ -193,8 +187,6 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       return acc;
     }, {});
   };
-
-
 
   const groupedTransactions = data ? groupTxsByDate(data) : {};
 
@@ -233,8 +225,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
       const trasactions = parsed || [];
 
-      if (trasactions.length === 0 && !isProcessing
-      ) {
+      if (trasactions.length === 0 && !isProcessing) {
         setHasMoreData(false);
       } else {
         // setData((prevData) => [...prevData, ...response]);
@@ -419,11 +410,11 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   };
 
   const renderGetMoreButton = () => {
-
-
     return (
       <div className="d-flex justify-content-center mt-4">
-        {unsupportedAddress ? <h6 className="text-danger">Unsupported Address</h6> : (
+        {unsupportedAddress ? (
+          <h6 className="text-danger">Unsupported Address</h6>
+        ) : (
           <Button
             disabled={loading || debouncedDisableGetMore || unsupportedAddress}
             onClick={getMoreTransactions}
@@ -433,25 +424,99 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
             {loading ? (
               <Spinner size="sm" />
             ) : (
-
               <h6 className="text-dark fw-semibold my-2">
-                {(isProcessing) ?
+                {isProcessing ? (
                   <>
-                    <span className="me-2">Downloading more transactions...</span>
+                    <span className="me-2">
+                      Downloading more transactions...
+                    </span>
                     <Spinner size="sm" />
                   </>
-                  :
-                  unsupportedAddress ? 'Unsupported Address' :
-                    'More Transactions'}
+                ) : unsupportedAddress ? (
+                  'Unsupported Address'
+                ) : (
+                  'More Transactions'
+                )}
               </h6>
             )}
           </Button>
         )}
-
-
       </div>
     );
-  }
+  };
+
+  const handleDownloadTransactions = async () => {
+    try {
+      setLoadingDownload(true);
+
+      const selectAsset = getSelectedAssetFilters(selectedAssets);
+      Swal.fire({
+        title: 'Downloading',
+        html: 'Your file is being prepared for download.',
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      const response = await dispatch(
+        downloadTransactions({
+          blockchain: 'eth-mainnet',
+          address: address,
+          query: debouncedSearchTerm,
+          filters: {
+            blockchainAction: selectedFilters,
+            includeSpam: includeSpam,
+          },
+          assetsFilters: selectAsset,
+        }),
+      ).unwrap();
+
+
+      if (response.isProcessing) {
+        Swal.fire({
+          title: 'Processing...',
+          text: "Address transactions are processing. Please try again in a few minutes.",
+          icon: 'info',
+          confirmButtonText: 'Ok',
+        });
+
+        setTimeout(() => {
+          setLoadingDownload(false);
+        }, 10000);
+      } else {
+        // Swal.fire({
+        //   title: 'Downloading',
+        //   html: 'Your file is being prepared for download.',
+        //   timerProgressBar: true,
+        //   didOpen: () => {
+        //     Swal.showLoading();
+        //   },
+        // });
+
+        const url = window.URL.createObjectURL(new Blob([response]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `transactions-${address}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+
+        setTimeout(() => {
+          Swal.close();
+          setLoadingDownload(false);
+        }, 500);
+      }
+    } catch (error) {
+      console.error(error);
+      console.log(error.response)
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong. Please try again later.',
+      });
+      setLoadingDownload(false);
+    }
+  };
 
   return (
     <React.Fragment>
@@ -482,10 +547,14 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
             Include Spam Transactions
           </label>
         </Col>
-        <Col
-          className="d-flex  py-3 justify-content-end"
-        >
-          <Button className="btn btn-sm" color="primary" size="sm">
+        <Col className="d-flex  py-3 justify-content-end">
+          <Button
+            disabled={loadingDownload}
+            onClick={handleDownloadTransactions}
+            className="btn btn-sm"
+            color="primary"
+            size="sm"
+          >
             Download CSV
           </Button>
         </Col>
@@ -557,11 +626,10 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
                 key={index}
                 date={date}
                 transactions={groupedTransactions[date]}
+                onRefresh={fetchData}
               />
             ))}
-            {!isInitialLoad && hasMoreData && (
-              renderGetMoreButton()
-            )}
+            {!isInitialLoad && hasMoreData && renderGetMoreButton()}
           </div>
         </Col>
       ) : (

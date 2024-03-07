@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const Navdata = () => {
-  const [iscurrentState, setIscurrentState] = useState("Investment");
+  const [iscurrentState, setIscurrentState] = useState('Investment');
 
   // function updateIconSidebar(e) {
   //   if (e && e.target && e.target.getAttribute("subitems")) {
@@ -42,47 +42,66 @@ const Navdata = () => {
       label: `Welocome to Coinstax`,
       isHeader: true,
     },
+    // {
+    //   id: "investment",
+    //   label: "Investment",
+    //   icon: "bx bx-world",
+    //   link: "/",
+    //   click: function (e) {
+    //     e.preventDefault();
+    //     setIscurrentState("Investment");
+    //   },
+    // },
     {
-      id: "investment",
-      label: "Investment",
-      icon: "bx bx-world",
-      link: "/",
+      id: 'home',
+      label: 'Home',
+      icon: 'bx bx-home',
+      link: '/dashboard',
       click: function (e) {
         e.preventDefault();
-        setIscurrentState("Investment");
+        setIscurrentState('Home');
       },
     },
     {
-      id: "favorite",
-      label: "Favorites",
-      icon: "bx bx-star",
-      link: "/",
+      id: 'blockchain',
+      label: 'Blockchain Contracts',
+      icon: ' bx bx-link fs-3',
+      link: '/blockchain-contracts',
       click: function (e) {
         e.preventDefault();
-        setIscurrentState("Favorites");
+        setIscurrentState('Investment');
       },
     },
-    {
-      id: "exchange",
-      label: "Exchange",
-      icon: "bx bx-refresh fs-3",
-      link: "/",
-      click: function (e) {
-        e.preventDefault();
-        setIscurrentState("Exchange");
-      },
-    },
-    {
-      id: "configuration",
-      label: "Configuration",
-      icon: "bx bx-cog",
-      link: "/configuration",
-      click: function (e) {
-        e.preventDefault();
-        setIscurrentState("Configuration");
-      },
-    },
-
+    // {
+    //   id: "favorite",
+    //   label: "Favorites",
+    //   icon: "bx bx-star",
+    //   link: "/",
+    //   click: function (e) {
+    //     e.preventDefault();
+    //     setIscurrentState("Favorites");
+    //   },
+    // },
+    // {
+    //   id: "exchange",
+    //   label: "Exchange",
+    //   icon: "bx bx-refresh fs-3",
+    //   link: "/",
+    //   click: function (e) {
+    //     e.preventDefault();
+    //     setIscurrentState("Exchange");
+    //   },
+    // },
+    // {
+    //   id: "configuration",
+    //   label: "Configuration",
+    //   icon: "bx bx-cog",
+    //   link: "/configuration",
+    //   click: function (e) {
+    //     e.preventDefault();
+    //     setIscurrentState("Configuration");
+    //   },
+    // },
   ];
   return <React.Fragment>{menuItems}</React.Fragment>;
 };
