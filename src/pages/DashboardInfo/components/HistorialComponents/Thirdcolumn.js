@@ -29,6 +29,15 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
 
   const currentUser = localStorage.getItem('currentUser');
 
+  const blockchainContractAddress = transaction.txSummary.mainContractAddress || (transaction.blockchainAction === blockchainActions.RECEIVE ?
+    transaction.sender : transaction.recipient)
+  const blockchainContractName = transaction.txSummary.mainContractInfo?.name || transaction.txSummary.marketplaceName || blockchainContractAddress
+  const blockchainContractLogo = transaction.txSummary.mainContractInfo?.logo || transaction.txSummary.marketplaceLogo;
+
+
+  const contractLabel = transaction.blockchainAction === blockchainActions.RECEIVE ? 'From' : transaction.blockchainAction === blockchainActions.SEND ? 'To' : 'Application';
+
+
   useEffect(() => {
     return () => {
       if (timeoutId) clearTimeout(timeoutId);
@@ -54,13 +63,16 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
 
   const handleClick = (e, transaction, targetId) => {
     e.stopPropagation();
-    if (
-      transaction.blockchainAction === blockchainActions.RECEIVE ||
-      transaction.blockchainAction === blockchainActions.SEND
-    ) {
-      return;
-    }
-    handleCopyToClipboard(e, transaction.recipient, targetId);
+    // if (
+    //   transaction.blockchainAction === blockchainActions.RECEIVE ||
+    //   transaction.blockchainAction === blockchainActions.SEND
+    // ) {
+    //   return;
+    // }
+
+    console.log("handleClick -> blockchainContractAddress", blockchainContractAddress)
+
+    handleCopyToClipboard(e, blockchainContractAddress, targetId);
   };
 
   const handleEditBlockChainContract = async (data) => {
@@ -80,7 +92,7 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
           data,
         }),
       );
-      Swal.fire('Success', 'Contract updated successfully', 'success');
+      Swal.fire('Success', 'Blockchain Contract updated successfully', 'success');
       setLoadingUpdate(false);
       setOpenModalEdit(false);
       onRefresh();
@@ -106,11 +118,7 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
           style={{ fontSize: '12px', marginBottom: '4px' }}
           className="text-start  mb-1"
         >
-          {transaction.blockchainAction === blockchainActions.RECEIVE
-            ? 'From'
-            : transaction.blockchainAction === blockchainActions.SEND
-              ? 'To'
-              : 'Application'}
+          {contractLabel}
         </p>
         <div className="d-flex align-items-end">
           <h6
@@ -129,7 +137,28 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
               )
             }
           >
-            {transaction.txSummary && transaction.txSummary.marketplaceName ? (
+            <>
+              {blockchainContractLogo && (
+                <img
+                  src={blockchainContractLogo}
+                  alt={blockchainContractName}
+                  style={{
+                    width: '20px',
+                    height: '20px',
+                    borderRadius: '6px',
+                    marginRight: '6px',
+                  }}
+                />
+              )}
+              <span className="text-hover-underline">
+                {formatIdTransaction(
+                  blockchainContractName,
+                  4,
+                  4,
+                )}
+              </span>
+            </>
+            {/* {transaction.txSummary && transaction.txSummary.marketplaceName ? (
               <>
                 {transaction.txSummary.marketplaceLogo && (
                   <img
@@ -145,7 +174,7 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
                 )}
                 <span className="text-hover-underline">
                   {formatIdTransaction(
-                    transaction.txSummary.marketplaceName,
+                    blockchainContractName,
                     4,
                     4,
                   )}
@@ -172,7 +201,7 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
               <span className="text-hover-underline">
                 {formatIdTransaction(transaction.recipient, 4, 4)}
               </span>
-            )}
+            )} */}
             <Popover
               placement="right"
               isOpen={
