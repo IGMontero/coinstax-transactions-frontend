@@ -531,7 +531,8 @@
         }
 
         .navbar-brand-box {
-            position: fixed;
+            // position: fixed;
+            margin-top: -70px;
             padding: 0;
             width: $vertical-menu-width-sm;
             z-index: 1;
