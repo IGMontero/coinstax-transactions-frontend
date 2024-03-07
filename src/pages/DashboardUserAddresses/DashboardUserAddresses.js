@@ -35,10 +35,10 @@ const DashboardUserAddresses = () => {
         }),
       );
 
-      setUserAddresses(response.data);
-      setHasMore(response.hasMore);
-      setPageSize(response.pageSize);
-      setTotal(response.total);
+      setUserAddresses(response.payload.data);
+      setHasMore(response.payload.hasMore);
+      setPageSize(response.payload.pageSize);
+      setTotal(response.payload.total);
 
       console.log(response);
     } catch (error) {
@@ -128,23 +128,23 @@ const DashboardUserAddresses = () => {
               <Spinner style={{ width: '3rem', height: '3rem' }} />
             </div>
           )}
-          {userAddresses ? (
-            userAddresses.map((addresses) => (
-              <tr style={{ height: 60 }} key={addresses.Id}>
-                <td className="align-middle">{addresses.Id}</td>
-                <td className="align-middle">{addresses.Blockchain}</td>
+          {userAddresses && userAddresses.length > 0 ? (
+            userAddresses?.map((address) => (
+              <tr style={{ height: 60 }} key={address.Id}>
+                <td className="align-middle">{address.Id}</td>
+                <td className="align-middle">{address.Blockchain}</td>
                 <td className="align-middle">
                   <span
-                    id={`popoverAddress-${addresses.Id}-${addresses.Address}`}
+                    id={`popoverAddress-${address.Id}-${address.Address}`}
                     style={{ cursor: 'pointer' }}
                     // onClick={(e) => handleCopyValue(e, addresses.Address)}
                   >
-                    {formatIdTransaction(addresses.Address, 4, 4)}
+                    {formatIdTransaction(address.Address, 4, 4)}
                   </span>
                   <UncontrolledPopover
                     trigger="hover"
                     placement="right"
-                    target={`popoverAddress-${addresses.Id}-${addresses.Address}`}
+                    target={`popoverAddress-${address.Id}-${address.Address}`}
                   >
                     <PopoverBody
                       style={{
@@ -157,14 +157,19 @@ const DashboardUserAddresses = () => {
                           fontSize: '0.70rem',
                         }}
                       >
-                        {isCopied ? 'Copied' : addresses.Address}
+                        {address.Address}
                       </span>
                     </PopoverBody>
                   </UncontrolledPopover>
                 </td>
-                <td className="align-middle">{addresses.Type}</td>
                 <td className="align-middle">
-                  {formatIdTransaction(addresses.Name, 4, 4)}
+                  {address.IsProcessingTransactions ? 'Yes' : 'No'}
+                </td>
+                <td className="align-middle">
+                  {address.LastTransactionsPageProcessed}
+                </td>
+                <td className="align-middle">
+                  {address.AllTransactionsProcessed ? 'Yes' : 'No'}
                 </td>
               </tr>
             ))
@@ -176,7 +181,7 @@ const DashboardUserAddresses = () => {
             </tr>
           )}
         </tbody>
-        {userAddresses && !loading && (
+        {!userAddresses && !loading && (
           <TablePagination
             onChangePage={handleChangePage}
             currentPage={currentPage}
