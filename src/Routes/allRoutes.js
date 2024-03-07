@@ -15,6 +15,7 @@ import UserProfile from '../pages/Authentication/user-profile';
 import DashboardInfo from '../pages/DashboardInfo/DashboardInfo';
 import DashboardNFT from '../pages/DashboardNFT/DashboardNFT';
 import DashboardBlockchainContracts from '../pages/DashboardBlockchainContracts/DashboardBlockchainContracts';
+import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUserAddresses';
 
 const authProtectedRoutes = [
   { path: '/dashboard', component: <DashboardInfo /> },
@@ -53,6 +54,10 @@ const allRoutes = [
   {
     path: '/blockchain-contracts',
     component: <DashboardBlockchainContracts />,
+  },
+  {
+    path: '/user-addresses',
+    component: <DashboardUserAddresses />,
   },
 
   //User Profile

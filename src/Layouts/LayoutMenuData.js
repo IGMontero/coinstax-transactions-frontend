@@ -72,6 +72,16 @@ const Navdata = () => {
         setIscurrentState('Investment');
       },
     },
+    {
+      id: 'userAddresses',
+      label: 'User Addresses',
+      icon: ' bx bx-user fs-3',
+      link: '/user-addresses',
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('Investment');
+      },
+    },
     // {
     //   id: "favorite",
     //   label: "Favorites",
