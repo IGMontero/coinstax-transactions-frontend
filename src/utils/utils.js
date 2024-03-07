@@ -1,4 +1,4 @@
-import moment from "moment";
+import moment from 'moment';
 
 export const getActionMapping = (action) => {
   switch (action) {
@@ -36,6 +36,13 @@ export const blockchainActions = {
   SEND: 'SEND',
   BURN: 'BURN',
   MINT: 'MINT',
+};
+
+export const blockchainContractTrustedStateEnumType = {
+  UNKNOUN: 'unknown',
+  TRUSTED: 'trusted',
+  SCAM: 'scam',
+  SPAM: 'spam',
 };
 
 export const FILTER_NAMES = ['TRADE', 'MINT', 'SEND', 'RECEIVE', 'OTHERS'];
@@ -115,5 +122,5 @@ export async function copyToClipboard(textToCopy) {
 }
 
 export const formatDate = (date) => {
-  return moment(date).format("MM/DD/YYYY")
+  return moment(date).format('MM/DD/YYYY');
 };
