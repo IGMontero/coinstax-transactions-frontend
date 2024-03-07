@@ -151,6 +151,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   useEffect(() => {
     if (activeTab != '3') {
       handleClearAllFilters();
+      setData([]);
     }
   }, [activeTab, address]);
 
@@ -340,8 +341,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${showTransactionFilterMenu ? 'active' : ''
-                }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${
+                showTransactionFilterMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">Transactions</span>
@@ -361,7 +363,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -377,8 +379,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           >
             <DropdownToggle
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${showAssetsMenu ? 'active' : ''
-                }`}
+              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -471,11 +474,10 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
         }),
       ).unwrap();
 
-
       if (response.isProcessing) {
         Swal.fire({
           title: 'Processing...',
-          text: "Address transactions are processing. Please try again in a few minutes.",
+          text: 'Address transactions are processing. Please try again in a few minutes.',
           icon: 'info',
           confirmButtonText: 'Ok',
         });
@@ -508,7 +510,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       }
     } catch (error) {
       console.error(error);
-      console.log(error.response)
+      console.log(error.response);
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
