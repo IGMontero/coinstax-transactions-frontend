@@ -29,14 +29,25 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
 
   const currentUser = localStorage.getItem('currentUser');
 
-  const blockchainContractAddress = transaction.txSummary.mainContractAddress || (transaction.blockchainAction === blockchainActions.RECEIVE ?
-    transaction.sender : transaction.recipient)
-  const blockchainContractName = transaction.txSummary.mainContractInfo?.name || transaction.txSummary.marketplaceName || blockchainContractAddress
-  const blockchainContractLogo = transaction.txSummary.mainContractInfo?.logo || transaction.txSummary.marketplaceLogo;
+  const blockchainContractAddress =
+    transaction.txSummary.mainContractAddress ||
+    (transaction.blockchainAction === blockchainActions.RECEIVE
+      ? transaction.sender
+      : transaction.recipient);
+  const blockchainContractName =
+    transaction.txSummary.mainContractInfo?.name ||
+    transaction.txSummary.marketplaceName ||
+    blockchainContractAddress;
+  const blockchainContractLogo =
+    transaction.txSummary.mainContractInfo?.logo ||
+    transaction.txSummary.marketplaceLogo;
 
-
-  const contractLabel = transaction.blockchainAction === blockchainActions.RECEIVE ? 'From' : transaction.blockchainAction === blockchainActions.SEND ? 'To' : 'Application';
-
+  const contractLabel =
+    transaction.blockchainAction === blockchainActions.RECEIVE
+      ? 'From'
+      : transaction.blockchainAction === blockchainActions.SEND
+        ? 'To'
+        : 'Application';
 
   useEffect(() => {
     return () => {
@@ -70,7 +81,10 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
     //   return;
     // }
 
-    console.log("handleClick -> blockchainContractAddress", blockchainContractAddress)
+    console.log(
+      'handleClick -> blockchainContractAddress',
+      blockchainContractAddress,
+    );
 
     handleCopyToClipboard(e, blockchainContractAddress, targetId);
   };
@@ -79,7 +93,7 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
     try {
       setLoadingUpdate(true);
       const address = transactionToEdit.txSummary.mainContractAddress;
-      if (!address) {
+      if (!blockchainContractAddress) {
         Swal.fire('Error', 'No Address found ', 'error');
         setLoadingUpdate(false);
         return;
@@ -88,11 +102,15 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
       await dispatch(
         editBlockChainContract({
           blockchain: 'ethereum',
-          address: address,
+          address: blockchainContractAddress,
           data,
         }),
       );
-      Swal.fire('Success', 'Blockchain Contract updated successfully', 'success');
+      Swal.fire(
+        'Success',
+        'Blockchain Contract updated successfully',
+        'success',
+      );
       setLoadingUpdate(false);
       setOpenModalEdit(false);
       onRefresh();
@@ -151,11 +169,7 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
                 />
               )}
               <span className="text-hover-underline">
-                {formatIdTransaction(
-                  blockchainContractName,
-                  4,
-                  4,
-                )}
+                {formatIdTransaction(blockchainContractName, 4, 4)}
               </span>
             </>
             {/* {transaction.txSummary && transaction.txSummary.marketplaceName ? (
