@@ -115,7 +115,7 @@ const Nfts = ({ address, activeTab }) => {
                     checked={includeSpam}
                   />
                   <label className="form-check-label" htmlFor="customCheck1">
-                    Include Spam
+                    Include Spam NFTs
                   </label>
                 </div>
               </div>
