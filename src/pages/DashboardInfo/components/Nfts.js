@@ -88,8 +88,8 @@ const Nfts = ({ address, activeTab }) => {
     }
   }, [address, activeTab, dispatch, includeSpam]);
 
-  const handleVisitNFT = (nft, index) => {
-    navigate(`/nfts/ethereum/${index + 1}?address=${address}`);
+  const handleVisitNFT = (tokenId, contractAddress) => {
+    navigate(`/contract/${contractAddress}?tokenId=${tokenId}`);
   };
 
   const handleShowSpam = () => {
@@ -302,7 +302,9 @@ const Nfts = ({ address, activeTab }) => {
                         className="d-flex justify-content-center"
                       >
                         <Card
-                          // onClick={() => handleVisitNFT(nft, index)}
+                          onClick={() =>
+                            handleVisitNFT(nft.contractAddress, nft.tokenId)
+                          }
                           className="cursor-pointer border-2 border bg-transparent shadow-none"
                           style={{
                             borderRadius: '10px',
