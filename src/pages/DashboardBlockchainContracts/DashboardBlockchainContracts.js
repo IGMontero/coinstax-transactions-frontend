@@ -15,7 +15,12 @@ import {
   fetchBlockchainContracts,
   setAllAsDirty,
   editBlockChainContract,
+  updateTrustedState,
 } from '../../slices/blockchainContracts/thunk';
+import {
+  blockchainContractTrustedStateEnumType,
+  capitalizeFirstLetter,
+} from '../../utils/utils';
 import { useDispatch } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
@@ -27,6 +32,11 @@ const DashboardBlockchainContracts = () => {
 
   const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
+
+  const [loadingUpdateTrustedState, setLoadingUpdateTrustedState] =
+    useState(false);
+  const [updatingContractId, setUpdatingContractId] = useState(null);
+
   const [contracts, setContracts] = useState([]);
   const [hasMore, setHasMore] = useState(false);
   const [pageSize, setPageSize] = useState();
@@ -155,6 +165,35 @@ const DashboardBlockchainContracts = () => {
     }
   };
 
+  const handleUpdateTrustedState = async (contract, state) => {
+    try {
+      setUpdatingContractId(contract.Id);
+      const response = await dispatch(
+        updateTrustedState({
+          blockchain: 'ethereum',
+          address: contract.Address,
+          trustedState: state,
+        }),
+      );
+
+      console.log(response.payload);
+      if (
+        !response.payload ||
+        response.payload.error ||
+        response.payload == null
+      ) {
+        Swal.fire('Error', 'Error updating Trusted state', 'error');
+      } else {
+        Swal.fire('Success', 'Trusted state update!', 'success');
+      }
+    } catch (error) {
+      Swal.fire('Error', 'Error updating trusted state', error.toString());
+      console.log(error);
+    } finally {
+      setUpdatingContractId(null);
+    }
+  };
+
   const renderDropdown = (contract) => {
     return (
       <UncontrolledDropdown>
@@ -165,9 +204,69 @@ const DashboardBlockchainContracts = () => {
           <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
             Edit
           </DropdownItem>
-          <DropdownItem>Update Trusted State</DropdownItem>
           <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
             Set All Tx as Dirty
+          </DropdownItem>
+        </DropdownMenu>
+      </UncontrolledDropdown>
+    );
+  };
+
+  const renderDropdownTrustedState = (contract) => {
+    return (
+      <UncontrolledDropdown disabled={loadingUpdateTrustedState}>
+        <DropdownToggle tag="a" className="nav-link cursor-pointer" caret>
+          {updatingContractId === contract.Id ? (
+            <Spinner style={{ width: '1.5rem', height: '1.5rem' }} />
+          ) : (
+            contract.TrustedState
+          )}
+        </DropdownToggle>
+        <DropdownMenu>
+          {/* <DropdownItem header>Select State</DropdownItem>  */}
+          <DropdownItem
+            onClick={() =>
+              handleUpdateTrustedState(
+                contract,
+                blockchainContractTrustedStateEnumType.UNKNOUN,
+              )
+            }
+          >
+            {capitalizeFirstLetter(
+              blockchainContractTrustedStateEnumType.UNKNOUN,
+            )}
+          </DropdownItem>
+          <DropdownItem
+            onClick={() =>
+              handleUpdateTrustedState(
+                contract,
+                blockchainContractTrustedStateEnumType.TRUSTED,
+              )
+            }
+          >
+            {capitalizeFirstLetter(
+              blockchainContractTrustedStateEnumType.TRUSTED,
+            )}
+          </DropdownItem>
+          <DropdownItem
+            onClick={() =>
+              handleUpdateTrustedState(
+                contract,
+                blockchainContractTrustedStateEnumType.SCAM,
+              )
+            }
+          >
+            {capitalizeFirstLetter(blockchainContractTrustedStateEnumType.SCAM)}
+          </DropdownItem>
+          <DropdownItem
+            onClick={() =>
+              handleUpdateTrustedState(
+                contract,
+                blockchainContractTrustedStateEnumType.SPAM,
+              )
+            }
+          >
+            {capitalizeFirstLetter(blockchainContractTrustedStateEnumType.SPAM)}
           </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
@@ -312,7 +411,9 @@ const DashboardBlockchainContracts = () => {
                     />
                   </td>
                   <td className="align-middle">{contract.Symbol}</td>
-                  <td className="align-middle">{contract.TrustedState}</td>
+                  <td className="align-middle">
+                    {renderDropdownTrustedState(contract)}{' '}
+                  </td>
                   <td className="align-middle text-center">
                     <span className="cursor-pointer">
                       {renderDropdown(contract)}{' '}
