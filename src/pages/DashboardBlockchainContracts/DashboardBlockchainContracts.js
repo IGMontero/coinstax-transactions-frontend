@@ -128,13 +128,17 @@ const DashboardBlockchainContracts = () => {
   const handleEditBlockChainContract = async (data) => {
     try {
       setLoadingUpdate(true);
-      await dispatch(
+      const response = await dispatch(
         editBlockChainContract({
           blockchain: 'ethereum',
           address: selectedContract.Address,
           data,
         }),
       );
+      if (!response || response.error) {
+        Swal.fire('Error', 'Error editing blockchain contract', 'error');
+        return;
+      }
       Swal.fire(
         'Success',
         'Blockchain Contract updated successfully',

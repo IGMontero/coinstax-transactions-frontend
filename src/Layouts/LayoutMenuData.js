@@ -39,7 +39,7 @@ const Navdata = () => {
 
   const menuItems = [
     {
-      label: `Welocome to Coinstax`,
+      label: `Admin`,
       isHeader: true,
     },
     // {
