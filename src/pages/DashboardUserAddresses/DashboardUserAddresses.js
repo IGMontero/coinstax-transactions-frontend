@@ -9,7 +9,7 @@ import {
 } from 'reactstrap';
 import { getUserAddresses } from '../../slices/userAddresses/thunk';
 import { useDispatch } from 'react-redux';
-import { formatIdTransaction } from '../../utils/utils';
+import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 
 const DashboardUserAddresses = () => {
@@ -34,13 +34,24 @@ const DashboardUserAddresses = () => {
           blockchain: 'ethereum',
         }),
       );
-
-      setUserAddresses(response.payload.data);
-      setHasMore(response.payload.hasMore);
+      const responseData = response.payload.data || response.payload;
+      if (
+        responseData &&
+        typeof responseData === 'object' &&
+        !Array.isArray(responseData)
+      ) {
+        setUserAddresses([responseData]);
+        setHasMore(false);
+      } else if (Array.isArray(responseData)) {
+        setUserAddresses(responseData);
+        setHasMore(response.payload.hasMore || false);
+        setTotal(response.payload.total || responseData.length);
+      } else {
+        setUserAddresses([]);
+        setHasMore(false);
+        setTotal(0);
+      }
       setPageSize(response.payload.pageSize);
-      setTotal(response.payload.total);
-
-      console.log(response);
     } catch (error) {
       console.error('Failed to fetch user addresses', error);
     } finally {
@@ -68,6 +79,16 @@ const DashboardUserAddresses = () => {
 
   const handleChangePage = (page) => {
     setCurrentPage(page);
+  };
+
+  const [isCopied, setIsCopied] = useState(false);
+  const handleCopyValue = (e, text) => {
+    e.stopPropagation();
+    copyToClipboard(text);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
   };
 
   return (
@@ -137,7 +158,7 @@ const DashboardUserAddresses = () => {
                   <span
                     id={`popoverAddress-${address.Id}-${address.Address}`}
                     style={{ cursor: 'pointer' }}
-                    // onClick={(e) => handleCopyValue(e, addresses.Address)}
+                    onClick={(e) => handleCopyValue(e, address.Address)}
                   >
                     {formatIdTransaction(address.Address, 4, 4)}
                   </span>
@@ -157,7 +178,7 @@ const DashboardUserAddresses = () => {
                           fontSize: '0.70rem',
                         }}
                       >
-                        {address.Address}
+                        {isCopied ? 'Copied' : address.Address}
                       </span>
                     </PopoverBody>
                   </UncontrolledPopover>
