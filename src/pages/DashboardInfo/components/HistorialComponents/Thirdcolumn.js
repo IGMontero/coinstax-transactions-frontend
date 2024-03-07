@@ -99,13 +99,17 @@ const ThirdColumn = ({ transaction, index, onRefresh }) => {
         return;
       }
 
-      await dispatch(
+      const response = await dispatch(
         editBlockChainContract({
           blockchain: 'ethereum',
           address: blockchainContractAddress,
           data,
         }),
       );
+      if (!response || response.error) {
+        Swal.fire('Error', 'Error editing blockchain contract', 'error');
+        return;
+      }
       Swal.fire(
         'Success',
         'Blockchain Contract updated successfully',
