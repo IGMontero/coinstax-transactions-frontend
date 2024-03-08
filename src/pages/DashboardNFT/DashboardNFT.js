@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Col, Row } from 'reactstrap';
 import { formatIdTransaction } from '../../utils/utils';
@@ -11,46 +11,25 @@ const DashboardNFT = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [loading, setLoading] = useState('');
+
+  const [description, setDescription] = useState('');
+  const [attributes, setAttributes] = useState([]);
+  const [collectionLogo, setCollectionLogo] = useState('');
+  const [collectionName, setCollectionName] = useState('');
+
+  const [logo, setLogo] = useState('');
+  const [name, setName] = useState('');
+
+  const [floorPriceFiat, setFloorPriceFiat] = useState(0);
+  const [symbol, setSymbol] = useState('');
+
   const queryParams = new URLSearchParams(location.search);
   const tokenId = queryParams.get('tokenId');
 
-  const address = 'asd';
-
-  console.log(tokenId);
-
-  const attributes = [
-    {
-      trait_type: 'Background',
-      value: 'shell',
-    },
-    {
-      trait_type: 'Fur',
-      value: 'White',
-    },
-    {
-      trait_type: 'Clothes',
-      value: 'Fav Tee',
-    },
-    {
-      trait_type: 'Eyes',
-      value: 'Sleepy',
-    },
-    {
-      trait_type: 'Cheeks',
-      value: 'Rosy cheeks',
-    },
-    {
-      trait_type: 'Face Piercings',
-      value: 'Silver Nose Piercing R',
-    },
-    {
-      trait_type: 'Mouth',
-      value: 'Bored',
-    },
-  ];
-
   const fetchNftByContractAddress = async () => {
     try {
+      setLoading(true);
       const response = await dispatch(
         getNftsByContractAddress({
           blockchain: 'ethereum',
@@ -58,9 +37,21 @@ const DashboardNFT = () => {
           tokenId,
         }),
       );
-      console.log(response);
+      const res = response.payload;
+      setCollectionLogo(res.collection.logo);
+      setCollectionName(res.collection.name);
+      setLogo(res.logo);
+      setName(res.name);
+      setFloorPriceFiat(res.floorPriceFiat);
+      setSymbol(res.symbol);
+      setAttributes(res.metadata.attributes);
+      setDescription(res.description);
+      setLoading(false);
+      console.log(response.payload);
     } catch (error) {
+      setLoading(false);
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -86,7 +77,7 @@ const DashboardNFT = () => {
             }}
           />
           <h6 className="m-0 ms-3">
-            Viewing {formatIdTransaction(address, 4, 4)} balances
+            Viewing {formatIdTransaction(tokenId, 4, 4)} balances
           </h6>
 
           <div className="ms-auto">
@@ -144,14 +135,18 @@ const DashboardNFT = () => {
   };
 
   const renderDescription = () => {
+    const segments = description.split('\n\n');
+    const formattedDescription = segments.map((segment, index) => (
+      <React.Fragment key={index}>
+        {index > 0 && <p></p>}
+        {segment}
+      </React.Fragment>
+    ));
+
     return (
       <div className="my-1">
         <h4 className="mb-4">Description</h4>
-        <p>
-          Bored Milady Maker is a collection of 6,911 generative pfpNFT's in a
-          neochibi aesthetic inspired by street style tribes that infected the
-          apes with Network Spirituality.
-        </p>
+        <p>{formattedDescription}</p>
       </div>
     );
   };
@@ -179,57 +174,79 @@ const DashboardNFT = () => {
     );
   };
 
-  document.title = 'NFTs';
+  document.title = `${name ? name : 'NFTs'} - ${collectionName || ''}`;
 
   return (
     <React.Fragment>
       <div className="page-content">
-        <Row>
-          <Col>
-            <div className="d-flex align-items-center mb-2">
-              <img
-                src="https://lh3.googleusercontent.com/2QUb8EfLW1jFTAskGZii8ugWfbe5hSmjNriq62dg6g26mGcLTWi4uL3yifWB3eM6Mjz1xge3zkhFWcH5SxtxXLC4guoHBeb1cQ"
-                alt="NFT"
-                className="img-fluid"
-                style={{ height: '32px', width: 'auto', borderRadius: '30%' }}
-              />
-
-              <h4 className="text-primary mb-0 ms-2"> Bored Milady Maker</h4>
+        {loading ? (
+          <div
+            style={{ height: '100vh' }}
+            className="d-flex justify-content-center align-items-center"
+          >
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
             </div>
-          </Col>
-        </Row>
-        <div className="my-3">
-          <h1>Boder Milady #2867</h1>
-        </div>
-        <div className="my-3">
-          <p>Price by floor Price</p>
-        </div>
-        <div className="my-3">
-          <h1>0.0092 ETH</h1>
-        </div>
-        <div className="d-flex justify-content-center">
-          <img
-            src="https://lh3.googleusercontent.com/B5MlCNYzuPTMwkIbWRqrRPSEtuuzIif6kY_LteFgyrhmkdLne62O8lCG0Ni77WAK9un-dA1d0UY5qykNCtWt1pZ8W3VeqWz8mTX0"
-            className="d-block mx-auto img-fluid"
-            alt="NFT"
-            style={{
-              borderRadius: '20px',
-              height: 'auto',
-              maxHeight: '400px',
-              width: 'auto',
-            }}
-          />
-        </div>
-
-        {renderCardProfile()}
-
-        {renderAttributes(attributes)}
-        <hr />
-        <div className="py-2">{renderDetails()}</div>
-        <hr />
-        <div className="py-2">{renderDescription()}</div>
-        <hr />
-        <div className="py-2">{renderAbout()}</div>
+          </div>
+        ) : (
+          <>
+            <Row>
+              <Col>
+                <div className="d-flex align-items-center mb-2">
+                  <img
+                    src={collectionLogo}
+                    alt="NFT"
+                    className="img-fluid"
+                    style={{
+                      height: '32px',
+                      width: 'auto',
+                      borderRadius: '30%',
+                    }}
+                  />
+                  <h4 className="text-primary mb-0 ms-2">{collectionName}</h4>
+                </div>
+              </Col>
+            </Row>
+            <div className="my-3">
+              <h1>{name}</h1>
+            </div>
+            <div className="my-3">
+              <p>Price by floor Price</p>
+            </div>
+            <div className="my-3">
+              <h1>
+                {floorPriceFiat} {symbol}
+              </h1>
+            </div>
+            <div className="d-flex justify-content-center">
+              <img
+                src={logo}
+                className="d-block mx-auto img-fluid"
+                alt="NFT"
+                style={{
+                  borderRadius: '20px',
+                  height: 'auto',
+                  maxHeight: '400px',
+                  width: 'auto',
+                }}
+              />
+            </div>
+            {/* {renderCardProfile()} */}
+            {attributes ? (
+              <>
+                {renderAttributes(attributes)}
+                <hr />
+              </>
+            ) : null}
+            {description ? (
+              <>
+                <div className="py-2">{renderDescription()}</div>
+                <hr />
+              </>
+            ) : null}
+            {/* <div className="py-2">{renderAbout()}</div> */}
+          </>
+        )}
       </div>
     </React.Fragment>
   );
