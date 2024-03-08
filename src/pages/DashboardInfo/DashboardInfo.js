@@ -49,6 +49,7 @@ const DashboardInfo = () => {
   const [addressTitle, setAddressTitle] = useState('');
 
   const [isCopied, setIsCopied] = useState(false);
+  const [isUnsupported, setIsUnsupported] = useState(false);
 
   const [searchInput, setSearchInput] = useState('');
   const [addressForSearch, setAddressForSearch] = useState('');
@@ -56,6 +57,7 @@ const DashboardInfo = () => {
   const [historyData, setHistoryData] = useState([]);
 
   const [assetsData, setAssetsData] = useState([]);
+  const [loadingAssets, setLoadingAssets] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
@@ -76,9 +78,8 @@ const DashboardInfo = () => {
     setShowQrModal(!showQrModal);
   };
 
-  const [isUnsupported, setIsUnsupported] = useState(false);
-
   const fetchDataAssets = () => {
+    setLoadingAssets(true);
     dispatch(fetchAssets(addressForSearch))
       .unwrap()
       .then((response) => {
@@ -88,11 +89,11 @@ const DashboardInfo = () => {
           setIsUnsupported(false);
         }
         setAssetsData(response);
-        setLoading(false);
+        setLoadingAssets(false);
       })
       .catch((error) => {
         console.error('Error fetching performance data:', error);
-        setLoading(false);
+        setLoadingAssets(false);
       });
   };
 
@@ -543,7 +544,10 @@ const DashboardInfo = () => {
                             </div>
                           </Col>
                           <Col xxl={12}>
-                            <AcitvesTable data={assetsData} />
+                            <AcitvesTable
+                              loading={loadingAssets}
+                              data={assetsData}
+                            />
                           </Col>
                         </div>
                       </div>
