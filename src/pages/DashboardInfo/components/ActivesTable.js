@@ -10,8 +10,8 @@ import {
 } from 'reactstrap';
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 
-const AcitvesTable = ({ data }) => {
-  const [loading, setLoading] = useState(false);
+const AcitvesTable = ({ data, loading }) => {
+  // const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState('byPlatform');
 
   const [showMenu, setShowMenu] = useState(false);
@@ -20,11 +20,11 @@ const AcitvesTable = ({ data }) => {
 
   const [hideZeroBalances, setHideZeroBalances] = useState(true);
 
-  useEffect(() => {
-    if (data) {
-      setLoading(false);
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (data) {
+  //     setLoading(false);
+  //   }
+  // }, [data]);
 
   const formatBalance = (number) => {
     if (typeof number !== 'number' || isNaN(number)) {
