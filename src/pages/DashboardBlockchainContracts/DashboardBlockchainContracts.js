@@ -186,7 +186,6 @@ const DashboardBlockchainContracts = () => {
         }),
       );
 
-      console.log(response.payload);
       if (
         !response.payload ||
         response.payload.error ||
@@ -209,8 +208,11 @@ const DashboardBlockchainContracts = () => {
           ),
         );
 
-        Swal.fire('Success', `Trusted state set to ${updatedContract.TrustedState
-          }.`, 'success');
+        Swal.fire(
+          'Success',
+          `Trusted state set to ${updatedContract.TrustedState}.`,
+          'success',
+        );
       }
     } catch (error) {
       Swal.fire('Error', 'Error updating trusted state', error.toString());

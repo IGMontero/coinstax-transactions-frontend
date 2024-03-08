@@ -629,6 +629,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
                 date={date}
                 transactions={groupedTransactions[date]}
                 onRefresh={fetchData}
+                setTransactions={setData}
               />
             ))}
             {!isInitialLoad && hasMoreData && renderGetMoreButton()}
