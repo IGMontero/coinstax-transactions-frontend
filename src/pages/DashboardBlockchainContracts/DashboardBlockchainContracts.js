@@ -134,7 +134,7 @@ const DashboardBlockchainContracts = () => {
         } else if (response.payload == true) {
           Swal.fire(
             'Success',
-            `All transactions with address ${address} sets as dirty `,
+            `All transactions with address ${address} have been set as dirty.`,
             'success',
           );
           await getBlockchainContracts();
@@ -209,7 +209,8 @@ const DashboardBlockchainContracts = () => {
           ),
         );
 
-        Swal.fire('Success', 'Trusted state update!', 'success');
+        Swal.fire('Success', `Trusted state set to ${updatedContract.TrustedState
+          }.`, 'success');
       }
     } catch (error) {
       Swal.fire('Error', 'Error updating trusted state', error.toString());

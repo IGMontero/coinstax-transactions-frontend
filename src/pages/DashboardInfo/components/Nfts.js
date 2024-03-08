@@ -88,7 +88,7 @@ const Nfts = ({ address, activeTab }) => {
     }
   }, [address, activeTab, dispatch, includeSpam]);
 
-  const handleVisitNFT = (tokenId, contractAddress) => {
+  const handleVisitNFT = (contractAddress, tokenId) => {
     navigate(`/contract/${contractAddress}?tokenId=${tokenId}`);
   };
 
