@@ -65,8 +65,8 @@ const Login = (props) => {
     enableReinitialize: true,
 
     initialValues: {
-      email: userLogin.email || 'test@a.co',
-      password: userLogin.password || '123',
+      email: '',
+      password: ''
     },
     validationSchema: Yup.object({
       email: Yup.string().required('Please Enter Your Email'),
@@ -101,13 +101,17 @@ const Login = (props) => {
 
   const handleLogin = (e) => {
     e.preventDefault();
+
+    const devEmail = 'dev@bitcoin.tax'
+    const devPassword = 'OJr1pKruRM'
+
     if (
-      validation.values.email === 'test@a.co' &&
-      validation.values.password === '123'
+      validation.values.email === devEmail &&
+      validation.values.password === devPassword
     ) {
       const currentUser = {
-        email: validation.values.email,
-        password: validation.values.password,
+        email: devEmail,
+        password: devPassword,
         role: 'admin',
       };
       localStorage.setItem('currentUser', JSON.stringify(currentUser));
@@ -181,13 +185,13 @@ const Login = (props) => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                              validation.errors.email
+                                validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                          validation.errors.email ? (
+                            validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -217,13 +221,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                validation.errors.password
+                                  validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                            validation.errors.password ? (
+                              validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>
