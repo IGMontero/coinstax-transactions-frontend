@@ -24,6 +24,15 @@ const EditBlockChainContract = ({
   const [blockchainLogo, setBlockchainLogo] = useState('');
   const [blockchainName, setBlockchainName] = useState('');
 
+  const [blockchainType, setBlockchainType] = useState('');
+
+  const typeOptions = [
+    { label: 'EMPTY', value: '' },
+    { label: 'ERC20', value: 'ERC20' },
+    { label: 'ERC721', value: 'ERC721' },
+    { label: 'ERC1155', value: 'ERC1155' },
+  ];
+
   useEffect(() => {
     if (transactionToEdit) {
       const defaultLogo = '';
@@ -40,6 +49,9 @@ const EditBlockChainContract = ({
           defaultName
         : transactionToEdit?.Name || defaultName;
       setBlockchainName(name);
+      if (!isHistoryPage) {
+        setBlockchainType(transactionToEdit?.Type);
+      }
     }
   }, [transactionToEdit, isHistoryPage]);
 
@@ -54,6 +66,7 @@ const EditBlockChainContract = ({
       data = {
         Logo: blockchainLogo,
         Name: blockchainName,
+        Type: blockchainType,
       };
     } else {
       data = {
@@ -63,6 +76,8 @@ const EditBlockChainContract = ({
     }
     onEdit(data);
   };
+
+  console.log(transactionToEdit, blockchainType);
 
   return (
     <Modal isOpen={open} toggle={toggleModal}>
@@ -86,6 +101,23 @@ const EditBlockChainContract = ({
             onChange={(e) => setBlockchainLogo(e.target.value)}
           />
         </div>
+        {!isHistoryPage && (
+          <div className="form-group mt-3">
+            <label htmlFor="Type">Type</label>
+            <Input
+              type="select"
+              id="Type"
+              value={blockchainType}
+              onChange={(e) => setBlockchainType(e.target.value)}
+            >
+              {typeOptions.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </Input>
+          </div>
+        )}
       </ModalBody>
       <ModalFooter>
         <Button
