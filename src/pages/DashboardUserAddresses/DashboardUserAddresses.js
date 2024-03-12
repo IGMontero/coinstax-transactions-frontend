@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import {
   Button,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
   Input,
   PopoverBody,
   Spinner,
   Table,
+  UncontrolledDropdown,
   UncontrolledPopover,
 } from 'reactstrap';
 import {
@@ -87,12 +91,14 @@ const DashboardUserAddresses = () => {
   const handleRefreshAllTransactions = async (address) => {
     setLoading(true);
     try {
-      await dispatch(
+      const response = await dispatch(
         refreshAllTransactions({
           blockchain: 'ethereum',
           address,
         }),
       );
+
+      console.log(response);
       // fetchUserAddresses();
     } catch (error) {
       console.error('Failed to refresh all transactions', error);
@@ -108,6 +114,25 @@ const DashboardUserAddresses = () => {
     setTimeout(() => {
       setIsCopied(false);
     }, 2000);
+  };
+
+  const renderDropdown = (address) => {
+    return (
+      <UncontrolledDropdown>
+        <DropdownToggle tag="a" className="nav-link">
+          <i className="ri-more-2-fill"></i>
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleRefreshAllTransactions(address.Address)}
+          >
+            {/* <i className="ri-refresh-line text-white btn btn-sm py-0 fs-4"></i>{' '} */}
+            Refresh
+          </DropdownItem>
+        </DropdownMenu>
+      </UncontrolledDropdown>
+    );
   };
 
   return (
@@ -213,13 +238,8 @@ const DashboardUserAddresses = () => {
                   {address.AllTransactionsProcessed ? 'Yes' : 'No'}
                 </td>
                 <td className="align-middle ">
-                  <span
-                    onClick={() =>
-                      handleRefreshAllTransactions(address.Address)
-                    }
-                    className="text-hover-primary "
-                  >
-                    <i className="ri-refresh-line text-white btn btn-sm py-0 fs-4"></i>
+                  <span className="cursor-pointer">
+                    {renderDropdown(address)}
                   </span>
                 </td>
               </tr>
