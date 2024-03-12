@@ -547,29 +547,31 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       </Col>
 
       <Row>
-        <Col className="mt-3 mb-0 d-flex">
-          <Input
-            id="customCheck1"
-            type="checkbox"
-            className="form-check-input me-2"
-            onChange={handleShowSpamTransactions}
-            checked={includeSpam}
-          />
-          <label className="form-check-label" htmlFor="customCheck1">
-            Include Spam Transactions
-          </label>
-        </Col>
-        <Col className="d-flex  py-3 justify-content-end">
-          <Button
-            disabled={loadingDownload}
-            onClick={handleDownloadTransactions}
-            className="btn btn-sm"
-            color="primary"
-            size="sm"
-          >
-            Download CSV
-          </Button>
-        </Col>
+        <div className="d-flex mb-0 justify-content-between align-items-center">
+          <div className="d-flex justify-content-start">
+            <Input
+              id="customCheck1"
+              type="checkbox"
+              className="form-check-input me-2 cursor-pointer"
+              onChange={handleShowSpamTransactions}
+              checked={includeSpam}
+            />
+            <label className="form-check-label" htmlFor="customCheck1">
+              Include Spam Transactions
+            </label>
+          </div>
+          <div className="d-flex py-3 justify-content-end">
+            <Button
+              disabled={loadingDownload}
+              onClick={handleDownloadTransactions}
+              className="btn btn-sm"
+              color="primary"
+              size="sm"
+            >
+              Download CSV
+            </Button>
+          </div>
+        </div>
       </Row>
       {/* <Row className="mt-4">
         <Col lg={6} md={8} sm={10} xs={12}>
