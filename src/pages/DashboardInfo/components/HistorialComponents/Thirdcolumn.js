@@ -18,6 +18,7 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
 
   const [loadingUpdate, setLoadingUpdate] = useState(false);
 
+
   const handleOpenModalEdit = (contract) => {
     setOpenModalEdit(!openModalEdit);
     setTransactionToEdit(contract);
@@ -35,11 +36,11 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
       ? transaction.sender
       : transaction.recipient);
   const blockchainContractName =
-    transaction.txSummary.mainContractInfo?.name ||
+    transaction.txSummary.mainContractAddressInfo?.name ||
     transaction.txSummary.marketplaceName ||
     blockchainContractAddress;
   const blockchainContractLogo =
-    transaction.txSummary.mainContractInfo?.logo ||
+    transaction.txSummary.mainContractAddressInfo?.logo ||
     transaction.txSummary.marketplaceLogo;
 
   const contractLabel =
@@ -121,23 +122,27 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
 
         setTransactions((prevTransactions) =>
           prevTransactions.map((transaction) => {
-            if (transaction.mainContractAddress === updatedInfo.Address) {
-              return {
-                ...transaction,
-                txSummary: {
-                  ...transaction.txSummary,
-                  mainContractAddressInfo: {
-                    ...transaction.txSummary.mainContractAddressInfo,
-                    address: updatedInfo.Address,
-                    name:
-                      updatedInfo.Name ||
-                      transaction.txSummary.mainContractAddressInfo.name,
-                    logo:
-                      updatedInfo.Logo ||
-                      transaction.txSummary.mainContractAddressInfo.logo,
-                  },
-                },
-              };
+            const transactionHasMainContract = transaction?.txSummary?.mainContractAddress === blockchainContractAddress;
+
+            if (transactionHasMainContract) {
+              const newTransaction = { ...transaction };
+
+              const newTxSummary = { ...newTransaction.txSummary };
+
+              const newMainContractAddressInfo = { ...newTxSummary.mainContractAddressInfo };
+
+              newMainContractAddressInfo.address = updatedInfo.Address;
+              newMainContractAddressInfo.name = updatedInfo.Name || newMainContractAddressInfo.name;
+              newMainContractAddressInfo.logo = updatedInfo.Logo || newMainContractAddressInfo.logo;
+
+              newTxSummary.mainContractAddressInfo = newMainContractAddressInfo;
+
+              newTransaction.txSummary = newTxSummary;
+
+              newTransaction.marketplaceName = updatedInfo.Name;
+              newTransaction.marketplaceLogo = updatedInfo.Logo;
+
+              return newTransaction;
             }
             return transaction;
           }),
