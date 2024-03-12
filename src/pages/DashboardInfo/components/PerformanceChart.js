@@ -11,12 +11,12 @@ const PerformanceChart = ({
   title,
   subtitle,
   setIsUnsupported,
-  onSearch,
+  loading,
+  setLoading,
 }) => {
   const dispatch = useDispatch();
   const [activeFilter, setActiveFilter] = useState('one_week');
 
-  const [loading, setLoading] = useState(false);
   const [options, setOptions] = useState({
     chart: {
       type: 'line',
@@ -112,9 +112,11 @@ const PerformanceChart = ({
       },
     },
   });
+
   const fetchAndSetData = (days) => {
+    setLoading(true);
+
     if (address) {
-      setLoading(true);
       const params = days ? { address, days } : { address };
       dispatch(fetchPerformance(params))
         .unwrap()

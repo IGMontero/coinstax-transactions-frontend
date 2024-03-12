@@ -99,7 +99,7 @@ const DashboardInfo = () => {
       });
   };
 
-  const handleSearchClick = () => {
+  const handlerClearAllData = () => {
     setAssetsData([]);
     setSeries([]);
     setHistoryData([]);
@@ -108,11 +108,13 @@ const DashboardInfo = () => {
     setAddressTitle('');
     setCustomActiveTab('1');
     setIsUnsupported(false);
+  };
 
+  const handleSearchClick = () => {
+    handlerClearAllData();
     setAddressForSearch(searchInput);
     setAddressTitle(searchInput);
     navigate(`/address/${searchInput}/tokens`);
-    setLoading(true);
   };
 
   useEffect(() => {
@@ -122,9 +124,7 @@ const DashboardInfo = () => {
   }, [addressForSearch, dispatch, isUnsupported]);
 
   useEffect(() => {
-    setLoading(true);
     if (series.length > 0 && series[0].data.length > 0) {
-      setLoading(true);
       const firstPointValue = series[0].data[0].y;
       setTitle(`$${firstPointValue.toLocaleString()}`);
       const lastPointValue = series[0].data[series[0].data.length - 1].y;
@@ -139,9 +139,7 @@ const DashboardInfo = () => {
       setSubtitle(
         `${sign}${changePercentage.toFixed(2)}% ($${formattedChange})`,
       );
-      setLoading(false);
     }
-    setLoading(false);
   }, [series, title, subtitle]);
 
   const handleCopy = async (e, text) => {
@@ -540,7 +538,8 @@ const DashboardInfo = () => {
                             <div className="d-flex justify-content-start">
                               <Col className="col-12 ">
                                 <PerformanceChart
-                                  onSearch={handleSearchClick}
+                                  loading={loading}
+                                  setLoading={setLoading}
                                   setIsUnsupported={setIsUnsupported}
                                   address={addressForSearch}
                                   series={series}
