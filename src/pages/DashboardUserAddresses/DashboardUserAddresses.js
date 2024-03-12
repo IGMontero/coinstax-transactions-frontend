@@ -99,7 +99,7 @@ const DashboardUserAddresses = () => {
       );
 
       console.log(response);
-      // fetchUserAddresses();
+      fetchUserAddresses();
     } catch (error) {
       console.error('Failed to refresh all transactions', error);
     } finally {
