@@ -80,6 +80,7 @@ const DashboardInfo = () => {
 
   const fetchDataAssets = () => {
     setLoadingAssets(true);
+
     dispatch(fetchAssets(addressForSearch))
       .unwrap()
       .then((response) => {
@@ -120,6 +121,7 @@ const DashboardInfo = () => {
 
   useEffect(() => {
     if (series.length > 0 && series[0].data.length > 0) {
+      setLoading(true);
       const firstPointValue = series[0].data[0].y;
       setTitle(`$${firstPointValue.toLocaleString()}`);
       const lastPointValue = series[0].data[series[0].data.length - 1].y;
@@ -134,6 +136,7 @@ const DashboardInfo = () => {
       setSubtitle(
         `${sign}${changePercentage.toFixed(2)}% ($${formattedChange})`,
       );
+      setLoading(false);
     }
   }, [series, title, subtitle]);
 
@@ -295,6 +298,7 @@ const DashboardInfo = () => {
 
   document.title = `${type ? capitalizeFirstLetter(type) : 'Dashboard'} ${addressTitle ? '- ' + addressTitle : ''}`;
 
+  console.log('loading', loading);
   return (
     <React.Fragment>
       <div className="page-content">
