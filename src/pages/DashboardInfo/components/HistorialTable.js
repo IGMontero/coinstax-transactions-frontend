@@ -321,6 +321,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const handleShowSpamTransactions = (e) => {
     const checked = e.target.checked;
     setIncludeSpam(checked);
+    setCurrentPage(0);
     setLoading(true);
   };
 
