@@ -47,6 +47,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   const [loading, setLoading] = useState(false);
 
   const [showDownloadMessage, setShowDownloadMessage] = useState(false);
+  const [showDownloadMessageInButton, setShowDownloadMessageInButton] =
+    useState(false);
 
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   // const [groupedTransactions, setGroupedTransactions] = useState({});
@@ -203,9 +205,14 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   const getMoreTransactions = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
+    let timerId;
     try {
       setLoading(true);
       const nextPage = currentPage + 1;
+
+      timerId = setTimeout(() => {
+        setShowDownloadMessageInButton(true);
+      }, 3000);
 
       const response = await dispatch(
         fetchHistory({
@@ -220,6 +227,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
         }),
       ).unwrap();
 
+      clearTimeout(timerId);
       const { parsed, unsupported, isProcessing } = response;
 
       if (unsupported) {
@@ -247,6 +255,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       console.error('Error fetching more transactions:', error);
     } finally {
       setLoading(false);
+      setShowDownloadMessageInButton(false);
     }
   };
 
@@ -436,7 +445,14 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
             style={{ borderRadius: '10px', border: '.5px solid grey' }}
           >
             {loading ? (
-              <Spinner size="sm" />
+              <div className="d-flex align-items-center">
+                <Spinner size="sm" />
+                {showDownloadMessageInButton && (
+                  <div className="ms-3">
+                    <h6 className="m-0">Downloading Transactions</h6>
+                  </div>
+                )}
+              </div>
             ) : (
               <h6 className="text-dark fw-semibold my-2">
                 {isProcessing ? (
