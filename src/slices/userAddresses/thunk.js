@@ -39,7 +39,7 @@ export const refreshAllTransactions = createAsyncThunk(
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-      const data = await response.json();
+      const data = await response;
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
