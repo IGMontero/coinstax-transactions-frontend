@@ -46,6 +46,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   const [loading, setLoading] = useState(false);
 
+  const [showDownloadMessage, setShowDownloadMessage] = useState(false);
+
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   // const [groupedTransactions, setGroupedTransactions] = useState({});
   const [selectedFilters, setSelectedFilters] = useState([]);
@@ -92,13 +94,17 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   const fetchData = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
-
+    let timerId;
     // const isInitialFetch = currentPage === 0;
     // const dataLength = data?.length;
 
     try {
       setIsInitialLoad(true);
       setLoading(true);
+
+      timerId = setTimeout(() => {
+        setShowDownloadMessage(true);
+      }, 3000);
 
       const response = await dispatch(
         fetchHistory({
@@ -113,6 +119,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
         }),
       ).unwrap();
 
+      clearTimeout(timerId);
       const { parsed, unsupported, isProcessing } = response;
 
       if (unsupported) {
@@ -137,6 +144,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     } finally {
       setLoading(false);
       setIsInitialLoad(false);
+      setShowDownloadMessage(false);
     }
   };
 
@@ -149,8 +157,9 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   };
 
   useEffect(() => {
-    if (activeTab != '3') {
+    if (activeTab != 3) {
       handleClearAllFilters();
+      setShowDownloadMessage('');
       setData([]);
     }
   }, [activeTab, address]);
@@ -160,6 +169,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
       fetchData();
       setHasMoreData(true);
     }
+    setShowDownloadMessage('');
     setCurrentPage(0);
   }, [
     address,
@@ -615,6 +625,11 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           style={{ height: '50vh' }}
         >
           <Spinner style={{ width: '4rem', height: '4rem' }} />
+          {showDownloadMessage && (
+            <div className="ms-3">
+              <h3>Downloading Transactions</h3>
+            </div>
+          )}
         </div>
       ) : Object.keys(groupedTransactions).length > 0 ? (
         <Col
