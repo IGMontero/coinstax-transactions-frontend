@@ -118,6 +118,7 @@ const PerformanceChart = ({
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
+          console.log(loading);
           if (response.unsupported) {
             setIsUnsupported(true);
           } else {
@@ -127,8 +128,8 @@ const PerformanceChart = ({
               y: item.close.quote,
             }));
             setSeries([{ data: lineData }]);
-            setLoading(false);
           }
+          setLoading(false);
         })
         .catch((error) => {
           console.error('Error fetching performance data:', error);
