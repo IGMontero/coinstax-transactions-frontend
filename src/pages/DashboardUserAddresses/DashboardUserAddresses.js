@@ -7,7 +7,10 @@ import {
   Table,
   UncontrolledPopover,
 } from 'reactstrap';
-import { getUserAddresses } from '../../slices/userAddresses/thunk';
+import {
+  getUserAddresses,
+  refreshAllTransactions,
+} from '../../slices/userAddresses/thunk';
 import { useDispatch } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
@@ -21,7 +24,7 @@ const DashboardUserAddresses = () => {
   const [pageSize, setPageSize] = useState();
   const [total, setTotal] = useState();
   const [currentPage, setCurrentPage] = useState(0);
-
+  const [isCopied, setIsCopied] = useState(false);
   const [userAddresses, setUserAddresses] = useState([]);
 
   const fetchUserAddresses = async () => {
@@ -81,7 +84,23 @@ const DashboardUserAddresses = () => {
     setCurrentPage(page);
   };
 
-  const [isCopied, setIsCopied] = useState(false);
+  const handleRefreshAllTransactions = async (address) => {
+    setLoading(true);
+    try {
+      await dispatch(
+        refreshAllTransactions({
+          blockchain: 'ethereum',
+          address,
+        }),
+      );
+      // fetchUserAddresses();
+    } catch (error) {
+      console.error('Failed to refresh all transactions', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
     copyToClipboard(text);
@@ -128,6 +147,7 @@ const DashboardUserAddresses = () => {
             <th>Processing</th>
             <th>Last Page Processed</th>
             <th>All Txs Processed</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody style={{ position: 'relative' }}>
@@ -191,6 +211,16 @@ const DashboardUserAddresses = () => {
                 </td>
                 <td className="align-middle">
                   {address.AllTransactionsProcessed ? 'Yes' : 'No'}
+                </td>
+                <td className="align-middle ">
+                  <span
+                    onClick={() =>
+                      handleRefreshAllTransactions(address.Address)
+                    }
+                    className="text-hover-primary "
+                  >
+                    <i className="ri-refresh-line text-white btn btn-sm py-0 fs-4"></i>
+                  </span>
                 </td>
               </tr>
             ))
