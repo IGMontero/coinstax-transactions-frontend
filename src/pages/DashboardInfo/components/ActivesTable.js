@@ -122,7 +122,7 @@ const AcitvesTable = ({ data, loading }) => {
                   className="d-flex justify-content-start align-items-center"
                 >
                   <input
-                    className="form-check-input me-2"
+                    className="form-check-input me-2 my-0"
                     type="checkbox"
                     id="hideBalances"
                     checked={hideSmallBalances}
@@ -131,7 +131,7 @@ const AcitvesTable = ({ data, loading }) => {
                     className="form-check-label"
                     htmlFor="hideBalances"
                     onClick={handleHideSmallBalancesChange}
-                    style={{ cursor: 'pointer', margin: 0 }}
+                    style={{ cursor: 'pointer' }}
                   >
                     Hide small balances
                   </label>
@@ -142,7 +142,7 @@ const AcitvesTable = ({ data, loading }) => {
                   className="d-flex justify-content-start align-items-center"
                 >
                   <input
-                    className="form-check-input me-2"
+                    className="form-check-input me-2 my-0"
                     type="checkbox"
                     id="hideZeroBalances"
                     checked={hideZeroBalances}
@@ -170,7 +170,8 @@ const AcitvesTable = ({ data, loading }) => {
               {viewMode === 'byPlatform' && (
                 <div className="d-flex flex-row align-items-center">
                   <h4>
-                    <b> Wallet </b>${formatBalance(data.total)} US${' '}
+                    <b> Wallet </b>
+                    {loading ? null : `$${formatBalance(data.total)} US`}
                   </h4>{' '}
                   <Badge
                     color="soft-dark"
