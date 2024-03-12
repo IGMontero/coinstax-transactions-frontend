@@ -42,7 +42,7 @@ const DashboardNFT = () => {
       setCollectionName(res.collection.name);
       setLogo(res.logo);
       setName(res.name);
-      setFloorPriceFiat(res.floorPriceFiat);
+      setFloorPriceFiat(res.floorPriceNativeToken);
       setSymbol(res.symbol);
       setAttributes(res.metadata.attributes);
       setDescription(res.description);
@@ -214,9 +214,7 @@ const DashboardNFT = () => {
               <p>Price by floor Price</p>
             </div>
             <div className="my-3">
-              <h1>
-                {floorPriceFiat} {symbol}
-              </h1>
+              <h1>{floorPriceFiat} ETH</h1>
             </div>
             <div className="d-flex justify-content-center">
               <img
