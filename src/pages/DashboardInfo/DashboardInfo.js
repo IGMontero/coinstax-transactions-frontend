@@ -86,6 +86,7 @@ const DashboardInfo = () => {
       .then((response) => {
         if (response.unsupported == true) {
           setIsUnsupported(true);
+          setLoadingAssets(false);
         } else {
           setIsUnsupported(false);
         }
@@ -106,6 +107,7 @@ const DashboardInfo = () => {
     setSubtitle('');
     setAddressTitle('');
     setCustomActiveTab('1');
+    setIsUnsupported(false);
 
     setAddressForSearch(searchInput);
     setAddressTitle(searchInput);
@@ -120,6 +122,7 @@ const DashboardInfo = () => {
   }, [addressForSearch, dispatch, isUnsupported]);
 
   useEffect(() => {
+    setLoading(true);
     if (series.length > 0 && series[0].data.length > 0) {
       setLoading(true);
       const firstPointValue = series[0].data[0].y;
@@ -138,6 +141,7 @@ const DashboardInfo = () => {
       );
       setLoading(false);
     }
+    setLoading(false);
   }, [series, title, subtitle]);
 
   const handleCopy = async (e, text) => {
@@ -298,7 +302,6 @@ const DashboardInfo = () => {
 
   document.title = `${type ? capitalizeFirstLetter(type) : 'Dashboard'} ${addressTitle ? '- ' + addressTitle : ''}`;
 
-  console.log('loading', loading);
   return (
     <React.Fragment>
       <div className="page-content">
@@ -537,6 +540,7 @@ const DashboardInfo = () => {
                             <div className="d-flex justify-content-start">
                               <Col className="col-12 ">
                                 <PerformanceChart
+                                  onSearch={handleSearchClick}
                                   setIsUnsupported={setIsUnsupported}
                                   address={addressForSearch}
                                   series={series}
