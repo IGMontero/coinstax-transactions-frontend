@@ -11,6 +11,7 @@ const PerformanceChart = ({
   title,
   subtitle,
   setIsUnsupported,
+  onSearch,
 }) => {
   const dispatch = useDispatch();
   const [activeFilter, setActiveFilter] = useState('one_week');
@@ -118,7 +119,6 @@ const PerformanceChart = ({
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
-          console.log(loading);
           if (response.unsupported) {
             setIsUnsupported(true);
           } else {
