@@ -83,15 +83,13 @@ const DashboardInfo = () => {
     }, [value]);
     return ref.current;
   }
-  const isDashboardPage = location.pathname === '/dashboard';
   useEffect(() => {
-    // If the address has changed, navigate and reset customActiveTab to '1'
     if (address && previousAddress !== address) {
       setCustomActiveTab('1');
       handlerClearAllData();
       navigate(`/address/${address}/tokens`);
     }
-  }, [address, previousAddress, navigate, isDashboardPage]);
+  }, [address, previousAddress, navigate]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
