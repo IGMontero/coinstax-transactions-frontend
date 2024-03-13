@@ -69,7 +69,6 @@ const Nfts = ({ address, activeTab }) => {
     dispatch(fetchNFTS({ address: address, spam: includeSpam }))
       .unwrap()
       .then((response) => {
-        console.log(response);
         setData(response);
         setUpdatedAt(response.updatedAt);
         setLoading(false);

@@ -21,6 +21,8 @@ const DashboardNFT = () => {
   const [logo, setLogo] = useState('');
   const [name, setName] = useState('');
 
+  const [ownerAddress, setOwnerAddress] = useState('');
+
   const [floorPriceFiat, setFloorPriceFiat] = useState(0);
   const [symbol, setSymbol] = useState('');
 
@@ -42,12 +44,12 @@ const DashboardNFT = () => {
       setCollectionName(res.collection.name);
       setLogo(res.logo);
       setName(res.name);
+      setOwnerAddress(res.ownerAddress);
       setFloorPriceFiat(res.floorPriceNativeToken);
       setSymbol(res.symbol);
       setAttributes(res.metadata.attributes);
       setDescription(res.description);
       setLoading(false);
-      console.log(response.payload);
     } catch (error) {
       setLoading(false);
       console.log(error);
@@ -59,9 +61,9 @@ const DashboardNFT = () => {
     fetchNftByContractAddress();
   }, []);
 
-  // const handleSeeProfile = () => {
-  //   navigate(`/address/${address}/tokens`);
-  // };
+  const handleSeeProfile = () => {
+    navigate(`/address/${ownerAddress}/tokens`);
+  };
 
   const renderCardProfile = () => {
     return (
@@ -76,14 +78,14 @@ const DashboardNFT = () => {
               width: 'auto',
             }}
           /> */}
-          <h6 className="m-0 ms-3">
-            Viewing {formatIdTransaction(address, 4, 4)} balances
+          <h6 className="m-0 ms-3 py-2">
+            Viewing {formatIdTransaction(ownerAddress, 4, 4)} balances
           </h6>
 
           <div className="ms-auto">
             <p
-              // onClick={handleSeeProfile}
-              className="m-0 cursor-pointer text-primary"
+              onClick={handleSeeProfile}
+              className="m-0 me-2 cursor-pointer text-primary text-hover-underline"
             >
               See profile
             </p>
@@ -127,7 +129,6 @@ const DashboardNFT = () => {
             <li>Ethereum</li>
           </ul>
         </div>
-        <hr />
       </>
     );
   };
@@ -175,26 +176,10 @@ const DashboardNFT = () => {
     );
   };
 
-  const backbutton = () => {
-    navigate(`address/${address}/nfts`);
-  };
-
   document.title = `${name ? name : 'NFTs'} - ${collectionName || ''}`;
 
   return (
     <React.Fragment>
-      <Col className="m-2 mb-n3">
-        <Button
-          color="primary"
-          className=" p-1 py-0 d-flex align-items-center btn btn-md justify-content-start"
-        >
-          <i
-            className="ri-arrow-left-line fs-5 fw-bold me-2"
-            onClick={backbutton}
-          ></i>{' '}
-          Back to Nfts
-        </Button>
-      </Col>
       <div className="page-content">
         {loading ? (
           <div
@@ -227,12 +212,16 @@ const DashboardNFT = () => {
             <div className="my-3">
               <h1>{name}</h1>
             </div>
-            <div className="my-3">
-              <p>Price by floor Price</p>
-            </div>
-            <div className="my-3">
-              <h1>{floorPriceFiat} ETH</h1>
-            </div>
+            {floorPriceFiat != 0 ? (
+              <>
+                <div className="my-3">
+                  <p>Price by floor Price</p>
+                </div>
+                <div className="my-3">
+                  <h1>{floorPriceFiat} ETH</h1>
+                </div>
+              </>
+            ) : null}
             <div className="d-flex justify-content-center">
               <img
                 src={logo}
@@ -246,7 +235,7 @@ const DashboardNFT = () => {
                 }}
               />
             </div>
-            {/* {renderCardProfile()} */}
+            {renderCardProfile()}
             {attributes ? (
               <>
                 {renderAttributes(attributes)}
@@ -256,6 +245,7 @@ const DashboardNFT = () => {
             {renderDetails()}
             {description ? (
               <>
+                <hr />
                 <div className="py-2">{renderDescription()}</div>
               </>
             ) : null}
