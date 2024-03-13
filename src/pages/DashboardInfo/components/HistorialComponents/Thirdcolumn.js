@@ -18,7 +18,6 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
 
   const [loadingUpdate, setLoadingUpdate] = useState(false);
 
-
   const handleOpenModalEdit = (contract) => {
     setOpenModalEdit(!openModalEdit);
     setTransactionToEdit(contract);
@@ -122,18 +121,24 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
 
         setTransactions((prevTransactions) =>
           prevTransactions.map((transaction) => {
-            const transactionHasMainContract = transaction?.txSummary?.mainContractAddress === blockchainContractAddress;
+            const transactionHasMainContract =
+              transaction?.txSummary?.mainContractAddress ===
+              blockchainContractAddress;
 
             if (transactionHasMainContract) {
               const newTransaction = { ...transaction };
 
               const newTxSummary = { ...newTransaction.txSummary };
 
-              const newMainContractAddressInfo = { ...newTxSummary.mainContractAddressInfo };
+              const newMainContractAddressInfo = {
+                ...newTxSummary.mainContractAddressInfo,
+              };
 
               newMainContractAddressInfo.address = updatedInfo.Address;
-              newMainContractAddressInfo.name = updatedInfo.Name || newMainContractAddressInfo.name;
-              newMainContractAddressInfo.logo = updatedInfo.Logo || newMainContractAddressInfo.logo;
+              newMainContractAddressInfo.name =
+                updatedInfo.Name || newMainContractAddressInfo.name;
+              newMainContractAddressInfo.logo =
+                updatedInfo.Logo || newMainContractAddressInfo.logo;
 
               newTxSummary.mainContractAddressInfo = newMainContractAddressInfo;
 

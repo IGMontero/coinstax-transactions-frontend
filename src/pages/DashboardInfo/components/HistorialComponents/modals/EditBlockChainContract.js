@@ -77,8 +77,6 @@ const EditBlockChainContract = ({
     onEdit(data);
   };
 
-  console.log(transactionToEdit, blockchainType);
-
   return (
     <Modal isOpen={open} toggle={toggleModal}>
       <ModalHeader toggle={toggleModal}>Edit BlockChain Contract</ModalHeader>

@@ -155,18 +155,22 @@ const DashboardBlockchainContracts = () => {
           data,
         }),
       );
-      if (!response || response.error) {
+
+      if (!response.payload || response.payload.error) {
         Swal.fire('Error', 'Error editing blockchain contract', 'error');
+        setLoadingUpdate(false);
         return;
+      } else {
+        Swal.fire(
+          'Success',
+          'Blockchain Contract updated successfully',
+          'success',
+        );
+        setModalEdit(false);
+        setLoadingUpdate(false);
+        await getBlockchainContracts();
       }
-      Swal.fire(
-        'Success',
-        'Blockchain Contract updated successfully',
-        'success',
-      );
       setLoadingUpdate(false);
-      setModalEdit(false);
-      await getBlockchainContracts();
     } catch (error) {
       setLoadingUpdate(true);
       console.error('Error editing blockchain contract', error);
