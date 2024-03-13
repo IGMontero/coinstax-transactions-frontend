@@ -63,14 +63,10 @@ const AcitvesTable = ({ data, loading }) => {
   };
 
   const handleHideSmallBalancesChange = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
     setHideSmallBalances(!hideSmallBalances);
   };
 
   const handleHideZeroBalancesChange = (event) => {
-    event.stopPropagation();
-    event.preventDefault();
     setHideZeroBalances(!hideZeroBalances);
   };
 
@@ -120,19 +116,24 @@ const AcitvesTable = ({ data, loading }) => {
               <DropdownMenu className="dropdown-menu-start mt-2">
                 <DropdownItem
                   toggle={false}
-                  onClick={handleHideSmallBalancesChange}
+                  onClick={(e) => handleHideSmallBalancesChange(e)}
                   className="d-flex justify-content-start align-items-center"
                 >
                   <input
                     className="form-check-input me-2 my-0"
                     type="checkbox"
                     id="hideBalances"
+                    onChange={(e) =>
+                      handleHideSmallBalancesChange(e.stopPropagation())
+                    }
                     checked={hideSmallBalances}
                   />
                   <label
                     className="form-check-label"
                     htmlFor="hideBalances"
-                    onClick={handleHideSmallBalancesChange}
+                    onClick={(e) =>
+                      handleHideSmallBalancesChange(e.preventDefault())
+                    }
                     style={{ cursor: 'pointer' }}
                   >
                     Hide small balances
@@ -140,20 +141,25 @@ const AcitvesTable = ({ data, loading }) => {
                 </DropdownItem>
                 <DropdownItem
                   toggle={false}
-                  onClick={handleHideZeroBalancesChange}
+                  onClick={(e) => handleHideZeroBalancesChange(e)}
                   className="d-flex justify-content-start align-items-center"
                 >
                   <input
                     className="form-check-input me-2 my-0"
                     type="checkbox"
                     id="hideZeroBalances"
+                    onChange={(e) =>
+                      handleHideZeroBalancesChange(e.stopPropagation())
+                    }
                     checked={hideZeroBalances}
                   />
                   <label
                     className="form-check-label"
                     htmlFor="hideZeroBalances"
                     style={{ cursor: 'pointer', margin: 0 }}
-                    onClick={handleHideZeroBalancesChange}
+                    onClick={(e) =>
+                      handleHideZeroBalancesChange(e.preventDefault())
+                    }
                   >
                     Hide zero balances
                   </label>
