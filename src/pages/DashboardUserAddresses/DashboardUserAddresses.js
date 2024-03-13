@@ -99,9 +99,12 @@ const DashboardUserAddresses = () => {
           address,
         }),
       );
-
-      console.log(response);
-      fetchUserAddresses();
+      if (response.payload) {
+        Swal.fire('Success', 'All transactions have been refreshed', 'success');
+        fetchUserAddresses();
+      } else {
+        Swal.fire('Error', 'Error to refresh all transactions', 'error');
+      }
     } catch (error) {
       console.error('Failed to refresh all transactions', error);
     } finally {
@@ -164,15 +167,13 @@ const DashboardUserAddresses = () => {
             className="d-flex align-items-center"
             onClick={() => handleRefreshAllTransactions(address.Address)}
           >
-            {/* <i className="ri-refresh-line text-white btn btn-sm py-0 fs-4"></i>{' '} */}
             Refresh All Transactions
           </DropdownItem>
           <DropdownItem
             className="d-flex align-items-center"
             onClick={() => handleSetAllTransactionsAsDirty(address.Address)}
           >
-            {/* <i className="ri-refresh-line text-white btn btn-sm py-0 fs-4"></i>{' '} */}
-            Set All Transactions As Dirty
+            Set All Tx as Dirty
           </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
