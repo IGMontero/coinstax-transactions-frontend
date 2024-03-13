@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import {
   DropdownItem,
   DropdownMenu,
@@ -10,6 +11,7 @@ import {
   PopoverBody,
   UncontrolledPopover,
   Button,
+  ButtonGroup,
 } from 'reactstrap';
 import {
   fetchBlockchainContracts,
@@ -227,82 +229,80 @@ const DashboardBlockchainContracts = () => {
   };
 
   const renderDropdown = (contract) => {
-    return (
-      <UncontrolledDropdown>
-        <DropdownToggle tag="a" className="nav-link">
-          <i className="ri-more-2-fill"></i>
-        </DropdownToggle>
-        <DropdownMenu>
-          <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
-            Edit
-          </DropdownItem>
-          <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
-            Set All Tx as Dirty
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    );
+    const portalRoot = document.getElementById('portal-root');
+    return portalRoot
+      ? ReactDOM.createPortal(
+          <DropdownMenu>
+            <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
+              Edit
+            </DropdownItem>
+            <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
+              Set All Tx as Dirty
+            </DropdownItem>
+          </DropdownMenu>,
+
+          portalRoot,
+        )
+      : null;
   };
 
   const renderDropdownTrustedState = (contract) => {
-    return (
-      <UncontrolledDropdown disabled={loadingUpdateTrustedState}>
-        <DropdownToggle tag="a" className="nav-link cursor-pointer" caret>
-          {updatingContractId === contract.Id ? (
-            <Spinner style={{ width: '1.5rem', height: '1.5rem' }} />
-          ) : (
-            contract.TrustedState
-          )}
-        </DropdownToggle>
-        <DropdownMenu>
-          {/* <DropdownItem header>Select State</DropdownItem>  */}
-          <DropdownItem
-            onClick={() =>
-              handleUpdateTrustedState(
-                contract,
+    const portalRoot = document.getElementById('portal-root');
+    return portalRoot
+      ? ReactDOM.createPortal(
+          <DropdownMenu>
+            <DropdownItem
+              onClick={() =>
+                handleUpdateTrustedState(
+                  contract,
+                  blockchainContractTrustedStateEnumType.UNKNOUN,
+                )
+              }
+            >
+              {capitalizeFirstLetter(
                 blockchainContractTrustedStateEnumType.UNKNOUN,
-              )
-            }
-          >
-            {capitalizeFirstLetter(
-              blockchainContractTrustedStateEnumType.UNKNOUN,
-            )}
-          </DropdownItem>
-          <DropdownItem
-            onClick={() =>
-              handleUpdateTrustedState(
-                contract,
+              )}
+            </DropdownItem>
+            <DropdownItem
+              onClick={() =>
+                handleUpdateTrustedState(
+                  contract,
+                  blockchainContractTrustedStateEnumType.TRUSTED,
+                )
+              }
+            >
+              {capitalizeFirstLetter(
                 blockchainContractTrustedStateEnumType.TRUSTED,
-              )
-            }
-          >
-            {capitalizeFirstLetter(
-              blockchainContractTrustedStateEnumType.TRUSTED,
-            )}
-          </DropdownItem>
-          <DropdownItem
-            onClick={() =>
-              handleUpdateTrustedState(
-                contract,
+              )}
+            </DropdownItem>
+            <DropdownItem
+              onClick={() =>
+                handleUpdateTrustedState(
+                  contract,
+                  blockchainContractTrustedStateEnumType.SCAM,
+                )
+              }
+            >
+              {capitalizeFirstLetter(
                 blockchainContractTrustedStateEnumType.SCAM,
-              )
-            }
-          >
-            {capitalizeFirstLetter(blockchainContractTrustedStateEnumType.SCAM)}
-          </DropdownItem>
-          <DropdownItem
-            onClick={() =>
-              handleUpdateTrustedState(
-                contract,
+              )}
+            </DropdownItem>
+            <DropdownItem
+              onClick={() =>
+                handleUpdateTrustedState(
+                  contract,
+                  blockchainContractTrustedStateEnumType.SPAM,
+                )
+              }
+            >
+              {capitalizeFirstLetter(
                 blockchainContractTrustedStateEnumType.SPAM,
-              )
-            }
-          >
-            {capitalizeFirstLetter(blockchainContractTrustedStateEnumType.SPAM)}
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    );
+              )}
+            </DropdownItem>
+          </DropdownMenu>,
+          portalRoot,
+        )
+      : null;
   };
 
   const handleCopyValue = (e, text) => {
@@ -444,12 +444,36 @@ const DashboardBlockchainContracts = () => {
                   </td>
                   <td className="align-middle">{contract.Symbol}</td>
                   <td className="align-middle">
-                    {renderDropdownTrustedState(contract)}{' '}
+                    <ButtonGroup onClick={(e) => e.stopPropagation()}>
+                      <UncontrolledDropdown
+                        disabled={loadingUpdateTrustedState}
+                      >
+                        <DropdownToggle
+                          tag="a"
+                          className="nav-link cursor-pointer"
+                          caret
+                        >
+                          {updatingContractId === contract.Id ? (
+                            <Spinner
+                              style={{ width: '1.5rem', height: '1.5rem' }}
+                            />
+                          ) : (
+                            contract.TrustedState
+                          )}
+                        </DropdownToggle>
+                        {renderDropdownTrustedState(contract)}
+                      </UncontrolledDropdown>
+                    </ButtonGroup>
                   </td>
-                  <td className="align-middle text-center">
-                    <span className="cursor-pointer">
-                      {renderDropdown(contract)}{' '}
-                    </span>
+                  <td className="align-middle">
+                    <ButtonGroup onClick={(e) => e.stopPropagation()}>
+                      <UncontrolledDropdown className="cursor-pointer">
+                        <DropdownToggle tag="a" className="nav-link">
+                          <i className="ri-more-2-fill"></i>
+                        </DropdownToggle>
+                        {renderDropdown(contract)}
+                      </UncontrolledDropdown>
+                    </ButtonGroup>
                   </td>
                 </tr>
               ))
@@ -469,6 +493,7 @@ const DashboardBlockchainContracts = () => {
             />
           )}
         </Table>
+        <div id="portal-root"></div>
       </div>
     </React.Fragment>
   );

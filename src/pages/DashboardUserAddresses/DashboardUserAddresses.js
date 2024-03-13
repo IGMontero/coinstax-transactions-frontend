@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import {
   Button,
+  ButtonGroup,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
@@ -157,27 +159,26 @@ const DashboardUserAddresses = () => {
   };
 
   const renderDropdown = (address) => {
-    return (
-      <UncontrolledDropdown>
-        <DropdownToggle tag="a" className="nav-link">
-          <i className="ri-more-2-fill"></i>
-        </DropdownToggle>
-        <DropdownMenu>
-          <DropdownItem
-            className="d-flex align-items-center"
-            onClick={() => handleRefreshAllTransactions(address.Address)}
-          >
-            Refresh All Transactions
-          </DropdownItem>
-          <DropdownItem
-            className="d-flex align-items-center"
-            onClick={() => handleSetAllTransactionsAsDirty(address.Address)}
-          >
-            Set All Tx as Dirty
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    );
+    const portalRoot = document.getElementById('portal-root');
+    return portalRoot
+      ? ReactDOM.createPortal(
+          <DropdownMenu>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleRefreshAllTransactions(address.Address)}
+            >
+              Refresh All Transactions
+            </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleSetAllTransactionsAsDirty(address.Address)}
+            >
+              Set All Tx as Dirty
+            </DropdownItem>
+          </DropdownMenu>,
+          portalRoot,
+        )
+      : null;
   };
 
   return (
@@ -283,9 +284,14 @@ const DashboardUserAddresses = () => {
                   {address.AllTransactionsProcessed ? 'Yes' : 'No'}
                 </td>
                 <td className="align-middle ">
-                  <span className="cursor-pointer">
-                    {renderDropdown(address)}
-                  </span>
+                  <ButtonGroup onClick={(e) => e.stopPropagation()}>
+                    <UncontrolledDropdown className="cursor-pointer">
+                      <DropdownToggle tag="a" className="nav-link">
+                        <i className="ri-more-2-fill"></i>
+                      </DropdownToggle>
+                      {renderDropdown(address)}
+                    </UncontrolledDropdown>
+                  </ButtonGroup>
                 </td>
               </tr>
             ))
@@ -305,6 +311,7 @@ const DashboardUserAddresses = () => {
           />
         )}
       </Table>
+      <div id="portal-root"></div>
     </div>
   );
 };
