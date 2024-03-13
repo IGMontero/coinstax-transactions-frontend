@@ -174,19 +174,78 @@ const PerformanceChart = ({
     fetchAndSetData(days);
     setActiveFilter(filterId);
   };
+
+  const renderFiltersButtons = () => {
+    return (
+      <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1 p-2">
+        <button
+          onClick={() => handleFilterForDays(7, 'one_week')}
+          type="button"
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'one_week' ? 'active' : ''
+          }`}
+          id="one_week"
+        >
+          7D
+        </button>
+        <button
+          onClick={() => handleFilterForDays(30, 'one_month')}
+          type="button"
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'one_month' ? 'active' : ''
+          }`}
+          id="one_month"
+        >
+          1M
+        </button>
+        <button
+          onClick={() => handleFilterForDays(180, 'six_months')}
+          type="button"
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'six_months' ? 'active' : ''
+          }`}
+          id="six_months"
+        >
+          6M
+        </button>
+        <button
+          onClick={() => handleFilterForDays(365, 'one_year')}
+          type="button"
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'one_year' ? 'active' : ''
+          }`}
+          id="one_year"
+        >
+          1Y
+        </button>
+        <button
+          onClick={() => handleFilterForDays(10000, 'all')}
+          type="button"
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'all' ? 'active' : ''
+          }`}
+          id="all"
+        >
+          ALL
+        </button>
+      </div>
+    );
+  };
+
   return (
     <div className="position-relative ">
       {loading ? (
         <Card>
           <CardBody className="p-4">
-            <div style={{ backgroundColor: '#21252', height: '360px' }}>
+            <div style={{ backgroundColor: '#212529', height: '360px' }}>
+              {' '}
               <div className="d-flex justify-content-center align-items-center h-100">
                 <Spinner color="white" />
               </div>
             </div>
           </CardBody>
         </Card>
-      ) : (
+      ) : series.length ? (
         <div className="border border-2 rounded p-2" style={{ zIndex: 1 }}>
           <ReactApexChart
             options={options}
@@ -194,59 +253,15 @@ const PerformanceChart = ({
             type="line"
             height={350}
           />
-          <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1 p-2">
-            <button
-              onClick={() => handleFilterForDays(7, 'one_week')}
-              type="button"
-              className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-                activeFilter === 'one_week' ? 'active' : ''
-              }`}
-              id="one_week"
-            >
-              7D
-            </button>
-            <button
-              onClick={() => handleFilterForDays(30, 'one_month')}
-              type="button"
-              className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-                activeFilter === 'one_month' ? 'active' : ''
-              }`}
-              id="one_month"
-            >
-              1M
-            </button>
-            <button
-              onClick={() => handleFilterForDays(180, 'six_months')}
-              type="button"
-              className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-                activeFilter === 'six_months' ? 'active' : ''
-              }`}
-              id="six_months"
-            >
-              6M
-            </button>
-            <button
-              onClick={() => handleFilterForDays(365, 'one_year')}
-              type="button"
-              className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-                activeFilter === 'one_year' ? 'active' : ''
-              }`}
-              id="one_year"
-            >
-              1Y
-            </button>
-            <button
-              onClick={() => handleFilterForDays(10000, 'all')}
-              type="button"
-              className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-                activeFilter === 'all' ? 'active' : ''
-              }`}
-              id="all"
-            >
-              ALL
-            </button>
-          </div>
+          {renderFiltersButtons()}
         </div>
+      ) : (
+        <ReactApexChart
+          options={{}}
+          series={[{ data: [] }]}
+          type="line"
+          height={350}
+        />
       )}
     </div>
   );
