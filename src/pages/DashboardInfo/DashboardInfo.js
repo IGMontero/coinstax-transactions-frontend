@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Container,
   Col,
@@ -31,7 +31,7 @@ import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
 import { fetchAssets, fetchNFTS } from '../../slices/transactions/thunk';
 import DashboardHome from '../DashboardHome/DashboardHome';
 import { useDispatch } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   capitalizeFirstLetter,
   copyToClipboard,
@@ -41,8 +41,10 @@ import QrModal from './modals/QrModal';
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { address, type } = useParams();
+  const previousAddress = usePrevious(address);
 
   const [customActiveTab, setCustomActiveTab] = useState('1');
 
@@ -73,6 +75,22 @@ const DashboardInfo = () => {
       setCustomActiveTab(tab);
     }
   };
+
+  function usePrevious(value) {
+    const ref = useRef();
+    useEffect(() => {
+      ref.current = value;
+    }, [value]);
+    return ref.current;
+  }
+
+  useEffect(() => {
+    // If the address has changed, navigate and reset customActiveTab to '1'
+    if (previousAddress !== address) {
+      setCustomActiveTab('1');
+      navigate(`/address/${address}/tokens`);
+    }
+  }, [address, previousAddress, navigate]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
