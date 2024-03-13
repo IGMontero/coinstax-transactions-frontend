@@ -128,7 +128,7 @@ const DashboardUserAddresses = () => {
             onClick={() => handleRefreshAllTransactions(address.Address)}
           >
             {/* <i className="ri-refresh-line text-white btn btn-sm py-0 fs-4"></i>{' '} */}
-            Refresh
+            Refresh All Transactions
           </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
