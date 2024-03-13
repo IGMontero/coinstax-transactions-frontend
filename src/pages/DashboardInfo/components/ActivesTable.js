@@ -14,6 +14,8 @@ const AcitvesTable = ({ data, loading }) => {
   // const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState('byPlatform');
 
+  console.log(data);
+
   const [showMenu, setShowMenu] = useState(false);
 
   const [hideSmallBalances, setHideSmallBalances] = useState(false);
@@ -161,7 +163,7 @@ const AcitvesTable = ({ data, loading }) => {
           </div>
         </div>
         <div className="border border-2 rounded p-3">
-          {data.items && data.items.length === 0 ? (
+          {(data.items && data.items.length === 0) || !data.lenght ? (
             <div className="text-center py-2 mt-3">
               <h4>No Assets Found</h4>
             </div>
