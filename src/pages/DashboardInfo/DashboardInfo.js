@@ -356,7 +356,7 @@ const DashboardInfo = () => {
             {loading ? (
               <div
                 className="d-flex justify-content-start align-items-center"
-                style={{ height: '10vh' }}
+                style={{ height: '13vh' }}
               >
                 <Spinner style={{ width: '2rem', height: '2rem' }} />
               </div>
