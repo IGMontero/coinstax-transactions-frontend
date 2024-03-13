@@ -88,6 +88,7 @@ const DashboardInfo = () => {
     // If the address has changed, navigate and reset customActiveTab to '1'
     if (previousAddress !== address) {
       setCustomActiveTab('1');
+      handlerClearAllData();
       navigate(`/address/${address}/tokens`);
     }
   }, [address, previousAddress, navigate]);

@@ -61,6 +61,8 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   const [loadingDownload, setLoadingDownload] = useState(false);
 
+  console.log(data);
+
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
   useEffect(() => {
@@ -690,6 +692,17 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
             >
               <div>
                 <h1>{errorData}</h1>
+              </div>
+            </Col>
+          )}
+          {!data?.length && (
+            <Col
+              lg={12}
+              className="position-relative d-flex justify-content-center align-items-center"
+              style={{ minHeight: '50vh' }}
+            >
+              <div>
+                <h1>No results found</h1>
               </div>
             </Col>
           )}
