@@ -163,6 +163,7 @@ const DashboardInfo = () => {
     if (address) {
       setAddressForSearch(address);
       setAddressTitle(address);
+      // setCustomActiveTab('1');
     }
   }, [type, address]);
 
