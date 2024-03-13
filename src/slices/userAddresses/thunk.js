@@ -28,11 +28,18 @@ export const refreshAllTransactions = createAsyncThunk(
     try {
       const response = await fetch(
         `${API_BASE}/admin/addresses/${blockchain}/${address}/refresh`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        },
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
-      const data = await response.json();
+      const data = await response;
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
