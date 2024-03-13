@@ -14,10 +14,12 @@ import {
 import {
   getUserAddresses,
   refreshAllTransactions,
+  setAllTransactionsAsDirty,
 } from '../../slices/userAddresses/thunk';
 import { useDispatch } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
+import Swal from 'sweetalert2';
 
 const DashboardUserAddresses = () => {
   const dispatch = useDispatch();
@@ -107,6 +109,41 @@ const DashboardUserAddresses = () => {
     }
   };
 
+  const handleSetAllTransactionsAsDirty = async (address) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `All transactions linked to address ${address} will be set as dirty.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Continue',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await dispatch(
+          setAllTransactionsAsDirty({
+            blockchain: 'ethereum',
+            address: address,
+          }),
+        );
+
+        if (!response.payload || response.payload == false) {
+          Swal.fire('Error', 'Error to set address as dirty', 'error');
+        } else if (response.payload == true) {
+          Swal.fire(
+            'Success',
+            `All transactions with address ${address} have been set as dirty.`,
+            'success',
+          );
+          await getBlockchainContracts();
+        }
+      } catch (error) {
+        console.error('Error setting all as dirty', error);
+      }
+    }
+  };
+
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
     copyToClipboard(text);
@@ -129,6 +166,13 @@ const DashboardUserAddresses = () => {
           >
             {/* <i className="ri-refresh-line text-white btn btn-sm py-0 fs-4"></i>{' '} */}
             Refresh All Transactions
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleSetAllTransactionsAsDirty(address.Address)}
+          >
+            {/* <i className="ri-refresh-line text-white btn btn-sm py-0 fs-4"></i>{' '} */}
+            Set All Transactions As Dirty
           </DropdownItem>
         </DropdownMenu>
       </UncontrolledDropdown>
