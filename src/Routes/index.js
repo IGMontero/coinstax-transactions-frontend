@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import appLogo from '../assets/images/logos/logo-dark.png';
 //Layouts
 import NonAuthLayout from '../Layouts/NonAuthLayout';
 import VerticalLayout from '../Layouts/index';
@@ -19,8 +19,12 @@ import Swal from 'sweetalert2';
 const Index = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useSelector((state) => state.auth);
+
   const [loading, setLoading] = useState(true);
+
+  console.log(user);
 
   const checkUser = async () => {
     if (localStorage.getItem('token')) {
@@ -28,16 +32,39 @@ const Index = () => {
     }
     setLoading(false);
   };
+
+  const isLoginPage = location.pathname.includes('/login');
   useEffect(() => {
     checkUser();
 
-    if (user) {
+    if (user && isLoginPage) {
       navigate('/dashboard');
     }
   }, [dispatch, user]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          width: '100vw',
+          backgroundColor: '#23282C',
+          flexDirection: 'column',
+        }}
+      >
+        <img
+          src={appLogo}
+          alt="Coinstax-logo"
+          border="0"
+          style={{ width: '50vw', maxWidth: '320px' }}
+        />
+
+        <h3 className="text-white mt-2"> Loading..</h3>
+      </div>
+    );
   }
 
   return (

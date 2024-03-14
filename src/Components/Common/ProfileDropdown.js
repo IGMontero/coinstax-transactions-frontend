@@ -10,39 +10,38 @@ import {
 //import images
 import avatar1 from '../../assets/images/users/avatar-1.jpg';
 import { logoutUser } from '../../slices/thunks';
+
+import { logout } from '../../slices/auth2/reducer';
+import Swal from 'sweetalert2';
 const ProfileDropdown = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user } = useSelector((state) => ({
-    user: state.Profile.user,
-  }));
+  const { user } = useSelector((state) => state.auth);
+  console.log(user);
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    localStorage.removeItem('currentUser');
-    navigate({ pathname: '/dashboard', replace: true });
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout());
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  useEffect(() => {
+    if (!user) {
+      Swal.fire({
+        title: 'Logged Out!',
+        text: 'You have been logged out successfully!',
+        icon: 'success',
+        timer: 2000,
+        confirmButton: false,
+      }).then(() => {
+        navigate('/dashboard');
+      });
+    }
+  }, [user, navigate]);
   const [userName, setUserName] = useState(user?.email || 'Admin');
   const [userAvatar, setUserAvatar] = useState(user?.photoURL || avatar1);
-
-  useEffect(() => {
-    if (localStorage.getItem('authUser')) {
-      const obj = JSON.parse(localStorage.getItem('authUser'));
-      setUserName(
-        process.env.REACT_APP_DEFAULTAUTH === 'firebase'
-          ? obj?.providerData?.[0]?.displayName?.split(' ')?.[0] ||
-              obj?.providerData?.[0]?.email ||
-              // Get first name from display name
-              obj?.displayName?.split(' ')[0]
-          : 'Admin',
-      );
-
-      if (obj?.photoURL) {
-        setUserAvatar(obj.photoURL);
-      }
-    }
-  }, [userName, user]);
 
   //Dropdown Toggle
   const [isProfileDropdown, setIsProfileDropdown] = useState(false);
@@ -69,7 +68,7 @@ const ProfileDropdown = () => {
                 {userName}
               </span>
               <span className="d-none d-xl-block ms-1 fs-12 text-muted user-name-sub-text">
-                Member
+                Admin
               </span>
             </span>
           </span>
@@ -103,15 +102,12 @@ const ProfileDropdown = () => {
           </DropdownItem>
 
           <DropdownItem onClick={handleLogout} className="p-0">
-            <Link
-              to={process.env.PUBLIC_URL + '/logout'}
-              className="dropdown-item"
-            >
+            <div className="dropdown-item">
               <i className="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>{' '}
               <span className="align-middle" data-key="t-logout">
                 Logout
               </span>
-            </Link>
+            </div>
           </DropdownItem>
         </DropdownMenu>
       </Dropdown>
