@@ -16,13 +16,13 @@ import {
 import {
   getUserAddresses,
   refreshAllTransactions,
-  setAllTransactionsAsDirty,
 } from '../../slices/userAddresses/thunk';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
 import { setAllAsDirty } from '../../slices/blockchainContracts/thunk';
+import { handleActionResult } from '../../hooks/useHandleAction';
 
 const DashboardUserAddresses = () => {
   const dispatch = useDispatch();
@@ -35,6 +35,12 @@ const DashboardUserAddresses = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [isCopied, setIsCopied] = useState(false);
   const [userAddresses, setUserAddresses] = useState([]);
+
+  const errorMessageEdit = useSelector(
+    (state) => state.blockchainContracts.error,
+  );
+
+  console.log(errorMessageEdit);
 
   const fetchUserAddresses = async () => {
     setLoading(true);
@@ -96,17 +102,31 @@ const DashboardUserAddresses = () => {
   const handleRefreshAllTransactions = async (address) => {
     setLoading(true);
     try {
-      const response = await dispatch(
+      const actionResult = await dispatch(
         refreshAllTransactions({
           blockchain: 'ethereum',
           address,
         }),
       );
-      if (response.payload) {
-        Swal.fire('Success', 'All transactions have been refreshed', 'success');
-        fetchUserAddresses();
-      } else {
-        Swal.fire('Error', 'Error to refresh all transactions', 'error');
+
+      const errorMessage = 'Error to refresh all transactions';
+      const wasSuccessful = await handleActionResult(
+        refreshAllTransactions,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        (response) => {
+          Swal.fire(
+            'Success',
+            'All transactions have been refreshed',
+            'success',
+          );
+          fetchUserAddresses();
+        },
+      );
+
+      if (!wasSuccessful) {
+        return;
       }
     } catch (error) {
       console.error('Failed to refresh all transactions', error);
@@ -115,8 +135,7 @@ const DashboardUserAddresses = () => {
     }
   };
 
-  const handleSetAllTransactionsAsDirty = async (address) => {
-    console.log('hola');
+  const handleSetAllAsDirty = async (address) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: `All transactions linked to address ${address} will be set as dirty.`,
@@ -127,9 +146,8 @@ const DashboardUserAddresses = () => {
     });
 
     if (result.isConfirmed) {
-      console.log('hola2');
       try {
-        const response = await dispatch(
+        const actionResult = await dispatch(
           setAllAsDirty({
             type: 'addresses',
             blockchain: 'ethereum',
@@ -137,18 +155,29 @@ const DashboardUserAddresses = () => {
           }),
         );
 
-        if (!response.payload || response.payload == false || !response) {
-          Swal.fire('Error', 'Error to set address as dirty', 'error');
-        } else if (response.payload == true) {
-          Swal.fire(
-            'Success',
-            `All transactions with address ${address} have been set as dirty.`,
-            'success',
-          );
-          await getBlockchainContracts();
+        const errorMessage = 'Error to set address as dirty';
+
+        const wasSuccessful = await handleActionResult(
+          setAllAsDirty,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            Swal.fire(
+              'Success',
+              `All transactions with address ${address} have been set as dirty.`,
+              'success',
+            );
+
+            getBlockchainContracts();
+          },
+        );
+        if (!wasSuccessful) {
+          return;
         }
       } catch (error) {
         console.error('Error setting all as dirty', error);
+        Swal.fire('Error', error.toString(), 'error');
       }
     }
   };
@@ -175,7 +204,7 @@ const DashboardUserAddresses = () => {
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
-              onClick={() => handleSetAllTransactionsAsDirty(address.Address)}
+              onClick={() => handleSetAllAsDirty(address.Address)}
             >
               Set All Tx as Dirty
             </DropdownItem>
