@@ -193,10 +193,10 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
         >
           {contractLabel}
         </p>
-        <div className="d-flex align-items-end">
+        <div className="d-flex align-items-end ">
           <h6
             id={`popoverMarketplace-${transaction.txHash}`}
-            className="fw-semibold my-0 text-start d-flex align-items-center"
+            className="fw-semibold my-0 text-start d-flex align-items-center text-contractLabel"
             style={{
               cursor: 'pointer',
               fontSize: '12px',
@@ -226,7 +226,7 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
                   }}
                 />
               )}
-              <span className="text-hover-underline">
+              <span className="text-hover-underline text-contractLabel">
                 {formatIdTransaction(blockchainContractName, 4, 4)}
               </span>
             </>
