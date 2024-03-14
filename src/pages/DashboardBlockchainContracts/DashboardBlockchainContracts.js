@@ -27,6 +27,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
+import { handleActionResult } from '../../utils/useHandleAction';
 import EditBlockChainContract from '../DashboardInfo/components/HistorialComponents/modals/EditBlockChainContract';
 
 const DashboardBlockchainContracts = () => {
@@ -131,27 +132,30 @@ const DashboardBlockchainContracts = () => {
         const actionResult = await dispatch(
           setAllAsDirty({
             type: 'contracts',
-            blockchain: 'ethereum',
+            blockchain: 'ehtereum',
             address,
           }),
         );
 
-        if (setAllAsDirty.rejected.match(actionResult)) {
-          let errorMessage = actionResult.payload || 'Unknown error';
-          Swal.fire('Error', errorMessage, 'error');
-          return;
-        }
+        const errorMessage = 'Error to set address as dirty';
 
-        const res = actionResult.payload;
-        if (!res || res.error || res === false) {
-          Swal.fire('Error', 'Error to set address as dirty', 'error');
-        } else if (res === true) {
-          Swal.fire(
-            'Success',
-            `All transactions with address ${address} have been set as dirty.`,
-            'success',
-          );
-          await getBlockchainContracts();
+        const wasSuccessful = await handleActionResult(
+          setAllAsDirty,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            Swal.fire(
+              'Success',
+              `All transactions with address ${address} have been set as dirty.`,
+              'success',
+            );
+
+            getBlockchainContracts();
+          },
+        );
+        if (!wasSuccessful) {
+          return;
         }
       } catch (error) {
         console.error('Error setting all as dirty', error);
@@ -171,26 +175,27 @@ const DashboardBlockchainContracts = () => {
         }),
       );
 
-      if (editBlockChainContract.rejected.match(actionResult)) {
-        let errorMessage =
-          errorMessageEdit || actionResult.payload || 'Unknown error';
-        Swal.fire('Error', errorMessage, 'error');
-      } else {
-        const res = actionResult.payload;
-
-        if (!res || res.error) {
-          let errorMessage = res?.error || 'Error editing blockchain contract';
-          Swal.fire('Error', errorMessage, 'error');
-        } else {
+      const errorMessage = 'Error editing blockchain contract';
+      const wasSuccessful = await handleActionResult(
+        editBlockChainContract,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        () => {
           Swal.fire(
             'Success',
             'Blockchain Contract updated successfully',
             'success',
           );
           setModalEdit(false);
-          await getBlockchainContracts();
-        }
+          getBlockchainContracts();
+        },
+      );
+
+      if (!wasSuccessful) {
+        return;
       }
+      setLoadingUpdate(false);
     } catch (error) {
       console.error(error);
       Swal.fire('Error', 'An unexpected error occurred.', 'error');
@@ -202,42 +207,39 @@ const DashboardBlockchainContracts = () => {
   const handleUpdateTrustedState = async (contract, state) => {
     try {
       setUpdatingContractId(contract.Id);
-      const response = await dispatch(
+      const actionResult = await dispatch(
         updateTrustedState({
           blockchain: 'ethereum',
           address: contract.Address,
           trustedState: state,
         }),
       );
+      const errorMessage = 'Error updating trusted state';
+      const updatedContract = actionResult.payload;
+      const wasSuccessful = await handleActionResult(
+        updateTrustedState,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        () => {
+          setContracts(
+            contracts.map((c) =>
+              c.Id === updatedContract.Id ? updatedContract : c,
+            ),
+          );
+          Swal.fire(
+            'Success',
+            `Trusted state set to ${updatedContract.TrustedState}.`,
+            'success',
+          );
+        },
+      );
 
-      if (
-        !response.payload ||
-        response.payload.error ||
-        response.payload === null ||
-        !response.payload.Id ||
-        !response.payload.Blockchain ||
-        !response.payload.Address
-      ) {
-        Swal.fire(
-          'Error',
-          'Error updating Trusted state. Incomplete data received.',
-          'error',
-        );
-      } else {
-        const updatedContract = response.payload;
-
-        setContracts(
-          contracts.map((c) =>
-            c.Id === updatedContract.Id ? updatedContract : c,
-          ),
-        );
-
-        Swal.fire(
-          'Success',
-          `Trusted state set to ${updatedContract.TrustedState}.`,
-          'success',
-        );
+      if (!wasSuccessful) {
+        return;
       }
+
+      setUpdatingContractId(null);
     } catch (error) {
       Swal.fire('Error', 'Error updating trusted state', error.toString());
       console.log(error);

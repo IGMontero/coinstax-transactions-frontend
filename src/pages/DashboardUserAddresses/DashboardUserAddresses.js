@@ -22,7 +22,7 @@ import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
 import { setAllAsDirty } from '../../slices/blockchainContracts/thunk';
-import { handleActionResult } from '../../hooks/useHandleAction';
+import { handleActionResult } from '../../utils/useHandleAction';
 
 const DashboardUserAddresses = () => {
   const dispatch = useDispatch();
@@ -39,8 +39,6 @@ const DashboardUserAddresses = () => {
   const errorMessageEdit = useSelector(
     (state) => state.blockchainContracts.error,
   );
-
-  console.log(errorMessageEdit);
 
   const fetchUserAddresses = async () => {
     setLoading(true);
