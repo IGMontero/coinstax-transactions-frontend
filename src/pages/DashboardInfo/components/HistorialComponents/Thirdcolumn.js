@@ -9,12 +9,16 @@ import { Link } from 'react-router-dom';
 import EditBlockChainContract from './modals/EditBlockChainContract';
 import Swal from 'sweetalert2';
 import { editBlockChainContract } from '../../../../slices/blockchainContracts/thunk';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   const dispatch = useDispatch();
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
+
+  const errorMessageEdit = useSelector(
+    (state) => state.blockchainContracts.error,
+  );
 
   const [loadingUpdate, setLoadingUpdate] = useState(false);
 
@@ -92,14 +96,12 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   const handleEditBlockChainContract = async (data) => {
     try {
       setLoadingUpdate(true);
-
       if (!blockchainContractAddress) {
         Swal.fire('Error', 'No Address found ', 'error');
         setLoadingUpdate(false);
         return;
       }
-
-      const response = await dispatch(
+      const actionResult = await dispatch(
         editBlockChainContract({
           blockchain: 'ethereum',
           address: blockchainContractAddress,
@@ -107,58 +109,67 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
         }),
       );
 
-      if (!response || response.payload.error) {
-        Swal.fire('Error', 'Error editing blockchain contract', 'error');
-        setLoadingUpdate(false);
-        return;
+      if (editBlockChainContract.rejected.match(actionResult)) {
+        let errorMessage =
+          errorMessageEdit || actionResult.payload || 'Unknown error';
+        Swal.fire('Error', errorMessage, 'error');
       } else {
-        const updatedInfo = response.payload;
-        Swal.fire(
-          'Success',
-          'Blockchain Contract updated successfully',
-          'success',
-        );
+        const res = actionResult.payload;
 
-        setTransactions((prevTransactions) =>
-          prevTransactions.map((transaction) => {
-            const transactionHasMainContract =
-              transaction?.txSummary?.mainContractAddress ===
-              blockchainContractAddress;
+        if (!res || res.error) {
+          let errorMessage = res?.error || 'Error editing blockchain contract';
+          Swal.fire('Error', errorMessage, 'error');
+        } else {
+          const updatedInfo = res;
+          Swal.fire(
+            'Success',
+            'Blockchain Contract updated successfully',
+            'success',
+          );
 
-            if (transactionHasMainContract) {
-              const newTransaction = { ...transaction };
+          setTransactions((prevTransactions) =>
+            prevTransactions.map((transaction) => {
+              const transactionHasMainContract =
+                transaction?.txSummary?.mainContractAddress ===
+                blockchainContractAddress;
 
-              const newTxSummary = { ...newTransaction.txSummary };
+              if (transactionHasMainContract) {
+                const newTransaction = { ...transaction };
 
-              const newMainContractAddressInfo = {
-                ...newTxSummary.mainContractAddressInfo,
-              };
+                const newTxSummary = { ...newTransaction.txSummary };
 
-              newMainContractAddressInfo.address = updatedInfo.Address;
-              newMainContractAddressInfo.name =
-                updatedInfo.Name || newMainContractAddressInfo.name;
-              newMainContractAddressInfo.logo =
-                updatedInfo.Logo || newMainContractAddressInfo.logo;
+                const newMainContractAddressInfo = {
+                  ...newTxSummary.mainContractAddressInfo,
+                };
 
-              newTxSummary.mainContractAddressInfo = newMainContractAddressInfo;
+                newMainContractAddressInfo.address = updatedInfo.Address;
+                newMainContractAddressInfo.name =
+                  updatedInfo.Name || newMainContractAddressInfo.name;
+                newMainContractAddressInfo.logo =
+                  updatedInfo.Logo || newMainContractAddressInfo.logo;
 
-              newTransaction.txSummary = newTxSummary;
+                newTxSummary.mainContractAddressInfo =
+                  newMainContractAddressInfo;
 
-              newTransaction.marketplaceName = updatedInfo.Name;
-              newTransaction.marketplaceLogo = updatedInfo.Logo;
+                newTransaction.txSummary = newTxSummary;
 
-              return newTransaction;
-            }
-            return transaction;
-          }),
-        );
+                newTransaction.marketplaceName = updatedInfo.Name;
+                newTransaction.marketplaceLogo = updatedInfo.Logo;
 
-        setLoadingUpdate(false);
-        setOpenModalEdit(false);
+                return newTransaction;
+              }
+              return transaction;
+            }),
+          );
+
+          setLoadingUpdate(false);
+          setOpenModalEdit(false);
+        }
       }
     } catch (error) {
       console.log('Error editing blockchain contract', error);
       Swal.fire('Error', 'Error editing blockchain contract', 'error');
+    } finally {
       setLoadingUpdate(false);
     }
   };

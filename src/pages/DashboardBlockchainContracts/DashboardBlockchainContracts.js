@@ -23,7 +23,7 @@ import {
   blockchainContractTrustedStateEnumType,
   capitalizeFirstLetter,
 } from '../../utils/utils';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
@@ -31,6 +31,10 @@ import EditBlockChainContract from '../DashboardInfo/components/HistorialCompone
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
+
+  const errorMessageEdit = useSelector(
+    (state) => state.blockchainContracts.error,
+  );
 
   const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -151,33 +155,38 @@ const DashboardBlockchainContracts = () => {
   const handleEditBlockChainContract = async (data) => {
     try {
       setLoadingUpdate(true);
-      const response = await dispatch(
+      const actionResult = await dispatch(
         editBlockChainContract({
-          blockchain: 'ethereu',
+          blockchain: 'ethereum',
           address: selectedContract.Address,
           data,
         }),
       );
 
-      if (!response.payload || response.payload.error) {
-        Swal.fire('Error', 'Error editing blockchain contract', 'error');
-        setLoadingUpdate(false);
-        return;
+      if (editBlockChainContract.rejected.match(actionResult)) {
+        let errorMessage =
+          errorMessageEdit || actionResult.payload || 'Unknown error';
+        Swal.fire('Error', errorMessage, 'error');
       } else {
-        Swal.fire(
-          'Success',
-          'Blockchain Contract updated successfully',
-          'success',
-        );
-        setModalEdit(false);
-        setLoadingUpdate(false);
-        await getBlockchainContracts();
+        const res = actionResult.payload;
+
+        if (!res || res.error) {
+          let errorMessage = res?.error || 'Error editing blockchain contract';
+          Swal.fire('Error', errorMessage, 'error');
+        } else {
+          Swal.fire(
+            'Success',
+            'Blockchain Contract updated successfully',
+            'success',
+          );
+          setModalEdit(false);
+          await getBlockchainContracts();
+        }
       }
-      setLoadingUpdate(false);
     } catch (error) {
-      setLoadingUpdate(true);
-      console.error('Error editing blockchain contract', error);
-      Swal.fire('Error', 'Error editing blockchain contract', 'error');
+      console.error(error);
+      Swal.fire('Error', 'An unexpected error occurred.', 'error');
+    } finally {
       setLoadingUpdate(false);
     }
   };
