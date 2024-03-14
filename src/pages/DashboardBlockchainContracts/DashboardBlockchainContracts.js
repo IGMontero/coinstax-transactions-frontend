@@ -36,8 +36,6 @@ const DashboardBlockchainContracts = () => {
     (state) => state.blockchainContracts.error,
   );
 
-  console.log(errorMessageEdit);
-
   const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
 
