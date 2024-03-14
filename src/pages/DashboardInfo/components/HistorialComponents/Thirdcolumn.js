@@ -10,6 +10,7 @@ import EditBlockChainContract from './modals/EditBlockChainContract';
 import Swal from 'sweetalert2';
 import { editBlockChainContract } from '../../../../slices/blockchainContracts/thunk';
 import { useDispatch, useSelector } from 'react-redux';
+import { handleActionResult } from '../../../../utils/useHandleAction';
 
 const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   const dispatch = useDispatch();
@@ -109,24 +110,15 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
         }),
       );
 
-      if (editBlockChainContract.rejected.match(actionResult)) {
-        let errorMessage =
-          errorMessageEdit || actionResult.payload || 'Unknown error';
-        Swal.fire('Error', errorMessage, 'error');
-      } else {
-        const res = actionResult.payload;
+      const errorMessage = 'Error editing blockchain contract';
 
-        if (!res || res.error) {
-          let errorMessage = res?.error || 'Error editing blockchain contract';
-          Swal.fire('Error', errorMessage, 'error');
-        } else {
+      const wasSuccessful = await handleActionResult(
+        editBlockChainContract,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        (res) => {
           const updatedInfo = res;
-          Swal.fire(
-            'Success',
-            'Blockchain Contract updated successfully',
-            'success',
-          );
-
           setTransactions((prevTransactions) =>
             prevTransactions.map((transaction) => {
               const transactionHasMainContract =
@@ -162,9 +154,20 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
             }),
           );
 
+          Swal.fire(
+            'Success',
+            'Blockchain Contract updated successfully',
+            'success',
+          );
+
           setLoadingUpdate(false);
           setOpenModalEdit(false);
-        }
+        },
+      );
+
+      if (!wasSuccessful) {
+        setLoadingUpdate(false);
+        return;
       }
     } catch (error) {
       console.log('Error editing blockchain contract', error);
