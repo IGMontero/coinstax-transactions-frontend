@@ -1,4 +1,8 @@
-import { fetchBlockchainContracts } from './thunk';
+import {
+  fetchBlockchainContracts,
+  editBlockChainContract,
+  updateTrustedState,
+} from './thunk';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -21,6 +25,28 @@ const blockchainContractsSlice = createSlice({
       state.error = null;
     },
     [fetchBlockchainContracts.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [editBlockChainContract.pending]: (state) => {
+      state.loading = true;
+    },
+    [editBlockChainContract.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [editBlockChainContract.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [updateTrustedState.pending]: (state) => {
+      state.loading = true;
+    },
+    [updateTrustedState.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [updateTrustedState.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
