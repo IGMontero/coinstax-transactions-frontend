@@ -84,12 +84,10 @@ const DashboardInfo = () => {
     return ref.current;
   }
   useEffect(() => {
-    if (address && previousAddress !== address) {
-      setCustomActiveTab('1');
-      handlerClearAllData();
+    if (address && previousAddress !== address && !type) {
       navigate(`/address/${address}/tokens`);
     }
-  }, [address, previousAddress, navigate]);
+  }, [address, previousAddress, navigate, type]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -172,17 +170,18 @@ const DashboardInfo = () => {
     }
   };
   useEffect(() => {
+    if (address) {
+      setAddressForSearch(address);
+      setAddressTitle(address);
+    }
+  }, [address]);
+  useEffect(() => {
     if (type) {
       setCustomActiveTab(
         type === 'nfts' ? '2' : type === 'history' ? '3' : '1',
       );
     }
-    if (address) {
-      setAddressForSearch(address);
-      setAddressTitle(address);
-      // setCustomActiveTab('1');
-    }
-  }, [type, address]);
+  }, [type]);
 
   const handleNavLinkClick = (route, toggle) => {
     setCustomActiveTab(toggle);
