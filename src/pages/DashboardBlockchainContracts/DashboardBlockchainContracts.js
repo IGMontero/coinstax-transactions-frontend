@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import {
   DropdownItem,
   DropdownMenu,
@@ -10,6 +11,7 @@ import {
   PopoverBody,
   UncontrolledPopover,
   Button,
+  ButtonGroup,
 } from 'reactstrap';
 import {
   fetchBlockchainContracts,
@@ -21,14 +23,19 @@ import {
   blockchainContractTrustedStateEnumType,
   capitalizeFirstLetter,
 } from '../../utils/utils';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
+import { handleActionResult } from '../../utils/useHandleAction';
 import EditBlockChainContract from '../DashboardInfo/components/HistorialComponents/modals/EditBlockChainContract';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
+
+  const errorMessageEdit = useSelector(
+    (state) => state.blockchainContracts.error,
+  );
 
   const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -122,25 +129,37 @@ const DashboardBlockchainContracts = () => {
 
     if (result.isConfirmed) {
       try {
-        const response = await dispatch(
+        const actionResult = await dispatch(
           setAllAsDirty({
-            blockchain: 'ethereum',
-            address: address,
+            type: 'contracts',
+            blockchain: 'ehtereum',
+            address,
           }),
         );
 
-        if (!response.payload || response.payload == false) {
-          Swal.fire('Error', 'Error to set address as dirty', 'error');
-        } else if (response.payload == true) {
-          Swal.fire(
-            'Success',
-            `All transactions with address ${address} have been set as dirty.`,
-            'success',
-          );
-          await getBlockchainContracts();
+        const errorMessage = 'Error to set address as dirty';
+
+        const wasSuccessful = await handleActionResult(
+          setAllAsDirty,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            Swal.fire(
+              'Success',
+              `All transactions with address ${address} have been set as dirty.`,
+              'success',
+            );
+
+            getBlockchainContracts();
+          },
+        );
+        if (!wasSuccessful) {
+          return;
         }
       } catch (error) {
         console.error('Error setting all as dirty', error);
+        Swal.fire('Error', error.toString(), 'error');
       }
     }
   };
@@ -148,29 +167,39 @@ const DashboardBlockchainContracts = () => {
   const handleEditBlockChainContract = async (data) => {
     try {
       setLoadingUpdate(true);
-      const response = await dispatch(
+      const actionResult = await dispatch(
         editBlockChainContract({
           blockchain: 'ethereum',
           address: selectedContract.Address,
           data,
         }),
       );
-      if (!response || response.error) {
-        Swal.fire('Error', 'Error editing blockchain contract', 'error');
+
+      const errorMessage = 'Error editing blockchain contract';
+      const wasSuccessful = await handleActionResult(
+        editBlockChainContract,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        () => {
+          Swal.fire(
+            'Success',
+            'Blockchain Contract updated successfully',
+            'success',
+          );
+          setModalEdit(false);
+          getBlockchainContracts();
+        },
+      );
+
+      if (!wasSuccessful) {
         return;
       }
-      Swal.fire(
-        'Success',
-        'Blockchain Contract updated successfully',
-        'success',
-      );
       setLoadingUpdate(false);
-      setModalEdit(false);
-      await getBlockchainContracts();
     } catch (error) {
-      setLoadingUpdate(true);
-      console.error('Error editing blockchain contract', error);
-      Swal.fire('Error', 'Error editing blockchain contract', 'error');
+      console.error(error);
+      Swal.fire('Error', 'An unexpected error occurred.', 'error');
+    } finally {
       setLoadingUpdate(false);
     }
   };
@@ -178,42 +207,39 @@ const DashboardBlockchainContracts = () => {
   const handleUpdateTrustedState = async (contract, state) => {
     try {
       setUpdatingContractId(contract.Id);
-      const response = await dispatch(
+      const actionResult = await dispatch(
         updateTrustedState({
           blockchain: 'ethereum',
           address: contract.Address,
           trustedState: state,
         }),
       );
+      const errorMessage = 'Error updating trusted state';
+      const updatedContract = actionResult.payload;
+      const wasSuccessful = await handleActionResult(
+        updateTrustedState,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        () => {
+          setContracts(
+            contracts.map((c) =>
+              c.Id === updatedContract.Id ? updatedContract : c,
+            ),
+          );
+          Swal.fire(
+            'Success',
+            `Trusted state set to ${updatedContract.TrustedState}.`,
+            'success',
+          );
+        },
+      );
 
-      if (
-        !response.payload ||
-        response.payload.error ||
-        response.payload === null ||
-        !response.payload.Id ||
-        !response.payload.Blockchain ||
-        !response.payload.Address
-      ) {
-        Swal.fire(
-          'Error',
-          'Error updating Trusted state. Incomplete data received.',
-          'error',
-        );
-      } else {
-        const updatedContract = response.payload;
-
-        setContracts(
-          contracts.map((c) =>
-            c.Id === updatedContract.Id ? updatedContract : c,
-          ),
-        );
-
-        Swal.fire(
-          'Success',
-          `Trusted state set to ${updatedContract.TrustedState}.`,
-          'success',
-        );
+      if (!wasSuccessful) {
+        return;
       }
+
+      setUpdatingContractId(null);
     } catch (error) {
       Swal.fire('Error', 'Error updating trusted state', error.toString());
       console.log(error);
@@ -223,82 +249,80 @@ const DashboardBlockchainContracts = () => {
   };
 
   const renderDropdown = (contract) => {
-    return (
-      <UncontrolledDropdown>
-        <DropdownToggle tag="a" className="nav-link">
-          <i className="ri-more-2-fill"></i>
-        </DropdownToggle>
-        <DropdownMenu>
-          <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
-            Edit
-          </DropdownItem>
-          <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
-            Set All Tx as Dirty
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    );
+    const portalRoot = document.getElementById('portal-root');
+    return portalRoot
+      ? ReactDOM.createPortal(
+          <DropdownMenu>
+            <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
+              Edit
+            </DropdownItem>
+            <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
+              Set All Tx as Dirty
+            </DropdownItem>
+          </DropdownMenu>,
+
+          portalRoot,
+        )
+      : null;
   };
 
   const renderDropdownTrustedState = (contract) => {
-    return (
-      <UncontrolledDropdown disabled={loadingUpdateTrustedState}>
-        <DropdownToggle tag="a" className="nav-link cursor-pointer" caret>
-          {updatingContractId === contract.Id ? (
-            <Spinner style={{ width: '1.5rem', height: '1.5rem' }} />
-          ) : (
-            contract.TrustedState
-          )}
-        </DropdownToggle>
-        <DropdownMenu>
-          {/* <DropdownItem header>Select State</DropdownItem>  */}
-          <DropdownItem
-            onClick={() =>
-              handleUpdateTrustedState(
-                contract,
+    const portalRoot = document.getElementById('portal-root');
+    return portalRoot
+      ? ReactDOM.createPortal(
+          <DropdownMenu>
+            <DropdownItem
+              onClick={() =>
+                handleUpdateTrustedState(
+                  contract,
+                  blockchainContractTrustedStateEnumType.UNKNOUN,
+                )
+              }
+            >
+              {capitalizeFirstLetter(
                 blockchainContractTrustedStateEnumType.UNKNOUN,
-              )
-            }
-          >
-            {capitalizeFirstLetter(
-              blockchainContractTrustedStateEnumType.UNKNOUN,
-            )}
-          </DropdownItem>
-          <DropdownItem
-            onClick={() =>
-              handleUpdateTrustedState(
-                contract,
+              )}
+            </DropdownItem>
+            <DropdownItem
+              onClick={() =>
+                handleUpdateTrustedState(
+                  contract,
+                  blockchainContractTrustedStateEnumType.TRUSTED,
+                )
+              }
+            >
+              {capitalizeFirstLetter(
                 blockchainContractTrustedStateEnumType.TRUSTED,
-              )
-            }
-          >
-            {capitalizeFirstLetter(
-              blockchainContractTrustedStateEnumType.TRUSTED,
-            )}
-          </DropdownItem>
-          <DropdownItem
-            onClick={() =>
-              handleUpdateTrustedState(
-                contract,
+              )}
+            </DropdownItem>
+            <DropdownItem
+              onClick={() =>
+                handleUpdateTrustedState(
+                  contract,
+                  blockchainContractTrustedStateEnumType.SCAM,
+                )
+              }
+            >
+              {capitalizeFirstLetter(
                 blockchainContractTrustedStateEnumType.SCAM,
-              )
-            }
-          >
-            {capitalizeFirstLetter(blockchainContractTrustedStateEnumType.SCAM)}
-          </DropdownItem>
-          <DropdownItem
-            onClick={() =>
-              handleUpdateTrustedState(
-                contract,
+              )}
+            </DropdownItem>
+            <DropdownItem
+              onClick={() =>
+                handleUpdateTrustedState(
+                  contract,
+                  blockchainContractTrustedStateEnumType.SPAM,
+                )
+              }
+            >
+              {capitalizeFirstLetter(
                 blockchainContractTrustedStateEnumType.SPAM,
-              )
-            }
-          >
-            {capitalizeFirstLetter(blockchainContractTrustedStateEnumType.SPAM)}
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    );
+              )}
+            </DropdownItem>
+          </DropdownMenu>,
+          portalRoot,
+        )
+      : null;
   };
 
   const handleCopyValue = (e, text) => {
@@ -440,12 +464,36 @@ const DashboardBlockchainContracts = () => {
                   </td>
                   <td className="align-middle">{contract.Symbol}</td>
                   <td className="align-middle">
-                    {renderDropdownTrustedState(contract)}{' '}
+                    <ButtonGroup onClick={(e) => e.stopPropagation()}>
+                      <UncontrolledDropdown
+                        disabled={loadingUpdateTrustedState}
+                      >
+                        <DropdownToggle
+                          tag="a"
+                          className="nav-link cursor-pointer"
+                          caret
+                        >
+                          {updatingContractId === contract.Id ? (
+                            <Spinner
+                              style={{ width: '1.5rem', height: '1.5rem' }}
+                            />
+                          ) : (
+                            contract.TrustedState
+                          )}
+                        </DropdownToggle>
+                        {renderDropdownTrustedState(contract)}
+                      </UncontrolledDropdown>
+                    </ButtonGroup>
                   </td>
-                  <td className="align-middle text-center">
-                    <span className="cursor-pointer">
-                      {renderDropdown(contract)}{' '}
-                    </span>
+                  <td className="align-middle">
+                    <ButtonGroup onClick={(e) => e.stopPropagation()}>
+                      <UncontrolledDropdown className="cursor-pointer">
+                        <DropdownToggle tag="a" className="nav-link">
+                          <i className="ri-more-2-fill"></i>
+                        </DropdownToggle>
+                        {renderDropdown(contract)}
+                      </UncontrolledDropdown>
+                    </ButtonGroup>
                   </td>
                 </tr>
               ))
@@ -465,6 +513,7 @@ const DashboardBlockchainContracts = () => {
             />
           )}
         </Table>
+        <div id="portal-root"></div>
       </div>
     </React.Fragment>
   );

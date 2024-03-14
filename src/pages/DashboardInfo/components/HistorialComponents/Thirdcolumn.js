@@ -9,15 +9,19 @@ import { Link } from 'react-router-dom';
 import EditBlockChainContract from './modals/EditBlockChainContract';
 import Swal from 'sweetalert2';
 import { editBlockChainContract } from '../../../../slices/blockchainContracts/thunk';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleActionResult } from '../../../../utils/useHandleAction';
 
 const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   const dispatch = useDispatch();
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
 
-  const [loadingUpdate, setLoadingUpdate] = useState(false);
+  const errorMessageEdit = useSelector(
+    (state) => state.blockchainContracts.error,
+  );
 
+  const [loadingUpdate, setLoadingUpdate] = useState(false);
 
   const handleOpenModalEdit = (contract) => {
     setOpenModalEdit(!openModalEdit);
@@ -93,14 +97,12 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   const handleEditBlockChainContract = async (data) => {
     try {
       setLoadingUpdate(true);
-
       if (!blockchainContractAddress) {
         Swal.fire('Error', 'No Address found ', 'error');
         setLoadingUpdate(false);
         return;
       }
-
-      const response = await dispatch(
+      const actionResult = await dispatch(
         editBlockChainContract({
           blockchain: 'ethereum',
           address: blockchainContractAddress,
@@ -108,52 +110,69 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
         }),
       );
 
-      if (!response || response.payload.error) {
-        Swal.fire('Error', 'Error editing blockchain contract', 'error');
+      const errorMessage = 'Error editing blockchain contract';
+
+      const wasSuccessful = await handleActionResult(
+        editBlockChainContract,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        (res) => {
+          const updatedInfo = res;
+          setTransactions((prevTransactions) =>
+            prevTransactions.map((transaction) => {
+              const transactionHasMainContract =
+                transaction?.txSummary?.mainContractAddress ===
+                blockchainContractAddress;
+
+              if (transactionHasMainContract) {
+                const newTransaction = { ...transaction };
+
+                const newTxSummary = { ...newTransaction.txSummary };
+
+                const newMainContractAddressInfo = {
+                  ...newTxSummary.mainContractAddressInfo,
+                };
+
+                newMainContractAddressInfo.address = updatedInfo.Address;
+                newMainContractAddressInfo.name =
+                  updatedInfo.Name || newMainContractAddressInfo.name;
+                newMainContractAddressInfo.logo =
+                  updatedInfo.Logo || newMainContractAddressInfo.logo;
+
+                newTxSummary.mainContractAddressInfo =
+                  newMainContractAddressInfo;
+
+                newTransaction.txSummary = newTxSummary;
+
+                newTransaction.marketplaceName = updatedInfo.Name;
+                newTransaction.marketplaceLogo = updatedInfo.Logo;
+
+                return newTransaction;
+              }
+              return transaction;
+            }),
+          );
+
+          Swal.fire(
+            'Success',
+            'Blockchain Contract updated successfully',
+            'success',
+          );
+
+          setLoadingUpdate(false);
+          setOpenModalEdit(false);
+        },
+      );
+
+      if (!wasSuccessful) {
         setLoadingUpdate(false);
         return;
-      } else {
-        const updatedInfo = response.payload;
-        Swal.fire(
-          'Success',
-          'Blockchain Contract updated successfully',
-          'success',
-        );
-
-        setTransactions((prevTransactions) =>
-          prevTransactions.map((transaction) => {
-            const transactionHasMainContract = transaction?.txSummary?.mainContractAddress === blockchainContractAddress;
-
-            if (transactionHasMainContract) {
-              const newTransaction = { ...transaction };
-
-              const newTxSummary = { ...newTransaction.txSummary };
-
-              const newMainContractAddressInfo = { ...newTxSummary.mainContractAddressInfo };
-
-              newMainContractAddressInfo.address = updatedInfo.Address;
-              newMainContractAddressInfo.name = updatedInfo.Name || newMainContractAddressInfo.name;
-              newMainContractAddressInfo.logo = updatedInfo.Logo || newMainContractAddressInfo.logo;
-
-              newTxSummary.mainContractAddressInfo = newMainContractAddressInfo;
-
-              newTransaction.txSummary = newTxSummary;
-
-              newTransaction.marketplaceName = updatedInfo.Name;
-              newTransaction.marketplaceLogo = updatedInfo.Logo;
-
-              return newTransaction;
-            }
-            return transaction;
-          }),
-        );
-
-        setLoadingUpdate(false);
-        setOpenModalEdit(false);
       }
     } catch (error) {
       console.log('Error editing blockchain contract', error);
       Swal.fire('Error', 'Error editing blockchain contract', 'error');
+    } finally {
       setLoadingUpdate(false);
     }
   };
@@ -174,10 +193,10 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
         >
           {contractLabel}
         </p>
-        <div className="d-flex align-items-end">
+        <div className="d-flex align-items-end ">
           <h6
             id={`popoverMarketplace-${transaction.txHash}`}
-            className="fw-semibold my-0 text-start d-flex align-items-center"
+            className="fw-semibold my-0 text-start d-flex align-items-center text-contractLabel"
             style={{
               cursor: 'pointer',
               fontSize: '12px',
@@ -207,7 +226,7 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
                   }}
                 />
               )}
-              <span className="text-hover-underline">
+              <span className="text-hover-underline text-contractLabel">
                 {formatIdTransaction(blockchainContractName, 4, 4)}
               </span>
             </>

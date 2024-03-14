@@ -69,7 +69,6 @@ const Nfts = ({ address, activeTab }) => {
     dispatch(fetchNFTS({ address: address, spam: includeSpam }))
       .unwrap()
       .then((response) => {
-        console.log(response);
         setData(response);
         setUpdatedAt(response.updatedAt);
         setLoading(false);
@@ -398,16 +397,24 @@ const Nfts = ({ address, activeTab }) => {
                   })}
               </div>
             )}
-
             {/* No NFTs found */}
-            {data.items && data.items.length === 0 && (
+            {data.length === 0 ? (
               <Col
                 className="d-flex text-center col-12 justify-content-center align-items-center"
                 style={{ display: 'flex', height: '50vh', width: '100%' }}
               >
-                <h4 className="text-center">No NFTs found </h4>
+                <h1 className="text-center">No NFTs found </h1>
               </Col>
-            )}
+            ) : null}
+
+            {data.items && data.items.length === 0 ? (
+              <Col
+                className="d-flex text-center col-12 justify-content-center align-items-center"
+                style={{ display: 'flex', height: '50vh', width: '100%' }}
+              >
+                <h1 className="text-center">No NFTs found </h1>
+              </Col>
+            ) : null}
           </Col>
         </>
       )}

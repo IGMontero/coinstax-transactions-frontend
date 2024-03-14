@@ -356,3 +356,16 @@
     max-width: 100px; 
   }
 }
+
+.text-contractLabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px; 
+}
+
+@media (max-width: 576px) {
+  .text-displayName {
+    max-width: 30px; 
+  }
+}

@@ -83,14 +83,11 @@ const DashboardInfo = () => {
     }, [value]);
     return ref.current;
   }
-
   useEffect(() => {
-    // If the address has changed, navigate and reset customActiveTab to '1'
-    if (previousAddress !== address) {
-      setCustomActiveTab('1');
+    if (address && previousAddress !== address && !type) {
       navigate(`/address/${address}/tokens`);
     }
-  }, [address, previousAddress, navigate]);
+  }, [address, previousAddress, navigate, type]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -173,17 +170,18 @@ const DashboardInfo = () => {
     }
   };
   useEffect(() => {
+    if (address) {
+      setAddressForSearch(address);
+      setAddressTitle(address);
+    }
+  }, [address]);
+  useEffect(() => {
     if (type) {
       setCustomActiveTab(
         type === 'nfts' ? '2' : type === 'history' ? '3' : '1',
       );
     }
-    if (address) {
-      setAddressForSearch(address);
-      setAddressTitle(address);
-      // setCustomActiveTab('1');
-    }
-  }, [type, address]);
+  }, [type]);
 
   const handleNavLinkClick = (route, toggle) => {
     setCustomActiveTab(toggle);
@@ -346,7 +344,7 @@ const DashboardInfo = () => {
             </InputGroup>
           </Col>
         </Row>
-        {!addressForSearch ? (
+        {!address ? (
           <Container>
             <DashboardHome />
           </Container>
@@ -355,7 +353,7 @@ const DashboardInfo = () => {
             {loading ? (
               <div
                 className="d-flex justify-content-start align-items-center"
-                style={{ height: '10vh' }}
+                style={{ height: '13vh' }}
               >
                 <Spinner style={{ width: '2rem', height: '2rem' }} />
               </div>

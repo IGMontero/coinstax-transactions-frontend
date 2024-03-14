@@ -12,6 +12,10 @@ const Negativeledgers = ({ ledger }) => {
   const randomNumber = Math.floor(Math.random() * 100) + 1;
 
   const negativeLedgers = ledger.txSummary.sent;
+  const addressLink =
+    ledger.txSummary.mainContractAddressInfo?.address ||
+    ledger.txSummary.mainContractAddress;
+
   const currency = negativeLedgers?.currency || '';
   const hasMoreThanOne = negativeLedgers?.logo === 'assets';
 
@@ -27,6 +31,11 @@ const Negativeledgers = ({ ledger }) => {
     }, 2000);
   };
 
+  const isNft = negativeLedgers?.isNft;
+
+  const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
+  console.log(ledger.txSummary.sentAssetsCount);
+  console.log(hasAssetsCount);
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
       <>
@@ -56,31 +65,35 @@ const Negativeledgers = ({ ledger }) => {
                 </div>
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
-                    {negativeLedgers?.value !== -1 &&
-                      negativeLedgers?.value !== 0 ? (
+                    {!isNft &&
+                    negativeLedgers?.value !== 0 &&
+                    !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
                         id={`amount-left-${ledger.txHash}`}
-                        className={`text-displayName`}
+                        className="text-displayName"
                       >
+                        {negativeLedgers?.displayName}
+                      </span>
+                    ) : hasAssetsCount ? (
+                      <span className="text-displayName">
                         {negativeLedgers?.displayName}
                       </span>
                     ) : (
                       <span
-                        // onClick={() =>
-                        //   navigate(
-                        //     `/nfts/ethereum/${randomNumber}/?address=${address}`,
-                        //   )
-                        // }
-                        className={`text-displayName `}
-                      //  text-hover-underline text-hover-primary
+                        onClick={() =>
+                          navigate(
+                            `/contract/${addressLink}/?tokenId=${address}`,
+                          )
+                        }
+                        className="text-displayName text-hover-underline text-hover-primary"
                       >
                         {negativeLedgers?.displayName}
                       </span>
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                      negativeLedgers?.value !== 0 ? (
+                    negativeLedgers?.value !== 0 ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
