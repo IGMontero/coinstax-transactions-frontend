@@ -577,9 +577,10 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
               Include Spam Transactions
             </label>
           </div>
+
           <div className="d-flex py-3 justify-content-end">
             <Button
-              disabled={loadingDownload}
+              disabled={loadingDownload || isInitialLoad}
               onClick={handleDownloadTransactions}
               className="btn btn-sm"
               color="primary"

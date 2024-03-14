@@ -1,6 +1,6 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import appLogo from '../assets/images/logos/logo-dark.png';
 //Layouts
 import NonAuthLayout from '../Layouts/NonAuthLayout';
 import VerticalLayout from '../Layouts/index';
@@ -12,9 +12,57 @@ import { useProfile } from '../Components/Hooks/UserHooks';
 import Header from '../Layouts/Header';
 import Footer from '../Layouts/Footer';
 import Sidebar from '../Layouts/Sidebar';
+import { authMe } from '../slices/auth2/thunk';
+import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const Index = () => {
-  const currentUser = localStorage.getItem('currentUser');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+
+  const [loading, setLoading] = useState(true);
+
+  const isLoginPage = location.pathname.includes('/login');
+
+  useEffect(() => {
+    if (localStorage.getItem('token')) {
+      dispatch(authMe());
+    }
+    setLoading(false);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (user && isLoginPage) {
+      navigate('/dashboard');
+    }
+  }, [user, isLoginPage, navigate]);
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          width: '100vw',
+          backgroundColor: '#23282C',
+          flexDirection: 'column',
+        }}
+      >
+        <img
+          src={appLogo}
+          alt="Coinstax-logo"
+          border="0"
+          style={{ width: '50vw', maxWidth: '320px' }}
+        />
+
+        <h3 className="text-white mt-2"> Loading..</h3>
+      </div>
+    );
+  }
 
   return (
     <React.Fragment>
@@ -23,7 +71,7 @@ const Index = () => {
           <Route
             path={route.path}
             element={
-              currentUser ? (
+              user ? (
                 <VerticalLayout>{route.component}</VerticalLayout>
               ) : (
                 <>

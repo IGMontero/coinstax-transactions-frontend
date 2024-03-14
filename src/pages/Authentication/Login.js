@@ -25,7 +25,8 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
 // actions
-import { loginUser, socialLogin, resetLoginFlag } from '../../slices/thunks';
+
+import { login } from '../../slices/auth2/thunk';
 
 import logoLight from '../../assets/images/logo-light.png';
 //import images
@@ -33,94 +34,52 @@ import logoLight from '../../assets/images/logo-light.png';
 const Login = (props) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, error, loading, errorMsg } = useSelector((state) => ({
-    user: state.Account.user,
-    error: state.Login.error,
-    loading: state.Login.loading,
-    errorMsg: state.Login.errorMsg,
-  }));
+
+  const [loading, setLoading] = useState(false);
+
+  const { error, status, user } = useSelector((state) => state.auth);
+
+  const [errorMsg, setErrorMsg] = useState(error);
 
   const [userLogin, setUserLogin] = useState([]);
   const [passwordShow, setPasswordShow] = useState(false);
 
-  useEffect(() => {
-    if (user && user) {
-      const updatedUserData =
-        process.env.REACT_APP_DEFAULTAUTH === 'firebase'
-          ? user?.multiFactor?.user?.email
-          : user?.user?.email;
-      const updatedUserPassword =
-        process.env.REACT_APP_DEFAULTAUTH === 'firebase'
-          ? ''
-          : user.user.confirm_password;
-      setUserLogin({
-        email: updatedUserData,
-        password: updatedUserPassword,
-      });
+  const handleLogin = async (values) => {
+    setLoading(true);
+    try {
+      const response = await dispatch(login(values));
+      if (response.payload.error) {
+        setErrorMsg(response.payload.error);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
     }
-  }, [user]);
+  };
 
   const validation = useFormik({
-    // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
-
     initialValues: {
       email: '',
-      password: ''
+      password: '',
     },
     validationSchema: Yup.object({
       email: Yup.string().required('Please Enter Your Email'),
       password: Yup.string().required('Please Enter Your Password'),
     }),
     onSubmit: (values) => {
-      dispatch(loginUser(values, props.router.navigate));
+      dispatch(handleLogin(values));
     },
   });
 
-  const signIn = (type) => {
-    dispatch(socialLogin(type, props.router.navigate));
-  };
-
-  //handleTwitterLoginResponse
-  // const twitterResponse = e => {}
-
-  //for facebook and google authentication
-  const socialResponse = (type) => {
-    signIn(type);
-  };
-
+  document.title = 'Basic SignIn | CoinsTax';
   useEffect(() => {
     if (errorMsg) {
       setTimeout(() => {
-        dispatch(resetLoginFlag());
+        setErrorMsg('');
       }, 3000);
     }
-  }, [dispatch, errorMsg]);
-
-  document.title = 'Basic SignIn | CoinsTax';
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    const devEmail = 'dev@bitcoin.tax'
-    const devPassword = 'OJr1pKruRM'
-
-    if (
-      validation.values.email === devEmail &&
-      validation.values.password === devPassword
-    ) {
-      const currentUser = {
-        email: devEmail,
-        password: devPassword,
-        role: 'admin',
-      };
-      localStorage.setItem('currentUser', JSON.stringify(currentUser));
-
-      navigate('/dashboard', { replace: true });
-    } else {
-      alert('Invalid credentials');
-    }
-  };
+  }, [dispatch, error]);
 
   return (
     <React.Fragment>
@@ -152,8 +111,8 @@ const Login = (props) => {
                         Sign in to continue to Velzon.
                       </p>
                     </div>
-                    {error && error ? (
-                      <Alert color="danger"> {error} </Alert>
+                    {errorMsg && errorMsg ? (
+                      <Alert color="danger"> {errorMsg} </Alert>
                     ) : null}
                     <div className="p-2 mt-4">
                       {/* <Form
@@ -164,13 +123,7 @@ const Login = (props) => {
                         }}
                         action="#"
                       > */}
-                      <Form
-                        onSubmit={(e) => {
-                          handleLogin(e);
-                          return false;
-                        }}
-                        action="#"
-                      >
+                      <Form onSubmit={validation.handleSubmit} action="#">
                         <div className="mb-3">
                           <Label htmlFor="email" className="form-label">
                             Email
@@ -261,7 +214,7 @@ const Login = (props) => {
                         <div className="mt-4">
                           <Button
                             color="success"
-                            disabled={error ? null : loading ? true : false}
+                            disabled={loading ? true : false}
                             className="btn btn-success w-100"
                             type="submit"
                           >
@@ -275,12 +228,12 @@ const Login = (props) => {
                           </Button>
                         </div>
 
-                        <div className="mt-4 text-center">
+                        {/*<div className="mt-4 text-center">
                           <div className="signin-other-title">
                             <h5 className="fs-13 mb-4 title">Sign In with</h5>
                           </div>
                           <div>
-                            {/* <Link
+                            <Link
                                                             to="#"
                                                             className="btn btn-primary btn-icon me-1"
                                                             onClick={e => {
@@ -289,7 +242,7 @@ const Login = (props) => {
                                                             }}
                                                             >
                                                             <i className="ri-facebook-fill fs-16" />
-                                                        </Link> */}
+                                                        </Link> 
                             <Link
                               to="#"
                               className="btn btn-danger btn-icon me-1"
@@ -300,12 +253,12 @@ const Login = (props) => {
                             >
                               <i className="ri-google-fill fs-16" />
                             </Link>
-                            {/* <Button color="primary" className="btn-icon"><i className="ri-facebook-fill fs-16"></i></Button>{" "} */}
-                            {/* <Button color="danger" className="btn-icon"><i className="ri-google-fill fs-16"></i></Button>{" "} */}
-                            {/* <Button color="dark" className="btn-icon"><i className="ri-github-fill fs-16"></i></Button>{" "} */}
-                            {/* <Button color="info" className="btn-icon"><i className="ri-twitter-fill fs-16"></i></Button> */}
+                         <Button color="primary" className="btn-icon"><i className="ri-facebook-fill fs-16"></i></Button>{" "} 
+                             <Button color="danger" className="btn-icon"><i className="ri-google-fill fs-16"></i></Button>{" "} 
+                             <Button color="dark" className="btn-icon"><i className="ri-github-fill fs-16"></i></Button>{" "} 
+                             <Button color="info" className="btn-icon"><i className="ri-twitter-fill fs-16"></i></Button> 
                           </div>
-                        </div>
+                        </div>*/}
                       </Form>
                     </div>
                   </CardBody>
