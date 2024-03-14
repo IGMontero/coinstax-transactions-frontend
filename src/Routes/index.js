@@ -24,23 +24,19 @@ const Index = () => {
 
   const [loading, setLoading] = useState(true);
 
-  console.log(user);
-
-  const checkUser = async () => {
-    if (localStorage.getItem('token')) {
-      await dispatch(authMe());
-    }
-    setLoading(false);
-  };
-
   const isLoginPage = location.pathname.includes('/login');
   useEffect(() => {
-    checkUser();
+    if (localStorage.getItem('token')) {
+      dispatch(authMe());
+    }
+    setLoading(false);
+  }, [dispatch]);
 
+  useEffect(() => {
     if (user && isLoginPage) {
       navigate('/dashboard');
     }
-  }, [dispatch, user]);
+  }, [user, isLoginPage, navigate]);
 
   if (loading) {
     return (

@@ -17,7 +17,6 @@ const ProfileDropdown = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  console.log(user);
 
   const handleLogout = async () => {
     try {
