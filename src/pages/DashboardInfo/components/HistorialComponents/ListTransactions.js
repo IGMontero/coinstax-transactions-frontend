@@ -32,6 +32,7 @@ const ListTransactionss = ({ transactions }) => {
   }, [transactions]);
 
   function renderLedger(ledger, index, isReceived) {
+    const isNft = ledger.isNft;
     const prefix = isReceived ? 'received' : 'sent';
     const targetId = `amount-list-${prefix}-${index}-${transactions.txHash}`;
     return (
@@ -65,10 +66,18 @@ const ListTransactionss = ({ transactions }) => {
         </div>
         <div className="d-flex flex-column justify-content-center">
           <h6 className="fw-semibold my-0">
-            {!(
-              ledger.isNft === true &&
-              (ledger.amount === 1 || ledger.amount === -1)
-            ) && (
+            {isNft && (ledger.amount === 1 || ledger.amount === -1) ? (
+              <span
+                onClick={() =>
+                  navigate(
+                    `/contract/${ledger.txInfo.contractAddressInfo?.address}/?tokenId=${ledger.txInfo?.tokenId}`,
+                  )
+                }
+                className="text-displayList text-hover-underline text-hover-primary"
+              >
+                {ledger.currency}
+              </span>
+            ) : (
               <>
                 {ledger.amount > 0 ? '+' : ''}
                 <span
@@ -95,8 +104,8 @@ const ListTransactionss = ({ transactions }) => {
                   </UncontrolledPopover>
                 )}
               </>
-            )}{' '}
-            {ledger.currency}
+            )}
+            {!ledger.isNft && ledger.currency}
           </h6>
           {!ledger.isNft && (
             <p className="text-muted mb-0 d-flex align-items-center">
@@ -138,19 +147,41 @@ const ListTransactionss = ({ transactions }) => {
     );
   }
 
+  function getColSizeBasedOnContent(ledgers) {
+    const maxLength = Math.max(
+      ...ledgers.map((ledger) => ledger.currency.length),
+    );
+
+    if (maxLength > 10) {
+      return {
+        negative: 'col-xxl-4 col-lg-4',
+        positive: 'col-xxl-8 col-lg-8',
+      };
+    } else {
+      return {
+        negative: 'col-xxl-2 col-lg-2',
+        positive: 'col-xxl-7 col-lg-7',
+      };
+    }
+  }
+
+  const negativeLedgersSize = getColSizeBasedOnContent(negativeLedgers);
+  const positiveLedgersSize = getColSizeBasedOnContent(positiveLedgers);
+
   return (
     <Col xxl={12} lg={12} className="border-top ">
-      <Row className="align-items-start g-0 mt-2">
+      <Row className=" g-0 mt-2">
         <Col xxl={12} className="d-flex mb-2"></Col>
         {negativeLedgers && negativeLedgers.length > 0 && (
-          <Col xxl={2} className="d-flex align-items-start flex-column ps-2">
+          <Col
+            className={`d-flex align-items-start flex-column ps-2 ${negativeLedgersSize.negative}`}
+          >
             <span className=" mt-n2">Sent</span>
             {negativeLedgers.map((ledger, index) =>
               renderLedger(ledger, index, false),
             )}
           </Col>
         )}
-
         {negativeLedgers.length && positiveLedgers.length ? (
           <Col
             xxl={1}
@@ -187,8 +218,7 @@ const ListTransactionss = ({ transactions }) => {
 
         {positiveLedgers && positiveLedgers.length > 0 && (
           <Col
-            xxl={9}
-            className="d-flex align-items-center ps-2 flex-column justify-content-start"
+            className={`d-flex align-items-center ps-2 flex-column justify-content-start ${positiveLedgersSize.positive}`}
           >
             <span className="mb-0 mt-n2 align-self-start">Received</span>
             <div className="w-100">
