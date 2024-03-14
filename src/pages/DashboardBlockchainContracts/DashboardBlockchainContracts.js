@@ -36,6 +36,8 @@ const DashboardBlockchainContracts = () => {
     (state) => state.blockchainContracts.error,
   );
 
+  console.log(errorMessageEdit);
+
   const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
 
@@ -128,17 +130,24 @@ const DashboardBlockchainContracts = () => {
 
     if (result.isConfirmed) {
       try {
-        const response = await dispatch(
+        const actionResult = await dispatch(
           setAllAsDirty({
             type: 'contracts',
             blockchain: 'ethereum',
-            address: address,
+            address,
           }),
         );
 
-        if (!response.payload || response.payload == false) {
+        if (setAllAsDirty.rejected.match(actionResult)) {
+          let errorMessage = actionResult.payload || 'Unknown error';
+          Swal.fire('Error', errorMessage, 'error');
+          return;
+        }
+
+        const res = actionResult.payload;
+        if (!res || res.error || res === false) {
           Swal.fire('Error', 'Error to set address as dirty', 'error');
-        } else if (response.payload == true) {
+        } else if (res === true) {
           Swal.fire(
             'Success',
             `All transactions with address ${address} have been set as dirty.`,
@@ -148,6 +157,7 @@ const DashboardBlockchainContracts = () => {
         }
       } catch (error) {
         console.error('Error setting all as dirty', error);
+        Swal.fire('Error', error.toString(), 'error');
       }
     }
   };

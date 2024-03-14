@@ -2,6 +2,7 @@ import {
   fetchBlockchainContracts,
   editBlockChainContract,
   updateTrustedState,
+  setAllAsDirty,
 } from './thunk';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -47,6 +48,17 @@ const blockchainContractsSlice = createSlice({
       state.error = null;
     },
     [updateTrustedState.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [setAllAsDirty.pending]: (state) => {
+      state.loading = true;
+    },
+    [setAllAsDirty.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [setAllAsDirty.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
