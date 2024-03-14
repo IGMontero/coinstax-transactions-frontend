@@ -15,6 +15,7 @@ const auth2Slice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
+      localStorage.removeItem('token');
     },
   },
   extraReducers: (builder) => {
@@ -37,5 +38,7 @@ const auth2Slice = createSlice({
       });
   },
 });
+
+export const { logout } = auth2Slice.actions;
 
 export default auth2Slice.reducer;
