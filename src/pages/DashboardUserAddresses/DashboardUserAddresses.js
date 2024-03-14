@@ -167,7 +167,7 @@ const DashboardUserAddresses = () => {
               'success',
             );
 
-            getBlockchainContracts();
+            fetchUserAddresses();
           },
         );
         if (!wasSuccessful) {
