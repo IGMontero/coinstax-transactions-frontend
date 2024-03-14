@@ -8,18 +8,19 @@ import ForgetPasswordReducer from './auth/forgetpwd/reducer';
 import LoginReducer from './auth/login/reducer';
 import ProfileReducer from './auth/profile/reducer';
 import AccountReducer from './auth/register/reducer';
+import BlockchainReducer from './blockchainContracts/reducer';
 
 // API Key
 import APIKeyReducer from './apiKey/reducer';
 
 const rootReducer = combineReducers({
-    Layout: LayoutReducer,
-    Login: LoginReducer,
-    Account: AccountReducer,
-    ForgetPassword: ForgetPasswordReducer,
-    Profile: ProfileReducer,
-
-    APIKey: APIKeyReducer,
+  Layout: LayoutReducer,
+  Login: LoginReducer,
+  Account: AccountReducer,
+  ForgetPassword: ForgetPasswordReducer,
+  Profile: ProfileReducer,
+  blockchainContracts: BlockchainReducer,
+  APIKey: APIKeyReducer,
 });
 
 export default rootReducer;

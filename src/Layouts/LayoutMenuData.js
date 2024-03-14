@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 const Navdata = () => {
-  const [iscurrentState, setIscurrentState] = useState('Investment');
+  const [iscurrentState, setIscurrentState] = useState('Home');
 
   // function updateIconSidebar(e) {
   //   if (e && e.target && e.target.getAttribute("subitems")) {

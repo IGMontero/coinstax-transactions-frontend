@@ -693,6 +693,17 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
               </div>
             </Col>
           )}
+          {!data?.length && (
+            <Col
+              lg={12}
+              className="position-relative d-flex justify-content-center align-items-center"
+              style={{ minHeight: '50vh' }}
+            >
+              <div>
+                <h1>No results found</h1>
+              </div>
+            </Col>
+          )}
         </>
       )}
     </React.Fragment>

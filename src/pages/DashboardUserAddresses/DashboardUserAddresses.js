@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import {
   Button,
+  ButtonGroup,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
@@ -15,9 +17,12 @@ import {
   getUserAddresses,
   refreshAllTransactions,
 } from '../../slices/userAddresses/thunk';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
+import Swal from 'sweetalert2';
+import { setAllAsDirty } from '../../slices/blockchainContracts/thunk';
+import { handleActionResult } from '../../utils/useHandleAction';
 
 const DashboardUserAddresses = () => {
   const dispatch = useDispatch();
@@ -30,6 +35,10 @@ const DashboardUserAddresses = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [isCopied, setIsCopied] = useState(false);
   const [userAddresses, setUserAddresses] = useState([]);
+
+  const errorMessageEdit = useSelector(
+    (state) => state.blockchainContracts.error,
+  );
 
   const fetchUserAddresses = async () => {
     setLoading(true);
@@ -91,19 +100,83 @@ const DashboardUserAddresses = () => {
   const handleRefreshAllTransactions = async (address) => {
     setLoading(true);
     try {
-      const response = await dispatch(
+      const actionResult = await dispatch(
         refreshAllTransactions({
           blockchain: 'ethereum',
           address,
         }),
       );
 
-      console.log(response);
-      fetchUserAddresses();
+      const errorMessage = 'Error to refresh all transactions';
+      const wasSuccessful = await handleActionResult(
+        refreshAllTransactions,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        (response) => {
+          Swal.fire(
+            'Success',
+            'All transactions have been refreshed',
+            'success',
+          );
+          fetchUserAddresses();
+        },
+      );
+
+      if (!wasSuccessful) {
+        return;
+      }
     } catch (error) {
       console.error('Failed to refresh all transactions', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSetAllAsDirty = async (address) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `All transactions linked to address ${address} will be set as dirty.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Continue',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const actionResult = await dispatch(
+          setAllAsDirty({
+            type: 'addresses',
+            blockchain: 'ethereum',
+            address: address,
+          }),
+        );
+
+        const errorMessage = 'Error to set address as dirty';
+
+        const wasSuccessful = await handleActionResult(
+          setAllAsDirty,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            Swal.fire(
+              'Success',
+              `All transactions with address ${address} have been set as dirty.`,
+              'success',
+            );
+
+            fetchUserAddresses();
+          },
+        );
+        if (!wasSuccessful) {
+          return;
+        }
+      } catch (error) {
+        console.error('Error setting all as dirty', error);
+        Swal.fire('Error', error.toString(), 'error');
+      }
     }
   };
 
@@ -117,22 +190,26 @@ const DashboardUserAddresses = () => {
   };
 
   const renderDropdown = (address) => {
-    return (
-      <UncontrolledDropdown>
-        <DropdownToggle tag="a" className="nav-link">
-          <i className="ri-more-2-fill"></i>
-        </DropdownToggle>
-        <DropdownMenu>
-          <DropdownItem
-            className="d-flex align-items-center"
-            onClick={() => handleRefreshAllTransactions(address.Address)}
-          >
-            {/* <i className="ri-refresh-line text-white btn btn-sm py-0 fs-4"></i>{' '} */}
-            Refresh All Transactions
-          </DropdownItem>
-        </DropdownMenu>
-      </UncontrolledDropdown>
-    );
+    const portalRoot = document.getElementById('portal-root');
+    return portalRoot
+      ? ReactDOM.createPortal(
+          <DropdownMenu>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleRefreshAllTransactions(address.Address)}
+            >
+              Refresh All Transactions
+            </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleSetAllAsDirty(address.Address)}
+            >
+              Set All Tx as Dirty
+            </DropdownItem>
+          </DropdownMenu>,
+          portalRoot,
+        )
+      : null;
   };
 
   return (
@@ -238,9 +315,14 @@ const DashboardUserAddresses = () => {
                   {address.AllTransactionsProcessed ? 'Yes' : 'No'}
                 </td>
                 <td className="align-middle ">
-                  <span className="cursor-pointer">
-                    {renderDropdown(address)}
-                  </span>
+                  <ButtonGroup onClick={(e) => e.stopPropagation()}>
+                    <UncontrolledDropdown className="cursor-pointer">
+                      <DropdownToggle tag="a" className="nav-link">
+                        <i className="ri-more-2-fill"></i>
+                      </DropdownToggle>
+                      {renderDropdown(address)}
+                    </UncontrolledDropdown>
+                  </ButtonGroup>
                 </td>
               </tr>
             ))
@@ -260,6 +342,7 @@ const DashboardUserAddresses = () => {
           />
         )}
       </Table>
+      <div id="portal-root"></div>
     </div>
   );
 };

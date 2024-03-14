@@ -12,6 +12,10 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
 
   const [isCopied, setIsCopied] = React.useState(false);
 
+  const isNft = positiveLedgers?.isNft;
+
+  const hasAssetsCount = ledger.txSummary.sentAssetsCount;
+
   const handleCopyValue = (e, value) => {
     if (value) {
       e.stopPropagation();
@@ -74,6 +78,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                       {positiveLedgers?.displayName}
                     </span>
                     {positiveLedgers?.value &&
+                    !isNft &&
                     !positiveLedgers.marketplaceName ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}

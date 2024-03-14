@@ -41,6 +41,7 @@ export const editBlockChainContract = createAsyncThunk(
       const responseData = await response.json();
       return responseData;
     } catch (error) {
+      console.log('error', error);
       return rejectWithValue(error.message);
     }
   },
@@ -71,9 +72,9 @@ export const updateTrustedState = createAsyncThunk(
 
 export const setAllAsDirty = createAsyncThunk(
   'blockchainContracts/setAllAsDirty',
-  async ({ blockchain, address }, { rejectWithValue }) => {
+  async ({ blockchain, address, type }, { rejectWithValue }) => {
     try {
-      let url = `${API_BASE}/admin/contracts/${blockchain}/${address}/transactions/dirty`;
+      let url = `${API_BASE}/admin/${type}/${blockchain}/${address}/transactions/dirty`;
       const response = await fetch(url, {
         method: 'POST',
       });
