@@ -126,6 +126,7 @@ const DashboardBlockchainContracts = () => {
       try {
         const response = await dispatch(
           setAllAsDirty({
+            type: 'contracts',
             blockchain: 'ethereum',
             address: address,
           }),

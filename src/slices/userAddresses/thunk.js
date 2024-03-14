@@ -46,22 +46,3 @@ export const refreshAllTransactions = createAsyncThunk(
     }
   },
 );
-
-export const setAllTransactionsAsDirty = createAsyncThunk(
-  'userAddresses/setAllTransactionsAsDirty',
-  async ({ blockchain, address }, { rejectWithValue }) => {
-    try {
-      let url = `${API_BASE}/admin/addresses/${blockchain}/${address}/transactions/dirty`;
-      const response = await fetch(url, {
-        method: 'POST',
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  },
-);
