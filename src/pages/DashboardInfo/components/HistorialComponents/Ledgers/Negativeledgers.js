@@ -3,6 +3,7 @@ import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
 import { copyToClipboard } from '../../../../../utils/utils';
+import Swal from 'sweetalert2';
 
 const Negativeledgers = ({ ledger }) => {
   const navigate = useNavigate();
@@ -34,8 +35,8 @@ const Negativeledgers = ({ ledger }) => {
   const isNft = negativeLedgers?.isNft;
 
   const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
-  console.log(ledger.txSummary.sentAssetsCount);
-  console.log(hasAssetsCount);
+
+  const tokenId = null;
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
       <>
@@ -81,11 +82,14 @@ const Negativeledgers = ({ ledger }) => {
                       </span>
                     ) : (
                       <span
-                        onClick={() =>
-                          navigate(
-                            `/contract/${addressLink}/?tokenId=${address}`,
-                          )
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (addressLink && tokenId) {
+                            navigate(
+                              `/contract/${addressLink}/?tokenId=${tokenId}`,
+                            );
+                          }
+                        }}
                         className="text-displayName text-hover-underline text-hover-primary"
                       >
                         {negativeLedgers?.displayName}

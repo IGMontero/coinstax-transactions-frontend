@@ -11,13 +11,9 @@ import {
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 
 const AcitvesTable = ({ data, loading }) => {
-  // const [loading, setLoading] = useState(false);
   const [viewMode, setViewMode] = useState('byPlatform');
 
-  console.log(data);
-
   const [showMenu, setShowMenu] = useState(false);
-
   const [hideSmallBalances, setHideSmallBalances] = useState(false);
 
   const [hideZeroBalances, setHideZeroBalances] = useState(true);
@@ -222,108 +218,115 @@ const AcitvesTable = ({ data, loading }) => {
                             (!hideZeroBalances ||
                               (asset.value !== 0 && asset.value !== null)),
                         )
-                        .map((asset, index) => (
-                          <tr key={index}>
-                            <td>
-                              <div className="d-flex align-items-center fw-high">
-                                <img
-                                  src={asset.logo || asset.name}
-                                  alt={asset.logo}
-                                  className="avatar-xs me-2"
-                                  onError={(e) => {
-                                    e.target.onerror = null;
-                                    e.target.style.display = 'none';
+                        .map((asset, index) => {
+                          return (
+                            <tr key={index}>
+                              <td>
+                                <div className="d-flex align-items-center fw-high">
+                                  <img
+                                    src={asset.logo}
+                                    alt={asset.name}
+                                    className="rounded avatar-xs me-2"
+                                    onError={(e) => {
+                                      e.target.onerror = null;
+                                      e.target.style.display = 'none';
 
-                                    const siblingDiv =
-                                      e.target.nextElementSibling;
-                                    if (
-                                      siblingDiv &&
-                                      siblingDiv.classList.contains(
-                                        'img-assets-placeholder',
-                                      )
-                                    ) {
-                                      siblingDiv.style.display = 'block';
-                                    }
-                                  }}
-                                />
-                                <div className="label-assets-placeholder">
-                                  {asset.name}
-                                </div>
-                                <div className="d-flex flex-column">
-                                  <div className="d-flex flex-row align-items-center">
-                                    {asset.name}{' '}
-                                    {viewMode === 'perPosition' && (
-                                      <Badge
-                                        color="soft-dark"
-                                        style={{ fontWeight: 'inherit' }}
-                                        className="mx-2 p-1 fs-7"
-                                      >
-                                        <span className="text-dark">
-                                          {' '}
-                                          {asset.percentage < 1
-                                            ? '<0.01'
-                                            : asset.percentage}
-                                          {'%'}
-                                        </span>
-                                      </Badge>
-                                    )}
+                                      const textNode =
+                                        document.createElement('div');
+                                      textNode.textContent = asset.name
+                                        ?.substring(0, 3)
+                                        .toUpperCase();
+                                      textNode.className =
+                                        'img-assets-placeholder avatar-xs me-2';
+
+                                      const container = e.target.parentNode;
+
+                                      container.insertBefore(
+                                        textNode,
+                                        container.firstChild,
+                                      );
+                                    }}
+                                  />
+
+                                  <div className="d-flex flex-column">
+                                    <div className="d-flex flex-row align-items-center">
+                                      {asset.name}{' '}
+                                      {viewMode === 'perPosition' && (
+                                        <Badge
+                                          color="soft-dark"
+                                          style={{ fontWeight: 'inherit' }}
+                                          className="mx-2 p-1 fs-7"
+                                        >
+                                          <span className="text-dark">
+                                            {' '}
+                                            {asset.percentage < 1
+                                              ? '<0.01'
+                                              : asset.percentage}
+                                            {'%'}
+                                          </span>
+                                        </Badge>
+                                      )}
+                                    </div>
+                                    <div className="d-flex align-items-center text-muted">
+                                      <img
+                                        src={eth}
+                                        width={15}
+                                        height={15}
+                                        className="me-1 "
+                                      />
+                                      Ethereum · Wallet
+                                    </div>
                                   </div>
-                                  <div className="d-flex align-items-center text-muted">
-                                    <img
-                                      src={eth}
-                                      width={15}
-                                      height={15}
-                                      className="me-1 "
-                                    />
-                                    Ethereum · Wallet
-                                  </div>
                                 </div>
-                              </div>
-                            </td>
-                            <td>
-                              {asset.price
-                                ? '$' + formatPriceAndValue(asset.price)
-                                : '$0.00'}
-                            </td>
-                            <td>
-                              {asset.balance ? (
-                                <span>
-                                  {formatBalance(asset.balance) +
-                                    ' ' +
-                                    asset.symbol}
-                                </span>
-                              ) : (
-                                '0.00'
-                              )}
-                            </td>
-                            <td>
-                              <div className="d-flex flex-column align-items-start">
-                                <span>
-                                  {asset.value ? asset.prettyValue : '$0.00'}
-                                </span>
-                                <small
-                                  className={`${
-                                    asset.prettyDeltaValuePercent === '0.00%'
-                                      ? 'text-primary'
-                                      : asset.prettyDeltaValuePercent[0] === '-'
-                                        ? 'text-danger'
-                                        : 'text-success'
-                                  }`}
-                                >
-                                  {asset.prettyDeltaValuePercent === '0.00%'
-                                    ? asset.prettyDeltaValuePercent
-                                    : (asset.prettyDeltaValuePercent[0] === '-'
-                                        ? ''
-                                        : '+') + asset.prettyDeltaValuePercent}
-                                  {' (' +
-                                    '$' +
-                                    asset.deltaValue.toFixed(2) +
-                                    ')'}
-                                </small>
-                              </div>
-                            </td>
-                          </tr>
-                        ))}
+                              </td>
+                              <td>
+                                {asset.price
+                                  ? '$' + formatPriceAndValue(asset.price)
+                                  : '$0.00'}
+                              </td>
+                              <td>
+                                {asset.balance ? (
+                                  <span>
+                                    {formatBalance(asset.balance) +
+                                      ' ' +
+                                      asset.symbol}
+                                  </span>
+                                ) : (
+                                  '0.00'
+                                )}
+                              </td>
+                              <td>
+                                <div className="d-flex flex-column align-items-start">
+                                  <span>
+                                    {asset.value ? asset.prettyValue : '$0.00'}
+                                  </span>
+                                  <small
+                                    className={`${
+                                      asset.prettyDeltaValuePercent === '0.00%'
+                                        ? 'text-primary'
+                                        : asset.prettyDeltaValuePercent[0] ===
+                                            '-'
+                                          ? 'text-danger'
+                                          : 'text-success'
+                                    }`}
+                                  >
+                                    {asset.prettyDeltaValuePercent === '0.00%'
+                                      ? asset.prettyDeltaValuePercent
+                                      : (asset.prettyDeltaValuePercent[0] ===
+                                        '-'
+                                          ? ''
+                                          : '+') +
+                                        asset.prettyDeltaValuePercent}
+                                    {' (' +
+                                      '$' +
+                                      asset.deltaValue.toFixed(2) +
+                                      ')'}
+                                  </small>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })}
                   </tbody>
                 )}
               </table>
