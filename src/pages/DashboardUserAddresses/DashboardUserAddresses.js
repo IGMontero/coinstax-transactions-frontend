@@ -22,6 +22,7 @@ import { useDispatch } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
+import { setAllAsDirty } from '../../slices/blockchainContracts/thunk';
 
 const DashboardUserAddresses = () => {
   const dispatch = useDispatch();
@@ -115,6 +116,7 @@ const DashboardUserAddresses = () => {
   };
 
   const handleSetAllTransactionsAsDirty = async (address) => {
+    console.log('hola');
     const result = await Swal.fire({
       title: 'Are you sure?',
       text: `All transactions linked to address ${address} will be set as dirty.`,
@@ -125,15 +127,17 @@ const DashboardUserAddresses = () => {
     });
 
     if (result.isConfirmed) {
+      console.log('hola2');
       try {
         const response = await dispatch(
-          setAllTransactionsAsDirty({
+          setAllAsDirty({
+            type: 'addresses',
             blockchain: 'ethereum',
             address: address,
           }),
         );
 
-        if (!response.payload || response.payload == false) {
+        if (!response.payload || response.payload == false || !response) {
           Swal.fire('Error', 'Error to set address as dirty', 'error');
         } else if (response.payload == true) {
           Swal.fire(
