@@ -25,6 +25,7 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   const isLoginPage = location.pathname.includes('/login');
+
   useEffect(() => {
     if (localStorage.getItem('token')) {
       dispatch(authMe());
