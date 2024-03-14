@@ -41,8 +41,6 @@ const Login = (props) => {
 
   const [errorMsg, setErrorMsg] = useState(error);
 
-  console.log(error);
-
   const [userLogin, setUserLogin] = useState([]);
   const [passwordShow, setPasswordShow] = useState(false);
 
@@ -50,7 +48,9 @@ const Login = (props) => {
     setLoading(true);
     try {
       const response = await dispatch(login(values));
-      console.log('response', response);
+      if (response.payload.error) {
+        setErrorMsg(response.payload.error);
+      }
       setLoading(false);
     } catch (error) {
       console.log(error);

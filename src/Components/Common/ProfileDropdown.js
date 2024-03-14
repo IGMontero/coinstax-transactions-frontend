@@ -21,24 +21,17 @@ const ProfileDropdown = () => {
   const handleLogout = async () => {
     try {
       await dispatch(logout());
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    if (!user) {
       Swal.fire({
         title: 'Logged Out!',
         text: 'You have been logged out successfully!',
         icon: 'success',
         timer: 2000,
-        confirmButton: false,
-      }).then(() => {
-        navigate('/dashboard');
+        showConfirmButton: false,
       });
+    } catch (error) {
+      console.log(error);
     }
-  }, [user, navigate]);
+  };
   const [userName, setUserName] = useState(user?.email || 'Admin');
   const [userAvatar, setUserAvatar] = useState(user?.photoURL || avatar1);
 
