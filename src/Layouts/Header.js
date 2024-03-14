@@ -27,9 +27,9 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { user } = useSelector((state) => state.Login);
+  const { user } = useSelector((state) => state.auth);
 
-  const currentUser = localStorage.getItem('currentUser');
+  const currentUser = user;
 
   const { sidebarVisibilitytype } = useSelector((state) => ({
     sidebarVisibilitytype: state.Layout.sidebarVisibilitytype,
