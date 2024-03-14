@@ -70,11 +70,16 @@ const ListTransactionss = ({ transactions }) => {
           <h6 className="fw-semibold my-0">
             {isNft && (ledger.amount === 1 || ledger.amount === -1) ? (
               <span
-                onClick={() =>
-                  navigate(
-                    `/contract/${ledger.txInfo.contractAddressInfo?.address}/?tokenId=${ledger.txInfo?.tokenId}`,
-                  )
-                }
+                onClick={() => {
+                  if (
+                    ledger.txInfo?.contractAddressInfo?.address &&
+                    ledger.txInfo?.tokenId
+                  ) {
+                    navigate(
+                      `/contract/${ledger.txInfo.contractAddressInfo.address}/?tokenId=${ledger.txInfo.tokenId}`,
+                    );
+                  }
+                }}
                 className="text-displayList text-hover-underline text-hover-primary"
               >
                 {ledger.currency}
