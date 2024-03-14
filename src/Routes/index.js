@@ -1,5 +1,5 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 
 //Layouts
 import NonAuthLayout from '../Layouts/NonAuthLayout';
@@ -12,9 +12,33 @@ import { useProfile } from '../Components/Hooks/UserHooks';
 import Header from '../Layouts/Header';
 import Footer from '../Layouts/Footer';
 import Sidebar from '../Layouts/Sidebar';
+import { authMe } from '../slices/auth2/thunk';
+import { useDispatch, useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const Index = () => {
-  const currentUser = localStorage.getItem('currentUser');
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const [loading, setLoading] = useState(true);
+
+  const checkUser = async () => {
+    if (localStorage.getItem('token')) {
+      await dispatch(authMe());
+    }
+    setLoading(false);
+  };
+  useEffect(() => {
+    checkUser();
+
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [dispatch, user]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <React.Fragment>
@@ -23,7 +47,7 @@ const Index = () => {
           <Route
             path={route.path}
             element={
-              currentUser ? (
+              user ? (
                 <VerticalLayout>{route.component}</VerticalLayout>
               ) : (
                 <>
