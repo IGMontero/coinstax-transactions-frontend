@@ -166,7 +166,7 @@ const ListTransactionss = ({ transactions }) => {
       };
     } else {
       return {
-        negative: 'col-xxl-2 col-lg-2',
+        negative: 'col-xxl-3 col-lg-3',
         positive: 'col-xxl-7 col-lg-7',
       };
     }

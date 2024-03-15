@@ -106,7 +106,8 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
 
                   {positiveLedgers &&
                     positiveLedgers.hideNativeAmount !== true &&
-                    (positiveLedgers.prettyNativeAmount ? (
+                    (positiveLedgers.prettyNativeAmount &&
+                    document.getElementById(`amount-left-${ledger.txHash}`) ? (
                       <p className="text-start d-flex align-items-center my-0 text-muted">
                         {positiveLedgers.prettyNativeAmount}
                       </p>

@@ -71,7 +71,7 @@ const Negativeledgers = ({ ledger }) => {
                     !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
-                        id={`amount-left-${ledger.txHash}`}
+                        id={`amount-left-${ledger?.txHash}`}
                         className="text-displayName"
                       >
                         {negativeLedgers?.displayName}
@@ -97,11 +97,12 @@ const Negativeledgers = ({ ledger }) => {
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                    negativeLedgers?.value !== 0 ? (
+                    negativeLedgers?.value !== 0 &&
+                    document.getElementById(`amount-left-${ledger.txHash}`) ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
-                        target={`amount-left-${ledger.txHash}`}
+                        target={`amount-left-${ledger?.txHash}`}
                         trigger="hover"
                       >
                         <PopoverBody

@@ -70,9 +70,11 @@ const AcitvesTable = ({ data, loading }) => {
     setShowMenu(!showMenu);
   };
 
+  console.log(data);
+
   return (
     <React.Fragment>
-      <div className="mb-3">
+      <div className={!data ? 'd-none' : 'mb-3'}>
         <div className="flex-grow-1 d-flex justify-content-between">
           <h2 className="ms-1 mb-3">Assets</h2>
           <div className="d-flex justify-content-between align-items-center ">
@@ -165,8 +167,8 @@ const AcitvesTable = ({ data, loading }) => {
           </div>
         </div>
         <div className="border border-2 rounded p-3">
-          {data.items && data.items.length === 0 && !data.lenght ? (
-            <div className="text-center py-2 mt-3">
+          {(data.items && data.items.length === 0) || !data ? (
+            <div className="text-center py-2 mt-3 ">
               <h4>No Assets Found</h4>
             </div>
           ) : (
@@ -175,7 +177,11 @@ const AcitvesTable = ({ data, loading }) => {
                 <div className="d-flex flex-row align-items-center">
                   <h4>
                     <b> Wallet </b>
-                    {loading ? null : `$${formatBalance(data.total)} US`}
+                    {data?.total && isNaN(data?.total)
+                      ? loading
+                        ? null
+                        : `$${formatBalance(data.total)} US`
+                      : null}
                   </h4>{' '}
                   <Badge
                     color="soft-dark"
