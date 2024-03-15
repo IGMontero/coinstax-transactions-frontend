@@ -236,7 +236,7 @@ const DashboardNFT = () => {
               />
             </div>
             {ownerAddress ? <>{renderCardProfile()}</> : null}
-            {attributes ? (
+            {attributes && attributes.length ? (
               <>
                 {renderAttributes(attributes)}
                 <hr />

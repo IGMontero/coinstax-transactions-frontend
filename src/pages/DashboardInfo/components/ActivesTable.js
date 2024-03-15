@@ -226,7 +226,7 @@ const AcitvesTable = ({ data, loading }) => {
                                   <img
                                     src={asset.logo}
                                     alt={asset.name}
-                                    className="rounded avatar-xs me-2"
+                                    className="rounded-circle avatar-xs me-2"
                                     onError={(e) => {
                                       e.target.onerror = null;
                                       e.target.style.display = 'none';
