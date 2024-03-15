@@ -549,7 +549,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   return (
     <React.Fragment>
-      {!isInitialLoad && data ? (
+      {!isInitialLoad && data && !errorData ? (
         <>
           {renderFiltersDropdown()}
           <Col className="col-12">
