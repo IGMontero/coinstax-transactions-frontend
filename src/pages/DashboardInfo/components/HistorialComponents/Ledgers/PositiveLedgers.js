@@ -6,6 +6,12 @@ import { copyToClipboard } from '../../../../../utils/utils';
 const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   const positiveLedgers = ledger.txSummary.received;
 
+  const addressLink =
+    ledger.txSummary.mainContractAddressInfo?.address ||
+    ledger.txSummary.mainContractAddress;
+
+  const tokenId = null;
+
   const currency = positiveLedgers?.currency || '';
 
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
@@ -14,7 +20,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
 
   const isNft = positiveLedgers?.isNft;
 
-  const hasAssetsCount = ledger.txSummary.sentAssetsCount;
+  const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
 
   const handleCopyValue = (e, value) => {
     if (value) {
@@ -67,11 +73,23 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   />{' '}
                 </div>
                 <div className="d-flex flex-column">
-                  <span className="text-success d-flex">
+                  <span
+                    className={`d-flex ${hasAssetsCount ? 'text-white' : `text-${isNft ? 'hover-primary text-hover-underline' : 'success'}`}`}
+                  >
                     <span
-                      onClick={(e) =>
-                        handleCopyValue(e, positiveLedgers?.value)
-                      }
+                      onClick={(e) => {
+                        if (hasAssetsCount) return;
+                        if (isNft) {
+                          e.stopPropagation();
+                          if (addressLink && tokenId) {
+                            navigate(
+                              `/contract/${addressLink}/?tokenId=${tokenId}`,
+                            );
+                          }
+                        } else {
+                          handleCopyValue(e, positiveLedgers?.value);
+                        }
+                      }}
                       id={`amount-${ledger.txHash}`}
                       className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
                     >
