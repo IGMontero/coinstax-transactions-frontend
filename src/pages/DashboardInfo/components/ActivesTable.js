@@ -72,7 +72,11 @@ const AcitvesTable = ({ data, loading }) => {
 
   return (
     <React.Fragment>
-      <div className={!data.length && !loading ? 'd-none' : 'mb-3'}>
+      <div
+        className={
+          Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
+        }
+      >
         <div className="flex-grow-1 d-flex justify-content-between">
           <h2 className="ms-1 mb-3">Assets</h2>
           <div className="d-flex justify-content-between align-items-center ">
