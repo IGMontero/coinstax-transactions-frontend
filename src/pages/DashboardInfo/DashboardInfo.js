@@ -136,7 +136,7 @@ const DashboardInfo = () => {
     if (addressForSearch) {
       fetchDataAssets();
     }
-  }, [addressForSearch, dispatch, isUnsupported]);
+  }, [addressForSearch, type, dispatch, isUnsupported]);
 
   useEffect(() => {
     if (series.length > 0 && series[0].data.length > 0) {
@@ -555,6 +555,7 @@ const DashboardInfo = () => {
                             <div className="d-flex justify-content-start">
                               <Col className="col-12 ">
                                 <PerformanceChart
+                                  type={type}
                                   loading={loading}
                                   setLoading={setLoading}
                                   setIsUnsupported={setIsUnsupported}

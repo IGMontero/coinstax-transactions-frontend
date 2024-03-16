@@ -205,7 +205,7 @@ const DashboardNFT = () => {
                       borderRadius: '30%',
                     }}
                   />
-                  <h4 className="text-primary mb-0 ms-2">{collectionName}</h4>
+                  <h4 className=" mb-0 ms-2">{collectionName}</h4>
                 </div>
               </Col>
             </Row>
@@ -236,7 +236,7 @@ const DashboardNFT = () => {
               />
             </div>
             {ownerAddress ? <>{renderCardProfile()}</> : null}
-            {attributes ? (
+            {attributes && attributes.length ? (
               <>
                 {renderAttributes(attributes)}
                 <hr />

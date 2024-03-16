@@ -549,48 +549,50 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   return (
     <React.Fragment>
-      {renderFiltersDropdown()}
+      {!isInitialLoad && data && !errorData ? (
+        <>
+          {renderFiltersDropdown()}
+          <Col className="col-12">
+            {renderBadges()}
+            {hasActiveFilters && (
+              <span
+                className="text-primary ms-2 cursor-pointer "
+                onClick={handleResetFilters}
+              >
+                <span className="text-hover-dark">Reset</span>
+              </span>
+            )}
+          </Col>
+          <Row>
+            <div className="d-flex mb-0 justify-content-between align-items-center">
+              <div className="d-flex justify-content-start">
+                <Input
+                  id="customCheck1"
+                  type="checkbox"
+                  className="form-check-input me-2 cursor-pointer"
+                  onChange={handleShowSpamTransactions}
+                  checked={includeSpam}
+                />
+                <label className="form-check-label" htmlFor="customCheck1">
+                  Include Spam Transactions
+                </label>
+              </div>
 
-      <Col className="col-12">
-        {renderBadges()}
-        {hasActiveFilters && (
-          <span
-            className="text-primary ms-2 cursor-pointer "
-            onClick={handleResetFilters}
-          >
-            <span className="text-hover-dark">Reset</span>
-          </span>
-        )}
-      </Col>
-
-      <Row>
-        <div className="d-flex mb-0 justify-content-between align-items-center">
-          <div className="d-flex justify-content-start">
-            <Input
-              id="customCheck1"
-              type="checkbox"
-              className="form-check-input me-2 cursor-pointer"
-              onChange={handleShowSpamTransactions}
-              checked={includeSpam}
-            />
-            <label className="form-check-label" htmlFor="customCheck1">
-              Include Spam Transactions
-            </label>
-          </div>
-
-          <div className="d-flex py-3 justify-content-end">
-            <Button
-              disabled={loadingDownload || isInitialLoad}
-              onClick={handleDownloadTransactions}
-              className="btn btn-sm"
-              color="primary"
-              size="sm"
-            >
-              Download CSV
-            </Button>
-          </div>
-        </div>
-      </Row>
+              <div className="d-flex py-3 justify-content-end">
+                <Button
+                  disabled={loadingDownload}
+                  onClick={handleDownloadTransactions}
+                  className="btn btn-sm"
+                  color="primary"
+                  size="sm"
+                >
+                  Download CSV
+                </Button>
+              </div>
+            </div>
+          </Row>{' '}
+        </>
+      ) : null}
       {/* <Row className="mt-4">
         <Col lg={6} md={8} sm={10} xs={12}>
           <InputGroup className="py-3 d-flex align-items-center pt-0 search-bar col-lg-12 col-md-12 pe-3">
@@ -694,7 +696,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
               </div>
             </Col>
           )}
-          {!data?.length && (
+          {!data && (
             <Col
               lg={12}
               className="position-relative d-flex justify-content-center align-items-center"

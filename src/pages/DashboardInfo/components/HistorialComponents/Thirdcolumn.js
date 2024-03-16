@@ -17,6 +17,8 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
 
+  const { user } = useSelector((state) => state.auth);
+
   const errorMessageEdit = useSelector(
     (state) => state.blockchainContracts.error,
   );
@@ -285,12 +287,12 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
               <PopoverBody className="p-1">Copied</PopoverBody>
             </Popover>
           </h6>
-          {currentUser && (
+          {user && (
             <i
               onClick={(e) =>
                 handleOpenModalEdit(transaction, e.stopPropagation())
               }
-              className="ri-pencil-line ms-2"
+              className="ri-pencil-line mb-0 ms-2"
             ></i>
           )}
         </div>

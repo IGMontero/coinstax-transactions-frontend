@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { fetchPerformance } from '../../../slices/transactions/thunk';
 import { useDispatch, useSelector } from 'react-redux';
-import { Card, CardBody, Spinner } from 'reactstrap';
+import { Card, CardBody, Col, Spinner } from 'reactstrap';
 
 const PerformanceChart = ({
   address,
@@ -13,9 +13,12 @@ const PerformanceChart = ({
   setIsUnsupported,
   loading,
   setLoading,
+  type,
 }) => {
   const dispatch = useDispatch();
   const [activeFilter, setActiveFilter] = useState('one_week');
+
+  const [showMessage, setShowMessage] = useState(false);
 
   const [options, setOptions] = useState({
     chart: {
@@ -168,7 +171,7 @@ const PerformanceChart = ({
         };
       });
     }
-  }, [series, title, subtitle]);
+  }, [series, type, title, subtitle]);
 
   const handleFilterForDays = (days, filterId) => {
     fetchAndSetData(days);
@@ -232,37 +235,52 @@ const PerformanceChart = ({
     );
   };
 
+  useEffect(() => {
+    if (!series.length) {
+      setShowMessage(true);
+      // setIsUnsupported(true);
+    }
+  }, [series]);
+
   return (
     <div className="position-relative ">
-      {loading ? (
-        <Card>
-          <CardBody className="p-4">
-            <div style={{ backgroundColor: '#212529', height: '360px' }}>
-              {' '}
-              <div className="d-flex justify-content-center align-items-center h-100">
-                <Spinner color="white" />
+      {
+        loading ? (
+          <Card>
+            <CardBody className="p-4">
+              <div style={{ backgroundColor: '#212529', height: '360px' }}>
+                {' '}
+                <div className="d-flex justify-content-center align-items-center h-100">
+                  <Spinner color="white" />
+                </div>
               </div>
-            </div>
-          </CardBody>
-        </Card>
-      ) : series.length ? (
-        <div className="border border-2 rounded p-2" style={{ zIndex: 1 }}>
-          <ReactApexChart
-            options={options}
-            series={series}
-            type="line"
-            height={350}
-          />
-          {renderFiltersButtons()}
-        </div>
-      ) : (
-        <ReactApexChart
-          options={{}}
-          series={[{ data: [] }]}
-          type="line"
-          height={350}
-        />
-      )}
+            </CardBody>
+          </Card>
+        ) : series.length ? (
+          <div className="border border-2 rounded p-2" style={{ zIndex: 1 }}>
+            <ReactApexChart
+              options={options}
+              series={series}
+              type="line"
+              height={350}
+            />
+            {renderFiltersButtons()}
+          </div>
+        ) : (
+          <Col
+            className="d-flex text-center col-12 justify-content-center align-items-center"
+            style={{ display: 'flex', height: '50vh', width: '100%' }}
+          >
+            <h1 className="text-center">No data found </h1>
+          </Col>
+        )
+        // <ReactApexChart
+        //   options={{}}
+        //   series={[{ data: [] }]}
+        //   type="line"
+        //   height={350}
+        // />
+      }
     </div>
   );
 };
