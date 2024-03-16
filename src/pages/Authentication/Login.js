@@ -39,9 +39,8 @@ const Login = (props) => {
 
   const { error, status, user } = useSelector((state) => state.auth);
 
-  const [errorMsg, setErrorMsg] = useState(error);
+  const [errorMsg, setErrorMsg] = useState(error.toString());
 
-  const [userLogin, setUserLogin] = useState([]);
   const [passwordShow, setPasswordShow] = useState(false);
 
   const handleLogin = async (values) => {
@@ -115,14 +114,6 @@ const Login = (props) => {
                       <Alert color="danger"> {errorMsg} </Alert>
                     ) : null}
                     <div className="p-2 mt-4">
-                      {/* <Form
-                        onSubmit={(e) => {
-                          e.preventDefault();
-                          validation.handleSubmit();
-                          return false;
-                        }}
-                        action="#"
-                      > */}
                       <Form onSubmit={validation.handleSubmit} action="#">
                         <div className="mb-3">
                           <Label htmlFor="email" className="form-label">
@@ -138,13 +129,13 @@ const Login = (props) => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                                validation.errors.email
+                              validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                            validation.errors.email ? (
+                          validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -174,13 +165,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                  validation.errors.password
+                                validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                              validation.errors.password ? (
+                            validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>

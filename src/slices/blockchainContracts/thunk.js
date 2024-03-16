@@ -26,12 +26,14 @@ export const fetchBlockchainContracts = createAsyncThunk(
 export const editBlockChainContract = createAsyncThunk(
   'blockchainContracts/editBlockChainContract',
   async ({ blockchain, address, data }, { rejectWithValue }) => {
+    const token = localStorage.getItem('token');
     try {
       let url = `${API_BASE}/admin/contracts/${blockchain}/${address}`;
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `${token}`,
         },
         body: JSON.stringify(data),
       });
@@ -50,12 +52,14 @@ export const editBlockChainContract = createAsyncThunk(
 export const updateTrustedState = createAsyncThunk(
   'blockchainContracts/updateTrustedState',
   async ({ blockchain, address, trustedState }, { rejectWithValue }) => {
+    const token = localStorage.getItem('token');
     try {
       let url = `${API_BASE}/admin/contracts/${blockchain}/${address}/trusted-state`;
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `${token}`,
         },
         body: JSON.stringify({ trustedState }),
       });
@@ -74,9 +78,13 @@ export const setAllAsDirty = createAsyncThunk(
   'blockchainContracts/setAllAsDirty',
   async ({ blockchain, address, type }, { rejectWithValue }) => {
     try {
+      const token = localStorage.getItem('token');
       let url = `${API_BASE}/admin/${type}/${blockchain}/${address}/transactions/dirty`;
       const response = await fetch(url, {
         method: 'POST',
+        headers: {
+          Authorization: `${token}`,
+        },
       });
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
