@@ -39,7 +39,7 @@ const Login = (props) => {
 
   const { error, status, user } = useSelector((state) => state.auth);
 
-  const [errorMsg, setErrorMsg] = useState(error.toString());
+  const [errorMsg, setErrorMsg] = useState(error?.toString());
 
   const [passwordShow, setPasswordShow] = useState(false);
 
@@ -129,13 +129,13 @@ const Login = (props) => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                              validation.errors.email
+                                validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                          validation.errors.email ? (
+                            validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -165,13 +165,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                validation.errors.password
+                                  validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                            validation.errors.password ? (
+                              validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>
