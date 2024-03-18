@@ -45,7 +45,12 @@ const Sidebar = ({ layoutType }) => {
   return (
     <React.Fragment>
       <div className="app-menu navbar-menu">
-        <div className="navbar-brand-box ">
+        <div
+          className="navbar-brand-box "
+          style={{
+            background: '#23282C',
+          }}
+        >
           <Link to="/" className="logo logo-dark">
             <span className="logo-sm">
               <img src={logo} alt="" height="20" width="63" />
