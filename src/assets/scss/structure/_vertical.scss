@@ -773,6 +773,7 @@
             // background: $vertical-menu-bg-dark;
             background: #16161a;
             padding-right: 10px;
+           
             // border-right: 1px solid $vertical-menu-border-dark;
 
             .hamburger-icon {
@@ -790,7 +791,7 @@
 
             .nav-link {
                 color: $vertical-menu-item-color-dark;
-                
+               
 
                 &.active {
                     color: $vertical-menu-item-active-color-dark;
@@ -835,6 +836,7 @@
             }
 
             >.nav-item {
+               
                 .nav-link.active {
                     border: .5px solid rgba(74, 73, 73, 0.517); 
                     border-radius: 0 15px 15px 0;

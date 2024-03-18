@@ -310,11 +310,11 @@ const VerticalLayout = (props) => {
               <li className="nav-item mt-2" style={{ marginLeft: '-.5rem' }}>
                 <Link
                   id={item.id}
-                  className="nav-link d-flex menu-link"
+                  className="nav-link d-flex  ps-3 menu-link"
                   to={item.link ? item.link : '/#'}
                 >
                   <i className={item.icon}></i>{' '}
-                  <span style={{ whiteSpace: 'nowrap' }}>
+                  <span className="ms-1" style={{ whiteSpace: 'nowrap' }}>
                     {props.t(item.label)}
                   </span>
                 </Link>
