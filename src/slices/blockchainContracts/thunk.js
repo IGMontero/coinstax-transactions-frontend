@@ -96,3 +96,27 @@ export const setAllAsDirty = createAsyncThunk(
     }
   },
 );
+
+export const deleteBlockchainContract = createAsyncThunk(
+  'blockchainContracts/deleteBlockchainContract',
+  async ({ blockchain, address }, { rejectWithValue }) => {
+    const token = localStorage.getItem('token');
+    try {
+      let url = `${API_BASE}/admin/contracts/${blockchain}/${address}`;
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify({}),
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const responseData = await response.json();
+      return responseData;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
