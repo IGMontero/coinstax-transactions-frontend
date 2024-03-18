@@ -36,7 +36,8 @@
 .navbar-menu {
     width: $vertical-menu-width;
     z-index: $vertical-menu-z-index;
-    background: $vertical-menu-bg;
+    // background: $vertical-menu-bg;
+    background: #16161a;
     // background: rgba($color: #2a2f34, $alpha: 1.0);
     // border-right: 1px solid $vertical-menu-border-dark;
     bottom: 0;
@@ -769,8 +770,10 @@
 
     &[data-sidebar="dark"] {
         .navbar-menu {
-            background: $vertical-menu-bg-dark;
-            border-right: 1px solid $vertical-menu-border-dark;
+            // background: $vertical-menu-bg-dark;
+            background: #16161a;
+            padding-right: 10px;
+            // border-right: 1px solid $vertical-menu-border-dark;
 
             .hamburger-icon {
                 span {
@@ -787,6 +790,7 @@
 
             .nav-link {
                 color: $vertical-menu-item-color-dark;
+                
 
                 &.active {
                     color: $vertical-menu-item-active-color-dark;
@@ -819,8 +823,9 @@
                 &:hover {
                     color: $vertical-menu-item-hover-color-dark;
                     box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.3); 
+                    border-radius: 0 15px 15px 0;
                     transform: translateY(-2px);
-                    
+                    transition: all 0.7s ease; 
                     .icon-dual {
                         color: $vertical-menu-item-hover-color-dark;
                         fill: rgba($white, 0.16);
@@ -835,7 +840,7 @@
                     border-radius: 0 15px 15px 0;
                     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
                     background: linear-gradient(145deg, #010d2067, #010d2067);
-                    transition: all 0.3s ease; 
+                    transition: all 0.7s ease; 
                   
                     .icon-dual {
                         color: $vertical-menu-item-hover-color-dark;
