@@ -16,6 +16,7 @@ import {
 import {
   getUserAddresses,
   refreshAllTransactions,
+  deleteUsersAddress,
 } from '../../slices/userAddresses/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
@@ -180,6 +181,54 @@ const DashboardUserAddresses = () => {
     }
   };
 
+  const handleDeleteUserAddress = async (address) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `You won't be able to revert this!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'No, cancel!',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const actionResult = await dispatch(
+          deleteUsersAddress({
+            blockchain: 'ethereum',
+            address,
+          }),
+        );
+
+        const errorMessage = 'Error to delete user address';
+
+        const wasSuccessful = await handleActionResult(
+          deleteUsersAddress,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            setUserAddresses(
+              userAddresses.filter((a) => a.Address !== address),
+            );
+            Swal.fire('Deleted!', 'User address has been deleted.', 'success');
+          },
+        );
+
+        if (!wasSuccessful) {
+          return;
+        }
+        setLoading(false);
+      } catch (error) {
+        setLoading(true);
+        console.error('Error deleting user address', error);
+        Swal.fire('Error', error.toString(), 'error');
+        setLoading(false);
+      }
+    }
+  };
+
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
     copyToClipboard(text);
@@ -205,6 +254,12 @@ const DashboardUserAddresses = () => {
               onClick={() => handleSetAllAsDirty(address.Address)}
             >
               Set All Tx as Dirty
+            </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleDeleteUserAddress(address.Address)}
+            >
+              Delete
             </DropdownItem>
           </DropdownMenu>,
           portalRoot,
