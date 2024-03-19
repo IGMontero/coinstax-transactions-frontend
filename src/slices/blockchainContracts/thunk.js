@@ -4,6 +4,7 @@ const API_BASE = process.env.REACT_APP_API_URL_BASE;
 export const fetchBlockchainContracts = createAsyncThunk(
   'blockchainContracts/fetchBlockchainContracts',
   async ({ blockchain, page, address }, { rejectWithValue }) => {
+    const token = localStorage.getItem('token');
     try {
       let url = `${API_BASE}/admin/contracts/${blockchain}`;
       if (address) {
@@ -11,7 +12,13 @@ export const fetchBlockchainContracts = createAsyncThunk(
       }
       url += `?page=${page}`;
 
-      const response = await fetch(url);
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${token}`,
+        },
+      });
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }

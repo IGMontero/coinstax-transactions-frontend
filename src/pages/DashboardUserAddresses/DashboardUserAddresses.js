@@ -202,21 +202,25 @@ const DashboardUserAddresses = () => {
         );
 
         const errorMessage = 'Error to delete user address';
-
+        const updateUserAddresses = actionResult;
         const wasSuccessful = await handleActionResult(
           deleteUsersAddress,
           actionResult,
           errorMessageEdit,
           errorMessage,
           () => {
+            // set user addresses
             setUserAddresses(
-              userAddresses.filter((a) => a.Address !== address),
+              userAddresses.map((u) =>
+                u.Id === updateUserAddresses.Id ? updateUserAddresses : u,
+              ),
             );
             Swal.fire('Deleted!', 'User address has been deleted.', 'success');
           },
         );
 
         if (!wasSuccessful) {
+          setLoading(false);
           return;
         }
         setLoading(false);
