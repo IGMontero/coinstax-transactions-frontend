@@ -270,6 +270,7 @@ const DashboardBlockchainContracts = () => {
         );
 
         const errorMessage = 'Error deleting blockchain contract';
+        // const updateContractResponse = actionResult.payloa
         const wasSuccessful = await handleActionResult(
           deleteBlockchainContract,
           actionResult,
@@ -277,6 +278,7 @@ const DashboardBlockchainContracts = () => {
           errorMessage,
           () => {
             setContracts(contracts.filter((c) => c.Id !== contract.Id));
+
             Swal.fire(
               'Success',
               `Blockchain Contract with address ${contract.Address} deleted successfully`,
@@ -286,6 +288,7 @@ const DashboardBlockchainContracts = () => {
         );
 
         if (!wasSuccessful) {
+          setLoading(false);
           return;
         }
         setLoading(false);
