@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
+  Col,
   Dropdown,
   DropdownMenu,
   DropdownToggle,
   Form,
+  Input,
+  InputGroup,
 } from 'reactstrap';
 
 //import images
@@ -28,6 +31,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const navigate = useNavigate();
 
   const { user } = useSelector((state) => state.auth);
+  const { address } = useParams();
 
   const currentUser = user;
 
@@ -86,6 +90,26 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     }
   };
 
+  const [searchInput, setSearchInput] = useState('');
+
+  const handlerClearAllData = () => {
+    // setAssetsData([]);
+    // setSeries([]);
+    // setHistoryData([]);
+    // setTitle('');
+    // setSubtitle('');
+    // setAddressTitle('');
+    // setCustomActiveTab('1');
+    // setIsUnsupported(false);
+  };
+
+  const handleSearchClick = () => {
+    // handlerClearAllData();
+    // setAddressForSearch(searchInput);
+    // setAddressTitle(searchInput);
+    navigate(`/address/${searchInput}/tokens`);
+  };
+
   return (
     <React.Fragment>
       {/* <header id="page-topbar" className={headerClass}> */}
@@ -114,11 +138,25 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   </span>
                 </button>
               ) : null}
-
-              {/* <SearchOption /> */}
             </div>
-
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center ">
+              <div className="d-flex justify-content-end ">
+                <InputGroup className="" style={{ width: '300px' }}>
+                  <Input
+                    className="form-control py-2 rounded"
+                    placeholder="Assets, wallet, domain, or identify"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                  />
+                  <Button
+                    disabled={!searchInput || address === searchInput}
+                    color="primary"
+                    onClick={handleSearchClick}
+                  >
+                    Search
+                  </Button>
+                </InputGroup>
+              </div>
               {/* <Dropdown isOpen={search} toggle={toogleSearch} className="d-md-none topbar-head-dropdown header-item">
                                 <DropdownToggle type="button" tag="button" className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle">
                                     <i className="bx bx-search fs-22"></i>
