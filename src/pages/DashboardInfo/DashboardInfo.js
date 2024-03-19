@@ -83,6 +83,13 @@ const DashboardInfo = () => {
     }, [value]);
     return ref.current;
   }
+
+  useEffect(() => {
+    if (address) {
+      setSearchInput(address);
+    }
+  }, [address]);
+
   useEffect(() => {
     if (address && previousAddress !== address && !type) {
       navigate(`/address/${address}/tokens`);
@@ -469,7 +476,7 @@ const DashboardInfo = () => {
                 </Col>
               </Row>
             )}
-            <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
+            <Row className="d-flex justify-content-center align-items-center mb-3 mt-5 ">
               {' '}
               {!isUnsupported ? (
                 <Col className="col-12 ">
@@ -480,7 +487,7 @@ const DashboardInfo = () => {
                       backgroundColor: '#16161a',
                     }}
                   >
-                    <Col xxl={6} className="">
+                    {/* <Col xxl={6} className="">
                       <Nav
                         tabs
                         className="  nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
@@ -540,7 +547,7 @@ const DashboardInfo = () => {
                           </NavLink>
                         </NavItem>
                       </Nav>
-                    </Col>
+                    </Col> */}
 
                     {/* Dropdown Menu  here  renderDropdownMenu()*/}
                   </div>
@@ -549,7 +556,7 @@ const DashboardInfo = () => {
                     className="text-muted"
                   >
                     <TabPane tabId="1" id="home1">
-                      <div className="d-flex">
+                      <div className="d-flex ">
                         <div className="flex-grow-1">
                           <Col xxl={12} className="mt-3 mb-4">
                             <div className="d-flex justify-content-start">
