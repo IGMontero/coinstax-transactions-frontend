@@ -70,16 +70,23 @@ const AcitvesTable = ({ data, loading }) => {
     setShowMenu(!showMenu);
   };
 
+  const isDashboardPage = location.pathname.includes('tokens');
+
   return (
     <React.Fragment>
+      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
+        Assets
+      </h1>
       <div
         className={
           Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
         }
       >
         <div className="flex-grow-1 d-flex justify-content-between">
-          <h2 className="ms-1 mb-3">Assets</h2>
-          <div className="d-flex justify-content-between align-items-center ">
+          <h2 className={`${!isDashboardPage ? 'd-none' : 'ms-1 mb-3'}`}>
+            Assets
+          </h2>
+          <div className="d-flex justify-content-between align-items-center mb-3">
             <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
             <Button
               className={`btn btn-sm btn-soft-primary rounded ${

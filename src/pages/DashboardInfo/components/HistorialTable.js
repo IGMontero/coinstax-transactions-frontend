@@ -106,6 +106,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
     try {
       setIsInitialLoad(true);
+
       setLoading(true);
 
       timerId = setTimeout(() => {
@@ -553,8 +554,12 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   return (
     <React.Fragment>
-      {!isInitialLoad && data && !errorData && !isDashboardPage ? (
-        <>
+      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
+        Transactions
+      </h1>
+
+      {!isInitialLoad && data && !errorData ? (
+        <div className={isDashboardPage ? 'd-none' : ''}>
           {renderFiltersDropdown()}
           <Col className="col-12">
             {renderBadges()}
@@ -595,7 +600,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
               </div>
             </div>
           </Row>{' '}
-        </>
+        </div>
       ) : null}
       {/* <Row className="mt-4">
         <Col lg={6} md={8} sm={10} xs={12}>
