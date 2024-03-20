@@ -59,7 +59,7 @@ const Index = () => {
           style={{ width: '50vw', maxWidth: '320px' }}
         />
 
-        <h3 className="text-white mt-2"> Loading..</h3>
+        <h3 className="text-white mt-2"> Loading...</h3>
       </div>
     );
   }
@@ -75,8 +75,8 @@ const Index = () => {
                 <VerticalLayout>{route.component}</VerticalLayout>
               ) : (
                 <>
-                  <Header />
-                  <NonAuthLayout>{route.component}</NonAuthLayout>
+                  {/* <Header /> */}
+                  <VerticalLayout>{route.component}</VerticalLayout>
                 </>
               )
             }

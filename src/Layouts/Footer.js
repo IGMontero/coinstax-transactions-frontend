@@ -22,13 +22,15 @@ const Footer = () => {
 
   return (
     <React.Fragment>
-      <footer className="footer ">
+      <footer className="footer bg bg-transparent ">
         <Container fluid>
           <Row>
-            <Col sm={6}>{new Date().getFullYear()} © CoinsTax</Col>
-            <Col sm={6}>
-              <div className="text-sm-end d-none d-sm-block">
-                Version {appVersion} ({apiVersion})
+            {/* <Col sm={6}>{new Date().getFullYear()} © CoinsTax</Col> */}
+            <Col sm={12}>
+              <div className="text-lg-end d-none d-sm-block text-white">
+                <h6>
+                  Version {appVersion} ({apiVersion})
+                </h6>
               </div>
             </Col>
           </Row>

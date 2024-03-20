@@ -3,6 +3,7 @@ import {
   editBlockChainContract,
   updateTrustedState,
   setAllAsDirty,
+  deleteBlockchainContract,
 } from './thunk';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -59,6 +60,17 @@ const blockchainContractsSlice = createSlice({
       state.error = null;
     },
     [setAllAsDirty.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [deleteBlockchainContract.pending]: (state) => {
+      state.loading = true;
+    },
+    [deleteBlockchainContract.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [deleteBlockchainContract.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },

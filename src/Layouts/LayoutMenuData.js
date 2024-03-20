@@ -1,7 +1,24 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 const Navdata = () => {
   const [iscurrentState, setIscurrentState] = useState('Home');
+
+  const { user } = useSelector((state) => state.auth);
+
+  const { address } = useParams();
+
+  const [addressSearched, setAddressSearched] = useState('');
+
+  console.log(address);
+
+  useEffect(() => {
+    console.log(address);
+    if (address) {
+      setAddressSearched(address);
+    }
+  }, [address]);
 
   // function updateIconSidebar(e) {
   //   if (e && e.target && e.target.getAttribute("subitems")) {
@@ -37,31 +54,59 @@ const Navdata = () => {
   //   // }
   // }, [history, iscurrentState, isAnalytics, isResources, isSummary]);
 
-  const menuItems = [
-    {
-      label: `Admin`,
-      isHeader: true,
-    },
-    // {
-    //   id: "investment",
-    //   label: "Investment",
-    //   icon: "bx bx-world",
-    //   link: "/",
-    //   click: function (e) {
-    //     e.preventDefault();
-    //     setIscurrentState("Investment");
-    //   },
-    // },
+  const isAdmin = user;
+
+  const dashboardLink = addressSearched
+    ? `/address/${addressSearched}/tokens`
+    : '/dashboard';
+
+  const adminMenuItems = [
     {
       id: 'home',
       label: 'Home',
       icon: 'bx bx-home',
-      link: '/dashboard',
+      link: `${dashboardLink}`,
       click: function (e) {
         e.preventDefault();
         setIscurrentState('Home');
       },
     },
+
+    {
+      id: 'assets',
+      label: 'Assets',
+      icon: 'bx bx-coin-stack',
+      link: `/address/${addressSearched}/assets`,
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('Assets');
+      },
+    },
+    {
+      id: 'nfts',
+      label: 'NFTs',
+      icon: 'bx bx-coin',
+      link: `/address/${addressSearched}/nfts`,
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('nfts');
+      },
+    },
+    {
+      id: 'transactions',
+      label: 'Transactions',
+      icon: 'bx bx-transfer',
+      link: `/address/${addressSearched}/history`,
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('Transactions');
+      },
+    },
+    {
+      label: `Admin`,
+      isHeader: true,
+    },
+
     {
       id: 'blockchain',
       label: 'Blockchain Contracts',
@@ -82,37 +127,66 @@ const Navdata = () => {
         setIscurrentState('Investment');
       },
     },
-    // {
-    //   id: "favorite",
-    //   label: "Favorites",
-    //   icon: "bx bx-star",
-    //   link: "/",
-    //   click: function (e) {
-    //     e.preventDefault();
-    //     setIscurrentState("Favorites");
-    //   },
-    // },
-    // {
-    //   id: "exchange",
-    //   label: "Exchange",
-    //   icon: "bx bx-refresh fs-3",
-    //   link: "/",
-    //   click: function (e) {
-    //     e.preventDefault();
-    //     setIscurrentState("Exchange");
-    //   },
-    // },
-    // {
-    //   id: "configuration",
-    //   label: "Configuration",
-    //   icon: "bx bx-cog",
-    //   link: "/configuration",
-    //   click: function (e) {
-    //     e.preventDefault();
-    //     setIscurrentState("Configuration");
-    //   },
-    // },
   ];
+
+  const userMenuItems = [
+    {
+      id: 'home',
+      label: 'Home',
+      icon: 'bx bx-home',
+      link: `${dashboardLink}`,
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('Home');
+      },
+    },
+    {
+      id: 'assets',
+      label: 'Assets',
+      icon: 'bx bx-coin-stack',
+      link: `/address/${addressSearched}/assets`,
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('Assets');
+      },
+    },
+    {
+      id: 'nfts',
+      label: 'NFTs',
+      icon: 'bx bx-coin',
+      link: `/address/${addressSearched}/nfts`,
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('nfts');
+      },
+    },
+    {
+      id: 'transactions',
+      label: 'Transactions',
+      icon: 'bx bx-transfer',
+      link: `/address/${addressSearched}/history`,
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('Transactions');
+      },
+    },
+  ];
+
+  const filterMenuItems = (menuItems) => {
+    if (!addressSearched) {
+      return menuItems.filter(
+        (item) =>
+          item.id !== 'assets' &&
+          item.id !== 'nfts' &&
+          item.id !== 'transactions',
+      );
+    }
+    return menuItems;
+  };
+  const filteredAdminMenuItems = filterMenuItems(adminMenuItems);
+  const filteredUserMenuItems = filterMenuItems(userMenuItems);
+
+  const menuItems = isAdmin ? filteredAdminMenuItems : filteredUserMenuItems;
   return <React.Fragment>{menuItems}</React.Fragment>;
 };
 export default Navdata;

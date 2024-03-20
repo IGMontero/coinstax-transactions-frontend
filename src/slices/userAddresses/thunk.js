@@ -55,3 +55,30 @@ export const refreshAllTransactions = createAsyncThunk(
     }
   },
 );
+
+export const deleteUsersAddress = createAsyncThunk(
+  'userAddresses/deleteUsersAddress',
+  async ({ blockchain, address }, { rejectWithValue }) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(
+        `${API_BASE}/admin/addresses/${blockchain}/${address}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({}),
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
