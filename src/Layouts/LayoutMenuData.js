@@ -134,7 +134,7 @@ const Navdata = () => {
       id: 'home',
       label: 'Home',
       icon: 'bx bx-home',
-      link: '/dashboard',
+      link: `${dashboardLink}`,
       click: function (e) {
         e.preventDefault();
         setIscurrentState('Home');
