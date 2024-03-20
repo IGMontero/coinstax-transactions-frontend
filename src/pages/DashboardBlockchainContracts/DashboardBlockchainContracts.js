@@ -403,7 +403,7 @@ const DashboardBlockchainContracts = () => {
         setOpen={handleOpenModalEdit}
         transactionToEdit={selectedContract}
       />
-      <div className="page-content" style={{ minHeight: '100vh' }}>
+      <div className="page-content mt-5" style={{ minHeight: '100vh' }}>
         <h3>Blockchain Contracts</h3>
         <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
           <Input
