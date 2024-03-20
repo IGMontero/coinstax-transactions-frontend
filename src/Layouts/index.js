@@ -24,6 +24,7 @@ import {
 
 //redux
 import { useSelector, useDispatch } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 const Layout = (props) => {
   const [headerClass, setHeaderClass] = useState('');
@@ -131,16 +132,26 @@ const Layout = (props) => {
     }
   }, [sidebarVisibilitytype, layoutType]);
 
+  const location = useLocation();
+
+  const isAuthPage =
+    location.pathname.includes('/login') ||
+    location.pathname.includes('/register');
+
   return (
     <React.Fragment>
       <div id="layout-wrapper">
-        <Header
-          headerClass={headerClass}
-          layoutModeType={layoutModeType}
-          onChangeLayoutMode={onChangeLayoutMode}
-        />
-        <Sidebar layoutType={layoutType} />
-        <div className="main-content">
+        {!isAuthPage && (
+          <>
+            <Header
+              headerClass={headerClass}
+              layoutModeType={layoutModeType}
+              onChangeLayoutMode={onChangeLayoutMode}
+            />
+            <Sidebar layoutType={layoutType} />
+          </>
+        )}
+        <div className="main-content" style={{ height: '100vh' }}>
           {props.children}
           <Footer />
         </div>
