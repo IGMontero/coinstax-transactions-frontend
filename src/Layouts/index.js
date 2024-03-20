@@ -117,14 +117,17 @@ const Layout = (props) => {
 
   // FIXME: Commented out
   useEffect(() => {
-    if (
-      sidebarVisibilitytype === 'show' ||
-      layoutType === 'vertical' ||
-      layoutType === 'twocolumn'
-    ) {
-      document.querySelector('.hamburger-icon').classList.remove('open');
-    } else {
-      document.querySelector('.hamburger-icon').classList.add('open');
+    const hamburgerIcon = document.querySelector('.hamburger-icon');
+    if (hamburgerIcon) {
+      if (
+        sidebarVisibilitytype === 'show' ||
+        layoutType === 'vertical' ||
+        layoutType === 'twocolumn'
+      ) {
+        hamburgerIcon.classList.remove('open');
+      } else {
+        hamburgerIcon.classList.add('open');
+      }
     }
   }, [sidebarVisibilitytype, layoutType]);
 

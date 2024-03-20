@@ -18,6 +18,7 @@ import {
   setAllAsDirty,
   editBlockChainContract,
   updateTrustedState,
+  deleteBlockchainContract,
 } from '../../slices/blockchainContracts/thunk';
 import {
   blockchainContractTrustedStateEnumType,
@@ -248,6 +249,58 @@ const DashboardBlockchainContracts = () => {
     }
   };
 
+  const handleDeleteBlockchainContract = async (contract) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `You are about to delete the contract with address ${contract.Address}.`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Continue',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const actionResult = await dispatch(
+          deleteBlockchainContract({
+            blockchain: 'ethereum',
+            address: contract.Address,
+          }),
+        );
+
+        const errorMessage = 'Error deleting blockchain contract';
+        // const updateContractResponse = actionResult.payloa
+        const wasSuccessful = await handleActionResult(
+          deleteBlockchainContract,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            setContracts(contracts.filter((c) => c.Id !== contract.Id));
+
+            Swal.fire(
+              'Success',
+              `Blockchain Contract with address ${contract.Address} deleted successfully`,
+              'success',
+            );
+          },
+        );
+
+        if (!wasSuccessful) {
+          setLoading(false);
+          return;
+        }
+        setLoading(false);
+      } catch (error) {
+        setLoading(true);
+        console.error('Error deleting blockchain contract', error);
+        Swal.fire('Error', error.toString(), 'error');
+        setLoading(false);
+      }
+    }
+  };
+
   const renderDropdown = (contract) => {
     const portalRoot = document.getElementById('portal-root');
     return portalRoot
@@ -258,6 +311,11 @@ const DashboardBlockchainContracts = () => {
             </DropdownItem>
             <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
               Set All Tx as Dirty
+            </DropdownItem>
+            <DropdownItem
+              onClick={() => handleDeleteBlockchainContract(contract)}
+            >
+              Delete
             </DropdownItem>
           </DropdownMenu>,
 

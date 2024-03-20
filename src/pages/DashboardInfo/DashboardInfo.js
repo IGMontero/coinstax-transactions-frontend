@@ -83,6 +83,13 @@ const DashboardInfo = () => {
     }, [value]);
     return ref.current;
   }
+
+  useEffect(() => {
+    if (address) {
+      setSearchInput(address);
+    }
+  }, [address]);
+
   useEffect(() => {
     if (address && previousAddress !== address && !type) {
       navigate(`/address/${address}/tokens`);
@@ -325,25 +332,7 @@ const DashboardInfo = () => {
           toggleQrModal={toggleQrModal}
           addressTitle={addressTitle}
         />
-        <Row className="d-flex justify-content-start align-items-center">
-          <Col lg={6} className="pb-3  d-flex justify-content-center ">
-            <InputGroup className="mb-3">
-              <Input
-                className="form-control py-2 rounded"
-                placeholder="Assets, wallet, domain, or identify"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-              />
-              <Button
-                disabled={!searchInput || loading || address === searchInput}
-                color="primary"
-                onClick={handleSearchClick}
-              >
-                Search
-              </Button>
-            </InputGroup>
-          </Col>
-        </Row>
+
         {!address ? (
           <Container>
             <DashboardHome />
@@ -352,7 +341,7 @@ const DashboardInfo = () => {
           <>
             {loading ? (
               <div
-                className="d-flex justify-content-start align-items-center"
+                className="d-flex d-none justify-content-start align-items-center"
                 style={{ height: '13vh' }}
               >
                 <Spinner style={{ width: '2rem', height: '2rem' }} />
@@ -368,7 +357,7 @@ const DashboardInfo = () => {
                   className="d-flex flex-column"
                   order="1"
                 >
-                  <div className="d-flex flex-row">
+                  {/* <div className="d-flex flex-row">
                     <h4>{formatIdTransaction(addressTitle, 6, 8)}</h4>
                     <UncontrolledDropdown className="card-header-dropdown">
                       <DropdownToggle
@@ -400,9 +389,9 @@ const DashboardInfo = () => {
                         </DropdownItem>
                       </DropdownMenu>
                     </UncontrolledDropdown>
-                  </div>
+                  </div> */}
                   <div className="d-flex flex-row ">
-                    <h1 className="fw-semibold">{title}</h1>
+                    {/* <h1 className="fw-semibold">{title}</h1> */}
                     {isUnsupported && (
                       <div>
                         <h1 className="fw-semibold text-danger">
@@ -434,13 +423,13 @@ const DashboardInfo = () => {
                       </DropdownMenu>
                     </UncontrolledDropdown> */}
                   </div>
-                  <h5
+                  {/* <h5
                     className={`mt-0 text-${
                       subtitle[0] == '+' ? 'success' : 'danger'
                     }`}
                   >
                     {subtitle}
-                  </h5>{' '}
+                  </h5>{' '} */}
                 </Col>
                 <Col
                   xxl={3}
@@ -480,7 +469,7 @@ const DashboardInfo = () => {
                       backgroundColor: '#16161a',
                     }}
                   >
-                    <Col xxl={6} className="">
+                    {/* <Col xxl={6} className="">
                       <Nav
                         tabs
                         className="  nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
@@ -540,7 +529,7 @@ const DashboardInfo = () => {
                           </NavLink>
                         </NavItem>
                       </Nav>
-                    </Col>
+                    </Col> */}
 
                     {/* Dropdown Menu  here  renderDropdownMenu()*/}
                   </div>
@@ -549,7 +538,7 @@ const DashboardInfo = () => {
                     className="text-muted"
                   >
                     <TabPane tabId="1" id="home1">
-                      <div className="d-flex">
+                      <div className="d-flex ">
                         <div className="flex-grow-1">
                           <Col xxl={12} className="mt-3 mb-4">
                             <div className="d-flex justify-content-start">
@@ -573,6 +562,27 @@ const DashboardInfo = () => {
                               loading={loadingAssets}
                               data={assetsData}
                             />
+                          </Col>
+                          <Col xxl={12} className="mt-3">
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                              <h2 className="ms-1 mt-2">Transactions</h2>
+                              <Button
+                                onClick={() =>
+                                  navigate(`/address/${address}/history`)
+                                }
+                                className="btn btn-sm btn-soft-primary rounded"
+                              >
+                                <span className="p-1">See more activity</span>
+                              </Button>
+                            </div>
+                            <div className="border border-2 rounded p-3 ">
+                              <HistorialTable
+                                data={historyData}
+                                setData={setHistoryData}
+                                activeTab={customActiveTab}
+                                address={addressForSearch}
+                              />
+                            </div>
                           </Col>
                         </div>
                       </div>

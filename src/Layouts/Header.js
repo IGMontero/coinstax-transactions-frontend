@@ -1,11 +1,17 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
+  Col,
   Dropdown,
+  DropdownItem,
   DropdownMenu,
   DropdownToggle,
   Form,
+  Input,
+  InputGroup,
+  Row,
+  UncontrolledDropdown,
 } from 'reactstrap';
 
 //import images
@@ -22,12 +28,18 @@ import SearchOption from '../Components/Common/SearchOption';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { changeSidebarVisibility } from '../slices/thunks';
+import QrModal from '../pages/DashboardInfo/modals/QrModal';
+import { copyToClipboard, formatIdTransaction } from '../utils/utils';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [isCopied, setIsCopied] = useState(false);
+  const [searchInput, setSearchInput] = useState('');
   const { user } = useSelector((state) => state.auth);
+  const { address } = useParams();
 
   const currentUser = user;
 
@@ -44,19 +56,16 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     var windowSize = document.documentElement.clientWidth;
 
     if (windowSize > 767) {
-      // document.querySelector(".hamburger-icon").classList.toggle('open');
       return;
     }
     dispatch(changeSidebarVisibility('show'));
 
-    //For collapse horizontal menu
     if (document.documentElement.getAttribute('data-layout') === 'horizontal') {
       document.body.classList.contains('menu')
         ? document.body.classList.remove('menu')
         : document.body.classList.add('menu');
     }
 
-    //For collapse vertical and semibox menu
     if (
       sidebarVisibilitytype === 'show' &&
       (document.documentElement.getAttribute('data-layout') === 'vertical' ||
@@ -78,7 +87,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       }
     }
 
-    //Two column menu
     if (document.documentElement.getAttribute('data-layout') === 'twocolumn') {
       document.body.classList.contains('twocolumn-panel')
         ? document.body.classList.remove('twocolumn-panel')
@@ -86,40 +94,72 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     }
   };
 
-  return (
-    <React.Fragment>
-      {/* <header id="page-topbar" className={headerClass}> */}
-      <header id={`${currentUser ? 'page' : 'page'}`} className={headerClass}>
-        <div className="layout-width">
-          <div className="navbar-header">
-            <div className="d-flex">
-              {!currentUser && (
-                <div className="navbar-brand-bo horizonta-logo">
-                  <span className="logo-lgs">
-                    <img src={logo} alt="" height="40" />
-                  </span>
-                </div>
+  // useEffect(() => {
+  //   if (address) {
+  //     setSearchInput(address);
+  //   }
+  // }, []);
+
+  const handleSearchClick = () => {
+    navigate(`/address/${searchInput}/tokens`);
+  };
+
+  const toggleQrModal = () => {
+    setShowQrModal(!showQrModal);
+  };
+
+  const handleCopy = async (e, text) => {
+    e.stopPropagation();
+    e.preventDefault();
+    try {
+      copyToClipboard(text);
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+
+  const renderAddressWithDropdown = () => {
+    return (
+      <div className="d-flex align-items-center ">
+        <h4 className="text-address">{formatIdTransaction(address, 6, 8)}</h4>
+        <UncontrolledDropdown className="card-header-dropdown">
+          <DropdownToggle tag="a" className="text-reset" role="button">
+            <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
+          </DropdownToggle>
+          <DropdownMenu className="dropdown-menu-end ms-3">
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={toggleQrModal}
+            >
+              {' '}
+              <i className="ri-qr-code-line fs-2 me-2"></i>
+              <span className="fw-semibold">Show QR code</span>
+            </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={(e) => handleCopy(e, address)}
+            >
+              {isCopied ? (
+                <i className="ri-check-line fs-2 me-2 "></i>
+              ) : (
+                <i className="ri-file-copy-line fs-2 me-2"></i>
               )}
-              {currentUser ? (
-                <button
-                  onClick={toogleMenuBtn}
-                  type="button"
-                  className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
-                  id="topnav-hamburger-icon"
-                >
-                  <span className="hamburger-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                  </span>
-                </button>
-              ) : null}
+              <span className="fw-semibold">Copy direction</span>
+            </DropdownItem>
+          </DropdownMenu>
+        </UncontrolledDropdown>
+      </div>
+    );
+  };
 
-              {/* <SearchOption /> */}
-            </div>
-
-            <div className="d-flex align-items-center">
-              {/* <Dropdown isOpen={search} toggle={toogleSearch} className="d-md-none topbar-head-dropdown header-item">
+  const commentedCode = () => {
+    return (
+      <>
+        {/* <Dropdown isOpen={search} toggle={toogleSearch} className="d-md-none topbar-head-dropdown header-item">
                                 <DropdownToggle type="button" tag="button" className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle">
                                     <i className="bx bx-search fs-22"></i>
                                 </DropdownToggle>
@@ -137,14 +177,14 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                                 </DropdownMenu>
                             </Dropdown> */}
 
-              {/* <LightDark
+        {/* <LightDark
                 layoutMode={layoutModeType}
                 onChangeLayoutMode={onChangeLayoutMode}
               /> */}
 
-              {/* NotificationDropdown */}
-              {/* <NotificationDropdown /> */}
-              {/* <div>
+        {/* NotificationDropdown */}
+        {/* <NotificationDropdown /> */}
+        {/* <div>
                 <Button
                   onClick={() => navigate('/')}
                   className="bg bg-transparent  border-0 btn btn-transparent"
@@ -152,7 +192,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   <i className="bx bx-world fs-3"></i>
                 </Button>
               </div> */}
-              {/* <div className="">
+        {/* <div className="">
                 <Link to="/" className="log">
                   <span className="logo-lg">
                     <img src={logo} alt="" height="30" />
@@ -160,10 +200,86 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 </Link>
               </div> */}
 
-              {/* ProfileDropdown */}
-              {currentUser && <ProfileDropdown />}
-            </div>
-          </div>
+        {/* ProfileDropdown */}
+      </>
+    );
+  };
+  {
+    /* {!currentUser && (
+                <div className="navbar-brand-bo horizonta-logo">
+                  <span className="logo-lgs">
+                    <img src={logo} alt="" height="40" />
+                  </span>
+                </div>
+              )} */
+  }
+  return (
+    <React.Fragment>
+      <header
+        id={`${currentUser ? 'page-topbar' : 'page-topbar'}`}
+        // className={headerClass}
+        className="mb-4"
+      >
+        <QrModal
+          showQrModal={showQrModal}
+          toggleQrModal={toggleQrModal}
+          addressTitle={address}
+        />
+        <div className="layout-width">
+          <Row
+            className="navbar-header "
+            style={{ backgroundColor: '#16161a' }}
+          >
+            <Col
+              lg={12}
+              xs={12}
+              className="d-flex justify-content-between align-items-center"
+            >
+              {/* <div>
+            {currentUser ? (
+             <div className="navbar-brand-bo horizonta-logo">
+              <span className="logo-lgs">
+                <img src={logo} alt="" height="40" />
+              </span>
+            </div> */}
+              <Col lg={6}>
+                <button
+                  onClick={toogleMenuBtn}
+                  type="button"
+                  className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
+                  id="topnav-hamburger-icon"
+                >
+                  <span className="hamburger-icon">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </span>
+                </button>
+                {address && renderAddressWithDropdown()}
+              </Col>
+              <Col lg={6}>
+                <div className="d-flex align-items-center justify-content-end">
+                  <InputGroup className="me-2" style={{ maxWidth: '400px' }}>
+                    <Input
+                      className="form-control py-2 rounded"
+                      placeholder="Assets, wallet, domain, or identity"
+                      value={searchInput}
+                      onChange={(e) => setSearchInput(e.target.value)}
+                    />
+                    <Button
+                      disabled={!searchInput || address === searchInput}
+                      color="primary"
+                      onClick={handleSearchClick}
+                    >
+                      Search
+                    </Button>
+                  </InputGroup>
+                  {/* {commentedCode()} */}
+                  {currentUser && <ProfileDropdown />}
+                </div>
+              </Col>
+            </Col>
+          </Row>
         </div>
       </header>
     </React.Fragment>

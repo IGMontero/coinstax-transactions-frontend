@@ -369,3 +369,20 @@
     max-width: 30px; 
   }
 }
+
+// text-address
+
+.text-address {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-left: 20px;
+}
+@media (max-width: 576px) {
+  .text-address {
+    font-size: 18px;
+    margin-left: 0px;
+    max-width: 80px; 
+  }
+}

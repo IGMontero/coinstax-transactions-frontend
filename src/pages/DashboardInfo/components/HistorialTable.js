@@ -23,10 +23,14 @@ import {
 import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
+import { useLocation } from 'react-router-dom';
 
 const HistorialTable = ({ address, activeTab, data, setData }) => {
   const inputRef = useRef(null);
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  const isDashboardPage = location.pathname.includes('tokens');
 
   const [errorData, setErrorData] = useState(null);
 
@@ -102,6 +106,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
     try {
       setIsInitialLoad(true);
+
       setLoading(true);
 
       timerId = setTimeout(() => {
@@ -167,7 +172,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   }, [activeTab, address]);
 
   useEffect(() => {
-    if (activeTab == '3') {
+    if (activeTab == '3' || isDashboardPage) {
       fetchData();
       setHasMoreData(true);
     }
@@ -549,8 +554,12 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
 
   return (
     <React.Fragment>
+      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
+        Transactions
+      </h1>
+
       {!isInitialLoad && data && !errorData ? (
-        <>
+        <div className={isDashboardPage ? 'd-none' : ''}>
           {renderFiltersDropdown()}
           <Col className="col-12">
             {renderBadges()}
@@ -591,7 +600,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
               </div>
             </div>
           </Row>{' '}
-        </>
+        </div>
       ) : null}
       {/* <Row className="mt-4">
         <Col lg={6} md={8} sm={10} xs={12}>
@@ -669,7 +678,10 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
                 setTransactions={setData}
               />
             ))}
-            {!isInitialLoad && hasMoreData && renderGetMoreButton()}
+            {!isInitialLoad &&
+              hasMoreData &&
+              !isDashboardPage &&
+              renderGetMoreButton()}
           </div>
         </Col>
       ) : (

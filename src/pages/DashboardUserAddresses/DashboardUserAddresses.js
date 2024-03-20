@@ -16,6 +16,7 @@ import {
 import {
   getUserAddresses,
   refreshAllTransactions,
+  deleteUsersAddress,
 } from '../../slices/userAddresses/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
@@ -180,6 +181,59 @@ const DashboardUserAddresses = () => {
     }
   };
 
+  const handleDeleteUserAddress = async (address) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `You won't be able to revert this!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete all transactions',
+      cancelButtonText: 'Cancel!',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const actionResult = await dispatch(
+          deleteUsersAddress({
+            blockchain: 'ethereum',
+            address,
+          }),
+        );
+
+        const errorMessage = 'Error to delete user address';
+        const updateUserAddresses = actionResult;
+        const wasSuccessful = await handleActionResult(
+          deleteUsersAddress,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            // set user addresses
+            setUserAddresses(
+              userAddresses.map((u) =>
+                u.Id === updateUserAddresses.Id ? updateUserAddresses : u,
+              ),
+            );
+            Swal.fire('Deleted!', 'Transaction has been deleted.', 'success');
+          },
+          fetchUserAddresses(),
+        );
+
+        if (!wasSuccessful) {
+          setLoading(false);
+          return;
+        }
+        setLoading(false);
+      } catch (error) {
+        setLoading(true);
+        console.error('Error deleting user address', error);
+        Swal.fire('Error', error.toString(), 'error');
+        setLoading(false);
+      }
+    }
+  };
+
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
     copyToClipboard(text);
@@ -205,6 +259,12 @@ const DashboardUserAddresses = () => {
               onClick={() => handleSetAllAsDirty(address.Address)}
             >
               Set All Tx as Dirty
+            </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleDeleteUserAddress(address.Address)}
+            >
+              Delete All Transactions
             </DropdownItem>
           </DropdownMenu>,
           portalRoot,

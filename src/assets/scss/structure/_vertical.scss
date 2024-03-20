@@ -23,20 +23,21 @@
 .page-content {
     // padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} * 0.5) $footer-height calc(#{$grid-gutter-width} * 0.5);
     // padding-top: calc(#{$header-height} + #{$grid-gutter-width});
-    padding-top: 30px;
+    padding-top: 50px;
     padding-bottom: 50px;
-    padding-left: 20px;
-    padding-right: 20px;
+    padding-left: 0px;
+    padding-right:0px;
     margin-left: auto;
     margin-right: auto;
-    max-width: 960px;
+    max-width: 1100px;
 
 }
 
 .navbar-menu {
     width: $vertical-menu-width;
     z-index: $vertical-menu-z-index;
-    background: $vertical-menu-bg;
+    // background: $vertical-menu-bg;
+    background: #16161a;
     // background: rgba($color: #2a2f34, $alpha: 1.0);
     // border-right: 1px solid $vertical-menu-border-dark;
     bottom: 0;
@@ -61,6 +62,7 @@
             }
 
             &:hover {
+                // color: $vertical-menu-item-hover-color;
                 color: $vertical-menu-item-hover-color;
             }
 
@@ -768,8 +770,11 @@
 
     &[data-sidebar="dark"] {
         .navbar-menu {
-            background: $vertical-menu-bg-dark;
-            border-right: 1px solid $vertical-menu-border-dark;
+            // background: $vertical-menu-bg-dark;
+            background: #16161a;
+            padding-right: 10px;
+           
+            // border-right: 1px solid $vertical-menu-border-dark;
 
             .hamburger-icon {
                 span {
@@ -786,6 +791,7 @@
 
             .nav-link {
                 color: $vertical-menu-item-color-dark;
+               
 
                 &.active {
                     color: $vertical-menu-item-active-color-dark;
@@ -817,7 +823,10 @@
 
                 &:hover {
                     color: $vertical-menu-item-hover-color-dark;
-
+                    box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.3); 
+                    border-radius: 0 15px 15px 0;
+                    transform: translateY(-2px);
+                    transition: all 0.7s ease; 
                     .icon-dual {
                         color: $vertical-menu-item-hover-color-dark;
                         fill: rgba($white, 0.16);
@@ -827,11 +836,17 @@
             }
 
             >.nav-item {
+               
                 .nav-link.active {
-                    color: $vertical-menu-item-active-color-dark;
-
+                    border: .5px solid rgba(74, 73, 73, 0.517); 
+                    border-radius: 0 15px 15px 0;
+                    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+                    background: linear-gradient(145deg, #010d2067, #010d2067);
+                    transition: all 0.7s ease; 
+                  
                     .icon-dual {
                         color: $vertical-menu-item-hover-color-dark;
+                       
                         fill: rgba($white, 0.16);
                     }
                 }

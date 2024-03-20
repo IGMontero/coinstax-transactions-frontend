@@ -15,17 +15,16 @@ import { Container } from 'reactstrap';
 import HorizontalLayout from './HorizontalLayout';
 
 const Sidebar = ({ layoutType }) => {
-  useEffect(() => {
-    var verticalOverlay = document.getElementsByClassName('vertical-overlay');
-    if (verticalOverlay) {
-      verticalOverlay[0].addEventListener('click', function () {
-        document.body.classList.remove('vertical-sidebar-enable');
-      });
-    }
-  });
+  // useEffect(() => {
+  //   var verticalOverlay = document.getElementsByClassName('vertical-overlay');
+  //   if (verticalOverlay) {
+  //     verticalOverlay[0].addEventListener('click', function () {
+  //       document.body.classList.remove('vertical-sidebar-enable');
+  //     });
+  //   }
+  // });
 
   const addEventListenerOnSmHoverMenu = () => {
-    // add listener Sidebar Hover icon on change layout from setting
     if (
       document.documentElement.getAttribute('data-sidebar-size') === 'sm-hover'
     ) {
@@ -45,7 +44,12 @@ const Sidebar = ({ layoutType }) => {
   return (
     <React.Fragment>
       <div className="app-menu navbar-menu">
-        <div className="navbar-brand-box ">
+        <div
+          className="navbar-brand-box "
+          // style={{
+          //   background: '#23282C',
+          // }}
+        >
           <Link to="/" className="logo logo-dark">
             <span className="logo-sm">
               <img src={logo} alt="" height="20" width="63" />
@@ -88,7 +92,7 @@ const Sidebar = ({ layoutType }) => {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <SimpleBar id="scrollbar" className="h-100">
+            <SimpleBar id="scrollbar" className="h-100 ">
               <Container fluid>
                 <div id="two-column-menu"></div>
                 <ul className="navbar-nav" id="navbar-nav">

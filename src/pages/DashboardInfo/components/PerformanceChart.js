@@ -244,6 +244,7 @@ const PerformanceChart = ({
 
   return (
     <div className="position-relative ">
+      <h1 className="ms-1 mt-0 mb-4">Dashboard</h1>
       {
         loading ? (
           <Card>
