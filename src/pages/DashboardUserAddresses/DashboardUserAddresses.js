@@ -187,8 +187,8 @@ const DashboardUserAddresses = () => {
       text: `You won't be able to revert this!`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, cancel!',
+      confirmButtonText: 'Delete all transactions',
+      cancelButtonText: 'Cancel!',
     });
 
     if (result.isConfirmed) {
@@ -215,8 +215,9 @@ const DashboardUserAddresses = () => {
                 u.Id === updateUserAddresses.Id ? updateUserAddresses : u,
               ),
             );
-            Swal.fire('Deleted!', 'User address has been deleted.', 'success');
+            Swal.fire('Deleted!', 'Transaction has been deleted.', 'success');
           },
+          fetchUserAddresses(),
         );
 
         if (!wasSuccessful) {
@@ -263,7 +264,7 @@ const DashboardUserAddresses = () => {
               className="d-flex align-items-center"
               onClick={() => handleDeleteUserAddress(address.Address)}
             >
-              Delete
+              Delete All Transactions
             </DropdownItem>
           </DropdownMenu>,
           portalRoot,

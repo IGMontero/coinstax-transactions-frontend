@@ -175,7 +175,7 @@ const VerticalLayout = (props) => {
           <React.Fragment key={key}>
             {/* Main Header */}
             {item['isHeader'] ? (
-              <li className="menu-title">
+              <li className="menu-title text-start d-flex mt-3 ">
                 <span data-key="t-menu">{props.t(item.label)}</span>
               </li>
             ) : item.subItems ? (

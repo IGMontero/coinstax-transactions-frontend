@@ -332,25 +332,7 @@ const DashboardInfo = () => {
           toggleQrModal={toggleQrModal}
           addressTitle={addressTitle}
         />
-        <Row className="d-flex justify-content-start align-items-center">
-          <Col lg={6} className="pb-3  d-flex justify-content-center ">
-            <InputGroup className="mb-3">
-              <Input
-                className="form-control py-2 rounded"
-                placeholder="Assets, wallet, domain, or identify"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-              />
-              <Button
-                disabled={!searchInput || loading || address === searchInput}
-                color="primary"
-                onClick={handleSearchClick}
-              >
-                Search
-              </Button>
-            </InputGroup>
-          </Col>
-        </Row>
+
         {!address ? (
           <Container>
             <DashboardHome />
@@ -366,6 +348,7 @@ const DashboardInfo = () => {
               </div>
             ) : (
               <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
+                {/* <h1 className="mb-4">Dashboard</h1> */}
                 <Col
                   xxl={9}
                   lg={9}
@@ -409,7 +392,7 @@ const DashboardInfo = () => {
                     </UncontrolledDropdown>
                   </div>
                   <div className="d-flex flex-row ">
-                    <h1 className="fw-semibold">{title}</h1>
+                    {/* <h1 className="fw-semibold">{title}</h1> */}
                     {isUnsupported && (
                       <div>
                         <h1 className="fw-semibold text-danger">
@@ -441,13 +424,13 @@ const DashboardInfo = () => {
                       </DropdownMenu>
                     </UncontrolledDropdown> */}
                   </div>
-                  <h5
+                  {/* <h5
                     className={`mt-0 text-${
                       subtitle[0] == '+' ? 'success' : 'danger'
                     }`}
                   >
                     {subtitle}
-                  </h5>{' '}
+                  </h5>{' '} */}
                 </Col>
                 <Col
                   xxl={3}
@@ -476,7 +459,7 @@ const DashboardInfo = () => {
                 </Col>
               </Row>
             )}
-            <Row className="d-flex justify-content-center align-items-center mb-3 mt-5 ">
+            <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
               {' '}
               {!isUnsupported ? (
                 <Col className="col-12 ">
@@ -580,6 +563,27 @@ const DashboardInfo = () => {
                               loading={loadingAssets}
                               data={assetsData}
                             />
+                          </Col>
+                          <Col xxl={12} className="mt-3">
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                              <h2 className="ms-1 mt-2">Transactions</h2>
+                              <Button
+                                onClick={() =>
+                                  navigate(`/address/${address}/history`)
+                                }
+                                className="btn btn-sm btn-soft-primary rounded"
+                              >
+                                <span className="p-1">See more activity</span>
+                              </Button>
+                            </div>
+                            <div className="border border-2 rounded p-3 ">
+                              <HistorialTable
+                                data={historyData}
+                                setData={setHistoryData}
+                                activeTab={customActiveTab}
+                                address={addressForSearch}
+                              />
+                            </div>
                           </Col>
                         </div>
                       </div>
