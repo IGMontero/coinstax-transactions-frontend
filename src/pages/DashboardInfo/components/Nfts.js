@@ -96,8 +96,13 @@ const Nfts = ({ address, activeTab }) => {
     setLoadingIncludeSpam(true);
   };
 
+  const isDashboardPage = location.pathname.includes('tokens');
+
   return (
     <React.Fragment>
+      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
+        NFTs
+      </h1>
       {loading ? (
         <div
           className="d-flex justify-content-center align-items-center"

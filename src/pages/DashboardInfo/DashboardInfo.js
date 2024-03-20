@@ -341,14 +341,13 @@ const DashboardInfo = () => {
           <>
             {loading ? (
               <div
-                className="d-flex justify-content-start align-items-center"
+                className="d-flex d-none justify-content-start align-items-center"
                 style={{ height: '13vh' }}
               >
                 <Spinner style={{ width: '2rem', height: '2rem' }} />
               </div>
             ) : (
               <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
-                {/* <h1 className="mb-4">Dashboard</h1> */}
                 <Col
                   xxl={9}
                   lg={9}
@@ -358,7 +357,7 @@ const DashboardInfo = () => {
                   className="d-flex flex-column"
                   order="1"
                 >
-                  <div className="d-flex flex-row">
+                  {/* <div className="d-flex flex-row">
                     <h4>{formatIdTransaction(addressTitle, 6, 8)}</h4>
                     <UncontrolledDropdown className="card-header-dropdown">
                       <DropdownToggle
@@ -390,7 +389,7 @@ const DashboardInfo = () => {
                         </DropdownItem>
                       </DropdownMenu>
                     </UncontrolledDropdown>
-                  </div>
+                  </div> */}
                   <div className="d-flex flex-row ">
                     {/* <h1 className="fw-semibold">{title}</h1> */}
                     {isUnsupported && (
