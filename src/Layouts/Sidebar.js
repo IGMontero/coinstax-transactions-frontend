@@ -47,9 +47,9 @@ const Sidebar = ({ layoutType }) => {
       <div className="app-menu navbar-menu">
         <div
           className="navbar-brand-box "
-          style={{
-            background: '#23282C',
-          }}
+          // style={{
+          //   background: '#23282C',
+          // }}
         >
           <Link to="/" className="logo logo-dark">
             <span className="logo-sm">

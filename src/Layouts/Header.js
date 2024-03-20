@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
@@ -102,6 +102,12 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     // setCustomActiveTab('1');
     // setIsUnsupported(false);
   };
+
+  useEffect(() => {
+    if (address) {
+      setSearchInput(address);
+    }
+  }, []);
 
   const handleSearchClick = () => {
     // handlerClearAllData();

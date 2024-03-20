@@ -62,11 +62,6 @@ const Navdata = () => {
 
   const adminMenuItems = [
     {
-      label: `Admin`,
-      isHeader: true,
-    },
-
-    {
       id: 'home',
       label: 'Home',
       icon: 'bx bx-home',
@@ -76,26 +71,7 @@ const Navdata = () => {
         setIscurrentState('Home');
       },
     },
-    {
-      id: 'blockchain',
-      label: 'Blockchain Contracts',
-      icon: ' bx bx-link fs-3',
-      link: '/blockchain-contracts',
-      click: function (e) {
-        e.preventDefault();
-        setIscurrentState('Investment');
-      },
-    },
-    {
-      id: 'userAddresses',
-      label: 'User Addresses',
-      icon: ' bx bx-user fs-3',
-      link: '/user-addresses',
-      click: function (e) {
-        e.preventDefault();
-        setIscurrentState('Investment');
-      },
-    },
+
     {
       id: 'assets',
       label: 'Assets',
@@ -124,6 +100,31 @@ const Navdata = () => {
       click: function (e) {
         e.preventDefault();
         setIscurrentState('Transactions');
+      },
+    },
+    {
+      label: `Admin`,
+      isHeader: true,
+    },
+
+    {
+      id: 'blockchain',
+      label: 'Blockchain Contracts',
+      icon: ' bx bx-link fs-3',
+      link: '/blockchain-contracts',
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('Investment');
+      },
+    },
+    {
+      id: 'userAddresses',
+      label: 'User Addresses',
+      icon: ' bx bx-user fs-3',
+      link: '/user-addresses',
+      click: function (e) {
+        e.preventDefault();
+        setIscurrentState('Investment');
       },
     },
   ];
