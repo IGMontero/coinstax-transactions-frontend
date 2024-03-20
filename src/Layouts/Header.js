@@ -48,19 +48,16 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     var windowSize = document.documentElement.clientWidth;
 
     if (windowSize > 767) {
-      // document.querySelector(".hamburger-icon").classList.toggle('open');
       return;
     }
     dispatch(changeSidebarVisibility('show'));
 
-    //For collapse horizontal menu
     if (document.documentElement.getAttribute('data-layout') === 'horizontal') {
       document.body.classList.contains('menu')
         ? document.body.classList.remove('menu')
         : document.body.classList.add('menu');
     }
 
-    //For collapse vertical and semibox menu
     if (
       sidebarVisibilitytype === 'show' &&
       (document.documentElement.getAttribute('data-layout') === 'vertical' ||
@@ -82,7 +79,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       }
     }
 
-    //Two column menu
     if (document.documentElement.getAttribute('data-layout') === 'twocolumn') {
       document.body.classList.contains('twocolumn-panel')
         ? document.body.classList.remove('twocolumn-panel')
@@ -92,17 +88,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
 
   const [searchInput, setSearchInput] = useState('');
 
-  const handlerClearAllData = () => {
-    // setAssetsData([]);
-    // setSeries([]);
-    // setHistoryData([]);
-    // setTitle('');
-    // setSubtitle('');
-    // setAddressTitle('');
-    // setCustomActiveTab('1');
-    // setIsUnsupported(false);
-  };
-
   useEffect(() => {
     if (address) {
       setSearchInput(address);
@@ -110,9 +95,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   }, []);
 
   const handleSearchClick = () => {
-    // handlerClearAllData();
-    // setAddressForSearch(searchInput);
-    // setAddressTitle(searchInput);
     navigate(`/address/${searchInput}/tokens`);
   };
 

@@ -15,17 +15,16 @@ import { Container } from 'reactstrap';
 import HorizontalLayout from './HorizontalLayout';
 
 const Sidebar = ({ layoutType }) => {
-  useEffect(() => {
-    var verticalOverlay = document.getElementsByClassName('vertical-overlay');
-    if (verticalOverlay) {
-      verticalOverlay[0].addEventListener('click', function () {
-        document.body.classList.remove('vertical-sidebar-enable');
-      });
-    }
-  });
+  // useEffect(() => {
+  //   var verticalOverlay = document.getElementsByClassName('vertical-overlay');
+  //   if (verticalOverlay) {
+  //     verticalOverlay[0].addEventListener('click', function () {
+  //       document.body.classList.remove('vertical-sidebar-enable');
+  //     });
+  //   }
+  // });
 
   const addEventListenerOnSmHoverMenu = () => {
-    // add listener Sidebar Hover icon on change layout from setting
     if (
       document.documentElement.getAttribute('data-sidebar-size') === 'sm-hover'
     ) {
