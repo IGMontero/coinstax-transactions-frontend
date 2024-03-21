@@ -125,14 +125,15 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   </span>
 
                   {positiveLedgers &&
-                    positiveLedgers.hideNativeAmount !== true &&
-                    (positiveLedgers.prettyNativeAmount &&
-                    document.getElementById(`amount-left-${ledger.txHash}`) ? (
-                      <p className="text-start d-flex align-items-center my-0 text-muted">
-                        {positiveLedgers.prettyNativeAmount}
-                      </p>
-                    ) : (
-                      <>
+                  !positiveLedgers.hideNativeAmount &&
+                  // document.getElementById(`amount-left-${ledger.txHash}`)
+                  positiveLedgers.prettyNativeAmount ? (
+                    <p className="text-start d-flex align-items-center my-0 text-muted">
+                      {positiveLedgers.prettyNativeAmount}
+                    </p>
+                  ) : (
+                    <>
+                      {ledger && ledger.txHash ? (
                         <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
                           N/A
                           <i
@@ -162,8 +163,13 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                             </PopoverBody>
                           </UncontrolledPopover>
                         </p>
-                      </>
-                    ))}
+                      ) : (
+                        <p className="text-muted">
+                          Transaction data not available
+                        </p>
+                      )}
+                    </>
+                  )}
                 </div>
               </>
             )}
