@@ -189,13 +189,13 @@ const RenderTransactions = ({
                     negativeLedgers={sentTxSummary.txSummary.sent}
                   />
                 </Col>
-                <Col lg={2} md={6} sm={6} xs={6}>
+                <Col lg={1} md={6} sm={6} xs={6}>
                   {transaction.txSummary.value && (
                     <ValueColumn value={transaction.txSummary.value} />
                   )}
                 </Col>
                 <Col
-                  lg={1}
+                  lg={2}
                   md={6}
                   sm={6}
                   xs={6}

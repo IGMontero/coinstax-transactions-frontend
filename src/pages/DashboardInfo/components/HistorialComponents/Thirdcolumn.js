@@ -188,14 +188,17 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
         onEdit={handleEditBlockChainContract}
         setOpen={setOpenModalEdit}
       />
-      <div className="d-flex flex-column w-100">
+      <div className="d-flex flex-column w-50  ">
         <p
           style={{ fontSize: '12px', marginBottom: '4px' }}
-          className="text-start  mb-1"
+          className="text-start mb-1"
         >
           {contractLabel}
         </p>
-        <div className="d-flex align-items-end ">
+        <div
+          title={`${blockchainContractAddress}`}
+          className="d-flex align-items-end "
+        >
           <h6
             id={`popoverMarketplace-${transaction.txHash}`}
             className="fw-semibold my-0 text-start d-flex align-items-center text-contractLabel"

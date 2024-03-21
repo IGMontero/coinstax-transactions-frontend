@@ -43,7 +43,7 @@ const DashboardNFT = () => {
         }),
       );
       const res = response.payload;
-      if (res.error || !res) {
+      if ((res && res.error) || !res) {
         Swal.fire({
           title: 'Error',
           text: 'NFTs not found',
@@ -53,18 +53,18 @@ const DashboardNFT = () => {
           window.history.back();
         });
         return;
+      } else {
+        setCollectionLogo(res.collection.logo);
+        setCollectionName(res.collection.name);
+        setLogo(res.logo);
+        setName(res.name);
+        setOwnerAddress(res.ownerAddress);
+        setFloorPriceFiat(res.floorPriceNativeToken);
+        setSymbol(res.symbol);
+        setAttributes(res.metadata.attributes);
+        setDescription(res.description);
+        setDetails(['Network', 'Ethereum']);
       }
-
-      setCollectionLogo(res.collection.logo);
-      setCollectionName(res.collection.name);
-      setLogo(res.logo);
-      setName(res.name);
-      setOwnerAddress(res.ownerAddress);
-      setFloorPriceFiat(res.floorPriceNativeToken);
-      setSymbol(res.symbol);
-      setAttributes(res.metadata.attributes);
-      setDescription(res.description);
-      setDetails(['Network', 'Ethereum']);
 
       setLoading(false);
     } catch (error) {
@@ -274,7 +274,7 @@ const DashboardNFT = () => {
                 <hr />
               </>
             ) : null}
-            {details ? renderDetails() : null}
+            {details.length ? renderDetails() : null}
             {description ? (
               <>
                 <hr />
