@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
-import { copyToClipboard, getActionMapping } from '../../../../utils/utils';
+import {
+  blockchainActions,
+  copyToClipboard,
+  getActionMapping,
+} from '../../../../utils/utils';
 import { Col, Row, Collapse, CardBody, Badge } from 'reactstrap';
 
 import eth from '../../../../assets/images/svg/crypto-icons/eth.svg';
@@ -84,9 +88,12 @@ const RenderTransactions = ({
             <div
               className={` border-bottom bg-transparent px-0 ${
                 openCollapse.has(collapseId)
-                  ? 'border border-primary rounded mb-2'
+                  ? 'border border-primary rounded px-2 mb-2'
                   : 'bg-light'
               }`}
+              style={{
+                transition: `all 0.3s ease-in-out`,
+              }}
             >
               <Row
                 className={`align-items-center justify-content-between col-12`}
@@ -201,12 +208,16 @@ const RenderTransactions = ({
                   xs={6}
                   className="d-flex justify-content-end  align-items-center  mt-lg-0 mt-3"
                 >
-                  <Thirdcolumn
-                    transaction={transaction}
-                    index={index}
-                    onRefresh={onRefresh}
-                    setTransactions={setTransactions}
-                  />
+                  {transaction.blockchainAction === blockchainActions.MINT ||
+                  transactions.blockchainAction ===
+                    blockchainActions.BURN ? null : (
+                    <Thirdcolumn
+                      transaction={transaction}
+                      index={index}
+                      onRefresh={onRefresh}
+                      setTransactions={setTransactions}
+                    />
+                  )}
                 </Col>
               </Row>
               <Collapse isOpen={openCollapse.has(collapseId)}>
