@@ -232,50 +232,6 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
                 {formatIdTransaction(blockchainContractName, 4, 4)}
               </span>
             </>
-            {/* {transaction.txSummary && transaction.txSummary.marketplaceName ? (
-              <>
-                {transaction.txSummary.marketplaceLogo && (
-                  <img
-                    src={transaction.txSummary.marketplaceLogo}
-                    alt={transaction.txSummary.marketplaceName}
-                    style={{
-                      width: '20px',
-                      height: '20px',
-                      borderRadius: '6px',
-                      marginRight: '6px',
-                    }}
-                  />
-                )}
-                <span className="text-hover-underline">
-                  {formatIdTransaction(
-                    blockchainContractName,
-                    4,
-                    4,
-                  )}
-                </span>
-              </>
-            ) : transaction.blockchainAction === blockchainActions.RECEIVE ||
-              transaction.blockchainAction === blockchainActions.SEND ? (
-              <Link
-                target="_blank"
-                className="text-decoration-none"
-                to={`https://etherscan.io/address/${transaction.blockchainAction === blockchainActions.RECEIVE ? transaction.sender : transaction.recipient}`}
-              >
-                <span className="text-hover-underline">
-                  {formatIdTransaction(
-                    transaction.blockchainAction === blockchainActions.RECEIVE
-                      ? transaction.sender
-                      : transaction.recipient,
-                    4,
-                    4,
-                  )}
-                </span>
-              </Link>
-            ) : (
-              <span className="text-hover-underline">
-                {formatIdTransaction(transaction.recipient, 4, 4)}
-              </span>
-            )} */}
             <Popover
               placement="right"
               isOpen={
