@@ -4,6 +4,7 @@ import { Button, Col, Row } from 'reactstrap';
 import { formatIdTransaction } from '../../utils/utils';
 import { getNftsByContractAddress } from '../../slices/transactions/thunk';
 import { useDispatch } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const DashboardNFT = () => {
   const { contractAddress } = useParams();
@@ -23,6 +24,8 @@ const DashboardNFT = () => {
 
   const [ownerAddress, setOwnerAddress] = useState('');
 
+  const [details, setDetails] = useState([]);
+
   const [floorPriceFiat, setFloorPriceFiat] = useState(0);
   const [symbol, setSymbol] = useState('');
 
@@ -40,6 +43,18 @@ const DashboardNFT = () => {
         }),
       );
       const res = response.payload;
+      if (res.error || !res) {
+        Swal.fire({
+          title: 'Error',
+          text: 'NFTs not found',
+          icon: 'error',
+          confirmButtonText: 'OK',
+        }).then(() => {
+          window.history.back();
+        });
+        return;
+      }
+
       setCollectionLogo(res.collection.logo);
       setCollectionName(res.collection.name);
       setLogo(res.logo);
@@ -49,10 +64,20 @@ const DashboardNFT = () => {
       setSymbol(res.symbol);
       setAttributes(res.metadata.attributes);
       setDescription(res.description);
+      setDetails(['Network', 'Ethereum']);
+
       setLoading(false);
     } catch (error) {
-      setLoading(false);
       console.log(error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Unexpected error occurred',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      }).then(() => {
+        window.history.back();
+      });
+    } finally {
       setLoading(false);
     }
   };
@@ -125,8 +150,11 @@ const DashboardNFT = () => {
         <div className="my-1">
           <h4 className="mb-4">Details</h4>
           <ul className="p-0 list-unstyled">
-            <li>Network </li>
-            <li>Ethereum</li>
+            {details.map((detail, index) => (
+              <li className="mt-1" key={index}>
+                {detail}
+              </li>
+            ))}
           </ul>
         </div>
       </>
@@ -193,21 +221,23 @@ const DashboardNFT = () => {
         ) : (
           <>
             <Row>
-              <Col>
-                <div className="d-flex align-items-center mb-2">
-                  <img
-                    src={collectionLogo}
-                    alt="NFT"
-                    className="img-fluid"
-                    style={{
-                      height: '32px',
-                      width: 'auto',
-                      borderRadius: '30%',
-                    }}
-                  />
-                  <h4 className=" mb-0 ms-2">{collectionName}</h4>
-                </div>
-              </Col>
+              {collectionLogo && (
+                <Col>
+                  <div className="d-flex align-items-center mb-2">
+                    <img
+                      src={collectionLogo}
+                      alt="NFT"
+                      className="img-fluid"
+                      style={{
+                        height: '32px',
+                        width: 'auto',
+                        borderRadius: '30%',
+                      }}
+                    />
+                    <h4 className=" mb-0 ms-2">{collectionName}</h4>
+                  </div>
+                </Col>
+              )}
             </Row>
             <div className="my-3">
               <h1>{name}</h1>
@@ -223,17 +253,19 @@ const DashboardNFT = () => {
               </>
             ) : null}
             <div className="d-flex justify-content-center">
-              <img
-                src={logo}
-                className="d-block mx-auto img-fluid"
-                alt="NFT"
-                style={{
-                  borderRadius: '20px',
-                  height: 'auto',
-                  maxHeight: '400px',
-                  width: 'auto',
-                }}
-              />
+              {logo && (
+                <img
+                  src={logo}
+                  className="d-block mx-auto img-fluid"
+                  alt="NFT"
+                  style={{
+                    borderRadius: '20px',
+                    height: 'auto',
+                    maxHeight: '400px',
+                    width: 'auto',
+                  }}
+                />
+              )}
             </div>
             {ownerAddress ? <>{renderCardProfile()}</> : null}
             {attributes && attributes.length ? (
@@ -242,7 +274,7 @@ const DashboardNFT = () => {
                 <hr />
               </>
             ) : null}
-            {renderDetails()}
+            {details ? renderDetails() : null}
             {description ? (
               <>
                 <hr />

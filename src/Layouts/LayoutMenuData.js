@@ -7,11 +7,11 @@ const Navdata = () => {
 
   const { user } = useSelector((state) => state.auth);
 
-  const { address } = useParams();
+  const { address, contractAddress } = useParams();
 
   const [addressSearched, setAddressSearched] = useState('');
 
-  console.log(address);
+  console.log(contractAddress);
 
   useEffect(() => {
     console.log(address);
@@ -173,7 +173,10 @@ const Navdata = () => {
   ];
 
   const filterMenuItems = (menuItems) => {
-    if (!addressSearched) {
+    if (
+      !addressSearched
+      // && !contractAddress
+    ) {
       return menuItems.filter(
         (item) =>
           item.id !== 'assets' &&
