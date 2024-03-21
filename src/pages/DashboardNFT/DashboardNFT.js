@@ -180,7 +180,7 @@ const DashboardNFT = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div className="page-content mt-5">
         {loading ? (
           <div
             style={{ height: '100vh' }}

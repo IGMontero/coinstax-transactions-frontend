@@ -3,6 +3,7 @@
 // 
 
 .app-content {
+    height: 100%;
     margin-left: $vertical-menu-width;
     overflow: hidden;
 
@@ -20,17 +21,27 @@
     }
 }
 
-.page-content {
+// .page-content {
     // padding: calc(#{$header-height} + #{$grid-gutter-width}) calc(#{$grid-gutter-width} * 0.5) $footer-height calc(#{$grid-gutter-width} * 0.5);
     // padding-top: calc(#{$header-height} + #{$grid-gutter-width});
+    // position: relative;
+    // padding-top: 50px;
+    // padding-bottom: 50px;
+    // padding-left: 50px;
+    // padding-right:50px;
+    // min-height: 100%;
+    // margin-left: auto;
+    // margin-right: auto;
+    // max-width: 1100px;
+// }
+
+.page-content {
     padding-top: 50px;
     padding-bottom: 50px;
-    padding-left: 0px;
-    padding-right:0px;
-    margin-left: auto;
-    margin-right: auto;
-    max-width: 1100px;
-
+    padding-left: 50px;
+    padding-right: 50px;
+    min-height: 100%;
+    padding-bottom: calc(20px + 50px); 
 }
 
 .navbar-menu {
