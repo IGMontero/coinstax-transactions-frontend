@@ -15,11 +15,14 @@ const DashboardHome = () => {
 
   return (
     <React.Fragment>
-      <Col className="col-12 mt-5" style={{ height: '100vh', width: '100%' }}>
+      <Col className="col-12 mt-5 ">
         <div className="d-flex  justify-content-center align-items-center">
-          <h1>Search for your wallet address to get started</h1>
+          <h1>Welcome to Coinstax</h1>
         </div>
-        <Row className="d-flex justify-content-center mt-5  align-items-center ">
+        <div className="d-flex  justify-content-center align-items-center">
+          <h2>Search for your wallet address to get started</h2>
+        </div>
+        <Row className="d-flex justify-content-center mt-3  align-items-center ">
           <Col lg={8} className="pb-3  d-flex justify-content-center ">
             <InputGroup className="mb-3">
               <Input
