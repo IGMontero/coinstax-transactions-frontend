@@ -2,15 +2,17 @@ import React from 'react';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import { copyToClipboard } from '../../../../../utils/utils';
+import { useNavigate } from 'react-router-dom';
 
 const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   const positiveLedgers = ledger.txSummary.received;
+  const navigate = useNavigate();
 
   const addressLink =
     ledger.txSummary.mainContractAddressInfo?.address ||
     ledger.txSummary.mainContractAddress;
 
-  const tokenId = null;
+  const tokenId = positiveLedgers?.nftInfo?.tokenId || undefined;
 
   const currency = positiveLedgers?.currency || '';
 

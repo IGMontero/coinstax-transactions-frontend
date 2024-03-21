@@ -8,6 +8,7 @@ import Negativeledgers from './Ledgers/Negativeledgers';
 import PositiveLedgers from './Ledgers/PositiveLedgers';
 import InformationLedger from './Ledgers/InformationLedger';
 import Thirdcolumn from './Thirdcolumn';
+import ValueColumn from './ValueColumn';
 
 const RenderTransactions = ({
   date,
@@ -98,7 +99,7 @@ const RenderTransactions = ({
               >
                 {' '}
                 <Col
-                  lg={3}
+                  lg={2}
                   md={12}
                   sm={12}
                   xs={12}
@@ -163,8 +164,8 @@ const RenderTransactions = ({
                 </Col>
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={transaction.txSummary.sent ? 3 : 0}
-                  md={transaction.txSummary.sent ? 3 : 0}
+                  lg={transaction.txSummary.sent ? 4 : 0}
+                  md={transaction.txSummary.sent ? 4 : 0}
                   sm={6}
                   xs={6}
                   className={`mb-lg-0 mb-3 ${
@@ -177,8 +178,8 @@ const RenderTransactions = ({
                 </Col>
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={transaction.txSummary.sent ? 4 : 7}
-                  md={transaction.txSummary.sent ? 4 : 7}
+                  lg={transaction.txSummary.sent ? 3 : 7}
+                  md={transaction.txSummary.sent ? 3 : 7}
                   sm={transaction.txSummary.sent ? 6 : 12}
                   xs={transaction.txSummary.sent ? 6 : 12}
                   className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3`}
@@ -188,11 +189,16 @@ const RenderTransactions = ({
                     negativeLedgers={sentTxSummary.txSummary.sent}
                   />
                 </Col>
+                <Col lg={2} md={6} sm={6} xs={6}>
+                  {transaction.txSummary.value && (
+                    <ValueColumn value={transaction.txSummary.value} />
+                  )}
+                </Col>
                 <Col
-                  lg={2}
-                  md={12}
-                  sm={12}
-                  xs={12}
+                  lg={1}
+                  md={6}
+                  sm={6}
+                  xs={6}
                   className="d-flex justify-content-end  align-items-center  mt-lg-0 mt-3"
                 >
                   <Thirdcolumn

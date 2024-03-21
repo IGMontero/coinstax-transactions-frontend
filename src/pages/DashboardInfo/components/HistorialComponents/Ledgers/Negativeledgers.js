@@ -37,7 +37,6 @@ const Negativeledgers = ({ ledger }) => {
   const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
   const tokenId = negativeLedgers?.nftInfo?.tokenId || undefined;
 
-  console.log(negativeLedgers);
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
       <>
