@@ -101,6 +101,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   // }, []);
 
   const handleSearchClick = () => {
+    // setSearchInput('');
     navigate(`/address/${searchInput}/tokens`);
   };
 

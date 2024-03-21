@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 
 const DashboardTransactions = () => {
   const { address } = useParams();
-  console.log(address);
   const [historyData, setHistoryData] = React.useState([]);
 
   return (
