@@ -98,6 +98,24 @@ const Nfts = ({ address, activeTab }) => {
 
   const isDashboardPage = location.pathname.includes('tokens');
 
+  const [imageError, setImageError] = useState(false);
+
+  if (imageError) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '8px',
+          backgroundColor: '#f0f0f0',
+        }}
+      >
+        <span>Unsupported</span>
+      </div>
+    );
+  }
+
   return (
     <React.Fragment>
       <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
@@ -300,6 +318,8 @@ const Nfts = ({ address, activeTab }) => {
                       ? prettyFiatFloorPrice
                       : prettyNativeTokenFloorPrice;
 
+                    const shouldShowUnsupported = !nft.logo || imageError;
+
                     return (
                       <div
                         key={index}
@@ -322,18 +342,36 @@ const Nfts = ({ address, activeTab }) => {
                                 minHeight: '200px',
                               }}
                             >
-                              <img
-                                src={nft.logo}
-                                alt=""
-                                className="img-fluid w-100 position-realative"
-                                style={{
-                                  maxWidth: '100%',
-                                  maxHeight: '100%',
-                                  aspectRatio: '1 / 1',
-                                  objectFit: 'cover',
-                                  borderRadius: '8px',
-                                }}
-                              />
+                              {shouldShowUnsupported ? (
+                                <div
+                                  className="d-flex justify-content-center align-items-center"
+                                  style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    aspectRatio: '1 / 1',
+                                    objectFit: 'cover',
+                                    borderRadius: '8px',
+                                  }}
+                                >
+                                  <h3 className="text-center">
+                                    Unsupported content
+                                  </h3>
+                                </div>
+                              ) : (
+                                <img
+                                  src={nft.logo}
+                                  alt=""
+                                  className="img-fluid w-100 position-realative"
+                                  style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    aspectRatio: '1 / 1',
+                                    objectFit: 'cover',
+                                    borderRadius: '8px',
+                                  }}
+                                  onError={() => setImageError(true)}
+                                />
+                              )}
                               <div className="">
                                 <img
                                   src={eth}
