@@ -23,10 +23,11 @@ import {
 import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
-const HistorialTable = ({ address, activeTab, data, setData }) => {
+const HistorialTable = ({ activeTab, data, setData }) => {
   const inputRef = useRef(null);
+  const { address } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
 
@@ -164,23 +165,20 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
   };
 
   useEffect(() => {
-    if (activeTab != 3) {
-      handleClearAllFilters();
+    if (!isDashboardPage) {
       setShowDownloadMessage('');
       setData([]);
     }
-  }, [activeTab, address]);
+  }, [location]);
 
   useEffect(() => {
-    if (activeTab == '3' || isDashboardPage) {
-      fetchData();
-      setHasMoreData(true);
-    }
+    fetchData();
+    setHasMoreData(true);
     setShowDownloadMessage('');
     setCurrentPage(0);
   }, [
     address,
-    activeTab,
+    location,
     dispatch,
     selectedAssets,
     selectedFilters,
@@ -552,6 +550,62 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
     }
   };
 
+  const renderSearchBar = () => {
+    return (
+      <>
+        {' '}
+        <Row className="mt-4">
+          <Col lg={6} md={8} sm={10} xs={12}>
+            <InputGroup className="py-3 d-flex align-items-center pt-0 search-bar col-lg-12 col-md-12 pe-3">
+              <span
+                className="search-icon ps-3 position-absolute"
+                onClick={() => inputRef.current.focus()}
+                style={{ zIndex: 1, cursor: 'text' }}
+              >
+                <i className="ri-search-line text-muted  fs-3"></i>
+              </span>
+              <Input
+                innerRef={inputRef}
+                className="search-input py-2 rounded"
+                style={{
+                  zIndex: 0,
+                  paddingLeft: '47px',
+                  paddingRight: '30px',
+                }}
+                placeholder="Filter by Address, Protocol, Assets, Type"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
+              {searchTerm && (
+                <Button
+                  color="link"
+                  className="btn-close
+              position-absolute btn btn-sm  border-0"
+                  style={{
+                    right: '25px',
+                    zIndex: 2,
+                  }}
+                  onClick={handleClearSearch}
+                />
+              )}
+            </InputGroup>
+          </Col>
+          <Col
+            lg={6}
+            md={4}
+            sm={2}
+            xs={12}
+            className="d-flex  py-3 justify-content-end"
+          >
+            <Button className="btn btn-sm" color="primary" size="sm">
+              Download CSV
+            </Button>
+          </Col>
+        </Row>{' '}
+      </>
+    );
+  };
+
   return (
     <React.Fragment>
       <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
@@ -602,54 +656,7 @@ const HistorialTable = ({ address, activeTab, data, setData }) => {
           </Row>{' '}
         </div>
       ) : null}
-      {/* <Row className="mt-4">
-        <Col lg={6} md={8} sm={10} xs={12}>
-          <InputGroup className="py-3 d-flex align-items-center pt-0 search-bar col-lg-12 col-md-12 pe-3">
-            <span
-              className="search-icon ps-3 position-absolute"
-              onClick={() => inputRef.current.focus()}
-              style={{ zIndex: 1, cursor: 'text' }}
-            >
-              <i className="ri-search-line text-muted  fs-3"></i>
-            </span>
-            <Input
-              innerRef={inputRef}
-              className="search-input py-2 rounded"
-              style={{
-                zIndex: 0,
-                paddingLeft: '47px',
-                paddingRight: '30px',
-              }}
-              placeholder="Filter by Address, Protocol, Assets, Type"
-              value={searchTerm}
-              onChange={handleSearch}
-            />
-            {searchTerm && (
-              <Button
-                color="link"
-                className="btn-close
-                position-absolute btn btn-sm  border-0"
-                style={{
-                  right: '25px',
-                  zIndex: 2,
-                }}
-                onClick={handleClearSearch}
-              />
-            )}
-          </InputGroup>
-        </Col>
-        <Col
-          lg={6}
-          md={4}
-          sm={2}
-          xs={12}
-          className="d-flex  py-3 justify-content-end"
-        >
-          <Button className="btn btn-sm" color="primary" size="sm">
-            Download CSV
-          </Button>
-        </Col>
-      </Row> */}
+      {/* {renderSearchBar()} */}
       {loading && isInitialLoad ? (
         <div
           className="d-flex justify-content-center align-items-center"

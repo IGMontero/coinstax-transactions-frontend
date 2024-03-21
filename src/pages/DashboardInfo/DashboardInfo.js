@@ -393,7 +393,7 @@ const DashboardInfo = () => {
                   <div className="d-flex flex-row ">
                     {/* <h1 className="fw-semibold">{title}</h1> */}
                     {isUnsupported && (
-                      <div>
+                      <div className="mt-5">
                         <h1 className="fw-semibold text-danger">
                           Unsupported Address
                         </h1>
@@ -592,19 +592,6 @@ const DashboardInfo = () => {
                       <div className="d-flex">
                         <div className="flex-grow-1 ms-2">
                           <Nfts
-                            activeTab={customActiveTab}
-                            address={addressForSearch}
-                          />
-                        </div>
-                      </div>
-                    </TabPane>
-
-                    <TabPane tabId="3">
-                      <div className="d-flex">
-                        <div className="flex-grow-1 ms-2">
-                          <HistorialTable
-                            data={historyData}
-                            setData={setHistoryData}
                             activeTab={customActiveTab}
                             address={addressForSearch}
                           />
