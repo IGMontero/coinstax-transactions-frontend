@@ -208,9 +208,6 @@ const RenderTransactions = ({
                     negativeLedgers={sentTxSummary.txSummary.sent}
                   />
                 </Col>
-                {/* <Col lg={2} md={6} sm={6} xs={6}>
-                 
-                </Col> */}
                 <Col
                   lg={2}
                   md={6}
