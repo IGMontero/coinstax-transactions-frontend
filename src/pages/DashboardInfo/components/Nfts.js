@@ -12,7 +12,7 @@ import {
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import { useDispatch } from 'react-redux';
 import { fetchNFTS } from '../../../slices/transactions/thunk';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { formatDate } from '../../../utils/utils';
 import moment from 'moment';
 
@@ -36,11 +36,13 @@ const ethIcon = (
   </svg>
 );
 
-const Nfts = ({ address, activeTab }) => {
-  // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
+const Nfts = ({ address }) => {
+  const location = useLocation();
+
+  const isDashboardPage = location.pathname.includes('tokens');
 
   const [loading, setLoading] = React.useState(false);
-
+  const [imageError, setImageError] = useState(false);
   const [loadingIncludeSpam, setLoadingIncludeSpam] = useState(false);
   const [includeSpam, setIncludeSpam] = useState(false);
 
@@ -82,10 +84,10 @@ const Nfts = ({ address, activeTab }) => {
   };
 
   useEffect(() => {
-    if (address && activeTab == '2') {
+    if (address) {
       fetchDataNFTS();
     }
-  }, [address, activeTab, dispatch, includeSpam]);
+  }, [address, dispatch, includeSpam]);
 
   const handleVisitNFT = (contractAddress, tokenId) => {
     navigate(`/contract/${contractAddress}?tokenId=${tokenId}`);
@@ -95,10 +97,6 @@ const Nfts = ({ address, activeTab }) => {
     setIncludeSpam(!includeSpam);
     setLoadingIncludeSpam(true);
   };
-
-  const isDashboardPage = location.pathname.includes('tokens');
-
-  const [imageError, setImageError] = useState(false);
 
   if (imageError) {
     return (
@@ -116,6 +114,9 @@ const Nfts = ({ address, activeTab }) => {
     );
   }
 
+  // show only 4 NFTs if is dashboard page
+  const filteredData = isDashboardPage ? data.items?.slice(0, 5) : data.items;
+
   return (
     <React.Fragment>
       <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
@@ -123,14 +124,14 @@ const Nfts = ({ address, activeTab }) => {
       </h1>
       {loading ? (
         <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: '50vh' }}
+          className="d-flex justify-content-center align-items-center h-50vh"
+          style={{ height: !isDashboardPage ? '50vh' : '40vh' }}
         >
           <Spinner style={{ width: '4rem', height: '4rem' }} />
         </div>
       ) : (
         <>
-          {data.items && data.items.length > 0 ? (
+          {filteredData && filteredData.length > 0 && !isDashboardPage ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
                 <h6>
@@ -294,9 +295,9 @@ const Nfts = ({ address, activeTab }) => {
                   gap: '30px',
                 }}
               >
-                {data.items &&
-                  data.items.length > 0 &&
-                  data.items.map((nft, index) => {
+                {filteredData &&
+                  filteredData.length > 0 &&
+                  filteredData.map((nft, index) => {
                     const {
                       floorPriceFiat,
                       floorPriceNativeToken,
