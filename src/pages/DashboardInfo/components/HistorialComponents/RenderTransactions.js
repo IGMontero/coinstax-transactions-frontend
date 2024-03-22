@@ -218,7 +218,7 @@ const RenderTransactions = ({
                   xs={6}
                   className="d-flex justify-content-end  align-items-center  mt-lg-0 mt-3"
                 >
-                  {transaction.blockchainAction === blockchainActions.MINT ||
+                  {transaction.blockchainAction === blockchainActions.BURN ||
                   transactions.blockchainAction ===
                     blockchainActions.BURN ? null : (
                     <Thirdcolumn

@@ -25,7 +25,7 @@ import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 
-const HistorialTable = ({ activeTab, data, setData }) => {
+const HistorialTable = ({ data, setData }) => {
   const inputRef = useRef(null);
   const { address } = useParams();
   const dispatch = useDispatch();
@@ -330,21 +330,29 @@ const HistorialTable = ({ activeTab, data, setData }) => {
     setLoading(true);
   };
 
+  const [loadingIncludeSpam, setLoadingIncludeSpam] = useState(false);
+
   const handleShowSpamTransactions = (e) => {
     const checked = e.target.checked;
     setIncludeSpam(checked);
     setCurrentPage(0);
-    setLoading(true);
+    setLoadingIncludeSpam(true);
   };
 
   const renderBadges = () => {
     return selectedFilters.map((filterName) => (
-      <Badge key={filterName} color="soft-dark" className="p-2 my-2 me-2">
-        <span className="fs-6 d-flex align-items-center fw-semibold">
+      <Badge
+        key={filterName}
+        color={isInitialLoad ? 'muted' : 'soft-dark'}
+        className={`p-2 my-2 me-2 `}
+      >
+        <span
+          className={`fs-6 d-flex text-${isInitialLoad ? 'muted' : 'dark'} align-items-center fw-semibold`}
+        >
           {capitalizeFirstLetter(filterName)}
           <button
             onClick={() => handleDeselectFilter(filterName)}
-            className="bg-transparent p-0 border-0 text-dark ms-2 fs-5"
+            className={`bg-transparent p-0 border-0 text-${isInitialLoad ? 'muted' : 'dark'} ms-2 fs-5`}
           >
             <i className="ri-close-line"></i>
           </button>
@@ -358,15 +366,16 @@ const HistorialTable = ({ activeTab, data, setData }) => {
       <Row>
         <Col className="d-flex">
           <Dropdown
+            disabled={loading}
             isOpen={showTransactionFilterMenu}
             toggle={handleShowTransactionFilterMenu}
-            className=""
           >
             <DropdownToggle
+              disabled={isInitialLoad}
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ${
-                showTransactionFilterMenu ? 'active' : ''
-              }`}
+              className={`btn btn-sm p-1 d-flex align-items-center
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted'}
+              ${showTransactionFilterMenu ? 'active' : ''} `}
               role="button"
             >
               <span className="fs-6">Transactions</span>
@@ -401,8 +410,10 @@ const HistorialTable = ({ activeTab, data, setData }) => {
             className=""
           >
             <DropdownToggle
+              disabled={isInitialLoad}
               tag="a"
-              className={`btn btn-sm p-1 btn-soft-primary d-flex align-items-center ms-2 ${
+              className={`btn btn-sm p-1  d-flex align-items-center ms-2 
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted'} ${
                 showAssetsMenu ? 'active' : ''
               }`}
               role="button"
@@ -612,24 +623,29 @@ const HistorialTable = ({ activeTab, data, setData }) => {
         Transactions
       </h1>
 
-      {!isInitialLoad && data && !errorData ? (
+      {data && !errorData ? (
         <div className={isDashboardPage ? 'd-none' : ''}>
           {renderFiltersDropdown()}
           <Col className="col-12">
             {renderBadges()}
             {hasActiveFilters && (
               <span
-                className="text-primary ms-2 cursor-pointer "
+                className={
+                  isInitialLoad ? 'd-none' : 'text-primary ms-2 cursor-pointer'
+                }
                 onClick={handleResetFilters}
               >
-                <span className="text-hover-dark">Reset</span>
+                <span className={isInitialLoad ? 'd-none' : 'text-hover-dark'}>
+                  Reset
+                </span>
               </span>
             )}
           </Col>
           <Row>
-            <div className="d-flex mb-0 justify-content-between align-items-center">
+            <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
               <div className="d-flex justify-content-start">
                 <Input
+                  disabled={isInitialLoad}
                   id="customCheck1"
                   type="checkbox"
                   className="form-check-input me-2 cursor-pointer"
@@ -640,13 +656,12 @@ const HistorialTable = ({ activeTab, data, setData }) => {
                   Include Spam Transactions
                 </label>
               </div>
-
-              <div className="d-flex py-3 justify-content-end">
+              <div className={`d-flex justify-content-end`}>
                 <Button
-                  disabled={loadingDownload}
+                  disabled={isInitialLoad}
                   onClick={handleDownloadTransactions}
-                  className="btn btn-sm"
-                  color="primary"
+                  className={`${isInitialLoad ? 'd-none' : 'btn btn-sm'} `}
+                  color={isInitialLoad ? 'muted' : 'primary'}
                   size="sm"
                 >
                   Download CSV
