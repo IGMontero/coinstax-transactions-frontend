@@ -17,6 +17,8 @@ import DashboardNFT from '../pages/DashboardNFT/DashboardNFT';
 import DashboardBlockchainContracts from '../pages/DashboardBlockchainContracts/DashboardBlockchainContracts';
 import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUserAddresses';
 import DashboardAssets from '../pages/DashboardAssets/DashboardAssets';
+import DashboardTransactions from '../pages/DashboardTransactions/DashboardTransactions';
+import NFTsPage from '../pages/DashboardNFT/NFTsPage';
 
 const authProtectedRoutes = [
   { path: '/dashboard', component: <DashboardInfo /> },
@@ -51,8 +53,10 @@ const allRoutes = [
   { path: '/register', component: <Register /> },
   { path: '/dashboard', component: <DashboardInfo /> },
   { path: '/contract/:contractAddress', component: <DashboardNFT /> },
-  { path: '/address/:address/:type', component: <DashboardInfo /> },
+  { path: '/address/:address/tokens', component: <DashboardInfo /> },
   { path: '/address/:address/assets', component: <DashboardAssets /> },
+  { path: '/address/:address/nfts', component: <NFTsPage /> },
+  { path: '/address/:address/history', component: <DashboardTransactions /> },
   {
     path: '/blockchain-contracts',
     component: <DashboardBlockchainContracts />,

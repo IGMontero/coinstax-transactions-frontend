@@ -12,7 +12,7 @@ import {
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import { useDispatch } from 'react-redux';
 import { fetchNFTS } from '../../../slices/transactions/thunk';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { formatDate } from '../../../utils/utils';
 import moment from 'moment';
 
@@ -36,11 +36,13 @@ const ethIcon = (
   </svg>
 );
 
-const Nfts = ({ address, activeTab }) => {
-  // const address = "0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6";
+const Nfts = ({ address }) => {
+  const location = useLocation();
+
+  const isDashboardPage = location.pathname.includes('tokens');
 
   const [loading, setLoading] = React.useState(false);
-
+  const [imageError, setImageError] = useState(false);
   const [loadingIncludeSpam, setLoadingIncludeSpam] = useState(false);
   const [includeSpam, setIncludeSpam] = useState(false);
 
@@ -82,10 +84,10 @@ const Nfts = ({ address, activeTab }) => {
   };
 
   useEffect(() => {
-    if (address && activeTab == '2') {
+    if (address) {
       fetchDataNFTS();
     }
-  }, [address, activeTab, dispatch, includeSpam]);
+  }, [address, dispatch, includeSpam]);
 
   const handleVisitNFT = (contractAddress, tokenId) => {
     navigate(`/contract/${contractAddress}?tokenId=${tokenId}`);
@@ -96,7 +98,24 @@ const Nfts = ({ address, activeTab }) => {
     setLoadingIncludeSpam(true);
   };
 
-  const isDashboardPage = location.pathname.includes('tokens');
+  if (imageError) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{
+          width: '100%',
+          height: '100%',
+          borderRadius: '8px',
+          backgroundColor: '#f0f0f0',
+        }}
+      >
+        <span>Unsupported</span>
+      </div>
+    );
+  }
+
+  // show only 4 NFTs if is dashboard page
+  const items = data.items;
 
   return (
     <React.Fragment>
@@ -105,14 +124,14 @@ const Nfts = ({ address, activeTab }) => {
       </h1>
       {loading ? (
         <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: '50vh' }}
+          className="d-flex justify-content-center align-items-center h-50vh"
+          style={{ height: !isDashboardPage ? '50vh' : '40vh' }}
         >
           <Spinner style={{ width: '4rem', height: '4rem' }} />
         </div>
       ) : (
         <>
-          {data.items && data.items.length > 0 ? (
+          {items && items.length > 0 && !isDashboardPage ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
                 <h6>
@@ -260,7 +279,7 @@ const Nfts = ({ address, activeTab }) => {
             </Col>
           </Row>
 
-          <Col className="mt-4 col-12">
+          <Col className="mt-4 col-12 d-flex justify-content-center">
             {loadingIncludeSpam ? (
               <div
                 className="d-flex justify-content-center align-items-center"
@@ -274,11 +293,12 @@ const Nfts = ({ address, activeTab }) => {
                 style={{
                   gridTemplateColumns: 'repeat(auto-fill, minmax(186px, 1fr))',
                   gap: '30px',
+                  justifyContent: 'center',
                 }}
               >
-                {data.items &&
-                  data.items.length > 0 &&
-                  data.items.map((nft, index) => {
+                {items &&
+                  items.length > 0 &&
+                  items.map((nft, index) => {
                     const {
                       floorPriceFiat,
                       floorPriceNativeToken,
@@ -300,10 +320,13 @@ const Nfts = ({ address, activeTab }) => {
                       ? prettyFiatFloorPrice
                       : prettyNativeTokenFloorPrice;
 
+                    const shouldShowUnsupported = !nft.logo || imageError;
+
                     return (
                       <div
                         key={index}
                         className="d-flex justify-content-center"
+                        style={{ maxWidth: '100%' }}
                       >
                         <Card
                           onClick={() =>
@@ -322,18 +345,36 @@ const Nfts = ({ address, activeTab }) => {
                                 minHeight: '200px',
                               }}
                             >
-                              <img
-                                src={nft.logo}
-                                alt=""
-                                className="img-fluid w-100 position-realative"
-                                style={{
-                                  maxWidth: '100%',
-                                  maxHeight: '100%',
-                                  aspectRatio: '1 / 1',
-                                  objectFit: 'cover',
-                                  borderRadius: '8px',
-                                }}
-                              />
+                              {shouldShowUnsupported ? (
+                                <div
+                                  className="d-flex justify-content-center align-items-center"
+                                  style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    aspectRatio: '1 / 1',
+                                    objectFit: 'cover',
+                                    borderRadius: '8px',
+                                  }}
+                                >
+                                  <h3 className="text-center">
+                                    Unsupported content
+                                  </h3>
+                                </div>
+                              ) : (
+                                <img
+                                  src={nft.logo}
+                                  alt=""
+                                  className="img-fluid w-100 position-realative"
+                                  style={{
+                                    maxWidth: '100%',
+                                    maxHeight: '100%',
+                                    aspectRatio: '1 / 1',
+                                    objectFit: 'cover',
+                                    borderRadius: '8px',
+                                  }}
+                                  onError={() => setImageError(true)}
+                                />
+                              )}
                               <div className="">
                                 <img
                                   src={eth}
@@ -412,7 +453,7 @@ const Nfts = ({ address, activeTab }) => {
               </Col>
             ) : null}
 
-            {data.items && data.items.length === 0 ? (
+            {items && items.length === 0 ? (
               <Col
                 className="d-flex text-center col-12 justify-content-center align-items-center"
                 style={{ display: 'flex', height: '50vh', width: '100%' }}

@@ -84,7 +84,7 @@ const InformationLedger = ({
         <div className="p-2 d-flex mx-2 flex-column">
           <strong>Transaction Hash:</strong>
           <div className="d-flex">
-            <span className=" d-flex align-items-center ">
+            <span title={txHash} className=" d-flex align-items-center ">
               {txHash ? (
                 <Link
                   to={`https://etherscan.io/tx/${txHash}`}

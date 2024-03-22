@@ -13,9 +13,7 @@ const Negativeledgers = ({ ledger }) => {
   const randomNumber = Math.floor(Math.random() * 100) + 1;
 
   const negativeLedgers = ledger.txSummary.sent;
-  const addressLink =
-    ledger.txSummary.mainContractAddressInfo?.address ||
-    ledger.txSummary.mainContractAddress;
+  const addressLink = negativeLedgers?.nftInfo?.contractAddress;
 
   const currency = negativeLedgers?.currency || '';
   const hasMoreThanOne = negativeLedgers?.logo === 'assets';
@@ -35,8 +33,8 @@ const Negativeledgers = ({ ledger }) => {
   const isNft = negativeLedgers?.isNft;
 
   const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
+  const tokenId = negativeLedgers?.nftInfo?.tokenId || undefined;
 
-  const tokenId = null;
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
       <>
@@ -64,6 +62,7 @@ const Negativeledgers = ({ ledger }) => {
                     }}
                   />{' '}
                 </div>
+
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {!isNft &&
@@ -86,7 +85,7 @@ const Negativeledgers = ({ ledger }) => {
                           e.stopPropagation();
                           if (addressLink && tokenId) {
                             navigate(
-                              `/contract/${addressLink}/?tokenId=${tokenId}`,
+                              `/contract/${addressLink}?tokenId=${tokenId}`,
                             );
                           }
                         }}
