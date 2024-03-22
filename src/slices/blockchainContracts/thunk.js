@@ -104,6 +104,29 @@ export const setAllAsDirty = createAsyncThunk(
   },
 );
 
+export const setBlockchainContractAsDirty = createAsyncThunk(
+  'blockchainContracts/setBlockchainContractAsDirty',
+  async ({ blockchain, address }, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      let url = `${API_BASE}/admin/contracts/${blockchain}/${address}/dirty`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const deleteBlockchainContract = createAsyncThunk(
   'blockchainContracts/deleteBlockchainContract',
   async ({ blockchain, address }, { rejectWithValue }) => {

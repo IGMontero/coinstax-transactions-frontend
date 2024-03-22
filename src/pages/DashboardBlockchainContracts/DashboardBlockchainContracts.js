@@ -19,6 +19,7 @@ import {
   editBlockChainContract,
   updateTrustedState,
   deleteBlockchainContract,
+  setBlockchainContractAsDirty,
 } from '../../slices/blockchainContracts/thunk';
 import {
   blockchainContractTrustedStateEnumType,
@@ -162,6 +163,41 @@ const DashboardBlockchainContracts = () => {
         console.error('Error setting all as dirty', error);
         Swal.fire('Error', error.toString(), 'error');
       }
+    }
+  };
+
+  const handleSetAsDirty = async (address) => {
+    try {
+      const actionResult = await dispatch(
+        setBlockchainContractAsDirty({
+          blockchain: 'ethereum',
+          address,
+        }),
+      );
+
+      const errorMessage = 'Error setting address as dirty';
+      const wasSuccessful = await handleActionResult(
+        setBlockchainContractAsDirty,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        () => {
+          Swal.fire(
+            'Success',
+            `All transactions with address ${address} have been set as dirty.`,
+            'success',
+          );
+
+          getBlockchainContracts();
+        },
+      );
+
+      if (!wasSuccessful) {
+        return;
+      }
+    } catch (error) {
+      console.error('Error setting as dirty', error);
+      Swal.fire('Error', error.toString(), 'error');
     }
   };
 
@@ -317,6 +353,9 @@ const DashboardBlockchainContracts = () => {
             >
               Delete
             </DropdownItem>
+            <DropdownItem onClick={() => handleSetAsDirty(contract.Address)}>
+              Set as Dirty
+            </DropdownItem>
           </DropdownMenu>,
 
           portalRoot,
@@ -403,7 +442,7 @@ const DashboardBlockchainContracts = () => {
         setOpen={handleOpenModalEdit}
         transactionToEdit={selectedContract}
       />
-      <div className="page-content" style={{ minHeight: '100vh' }}>
+      <div className="page-content mt-5">
         <h3>Blockchain Contracts</h3>
         <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
           <Input

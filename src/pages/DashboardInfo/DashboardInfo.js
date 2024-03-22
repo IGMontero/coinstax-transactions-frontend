@@ -393,7 +393,7 @@ const DashboardInfo = () => {
                   <div className="d-flex flex-row ">
                     {/* <h1 className="fw-semibold">{title}</h1> */}
                     {isUnsupported && (
-                      <div>
+                      <div className="mt-5">
                         <h1 className="fw-semibold text-danger">
                           Unsupported Address
                         </h1>
@@ -563,6 +563,31 @@ const DashboardInfo = () => {
                               data={assetsData}
                             />
                           </Col>
+                          <Col xxl={12} className="mt-3 d-flex flex-column">
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                              <h2 className="ms-1 mt-2">NFTs</h2>
+                              <Button
+                                onClick={() =>
+                                  navigate(`/address/${address}/nfts`)
+                                }
+                                className="btn btn-sm btn-soft-primary rounded"
+                              >
+                                <span className="p-1">See more NFTs</span>
+                              </Button>
+                            </div>
+                            <div
+                              className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden"
+                              style={{ maxHeight: '370px' }}
+                            >
+                              <div
+                                className="w-100 overflow-hidden"
+                                style={{ maxHeight: '370px' }}
+                              >
+                                <Nfts address={addressForSearch} />
+                              </div>
+                            </div>
+                          </Col>
+
                           <Col xxl={12} className="mt-3">
                             <div className="d-flex justify-content-between align-items-center mb-2">
                               <h2 className="ms-1 mt-2">Transactions</h2>
@@ -590,25 +615,7 @@ const DashboardInfo = () => {
 
                     <TabPane tabId="2">
                       <div className="d-flex">
-                        <div className="flex-grow-1 ms-2">
-                          <Nfts
-                            activeTab={customActiveTab}
-                            address={addressForSearch}
-                          />
-                        </div>
-                      </div>
-                    </TabPane>
-
-                    <TabPane tabId="3">
-                      <div className="d-flex">
-                        <div className="flex-grow-1 ms-2">
-                          <HistorialTable
-                            data={historyData}
-                            setData={setHistoryData}
-                            activeTab={customActiveTab}
-                            address={addressForSearch}
-                          />
-                        </div>
+                        <div className="flex-grow-1 ms-2"></div>
                       </div>
                     </TabPane>
                   </TabContent>
