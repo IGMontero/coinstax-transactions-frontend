@@ -19,6 +19,7 @@ import {
   editBlockChainContract,
   updateTrustedState,
   deleteBlockchainContract,
+  setBlockchainContractAsDirty,
 } from '../../slices/blockchainContracts/thunk';
 import {
   blockchainContractTrustedStateEnumType,
@@ -162,6 +163,41 @@ const DashboardBlockchainContracts = () => {
         console.error('Error setting all as dirty', error);
         Swal.fire('Error', error.toString(), 'error');
       }
+    }
+  };
+
+  const handleSetAsDirty = async (address) => {
+    try {
+      const actionResult = await dispatch(
+        setBlockchainContractAsDirty({
+          blockchain: 'ethereum',
+          address,
+        }),
+      );
+
+      const errorMessage = 'Error setting address as dirty';
+      const wasSuccessful = await handleActionResult(
+        setBlockchainContractAsDirty,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        () => {
+          Swal.fire(
+            'Success',
+            `All transactions with address ${address} have been set as dirty.`,
+            'success',
+          );
+
+          getBlockchainContracts();
+        },
+      );
+
+      if (!wasSuccessful) {
+        return;
+      }
+    } catch (error) {
+      console.error('Error setting as dirty', error);
+      Swal.fire('Error', error.toString(), 'error');
     }
   };
 
@@ -316,6 +352,9 @@ const DashboardBlockchainContracts = () => {
               onClick={() => handleDeleteBlockchainContract(contract)}
             >
               Delete
+            </DropdownItem>
+            <DropdownItem onClick={() => handleSetAsDirty(contract.Address)}>
+              Set as Dirty
             </DropdownItem>
           </DropdownMenu>,
 

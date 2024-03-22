@@ -288,6 +288,78 @@ const HistorialTable = ({ data, setData }) => {
     setHasAppliedFilters(true);
   };
 
+  const handleDownloadTransactions = async () => {
+    try {
+      setLoadingDownload(true);
+
+      const selectAsset = getSelectedAssetFilters(selectedAssets);
+      Swal.fire({
+        title: 'Downloading',
+        html: 'Your file is being prepared for download.',
+        timerProgressBar: true,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+      const response = await dispatch(
+        downloadTransactions({
+          blockchain: 'eth-mainnet',
+          address: address,
+          query: debouncedSearchTerm,
+          filters: {
+            blockchainAction: selectedFilters,
+            includeSpam: includeSpam,
+          },
+          assetsFilters: selectAsset,
+        }),
+      ).unwrap();
+
+      if (response.isProcessing) {
+        Swal.fire({
+          title: 'Processing...',
+          text: 'Address transactions are processing. Please try again in a few minutes.',
+          icon: 'info',
+          confirmButtonText: 'Ok',
+        });
+
+        setTimeout(() => {
+          setLoadingDownload(false);
+        }, 10000);
+      } else {
+        // Swal.fire({
+        //   title: 'Downloading',
+        //   html: 'Your file is being prepared for download.',
+        //   timerProgressBar: true,
+        //   didOpen: () => {
+        //     Swal.showLoading();
+        //   },
+        // });
+
+        const url = window.URL.createObjectURL(new Blob([response]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `transactions-${address}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+
+        setTimeout(() => {
+          Swal.close();
+          setLoadingDownload(false);
+        }, 500);
+      }
+    } catch (error) {
+      console.error(error);
+      console.log(error.response);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong. Please try again later.',
+      });
+      setLoadingDownload(false);
+    }
+  };
+
   const hasActiveFilters = Object.values(selectedFilters).some(
     (value) => value,
   );
@@ -330,13 +402,10 @@ const HistorialTable = ({ data, setData }) => {
     setLoading(true);
   };
 
-  const [loadingIncludeSpam, setLoadingIncludeSpam] = useState(false);
-
   const handleShowSpamTransactions = (e) => {
     const checked = e.target.checked;
     setIncludeSpam(checked);
     setCurrentPage(0);
-    setLoadingIncludeSpam(true);
   };
 
   const renderBadges = () => {
@@ -375,7 +444,7 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1 d-flex align-items-center
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted'}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'}
               ${showTransactionFilterMenu ? 'active' : ''} `}
               role="button"
             >
@@ -414,7 +483,7 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted'} ${
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
                 showAssetsMenu ? 'active' : ''
               }`}
               role="button"
@@ -488,78 +557,6 @@ const HistorialTable = ({ data, setData }) => {
         )}
       </div>
     );
-  };
-
-  const handleDownloadTransactions = async () => {
-    try {
-      setLoadingDownload(true);
-
-      const selectAsset = getSelectedAssetFilters(selectedAssets);
-      Swal.fire({
-        title: 'Downloading',
-        html: 'Your file is being prepared for download.',
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-      const response = await dispatch(
-        downloadTransactions({
-          blockchain: 'eth-mainnet',
-          address: address,
-          query: debouncedSearchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
-          assetsFilters: selectAsset,
-        }),
-      ).unwrap();
-
-      if (response.isProcessing) {
-        Swal.fire({
-          title: 'Processing...',
-          text: 'Address transactions are processing. Please try again in a few minutes.',
-          icon: 'info',
-          confirmButtonText: 'Ok',
-        });
-
-        setTimeout(() => {
-          setLoadingDownload(false);
-        }, 10000);
-      } else {
-        // Swal.fire({
-        //   title: 'Downloading',
-        //   html: 'Your file is being prepared for download.',
-        //   timerProgressBar: true,
-        //   didOpen: () => {
-        //     Swal.showLoading();
-        //   },
-        // });
-
-        const url = window.URL.createObjectURL(new Blob([response]));
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', `transactions-${address}.csv`);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-
-        setTimeout(() => {
-          Swal.close();
-          setLoadingDownload(false);
-        }, 500);
-      }
-    } catch (error) {
-      console.error(error);
-      console.log(error.response);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong. Please try again later.',
-      });
-      setLoadingDownload(false);
-    }
   };
 
   const renderSearchBar = () => {
