@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Button,
   Col,
@@ -34,11 +34,18 @@ import { copyToClipboard, formatIdTransaction } from '../utils/utils';
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const { user } = useSelector((state) => state.auth);
+  const { assets, transactions, performance } = useSelector(
+    (state) => state.fetchData,
+  );
+
+  const isUnsupported =
+    assets.unsupported || transactions.unsupported || performance.unsupported;
   const { address } = useParams();
 
   const currentUser = user;
@@ -122,6 +129,9 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       console.error('Failed to copy: ', err);
     }
   };
+  useEffect(() => {
+    setSearchInput('');
+  }, [location]);
 
   const renderAddressWithDropdown = () => {
     return (
