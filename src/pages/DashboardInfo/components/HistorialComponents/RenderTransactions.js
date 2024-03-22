@@ -162,7 +162,7 @@ const RenderTransactions = ({
                       </p>
                     </div>
                   </Col>
-                  <Col>
+                  <Col className="ms-n3">
                     {transaction.successful ? (
                       transaction.txSummary.value && (
                         <div className="d-flex text-start justify-content-start me-3">
