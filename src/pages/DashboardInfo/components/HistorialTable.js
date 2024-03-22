@@ -351,6 +351,7 @@ const HistorialTable = ({ data, setData }) => {
         >
           {capitalizeFirstLetter(filterName)}
           <button
+            disabled={isInitialLoad}
             onClick={() => handleDeselectFilter(filterName)}
             className={`bg-transparent p-0 border-0 text-${isInitialLoad ? 'muted' : 'dark'} ms-2 fs-5`}
           >
@@ -633,7 +634,9 @@ const HistorialTable = ({ data, setData }) => {
                 className={
                   isInitialLoad ? 'd-none' : 'text-primary ms-2 cursor-pointer'
                 }
-                onClick={handleResetFilters}
+                onClick={() => {
+                  handleClearAllFilters();
+                }}
               >
                 <span className={isInitialLoad ? 'd-none' : 'text-hover-dark'}>
                   Reset
