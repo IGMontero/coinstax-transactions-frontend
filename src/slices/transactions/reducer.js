@@ -1,12 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 import {
   fetchNFTS,
   fetchPerformance,
   fetchAssets,
   fetchHistory,
-  fetchSearchHistoryTable,
-  fetchTransactionsFilter,
-} from "./thunk";
+} from './thunk';
 export const initialState = {
   transactions: [],
   performance: [],
@@ -16,57 +14,58 @@ export const initialState = {
 };
 
 const TransactionsSlice = createSlice({
-  name: "TransactionsSlice",
+  name: 'TransactionsSlice',
   initialState,
   reducers: {},
-  extraReducers: (builder) => {
-    builder
-      // NFTS
-      .addCase(fetchNFTS.fulfilled, (state, action) => {
-        state.transactions = action.payload;
-      })
-      .addCase(fetchNFTS.rejected, (state, action) => {
-        state.error = action.payload.error || null;
-      })
-
-      // CHART
-      .addCase(fetchPerformance.fulfilled, (state, action) => {
-        state.performance = action.payload;
-      })
-      .addCase(fetchPerformance.rejected, (state, action) => {
-        state.error = action.payload.error || null;
-      })
-
-      // ASSETS
-      .addCase(fetchAssets.fulfilled, (state, action) => {
-        state.assets = action.payload;
-      })
-      .addCase(fetchAssets.rejected, (state, action) => {
-        state.error = action.payload.error || null;
-      })
-
-      // HISTORY
-      .addCase(fetchHistory.fulfilled, (state, action) => {
-        state.history = action.payload;
-      })
-      .addCase(fetchHistory.rejected, (state, action) => {
-        state.error = action.payload.error || null;
-      })
-
-      // SEARCH HISTORY TABLE
-      .addCase(fetchSearchHistoryTable.fulfilled, (state, action) => {
-        state.history = action.payload;
-      })
-      .addCase(fetchSearchHistoryTable.rejected, (state, action) => {
-        state.error = action.payload.error || null;
-      })
-      // TRANSACTIONS HISTORY FILTERS
-      .addCase(fetchTransactionsFilter.fulfilled, (state, action) => {
-        state.history = action.payload;
-      })
-      .addCase(fetchTransactionsFilter.rejected, (state, action) => {
-        state.error = action.payload.error || null;
-      });
+  extraReducers: {
+    [fetchNFTS.pending]: (state) => {
+      state.loading = true;
+    },
+    [fetchNFTS.fulfilled]: (state, action) => {
+      state.transactions = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    [fetchNFTS.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [fetchPerformance.pending]: (state) => {
+      state.loading = true;
+    },
+    [fetchPerformance.fulfilled]: (state, action) => {
+      state.performance = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    [fetchPerformance.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [fetchAssets.pending]: (state) => {
+      state.loading = true;
+    },
+    [fetchAssets.fulfilled]: (state, action) => {
+      state.assets = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    [fetchAssets.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [fetchHistory.pending]: (state) => {
+      state.loading = true;
+    },
+    [fetchHistory.fulfilled]: (state, action) => {
+      state.history = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    [fetchHistory.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 

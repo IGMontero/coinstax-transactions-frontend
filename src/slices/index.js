@@ -10,6 +10,7 @@ import ProfileReducer from './auth/profile/reducer';
 import AccountReducer from './auth/register/reducer';
 import BlockchainReducer from './blockchainContracts/reducer';
 import Auth2Reducer from './auth2/reducer';
+import DataReducer from './transactions/reducer';
 // API Key
 import APIKeyReducer from './apiKey/reducer';
 
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   blockchainContracts: BlockchainReducer,
   APIKey: APIKeyReducer,
   auth: Auth2Reducer,
+  fetchData: DataReducer,
 });
 
 export default rootReducer;

@@ -7,16 +7,23 @@ const Navdata = () => {
 
   const { user } = useSelector((state) => state.auth);
 
-  const { address, contractAddress } = useParams();
+  const { assets, transactions, performance } = useSelector(
+    (state) => state.fetchData,
+  );
+
+  const isUnsupported =
+    assets.unsupported || transactions.unsupported || performance.unsupported;
+
+  const { address } = useParams();
 
   const [addressSearched, setAddressSearched] = useState('');
 
-  console.log(contractAddress);
-
   useEffect(() => {
-    console.log(address);
     if (address) {
       setAddressSearched(address);
+    }
+    if (isUnsupported) {
+      setAddressSearched('');
     }
   }, [address]);
 
@@ -56,9 +63,11 @@ const Navdata = () => {
 
   const isAdmin = user;
 
-  const dashboardLink = addressSearched
-    ? `/address/${addressSearched}/tokens`
-    : '/dashboard';
+  const dashboardLink = isUnsupported
+    ? '/dashboard'
+    : addressSearched
+      ? `/address/${addressSearched}/tokens`
+      : '/dashboard';
 
   const adminMenuItems = [
     {
@@ -174,7 +183,8 @@ const Navdata = () => {
 
   const filterMenuItems = (menuItems) => {
     if (
-      !addressSearched
+      !addressSearched ||
+      isUnsupported
       // && !contractAddress
     ) {
       return menuItems.filter(
