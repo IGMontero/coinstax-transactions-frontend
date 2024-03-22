@@ -178,10 +178,12 @@ const DashboardInfo = () => {
   };
   useEffect(() => {
     if (address) {
+      setIsUnsupported(false);
       setAddressForSearch(address);
       setAddressTitle(address);
     }
   }, [address]);
+
   useEffect(() => {
     if (type) {
       setCustomActiveTab(
