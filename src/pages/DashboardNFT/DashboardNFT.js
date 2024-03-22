@@ -44,14 +44,6 @@ const DashboardNFT = () => {
       );
       const res = response.payload;
       if ((res && res.error) || !res) {
-        // Swal.fire({
-        //   title: 'Error',
-        //   text: 'NFTs not found',
-        //   icon: 'error',
-        //   confirmButtonText: 'OK',
-        // }).then(() => {
-        //   window.history.back();
-        // });
         return;
       } else {
         setCollectionLogo(res.collection.logo);
@@ -69,14 +61,7 @@ const DashboardNFT = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
-      Swal.fire({
-        title: 'Error',
-        text: 'Unexpected error occurred',
-        icon: 'error',
-        confirmButtonText: 'OK',
-      }).then(() => {
-        window.history.back();
-      });
+      window.history.back();
     } finally {
       setLoading(false);
     }
