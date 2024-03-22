@@ -188,7 +188,7 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
         onEdit={handleEditBlockChainContract}
         setOpen={setOpenModalEdit}
       />
-      <div className="d-flex flex-column w-50  ">
+      <div className="d-flex flex-column w-100  ">
         <p
           style={{ fontSize: '12px', marginBottom: '4px' }}
           className="text-start mb-1"
