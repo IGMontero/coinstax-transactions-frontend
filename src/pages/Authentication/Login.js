@@ -83,7 +83,7 @@ const Login = (props) => {
   return (
     <React.Fragment>
       <ParticlesAuth>
-        <div className="auth-page-content">
+        <div className="auth-page-content ms-n5 me-5 pe-5">
           <Container>
             <Row>
               <Col lg={12}>
@@ -94,20 +94,20 @@ const Login = (props) => {
                                         </Link> */}
                   </div>
                   <p className="mt-3 fs-15 fw-medium">
-                    Premium Admin & Dashboard Template
+                    {/* Premium Admin & Dashboard Template */}
                   </p>
                 </div>
               </Col>
             </Row>
 
-            <Row className="justify-content-center">
+            <Row className=" justify-content-center">
               <Col md={8} lg={6} xl={5}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
                     <div className="text-center mt-2">
                       <h5 className="text-primary">Welcome Back !</h5>
                       <p className="text-muted">
-                        Sign in to continue to Velzon.
+                        Sign in to continue to Coinstax.
                       </p>
                     </div>
                     {errorMsg && errorMsg ? (
@@ -129,13 +129,13 @@ const Login = (props) => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                                validation.errors.email
+                              validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                            validation.errors.email ? (
+                          validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -165,13 +165,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                  validation.errors.password
+                                validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                              validation.errors.password ? (
+                            validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>
@@ -255,7 +255,7 @@ const Login = (props) => {
                   </CardBody>
                 </Card>
 
-                <div className="mt-4 text-center">
+                {/* <div className="mt-4 text-center">
                   <p className="mb-0">
                     Don't have an account ?{' '}
                     <Link
@@ -266,7 +266,7 @@ const Login = (props) => {
                       Signup{' '}
                     </Link>{' '}
                   </p>
-                </div>
+                </div> */}
               </Col>
             </Row>
           </Container>
