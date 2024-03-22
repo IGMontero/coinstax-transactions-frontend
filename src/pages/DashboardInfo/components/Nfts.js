@@ -115,7 +115,7 @@ const Nfts = ({ address }) => {
   }
 
   // show only 4 NFTs if is dashboard page
-  const filteredData = isDashboardPage ? data.items?.slice(0, 5) : data.items;
+  const items = data.items;
 
   return (
     <React.Fragment>
@@ -131,7 +131,7 @@ const Nfts = ({ address }) => {
         </div>
       ) : (
         <>
-          {filteredData && filteredData.length > 0 && !isDashboardPage ? (
+          {items && items.length > 0 && !isDashboardPage ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
                 <h6>
@@ -279,7 +279,7 @@ const Nfts = ({ address }) => {
             </Col>
           </Row>
 
-          <Col className="mt-4 col-12">
+          <Col className="mt-4 col-12 d-flex justify-content-center">
             {loadingIncludeSpam ? (
               <div
                 className="d-flex justify-content-center align-items-center"
@@ -293,11 +293,12 @@ const Nfts = ({ address }) => {
                 style={{
                   gridTemplateColumns: 'repeat(auto-fill, minmax(186px, 1fr))',
                   gap: '30px',
+                  justifyContent: 'center',
                 }}
               >
-                {filteredData &&
-                  filteredData.length > 0 &&
-                  filteredData.map((nft, index) => {
+                {items &&
+                  items.length > 0 &&
+                  items.map((nft, index) => {
                     const {
                       floorPriceFiat,
                       floorPriceNativeToken,
@@ -325,6 +326,7 @@ const Nfts = ({ address }) => {
                       <div
                         key={index}
                         className="d-flex justify-content-center"
+                        style={{ maxWidth: '100%' }}
                       >
                         <Card
                           onClick={() =>
@@ -451,7 +453,7 @@ const Nfts = ({ address }) => {
               </Col>
             ) : null}
 
-            {data.items && data.items.length === 0 ? (
+            {items && items.length === 0 ? (
               <Col
                 className="d-flex text-center col-12 justify-content-center align-items-center"
                 style={{ display: 'flex', height: '50vh', width: '100%' }}
