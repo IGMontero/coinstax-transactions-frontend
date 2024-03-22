@@ -44,14 +44,14 @@ const DashboardNFT = () => {
       );
       const res = response.payload;
       if ((res && res.error) || !res) {
-        Swal.fire({
-          title: 'Error',
-          text: 'NFTs not found',
-          icon: 'error',
-          confirmButtonText: 'OK',
-        }).then(() => {
-          window.history.back();
-        });
+        // Swal.fire({
+        //   title: 'Error',
+        //   text: 'NFTs not found',
+        //   icon: 'error',
+        //   confirmButtonText: 'OK',
+        // }).then(() => {
+        //   window.history.back();
+        // });
         return;
       } else {
         setCollectionLogo(res.collection.logo);
@@ -274,7 +274,8 @@ const DashboardNFT = () => {
                 <hr />
               </>
             ) : null}
-            {details.length ? renderDetails() : null}
+            {/* {details.length ? renderDetails() : null} */}
+            {renderDetails()}
             {description ? (
               <>
                 <hr />

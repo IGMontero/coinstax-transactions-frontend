@@ -8,9 +8,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   const positiveLedgers = ledger.txSummary.received;
   const navigate = useNavigate();
 
-  const addressLink =
-    ledger.txSummary.mainContractAddressInfo?.address ||
-    ledger.txSummary.mainContractAddress;
+  const addressLink = negativeLedgers?.nftInfo?.contractAddress;
 
   const tokenId = positiveLedgers?.nftInfo?.tokenId || undefined;
 
@@ -22,7 +20,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
 
   const isNft = positiveLedgers?.isNft;
 
-  const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
+  const hasAssetsCount = ledger.txSummary?.receivedAssetsCount >= 2;
 
   const handleCopyValue = (e, value) => {
     if (value) {
@@ -85,7 +83,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                           e.stopPropagation();
                           if (addressLink && tokenId) {
                             navigate(
-                              `/contract/${addressLink}/?tokenId=${tokenId}`,
+                              `/contract/${addressLink}?tokenId=${tokenId}`,
                             );
                           }
                         } else {
@@ -126,14 +124,15 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
 
                   {positiveLedgers &&
                   !positiveLedgers.hideNativeAmount &&
-                  // document.getElementById(`amount-left-${ledger.txHash}`)
                   positiveLedgers.prettyNativeAmount ? (
                     <p className="text-start d-flex align-items-center my-0 text-muted">
                       {positiveLedgers.prettyNativeAmount}
                     </p>
                   ) : (
                     <>
-                      {ledger && ledger.txHash ? (
+                      {ledger &&
+                      ledger.txHash &&
+                      !positiveLedgers.hideNativeAmount ? (
                         <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
                           N/A
                           <i
@@ -163,11 +162,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                             </PopoverBody>
                           </UncontrolledPopover>
                         </p>
-                      ) : (
-                        <p className="text-muted">
-                          Transaction data not available
-                        </p>
-                      )}
+                      ) : null}
                     </>
                   )}
                 </div>

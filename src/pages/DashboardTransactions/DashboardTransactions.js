@@ -7,7 +7,7 @@ const DashboardTransactions = () => {
   const [historyData, setHistoryData] = React.useState([]);
 
   return (
-    <div className="page-content mt-5 mx-5">
+    <div className="page-content mt-5">
       <HistorialTable
         data={historyData}
         setData={setHistoryData}

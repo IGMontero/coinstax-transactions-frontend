@@ -106,7 +106,7 @@ const RenderTransactions = ({
               >
                 {' '}
                 <Col
-                  lg={2}
+                  lg={3}
                   md={12}
                   sm={12}
                   xs={12}
@@ -167,12 +167,15 @@ const RenderTransactions = ({
                         </div>
                       </Badge>
                     )}
+                    {transaction.txSummary.value && (
+                      <ValueColumn value={transaction.txSummary.value} />
+                    )}
                   </div>
                 </Col>
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={transaction.txSummary.sent ? 4 : 0}
-                  md={transaction.txSummary.sent ? 4 : 0}
+                  lg={transaction.txSummary.sent ? 3 : 0}
+                  md={transaction.txSummary.sent ? 3 : 0}
                   sm={6}
                   xs={6}
                   className={`mb-lg-0 mb-3 ${
@@ -185,8 +188,8 @@ const RenderTransactions = ({
                 </Col>
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={transaction.txSummary.sent ? 3 : 7}
-                  md={transaction.txSummary.sent ? 3 : 7}
+                  lg={transaction.txSummary.sent ? 3 : 6}
+                  md={transaction.txSummary.sent ? 3 : 6}
                   sm={transaction.txSummary.sent ? 6 : 12}
                   xs={transaction.txSummary.sent ? 6 : 12}
                   className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3`}
@@ -196,11 +199,9 @@ const RenderTransactions = ({
                     negativeLedgers={sentTxSummary.txSummary.sent}
                   />
                 </Col>
-                <Col lg={1} md={6} sm={6} xs={6}>
-                  {transaction.txSummary.value && (
-                    <ValueColumn value={transaction.txSummary.value} />
-                  )}
-                </Col>
+                {/* <Col lg={2} md={6} sm={6} xs={6}>
+                 
+                </Col> */}
                 <Col
                   lg={2}
                   md={6}
