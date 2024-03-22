@@ -182,7 +182,7 @@ const DashboardInfo = () => {
       setAddressForSearch(address);
       setAddressTitle(address);
     }
-  }, [address]);
+  }, [address, location]);
 
   useEffect(() => {
     if (type) {
