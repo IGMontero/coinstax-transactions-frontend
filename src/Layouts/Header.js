@@ -227,7 +227,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   return (
     <React.Fragment>
       <header
-        id={`${currentUser ? 'page-topbar' : 'page-topbar'}`}
+        id="page-topbar"
         // className={headerClass}
         className="mb-4"
       >
