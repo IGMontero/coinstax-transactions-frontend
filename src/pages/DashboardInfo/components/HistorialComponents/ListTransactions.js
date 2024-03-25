@@ -91,7 +91,7 @@ const ListTransactionss = ({ transactions }) => {
                   id={targetId}
                   onClick={(e) => handleCopyValue(e, ledger.amount)}
                 >
-                  {formatNumber(ledger.amount)}
+                  {formatNumber(ledger.amount)}{' '}
                 </span>
                 {ledger.amount && (
                   <UncontrolledPopover
