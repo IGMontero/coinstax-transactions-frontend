@@ -130,7 +130,7 @@ const Negativeledgers = ({ ledger }) => {
                         </p>
                       ) : (
                         <>
-                          <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
+                          {/* <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
                             N/A
                             <i
                               id={`nativeAmount-id-${ledger.txHash}`}
@@ -158,7 +158,8 @@ const Negativeledgers = ({ ledger }) => {
                                 </span>
                               </PopoverBody>
                             </UncontrolledPopover>
-                          </p>
+                          </p> */}
+                          {null}
                         </>
                       ))}
                   </p>

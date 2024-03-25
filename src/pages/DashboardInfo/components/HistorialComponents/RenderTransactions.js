@@ -106,7 +106,7 @@ const RenderTransactions = ({
               >
                 {' '}
                 <Col
-                  lg={3}
+                  lg={4}
                   md={12}
                   sm={12}
                   xs={12}
@@ -165,12 +165,12 @@ const RenderTransactions = ({
                   <Col className="ms-n3">
                     {transaction.successful ? (
                       transaction.txSummary.value && (
-                        <div className="d-flex text-start justify-content-start me-3">
+                        <div className="d-flex text-start justify-content-start ms-n2">
                           <ValueColumn value={transaction.txSummary.value} />
                         </div>
                       )
                     ) : (
-                      <div className="">
+                      <div className="ms-n2">
                         <Badge color="soft-danger" className="rounded-pill">
                           <div className="text-danger fw-normal p-0 d-flex align-items-center">
                             <i className="ri-close-line px-0 fs-5 p-0"></i>
@@ -183,8 +183,8 @@ const RenderTransactions = ({
                 </Col>
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={transaction.txSummary.sent ? 4 : 0}
-                  md={transaction.txSummary.sent ? 4 : 0}
+                  lg={transaction.txSummary.sent ? 3 : 0}
+                  md={transaction.txSummary.sent ? 3 : 0}
                   sm={6}
                   xs={6}
                   className={`mb-lg-0 mb-3 ${
@@ -197,8 +197,8 @@ const RenderTransactions = ({
                 </Col>
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={transaction.txSummary.sent ? 3 : 7}
-                  md={transaction.txSummary.sent ? 3 : 7}
+                  lg={transaction.txSummary.sent ? 3 : 6}
+                  md={transaction.txSummary.sent ? 3 : 6}
                   sm={transaction.txSummary.sent ? 6 : 12}
                   xs={transaction.txSummary.sent ? 6 : 12}
                   className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3`}
