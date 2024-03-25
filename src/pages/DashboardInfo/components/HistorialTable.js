@@ -165,20 +165,12 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   useEffect(() => {
-    if (!isDashboardPage) {
-      setShowDownloadMessage('');
-      setData([]);
-    }
-  }, [location]);
-
-  useEffect(() => {
     fetchData();
     setHasMoreData(true);
     setShowDownloadMessage('');
     setCurrentPage(0);
   }, [
     address,
-    location,
     dispatch,
     selectedAssets,
     selectedFilters,
