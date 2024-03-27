@@ -156,7 +156,7 @@ const ListTransactionss = ({ transactions }) => {
 
   function getColSizeBasedOnContent(ledgers) {
     const maxLength = Math.max(
-      ...ledgers.map((ledger) => ledger.currency.length),
+      ...ledgers.map((ledger) => ledger?.currency?.length),
     );
 
     if (maxLength > 10) {
