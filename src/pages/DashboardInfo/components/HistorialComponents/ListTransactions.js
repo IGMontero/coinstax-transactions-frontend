@@ -91,7 +91,7 @@ const ListTransactionss = ({ transactions }) => {
                   id={targetId}
                   onClick={(e) => handleCopyValue(e, ledger.amount)}
                 >
-                  {formatNumber(ledger.amount)}
+                  {formatNumber(ledger.amount)}{' '}
                 </span>
                 {ledger.amount && (
                   <UncontrolledPopover
@@ -118,7 +118,7 @@ const ListTransactionss = ({ transactions }) => {
             <p className="text-muted mb-0 d-flex align-items-center">
               {ledger.prettyNativeAmount || (
                 <>
-                  N/A
+                  {/* N/A
                   <i
                     id={`nativeAmount-na-${targetId}`}
                     className="ri-information-line ms-1 fs-6 text-muted"
@@ -144,7 +144,8 @@ const ListTransactionss = ({ transactions }) => {
                         transaction
                       </span>
                     </PopoverBody>
-                  </UncontrolledPopover>
+                  </UncontrolledPopover> */}{' '}
+                  {null}
                 </>
               )}
             </p>

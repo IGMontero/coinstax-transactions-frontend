@@ -4,9 +4,15 @@
 
 
 .auth-page-wrapper{
+    display: flex
+    ;
+    align-items: center;
+    justify-content: center;
+    min-height: 90%;
     .auth-page-content{
         padding-bottom: $footer-height;
         position: relative;
+        
         z-index: 2;
         width: 100%;
     }
