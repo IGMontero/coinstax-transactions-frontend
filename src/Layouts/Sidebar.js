@@ -50,23 +50,23 @@ const Sidebar = ({ layoutType }) => {
           //   background: '#23282C',
           // }}
         >
-          <Link to="/" className="logo logo-dark">
+          <div className="logo logo-dark">
             <span className="logo-sm">
               <img src={logo} alt="" height="20" width="63" />
             </span>
             <span className="logo-lg">
               <img src={logo} alt="" height="30" />
             </span>
-          </Link>
+          </div>
 
-          <Link to="/" className="logo logo-light">
+          <div className="logo logo-light">
             <span className="logo-sm">
               <img src={logo} alt="" height="30" />
             </span>
             <span className="logo-lg">
               <img src={logo} alt="" height="30" />
             </span>
-          </Link>
+          </div>
           <button
             onClick={addEventListenerOnSmHoverMenu}
             type="button"

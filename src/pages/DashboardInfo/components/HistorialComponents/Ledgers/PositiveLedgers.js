@@ -132,37 +132,38 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                     <>
                       {ledger &&
                       ledger.txHash &&
-                      !positiveLedgers.hideNativeAmount ? (
-                        <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
-                          N/A
-                          <i
-                            id={`nativeAmount-${ledger.txHash}`}
-                            className="ri-information-line ms-1 fs-6 text-muted"
-                          ></i>
-                          <UncontrolledPopover
-                            onClick={(e) => e.stopPropagation()}
-                            placement="bottom"
-                            target={`nativeAmount-${ledger.txHash}`}
-                            trigger="hover"
-                          >
-                            <PopoverBody
-                              style={{
-                                width: 'auto',
-                              }}
-                              className="w-auto p-2 text-center"
-                            >
-                              <span
-                                style={{
-                                  fontSize: '0.70rem',
-                                }}
-                              >
-                                The price is not available at the time of the
-                                transaction
-                              </span>
-                            </PopoverBody>
-                          </UncontrolledPopover>
-                        </p>
-                      ) : null}
+                      !positiveLedgers.hideNativeAmount
+                        ? // <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
+                          //   N/A
+                          //   <i
+                          //     id={`nativeAmount-${ledger.txHash}`}
+                          //     className="ri-information-line ms-1 fs-6 text-muted"
+                          //   ></i>
+                          //   <UncontrolledPopover
+                          //     onClick={(e) => e.stopPropagation()}
+                          //     placement="bottom"
+                          //     target={`nativeAmount-${ledger.txHash}`}
+                          //     trigger="hover"
+                          //   >
+                          //     <PopoverBody
+                          //       style={{
+                          //         width: 'auto',
+                          //       }}
+                          //       className="w-auto p-2 text-center"
+                          //     >
+                          //       <span
+                          //         style={{
+                          //           fontSize: '0.70rem',
+                          //         }}
+                          //       >
+                          //         The price is not available at the time of the
+                          //         transaction
+                          //       </span>
+                          //     </PopoverBody>
+                          //   </UncontrolledPopover>
+                          // </p>
+                          null
+                        : null}
                     </>
                   )}
                 </div>
