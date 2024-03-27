@@ -70,16 +70,7 @@ const Index = () => {
         {allRoutes.map((route, idx) => (
           <Route
             path={route.path}
-            element={
-              user ? (
-                <VerticalLayout>{route.component}</VerticalLayout>
-              ) : (
-                <>
-                  {/* <Header /> */}
-                  <VerticalLayout>{route.component}</VerticalLayout>
-                </>
-              )
-            }
+            element={<VerticalLayout>{route.component}</VerticalLayout>}
             key={idx}
             exact={true}
           />
