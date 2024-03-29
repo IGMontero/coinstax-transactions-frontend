@@ -134,7 +134,7 @@ const DashboardBlockchainContracts = () => {
         const actionResult = await dispatch(
           setAllAsDirty({
             type: 'contracts',
-            blockchain: 'ehtereum',
+            blockchain: 'ethereum',
             address,
           }),
         );
@@ -341,25 +341,25 @@ const DashboardBlockchainContracts = () => {
     const portalRoot = document.getElementById('portal-root');
     return portalRoot
       ? ReactDOM.createPortal(
-          <DropdownMenu>
-            <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
-              Edit
-            </DropdownItem>
-            <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
-              Set All Tx as Dirty
-            </DropdownItem>
-            <DropdownItem
-              onClick={() => handleDeleteBlockchainContract(contract)}
-            >
-              Delete
-            </DropdownItem>
-            <DropdownItem onClick={() => handleSetAsDirty(contract.Address)}>
-              Set as Dirty
-            </DropdownItem>
-          </DropdownMenu>,
+        <DropdownMenu>
+          <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
+            Edit
+          </DropdownItem>
+          <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
+            Set All Tx as Dirty
+          </DropdownItem>
+          <DropdownItem
+            onClick={() => handleDeleteBlockchainContract(contract)}
+          >
+            Delete
+          </DropdownItem>
+          <DropdownItem onClick={() => handleSetAsDirty(contract.Address)}>
+            Set as Dirty
+          </DropdownItem>
+        </DropdownMenu>,
 
-          portalRoot,
-        )
+        portalRoot,
+      )
       : null;
   };
 
@@ -367,58 +367,58 @@ const DashboardBlockchainContracts = () => {
     const portalRoot = document.getElementById('portal-root');
     return portalRoot
       ? ReactDOM.createPortal(
-          <DropdownMenu>
-            <DropdownItem
-              onClick={() =>
-                handleUpdateTrustedState(
-                  contract,
-                  blockchainContractTrustedStateEnumType.UNKNOUN,
-                )
-              }
-            >
-              {capitalizeFirstLetter(
+        <DropdownMenu>
+          <DropdownItem
+            onClick={() =>
+              handleUpdateTrustedState(
+                contract,
                 blockchainContractTrustedStateEnumType.UNKNOUN,
-              )}
-            </DropdownItem>
-            <DropdownItem
-              onClick={() =>
-                handleUpdateTrustedState(
-                  contract,
-                  blockchainContractTrustedStateEnumType.TRUSTED,
-                )
-              }
-            >
-              {capitalizeFirstLetter(
+              )
+            }
+          >
+            {capitalizeFirstLetter(
+              blockchainContractTrustedStateEnumType.UNKNOUN,
+            )}
+          </DropdownItem>
+          <DropdownItem
+            onClick={() =>
+              handleUpdateTrustedState(
+                contract,
                 blockchainContractTrustedStateEnumType.TRUSTED,
-              )}
-            </DropdownItem>
-            <DropdownItem
-              onClick={() =>
-                handleUpdateTrustedState(
-                  contract,
-                  blockchainContractTrustedStateEnumType.SCAM,
-                )
-              }
-            >
-              {capitalizeFirstLetter(
+              )
+            }
+          >
+            {capitalizeFirstLetter(
+              blockchainContractTrustedStateEnumType.TRUSTED,
+            )}
+          </DropdownItem>
+          <DropdownItem
+            onClick={() =>
+              handleUpdateTrustedState(
+                contract,
                 blockchainContractTrustedStateEnumType.SCAM,
-              )}
-            </DropdownItem>
-            <DropdownItem
-              onClick={() =>
-                handleUpdateTrustedState(
-                  contract,
-                  blockchainContractTrustedStateEnumType.SPAM,
-                )
-              }
-            >
-              {capitalizeFirstLetter(
+              )
+            }
+          >
+            {capitalizeFirstLetter(
+              blockchainContractTrustedStateEnumType.SCAM,
+            )}
+          </DropdownItem>
+          <DropdownItem
+            onClick={() =>
+              handleUpdateTrustedState(
+                contract,
                 blockchainContractTrustedStateEnumType.SPAM,
-              )}
-            </DropdownItem>
-          </DropdownMenu>,
-          portalRoot,
-        )
+              )
+            }
+          >
+            {capitalizeFirstLetter(
+              blockchainContractTrustedStateEnumType.SPAM,
+            )}
+          </DropdownItem>
+        </DropdownMenu>,
+        portalRoot,
+      )
       : null;
   };
 
