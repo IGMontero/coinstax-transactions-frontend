@@ -15,7 +15,7 @@ import {
   Badge,
 } from 'reactstrap';
 import { getSelectedAssetFilters } from '../../../utils/utils';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchHistory,
   downloadTransactions,
@@ -30,6 +30,8 @@ const HistorialTable = ({ data, setData }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+  const currentUser = user;
 
   const isDashboardPage = location.pathname.includes('tokens');
 
@@ -96,7 +98,7 @@ const HistorialTable = ({ data, setData }) => {
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   const fetchData = async () => {
@@ -649,15 +651,17 @@ const HistorialTable = ({ data, setData }) => {
                 </label>
               </div>
               <div className={`d-flex justify-content-end`}>
-                <Button
-                  disabled={isInitialLoad}
-                  onClick={handleDownloadTransactions}
-                  className={`${isInitialLoad ? 'd-none' : 'btn btn-sm'} `}
-                  color={isInitialLoad ? 'muted' : 'primary'}
-                  size="sm"
-                >
-                  Download CSV
-                </Button>
+                {currentUser ? (
+                  <Button
+                    disabled={isInitialLoad}
+                    onClick={handleDownloadTransactions}
+                    className={`${isInitialLoad ? 'd-none' : 'btn btn-sm'} `}
+                    color={isInitialLoad ? 'muted' : 'primary'}
+                    size="sm"
+                  >
+                    Download CSV
+                  </Button>
+                ) : null}
               </div>
             </div>
           </Row>{' '}
