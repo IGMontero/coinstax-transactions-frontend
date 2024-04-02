@@ -34,17 +34,17 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   const [targetId, setTargetId] = useState('');
   const [timeoutId, setTimeoutId] = useState(null);
 
-  const currentUser = localStorage.getItem('currentUser');
-
   const blockchainContractAddress =
     transaction.txSummary.mainContractAddress ||
     (transaction.blockchainAction === blockchainActions.RECEIVE
       ? transaction.sender
       : transaction.recipient);
+
   const blockchainContractName =
     transaction.txSummary.mainContractAddressInfo?.name ||
     transaction.txSummary.marketplaceName ||
     blockchainContractAddress;
+
   const blockchainContractLogo =
     transaction.txSummary.mainContractAddressInfo?.logo ||
     transaction.txSummary.marketplaceLogo;
@@ -55,6 +55,11 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
       : transaction.blockchainAction === blockchainActions.SEND
         ? 'To'
         : 'Application';
+
+  const tooltipTitle =
+    blockchainContractName === blockchainContractAddress
+      ? blockchainContractAddress
+      : `${blockchainContractName}\n${blockchainContractAddress}`;
 
   useEffect(() => {
     return () => {
@@ -192,10 +197,7 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
         <p style={{ fontSize: '12px', marginBottom: '4px' }} className=" mb-1">
           {contractLabel}
         </p>
-        <div
-          title={`${blockchainContractAddress}`}
-          className="d-flex align-items-end "
-        >
+        <div title={`${tooltipTitle}`} className="d-flex align-items-end ">
           <h6
             id={`popoverMarketplace-${transaction.txHash}`}
             className="fw-semibold my-0 text-start d-flex align-items-center text-contractLabel"
