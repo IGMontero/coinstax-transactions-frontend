@@ -4,15 +4,21 @@ import {
   blockchainActions,
   copyToClipboard,
   formatIdTransaction,
-} from '../../../../utils/utils';
+} from '../../../../../../utils/utils';
 import { Link } from 'react-router-dom';
-import EditBlockChainContract from './modals/EditBlockChainContract';
+import EditBlockChainContract from '../../modals/EditBlockChainContract';
 import Swal from 'sweetalert2';
-import { editBlockChainContract } from '../../../../slices/blockchainContracts/thunk';
-import { useDispatch, useSelector } from 'react-redux';
-import { handleActionResult } from '../../../../utils/useHandleAction';
+import { editBlockChainContract } from '../../../../../../slices/blockchainContracts/thunk';
 
-const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
+import { useDispatch, useSelector } from 'react-redux';
+import { handleActionResult } from '../../../../../../utils/useHandleAction';
+
+const ContractInfoColumn = ({
+  transaction,
+  index,
+  onRefresh,
+  setTransactions,
+}) => {
   const dispatch = useDispatch();
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
@@ -259,4 +265,4 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   );
 };
 
-export default ThirdColumn;
+export default ContractInfoColumn;
