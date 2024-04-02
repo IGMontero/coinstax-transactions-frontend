@@ -33,9 +33,13 @@ const HistorialTable = ({ data, setData }) => {
   const { user } = useSelector((state) => state.auth);
   const currentUser = user;
 
+  const isPreview = data.some((transaction) => transaction.preview === true);
+
   const isDashboardPage = location.pathname.includes('tokens');
 
   const [errorData, setErrorData] = useState(null);
+
+  const [totalTransactions, setTotalTransactions] = useState(0);
 
   const [showTransactionFilterMenu, setShowTransactionFilterMenu] =
     useState(false);
@@ -130,7 +134,7 @@ const HistorialTable = ({ data, setData }) => {
       ).unwrap();
 
       clearTimeout(timerId);
-      const { parsed, unsupported, isProcessing } = response;
+      const { parsed, unsupported, isProcessing, transactionsCount } = response;
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -144,10 +148,11 @@ const HistorialTable = ({ data, setData }) => {
         setIsProcessing(false);
       }
 
-      const trasactions = parsed || [];
+      const transactions = parsed || [];
 
-      setData(trasactions);
-      setHasMoreData(trasactions.length > 0 || isProcessing);
+      setData(transactions);
+      setTotalTransactions(transactionsCount);
+      setHasMoreData(transactions.length > 0 || isProcessing);
     } catch (error) {
       setErrorData(error);
       console.log(error);
@@ -178,6 +183,7 @@ const HistorialTable = ({ data, setData }) => {
     selectedFilters,
     includeSpam,
     debouncedSearchTerm,
+    isPreview,
   ]);
 
   const groupTxsByDate = (transactions) => {
@@ -668,6 +674,26 @@ const HistorialTable = ({ data, setData }) => {
         </div>
       ) : null}
       {/* {renderSearchBar()} */}
+      {!loading && !isInitialLoad && !errorData && !isDashboardPage && (
+        <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
+          <Col>
+            <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
+          </Col>
+          {isPreview && (
+            <Col>
+              <div className="d-flex align-items-center justify-content-end">
+                <Spinner
+                  className="me-2"
+                  style={{ width: '1rem', height: '1rem' }}
+                />
+                <h6 className="mb-0 fw-semibold">
+                  Loading transactions information ...
+                </h6>
+              </div>
+            </Col>
+          )}
+        </Col>
+      )}
       {loading && isInitialLoad ? (
         <div
           className="d-flex justify-content-center align-items-center"
