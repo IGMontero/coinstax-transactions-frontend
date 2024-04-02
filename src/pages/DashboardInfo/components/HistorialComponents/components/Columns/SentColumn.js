@@ -1,16 +1,11 @@
 import React from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
-import assetsIcon from '../../../../../assets/images/svg/assets.svg';
+import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
-import { copyToClipboard } from '../../../../../utils/utils';
-import Swal from 'sweetalert2';
+import { copyToClipboard } from '../../../../../../utils/utils';
 
-const Negativeledgers = ({ ledger }) => {
+const SentColumn = ({ ledger }) => {
   const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-  const address = queryParams.get('address');
-
-  const randomNumber = Math.floor(Math.random() * 100) + 1;
 
   const negativeLedgers = ledger.txSummary.sent;
   const addressLink = negativeLedgers?.nftInfo?.contractAddress;
@@ -46,7 +41,7 @@ const Negativeledgers = ({ ledger }) => {
               <>
                 <div className="image-container me-1">
                   <img
-                    src={negativeLedgers?.logo || currency}
+                    src={negativeLedgers?.logo || negativeLedgers?.displayName}
                     alt={negativeLedgers?.displayName}
                     className="rounded"
                     width={35}
@@ -56,7 +51,7 @@ const Negativeledgers = ({ ledger }) => {
                       e.target.style.display = 'none';
                       const container = e.target.parentNode;
                       const textNode = document.createElement('div');
-                      textNode.textContent = currency;
+                      textNode.textContent = negativeLedgers?.displayName;
                       textNode.className = 'currency-placeholder';
                       container.appendChild(textNode);
                     }}
@@ -191,4 +186,4 @@ const Negativeledgers = ({ ledger }) => {
   );
 };
 
-export default Negativeledgers;
+export default SentColumn;

@@ -1,10 +1,10 @@
 import React from 'react';
-import assetsIcon from '../../../../../assets/images/svg/assets.svg';
+import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
-import { copyToClipboard } from '../../../../../utils/utils';
+import { copyToClipboard } from '../../../../../../utils/utils';
 import { useNavigate } from 'react-router-dom';
 
-const PositiveLedgers = ({ ledger, negativeLedgers }) => {
+const ReceivedColumn = ({ ledger, negativeLedgers }) => {
   const positiveLedgers = ledger.txSummary.received;
   const navigate = useNavigate();
 
@@ -56,7 +56,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   }`}
                 >
                   <img
-                    src={positiveLedgers?.logo || currency}
+                    src={positiveLedgers?.logo || positiveLedgers?.displayName}
                     alt={positiveLedgers?.displayName}
                     className="ps-0 rounded"
                     width={35}
@@ -66,7 +66,7 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                       e.target.style.display = 'none';
                       const container = e.target.parentNode;
                       const textNode = document.createElement('div');
-                      textNode.textContent = currency;
+                      textNode.textContent = positiveLedgers?.displayName;
                       textNode.className = 'currency-placeholder';
                       container.appendChild(textNode);
                     }}
@@ -199,4 +199,4 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   );
 };
 
-export default PositiveLedgers;
+export default ReceivedColumn;

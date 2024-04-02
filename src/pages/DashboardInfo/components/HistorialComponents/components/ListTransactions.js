@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Col, PopoverBody, Row, UncontrolledPopover } from 'reactstrap';
-import { copyToClipboard, formatNumber } from '../../../../utils/utils';
+import { copyToClipboard, formatNumber } from '../../../../../utils/utils';
 import { useNavigate } from 'react-router-dom';
 
 const ListTransactionss = ({ transactions }) => {
