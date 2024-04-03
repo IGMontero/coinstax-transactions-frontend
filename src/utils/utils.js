@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { fetchHistory } from '../slices/transactions/thunk';
 
 export const getActionMapping = (action) => {
   switch (action) {
@@ -135,6 +136,7 @@ export const parseValuesToLocale = (value, currency) => {
 
   const cryptoCurrencies = [
     'USDT',
+    'USD',
     'BTC',
     'ETH',
     'DAI',
@@ -253,5 +255,67 @@ export const parseValuesToLocale = (value, currency) => {
       }
       return parseFloat(value).toFixed(2) + ' ' + currency;
     }
+  }
+};
+
+export const updateTransactionsPreview = async ({
+  address,
+  debouncedSearchTerm,
+  selectedFilters,
+  includeSpam,
+  selectedAssets,
+  currentPage,
+  setData,
+  data,
+  dispatch,
+}) => {
+  if (!data.some((transaction) => transaction.preview)) {
+    return;
+  }
+
+  let allUpdatedTransactions = [];
+
+  // Fetch the data for each page.
+  for (let page = 0; page <= currentPage; page++) {
+    try {
+      const response = await dispatch(
+        fetchHistory({
+          address,
+          query: debouncedSearchTerm,
+          filters: {
+            blockchainAction: selectedFilters,
+            includeSpam: includeSpam,
+          },
+          assetsFilters: getSelectedAssetFilters(selectedAssets),
+          page: page,
+        }),
+      ).unwrap();
+
+      const { parsed } = response;
+      if (parsed && parsed.length > 0) {
+        allUpdatedTransactions = [...allUpdatedTransactions, ...parsed];
+      }
+    } catch (error) {
+      console.error('Error updating previews:', error);
+      break;
+    }
+  }
+
+  // Update the transactions with the new data.
+  if (allUpdatedTransactions.length > 0) {
+    setData((currentData) => {
+      const newData = currentData.map((transaction) => {
+        const updatedTransaction = allUpdatedTransactions.find(
+          (updated) =>
+            updated.txHash === transaction.txHash && !updated.preview,
+        );
+
+        // If the transaction is found in the new data and it's not a preview,
+        // replace the current transaction with the updated transaction.
+        return updatedTransaction ? updatedTransaction : transaction;
+      });
+
+      return newData;
+    });
   }
 };

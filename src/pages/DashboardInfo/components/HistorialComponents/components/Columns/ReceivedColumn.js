@@ -41,6 +41,8 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
     }
   };
 
+  const isPreview = ledger?.preview;
+
   return (
     <div
       className="d-flex align-items-center justify-content-start"
@@ -63,28 +65,34 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                     negativeLedgers ? '' : ''
                   }`}
                 >
-                  <img
-                    src={
-                      positiveLedgers?.logo ||
-                      positiveLedgers.currency ||
-                      positiveLedgers?.displayName
-                    }
-                    alt={positiveLedgers?.displayName}
-                    className="ps-0 rounded"
-                    width={35}
-                    height={35}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.style.display = 'none';
-                      const container = e.target.parentNode;
-                      const textNode = document.createElement('div');
-                      textNode.textContent =
+                  {isPreview && !positiveLedgers?.logo ? (
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  ) : (
+                    <img
+                      src={
+                        positiveLedgers?.logo ||
                         positiveLedgers.currency ||
-                        positiveLedgers?.displayName;
-                      textNode.className = 'currency-placeholder';
-                      container.appendChild(textNode);
-                    }}
-                  />{' '}
+                        positiveLedgers?.displayName
+                      }
+                      alt={positiveLedgers?.displayName}
+                      className="ps-0 rounded"
+                      width={35}
+                      height={35}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.style.display = 'none';
+                        const container = e.target.parentNode;
+                        const textNode = document.createElement('div');
+                        textNode.textContent =
+                          positiveLedgers.currency ||
+                          positiveLedgers?.displayName;
+                        textNode.className = 'currency-placeholder';
+                        container.appendChild(textNode);
+                      }}
+                    />
+                  )}
                 </div>
                 <div className="d-flex flex-column">
                   <span
@@ -144,7 +152,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                     <p className="text-start d-flex align-items-center my-0 text-muted">
                       {parseValuesToLocale(
                         positiveLedgers?.nativeAmount,
-                        positiveLedgers?.currency,
+                        'USD',
                       )}
                     </p>
                   ) : (

@@ -38,6 +38,8 @@ const SentColumn = ({ ledger }) => {
   const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
   const tokenId = negativeLedgers?.nftInfo?.tokenId || undefined;
 
+  const isPreview = ledger?.preview;
+
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
       <>
@@ -48,28 +50,34 @@ const SentColumn = ({ ledger }) => {
             ) : (
               <>
                 <div className="image-container me-1">
-                  <img
-                    src={
-                      negativeLedgers?.logo ||
-                      negativeLedgers.currency ||
-                      negativeLedgers?.displayName
-                    }
-                    alt={negativeLedgers?.displayName}
-                    className="rounded"
-                    width={35}
-                    height={35}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.style.display = 'none';
-                      const container = e.target.parentNode;
-                      const textNode = document.createElement('div');
-                      textNode.textContent =
+                  {isPreview && !negativeLedgers?.logo ? (
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  ) : (
+                    <img
+                      src={
+                        negativeLedgers?.logo ||
                         negativeLedgers.currency ||
-                        negativeLedgers?.displayName;
-                      textNode.className = 'currency-placeholder';
-                      container.appendChild(textNode);
-                    }}
-                  />{' '}
+                        negativeLedgers?.displayName
+                      }
+                      alt={negativeLedgers?.displayName}
+                      className="rounded"
+                      width={35}
+                      height={35}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.style.display = 'none';
+                        const container = e.target.parentNode;
+                        const textNode = document.createElement('div');
+                        textNode.textContent =
+                          negativeLedgers.currency ||
+                          negativeLedgers?.displayName;
+                        textNode.className = 'currency-placeholder';
+                        container.appendChild(textNode);
+                      }}
+                    />
+                  )}{' '}
                 </div>
 
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
@@ -137,7 +145,7 @@ const SentColumn = ({ ledger }) => {
                         <p className="text-start d-flex align-items-center my-0 text-muted">
                           {parseValuesToLocale(
                             negativeLedgers.nativeAmount,
-                            negativeLedgers.nativeCurrency,
+                            'USD',
                           )}
                         </p>
                       ) : (
