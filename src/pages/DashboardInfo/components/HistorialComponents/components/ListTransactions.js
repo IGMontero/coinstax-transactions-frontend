@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Col, PopoverBody, Row, UncontrolledPopover } from 'reactstrap';
-import { copyToClipboard, formatNumber } from '../../../../../utils/utils';
+import {
+  copyToClipboard,
+  formatNumber,
+  parseValuesToLocale,
+} from '../../../../../utils/utils';
 import { useNavigate } from 'react-router-dom';
 
 const ListTransactionss = ({ transactions }) => {
@@ -37,6 +41,7 @@ const ListTransactionss = ({ transactions }) => {
     const isNft = ledger.isNft;
     const prefix = isReceived ? 'received' : 'sent';
     const targetId = `amount-list-${prefix}-${index}-${transactions.txHash}`;
+
     return (
       <div
         key={index}
@@ -91,7 +96,10 @@ const ListTransactionss = ({ transactions }) => {
                   id={targetId}
                   onClick={(e) => handleCopyValue(e, ledger.amount)}
                 >
-                  {formatNumber(ledger.amount)}{' '}
+                  {parseValuesToLocale(
+                    ledger.amount,
+                    isNft ? '' : ledger.currency,
+                  )}
                 </span>
                 {ledger.amount && (
                   <UncontrolledPopover
@@ -112,7 +120,7 @@ const ListTransactionss = ({ transactions }) => {
                 )}
               </>
             )}
-            {!ledger.isNft && ledger.currency}
+            {/* {!ledger.isNft && ledger.currency} */}
           </h6>
           {!ledger.isNft && (
             <p className="text-muted mb-0 d-flex align-items-center">

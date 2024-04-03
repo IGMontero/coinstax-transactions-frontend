@@ -142,10 +142,10 @@ const RenderTransactions = ({
                 </Col>
                 <Col
                   lg={2}
-                  md={6}
-                  sm={6}
-                  xs={6}
-                  className="d-flex justify-content-end  align-items-center  mt-lg-0 mt-3"
+                  md={3}
+                  sm={3}
+                  xs={3}
+                  className="d-flex justify-content-end  align-items-center  mt-lg-0 mb-3"
                 >
                   {transaction.blockchainAction === blockchainActions.BURN ||
                   transactions.blockchainAction ===
