@@ -133,19 +133,92 @@ export const parseValuesToLocale = (value, currency) => {
     return '';
   }
 
-  const cryptoCurrencies = ['USDT', 'BTC', 'ETH', 'DAI'];
+  const cryptoCurrencies = [
+    'USDT',
+    'BTC',
+    'ETH',
+    'DAI',
+    'FRG',
+    'USDC',
+    'WBTC',
+    'SUSHI',
+    'YFI',
+    'UNI',
+    'LINK',
+    'AAVE',
+    'MKR',
+    'COMP',
+    'SNX',
+    'CRV',
+    'REN',
+    'BAL',
+    'KNC',
+    'BNT',
+    'LRC',
+    'ENJ',
+    'MANA',
+    'GRT',
+    'STORJ',
+    'CVC',
+    'BAND',
+    'RLC',
+    'ZRX',
+    'REP',
+    'BAT',
+    'ANT',
+    'MLN',
+    'GNO',
+    'AMP',
+    '1INCH',
+    'UMA',
+    'NU',
+    'OCEAN',
+    'BOND',
+    'TRB',
+    'LPT',
+    'LRC',
+    'FARM',
+    'FRAX',
+    'HEGIC',
+    'PICKLE',
+    'COVER',
+    'CREAM',
+    'KP3R',
+    'PICKLE',
+    'CORE',
+    'BOND',
+    'SFI',
+    'YLA',
+    'YAX',
+    'YFL',
+    'YAM',
+    'YFII',
+    'YFV',
+  ];
 
   const isValueHuge = value > 1e20;
-  // Consider values less than 0.01 as small values
   const isValueSmall = value > 0 && value < 0.01;
+
+  const findSignificantDigits = (val) => {
+    // Early return if value is 0
+    if (val === 0) return 0;
+    // Match the first significant digit and the first 3 significant digits
+    const match = val.toString().match(/(?:\.(\d*?)0*?)?(?:[1-9](\d{0,2}))/);
+    // Return the number of significant digits
+    return match
+      ? (match[1] ? match[1].length : 0) + (match[2] ? match[2].length : 0)
+      : 0;
+  };
 
   if (cryptoCurrencies.includes(currency)) {
     let formattedValue;
     if (isValueHuge) {
       formattedValue = Number(value).toExponential(2);
     } else if (isValueSmall) {
-      // Withouth toFixed, the value is displayed in scientific notation
-      formattedValue = Number(value).toFixed(4);
+      // Use dynamic precision for small values based on the first significant digit
+      const significantDigits = findSignificantDigits(value);
+      // Add 3 more digits to formattedValue to the precision
+      formattedValue = value.toFixed(significantDigits + 3);
     } else {
       formattedValue = parseFloat(value).toFixed(2);
     }
@@ -157,7 +230,9 @@ export const parseValuesToLocale = (value, currency) => {
             style: 'currency',
             currency: currency,
             minimumFractionDigits: 2,
-            maximumFractionDigits: isValueSmall ? 8 : 4,
+            maximumFractionDigits: isValueSmall
+              ? findSignificantDigits(value) + 3
+              : 4,
           }
         : {
             style: 'currency',
@@ -173,6 +248,7 @@ export const parseValuesToLocale = (value, currency) => {
     } catch (error) {
       console.error('Error', error);
       if (isValueSmall) {
+        // For errors on small values, fallback to exponential notation
         return Number(value).toExponential(2) + ' ' + currency;
       }
       return parseFloat(value).toFixed(2) + ' ' + currency;
