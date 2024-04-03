@@ -1,7 +1,10 @@
 import React from 'react';
 import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
-import { copyToClipboard } from '../../../../../../utils/utils';
+import {
+  copyToClipboard,
+  parseValuesToLocale,
+} from '../../../../../../utils/utils';
 import { useNavigate } from 'react-router-dom';
 
 const ReceivedColumn = ({ ledger, negativeLedgers }) => {
@@ -17,6 +20,8 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
 
   const [isCopied, setIsCopied] = React.useState(false);
+
+  const value = parseValuesToLocale(positiveLedgers?.value, currency);
 
   const isNft = positiveLedgers?.isNft;
 
@@ -56,7 +61,11 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   }`}
                 >
                   <img
-                    src={positiveLedgers?.logo || positiveLedgers?.displayName}
+                    src={
+                      positiveLedgers?.logo ||
+                      positiveLedgers.currency ||
+                      positiveLedgers?.displayName
+                    }
                     alt={positiveLedgers?.displayName}
                     className="ps-0 rounded"
                     width={35}
@@ -66,7 +75,9 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                       e.target.style.display = 'none';
                       const container = e.target.parentNode;
                       const textNode = document.createElement('div');
-                      textNode.textContent = positiveLedgers?.displayName;
+                      textNode.textContent =
+                        positiveLedgers.currency ||
+                        positiveLedgers?.displayName;
                       textNode.className = 'currency-placeholder';
                       container.appendChild(textNode);
                     }}
@@ -93,7 +104,9 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                       id={`amount-${ledger.txHash}`}
                       className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
                     >
-                      {positiveLedgers?.displayName}
+                      {!isNft
+                        ? `+${positiveLedgers?.value} ${currency}`
+                        : `${positiveLedgers?.displayName}`}
                     </span>
                     {positiveLedgers?.value &&
                     !isNft &&
@@ -126,7 +139,8 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   !positiveLedgers.hideNativeAmount &&
                   positiveLedgers.prettyNativeAmount ? (
                     <p className="text-start d-flex align-items-center my-0 text-muted">
-                      {positiveLedgers.prettyNativeAmount}
+                      {positiveLedgers.nativeAmount}{' '}
+                      {positiveLedgers.nativeCurrency}
                     </p>
                   ) : (
                     <>
@@ -188,7 +202,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   {positiveLedgers.displayName}
                 </span>
                 <p className="text-start my-0 text-muted">
-                  {positiveLedgers.prettyNativeAmount || ''}
+                  {positiveLedgers.nativeAmount || ''}
                 </p>
               </div>
             </div>

@@ -2,7 +2,10 @@ import React from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
-import { copyToClipboard } from '../../../../../../utils/utils';
+import {
+  copyToClipboard,
+  parseValuesToLocale,
+} from '../../../../../../utils/utils';
 
 const SentColumn = ({ ledger }) => {
   const navigate = useNavigate();
@@ -25,6 +28,11 @@ const SentColumn = ({ ledger }) => {
     }, 2000);
   };
 
+  const value = parseValuesToLocale(
+    negativeLedgers?.value,
+    negativeLedgers?.currency,
+  );
+
   const isNft = negativeLedgers?.isNft;
 
   const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
@@ -41,7 +49,11 @@ const SentColumn = ({ ledger }) => {
               <>
                 <div className="image-container me-1">
                   <img
-                    src={negativeLedgers?.logo || negativeLedgers?.displayName}
+                    src={
+                      negativeLedgers?.logo ||
+                      negativeLedgers.currency ||
+                      negativeLedgers?.displayName
+                    }
                     alt={negativeLedgers?.displayName}
                     className="rounded"
                     width={35}
@@ -51,7 +63,9 @@ const SentColumn = ({ ledger }) => {
                       e.target.style.display = 'none';
                       const container = e.target.parentNode;
                       const textNode = document.createElement('div');
-                      textNode.textContent = negativeLedgers?.displayName;
+                      textNode.textContent =
+                        negativeLedgers.currency ||
+                        negativeLedgers?.displayName;
                       textNode.className = 'currency-placeholder';
                       container.appendChild(textNode);
                     }}
@@ -68,11 +82,11 @@ const SentColumn = ({ ledger }) => {
                         id={`amount-left-${ledger?.txHash}`}
                         className="text-displayName"
                       >
-                        {negativeLedgers?.displayName}
+                        {negativeLedgers?.value} {currency}
                       </span>
                     ) : hasAssetsCount ? (
                       <span className="text-displayName">
-                        {negativeLedgers?.displayName}
+                        {negativeLedgers?.value} {currency}
                       </span>
                     ) : (
                       <span
@@ -86,7 +100,7 @@ const SentColumn = ({ ledger }) => {
                         }}
                         className="text-displayName text-hover-underline text-hover-primary"
                       >
-                        {negativeLedgers?.displayName}
+                        {negativeLedgers?.value} {currency}
                       </span>
                     )}
 
@@ -119,9 +133,10 @@ const SentColumn = ({ ledger }) => {
                   <p className="text-start my-0">
                     {negativeLedgers &&
                       negativeLedgers.hideNativeAmount !== true &&
-                      (negativeLedgers.prettyNativeAmount ? (
+                      (negativeLedgers.nativeAmount ? (
                         <p className="text-start d-flex align-items-center my-0 text-muted">
-                          {negativeLedgers.prettyNativeAmount}
+                          {negativeLedgers.nativeAmount}{' '}
+                          {negativeLedgers.nativeCurrency || ''}
                         </p>
                       ) : (
                         <>
@@ -176,7 +191,7 @@ const SentColumn = ({ ledger }) => {
             <div className="ms-2 ">
               <span className="text-dark">{negativeLedgers.displayName}</span>{' '}
               <p className="text-start my-0 text-muted">
-                {negativeLedgers.prettyNativeAmount || ''}
+                {negativeLedgers.nativeAmount || ''}
               </p>
             </div>
           </>

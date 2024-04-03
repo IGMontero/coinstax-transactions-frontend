@@ -33,6 +33,9 @@ const HistorialTable = ({ data, setData }) => {
   const { user } = useSelector((state) => state.auth);
   const currentUser = user;
 
+  // const state = useSelector((state) => state);
+  // console.log(state);
+
   const isPreview = data.some((transaction) => transaction.preview === true);
 
   const isDashboardPage = location.pathname.includes('tokens');
@@ -171,6 +174,8 @@ const HistorialTable = ({ data, setData }) => {
     setHasAppliedFilters(false);
   };
 
+  // Verify
+
   useEffect(() => {
     fetchData();
     setHasMoreData(true);
@@ -183,7 +188,6 @@ const HistorialTable = ({ data, setData }) => {
     selectedFilters,
     includeSpam,
     debouncedSearchTerm,
-    isPreview,
   ]);
 
   const groupTxsByDate = (transactions) => {
