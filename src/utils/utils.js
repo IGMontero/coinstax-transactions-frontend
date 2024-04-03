@@ -126,22 +126,56 @@ export const formatDate = (date) => {
 };
 
 export const parseValuesToLocale = (value, currency) => {
-  const numericValue = typeof value === 'number' ? value : Number(value);
+  // Get the location from the browser
+  const localUbication = navigator.language || 'en-US';
 
-  if (isNaN(numericValue)) {
-    console.error('Error to format number');
-    return value;
+  if (value === undefined || value === null) {
+    return '';
   }
 
-  try {
-    return numericValue.toLocaleString(undefined, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-      style: 'currency',
-      currency: currency,
-    });
-  } catch (error) {
-    console.error('Error to format number', error);
-    return `${numericValue} ${currency}`;
+  const cryptoCurrencies = ['USDT', 'BTC', 'ETH', 'DAI'];
+
+  const isValueHuge = value > 1e20;
+  // Consider values less than 0.01 as small values
+  const isValueSmall = value > 0 && value < 0.01;
+
+  if (cryptoCurrencies.includes(currency)) {
+    let formattedValue;
+    if (isValueHuge) {
+      formattedValue = Number(value).toExponential(2);
+    } else if (isValueSmall) {
+      // Withouth toFixed, the value is displayed in scientific notation
+      formattedValue = Number(value).toFixed(4);
+    } else {
+      formattedValue = parseFloat(value).toFixed(2);
+    }
+    return formattedValue + ' ' + currency;
+  } else {
+    try {
+      const options = isValueSmall
+        ? {
+            style: 'currency',
+            currency: currency,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: isValueSmall ? 8 : 4,
+          }
+        : {
+            style: 'currency',
+            currency: currency,
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 4,
+          };
+
+      if (isValueHuge) {
+        return Number(value).toExponential(2) + ' ' + currency;
+      }
+      return parseFloat(value).toLocaleString(localUbication, options);
+    } catch (error) {
+      console.error('Error', error);
+      if (isValueSmall) {
+        return Number(value).toExponential(2) + ' ' + currency;
+      }
+      return parseFloat(value).toFixed(2) + ' ' + currency;
+    }
   }
 };
