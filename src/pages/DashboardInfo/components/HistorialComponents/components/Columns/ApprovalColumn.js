@@ -1,11 +1,19 @@
 import React from 'react';
-import { copyToClipboard } from '../../../../../../utils/utils';
+import {
+  copyToClipboard,
+  parseValuesToLocale,
+} from '../../../../../../utils/utils';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 
 const ApprovalColumn = ({ transaction }) => {
-  const isApproval = transaction?.txSummary?.approval;
+  const transactionApproval = transaction?.txSummary?.approval;
 
   const [isCopied, setIsCopied] = React.useState(false);
+
+  const value = parseValuesToLocale(
+    transactionApproval?.value,
+    transactionApproval?.currency,
+  );
 
   const handleCopyValue = (e, value) => {
     if (value) {
@@ -29,8 +37,12 @@ const ApprovalColumn = ({ transaction }) => {
         <>
           <div className={`image-container me-2`}>
             <img
-              src={isApproval?.logo || isApproval.displayName}
-              alt={isApproval?.displayName}
+              src={
+                transactionApproval?.logo ||
+                transactionApproval.currency ||
+                transactionApproval.displayName
+              }
+              alt={transactionApproval?.displayName}
               className="ps-0 rounded"
               width={35}
               height={35}
@@ -39,7 +51,9 @@ const ApprovalColumn = ({ transaction }) => {
                 e.target.style.display = 'none';
                 const container = e.target.parentNode;
                 const textNode = document.createElement('div');
-                textNode.textContent = isApproval.displayName;
+                textNode.textContent =
+                  transactionApproval.currency ||
+                  transactionApproval.displayName;
                 textNode.className = 'currency-placeholder';
                 container.appendChild(textNode);
               }}
@@ -49,14 +63,19 @@ const ApprovalColumn = ({ transaction }) => {
             <span className={`d-flex text-white'`}>
               <span
                 onClick={(e) => {
-                  handleCopyValue(e, isApproval?.value);
+                  handleCopyValue(e, transactionApproval?.value);
                 }}
                 id={`amount-${transaction.txHash}`}
                 className={`me-1 text-displayName `}
               >
-                {isApproval?.displayName}
+                <>
+                  {transactionApproval?.name}
+                  {transactionApproval?.name !==
+                    transactionApproval?.currency &&
+                    ` ${transactionApproval?.currency}`}
+                </>
               </span>
-              {isApproval?.value ? (
+              {transactionApproval?.value ? (
                 <UncontrolledPopover
                   onClick={(e) => e.stopPropagation()}
                   placement="bottom"
@@ -74,57 +93,15 @@ const ApprovalColumn = ({ transaction }) => {
                         fontSize: '0.70rem',
                       }}
                     >
-                      {isCopied ? 'Copied' : isApproval?.value}
+                      {isCopied ? 'Copied' : transactionApproval?.value}
                     </span>
                   </PopoverBody>
                 </UncontrolledPopover>
               ) : null}
             </span>
-
-            {isApproval &&
-            !isApproval.hideNativeAmount &&
-            isApproval.prettyNativeAmount ? (
-              <p className="text-start d-flex align-items-center my-0 text-muted">
-                {isApproval.prettyNativeAmount}
-              </p>
-            ) : (
-              <>
-                {transaction &&
-                transaction.txHash &&
-                !isApproval.hideNativeAmount
-                  ? // <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
-                    //   N/A
-                    //   <i
-                    //     id={`nativeAmount-${ledger.txHash}`}
-                    //     className="ri-information-line ms-1 fs-6 text-muted"
-                    //   ></i>
-                    //   <UncontrolledPopover
-                    //     onClick={(e) => e.stopPropagation()}
-                    //     placement="bottom"
-                    //     target={`nativeAmount-${ledger.txHash}`}
-                    //     trigger="hover"
-                    //   >
-                    //     <PopoverBody
-                    //       style={{
-                    //         width: 'auto',
-                    //       }}
-                    //       className="w-auto p-2 text-center"
-                    //     >
-                    //       <span
-                    //         style={{
-                    //           fontSize: '0.70rem',
-                    //         }}
-                    //       >
-                    //         The price is not available at the time of the
-                    //         transaction
-                    //       </span>
-                    //     </PopoverBody>
-                    //   </UncontrolledPopover>
-                    // </p>
-                    null
-                  : null}
-              </>
-            )}
+            <p className="text-start d-flex align-items-center my-0 text-muted">
+              {transactionApproval.value} {transactionApproval.currency}
+            </p>
           </div>
         </>
       </h6>

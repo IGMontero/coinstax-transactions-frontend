@@ -124,3 +124,24 @@ export async function copyToClipboard(textToCopy) {
 export const formatDate = (date) => {
   return moment(date).format('MM/DD/YYYY');
 };
+
+export const parseValuesToLocale = (value, currency) => {
+  const numericValue = typeof value === 'number' ? value : Number(value);
+
+  if (isNaN(numericValue)) {
+    console.error('Error to format number');
+    return value;
+  }
+
+  try {
+    return numericValue.toLocaleString(undefined, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+      style: 'currency',
+      currency: currency,
+    });
+  } catch (error) {
+    console.error('Error to format number', error);
+    return `${numericValue} ${currency}`;
+  }
+};
