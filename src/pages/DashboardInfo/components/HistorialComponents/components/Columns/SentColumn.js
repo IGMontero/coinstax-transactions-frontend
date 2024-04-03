@@ -28,7 +28,7 @@ const SentColumn = ({ ledger }) => {
     }, 2000);
   };
 
-  const value = parseValuesToLocale(
+  const parsedValue = parseValuesToLocale(
     negativeLedgers?.value,
     negativeLedgers?.currency,
   );
@@ -82,11 +82,11 @@ const SentColumn = ({ ledger }) => {
                         id={`amount-left-${ledger?.txHash}`}
                         className="text-displayName"
                       >
-                        {negativeLedgers?.value} {currency}
+                        {isNft ? negativeLedgers?.displayName : parsedValue}
                       </span>
                     ) : hasAssetsCount ? (
                       <span className="text-displayName">
-                        {negativeLedgers?.value} {currency}
+                        {isNft ? negativeLedgers?.displayName : parsedValue}
                       </span>
                     ) : (
                       <span
@@ -100,7 +100,7 @@ const SentColumn = ({ ledger }) => {
                         }}
                         className="text-displayName text-hover-underline text-hover-primary"
                       >
-                        {negativeLedgers?.value} {currency}
+                        {isNft ? negativeLedgers?.displayName : parsedValue}
                       </span>
                     )}
 
@@ -135,8 +135,10 @@ const SentColumn = ({ ledger }) => {
                       negativeLedgers.hideNativeAmount !== true &&
                       (negativeLedgers.nativeAmount ? (
                         <p className="text-start d-flex align-items-center my-0 text-muted">
-                          {negativeLedgers.nativeAmount}{' '}
-                          {negativeLedgers.nativeCurrency || ''}
+                          {parseValuesToLocale(
+                            negativeLedgers.nativeAmount,
+                            negativeLedgers.nativeCurrency,
+                          )}
                         </p>
                       ) : (
                         <>
@@ -191,7 +193,9 @@ const SentColumn = ({ ledger }) => {
             <div className="ms-2 ">
               <span className="text-dark">{negativeLedgers.displayName}</span>{' '}
               <p className="text-start my-0 text-muted">
-                {negativeLedgers.nativeAmount || ''}
+                {negativeLedgers?.nativeAmount === 0
+                  ? ''
+                  : parseValuesToLocale(negativeLedgers?.nativeAmount, '')}
               </p>
             </div>
           </>

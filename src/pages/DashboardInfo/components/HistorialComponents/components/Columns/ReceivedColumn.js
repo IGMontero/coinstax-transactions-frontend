@@ -21,7 +21,10 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
 
   const [isCopied, setIsCopied] = React.useState(false);
 
-  const value = parseValuesToLocale(positiveLedgers?.value, currency);
+  const parseValue = parseValuesToLocale(
+    positiveLedgers?.value,
+    positiveLedgers?.currency,
+  );
 
   const isNft = positiveLedgers?.isNft;
 
@@ -105,7 +108,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                       className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
                     >
                       {!isNft
-                        ? `+${positiveLedgers?.value} ${currency}`
+                        ? `+${parseValue}`
                         : `${positiveLedgers?.displayName}`}
                     </span>
                     {positiveLedgers?.value &&
@@ -137,10 +140,12 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
 
                   {positiveLedgers &&
                   !positiveLedgers.hideNativeAmount &&
-                  positiveLedgers.prettyNativeAmount ? (
+                  positiveLedgers.nativeAmount ? (
                     <p className="text-start d-flex align-items-center my-0 text-muted">
-                      {positiveLedgers.nativeAmount}{' '}
-                      {positiveLedgers.nativeCurrency}
+                      {parseValuesToLocale(
+                        positiveLedgers?.nativeAmount,
+                        positiveLedgers?.currency,
+                      )}
                     </p>
                   ) : (
                     <>
@@ -202,7 +207,9 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   {positiveLedgers.displayName}
                 </span>
                 <p className="text-start my-0 text-muted">
-                  {positiveLedgers.nativeAmount || ''}
+                  {positiveLedgers?.nativeAmount === 0
+                    ? ''
+                    : parseValuesToLocale(positiveLedgers?.nativeAmount, '')}
                 </p>
               </div>
             </div>
