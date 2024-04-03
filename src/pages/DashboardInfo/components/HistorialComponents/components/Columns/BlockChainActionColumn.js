@@ -19,7 +19,7 @@ const BlockChainActionColumn = ({ transaction }) => {
     <>
       <Col
         className={`d-flex ${
-          transaction.successful && !transaction.successful ? 'col-12' : 'col-8'
+          transaction.successful && !transaction.successful ? 'col-12' : 'col-7'
         }`}
       >
         {transaction.blockchainAction && (
@@ -61,7 +61,7 @@ const BlockChainActionColumn = ({ transaction }) => {
           <p className="text-start my-0">{formatTime(transaction.date)}</p>
         </div>
       </Col>
-      <Col className="ms-n3">
+      <Col className=" w-100">
         {transaction.successful ? (
           transaction.txSummary.value && (
             <div className="d-flex text-start justify-content-start ms-n2">

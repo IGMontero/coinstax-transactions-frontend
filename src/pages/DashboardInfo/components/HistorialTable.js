@@ -14,7 +14,10 @@ import {
   DropdownItem,
   Badge,
 } from 'reactstrap';
-import { getSelectedAssetFilters } from '../../../utils/utils';
+import {
+  getSelectedAssetFilters,
+  updateTransactionsPreview,
+} from '../../../utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchHistory,
@@ -174,7 +177,25 @@ const HistorialTable = ({ data, setData }) => {
     setHasAppliedFilters(false);
   };
 
-  // Verify
+  useEffect(() => {
+    let interval;
+    if (isPreview) {
+      interval = setInterval(() => {
+        updateTransactionsPreview({
+          address,
+          debouncedSearchTerm,
+          selectedFilters,
+          includeSpam,
+          selectedAssets,
+          currentPage,
+          setData,
+          data,
+          dispatch,
+        });
+      }, 4000);
+    }
+    return () => clearInterval(interval);
+  }, [isPreview, currentPage]);
 
   useEffect(() => {
     fetchData();
