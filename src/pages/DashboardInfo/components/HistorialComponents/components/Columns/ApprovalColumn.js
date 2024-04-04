@@ -67,9 +67,9 @@ const ApprovalColumn = ({ transaction }) => {
               >
                 <>
                   {transactionApproval?.name}
-                  {transactionApproval?.name !==
+                  {/* {transactionApproval?.name !==
                     transactionApproval?.currency &&
-                    ` ${transactionApproval?.currency}`}
+                    ` ${transactionApproval?.currency}`} */}
                 </>
               </span>
               {transactionApproval?.value ? (

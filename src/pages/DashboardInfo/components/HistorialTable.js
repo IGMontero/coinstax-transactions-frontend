@@ -36,11 +36,27 @@ const HistorialTable = ({ data, setData }) => {
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const currentUser = user;
+  const [hasPreview, setHasPreview] = useState(false);
 
   // const state = useSelector((state) => state);
   // console.log(state);
 
-  const isPreview = data.some((transaction) => transaction.preview === true);
+  useEffect(() => {
+    const hasPreview = data.some((transaction) => transaction.preview === true);
+
+    console.log("Preview txs:", data.filter((tx) => tx.preview === true).length) // 0
+
+    if (hasPreview) {
+      setHasPreview(true);
+    } else {
+      setHasPreview(false);
+    }
+
+    return () => {
+      setHasPreview(false);
+    };
+  }, [data]);
+
 
   const isDashboardPage = location.pathname.includes('tokens');
 
@@ -181,7 +197,7 @@ const HistorialTable = ({ data, setData }) => {
 
   useEffect(() => {
     let interval;
-    if (isPreview) {
+    if (hasPreview) {
       interval = setInterval(() => {
         updateTransactionsPreview({
           address,
@@ -195,10 +211,10 @@ const HistorialTable = ({ data, setData }) => {
           dispatch,
           pagesChecked: pagesCheckedRef.current,
         });
-      }, 4000);
+      }, 5000);
     }
     return () => clearInterval(interval);
-  }, [isPreview, data]);
+  }, [hasPreview, data]);
 
   useEffect(() => {
     fetchData();
@@ -493,7 +509,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -511,9 +527,8 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -707,7 +722,7 @@ const HistorialTable = ({ data, setData }) => {
           <Col>
             <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
           </Col>
-          {isPreview && (
+          {hasPreview && (
             <Col>
               <div className="d-flex align-items-center justify-content-end">
                 <Spinner

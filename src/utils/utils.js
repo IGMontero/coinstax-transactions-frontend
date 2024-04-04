@@ -149,22 +149,49 @@ export const parseValuesToLocale = (value, currency) => {
   };
 
   try {
-    const options = {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: isValueSmall
-        ? findSignificantDigits(value) + 2
-        : 3,
-    };
+    let options;
+
+    if (currency) {
+      options = {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: isValueSmall
+          ? findSignificantDigits(value) + 2
+          : 3,
+      };
+    } else {
+      options = {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: isValueSmall
+          ? findSignificantDigits(value) + 2
+          : 3,
+      };
+    }
+
+
 
     if (isValueHuge) {
-      return Number(value).toExponential(2) + ' ' + currency;
+      // return Number(value).toExponential(2) + ' ' + currency;
+
+      // Do above but using tolocalestring
+      return parseFloat(value).toLocaleString(localUbication, {
+        ...options,
+        notation: 'scientific',
+      });
+
     }
 
     if (isValueSmall) {
       const significantDigits = findSignificantDigits(Math.abs(value));
-      return parseFloat(value).toFixed(significantDigits + 1) + ' ' + currency;
+      // return parseFloat(value).toFixed(significantDigits + 1) + ' ' + currency;
+
+      // Above but tolocale string
+      return parseFloat(value).toLocaleString(localUbication, {
+        ...options,
+        // maximumFractionDigits: significantDigits + 1,
+      });
+
     }
 
     return parseFloat(value).toLocaleString(localUbication, options);
@@ -234,7 +261,10 @@ export const updateTransactionsPreview = async ({
         return updatePage(page + 1);
       }
       // Stop if the currentPage has been reached and all transactions are not in preview mode
-      return;
+      // Update one tx to trigger the re-render
+      const newData = [...parsed];
+
+      return setData((currentData) => newData);
     }
 
     // Update the data
