@@ -3,6 +3,7 @@ import { Col, Row, PopoverBody, UncontrolledPopover } from 'reactstrap';
 import {
   formatIdTransaction,
   blockchainActions,
+  parseValuesToLocale,
 } from '../../../../../utils/utils';
 import { Link } from 'react-router-dom';
 
@@ -61,17 +62,20 @@ const InformationLedger = ({
 
   const renderFee = (fee) => {
     const prettyAmount = fee?.prettyAmount;
+    const amount = parseValuesToLocale(fee?.amount, '');
+    const amountUsd = parseValuesToLocale(
+      fee?.nativeAmount,
+      fee?.nativeCurrency,
+    );
+
     return (
       <div className=" p-2 d-flex flex-column">
         <strong className="">Fee:</strong>
         <span>
           {transaction.blockchainAction === blockchainActions.RECEIVE
             ? 'N/A'
-            : transaction.txSummary &&
-                fee &&
-                prettyAmount !== '0' &&
-                prettyAmount !== null
-              ? `${prettyAmount} (${fee.prettyNativeAmount})`
+            : transaction.txSummary && fee && amount !== '0' && amount !== null
+              ? `${amount} ${fee.currency} (${amountUsd})`
               : 'N/A'}
         </span>
       </div>
