@@ -28,10 +28,7 @@ const SentColumn = ({ ledger }) => {
     }, 2000);
   };
 
-  const parsedValue = parseValuesToLocale(
-    negativeLedgers?.value,
-    negativeLedgers?.currency,
-  );
+  const parsedValue = parseValuesToLocale(negativeLedgers?.value, '');
 
   const isNft = negativeLedgers?.isNft;
 
@@ -90,11 +87,15 @@ const SentColumn = ({ ledger }) => {
                         id={`amount-left-${ledger?.txHash}`}
                         className="text-displayName"
                       >
-                        {isNft ? negativeLedgers?.displayName : parsedValue}
+                        {isNft
+                          ? negativeLedgers?.displayName
+                          : `${parsedValue} ${currency}`}
                       </span>
                     ) : hasAssetsCount ? (
                       <span className="text-displayName">
-                        {isNft ? negativeLedgers?.displayName : parsedValue}
+                        {isNft
+                          ? negativeLedgers?.displayName
+                          : `${parsedValue} ${currency}`}
                       </span>
                     ) : (
                       <span
@@ -108,7 +109,9 @@ const SentColumn = ({ ledger }) => {
                         }}
                         className="text-displayName text-hover-underline text-hover-primary"
                       >
-                        {isNft ? negativeLedgers?.displayName : parsedValue}
+                        {isNft
+                          ? negativeLedgers?.displayName
+                          : `${parsedValue} ${currency}`}
                       </span>
                     )}
 
