@@ -14,8 +14,11 @@ import {
   DropdownItem,
   Badge,
 } from 'reactstrap';
-import { getSelectedAssetFilters } from '../../../utils/utils';
-import { useDispatch } from 'react-redux';
+import {
+  getSelectedAssetFilters,
+  updateTransactionsPreview,
+} from '../../../utils/utils';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchHistory,
   downloadTransactions,
@@ -27,13 +30,39 @@ import { useLocation, useParams } from 'react-router-dom';
 
 const HistorialTable = ({ data, setData }) => {
   const inputRef = useRef(null);
+  const pagesCheckedRef = useRef(new Set());
   const { address } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+  const currentUser = user;
+  const [hasPreview, setHasPreview] = useState(false);
+
+  // const state = useSelector((state) => state);
+  // console.log(state);
+
+  useEffect(() => {
+    const hasPreview = data.some((transaction) => transaction.preview === true);
+
+    console.log("Preview txs:", data.filter((tx) => tx.preview === true).length) // 0
+
+    if (hasPreview) {
+      setHasPreview(true);
+    } else {
+      setHasPreview(false);
+    }
+
+    return () => {
+      setHasPreview(false);
+    };
+  }, [data]);
+
 
   const isDashboardPage = location.pathname.includes('tokens');
 
   const [errorData, setErrorData] = useState(null);
+
+  const [totalTransactions, setTotalTransactions] = useState(0);
 
   const [showTransactionFilterMenu, setShowTransactionFilterMenu] =
     useState(false);
@@ -96,7 +125,7 @@ const HistorialTable = ({ data, setData }) => {
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString('en-US', options);
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   const fetchData = async () => {
@@ -128,7 +157,7 @@ const HistorialTable = ({ data, setData }) => {
       ).unwrap();
 
       clearTimeout(timerId);
-      const { parsed, unsupported, isProcessing } = response;
+      const { parsed, unsupported, isProcessing, transactionsCount } = response;
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -142,10 +171,12 @@ const HistorialTable = ({ data, setData }) => {
         setIsProcessing(false);
       }
 
-      const trasactions = parsed || [];
+      const transactions = parsed || [];
+      // If some transaction is preview ...
 
-      setData(trasactions);
-      setHasMoreData(trasactions.length > 0 || isProcessing);
+      setData(transactions);
+      setTotalTransactions(transactionsCount);
+      setHasMoreData(transactions.length > 0 || isProcessing);
     } catch (error) {
       setErrorData(error);
       console.log(error);
@@ -163,6 +194,27 @@ const HistorialTable = ({ data, setData }) => {
     setSearchTerm('');
     setHasAppliedFilters(false);
   };
+
+  useEffect(() => {
+    let interval;
+    if (hasPreview) {
+      interval = setInterval(() => {
+        updateTransactionsPreview({
+          address,
+          debouncedSearchTerm,
+          selectedFilters,
+          includeSpam,
+          selectedAssets,
+          currentPage,
+          setData,
+          data,
+          dispatch,
+          pagesChecked: pagesCheckedRef.current,
+        });
+      }, 5000);
+    }
+    return () => clearInterval(interval);
+  }, [hasPreview, data]);
 
   useEffect(() => {
     fetchData();
@@ -457,7 +509,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -475,9 +527,8 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -649,21 +700,43 @@ const HistorialTable = ({ data, setData }) => {
                 </label>
               </div>
               <div className={`d-flex justify-content-end`}>
-                <Button
-                  disabled={isInitialLoad}
-                  onClick={handleDownloadTransactions}
-                  className={`${isInitialLoad ? 'd-none' : 'btn btn-sm'} `}
-                  color={isInitialLoad ? 'muted' : 'primary'}
-                  size="sm"
-                >
-                  Download CSV
-                </Button>
+                {currentUser ? (
+                  <Button
+                    disabled={isInitialLoad}
+                    onClick={handleDownloadTransactions}
+                    className={`${isInitialLoad ? 'd-none' : 'btn btn-sm'} `}
+                    color={isInitialLoad ? 'muted' : 'primary'}
+                    size="sm"
+                  >
+                    Download CSV
+                  </Button>
+                ) : null}
               </div>
             </div>
           </Row>{' '}
         </div>
       ) : null}
       {/* {renderSearchBar()} */}
+      {!loading && !isInitialLoad && !errorData && !isDashboardPage && (
+        <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
+          <Col>
+            <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
+          </Col>
+          {hasPreview && (
+            <Col>
+              <div className="d-flex align-items-center justify-content-end">
+                <Spinner
+                  className="me-2"
+                  style={{ width: '1rem', height: '1rem' }}
+                />
+                <h6 className="mb-0 fw-semibold">
+                  Loading transactions information ...
+                </h6>
+              </div>
+            </Col>
+          )}
+        </Col>
+      )}
       {loading && isInitialLoad ? (
         <div
           className="d-flex justify-content-center align-items-center"

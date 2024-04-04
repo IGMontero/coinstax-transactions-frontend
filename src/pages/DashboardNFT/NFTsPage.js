@@ -1,6 +1,7 @@
 import React from 'react';
-import Nfts from '../DashboardInfo/components/Nfts';
+
 import { useParams } from 'react-router-dom';
+import Nfts from './Nfts';
 
 const NFTsPage = () => {
   const { address } = useParams();

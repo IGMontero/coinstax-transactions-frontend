@@ -1,16 +1,14 @@
 import React from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
-import assetsIcon from '../../../../../assets/images/svg/assets.svg';
+import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
-import { copyToClipboard } from '../../../../../utils/utils';
-import Swal from 'sweetalert2';
+import {
+  copyToClipboard,
+  parseValuesToLocale,
+} from '../../../../../../utils/utils';
 
-const Negativeledgers = ({ ledger }) => {
+const SentColumn = ({ ledger }) => {
   const navigate = useNavigate();
-  const queryParams = new URLSearchParams(location.search);
-  const address = queryParams.get('address');
-
-  const randomNumber = Math.floor(Math.random() * 100) + 1;
 
   const negativeLedgers = ledger.txSummary.sent;
   const addressLink = negativeLedgers?.nftInfo?.contractAddress;
@@ -30,10 +28,14 @@ const Negativeledgers = ({ ledger }) => {
     }, 2000);
   };
 
+  const parsedValue = parseValuesToLocale(negativeLedgers?.value, '');
+
   const isNft = negativeLedgers?.isNft;
 
   const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
   const tokenId = negativeLedgers?.nftInfo?.tokenId || undefined;
+
+  const isPreview = ledger?.preview;
 
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
@@ -45,39 +47,53 @@ const Negativeledgers = ({ ledger }) => {
             ) : (
               <>
                 <div className="image-container me-1">
-                  <img
-                    src={negativeLedgers?.logo || currency}
-                    alt={negativeLedgers?.displayName}
-                    className="rounded"
-                    width={35}
-                    height={35}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.style.display = 'none';
-                      const container = e.target.parentNode;
-                      const textNode = document.createElement('div');
-                      textNode.textContent = currency;
-                      textNode.className = 'currency-placeholder';
-                      container.appendChild(textNode);
-                    }}
-                  />{' '}
+                  {isPreview && !negativeLedgers?.logo ? (
+                    <div className="skeleton-avatar"></div>
+                  ) : (
+                    <img
+                      src={
+                        negativeLedgers?.logo ||
+                        negativeLedgers.currency ||
+                        negativeLedgers?.displayName
+                      }
+                      alt={negativeLedgers?.displayName}
+                      className="rounded"
+                      width={35}
+                      height={35}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.style.display = 'none';
+                        const container = e.target.parentNode;
+                        const textNode = document.createElement('div');
+                        textNode.textContent =
+                          negativeLedgers.currency ||
+                          negativeLedgers?.displayName;
+                        textNode.className = 'currency-placeholder';
+                        container.appendChild(textNode);
+                      }}
+                    />
+                  )}{' '}
                 </div>
 
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {!isNft &&
-                    negativeLedgers?.value !== 0 &&
-                    !hasAssetsCount ? (
+                      negativeLedgers?.value !== 0 &&
+                      !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
                         id={`amount-left-${ledger?.txHash}`}
                         className="text-displayName"
                       >
-                        {negativeLedgers?.displayName}
+                        {isNft
+                          ? negativeLedgers?.displayName
+                          : `${parsedValue} ${currency}`}
                       </span>
                     ) : hasAssetsCount ? (
                       <span className="text-displayName">
-                        {negativeLedgers?.displayName}
+                        {isNft
+                          ? negativeLedgers?.displayName
+                          : `${parsedValue} ${currency}`}
                       </span>
                     ) : (
                       <span
@@ -91,13 +107,15 @@ const Negativeledgers = ({ ledger }) => {
                         }}
                         className="text-displayName text-hover-underline text-hover-primary"
                       >
-                        {negativeLedgers?.displayName}
+                        {isNft
+                          ? negativeLedgers?.displayName
+                          : `${parsedValue} ${currency}`}
                       </span>
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                    negativeLedgers?.value !== 0 &&
-                    document.getElementById(`amount-left-${ledger.txHash}`) ? (
+                      negativeLedgers?.value !== 0 &&
+                      document.getElementById(`amount-left-${ledger.txHash}`) ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
@@ -124,9 +142,12 @@ const Negativeledgers = ({ ledger }) => {
                   <p className="text-start my-0">
                     {negativeLedgers &&
                       negativeLedgers.hideNativeAmount !== true &&
-                      (negativeLedgers.prettyNativeAmount ? (
+                      (negativeLedgers.nativeAmount ? (
                         <p className="text-start d-flex align-items-center my-0 text-muted">
-                          {negativeLedgers.prettyNativeAmount}
+                          {parseValuesToLocale(
+                            negativeLedgers.nativeAmount,
+                            'USD',
+                          )}
                         </p>
                       ) : (
                         <>
@@ -181,7 +202,9 @@ const Negativeledgers = ({ ledger }) => {
             <div className="ms-2 ">
               <span className="text-dark">{negativeLedgers.displayName}</span>{' '}
               <p className="text-start my-0 text-muted">
-                {negativeLedgers.prettyNativeAmount || ''}
+                {negativeLedgers?.nativeAmount === 0
+                  ? ''
+                  : parseValuesToLocale(negativeLedgers?.nativeAmount, 'USD')}
               </p>
             </div>
           </>
@@ -191,4 +214,4 @@ const Negativeledgers = ({ ledger }) => {
   );
 };
 
-export default Negativeledgers;
+export default SentColumn;

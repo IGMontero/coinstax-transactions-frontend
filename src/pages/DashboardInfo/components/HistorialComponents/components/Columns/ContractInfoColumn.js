@@ -4,15 +4,21 @@ import {
   blockchainActions,
   copyToClipboard,
   formatIdTransaction,
-} from '../../../../utils/utils';
+} from '../../../../../../utils/utils';
 import { Link } from 'react-router-dom';
-import EditBlockChainContract from './modals/EditBlockChainContract';
+import EditBlockChainContract from '../../modals/EditBlockChainContract';
 import Swal from 'sweetalert2';
-import { editBlockChainContract } from '../../../../slices/blockchainContracts/thunk';
-import { useDispatch, useSelector } from 'react-redux';
-import { handleActionResult } from '../../../../utils/useHandleAction';
+import { editBlockChainContract } from '../../../../../../slices/blockchainContracts/thunk';
 
-const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
+import { useDispatch, useSelector } from 'react-redux';
+import { handleActionResult } from '../../../../../../utils/useHandleAction';
+
+const ContractInfoColumn = ({
+  transaction,
+  index,
+  onRefresh,
+  setTransactions,
+}) => {
   const dispatch = useDispatch();
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
@@ -34,17 +40,17 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   const [targetId, setTargetId] = useState('');
   const [timeoutId, setTimeoutId] = useState(null);
 
-  const currentUser = localStorage.getItem('currentUser');
-
   const blockchainContractAddress =
     transaction.txSummary.mainContractAddress ||
     (transaction.blockchainAction === blockchainActions.RECEIVE
       ? transaction.sender
       : transaction.recipient);
+
   const blockchainContractName =
     transaction.txSummary.mainContractAddressInfo?.name ||
     transaction.txSummary.marketplaceName ||
     blockchainContractAddress;
+
   const blockchainContractLogo =
     transaction.txSummary.mainContractAddressInfo?.logo ||
     transaction.txSummary.marketplaceLogo;
@@ -55,6 +61,11 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
       : transaction.blockchainAction === blockchainActions.SEND
         ? 'To'
         : 'Application';
+
+  const tooltipTitle =
+    blockchainContractName === blockchainContractAddress
+      ? blockchainContractAddress
+      : `${blockchainContractName}\n${blockchainContractAddress}`;
 
   useEffect(() => {
     return () => {
@@ -192,10 +203,7 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
         <p style={{ fontSize: '12px', marginBottom: '4px' }} className=" mb-1">
           {contractLabel}
         </p>
-        <div
-          title={`${blockchainContractAddress}`}
-          className="d-flex align-items-end "
-        >
+        <div title={`${tooltipTitle}`} className="d-flex align-items-end ">
           <h6
             id={`popoverMarketplace-${transaction.txHash}`}
             className="fw-semibold my-0 text-start d-flex align-items-center text-contractLabel"
@@ -257,4 +265,4 @@ const ThirdColumn = ({ transaction, index, onRefresh, setTransactions }) => {
   );
 };
 
-export default ThirdColumn;
+export default ContractInfoColumn;

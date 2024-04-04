@@ -9,20 +9,15 @@ import {
   Spinner,
 } from 'reactstrap';
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
+import { parseValuesToLocale } from '../../../utils/utils';
 
-const AcitvesTable = ({ data, loading }) => {
+const ActivesTable = ({ data, loading }) => {
   const [viewMode, setViewMode] = useState('byPlatform');
 
   const [showMenu, setShowMenu] = useState(false);
   const [hideSmallBalances, setHideSmallBalances] = useState(false);
 
   const [hideZeroBalances, setHideZeroBalances] = useState(true);
-
-  // useEffect(() => {
-  //   if (data) {
-  //     setLoading(false);
-  //   }
-  // }, [data]);
 
   const formatBalance = (number) => {
     if (typeof number !== 'number' || isNaN(number)) {
@@ -89,17 +84,15 @@ const AcitvesTable = ({ data, loading }) => {
           <div className="d-flex justify-content-between align-items-center mb-3">
             <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
             <Button
-              className={`btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'byPlatform' ? 'active' : ''
-              }`}
+              className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
+                }`}
               onClick={() => handleViewModeChange('byPlatform')}
             >
               By Platform
             </Button>
             <Button
-              className={`mx-2 btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'perPosition' ? 'active' : ''
-              }`}
+              className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
+                }`}
               onClick={() => handleViewModeChange('perPosition')}
             >
               Per Position
@@ -296,13 +289,13 @@ const AcitvesTable = ({ data, loading }) => {
                               </td>
                               <td>
                                 {asset.price
-                                  ? '$' + formatPriceAndValue(asset.price)
+                                  ? parseValuesToLocale(asset.price, 'USD')
                                   : '$0.00'}
                               </td>
                               <td>
                                 {asset.balance ? (
                                   <span>
-                                    {formatBalance(asset.balance) +
+                                    {parseValuesToLocale(asset.balance, '') +
                                       ' ' +
                                       asset.symbol}
                                   </span>
@@ -313,29 +306,38 @@ const AcitvesTable = ({ data, loading }) => {
                               <td>
                                 <div className="d-flex flex-column align-items-start">
                                   <span>
-                                    {asset.value ? asset.prettyValue : '$0.00'}
+                                    {asset.value
+                                      ? parseValuesToLocale(asset.value, 'USD')
+                                      : parseValuesToLocale(0, 'USD')}
                                   </span>
                                   <small
-                                    className={`${
-                                      asset.prettyDeltaValuePercent === '0.00%'
-                                        ? 'text-primary'
-                                        : asset.prettyDeltaValuePercent[0] ===
-                                            '-'
-                                          ? 'text-danger'
-                                          : 'text-success'
-                                    }`}
+                                    className={`${asset.prettyDeltaValuePercent === '0.00%'
+                                      ? 'text-primary'
+                                      : asset.prettyDeltaValuePercent[0] ===
+                                        '-'
+                                        ? 'text-danger'
+                                        : 'text-success'
+                                      }`}
                                   >
                                     {asset.prettyDeltaValuePercent === '0.00%'
-                                      ? asset.prettyDeltaValuePercent
+                                      ? parseValuesToLocale(
+                                        asset.deltaValuePercent,
+                                        '',
+                                      )
                                       : (asset.prettyDeltaValuePercent[0] ===
                                         '-'
-                                          ? ''
-                                          : '+') +
-                                        asset.prettyDeltaValuePercent}
-                                    {' (' +
-                                      '$' +
-                                      asset.deltaValue.toFixed(2) +
-                                      ')'}
+                                        ? ''
+                                        : '+') +
+                                      parseValuesToLocale(
+                                        asset.deltaValuePercent,
+                                        '',
+                                      )}
+                                    {asset.deltaValue ? ' (' +
+                                      parseValuesToLocale(
+                                        asset.deltaValue,
+                                        'USD',
+                                      ) +
+                                      ')' : null}
                                   </small>
                                 </div>
                               </td>
@@ -353,4 +355,4 @@ const AcitvesTable = ({ data, loading }) => {
   );
 };
 
-export default AcitvesTable;
+export default ActivesTable;

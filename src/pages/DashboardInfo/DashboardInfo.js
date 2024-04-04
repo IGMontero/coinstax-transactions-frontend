@@ -10,32 +10,26 @@ import {
   Button,
   TabPane,
   TabContent,
-  Nav,
-  NavItem,
-  NavLink,
-  InputGroup,
-  Input,
   Spinner,
 } from 'reactstrap';
-import classnames from 'classnames';
 import PerformanceChart from './components/PerformanceChart';
-import AcitvesTable from './components/ActivesTable';
+import ActivesTable from './components/ActivesTable';
 import HistorialTable from './components/HistorialTable';
-import Nfts from './components/Nfts';
+import Nfts from '../DashboardNFT/Nfts';
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
 import btc from '../../assets/images/svg/crypto-icons/btc.svg';
 import arb from '../../assets/images/svg/crypto-icons/ankr.svg';
 import pol from '../../assets/images/svg/crypto-icons/poly.svg';
 import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
 
-import { fetchAssets, fetchNFTS } from '../../slices/transactions/thunk';
+import { fetchAssets } from '../../slices/transactions/thunk';
 import DashboardHome from '../DashboardHome/DashboardHome';
 import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   capitalizeFirstLetter,
   copyToClipboard,
-  formatIdTransaction,
+  parseValuesToLocale,
 } from '../../utils/utils';
 import QrModal from './modals/QrModal';
 const DashboardInfo = () => {
@@ -148,7 +142,7 @@ const DashboardInfo = () => {
   useEffect(() => {
     if (series.length > 0 && series[0].data.length > 0) {
       const firstPointValue = series[0].data[0].y;
-      setTitle(`$${firstPointValue.toLocaleString()}`);
+      setTitle(`${parseValuesToLocale(firstPointValue, 'USD')}`);
       const lastPointValue = series[0].data[series[0].data.length - 1].y;
       const change = firstPointValue - lastPointValue;
       let changePercentage = (change / firstPointValue) * 100;
@@ -156,10 +150,10 @@ const DashboardInfo = () => {
       if (isNaN(changePercentage)) {
         changePercentage = 0;
       }
-      const formattedChange = isNaN(change) ? 0 : change.toLocaleString();
+      const formattedChange = isNaN(change) ? 0 : change;
       const sign = changePercentage >= 0 ? '+' : '';
       setSubtitle(
-        `${sign}${changePercentage.toFixed(2)}% ($${formattedChange})`,
+        `${sign}${parseValuesToLocale(changePercentage, '')}% (${parseValuesToLocale(formattedChange, 'USD')})`,
       );
     }
   }, [series, title, subtitle]);
@@ -560,7 +554,7 @@ const DashboardInfo = () => {
                             </div>
                           </Col>
                           <Col xxl={12}>
-                            <AcitvesTable
+                            <ActivesTable
                               loading={loadingAssets}
                               data={assetsData}
                             />
@@ -577,16 +571,8 @@ const DashboardInfo = () => {
                                 <span className="p-1">See more NFTs</span>
                               </Button>
                             </div>
-                            <div
-                              className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden"
-                              style={{ maxHeight: '370px' }}
-                            >
-                              <div
-                                className="w-100 overflow-hidden"
-                                style={{ maxHeight: '370px' }}
-                              >
-                                <Nfts address={addressForSearch} />
-                              </div>
+                            <div className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden">
+                              <Nfts address={addressForSearch} />
                             </div>
                           </Col>
 
