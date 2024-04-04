@@ -1,6 +1,12 @@
 import React from 'react';
+import { parseValuesToLocale } from '../../../../../../utils/utils';
 
-const ValueColumn = ({ value }) => {
+const ValueColumn = ({ transaction }) => {
+  const parseValue = parseValuesToLocale(
+    transaction.value,
+    transaction.currency === '' ? 'USD' : '',
+  );
+
   return (
     <div>
       <p
@@ -11,7 +17,7 @@ const ValueColumn = ({ value }) => {
       </p>
       <div className="d-flex align-items-start ">
         <h6 className="fw-semibold d-flex mb-0 mt-0 text-start d-flex align-items-center text-contractLabel">
-          {value ? value : ''}
+          {transaction?.value ? `${parseValue} ${transaction.currency}` : ''}
         </h6>
       </div>
     </div>

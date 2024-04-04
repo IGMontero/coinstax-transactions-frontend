@@ -65,7 +65,7 @@ const BlockChainActionColumn = ({ transaction }) => {
         {transaction.successful ? (
           transaction.txSummary.value && (
             <div className="d-flex text-start justify-content-start ms-n2">
-              <ValueColumn value={transaction.txSummary.value} />
+              <ValueColumn transaction={transaction} />
             </div>
           )
         ) : (

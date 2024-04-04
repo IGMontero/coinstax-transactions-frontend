@@ -63,9 +63,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   }`}
                 >
                   {isPreview && !positiveLedgers?.logo ? (
-                    <div className="spinner-border text-primary" role="status">
-                      <span className="visually-hidden">Loading...</span>
-                    </div>
+                    <div className="skeleton-avatar"></div>
                   ) : (
                     <img
                       src={
