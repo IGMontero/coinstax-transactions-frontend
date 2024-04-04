@@ -154,8 +154,8 @@ export const parseValuesToLocale = (value, currency) => {
       currency: currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: isValueSmall
-        ? findSignificantDigits(value) + 3
-        : 4,
+        ? findSignificantDigits(value) + 2
+        : 3,
     };
 
     if (isValueHuge) {
@@ -194,9 +194,6 @@ export const updateTransactionsPreview = async ({
   }
 
   let allUpdatedTransactions = [];
-
-  // Fetch the data for each page.
-  // for (let page = 0; page <= currentPage; page++) {
   try {
     const response = await dispatch(
       fetchHistory({
@@ -217,9 +214,7 @@ export const updateTransactionsPreview = async ({
     }
   } catch (error) {
     console.error('Error updating previews:', error);
-    // break;
   }
-  // }
 
   // Update the transactions with the new data.
   if (allUpdatedTransactions.length > 0) {
