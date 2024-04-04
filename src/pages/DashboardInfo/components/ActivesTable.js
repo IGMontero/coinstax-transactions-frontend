@@ -9,6 +9,7 @@ import {
   Spinner,
 } from 'reactstrap';
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
+import { parseValuesToLocale } from '../../../utils/utils';
 
 const AcitvesTable = ({ data, loading }) => {
   const [viewMode, setViewMode] = useState('byPlatform');
@@ -17,12 +18,6 @@ const AcitvesTable = ({ data, loading }) => {
   const [hideSmallBalances, setHideSmallBalances] = useState(false);
 
   const [hideZeroBalances, setHideZeroBalances] = useState(true);
-
-  // useEffect(() => {
-  //   if (data) {
-  //     setLoading(false);
-  //   }
-  // }, [data]);
 
   const formatBalance = (number) => {
     if (typeof number !== 'number' || isNaN(number)) {
@@ -296,13 +291,13 @@ const AcitvesTable = ({ data, loading }) => {
                               </td>
                               <td>
                                 {asset.price
-                                  ? '$' + formatPriceAndValue(asset.price)
+                                  ? parseValuesToLocale(asset.price, 'USD')
                                   : '$0.00'}
                               </td>
                               <td>
                                 {asset.balance ? (
                                   <span>
-                                    {formatBalance(asset.balance) +
+                                    {parseValuesToLocale(asset.balance, '') +
                                       ' ' +
                                       asset.symbol}
                                   </span>
@@ -313,7 +308,9 @@ const AcitvesTable = ({ data, loading }) => {
                               <td>
                                 <div className="d-flex flex-column align-items-start">
                                   <span>
-                                    {asset.value ? asset.prettyValue : '$0.00'}
+                                    {asset.value
+                                      ? parseValuesToLocale(asset.value, 'USD')
+                                      : parseValuesToLocale(0, 'USD')}
                                   </span>
                                   <small
                                     className={`${
@@ -326,15 +323,23 @@ const AcitvesTable = ({ data, loading }) => {
                                     }`}
                                   >
                                     {asset.prettyDeltaValuePercent === '0.00%'
-                                      ? asset.prettyDeltaValuePercent
+                                      ? parseValuesToLocale(
+                                          asset.deltaValuePercent,
+                                          '',
+                                        )
                                       : (asset.prettyDeltaValuePercent[0] ===
                                         '-'
                                           ? ''
                                           : '+') +
-                                        asset.prettyDeltaValuePercent}
+                                        parseValuesToLocale(
+                                          asset.deltaValuePercent,
+                                          '',
+                                        )}
                                     {' (' +
-                                      '$' +
-                                      asset.deltaValue.toFixed(2) +
+                                      parseValuesToLocale(
+                                        asset.deltaValue,
+                                        'USD',
+                                      ) +
                                       ')'}
                                   </small>
                                 </div>
