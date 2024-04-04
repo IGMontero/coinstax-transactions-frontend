@@ -186,15 +186,23 @@ export const updateTransactionsPreview = async ({
   selectedAssets,
   currentPage,
   setData,
-  data,
   dispatch,
+  pagesChecked,
 }) => {
-  if (!data.some((transaction) => transaction.preview)) {
-    return;
-  }
+  // Pges checked
+  // const pagesChecked = new Set();
 
-  let allUpdatedTransactions = [];
-  try {
+  const updatePage = async (page) => {
+    // if the page has been checked, continue with the next page
+    if (pagesChecked.has(page)) {
+      if (page < currentPage) {
+        // Continue with the next page
+        return updatePage(page + 1);
+      }
+      // Stop if the currentPage has been reached and all transactions are not in preview mode
+      return;
+    }
+
     const response = await dispatch(
       fetchHistory({
         address,
@@ -204,33 +212,42 @@ export const updateTransactionsPreview = async ({
           includeSpam: includeSpam,
         },
         assetsFilters: getSelectedAssetFilters(selectedAssets),
-        page: currentPage,
+        page: page,
       }),
     ).unwrap();
 
     const { parsed } = response;
-    if (parsed && parsed.length > 0) {
-      allUpdatedTransactions = [...allUpdatedTransactions, ...parsed];
+    if (!parsed || parsed.length === 0) {
+      return;
     }
-  } catch (error) {
-    console.error('Error updating previews:', error);
-  }
 
-  // Update the transactions with the new data.
-  if (allUpdatedTransactions.length > 0) {
+    // Verify if all transactions are not in preview mode
+    const allNotInPreview = parsed.every((transaction) => !transaction.preview);
+
+    // If all transactions are not in preview mode, add the page to the set of checked pages
+    if (allNotInPreview) {
+      // Add the page to the set of checked pages
+      pagesChecked.add(page);
+
+      if (page < currentPage) {
+        // Continue with the next page
+        return updatePage(page + 1);
+      }
+      // Stop if the currentPage has been reached and all transactions are not in preview mode
+      return;
+    }
+
+    // Update the data
     setData((currentData) => {
-      const newData = currentData.map((transaction) => {
-        const updatedTransaction = allUpdatedTransactions.find(
-          (updated) =>
-            updated.txHash === transaction.txHash && !updated.preview,
+      return currentData.map((transaction) => {
+        const updatedTransaction = parsed.find(
+          (t) => t.txHash === transaction.txHash,
         );
-
-        // If the transaction is found in the new data and it's not a preview,
-        // replace the current transaction with the updated transaction.
-        return updatedTransaction ? updatedTransaction : transaction;
+        return updatedTransaction || transaction;
       });
-
-      return newData;
     });
-  }
+  };
+
+  // Start the update process
+  await updatePage(0);
 };
