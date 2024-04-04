@@ -3,8 +3,8 @@ import { parseValuesToLocale } from '../../../../../../utils/utils';
 
 const ValueColumn = ({ transaction }) => {
   const parseValue = parseValuesToLocale(
-    transaction.value,
-    transaction.currency === '' ? 'USD' : '',
+    Math.abs(transaction.value),
+    'USD',
   );
 
   return (
@@ -17,7 +17,7 @@ const ValueColumn = ({ transaction }) => {
       </p>
       <div className="d-flex align-items-start ">
         <h6 className="fw-semibold d-flex mb-0 mt-0 text-start d-flex align-items-center text-contractLabel">
-          {transaction?.value ? `${parseValue} ${transaction.currency}` : ''}
+          {transaction?.value ? `${parseValue}` : ''}
         </h6>
       </div>
     </div>

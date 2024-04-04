@@ -78,8 +78,8 @@ const SentColumn = ({ ledger }) => {
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {!isNft &&
-                    negativeLedgers?.value !== 0 &&
-                    !hasAssetsCount ? (
+                      negativeLedgers?.value !== 0 &&
+                      !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
                         id={`amount-left-${ledger?.txHash}`}
@@ -114,8 +114,8 @@ const SentColumn = ({ ledger }) => {
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                    negativeLedgers?.value !== 0 &&
-                    document.getElementById(`amount-left-${ledger.txHash}`) ? (
+                      negativeLedgers?.value !== 0 &&
+                      document.getElementById(`amount-left-${ledger.txHash}`) ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
@@ -204,7 +204,7 @@ const SentColumn = ({ ledger }) => {
               <p className="text-start my-0 text-muted">
                 {negativeLedgers?.nativeAmount === 0
                   ? ''
-                  : parseValuesToLocale(negativeLedgers?.nativeAmount, '')}
+                  : parseValuesToLocale(negativeLedgers?.nativeAmount, 'USD')}
               </p>
             </div>
           </>

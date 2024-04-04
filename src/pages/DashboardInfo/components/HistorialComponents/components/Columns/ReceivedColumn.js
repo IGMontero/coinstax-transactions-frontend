@@ -58,9 +58,8 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   <i className="ri-arrow-right-line text-dark text-end fs-4 me-2"></i>
                 )}
                 <div
-                  className={`image-container me-2 ${
-                    negativeLedgers ? '' : ''
-                  }`}
+                  className={`image-container me-2 ${negativeLedgers ? '' : ''
+                    }`}
                 >
                   {isPreview && !positiveLedgers?.logo ? (
                     <div className="skeleton-avatar"></div>
@@ -115,8 +114,8 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                         : `${positiveLedgers?.displayName}`}
                     </span>
                     {positiveLedgers?.value &&
-                    !isNft &&
-                    !positiveLedgers.marketplaceName ? (
+                      !isNft &&
+                      !positiveLedgers.marketplaceName ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
@@ -142,8 +141,8 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   </span>
 
                   {positiveLedgers &&
-                  !positiveLedgers.hideNativeAmount &&
-                  positiveLedgers.nativeAmount ? (
+                    !positiveLedgers.hideNativeAmount &&
+                    positiveLedgers.nativeAmount ? (
                     <p className="text-start d-flex align-items-center my-0 text-muted">
                       {parseValuesToLocale(
                         positiveLedgers?.nativeAmount,
@@ -153,38 +152,38 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   ) : (
                     <>
                       {ledger &&
-                      ledger.txHash &&
-                      !positiveLedgers.hideNativeAmount
+                        ledger.txHash &&
+                        !positiveLedgers.hideNativeAmount
                         ? // <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
-                          //   N/A
-                          //   <i
-                          //     id={`nativeAmount-${ledger.txHash}`}
-                          //     className="ri-information-line ms-1 fs-6 text-muted"
-                          //   ></i>
-                          //   <UncontrolledPopover
-                          //     onClick={(e) => e.stopPropagation()}
-                          //     placement="bottom"
-                          //     target={`nativeAmount-${ledger.txHash}`}
-                          //     trigger="hover"
-                          //   >
-                          //     <PopoverBody
-                          //       style={{
-                          //         width: 'auto',
-                          //       }}
-                          //       className="w-auto p-2 text-center"
-                          //     >
-                          //       <span
-                          //         style={{
-                          //           fontSize: '0.70rem',
-                          //         }}
-                          //       >
-                          //         The price is not available at the time of the
-                          //         transaction
-                          //       </span>
-                          //     </PopoverBody>
-                          //   </UncontrolledPopover>
-                          // </p>
-                          null
+                        //   N/A
+                        //   <i
+                        //     id={`nativeAmount-${ledger.txHash}`}
+                        //     className="ri-information-line ms-1 fs-6 text-muted"
+                        //   ></i>
+                        //   <UncontrolledPopover
+                        //     onClick={(e) => e.stopPropagation()}
+                        //     placement="bottom"
+                        //     target={`nativeAmount-${ledger.txHash}`}
+                        //     trigger="hover"
+                        //   >
+                        //     <PopoverBody
+                        //       style={{
+                        //         width: 'auto',
+                        //       }}
+                        //       className="w-auto p-2 text-center"
+                        //     >
+                        //       <span
+                        //         style={{
+                        //           fontSize: '0.70rem',
+                        //         }}
+                        //       >
+                        //         The price is not available at the time of the
+                        //         transaction
+                        //       </span>
+                        //     </PopoverBody>
+                        //   </UncontrolledPopover>
+                        // </p>
+                        null
                         : null}
                     </>
                   )}
@@ -212,7 +211,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                 <p className="text-start my-0 text-muted">
                   {positiveLedgers?.nativeAmount === 0
                     ? ''
-                    : parseValuesToLocale(positiveLedgers?.nativeAmount, '')}
+                    : parseValuesToLocale(positiveLedgers?.nativeAmount, 'USD')}
                 </p>
               </div>
             </div>
