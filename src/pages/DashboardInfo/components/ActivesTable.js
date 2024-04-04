@@ -11,7 +11,7 @@ import {
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import { parseValuesToLocale } from '../../../utils/utils';
 
-const AcitvesTable = ({ data, loading }) => {
+const ActivesTable = ({ data, loading }) => {
   const [viewMode, setViewMode] = useState('byPlatform');
 
   const [showMenu, setShowMenu] = useState(false);
@@ -358,4 +358,4 @@ const AcitvesTable = ({ data, loading }) => {
   );
 };
 
-export default AcitvesTable;
+export default ActivesTable;
