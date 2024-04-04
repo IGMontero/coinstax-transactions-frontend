@@ -248,6 +248,16 @@ export const updateTransactionsPreview = async ({
       return;
     }
 
+    // Update the data
+    setData((currentData) => {
+      return currentData.map((transaction) => {
+        const updatedTransaction = parsed.find(
+          (t) => t.txHash === transaction.txHash,
+        );
+        return updatedTransaction || transaction;
+      });
+    });
+
     // Verify if all transactions are not in preview mode
     const allNotInPreview = parsed.every((transaction) => !transaction.preview);
 
@@ -262,20 +272,12 @@ export const updateTransactionsPreview = async ({
       }
       // Stop if the currentPage has been reached and all transactions are not in preview mode
       // Update one tx to trigger the re-render
-      const newData = [...parsed];
+      // const newData = [...parsed];
 
-      return setData((currentData) => newData);
+      return
     }
 
-    // Update the data
-    setData((currentData) => {
-      return currentData.map((transaction) => {
-        const updatedTransaction = parsed.find(
-          (t) => t.txHash === transaction.txHash,
-        );
-        return updatedTransaction || transaction;
-      });
-    });
+
   };
 
   // Start the update process
