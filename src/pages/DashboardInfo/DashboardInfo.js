@@ -36,6 +36,7 @@ import {
   capitalizeFirstLetter,
   copyToClipboard,
   formatIdTransaction,
+  parseValuesToLocale,
 } from '../../utils/utils';
 import QrModal from './modals/QrModal';
 const DashboardInfo = () => {
@@ -148,7 +149,7 @@ const DashboardInfo = () => {
   useEffect(() => {
     if (series.length > 0 && series[0].data.length > 0) {
       const firstPointValue = series[0].data[0].y;
-      setTitle(`$${firstPointValue.toLocaleString()}`);
+      setTitle(`${parseValuesToLocale(firstPointValue, 'USD')}`);
       const lastPointValue = series[0].data[series[0].data.length - 1].y;
       const change = firstPointValue - lastPointValue;
       let changePercentage = (change / firstPointValue) * 100;
@@ -156,10 +157,10 @@ const DashboardInfo = () => {
       if (isNaN(changePercentage)) {
         changePercentage = 0;
       }
-      const formattedChange = isNaN(change) ? 0 : change.toLocaleString();
+      const formattedChange = isNaN(change) ? 0 : change;
       const sign = changePercentage >= 0 ? '+' : '';
       setSubtitle(
-        `${sign}${changePercentage.toFixed(2)}% ($${formattedChange})`,
+        `${sign}${parseValuesToLocale(changePercentage, '')}% (${parseValuesToLocale(formattedChange, 'USD')})`,
       );
     }
   }, [series, title, subtitle]);
