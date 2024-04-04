@@ -134,72 +134,8 @@ export const parseValuesToLocale = (value, currency) => {
     return '';
   }
 
-  const cryptoCurrencies = [
-    'USDT',
-    'USD',
-    'BTC',
-    'ETH',
-    'DAI',
-    'FRG',
-    'USDC',
-    'WBTC',
-    'SUSHI',
-    'YFI',
-    'UNI',
-    'LINK',
-    'AAVE',
-    'MKR',
-    'COMP',
-    'SNX',
-    'CRV',
-    'REN',
-    'BAL',
-    'KNC',
-    'BNT',
-    'LRC',
-    'ENJ',
-    'MANA',
-    'GRT',
-    'STORJ',
-    'CVC',
-    'BAND',
-    'RLC',
-    'ZRX',
-    'REP',
-    'BAT',
-    'ANT',
-    'MLN',
-    'GNO',
-    'AMP',
-    '1INCH',
-    'UMA',
-    'NU',
-    'OCEAN',
-    'BOND',
-    'TRB',
-    'LPT',
-    'LRC',
-    'FARM',
-    'FRAX',
-    'HEGIC',
-    'PICKLE',
-    'COVER',
-    'CREAM',
-    'KP3R',
-    'PICKLE',
-    'CORE',
-    'BOND',
-    'SFI',
-    'YLA',
-    'YAX',
-    'YFL',
-    'YAM',
-    'YFII',
-    'YFV',
-  ];
-
   const isValueHuge = value > 1e20;
-  const isValueSmall = value > 0 && value < 0.01;
+  const isValueSmall = Math.abs(value) < 0.01;
 
   const findSignificantDigits = (val) => {
     // Early return if value is 0
@@ -212,49 +148,33 @@ export const parseValuesToLocale = (value, currency) => {
       : 0;
   };
 
-  if (cryptoCurrencies.includes(currency)) {
-    let formattedValue;
-    if (isValueHuge) {
-      formattedValue = Number(value).toExponential(2);
-    } else if (isValueSmall) {
-      // Use dynamic precision for small values based on the first significant digit
-      const significantDigits = findSignificantDigits(value);
-      // Add 3 more digits to formattedValue to the precision
-      formattedValue = value.toFixed(significantDigits + 3);
-    } else {
-      formattedValue = parseFloat(value).toFixed(2);
-    }
-    return formattedValue + ' ' + currency;
-  } else {
-    try {
-      const options = isValueSmall
-        ? {
-            style: 'currency',
-            currency: currency,
-            minimumFractionDigits: 2,
-            maximumFractionDigits: isValueSmall
-              ? findSignificantDigits(value) + 3
-              : 4,
-          }
-        : {
-            style: 'currency',
-            currency: currency,
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 4,
-          };
+  try {
+    const options = {
+      style: 'currency',
+      currency: currency,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: isValueSmall
+        ? findSignificantDigits(value) + 3
+        : 4,
+    };
 
-      if (isValueHuge) {
-        return Number(value).toExponential(2) + ' ' + currency;
-      }
-      return parseFloat(value).toLocaleString(localUbication, options);
-    } catch (error) {
-      console.error('Error', error);
-      if (isValueSmall) {
-        // For errors on small values, fallback to exponential notation
-        return Number(value).toExponential(2) + ' ' + currency;
-      }
-      return parseFloat(value).toFixed(2) + ' ' + currency;
+    if (isValueHuge) {
+      return Number(value).toExponential(2) + ' ' + currency;
     }
+
+    if (isValueSmall) {
+      const significantDigits = findSignificantDigits(Math.abs(value));
+      return parseFloat(value).toFixed(significantDigits + 1) + ' ' + currency;
+    }
+
+    return parseFloat(value).toLocaleString(localUbication, options);
+  } catch (error) {
+    console.error('Error', error);
+    if (isValueSmall) {
+      // For errors on small values, fallback to exponential notation
+      return Number(value).toExponential(2) + ' ' + currency;
+    }
+    return parseFloat(value).toFixed(2) + ' ' + currency;
   }
 };
 
@@ -276,30 +196,30 @@ export const updateTransactionsPreview = async ({
   let allUpdatedTransactions = [];
 
   // Fetch the data for each page.
-  for (let page = 0; page <= currentPage; page++) {
-    try {
-      const response = await dispatch(
-        fetchHistory({
-          address,
-          query: debouncedSearchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
-          assetsFilters: getSelectedAssetFilters(selectedAssets),
-          page: page,
-        }),
-      ).unwrap();
+  // for (let page = 0; page <= currentPage; page++) {
+  try {
+    const response = await dispatch(
+      fetchHistory({
+        address,
+        query: debouncedSearchTerm,
+        filters: {
+          blockchainAction: selectedFilters,
+          includeSpam: includeSpam,
+        },
+        assetsFilters: getSelectedAssetFilters(selectedAssets),
+        page: currentPage,
+      }),
+    ).unwrap();
 
-      const { parsed } = response;
-      if (parsed && parsed.length > 0) {
-        allUpdatedTransactions = [...allUpdatedTransactions, ...parsed];
-      }
-    } catch (error) {
-      console.error('Error updating previews:', error);
-      break;
+    const { parsed } = response;
+    if (parsed && parsed.length > 0) {
+      allUpdatedTransactions = [...allUpdatedTransactions, ...parsed];
     }
+  } catch (error) {
+    console.error('Error updating previews:', error);
+    // break;
   }
+  // }
 
   // Update the transactions with the new data.
   if (allUpdatedTransactions.length > 0) {

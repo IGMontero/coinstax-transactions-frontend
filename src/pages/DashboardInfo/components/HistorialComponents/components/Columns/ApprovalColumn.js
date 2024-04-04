@@ -10,7 +10,7 @@ const ApprovalColumn = ({ transaction }) => {
 
   const [isCopied, setIsCopied] = React.useState(false);
 
-  const parsedValue = parseValuesToLocale(transactionApproval?.value, 'USD');
+  const parsedValue = parseValuesToLocale(transactionApproval?.value, '');
 
   const handleCopyValue = (e, value) => {
     if (value) {
@@ -97,7 +97,7 @@ const ApprovalColumn = ({ transaction }) => {
               ) : null}
             </span>
             <p className="text-start d-flex align-items-center my-0 text-muted">
-              {parsedValue}
+              {parsedValue} {transactionApproval?.currency}
             </p>
           </div>
         </>

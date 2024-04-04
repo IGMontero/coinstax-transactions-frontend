@@ -155,6 +155,7 @@ const HistorialTable = ({ data, setData }) => {
       }
 
       const transactions = parsed || [];
+      // If some transaction is preview ...
 
       setData(transactions);
       setTotalTransactions(transactionsCount);

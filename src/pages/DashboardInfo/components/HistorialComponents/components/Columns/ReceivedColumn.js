@@ -21,10 +21,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
 
   const [isCopied, setIsCopied] = React.useState(false);
 
-  const parseValue = parseValuesToLocale(
-    positiveLedgers?.value,
-    positiveLedgers?.currency,
-  );
+  const parseValue = parseValuesToLocale(positiveLedgers?.value, '');
 
   const isNft = positiveLedgers?.isNft;
 
@@ -116,7 +113,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                       className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
                     >
                       {!isNft
-                        ? `+${parseValue}`
+                        ? `+${parseValue} ${currency}`
                         : `${positiveLedgers?.displayName}`}
                     </span>
                     {positiveLedgers?.value &&
