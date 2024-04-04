@@ -30,6 +30,7 @@ import { useLocation, useParams } from 'react-router-dom';
 
 const HistorialTable = ({ data, setData }) => {
   const inputRef = useRef(null);
+  const pagesCheckedRef = useRef(new Set());
   const { address } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -192,11 +193,12 @@ const HistorialTable = ({ data, setData }) => {
           setData,
           data,
           dispatch,
+          pagesChecked: pagesCheckedRef.current,
         });
       }, 4000);
     }
     return () => clearInterval(interval);
-  }, [isPreview, currentPage]);
+  }, [isPreview, data]);
 
   useEffect(() => {
     fetchData();
