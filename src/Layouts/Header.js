@@ -275,7 +275,13 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                       className="form-control py-2 rounded"
                       placeholder="Assets, wallet, domain, or identity"
                       value={searchInput}
-                      onChange={(e) => setSearchInput(e.target.value)}
+                      onChange={(e) => {
+                        const filteredInput = e.target.value.replace(
+                          /[^a-zA-Z0-9]/g,
+                          '',
+                        );
+                        setSearchInput(filteredInput);
+                      }}
                     />
                     <Button
                       disabled={!searchInput || address === searchInput}

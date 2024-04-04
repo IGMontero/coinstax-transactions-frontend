@@ -1,10 +1,13 @@
 import React from 'react';
-import assetsIcon from '../../../../../assets/images/svg/assets.svg';
+import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
-import { copyToClipboard } from '../../../../../utils/utils';
+import {
+  copyToClipboard,
+  parseValuesToLocale,
+} from '../../../../../../utils/utils';
 import { useNavigate } from 'react-router-dom';
 
-const PositiveLedgers = ({ ledger, negativeLedgers }) => {
+const ReceivedColumn = ({ ledger, negativeLedgers }) => {
   const positiveLedgers = ledger.txSummary.received;
   const navigate = useNavigate();
 
@@ -17,6 +20,8 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
 
   const [isCopied, setIsCopied] = React.useState(false);
+
+  const parseValue = parseValuesToLocale(positiveLedgers?.value, '');
 
   const isNft = positiveLedgers?.isNft;
 
@@ -32,6 +37,8 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
       }, 2000);
     }
   };
+
+  const isPreview = ledger?.preview;
 
   return (
     <div
@@ -51,26 +58,35 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   <i className="ri-arrow-right-line text-dark text-end fs-4 me-2"></i>
                 )}
                 <div
-                  className={`image-container me-2 ${
-                    negativeLedgers ? '' : ''
-                  }`}
+                  className={`image-container me-2 ${negativeLedgers ? '' : ''
+                    }`}
                 >
-                  <img
-                    src={positiveLedgers?.logo || currency}
-                    alt={positiveLedgers?.displayName}
-                    className="ps-0 rounded"
-                    width={35}
-                    height={35}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.style.display = 'none';
-                      const container = e.target.parentNode;
-                      const textNode = document.createElement('div');
-                      textNode.textContent = currency;
-                      textNode.className = 'currency-placeholder';
-                      container.appendChild(textNode);
-                    }}
-                  />{' '}
+                  {isPreview && !positiveLedgers?.logo ? (
+                    <div className="skeleton-avatar"></div>
+                  ) : (
+                    <img
+                      src={
+                        positiveLedgers?.logo ||
+                        positiveLedgers.currency ||
+                        positiveLedgers?.displayName
+                      }
+                      alt={positiveLedgers?.displayName}
+                      className="ps-0 rounded"
+                      width={35}
+                      height={35}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.style.display = 'none';
+                        const container = e.target.parentNode;
+                        const textNode = document.createElement('div');
+                        textNode.textContent =
+                          positiveLedgers.currency ||
+                          positiveLedgers?.displayName;
+                        textNode.className = 'currency-placeholder';
+                        container.appendChild(textNode);
+                      }}
+                    />
+                  )}
                 </div>
                 <div className="d-flex flex-column">
                   <span
@@ -93,11 +109,13 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                       id={`amount-${ledger.txHash}`}
                       className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
                     >
-                      {positiveLedgers?.displayName}
+                      {!isNft
+                        ? `+${parseValue} ${currency}`
+                        : `${positiveLedgers?.displayName}`}
                     </span>
                     {positiveLedgers?.value &&
-                    !isNft &&
-                    !positiveLedgers.marketplaceName ? (
+                      !isNft &&
+                      !positiveLedgers.marketplaceName ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
@@ -123,46 +141,49 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   </span>
 
                   {positiveLedgers &&
-                  !positiveLedgers.hideNativeAmount &&
-                  positiveLedgers.prettyNativeAmount ? (
+                    !positiveLedgers.hideNativeAmount &&
+                    positiveLedgers.nativeAmount ? (
                     <p className="text-start d-flex align-items-center my-0 text-muted">
-                      {positiveLedgers.prettyNativeAmount}
+                      {parseValuesToLocale(
+                        positiveLedgers?.nativeAmount,
+                        'USD',
+                      )}
                     </p>
                   ) : (
                     <>
                       {ledger &&
-                      ledger.txHash &&
-                      !positiveLedgers.hideNativeAmount
+                        ledger.txHash &&
+                        !positiveLedgers.hideNativeAmount
                         ? // <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
-                          //   N/A
-                          //   <i
-                          //     id={`nativeAmount-${ledger.txHash}`}
-                          //     className="ri-information-line ms-1 fs-6 text-muted"
-                          //   ></i>
-                          //   <UncontrolledPopover
-                          //     onClick={(e) => e.stopPropagation()}
-                          //     placement="bottom"
-                          //     target={`nativeAmount-${ledger.txHash}`}
-                          //     trigger="hover"
-                          //   >
-                          //     <PopoverBody
-                          //       style={{
-                          //         width: 'auto',
-                          //       }}
-                          //       className="w-auto p-2 text-center"
-                          //     >
-                          //       <span
-                          //         style={{
-                          //           fontSize: '0.70rem',
-                          //         }}
-                          //       >
-                          //         The price is not available at the time of the
-                          //         transaction
-                          //       </span>
-                          //     </PopoverBody>
-                          //   </UncontrolledPopover>
-                          // </p>
-                          null
+                        //   N/A
+                        //   <i
+                        //     id={`nativeAmount-${ledger.txHash}`}
+                        //     className="ri-information-line ms-1 fs-6 text-muted"
+                        //   ></i>
+                        //   <UncontrolledPopover
+                        //     onClick={(e) => e.stopPropagation()}
+                        //     placement="bottom"
+                        //     target={`nativeAmount-${ledger.txHash}`}
+                        //     trigger="hover"
+                        //   >
+                        //     <PopoverBody
+                        //       style={{
+                        //         width: 'auto',
+                        //       }}
+                        //       className="w-auto p-2 text-center"
+                        //     >
+                        //       <span
+                        //         style={{
+                        //           fontSize: '0.70rem',
+                        //         }}
+                        //       >
+                        //         The price is not available at the time of the
+                        //         transaction
+                        //       </span>
+                        //     </PopoverBody>
+                        //   </UncontrolledPopover>
+                        // </p>
+                        null
                         : null}
                     </>
                   )}
@@ -188,7 +209,9 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
                   {positiveLedgers.displayName}
                 </span>
                 <p className="text-start my-0 text-muted">
-                  {positiveLedgers.prettyNativeAmount || ''}
+                  {positiveLedgers?.nativeAmount === 0
+                    ? ''
+                    : parseValuesToLocale(positiveLedgers?.nativeAmount, 'USD')}
                 </p>
               </div>
             </div>
@@ -199,4 +222,4 @@ const PositiveLedgers = ({ ledger, negativeLedgers }) => {
   );
 };
 
-export default PositiveLedgers;
+export default ReceivedColumn;
