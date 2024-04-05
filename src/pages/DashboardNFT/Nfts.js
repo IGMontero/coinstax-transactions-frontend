@@ -252,7 +252,7 @@ const Nfts = ({ address }) => {
   };
 
   // if no NFTs found
-  if (data && data.length === 0) {
+  if (data && data.length === 0 && !loading) {
     return (
       <>
         {renderTitle()}
@@ -275,7 +275,7 @@ const Nfts = ({ address }) => {
   }
 
   // if no NFTs found
-  if (items && items.length === 0) {
+  if (items && items.length === 0 && !loading) {
     return (
       <>
         {renderTitle()}

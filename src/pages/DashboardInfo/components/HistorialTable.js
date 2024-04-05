@@ -728,7 +728,7 @@ const HistorialTable = ({ data, setData }) => {
         </div>
       ) : null}
       {/* {renderSearchBar()} */}
-      {!loading && !isInitialLoad && !errorData && !isDashboardPage && (
+      {!isInitialLoad && !errorData && !isDashboardPage && (
         <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
           <Col>
             <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
