@@ -37,6 +37,7 @@ export const blockchainActions = {
   SEND: 'SEND',
   BURN: 'BURN',
   MINT: 'MINT',
+  OTHER: 'OTHER',
 };
 
 export const blockchainContractTrustedStateEnumType = {

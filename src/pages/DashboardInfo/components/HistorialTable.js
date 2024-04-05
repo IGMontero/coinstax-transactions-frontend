@@ -40,17 +40,18 @@ const HistorialTable = ({ data, setData }) => {
 
   // const state = useSelector((state) => state);
   // console.log(state);
-
   useEffect(() => {
-    const hasPreview = data.some((transaction) => transaction.preview === true);
+    if (Array.isArray(data)) {
+      const hasPreview = data.some(
+        (transaction) => transaction.preview === true,
+      );
 
-    console.log(
-      'Preview txs:',
-      data.filter((tx) => tx.preview === true).length,
-    ); // 0
+      console.log(
+        'Preview txs:',
+        data.filter((tx) => tx.preview === true).length,
+      );
 
-    if (hasPreview) {
-      setHasPreview(true);
+      setHasPreview(hasPreview);
     } else {
       setHasPreview(false);
     }
