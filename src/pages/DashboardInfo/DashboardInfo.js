@@ -27,6 +27,7 @@ import DashboardHome from '../DashboardHome/DashboardHome';
 import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
+  CurrencyUSD,
   capitalizeFirstLetter,
   copyToClipboard,
   parseValuesToLocale,
@@ -142,7 +143,7 @@ const DashboardInfo = () => {
   useEffect(() => {
     if (series.length > 0 && series[0].data.length > 0) {
       const firstPointValue = series[0].data[0].y;
-      setTitle(`${parseValuesToLocale(firstPointValue, 'USD')}`);
+      setTitle(`${parseValuesToLocale(firstPointValue, CurrencyUSD)}`);
       const lastPointValue = series[0].data[series[0].data.length - 1].y;
       const change = firstPointValue - lastPointValue;
       let changePercentage = (change / firstPointValue) * 100;
@@ -153,7 +154,7 @@ const DashboardInfo = () => {
       const formattedChange = isNaN(change) ? 0 : change;
       const sign = changePercentage >= 0 ? '+' : '';
       setSubtitle(
-        `${sign}${parseValuesToLocale(changePercentage, '')}% (${parseValuesToLocale(formattedChange, 'USD')})`,
+        `${sign}${parseValuesToLocale(changePercentage, '')}% (${parseValuesToLocale(formattedChange, CurrencyUSD)})`,
       );
     }
   }, [series, title, subtitle]);

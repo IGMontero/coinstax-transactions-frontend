@@ -2,6 +2,7 @@ import React from 'react';
 import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import {
+  CurrencyUSD,
   copyToClipboard,
   parseValuesToLocale,
 } from '../../../../../../utils/utils';
@@ -153,7 +154,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                     <p className="text-start d-flex align-items-center my-0 text-muted">
                       {parseValuesToLocale(
                         positiveLedgers?.nativeAmount,
-                        'USD',
+                        CurrencyUSD,
                       )}
                     </p>
                   ) : (
@@ -218,7 +219,10 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                 <p className="text-start my-0 text-muted">
                   {positiveLedgers?.nativeAmount === 0
                     ? ''
-                    : parseValuesToLocale(positiveLedgers?.nativeAmount, 'USD')}
+                    : parseValuesToLocale(
+                        positiveLedgers?.nativeAmount,
+                        CurrencyUSD,
+                      )}
                 </p>
               </div>
             </div>

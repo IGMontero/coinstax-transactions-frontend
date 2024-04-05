@@ -48,6 +48,8 @@ export const blockchainContractTrustedStateEnumType = {
 
 export const FILTER_NAMES = ['TRADE', 'MINT', 'SEND', 'RECEIVE', 'OTHERS'];
 
+export const CurrencyUSD = 'USD';
+
 export const formatIdTransaction = (address, prefixLength, suffixLength) => {
   if (!address || typeof address !== 'string' || !address.startsWith('0x')) {
     return address;
@@ -169,8 +171,6 @@ export const parseValuesToLocale = (value, currency) => {
       };
     }
 
-
-
     if (isValueHuge) {
       // return Number(value).toExponential(2) + ' ' + currency;
 
@@ -179,7 +179,6 @@ export const parseValuesToLocale = (value, currency) => {
         ...options,
         notation: 'scientific',
       });
-
     }
 
     if (isValueSmall) {
@@ -191,7 +190,6 @@ export const parseValuesToLocale = (value, currency) => {
         ...options,
         // maximumFractionDigits: significantDigits + 1,
       });
-
     }
 
     return parseFloat(value).toLocaleString(localUbication, options);
@@ -264,7 +262,16 @@ export const updateTransactionsPreview = async ({
       // Update one tx to trigger the re-render
       const newData = [...parsed];
 
-      return setData((currentData) => newData);
+      // return setData((currentData) => newData);
+      // return setData && setData(newData);
+      return setData((currentData) => {
+        return currentData.map((transaction) => {
+          const updatedTransaction = newData.find(
+            (t) => t.txHash === transaction.txHash,
+          );
+          return updatedTransaction || transaction;
+        });
+      });
     }
 
     // Update the data
