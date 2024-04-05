@@ -9,7 +9,7 @@ import {
   Spinner,
 } from 'reactstrap';
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
-import { parseValuesToLocale } from '../../../utils/utils';
+import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
 
 const ActivesTable = ({ data, loading }) => {
   const [viewMode, setViewMode] = useState('byPlatform');
@@ -84,15 +84,17 @@ const ActivesTable = ({ data, loading }) => {
           <div className="d-flex justify-content-between align-items-center mb-3">
             <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
             <Button
-              className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
-                }`}
+              className={`btn btn-sm btn-soft-primary rounded ${
+                viewMode === 'byPlatform' ? 'active' : ''
+              }`}
               onClick={() => handleViewModeChange('byPlatform')}
             >
               By Platform
             </Button>
             <Button
-              className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
-                }`}
+              className={`mx-2 btn btn-sm btn-soft-primary rounded ${
+                viewMode === 'perPosition' ? 'active' : ''
+              }`}
               onClick={() => handleViewModeChange('perPosition')}
             >
               Per Position
@@ -289,7 +291,10 @@ const ActivesTable = ({ data, loading }) => {
                               </td>
                               <td>
                                 {asset.price
-                                  ? parseValuesToLocale(asset.price, 'USD')
+                                  ? parseValuesToLocale(
+                                      asset.price,
+                                      CurrencyUSD,
+                                    )
                                   : '$0.00'}
                               </td>
                               <td>
@@ -307,37 +312,43 @@ const ActivesTable = ({ data, loading }) => {
                                 <div className="d-flex flex-column align-items-start">
                                   <span>
                                     {asset.value
-                                      ? parseValuesToLocale(asset.value, 'USD')
-                                      : parseValuesToLocale(0, 'USD')}
+                                      ? parseValuesToLocale(
+                                          asset.value,
+                                          CurrencyUSD,
+                                        )
+                                      : parseValuesToLocale(0, CurrencyUSD)}
                                   </span>
                                   <small
-                                    className={`${asset.prettyDeltaValuePercent === '0.00%'
-                                      ? 'text-primary'
-                                      : asset.prettyDeltaValuePercent[0] ===
-                                        '-'
-                                        ? 'text-danger'
-                                        : 'text-success'
-                                      }`}
+                                    className={`${
+                                      asset.prettyDeltaValuePercent === '0.00%'
+                                        ? 'text-primary'
+                                        : asset.prettyDeltaValuePercent[0] ===
+                                            '-'
+                                          ? 'text-danger'
+                                          : 'text-success'
+                                    }`}
                                   >
                                     {asset.prettyDeltaValuePercent === '0.00%'
                                       ? parseValuesToLocale(
-                                        asset.deltaValuePercent,
-                                        '',
-                                      )
+                                          asset.deltaValuePercent,
+                                          '',
+                                        )
                                       : (asset.prettyDeltaValuePercent[0] ===
                                         '-'
-                                        ? ''
-                                        : '+') +
-                                      parseValuesToLocale(
-                                        asset.deltaValuePercent,
-                                        '',
-                                      )}
-                                    {asset.deltaValue ? ' (' +
-                                      parseValuesToLocale(
-                                        asset.deltaValue,
-                                        'USD',
-                                      ) +
-                                      ')' : null}
+                                          ? ''
+                                          : '+') +
+                                        parseValuesToLocale(
+                                          asset.deltaValuePercent,
+                                          '',
+                                        )}
+                                    {asset.deltaValue
+                                      ? ' (' +
+                                        parseValuesToLocale(
+                                          asset.deltaValue,
+                                          CurrencyUSD,
+                                        ) +
+                                        ')'
+                                      : null}
                                   </small>
                                 </div>
                               </td>

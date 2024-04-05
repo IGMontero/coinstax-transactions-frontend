@@ -3,6 +3,7 @@ import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
 import {
+  CurrencyUSD,
   copyToClipboard,
   parseValuesToLocale,
 } from '../../../../../../utils/utils';
@@ -152,7 +153,7 @@ const SentColumn = ({ ledger }) => {
                         <p className="text-start d-flex align-items-center my-0 text-muted">
                           {parseValuesToLocale(
                             negativeLedgers.nativeAmount,
-                            'USD',
+                            CurrencyUSD,
                           )}
                         </p>
                       ) : (
@@ -210,7 +211,10 @@ const SentColumn = ({ ledger }) => {
               <p className="text-start my-0 text-muted">
                 {negativeLedgers?.nativeAmount === 0
                   ? ''
-                  : parseValuesToLocale(negativeLedgers?.nativeAmount, 'USD')}
+                  : parseValuesToLocale(
+                      negativeLedgers?.nativeAmount,
+                      CurrencyUSD,
+                    )}
               </p>
             </div>
           </>
