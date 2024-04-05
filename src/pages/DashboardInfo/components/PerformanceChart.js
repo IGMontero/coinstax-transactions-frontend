@@ -3,7 +3,7 @@ import ReactApexChart from 'react-apexcharts';
 import { fetchPerformance } from '../../../slices/transactions/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardBody, Col, Spinner } from 'reactstrap';
-import { parseValuesToLocale } from '../../../utils/utils';
+import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
 
 const PerformanceChart = ({
   address,
@@ -106,7 +106,7 @@ const PerformanceChart = ({
       custom: function ({ series, seriesIndex, dataPointIndex, w }) {
         const value = parseValuesToLocale(
           series[seriesIndex][dataPointIndex],
-          'USD',
+          CurrencyUSD,
         );
         const date = new Date(w.globals.seriesX[seriesIndex][dataPointIndex]);
         const prettyDate = date.toLocaleDateString('en-US', {

@@ -8,6 +8,8 @@ import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 const ApprovalColumn = ({ transaction }) => {
   const transactionApproval = transaction?.txSummary?.approval;
 
+  const isPreview = transaction?.preview;
+
   const [isCopied, setIsCopied] = React.useState(false);
 
   const parsedValue = parseValuesToLocale(transactionApproval?.value, '');
@@ -28,11 +30,11 @@ const ApprovalColumn = ({ transaction }) => {
       className="d-flex align-items-center justify-content-start"
       style={{ overflow: 'hidden' }}
     >
-      <h6
-        className={`fw-semibold my-0  d-flex align-items-center justify-content-start`}
-      >
-        <>
-          <div className={`image-container me-2`}>
+      <>
+        <div className="image-container me-2">
+          {isPreview && !transactionApproval?.logo ? (
+            <div className="skeleton-avatar-circle"></div>
+          ) : (
             <img
               src={
                 transactionApproval?.logo ||
@@ -54,8 +56,12 @@ const ApprovalColumn = ({ transaction }) => {
                 textNode.className = 'currency-placeholder';
                 container.appendChild(textNode);
               }}
-            />{' '}
-          </div>
+            />
+          )}
+        </div>
+        <h6
+          className={`fw-semibold my-0  d-flex align-items-center justify-content-start`}
+        >
           <div className="d-flex flex-column">
             <span className={`d-flex text-white'`}>
               <span
@@ -100,8 +106,8 @@ const ApprovalColumn = ({ transaction }) => {
               {parsedValue} {transactionApproval?.currency}
             </p>
           </div>
-        </>
-      </h6>
+        </h6>
+      </>
     </div>
   );
 };

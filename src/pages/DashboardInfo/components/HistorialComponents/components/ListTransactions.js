@@ -42,6 +42,8 @@ const ListTransactionss = ({ transactions }) => {
     const prefix = isReceived ? 'received' : 'sent';
     const targetId = `amount-list-${prefix}-${index}-${transactions.txHash}`;
 
+    const isPreview = transactions.preview;
+
     return (
       <div
         key={index}
@@ -49,27 +51,35 @@ const ListTransactionss = ({ transactions }) => {
         style={{ minHeight: '50px' }}
       >
         <div className="image-container me-2 d-flex align-items-center justify-content-center">
-          <img
-            src={ledger.txInfo?.logo || ledger.currency}
-            alt={ledger.txInfo?.name}
-            className="rounded"
-            width={35}
-            height={35}
-            onError={(e) => {
-              e.target.onerror = null;
-              e.target.style.display = 'none';
-              const container = e.target.parentNode;
-              container.classList.add(
-                'd-flex',
-                'align-items-center',
-                'justify-content-center',
-              );
-              const textNode = document.createElement('div');
-              textNode.textContent = ledger.currency;
-              textNode.className = 'currency-placeholder';
-              container.appendChild(textNode);
-            }}
-          />
+          {isPreview && !ledger.txInfo?.logo ? (
+            <div
+              className={
+                isNft ? 'skeleton-avatar-square' : 'skeleton-avatar-circle'
+              }
+            ></div>
+          ) : (
+            <img
+              src={ledger.txInfo?.logo || ledger.currency}
+              alt={ledger.txInfo?.name}
+              className="rounded"
+              width={35}
+              height={35}
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.style.display = 'none';
+                const container = e.target.parentNode;
+                container.classList.add(
+                  'd-flex',
+                  'align-items-center',
+                  'justify-content-center',
+                );
+                const textNode = document.createElement('div');
+                textNode.textContent = ledger.currency;
+                textNode.className = 'currency-placeholder';
+                container.appendChild(textNode);
+              }}
+            />
+          )}
         </div>
         <div className="d-flex flex-column justify-content-center">
           <h6 className="fw-semibold my-0">
@@ -96,10 +106,8 @@ const ListTransactionss = ({ transactions }) => {
                   id={targetId}
                   onClick={(e) => handleCopyValue(e, ledger.amount)}
                 >
-                  {parseValuesToLocale(
-                    ledger.amount,
-                    isNft ? '' : ledger.currency,
-                  )}
+                  {parseValuesToLocale(ledger.amount, '')}{' '}
+                  {isNft ? '' : ledger.currency}
                 </span>
                 {ledger.amount && (
                   <UncontrolledPopover
