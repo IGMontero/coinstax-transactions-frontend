@@ -103,6 +103,17 @@ const Nfts = ({ address }) => {
     setLoadingIncludeSpam(true);
   };
 
+  // show only 4 NFTs if is dashboard page
+  let items = [];
+
+  if (isDashboardPage) {
+    if (data && Array.isArray(data.items)) {
+      items = data.items.slice(0, 5);
+    }
+  } else {
+    items = data.items;
+  }
+
   if (imageError) {
     return (
       <div
@@ -232,22 +243,49 @@ const Nfts = ({ address }) => {
     );
   };
 
-  // show only 4 NFTs if is dashboard page
-  let items = [];
+  const renderTitle = () => {
+    return (
+      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
+        NFTs
+      </h1>
+    );
+  };
 
-  if (isDashboardPage) {
-    if (data && Array.isArray(data.items)) {
-      items = data.items.slice(0, 5);
-    }
-  } else {
-    items = data.items;
+  // if no NFTs found
+  if (data && data.length === 0) {
+    return (
+      <>
+        {renderTitle()}
+        <Col
+          className="d-flex text-center col-12 justify-content-center align-items-center"
+          style={{ display: 'flex', height: '50vh', width: '100%' }}
+        >
+          <h1 className="text-center">No NFTs found </h1>
+        </Col>
+      </>
+    );
+  }
+
+  // if no NFTs found
+  if (items && items.length === 0) {
+    return (
+      <>
+        {renderTitle()}
+        <Row>
+          <Col
+            className="d-flex text-center col-12   justify-content-center align-items-center"
+            style={{ display: 'flex', height: '40vh', width: '100%' }}
+          >
+            <h1 className="text-center ">No NFTs found</h1>
+          </Col>
+        </Row>
+      </>
+    );
   }
 
   return (
     <React.Fragment>
-      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
-        NFTs
-      </h1>
+      {renderTitle()}
       {loading ? (
         <div
           className="d-flex justify-content-center align-items-center h-50vh"
@@ -298,7 +336,7 @@ const Nfts = ({ address }) => {
 
           {/* {renderDropdown()} */}
 
-          <Col className="mt-4 col-12 d-flex justify-content-center">
+          <Col className={`mt-4 col-12 d-flex justify-content-center`}>
             {loadingIncludeSpam ? (
               <div
                 className="d-flex justify-content-center align-items-center"
@@ -462,25 +500,8 @@ const Nfts = ({ address }) => {
                   })}
               </div>
             )}
-            {/* No NFTs found */}
-            {data.length === 0 ? (
-              <Col
-                className="d-flex text-center col-12 justify-content-center align-items-center"
-                style={{ display: 'flex', height: '50vh', width: '100%' }}
-              >
-                <h1 className="text-center">No NFTs found </h1>
-              </Col>
-            ) : null}
-
-            {items && items.length === 0 ? (
-              <Col
-                className="d-flex text-center col-12 justify-content-center align-items-center"
-                style={{ display: 'flex', height: '50vh', width: '100%' }}
-              >
-                <h1 className="text-center">No NFTs found </h1>
-              </Col>
-            ) : null}
           </Col>
+          {/* No NFTs found */}
         </>
       )}
     </React.Fragment>
