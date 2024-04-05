@@ -48,7 +48,13 @@ const SentColumn = ({ ledger }) => {
               <>
                 <div className="image-container me-1">
                   {isPreview && !negativeLedgers?.logo ? (
-                    <div className="skeleton-avatar"></div>
+                    <div
+                      className={
+                        isNft
+                          ? 'skeleton-avatar-square'
+                          : 'skeleton-avatar-circle'
+                      }
+                    ></div>
                   ) : (
                     <img
                       src={
@@ -78,8 +84,8 @@ const SentColumn = ({ ledger }) => {
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {!isNft &&
-                      negativeLedgers?.value !== 0 &&
-                      !hasAssetsCount ? (
+                    negativeLedgers?.value !== 0 &&
+                    !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
                         id={`amount-left-${ledger?.txHash}`}
@@ -114,8 +120,8 @@ const SentColumn = ({ ledger }) => {
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                      negativeLedgers?.value !== 0 &&
-                      document.getElementById(`amount-left-${ledger.txHash}`) ? (
+                    negativeLedgers?.value !== 0 &&
+                    document.getElementById(`amount-left-${ledger.txHash}`) ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
