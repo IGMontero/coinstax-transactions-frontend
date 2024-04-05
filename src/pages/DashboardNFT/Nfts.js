@@ -258,9 +258,17 @@ const Nfts = ({ address }) => {
         {renderTitle()}
         <Col
           className="d-flex text-center col-12 justify-content-center align-items-center"
-          style={{ display: 'flex', height: '50vh', width: '100%' }}
+          style={{
+            display: 'flex',
+            height: isDashboardPage ? '10vh' : '40vh',
+            width: '100%',
+          }}
         >
-          <h1 className="text-center">No NFTs found </h1>
+          {isDashboardPage ? (
+            <h4 className="text-center ">No NFTs Found</h4>
+          ) : (
+            <h1 className="text-center ">No NFTs Found</h1>
+          )}
         </Col>
       </>
     );
@@ -274,9 +282,17 @@ const Nfts = ({ address }) => {
         <Row>
           <Col
             className="d-flex text-center col-12   justify-content-center align-items-center"
-            style={{ display: 'flex', height: '40vh', width: '100%' }}
+            style={{
+              display: 'flex',
+              height: isDashboardPage ? '10vh' : '40vh',
+              width: '100%',
+            }}
           >
-            <h1 className="text-center ">No NFTs found</h1>
+            {isDashboardPage ? (
+              <h4 className="text-center ">No NFTs Found</h4>
+            ) : (
+              <h1 className="text-center ">No NFTs Found</h1>
+            )}
           </Col>
         </Row>
       </>
