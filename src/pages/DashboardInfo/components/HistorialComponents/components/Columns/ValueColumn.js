@@ -1,10 +1,13 @@
 import React from 'react';
-import { parseValuesToLocale } from '../../../../../../utils/utils';
+import {
+  CurrencyUSD,
+  parseValuesToLocale,
+} from '../../../../../../utils/utils';
 
 const ValueColumn = ({ transaction }) => {
   const parseValue = parseValuesToLocale(
     Math.abs(transaction.value),
-    'USD',
+    CurrencyUSD,
   );
 
   return (

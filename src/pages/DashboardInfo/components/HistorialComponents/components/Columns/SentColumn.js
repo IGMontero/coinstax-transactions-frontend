@@ -3,6 +3,7 @@ import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
 import {
+  CurrencyUSD,
   copyToClipboard,
   parseValuesToLocale,
 } from '../../../../../../utils/utils';
@@ -48,7 +49,13 @@ const SentColumn = ({ ledger }) => {
               <>
                 <div className="image-container me-1">
                   {isPreview && !negativeLedgers?.logo ? (
-                    <div className="skeleton-avatar"></div>
+                    <div
+                      className={
+                        isNft
+                          ? 'skeleton-avatar-square'
+                          : 'skeleton-avatar-circle'
+                      }
+                    ></div>
                   ) : (
                     <img
                       src={
@@ -78,8 +85,8 @@ const SentColumn = ({ ledger }) => {
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {!isNft &&
-                      negativeLedgers?.value !== 0 &&
-                      !hasAssetsCount ? (
+                    negativeLedgers?.value !== 0 &&
+                    !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
                         id={`amount-left-${ledger?.txHash}`}
@@ -114,8 +121,8 @@ const SentColumn = ({ ledger }) => {
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                      negativeLedgers?.value !== 0 &&
-                      document.getElementById(`amount-left-${ledger.txHash}`) ? (
+                    negativeLedgers?.value !== 0 &&
+                    document.getElementById(`amount-left-${ledger.txHash}`) ? (
                       <UncontrolledPopover
                         onClick={(e) => e.stopPropagation()}
                         placement="bottom"
@@ -146,7 +153,7 @@ const SentColumn = ({ ledger }) => {
                         <p className="text-start d-flex align-items-center my-0 text-muted">
                           {parseValuesToLocale(
                             negativeLedgers.nativeAmount,
-                            'USD',
+                            CurrencyUSD,
                           )}
                         </p>
                       ) : (
@@ -204,7 +211,10 @@ const SentColumn = ({ ledger }) => {
               <p className="text-start my-0 text-muted">
                 {negativeLedgers?.nativeAmount === 0
                   ? ''
-                  : parseValuesToLocale(negativeLedgers?.nativeAmount, 'USD')}
+                  : parseValuesToLocale(
+                      negativeLedgers?.nativeAmount,
+                      CurrencyUSD,
+                    )}
               </p>
             </div>
           </>

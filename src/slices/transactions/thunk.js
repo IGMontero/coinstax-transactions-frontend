@@ -106,6 +106,7 @@ export const downloadTransactions = createAsyncThunk(
     { blockchain, address, query = '', filters = {}, assetsFilters },
     { rejectWithValue },
   ) => {
+    const token = localStorage.getItem('token');
     try {
       let queryString = '';
       if (query) {
@@ -129,6 +130,10 @@ export const downloadTransactions = createAsyncThunk(
       let url = `${API_BASE}/transactions/${blockchain}/${address}/export-csv?${queryString}`;
       const response = await fetch(url, {
         method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${token}`,
+        },
       });
       if (!response.ok) {
         return response.json();
