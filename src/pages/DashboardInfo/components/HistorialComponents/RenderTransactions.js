@@ -145,7 +145,7 @@ const RenderTransactions = ({
                   md={3}
                   sm={3}
                   xs={3}
-                  className="d-flex justify-content-end  align-items-center  mt-lg-0 mb-3"
+                  className="d-flex justify-content-end  align-items-center  pb-lg-0 pb-3"
                 >
                   {transaction.blockchainAction === blockchainActions.BURN ||
                   transactions.blockchainAction ===
