@@ -4,6 +4,7 @@ import {
   fetchPerformance,
   fetchAssets,
   fetchHistory,
+  downloadTransactions,
 } from './thunk';
 export const initialState = {
   transactions: [],
@@ -63,6 +64,16 @@ const TransactionsSlice = createSlice({
       state.error = null;
     },
     [fetchHistory.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [downloadTransactions.pending]: (state) => {
+      state.loading = true;
+    },
+    [downloadTransactions.fulfilled]: (state) => {
+      state.loading = false;
+    },
+    [downloadTransactions.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },

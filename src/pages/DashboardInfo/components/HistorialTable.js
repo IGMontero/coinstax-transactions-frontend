@@ -44,7 +44,10 @@ const HistorialTable = ({ data, setData }) => {
   useEffect(() => {
     const hasPreview = data.some((transaction) => transaction.preview === true);
 
-    console.log("Preview txs:", data.filter((tx) => tx.preview === true).length) // 0
+    console.log(
+      'Preview txs:',
+      data.filter((tx) => tx.preview === true).length,
+    ); // 0
 
     if (hasPreview) {
       setHasPreview(true);
@@ -56,7 +59,6 @@ const HistorialTable = ({ data, setData }) => {
       setHasPreview(false);
     };
   }, [data]);
-
 
   const isDashboardPage = location.pathname.includes('tokens');
 
@@ -358,7 +360,14 @@ const HistorialTable = ({ data, setData }) => {
         }),
       ).unwrap();
 
-      if (response.isProcessing) {
+      if (response.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong. Please try again later.',
+        });
+        setLoadingDownload(false);
+      } else if (response.isProcessing && !response.error) {
         Swal.fire({
           title: 'Processing...',
           text: 'Address transactions are processing. Please try again in a few minutes.',
@@ -509,7 +518,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -527,8 +536,9 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
