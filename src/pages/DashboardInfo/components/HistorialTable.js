@@ -361,14 +361,14 @@ const HistorialTable = ({ data, setData }) => {
         }),
       ).unwrap();
 
-      if (response.error) {
+      if (response.error && response.error.code !== 'PROCESSING') {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: 'Something went wrong. Please try again later.',
         });
         setLoadingDownload(false);
-      } else if (response.isProcessing && !response.error) {
+      } else if (response.isProcessing) {
         Swal.fire({
           title: 'Processing...',
           text: 'Address transactions are processing. Please try again in a few minutes.',
