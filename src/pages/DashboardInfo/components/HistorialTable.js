@@ -134,9 +134,6 @@ const HistorialTable = ({ data, setData }) => {
   const fetchData = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
-    // const isInitialFetch = currentPage === 0;
-    // const dataLength = data?.length;
-
     try {
       setIsInitialLoad(true);
 
@@ -201,8 +198,8 @@ const HistorialTable = ({ data, setData }) => {
   useEffect(() => {
     let interval;
     if (hasPreview) {
-      interval = setInterval(() => {
-        updateTransactionsPreview({
+      interval = setInterval(async () => {
+        await updateTransactionsPreview({
           address,
           debouncedSearchTerm,
           selectedFilters,
