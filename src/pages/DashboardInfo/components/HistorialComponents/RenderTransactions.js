@@ -148,8 +148,9 @@ const RenderTransactions = ({
                   className="d-flex justify-content-end  align-items-center  pb-lg-0 pb-3"
                 >
                   {transaction.blockchainAction === blockchainActions.BURN ||
-                  transactions.blockchainAction ===
-                    blockchainActions.BURN ? null : (
+                  transactions.blockchainAction === blockchainActions.MINT ||
+                  transaction.blockchainAction ===
+                    blockchainActions.OTHER ? null : (
                     <ContractInfoColumn
                       transaction={transaction}
                       index={index}

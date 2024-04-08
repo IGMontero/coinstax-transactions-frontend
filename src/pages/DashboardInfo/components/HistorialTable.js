@@ -40,14 +40,18 @@ const HistorialTable = ({ data, setData }) => {
 
   // const state = useSelector((state) => state);
   // console.log(state);
-
   useEffect(() => {
-    const hasPreview = data.some((transaction) => transaction.preview === true);
+    if (Array.isArray(data)) {
+      const hasPreview = data.some(
+        (transaction) => transaction.preview === true,
+      );
 
-    console.log("Preview txs:", data.filter((tx) => tx.preview === true).length) // 0
+      console.log(
+        'Preview txs:',
+        data.filter((tx) => tx.preview === true).length,
+      );
 
-    if (hasPreview) {
-      setHasPreview(true);
+      setHasPreview(hasPreview);
     } else {
       setHasPreview(false);
     }
@@ -56,7 +60,6 @@ const HistorialTable = ({ data, setData }) => {
       setHasPreview(false);
     };
   }, [data]);
-
 
   const isDashboardPage = location.pathname.includes('tokens');
 
@@ -358,7 +361,14 @@ const HistorialTable = ({ data, setData }) => {
         }),
       ).unwrap();
 
-      if (response.isProcessing) {
+      if (response.error && response.error.code !== 'PROCESSING') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong. Please try again later.',
+        });
+        setLoadingDownload(false);
+      } else if (response.isProcessing) {
         Swal.fire({
           title: 'Processing...',
           text: 'Address transactions are processing. Please try again in a few minutes.',
@@ -509,7 +519,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -527,8 +537,9 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -717,7 +728,7 @@ const HistorialTable = ({ data, setData }) => {
         </div>
       ) : null}
       {/* {renderSearchBar()} */}
-      {!loading && !isInitialLoad && !errorData && !isDashboardPage && (
+      {!isInitialLoad && !errorData && !isDashboardPage && (
         <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
           <Col>
             <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
