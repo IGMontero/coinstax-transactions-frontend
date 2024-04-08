@@ -24,7 +24,7 @@ export const getActionMapping = (action) => {
     case 'OTHER':
       return { color: 'dark', icon: 'ri-question-mark fs-3' };
     default:
-      return { color: 'dark', icon: 'ri-arrow-down-line fs-3' };
+      return { color: 'dark', icon: 'ri-question-mark fs-3' };
   }
 };
 
@@ -216,69 +216,80 @@ export const updateTransactionsPreview = async ({
   pagesChecked,
 }) => {
   // Pges checked
-  // const pagesChecked = new Set();
-
-  const updatePage = async (page) => {
-    // if the page has been checked, continue with the next page
-    if (pagesChecked.has(page)) {
-      if (page < currentPage) {
-        // Continue with the next page
-        return updatePage(page + 1);
+  // const [pagesChecked, setPagesChecked] = useState(new Set());
+  try {
+    const updatePage = async (page) => {
+      // if the page has been checked, continue with the next page
+      if (pagesChecked.has(page)) {
+        if (page < currentPage) {
+          // Continue with the next page
+          return updatePage(page + 1);
+        }
+        // Stop if the currentPage has been reached and all transactions are not in preview mode
+        return;
       }
-      // Stop if the currentPage has been reached and all transactions are not in preview mode
-      return;
-    }
 
-    const response = await dispatch(
-      fetchHistory({
-        address,
-        query: debouncedSearchTerm,
-        filters: {
-          blockchainAction: selectedFilters,
-          includeSpam: includeSpam,
-        },
-        assetsFilters: getSelectedAssetFilters(selectedAssets),
-        page: page,
-      }),
-    ).unwrap();
+      const response = await dispatch(
+        fetchHistory({
+          address,
+          query: debouncedSearchTerm,
+          filters: {
+            blockchainAction: selectedFilters,
+            includeSpam: includeSpam,
+          },
+          assetsFilters: getSelectedAssetFilters(selectedAssets),
+          page: page,
+        }),
+      ).unwrap();
 
-    const { parsed } = response;
-    if (!parsed || parsed.length === 0) {
-      return;
-    }
+      const { parsed } = response;
+      if (!parsed || parsed.length === 0) {
+        return;
+      }
 
-    // Update the data
-    setData((currentData) => {
-      return currentData.map((transaction) => {
-        const updatedTransaction = parsed.find(
-          (t) => t.txHash === transaction.txHash,
-        );
-        return updatedTransaction || transaction;
+      // Verify if all transactions are not in preview mode
+      const allNotInPreview = parsed.every(
+        (transaction) => !transaction.preview,
+      );
+
+      // If all transactions are not in preview mode, add the page to the set of checked pages
+      if (allNotInPreview) {
+        // Add the page to the set of checked pages
+        pagesChecked.add(page);
+
+        if (page < currentPage) {
+          // Continue with the next page
+          return updatePage(page + 1);
+        }
+        // Stop if the currentPage has been reached and all transactions are not in preview mode
+        // Update one tx to trigger the re-render
+        const newData = [...parsed];
+
+        // return setData((currentData) => newData);
+        // return setData && setData(newData);
+        return setData((currentData) => {
+          return currentData.map((transaction) => {
+            const updatedTransaction = newData.find(
+              (t) => t.txHash === transaction.txHash,
+            );
+            return updatedTransaction || transaction;
+          });
+        });
+      }
+
+      // Update the data
+      setData((currentData) => {
+        return currentData.map((transaction) => {
+          const updatedTransaction = parsed.find(
+            (t) => t.txHash === transaction.txHash,
+          );
+          return updatedTransaction || transaction;
+        });
       });
-    });
-
-    // Verify if all transactions are not in preview mode
-    const allNotInPreview = parsed.every((transaction) => !transaction.preview);
-
-    // If all transactions are not in preview mode, add the page to the set of checked pages
-    if (allNotInPreview) {
-      // Add the page to the set of checked pages
-      pagesChecked.add(page);
-
-      if (page < currentPage) {
-        // Continue with the next page
-        return updatePage(page + 1);
-      }
-      // Stop if the currentPage has been reached and all transactions are not in preview mode
-      // Update one tx to trigger the re-render
-      // const newData = [...parsed];
-
-      return
-    }
-
-
-  };
-
-  // Start the update process
-  await updatePage(0);
+    };
+    // Start the update process
+    await updatePage(0);
+  } catch (error) {
+    console.log(error);
+  }
 };
