@@ -48,7 +48,7 @@ const SentColumn = ({ ledger }) => {
             ) : (
               <>
                 <div className="image-container me-1">
-                  {isPreview && !negativeLedgers?.logo ? (
+                  {isPreview ? (
                     <div
                       className={
                         isNft
