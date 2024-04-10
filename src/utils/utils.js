@@ -299,3 +299,12 @@ export const updateTransactionsPreview = async ({
     console.log(error);
   }
 };
+
+// Remove negative sign from the string
+export const removeNegativeSign = (amount) => {
+  if (amount === undefined || amount === null) {
+    return '';
+  }
+
+  return amount.replace('-', '');
+};
