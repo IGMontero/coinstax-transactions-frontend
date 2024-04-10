@@ -330,31 +330,26 @@ const DashboardInfo = () => {
           addressTitle={addressTitle}
         />
 
-        {!address ? (
-          <Container>
-            <DashboardHome />
-          </Container>
-        ) : (
-          <>
-            {loading ? (
-              <div
-                className="d-flex d-none justify-content-start align-items-center"
-                style={{ height: '13vh' }}
+        <>
+          {loading ? (
+            <div
+              className="d-flex d-none justify-content-start align-items-center"
+              style={{ height: '13vh' }}
+            >
+              <Spinner style={{ width: '2rem', height: '2rem' }} />
+            </div>
+          ) : (
+            <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
+              <Col
+                xxl={9}
+                lg={9}
+                md={9}
+                sm={9}
+                xs={9}
+                className="d-flex flex-column"
+                order="1"
               >
-                <Spinner style={{ width: '2rem', height: '2rem' }} />
-              </div>
-            ) : (
-              <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
-                <Col
-                  xxl={9}
-                  lg={9}
-                  md={9}
-                  sm={9}
-                  xs={9}
-                  className="d-flex flex-column"
-                  order="1"
-                >
-                  {/* <div className="d-flex flex-row">
+                {/* <div className="d-flex flex-row">
                     <h4>{formatIdTransaction(addressTitle, 6, 8)}</h4>
                     <UncontrolledDropdown className="card-header-dropdown">
                       <DropdownToggle
@@ -387,19 +382,19 @@ const DashboardInfo = () => {
                       </DropdownMenu>
                     </UncontrolledDropdown>
                   </div> */}
-                  <div className="d-flex flex-row ">
-                    {/* <h1 className="fw-semibold">{title}</h1> */}
-                    {isUnsupported && (
-                      <div className="mt-5">
-                        <h1 className="fw-semibold text-danger">
-                          Unsupported Address
-                        </h1>
-                        <h5 className="text-primary">
-                          Contact our support team{' '}
-                        </h5>
-                      </div>
-                    )}
-                    {/* <UncontrolledDropdown className="card-header-dropdown">
+                <div className="d-flex flex-row ">
+                  {/* <h1 className="fw-semibold">{title}</h1> */}
+                  {isUnsupported && (
+                    <div className="mt-5">
+                      <h1 className="fw-semibold text-danger">
+                        Unsupported Address
+                      </h1>
+                      <h5 className="text-primary">
+                        Contact our support team{' '}
+                      </h5>
+                    </div>
+                  )}
+                  {/* <UncontrolledDropdown className="card-header-dropdown">
                       <DropdownToggle
                         tag="a"
                         className="text-reset "
@@ -419,31 +414,31 @@ const DashboardInfo = () => {
                         </DropdownItem>
                       </DropdownMenu>
                     </UncontrolledDropdown> */}
-                  </div>
-                  {/* <h5
+                </div>
+                {/* <h5
                     className={`mt-0 text-${
                       subtitle[0] == '+' ? 'success' : 'danger'
                     }`}
                   >
                     {subtitle}
                   </h5>{' '} */}
-                </Col>
-                <Col
-                  xxl={3}
-                  lg={3}
-                  md={3}
-                  sm={12}
-                  xs={12}
-                  className="d-flex justify-content-center mb-3"
-                  order={{
-                    sm: 'last',
-                    xs: 'last',
-                    md: '2',
-                    lg: '2',
-                    xxl: '2',
-                  }}
-                >
-                  {/* <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
+              </Col>
+              <Col
+                xxl={3}
+                lg={3}
+                md={3}
+                sm={12}
+                xs={12}
+                className="d-flex justify-content-center mb-3"
+                order={{
+                  sm: 'last',
+                  xs: 'last',
+                  md: '2',
+                  lg: '2',
+                  xxl: '2',
+                }}
+              >
+                {/* <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
                       <i className="ri-share-forward-fill text-dark fs-4 p-1"></i>
                     </Button>
                     <Button className="rounded-circle bg-transparent border-1 mx-3 border-dark btn btn-sm">
@@ -452,21 +447,21 @@ const DashboardInfo = () => {
                     <Button color="primary" className="btn btn-sm">
                       Add wallet
                     </Button> */}
-                </Col>
-              </Row>
-            )}
-            <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
-              {' '}
-              {!isUnsupported ? (
-                <Col className="col-12 ">
-                  <div
-                    className=" w-100 top-0 d-flex justify-content-between position-sticky align-items-center  "
-                    style={{
-                      zIndex: 5,
-                      backgroundColor: '#16161a',
-                    }}
-                  >
-                    {/* <Col xxl={6} className="">
+              </Col>
+            </Row>
+          )}
+          <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
+            {' '}
+            {!isUnsupported ? (
+              <Col className="col-12 ">
+                <div
+                  className=" w-100 top-0 d-flex justify-content-between position-sticky align-items-center  "
+                  style={{
+                    zIndex: 5,
+                    backgroundColor: '#16161a',
+                  }}
+                >
+                  {/* <Col xxl={6} className="">
                       <Nav
                         tabs
                         className="  nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
@@ -528,93 +523,89 @@ const DashboardInfo = () => {
                       </Nav>
                     </Col> */}
 
-                    {/* Dropdown Menu  here  renderDropdownMenu()*/}
-                  </div>
-                  <TabContent
-                    activeTab={customActiveTab}
-                    className="text-muted"
-                  >
-                    <TabPane tabId="1" id="home1">
-                      <div className="d-flex ">
-                        <div className="flex-grow-1">
-                          <Col xxl={12} className="mt-3 mb-4">
-                            <div className="d-flex justify-content-start">
-                              <Col className="col-12 ">
-                                <PerformanceChart
-                                  type={type}
-                                  loading={loading}
-                                  setLoading={setLoading}
-                                  setIsUnsupported={setIsUnsupported}
-                                  address={addressForSearch}
-                                  series={series}
-                                  setSeries={setSeries}
-                                  title={title}
-                                  subtitle={subtitle}
-                                />
-                              </Col>
-                            </div>
-                          </Col>
-                          <Col xxl={12}>
-                            <ActivesTable
-                              loading={loadingAssets}
-                              data={assetsData}
-                            />
-                          </Col>
-                          <Col xxl={12} className="mt-3 d-flex flex-column">
-                            <div className="d-flex justify-content-between align-items-center mb-2">
-                              <h2 className="ms-1 mt-2">NFTs</h2>
-                              <Button
-                                onClick={() =>
-                                  navigate(`/address/${address}/nfts`)
-                                }
-                                className="btn btn-sm btn-soft-primary rounded"
-                              >
-                                <span className="p-1">See more NFTs</span>
-                              </Button>
-                            </div>
-                            <div className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden">
-                              <Nfts address={addressForSearch} />
-                            </div>
-                          </Col>
-
-                          <Col xxl={12} className="mt-3">
-                            <div className="d-flex justify-content-between align-items-center mb-2">
-                              <h2 className="ms-1 mt-2">Transactions</h2>
-                              <Button
-                                onClick={() =>
-                                  navigate(`/address/${address}/history`)
-                                }
-                                className="btn btn-sm btn-soft-primary rounded"
-                              >
-                                <span className="p-1">See more activity</span>
-                              </Button>
-                            </div>
-                            <div className="border border-2 rounded p-3 ">
-                              <HistorialTable
-                                data={historyData}
-                                setData={setHistoryData}
-                                activeTab={customActiveTab}
+                  {/* Dropdown Menu  here  renderDropdownMenu()*/}
+                </div>
+                <TabContent activeTab={customActiveTab} className="text-muted">
+                  <TabPane tabId="1" id="home1">
+                    <div className="d-flex ">
+                      <div className="flex-grow-1">
+                        <Col xxl={12} className="mt-3 mb-4">
+                          <div className="d-flex justify-content-start">
+                            <Col className="col-12 ">
+                              <PerformanceChart
+                                type={type}
+                                loading={loading}
+                                setLoading={setLoading}
+                                setIsUnsupported={setIsUnsupported}
                                 address={addressForSearch}
+                                series={series}
+                                setSeries={setSeries}
+                                title={title}
+                                subtitle={subtitle}
                               />
-                            </div>
-                          </Col>
-                        </div>
-                      </div>
-                    </TabPane>
+                            </Col>
+                          </div>
+                        </Col>
+                        <Col xxl={12}>
+                          <ActivesTable
+                            loading={loadingAssets}
+                            data={assetsData}
+                          />
+                        </Col>
+                        <Col xxl={12} className="mt-3 d-flex flex-column">
+                          <div className="d-flex justify-content-between align-items-center mb-2">
+                            <h2 className="ms-1 mt-2">NFTs</h2>
+                            <Button
+                              onClick={() =>
+                                navigate(`/address/${address}/nfts`)
+                              }
+                              className="btn btn-sm btn-soft-primary rounded"
+                            >
+                              <span className="p-1">See more NFTs</span>
+                            </Button>
+                          </div>
+                          <div className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden">
+                            <Nfts address={addressForSearch} />
+                          </div>
+                        </Col>
 
-                    <TabPane tabId="2">
-                      <div className="d-flex">
-                        <div className="flex-grow-1 ms-2"></div>
+                        <Col xxl={12} className="mt-3">
+                          <div className="d-flex justify-content-between align-items-center mb-2">
+                            <h2 className="ms-1 mt-2">Transactions</h2>
+                            <Button
+                              onClick={() =>
+                                navigate(`/address/${address}/history`)
+                              }
+                              className="btn btn-sm btn-soft-primary rounded"
+                            >
+                              <span className="p-1">See more activity</span>
+                            </Button>
+                          </div>
+                          <div className="border border-2 rounded p-3 ">
+                            <HistorialTable
+                              data={historyData}
+                              setData={setHistoryData}
+                              activeTab={customActiveTab}
+                              address={addressForSearch}
+                            />
+                          </div>
+                        </Col>
                       </div>
-                    </TabPane>
-                  </TabContent>
-                </Col>
-              ) : (
-                <div style={{ minHeight: '100vh' }}></div>
-              )}
-            </Row>
-          </>
-        )}
+                    </div>
+                  </TabPane>
+
+                  <TabPane tabId="2">
+                    <div className="d-flex">
+                      <div className="flex-grow-1 ms-2"></div>
+                    </div>
+                  </TabPane>
+                </TabContent>
+              </Col>
+            ) : (
+              <div style={{ minHeight: '100vh' }}></div>
+            )}
+          </Row>
+        </>
       </div>
     </React.Fragment>
   );
