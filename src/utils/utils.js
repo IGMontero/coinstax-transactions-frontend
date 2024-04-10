@@ -285,15 +285,16 @@ export const updateTransactionsPreview = async ({
       });
     };
     // Clear the checked pages if the address has changed
-    if (address !== pagesChecked.address) {
-      pagesChecked.clear();
-      pagesChecked.address = address;
-      await updatePage(0);
-    } else {
-      if (!pagesChecked.has(currentPage)) {
-        await updatePage(currentPage);
-      }
-    }
+    await updatePage(0);
+    // if (address !== pagesChecked.address) {
+    //   pagesChecked.clear();
+    //   pagesChecked.address = address;
+    //   await updatePage(0);
+    // } else {
+    //   if (!pagesChecked.has(currentPage)) {
+    //     await updatePage(currentPage);
+    //   }
+    // }
   } catch (error) {
     console.log(error);
   }
