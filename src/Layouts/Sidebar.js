@@ -19,7 +19,7 @@ const Sidebar = ({ layoutType }) => {
   //   var verticalOverlay = document.getElementsByClassName('vertical-overlay');
   //   if (verticalOverlay) {
   //     verticalOverlay[0].addEventListener('click', function () {
-  //       document.body.classList.remove('vertical-sidebar-enable');
+  //       document.body?.classList?.remove('vertical-sidebar-enable');
   //     });
   //   }
   // });
