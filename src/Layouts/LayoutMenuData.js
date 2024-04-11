@@ -33,16 +33,16 @@ const Navdata = () => {
   //     const iconItems = ul.querySelectorAll(".nav-icon.active");
   //     let activeIconItems = [...iconItems];
   //     activeIconItems.forEach((item) => {
-  //       item.classList.remove("active");
+  //       item?.classList?.remove("active");
   //       var id = item.getAttribute("subitems");
   //       if (document.getElementById(id))
-  //         document.getElementById(id).classList.remove("show");
+  //         document.getElementById(id)?.classList?.remove("show");
   //     });
   //   }
   // }
 
   // useEffect(() => {
-  //   document.body.classList.remove("twocolumn-panel");
+  //   document.body?.classList?.remove("twocolumn-panel");
   //   // if (iscurrentState !== "Analytics") {
   //   //   setIsAnalytics(false);
   //   // }
@@ -57,7 +57,7 @@ const Navdata = () => {
   //   // }
   //   // if (iscurrentState === "Territory") {
   //   //   history("/territory-mapping");
-  //   //   document.body.classList.add("twocolumn-panel");
+  //   //   document.body?.classList?.add("twocolumn-panel");
   //   // }
   // }, [history, iscurrentState, isAnalytics, isResources, isSummary]);
 

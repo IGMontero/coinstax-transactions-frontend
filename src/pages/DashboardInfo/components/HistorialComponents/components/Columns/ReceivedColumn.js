@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import {
@@ -21,12 +21,26 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
   const hasMoreThanOne = positiveLedgers?.logo === 'assets';
 
   const [isCopied, setIsCopied] = React.useState(false);
+  const [imageSrc, setImageSrc] = useState(null);
+  const [showPlaceholder, setShowPlaceholder] = useState(false);
 
   const parseValue = parseValuesToLocale(positiveLedgers?.value, '');
 
   const isNft = positiveLedgers?.isNft;
 
   const hasAssetsCount = ledger.txSummary?.receivedAssetsCount >= 2;
+
+  useEffect(() => {
+    if (positiveLedgers?.logo) {
+      setImageSrc(positiveLedgers.logo);
+      setShowPlaceholder(false);
+    } else if (ledger?.preview) {
+      setShowPlaceholder(true);
+    } else {
+      setShowPlaceholder(false);
+      setImageSrc(null);
+    }
+  }, [ledger, positiveLedgers?.logo, ledger?.preview]);
 
   const handleCopyValue = (e, value) => {
     if (value) {
@@ -63,7 +77,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                     negativeLedgers ? '' : ''
                   }`}
                 >
-                  {isPreview && !positiveLedgers?.logo ? (
+                  {showPlaceholder ? (
                     <div
                       className={
                         isNft
@@ -71,30 +85,18 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                           : 'skeleton-avatar-circle'
                       }
                     ></div>
-                  ) : (
+                  ) : imageSrc ? (
                     <img
-                      src={
-                        positiveLedgers?.logo ||
-                        positiveLedgers.currency ||
-                        positiveLedgers?.displayName
-                      }
-                      alt={positiveLedgers?.displayName}
-                      className="ps-0 rounded"
+                      src={imageSrc}
+                      alt={negativeLedgers?.displayName}
+                      className="rounded"
                       width={35}
                       height={35}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.style.display = 'none';
-                        const container = e.target.parentNode;
-                        const textNode = document.createElement('div');
-                        textNode.textContent =
-                          positiveLedgers.currency ||
-                          positiveLedgers?.displayName;
-                        textNode.className = 'currency-placeholder';
-                        container.appendChild(textNode);
+                      onError={() => {
+                        setShowPlaceholder(true);
                       }}
                     />
-                  )}
+                  ) : null}
                 </div>
                 <div className="d-flex flex-column">
                   <span

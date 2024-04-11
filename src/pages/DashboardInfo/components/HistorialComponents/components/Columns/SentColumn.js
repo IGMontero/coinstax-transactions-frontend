@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,6 @@ import {
 
 const SentColumn = ({ ledger }) => {
   const navigate = useNavigate();
-
   const negativeLedgers = ledger.txSummary.sent;
   const addressLink = negativeLedgers?.nftInfo?.contractAddress;
 
@@ -18,6 +17,9 @@ const SentColumn = ({ ledger }) => {
   const hasMoreThanOne = negativeLedgers?.logo === 'assets';
 
   const [isCopied, setIsCopied] = React.useState(false);
+
+  const [imageSrc, setImageSrc] = useState(null);
+  const [showPlaceholder, setShowPlaceholder] = useState(false);
 
   const handleCopyValue = (e) => {
     e.stopPropagation();
@@ -28,6 +30,19 @@ const SentColumn = ({ ledger }) => {
       setIsCopied(false);
     }, 2000);
   };
+
+  // This useEffect is used to set the image source and show the placeholder if the image is not available
+  useEffect(() => {
+    if (negativeLedgers?.logo) {
+      setImageSrc(negativeLedgers.logo);
+      setShowPlaceholder(false);
+    } else if (ledger?.preview) {
+      setShowPlaceholder(true);
+    } else {
+      setShowPlaceholder(false);
+      setImageSrc(null);
+    }
+  }, [ledger, negativeLedgers?.logo, ledger?.preview]);
 
   const parsedValue = parseValuesToLocale(negativeLedgers?.value, '');
 
@@ -48,7 +63,7 @@ const SentColumn = ({ ledger }) => {
             ) : (
               <>
                 <div className="image-container me-1">
-                  {isPreview ? (
+                  {showPlaceholder ? (
                     <div
                       className={
                         isNft
@@ -56,30 +71,18 @@ const SentColumn = ({ ledger }) => {
                           : 'skeleton-avatar-circle'
                       }
                     ></div>
-                  ) : (
+                  ) : imageSrc ? (
                     <img
-                      src={
-                        negativeLedgers?.logo ||
-                        negativeLedgers.currency ||
-                        negativeLedgers?.displayName
-                      }
+                      src={imageSrc}
                       alt={negativeLedgers?.displayName}
                       className="rounded"
                       width={35}
                       height={35}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.style.display = 'none';
-                        const container = e.target.parentNode;
-                        const textNode = document.createElement('div');
-                        textNode.textContent =
-                          negativeLedgers.currency ||
-                          negativeLedgers?.displayName;
-                        textNode.className = 'currency-placeholder';
-                        container.appendChild(textNode);
+                      onError={() => {
+                        setShowPlaceholder(true);
                       }}
                     />
-                  )}{' '}
+                  ) : null}
                 </div>
 
                 <div className="d-flex flex-column text-center justify-content-end ms-2">

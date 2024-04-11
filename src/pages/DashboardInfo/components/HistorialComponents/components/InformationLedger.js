@@ -4,6 +4,7 @@ import {
   formatIdTransaction,
   blockchainActions,
   parseValuesToLocale,
+  removeNegativeSign,
 } from '../../../../../utils/utils';
 import { Link } from 'react-router-dom';
 
@@ -75,7 +76,7 @@ const InformationLedger = ({
           {transaction.blockchainAction === blockchainActions.RECEIVE
             ? 'N/A'
             : transaction.txSummary && fee && amount !== '0' && amount !== null
-              ? `${amount} ${fee.currency} (${amountUsd})`
+              ? `${removeNegativeSign(amount)} ${fee.currency} (${removeNegativeSign(amountUsd)})`
               : 'N/A'}
         </span>
       </div>

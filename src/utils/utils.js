@@ -125,7 +125,7 @@ export async function copyToClipboard(textToCopy) {
   }
 }
 
-export const formatDate = (date) => {
+export const formatDateToLocal = (date) => {
   return moment(date).format('MM/DD/YYYY');
 };
 
@@ -285,16 +285,31 @@ export const updateTransactionsPreview = async ({
       });
     };
     // Clear the checked pages if the address has changed
-    if (address !== pagesChecked.address) {
-      pagesChecked.clear();
-      pagesChecked.address = address;
-      await updatePage(0);
-    } else {
-      if (!pagesChecked.has(currentPage)) {
-        await updatePage(currentPage);
-      }
-    }
+    await updatePage(0);
+    // if (address !== pagesChecked.address) {
+    //   pagesChecked.clear();
+    //   pagesChecked.address = address;
+    //   await updatePage(0);
+    // } else {
+    //   if (!pagesChecked.has(currentPage)) {
+    //     await updatePage(currentPage);
+    //   }
+    // }
   } catch (error) {
     console.log(error);
   }
+};
+
+// Remove negative sign from the string
+export const removeNegativeSign = (amount) => {
+  if (amount === undefined || amount === null) {
+    return '';
+  }
+
+  return amount.replace('-', '');
+};
+
+export const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
 };
