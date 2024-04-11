@@ -15,6 +15,7 @@ import {
   Badge,
 } from 'reactstrap';
 import {
+  formatDateToLocal,
   getSelectedAssetFilters,
   updateTransactionsPreview,
 } from '../../../utils/utils';
@@ -29,73 +30,40 @@ import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 
 const HistorialTable = ({ data, setData }) => {
+  // #region HOOKS
   const inputRef = useRef(null);
   const pagesCheckedRef = useRef(new Set());
   const { address } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
+
   const currentUser = user;
-  const [hasPreview, setHasPreview] = useState(false);
-
-  // const state = useSelector((state) => state);
-  // console.log(state);
-  useEffect(() => {
-    if (Array.isArray(data)) {
-      const hasPreview = data.some(
-        (transaction) => transaction.preview === true,
-      );
-
-      console.log(
-        'Preview txs:',
-        data.filter((tx) => tx.preview === true).length,
-      );
-
-      setHasPreview(hasPreview);
-    } else {
-      setHasPreview(false);
-    }
-
-    return () => {
-      setHasPreview(false);
-    };
-  }, [data]);
-
   const isDashboardPage = location.pathname.includes('tokens');
 
+  // #region STATES
+  const [hasPreview, setHasPreview] = useState(false);
   const [errorData, setErrorData] = useState(null);
-
   const [totalTransactions, setTotalTransactions] = useState(0);
-
   const [showTransactionFilterMenu, setShowTransactionFilterMenu] =
     useState(false);
-
   const [searchTerm, setSearchTerm] = useState('');
-
   const [includeSpam, setIncludeSpam] = useState(false);
-
   const [showAssetsMenu, setShowAssetsMenu] = useState(false);
-
   const [hasMoreData, setHasMoreData] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
   const [unsupportedAddress, setUnsupportedAddress] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-
   const [loading, setLoading] = useState(false);
-
   const [showDownloadMessage, setShowDownloadMessage] = useState(false);
   const [showDownloadMessageInButton, setShowDownloadMessageInButton] =
     useState(false);
-
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  // const [groupedTransactions, setGroupedTransactions] = useState({});
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [selectedAssets, setSelectedAssets] = useState('All Assets');
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
   const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
-
   const [debouncedDisableGetMore, setDebouncedDisableGetMore] = useState(false);
-
   const [loadingDownload, setLoadingDownload] = useState(false);
 
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
@@ -126,11 +94,28 @@ const HistorialTable = ({ data, setData }) => {
   //   };
   // }, [searchTerm]);
 
-  const formatDate = (dateString) => {
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return new Date(dateString).toLocaleDateString(undefined, options);
-  };
+  useEffect(() => {
+    if (Array.isArray(data)) {
+      const hasPreview = data.some(
+        (transaction) => transaction.preview === true,
+      );
 
+      console.log(
+        'Preview txs:',
+        data.filter((tx) => tx.preview === true).length,
+      );
+
+      setHasPreview(hasPreview);
+    } else {
+      setHasPreview(false);
+    }
+
+    return () => {
+      setHasPreview(false);
+    };
+  }, [data]);
+
+  // #region FETCH DATA
   const fetchData = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
@@ -187,14 +172,6 @@ const HistorialTable = ({ data, setData }) => {
     }
   };
 
-  const handleClearAllFilters = () => {
-    setSelectedFilters([]);
-    setSelectedAssets('All Assets');
-    setIncludeSpam(false);
-    setSearchTerm('');
-    setHasAppliedFilters(false);
-  };
-
   useEffect(() => {
     let interval;
     if (hasPreview) {
@@ -230,6 +207,7 @@ const HistorialTable = ({ data, setData }) => {
     debouncedSearchTerm,
   ]);
 
+  // #region GROUPS
   const groupTxsByDate = (transactions) => {
     if (!Array.isArray(transactions)) {
       console.error(
@@ -239,7 +217,7 @@ const HistorialTable = ({ data, setData }) => {
       return {};
     }
     return transactions.reduce((acc, transaction) => {
-      const date = formatDate(transaction.date);
+      const date = formatDateToLocal(transaction.date);
       if (!acc[date]) {
         acc[date] = [];
       }
@@ -304,6 +282,15 @@ const HistorialTable = ({ data, setData }) => {
       setLoading(false);
       setShowDownloadMessageInButton(false);
     }
+  };
+
+  // #region HANDLERS
+  const handleClearAllFilters = () => {
+    setSelectedFilters([]);
+    setSelectedAssets('All Assets');
+    setIncludeSpam(false);
+    setSearchTerm('');
+    setHasAppliedFilters(false);
   };
 
   const handleShowAssetsMenu = (e) => {
@@ -459,6 +446,7 @@ const HistorialTable = ({ data, setData }) => {
     setCurrentPage(0);
   };
 
+  // #region RENDER FUNCTIONS
   const renderBadges = () => {
     return selectedFilters.map((filterName) => (
       <Badge
@@ -516,7 +504,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -534,9 +522,8 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -666,6 +653,7 @@ const HistorialTable = ({ data, setData }) => {
     );
   };
 
+  // #region RENDER
   return (
     <React.Fragment>
       <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>

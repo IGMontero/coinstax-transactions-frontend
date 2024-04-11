@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Col, Container, Input, InputGroup, Row } from 'reactstrap';
-
+import Index from './OnePage/index';
 const DashboardHome = () => {
   const navigate = useNavigate();
   const [searchInput, setSearchInput] = useState('');
@@ -15,7 +15,7 @@ const DashboardHome = () => {
 
   return (
     <React.Fragment>
-      <Col className="col-12 mt-5 ">
+      {/* <Col className="col-12 mt-5 ">
         <div className="d-flex  justify-content-center align-items-center">
           <h1>Welcome to Coinstax</h1>
         </div>
@@ -47,7 +47,8 @@ const DashboardHome = () => {
             </InputGroup>
           </Col>
         </Row>
-      </Col>
+      </Col> */}
+      <Index />
     </React.Fragment>
   );
 };

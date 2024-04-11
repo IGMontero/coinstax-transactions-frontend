@@ -125,9 +125,9 @@ const Layout = (props) => {
         layoutType === 'vertical' ||
         layoutType === 'twocolumn'
       ) {
-        hamburgerIcon.classList.remove('open');
+        hamburgerIcon?.classList?.remove('open');
       } else {
-        hamburgerIcon.classList.add('open');
+        hamburgerIcon?.classList?.add('open');
       }
     }
   }, [sidebarVisibilitytype, layoutType]);

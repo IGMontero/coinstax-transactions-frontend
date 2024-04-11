@@ -19,6 +19,7 @@ import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUse
 import DashboardAssets from '../pages/DashboardAssets/DashboardAssets';
 import DashboardTransactions from '../pages/DashboardTransactions/DashboardTransactions';
 import NFTsPage from '../pages/DashboardNFT/NFTsPage';
+import DashboardHome from '../pages/DashboardHome/DashboardHome';
 
 const authProtectedRoutes = [
   { path: '/dashboard', component: <DashboardInfo /> },
@@ -40,18 +41,21 @@ const authProtectedRoutes = [
 
 const publicRoutes = [
   // Authentication Page
+  { path: '/dashboard', component: <DashboardHome /> },
   { path: '/logout', component: <Logout /> },
   { path: '/login', component: <Login /> },
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
 ];
 
+const homePage = [{ path: '/dashboard', component: <DashboardHome /> }];
+
 const allRoutes = [
   { path: '/logout', component: <Logout /> },
   { path: '/login', component: <Login /> },
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
-  { path: '/dashboard', component: <DashboardInfo /> },
+
   { path: '/contract/:contractAddress', component: <DashboardNFT /> },
   { path: '/address/:address/tokens', component: <DashboardInfo /> },
   { path: '/address/:address/assets', component: <DashboardAssets /> },
@@ -79,4 +83,4 @@ const allRoutes = [
   { path: '*', component: <Navigate to="/dashboard" /> },
 ];
 
-export { allRoutes, authProtectedRoutes, publicRoutes };
+export { allRoutes, authProtectedRoutes, publicRoutes, homePage };
