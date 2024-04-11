@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   blockchainActions,
   copyToClipboard,
@@ -68,9 +68,8 @@ const RenderTransactions = ({
         if (!transaction.ledgers) {
           return null;
         }
-        const sentTxSummary = transaction;
+        const sentTxSummary = transaction.txSummary?.sent;
 
-        const receivedTxSummary = transaction;
         const hasList =
           transaction.txSummary?.receivedAssetsCount > 1 ||
           transaction.txSummary?.sentAssetsCount > 1;
@@ -110,24 +109,22 @@ const RenderTransactions = ({
                 </Col>
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
-                  lg={transaction.txSummary.sent ? 3 : 0}
-                  md={transaction.txSummary.sent ? 3 : 0}
+                  lg={sentTxSummary ? 3 : 0}
+                  md={sentTxSummary ? 3 : 0}
                   sm={6}
                   xs={6}
                   className={`mb-lg-0 mb-3 ${
-                    transaction.txSummary.sent
-                      ? 'd-flex justify-content-start '
-                      : 'd-none'
+                    sentTxSummary ? 'd-flex justify-content-start ' : 'd-none'
                   }`}
                 >
-                  <SentColumn ledger={sentTxSummary} />
+                  <SentColumn ledger={transaction} />
                 </Col>
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
-                  lg={transaction.txSummary.sent ? 3 : 6}
-                  md={transaction.txSummary.sent ? 3 : 6}
-                  sm={transaction.txSummary.sent ? 6 : 12}
-                  xs={transaction.txSummary.sent ? 6 : 12}
+                  lg={sentTxSummary ? 3 : 6}
+                  md={sentTxSummary ? 3 : 6}
+                  sm={sentTxSummary ? 6 : 12}
+                  xs={sentTxSummary ? 6 : 12}
                   className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3`}
                 >
                   {isApproval ? (
@@ -135,8 +132,8 @@ const RenderTransactions = ({
                   ) : (
                     <ReceivedColumn
                       isApproval={isApproval}
-                      ledger={receivedTxSummary}
-                      negativeLedgers={sentTxSummary.txSummary.sent}
+                      ledger={transaction}
+                      negativeLedgers={sentTxSummary}
                     />
                   )}
                 </Col>
