@@ -6,7 +6,12 @@ import NonAuthLayout from '../Layouts/NonAuthLayout';
 import VerticalLayout from '../Layouts/index';
 
 //routes
-import { authProtectedRoutes, publicRoutes, allRoutes } from './allRoutes';
+import {
+  authProtectedRoutes,
+  publicRoutes,
+  allRoutes,
+  homePage,
+} from './allRoutes';
 import { AuthProtected } from './AuthProtected';
 import { useProfile } from '../Components/Hooks/UserHooks';
 import Header from '../Layouts/Header';
@@ -64,9 +69,24 @@ const Index = () => {
     );
   }
 
+  const isHomePage =
+    location.pathname === '/dashboard' || location.pathname === '/';
+
   return (
     <React.Fragment>
       <Routes>
+        {isHomePage && (
+          <Route>
+            {homePage.map((route, idx) => (
+              <Route
+                path={route.path}
+                element={<NonAuthLayout>{route.component}</NonAuthLayout>}
+                key={idx}
+                exact={true}
+              />
+            ))}
+          </Route>
+        )}
         {allRoutes.map((route, idx) => (
           <Route
             path={route.path}
@@ -75,24 +95,6 @@ const Index = () => {
             exact={true}
           />
         ))}
-        {/* {!isAuth && (
-                    <Route>
-
-                        {publicRoutes.map((route, idx) => (
-                            <Route
-                                path={route.path}
-                                element={
-                                    <NonAuthLayout>
-                                        {route.component}
-                                    </NonAuthLayout>
-                                }
-                                key={idx}
-                                exact={true}
-                            />
-                        ))}
-                    </Route>
-                )}
-*/}
 
         {/* <Route>
           {allRoutes.map((route, idx) => (

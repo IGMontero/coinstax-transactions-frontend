@@ -68,7 +68,7 @@ const ListTransactionss = ({ transactions }) => {
                 e.target.onerror = null;
                 e.target.style.display = 'none';
                 const container = e.target.parentNode;
-                container.classList.add(
+                container?.classList?.add(
                   'd-flex',
                   'align-items-center',
                   'justify-content-center',
