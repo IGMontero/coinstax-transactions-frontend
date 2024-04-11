@@ -125,7 +125,7 @@ export async function copyToClipboard(textToCopy) {
   }
 }
 
-export const formatDate = (date) => {
+export const formatDateToLocal = (date) => {
   return moment(date).format('MM/DD/YYYY');
 };
 
@@ -307,4 +307,9 @@ export const removeNegativeSign = (amount) => {
   }
 
   return amount.replace('-', '');
+};
+
+export const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
 };
