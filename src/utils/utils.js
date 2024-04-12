@@ -313,3 +313,9 @@ export const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
+
+export const saveAddressToLocalStorage = (address) => {
+  localStorage
+    .setItem('recentAddresses', JSON.stringify([address]))
+    .catch((error) => console.error(error));
+};

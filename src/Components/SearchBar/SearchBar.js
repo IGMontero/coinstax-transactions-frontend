@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const SearchBar = () => {
   const navigate = useNavigate();
+
   const originalOptions = [
     {
       label: '0x768d280111e0fdc53e355cefb1962eb91b6cca2d',
@@ -20,23 +21,27 @@ const SearchBar = () => {
       value: '0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6',
     },
   ];
+
   const [options, setOptions] = useState(originalOptions);
   const [searchInput, setSearchInput] = useState('');
 
   const handleChange = (selectedOption) => {
-    if (selectedOption) {
+    if (selectedOption && selectedOption.value) {
       navigate(`/address/${selectedOption.value}/tokens`);
+    } else {
+      return;
     }
   };
 
-  const handleInputChange = (inputValue, { action }) => {
-    setSearchInput(inputValue);
-    if (action === 'input-change') {
-      if (!inputValue) {
+  const handleInputChange = (inputValue, actionMeta) => {
+    const filteredInput = inputValue.replace(/[^a-zA-Z0-9]/g, '');
+    if (actionMeta.action === 'input-change') {
+      setSearchInput(filteredInput);
+      if (!filteredInput.trim()) {
         setOptions(originalOptions);
       } else {
         const filteredOptions = originalOptions.filter((option) =>
-          option.label.toLowerCase().includes(inputValue.toLowerCase()),
+          option.label.toLowerCase().includes(filteredInput.toLowerCase()),
         );
         setOptions(filteredOptions);
       }
@@ -67,7 +72,6 @@ const SearchBar = () => {
     menu: (provided) => ({
       ...provided,
       zIndex: 9999,
-
       backgroundColor: '#2a2f34',
       color: '#fff',
       textAlign: 'left',
@@ -92,7 +96,7 @@ const SearchBar = () => {
             : 'transparent',
       },
       '&:hover': {
-        backgroundColor: '#1f252b', // Un color más oscuro para el hover
+        backgroundColor: '#1f252b',
         color: 'white',
       },
     }),
@@ -108,7 +112,7 @@ const SearchBar = () => {
 
   return (
     <Select
-      name="symbol"
+      name="address"
       placeholder="Assets, wallet, domain, or identify"
       classNamePrefix="select-custom-menu"
       value={options.find((option) => option.value === searchInput)}

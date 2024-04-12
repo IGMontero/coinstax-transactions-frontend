@@ -246,22 +246,38 @@ const PerformanceChart = ({
     }
   }, [series]);
 
+  if (
+    !loading &&
+    series.length === 0 &&
+    showMessage &&
+    !showMessage &&
+    !loading
+  ) {
+    <Col
+      className="d-flex text-center col-12 justify-content-center align-items-center"
+      style={{ display: 'flex', height: '50vh', width: '100%' }}
+    >
+      <h1 className="text-center">No data found </h1>
+    </Col>;
+  }
+
   return (
-    <div className="position-relative ">
-      <h1 className="ms-1 mt-0 mb-4">Dashboard</h1>
-      {
-        loading ? (
-          <Card>
-            <CardBody className="p-4">
-              <div style={{ backgroundColor: '#212529', height: '360px' }}>
-                {' '}
+    <div style={{ minHeight: '350px' }} className="position-relative ">
+      <h1 className={`ms-1 mt-0 ${loading ? 'mb-0 pb-0' : 'mb-4'}`}>
+        Dashboard
+      </h1>
+      <div style={{ minHeight: '350px' }}>
+        {loading ? (
+          <Card className="mt-3">
+            <CardBody className="p-5 pb-4">
+              <div style={{ backgroundColor: '#212529', height: '353px' }}>
                 <div className="d-flex justify-content-center align-items-center h-100">
                   <Spinner color="white" />
                 </div>
               </div>
             </CardBody>
           </Card>
-        ) : series.length ? (
+        ) : (
           <div className="border border-2 rounded p-2" style={{ zIndex: 1 }}>
             <ReactApexChart
               options={options}
@@ -271,21 +287,8 @@ const PerformanceChart = ({
             />
             {renderFiltersButtons()}
           </div>
-        ) : (
-          <Col
-            className="d-flex text-center col-12 justify-content-center align-items-center"
-            style={{ display: 'flex', height: '50vh', width: '100%' }}
-          >
-            <h1 className="text-center">No data found </h1>
-          </Col>
-        )
-        // <ReactApexChart
-        //   options={{}}
-        //   series={[{ data: [] }]}
-        //   type="line"
-        //   height={350}
-        // />
-      }
+        )}
+      </div>
     </div>
   );
 };

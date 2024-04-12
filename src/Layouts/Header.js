@@ -30,6 +30,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeSidebarVisibility } from '../slices/thunks';
 import QrModal from '../pages/DashboardInfo/modals/QrModal';
 import { copyToClipboard, formatIdTransaction } from '../utils/utils';
+import SearchBar from '../Components/SearchBar/SearchBar';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
@@ -253,7 +254,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 <img src={logo} alt="" height="40" />
               </span>
             </div> */}
-              <Col lg={6}>
+              <Col lg={4}>
                 <button
                   onClick={toogleMenuBtn}
                   type="button"
@@ -266,31 +267,11 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                     <span></span>
                   </span>
                 </button>
-                {address && renderAddressWithDropdown()}
+                <SearchBar />
               </Col>
-              <Col lg={6}>
+              <Col lg={8}>
                 <div className="d-flex align-items-center justify-content-end">
-                  <InputGroup className="me-2" style={{ maxWidth: '400px' }}>
-                    <Input
-                      className="form-control py-2 rounded"
-                      placeholder="Assets, wallet, domain, or identity"
-                      value={searchInput}
-                      onChange={(e) => {
-                        const filteredInput = e.target.value.replace(
-                          /[^a-zA-Z0-9]/g,
-                          '',
-                        );
-                        setSearchInput(filteredInput);
-                      }}
-                    />
-                    <Button
-                      disabled={!searchInput || address === searchInput}
-                      color="primary"
-                      onClick={handleSearchClick}
-                    >
-                      Search
-                    </Button>
-                  </InputGroup>
+                  {address && renderAddressWithDropdown()}
                   {/* {commentedCode()} */}
                   {currentUser && <ProfileDropdown />}
                 </div>
