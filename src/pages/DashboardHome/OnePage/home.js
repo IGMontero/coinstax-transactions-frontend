@@ -22,15 +22,9 @@ import creativeDemo from '../../../assets/images/demos/creative.png';
 import modernDemo from '../../../assets/images/demos/modern.png';
 import interactiveDemo from '../../../assets/images/demos/interactive.png';
 
-import { useNavigate } from 'react-router-dom';
 import SearchBar from '../../../Components/SearchBar/SearchBar';
+
 const Home = () => {
-  const navigate = useNavigate();
-
-  const handleSearchClick = () => {
-    navigate(`/address/${searchInput}/tokens`);
-  };
-
   return (
     <React.Fragment>
       <section className="section pb-0 hero-section" id="hero">
