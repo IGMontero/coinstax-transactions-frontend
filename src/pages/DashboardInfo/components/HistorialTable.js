@@ -28,6 +28,7 @@ import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
+import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 
 const HistorialTable = ({ data, setData }) => {
   // #region HOOKS
@@ -657,7 +658,8 @@ const HistorialTable = ({ data, setData }) => {
   // #region RENDER
   return (
     <React.Fragment>
-      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
+      <AddressWithDropdown />
+      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-4 mb-4'}`}>
         Transactions
       </h1>
 

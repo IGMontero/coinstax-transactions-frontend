@@ -264,7 +264,7 @@ const PerformanceChart = ({
   return (
     <div
       style={{ minHeight: '350px' }}
-      className={`position-relative ${loading ? 'mt-3' : ''}`}
+      className={`position-relative ${loading ? '' : 'mt-n3'}`}
     >
       <h1 className={`ms-1 mt-0 ${loading ? 'mb-0 pb-0' : 'mb-4'}`}>
         Dashboard
