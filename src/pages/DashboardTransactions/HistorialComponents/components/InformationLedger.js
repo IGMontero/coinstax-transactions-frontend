@@ -5,7 +5,7 @@ import {
   blockchainActions,
   parseValuesToLocale,
   removeNegativeSign,
-} from '../../../../../utils/utils';
+} from '../../../../utils/utils';
 import { Link } from 'react-router-dom';
 
 const InformationLedger = ({

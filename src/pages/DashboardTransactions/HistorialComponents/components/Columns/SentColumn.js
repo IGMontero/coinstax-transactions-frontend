@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
-import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
+import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
 import {
   CurrencyUSD,
   copyToClipboard,
   parseValuesToLocale,
-} from '../../../../../../utils/utils';
+} from '../../../../../utils/utils';
 
 const SentColumn = ({ ledger }) => {
   const navigate = useNavigate();
