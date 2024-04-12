@@ -10,6 +10,7 @@ import {
 } from 'reactstrap';
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
+import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 
 const ActivesTable = ({ data, loading }) => {
   const [viewMode, setViewMode] = useState('byPlatform');
@@ -69,9 +70,13 @@ const ActivesTable = ({ data, loading }) => {
 
   return (
     <React.Fragment>
-      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
-        Assets
-      </h1>
+      {' '}
+      {isDashboardPage ? null : (
+        <div className="mt-0">
+          <AddressWithDropdown />
+          <h1 className={` ms-1  mb-4 mt-4 `}>Assets</h1>
+        </div>
+      )}
       <div
         className={
           Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'

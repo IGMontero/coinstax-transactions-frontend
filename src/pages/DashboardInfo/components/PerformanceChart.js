@@ -4,6 +4,7 @@ import { fetchPerformance } from '../../../slices/transactions/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardBody, Col, Spinner } from 'reactstrap';
 import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
+import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 
 const PerformanceChart = ({
   address,
@@ -263,13 +264,13 @@ const PerformanceChart = ({
 
   return (
     <div
-      style={{ minHeight: '350px' }}
-      className={`position-relative ${loading ? '' : 'mt-n3'}`}
+      style={{
+        marginTop: loading ? '-1rem' : '-2rem',
+      }}
     >
-      <h1 className={`ms-1 mt-0 ${loading ? 'mb-0 pb-0' : 'mb-4'}`}>
-        Dashboard
-      </h1>
-      <div style={{ minHeight: '350px' }}>
+      <AddressWithDropdown />
+      <h1 className={`ms-1 mt-4 mb-4 `}>Performance Chart</h1>
+      <div className="position-relative">
         {loading ? (
           <Card className="mt-3">
             <CardBody className="p-5 pb-4">
