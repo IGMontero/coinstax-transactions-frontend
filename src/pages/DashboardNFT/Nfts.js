@@ -20,6 +20,7 @@ import { useDispatch } from 'react-redux';
 import { fetchNFTS } from '../../slices/transactions/thunk';
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 
 const ethIcon = (
   <svg
@@ -245,9 +246,12 @@ const Nfts = ({ address }) => {
 
   const renderTitle = () => {
     return (
-      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mb-4'}`}>
-        NFTs
-      </h1>
+      <>
+        <AddressWithDropdown />
+        <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mt-4 mb-4'}`}>
+          NFTs
+        </h1>
+      </>
     );
   };
 
