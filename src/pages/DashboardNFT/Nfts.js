@@ -247,10 +247,12 @@ const Nfts = ({ address }) => {
   const renderTitle = () => {
     return (
       <>
-        <AddressWithDropdown />
-        <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-0 mt-4 mb-4'}`}>
-          NFTs
-        </h1>
+        {isDashboardPage ? null : (
+          <>
+            <AddressWithDropdown />
+            <h1 className={`ms-1 mt-0 mt-4 mb-4`}>NFTs</h1>{' '}
+          </>
+        )}{' '}
       </>
     );
   };
