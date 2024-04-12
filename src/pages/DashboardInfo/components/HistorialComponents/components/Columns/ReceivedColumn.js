@@ -88,7 +88,10 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   ) : imageSrc ? (
                     <img
                       src={imageSrc}
-                      alt={negativeLedgers?.displayName}
+                      alt={
+                        positiveLedgers?.displayName ||
+                        positiveLedgers?.currency
+                      }
                       className="rounded"
                       width={35}
                       height={35}
@@ -96,7 +99,17 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                         setShowPlaceholder(true);
                       }}
                     />
-                  ) : null}
+                  ) : (
+                    <div
+                      className={
+                        isNft
+                          ? 'skeleton-avatar-square-error'
+                          : 'skeleton-avatar-circle-error'
+                      }
+                    >
+                      {positiveLedgers?.currency}
+                    </div>
+                  )}
                 </div>
                 <div className="d-flex flex-column">
                   <span
