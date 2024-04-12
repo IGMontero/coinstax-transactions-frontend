@@ -546,7 +546,8 @@ const DashboardInfo = () => {
                             </Col>
                           </div>
                         </Col>
-                        <Col xxl={12}>
+
+                        <Col className={`${loading ? 'mt-n2' : ''}`} xxl={12}>
                           <ActivesTable
                             loading={loadingAssets}
                             data={assetsData}
