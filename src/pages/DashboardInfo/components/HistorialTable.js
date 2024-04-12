@@ -25,7 +25,7 @@ import {
   downloadTransactions,
 } from '../../../slices/transactions/thunk';
 import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
-import RenderTransactions from './HistorialComponents/RenderTransactions';
+import RenderTransactions from '../../DashboardTransactions/HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
+import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import {
   CurrencyUSD,
   copyToClipboard,
   parseValuesToLocale,
-} from '../../../../../../utils/utils';
+} from '../../../../../utils/utils';
+
 import { useNavigate } from 'react-router-dom';
 
 const ReceivedColumn = ({ ledger, negativeLedgers }) => {
@@ -30,17 +31,19 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
 
   const hasAssetsCount = ledger.txSummary?.receivedAssetsCount >= 2;
 
+  const isPreview = ledger?.preview;
+
   useEffect(() => {
     if (positiveLedgers?.logo) {
       setImageSrc(positiveLedgers.logo);
       setShowPlaceholder(false);
-    } else if (ledger?.preview) {
+    } else if (isPreview) {
       setShowPlaceholder(true);
     } else {
       setShowPlaceholder(false);
       setImageSrc(null);
     }
-  }, [ledger, positiveLedgers?.logo, ledger?.preview]);
+  }, [ledger, positiveLedgers?.logo, isPreview]);
 
   const handleCopyValue = (e, value) => {
     if (value) {
@@ -52,8 +55,6 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
       }, 2000);
     }
   };
-
-  const isPreview = ledger?.preview;
 
   return (
     <div
