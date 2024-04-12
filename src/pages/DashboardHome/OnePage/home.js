@@ -1,6 +1,7 @@
 import React from 'react';
 import { Col, Container, Row, Input, InputGroup, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
+import Select from 'react-select';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -22,9 +23,9 @@ import modernDemo from '../../../assets/images/demos/modern.png';
 import interactiveDemo from '../../../assets/images/demos/interactive.png';
 
 import { useNavigate } from 'react-router-dom';
+import SearchBar from '../../../Components/SearchBar/SearchBar';
 const Home = () => {
   const navigate = useNavigate();
-  const [searchInput, setSearchInput] = React.useState('');
 
   const handleSearchClick = () => {
     navigate(`/address/${searchInput}/tokens`);
@@ -45,27 +46,7 @@ const Home = () => {
                 {/* <p className="lead text-muted lh-base">Velzon is a fully responsive, multipurpose and premium Bootstrap 5 Admin & Dashboard Template built in multiple frameworks.</p> */}
                 <div className="d-flex align-items-center justify-content-center">
                   <Col className="col-8 mt-2 ">
-                    <InputGroup className="mb-3">
-                      <Input
-                        className="form-control py-2 rounded"
-                        placeholder="Assets, wallet, domain, or identify"
-                        value={searchInput}
-                        onChange={(e) => {
-                          const filteredInput = e.target.value.replace(
-                            /[^a-zA-Z0-9]/g,
-                            '',
-                          );
-                          setSearchInput(filteredInput);
-                        }}
-                      />
-                      <Button
-                        disabled={!searchInput}
-                        color="primary"
-                        onClick={handleSearchClick}
-                      >
-                        Search
-                      </Button>
-                    </InputGroup>
+                    <SearchBar />
                   </Col>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-4">
