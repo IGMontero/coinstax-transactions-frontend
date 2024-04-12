@@ -41,14 +41,14 @@ const authProtectedRoutes = [
 
 const publicRoutes = [
   // Authentication Page
-  { path: '/dashboard', component: <DashboardHome /> },
+  { path: '/', component: <DashboardHome /> },
   { path: '/logout', component: <Logout /> },
   { path: '/login', component: <Login /> },
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
 ];
 
-const homePage = [{ path: '/dashboard', component: <DashboardHome /> }];
+const homePage = [{ path: '/', component: <DashboardHome /> }];
 
 const allRoutes = [
   { path: '/logout', component: <Logout /> },
@@ -78,9 +78,9 @@ const allRoutes = [
   {
     path: '/',
     exact: true,
-    component: <Navigate to="/dashboard" />,
+    component: <Navigate to="/" />,
   },
-  { path: '*', component: <Navigate to="/dashboard" /> },
+  { path: '*', component: <Navigate to="/" /> },
 ];
 
 export { allRoutes, authProtectedRoutes, publicRoutes, homePage };
