@@ -33,6 +33,7 @@ import {
   parseValuesToLocale,
 } from '../../utils/utils';
 import QrModal from './modals/QrModal';
+import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -331,6 +332,7 @@ const DashboardInfo = () => {
         />
 
         <>
+          <AddressWithDropdown />
           {loading ? (
             <div
               className="d-flex d-none justify-content-start align-items-center"

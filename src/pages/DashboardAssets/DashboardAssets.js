@@ -37,7 +37,7 @@ const DashboardAssets = () => {
   }, []);
 
   return (
-    <div className="page-content mt-3" style={{ height: '90vh' }}>
+    <div className="page-content mt-5">
       <AcitvesTable loading={loadingAssets} data={assetsData} />
     </div>
   );
