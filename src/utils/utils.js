@@ -99,6 +99,24 @@ export const getSelectedAssetFilters = (selectedAssets) => {
   }
 };
 
+export function getColSizeBasedOnContent(ledgers) {
+  const maxLength = Math.max(
+    ...ledgers.map((ledger) => ledger.currency.length),
+  );
+
+  if (maxLength > 10) {
+    return {
+      negative: 'col-xxl-4 col-lg-4',
+      positive: 'col-xxl-7 col-lg-7',
+    };
+  } else {
+    return {
+      negative: 'col-xxl-3 col-lg-3',
+      positive: 'col-xxl-7 col-lg-7',
+    };
+  }
+}
+
 export async function copyToClipboard(textToCopy) {
   // Navigator clipboard api needs a secure context (https)
   if (navigator.clipboard && window.isSecureContext) {

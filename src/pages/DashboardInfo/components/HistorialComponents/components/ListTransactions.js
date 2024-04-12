@@ -3,6 +3,7 @@ import { Col, PopoverBody, Row, UncontrolledPopover } from 'reactstrap';
 import {
   copyToClipboard,
   formatNumber,
+  getColSizeBasedOnContent,
   parseValuesToLocale,
 } from '../../../../../utils/utils';
 import { useNavigate } from 'react-router-dom';
@@ -169,24 +170,6 @@ const ListTransactionss = ({ transactions }) => {
         </div>
       </div>
     );
-  }
-
-  function getColSizeBasedOnContent(ledgers) {
-    const maxLength = Math.max(
-      ...ledgers.map((ledger) => ledger.currency.length),
-    );
-
-    if (maxLength > 10) {
-      return {
-        negative: 'col-xxl-4 col-lg-4',
-        positive: 'col-xxl-8 col-lg-8',
-      };
-    } else {
-      return {
-        negative: 'col-xxl-3 col-lg-3',
-        positive: 'col-xxl-7 col-lg-7',
-      };
-    }
   }
 
   const negativeLedgersSize = getColSizeBasedOnContent(negativeLedgers);
