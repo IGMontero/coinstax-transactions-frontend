@@ -6,7 +6,7 @@ import Nfts from './Nfts';
 const NFTsPage = () => {
   const { address } = useParams();
   return (
-    <div className="page-content mt-5">
+    <div className="page-content ">
       <Nfts address={address} />
     </div>
   );
