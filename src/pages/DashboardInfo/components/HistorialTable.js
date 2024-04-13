@@ -15,7 +15,7 @@ import {
   Badge,
 } from 'reactstrap';
 import {
-  formatDateToLocal,
+  formatDateToLocale,
   getSelectedAssetFilters,
   updateTransactionsPreview,
 } from '../../../utils/utils';
@@ -218,7 +218,7 @@ const HistorialTable = ({ data, setData }) => {
       return {};
     }
     return transactions.reduce((acc, transaction) => {
-      const date = formatDateToLocal(transaction.date);
+      const date = formatDateToLocale(transaction.date);
       if (!acc[date]) {
         acc[date] = [];
       }
