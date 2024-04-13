@@ -33,6 +33,7 @@ import {
   parseValuesToLocale,
 } from '../../utils/utils';
 import QrModal from './modals/QrModal';
+import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -331,6 +332,7 @@ const DashboardInfo = () => {
         />
 
         <>
+          {/* <AddressWithDropdown /> */}
           {loading ? (
             <div
               className="d-flex d-none justify-content-start align-items-center"
@@ -529,7 +531,7 @@ const DashboardInfo = () => {
                   <TabPane tabId="1" id="home1">
                     <div className="d-flex ">
                       <div className="flex-grow-1">
-                        <Col xxl={12} className="mt-3 mb-4">
+                        <Col xxl={12} className="mb-4">
                           <div className="d-flex justify-content-start">
                             <Col className="col-12 ">
                               <PerformanceChart
@@ -546,7 +548,8 @@ const DashboardInfo = () => {
                             </Col>
                           </div>
                         </Col>
-                        <Col xxl={12}>
+
+                        <Col className={`${loading ? 'mt-n2' : ''}`} xxl={12}>
                           <ActivesTable
                             loading={loadingAssets}
                             data={assetsData}

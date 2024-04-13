@@ -1,9 +1,9 @@
 import React from 'react';
 import { Badge, Col } from 'reactstrap';
-import eth from '../../../../../../assets/images/svg/crypto-icons/eth.svg';
+import eth from '../../../../../assets/images/svg/crypto-icons/eth.svg';
 
 import ValueColumn from './ValueColumn';
-import { getActionMapping } from '../../../../../../utils/utils';
+import { getActionMapping } from '../../../../../utils/utils';
 
 function capitalizeFirstLetter(text) {
   if (!text) return text;
