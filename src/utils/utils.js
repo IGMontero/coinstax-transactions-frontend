@@ -143,8 +143,9 @@ export async function copyToClipboard(textToCopy) {
   }
 }
 
-export const formatDateToLocal = (date) => {
-  return moment(date).format('MM/DD/YYYY');
+export const formatDateToLocale = (date) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(date).toLocaleDateString(undefined, options);
 };
 
 export const parseValuesToLocale = (value, currency) => {
