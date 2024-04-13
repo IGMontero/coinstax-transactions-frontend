@@ -345,6 +345,9 @@ const HistorialTable = ({ data, setData }) => {
         }),
       ).unwrap();
 
+
+      console.log(response)
+
       if (response.error && response.error.code !== 'PROCESSING') {
         Swal.fire({
           icon: 'error',
@@ -362,7 +365,7 @@ const HistorialTable = ({ data, setData }) => {
 
         setTimeout(() => {
           setLoadingDownload(false);
-        }, 10000);
+        }, 5000);
       } else {
         // Swal.fire({
         //   title: 'Downloading',
@@ -372,6 +375,7 @@ const HistorialTable = ({ data, setData }) => {
         //     Swal.showLoading();
         //   },
         // });
+        console.log("Will download file")
 
         const url = window.URL.createObjectURL(new Blob([response]));
         const link = document.createElement('a');

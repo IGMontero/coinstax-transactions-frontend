@@ -138,7 +138,7 @@ export const downloadTransactions = createAsyncThunk(
       if (!response.ok) {
         return response.json();
       }
-      const data = await response.blob();
+      const data = await response.json();
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
