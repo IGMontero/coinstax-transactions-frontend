@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import {
-  blockchainActions,
-  copyToClipboard,
-  getActionMapping,
-} from '../../../../utils/utils';
+import { blockchainActions, copyToClipboard } from '../../../utils/utils';
 import { Col, Row, Collapse, CardBody, Badge } from 'reactstrap';
 
 import InformationLedger from './components/InformationLedger';
-import ListTransactions from './components/ListTransactions';
+import ListTransactions from './components/List/ListTransactions';
 // Columns components
 import ApprovalColumn from './components/Columns/ApprovalColumn';
 import SentColumn from './components/Columns/SentColumn';

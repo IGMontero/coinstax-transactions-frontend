@@ -7,7 +7,7 @@ import {
 } from '../../../../../utils/utils';
 import { useNavigate } from 'react-router-dom';
 
-const ListTransactionss = ({ transactions }) => {
+const ListTransactions = ({ transactions }) => {
   const navigate = useNavigate();
   const [positiveLedgers, setPositiveLedgers] = useState([]);
   const [negativeLedgers, setNegativeLedgers] = useState([]);
@@ -257,4 +257,4 @@ const ListTransactionss = ({ transactions }) => {
   );
 };
 
-export default ListTransactionss;
+export default ListTransactions;
