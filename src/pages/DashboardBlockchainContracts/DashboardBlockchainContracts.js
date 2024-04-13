@@ -30,7 +30,7 @@ import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
 import { handleActionResult } from '../../utils/useHandleAction';
-import EditBlockChainContract from '../DashboardInfo/components/HistorialComponents/modals/EditBlockChainContract';
+import EditBlockChainContract from '../DashboardTransactions/HistorialComponents/modals/EditBlockChainContract';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();

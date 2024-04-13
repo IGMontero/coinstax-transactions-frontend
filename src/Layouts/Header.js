@@ -30,6 +30,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeSidebarVisibility } from '../slices/thunks';
 import QrModal from '../pages/DashboardInfo/modals/QrModal';
 import { copyToClipboard, formatIdTransaction } from '../utils/utils';
+import SearchBar from '../Components/SearchBar/SearchBar';
+import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
@@ -101,71 +103,9 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     }
   };
 
-  // useEffect(() => {
-  //   if (address) {
-  //     setSearchInput(address);
-  //   }
-  // }, []);
-
-  const handleSearchClick = () => {
-    // setSearchInput('');
-    navigate(`/address/${searchInput}/tokens`);
-  };
-
-  const toggleQrModal = () => {
-    setShowQrModal(!showQrModal);
-  };
-
-  const handleCopy = async (e, text) => {
-    e.stopPropagation();
-    e.preventDefault();
-    try {
-      copyToClipboard(text);
-      setIsCopied(true);
-      setTimeout(() => {
-        setIsCopied(null);
-      }, 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-    }
-  };
   useEffect(() => {
     setSearchInput('');
   }, [location]);
-
-  const renderAddressWithDropdown = () => {
-    return (
-      <div className="d-flex align-items-center ">
-        <h4 className="text-address">{formatIdTransaction(address, 6, 8)}</h4>
-        <UncontrolledDropdown className="card-header-dropdown">
-          <DropdownToggle tag="a" className="text-reset" role="button">
-            <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
-          </DropdownToggle>
-          <DropdownMenu className="dropdown-menu-end ms-3">
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={toggleQrModal}
-            >
-              {' '}
-              <i className="ri-qr-code-line fs-2 me-2"></i>
-              <span className="fw-semibold">Show QR code</span>
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={(e) => handleCopy(e, address)}
-            >
-              {isCopied ? (
-                <i className="ri-check-line fs-2 me-2 "></i>
-              ) : (
-                <i className="ri-file-copy-line fs-2 me-2"></i>
-              )}
-              <span className="fw-semibold">Copy direction</span>
-            </DropdownItem>
-          </DropdownMenu>
-        </UncontrolledDropdown>
-      </div>
-    );
-  };
 
   const commentedCode = () => {
     return (
@@ -231,11 +171,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
         // className={headerClass}
         className="mb-4"
       >
-        <QrModal
-          showQrModal={showQrModal}
-          toggleQrModal={toggleQrModal}
-          addressTitle={address}
-        />
         <div className="layout-width">
           <Row
             className="navbar-header "
@@ -253,7 +188,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 <img src={logo} alt="" height="40" />
               </span>
             </div> */}
-              <Col lg={6}>
+              <Col lg={4}>
                 <button
                   onClick={toogleMenuBtn}
                   type="button"
@@ -266,31 +201,10 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                     <span></span>
                   </span>
                 </button>
-                {address && renderAddressWithDropdown()}
+                <SearchBar />
               </Col>
-              <Col lg={6}>
+              <Col lg={8}>
                 <div className="d-flex align-items-center justify-content-end">
-                  <InputGroup className="me-2" style={{ maxWidth: '400px' }}>
-                    <Input
-                      className="form-control py-2 rounded"
-                      placeholder="Assets, wallet, domain, or identity"
-                      value={searchInput}
-                      onChange={(e) => {
-                        const filteredInput = e.target.value.replace(
-                          /[^a-zA-Z0-9]/g,
-                          '',
-                        );
-                        setSearchInput(filteredInput);
-                      }}
-                    />
-                    <Button
-                      disabled={!searchInput || address === searchInput}
-                      color="primary"
-                      onClick={handleSearchClick}
-                    >
-                      Search
-                    </Button>
-                  </InputGroup>
                   {/* {commentedCode()} */}
                   {currentUser && <ProfileDropdown />}
                 </div>

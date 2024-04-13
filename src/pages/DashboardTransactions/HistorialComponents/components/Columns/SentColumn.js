@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
-import assetsIcon from '../../../../../../assets/images/svg/assets.svg';
+import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
 import {
   CurrencyUSD,
   copyToClipboard,
   parseValuesToLocale,
-} from '../../../../../../utils/utils';
+} from '../../../../../utils/utils';
 
 const SentColumn = ({ ledger }) => {
   const navigate = useNavigate();
@@ -31,18 +31,19 @@ const SentColumn = ({ ledger }) => {
     }, 2000);
   };
 
+  const isPreview = ledger?.preview;
   // This useEffect is used to set the image source and show the placeholder if the image is not available
   useEffect(() => {
     if (negativeLedgers?.logo) {
       setImageSrc(negativeLedgers.logo);
       setShowPlaceholder(false);
-    } else if (ledger?.preview) {
+    } else if (isPreview) {
       setShowPlaceholder(true);
     } else {
       setShowPlaceholder(false);
       setImageSrc(null);
     }
-  }, [ledger, negativeLedgers?.logo, ledger?.preview]);
+  }, [ledger, negativeLedgers?.logo, isPreview]);
 
   const parsedValue = parseValuesToLocale(negativeLedgers?.value, '');
 
@@ -50,8 +51,6 @@ const SentColumn = ({ ledger }) => {
 
   const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
   const tokenId = negativeLedgers?.nftInfo?.tokenId || undefined;
-
-  const isPreview = ledger?.preview;
 
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
@@ -74,7 +73,10 @@ const SentColumn = ({ ledger }) => {
                   ) : imageSrc ? (
                     <img
                       src={imageSrc}
-                      alt={negativeLedgers?.displayName}
+                      alt={
+                        negativeLedgers?.displayName ||
+                        negativeLedgers?.currency
+                      }
                       className="rounded"
                       width={35}
                       height={35}
@@ -82,7 +84,17 @@ const SentColumn = ({ ledger }) => {
                         setShowPlaceholder(true);
                       }}
                     />
-                  ) : null}
+                  ) : (
+                    <div
+                      className={
+                        isNft
+                          ? 'skeleton-avatar-square-error'
+                          : 'skeleton-avatar-circle-error'
+                      }
+                    >
+                      {negativeLedgers?.currency}
+                    </div>
+                  )}
                 </div>
 
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
