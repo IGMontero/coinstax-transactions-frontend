@@ -2,7 +2,7 @@ import React from 'react';
 import {
   copyToClipboard,
   parseValuesToLocale,
-} from '../../../../../../utils/utils';
+} from '../../../../../utils/utils';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 
 const ApprovalColumn = ({ transaction }) => {

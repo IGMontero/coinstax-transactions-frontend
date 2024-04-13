@@ -99,6 +99,24 @@ export const getSelectedAssetFilters = (selectedAssets) => {
   }
 };
 
+export function getColSizeBasedOnContent(ledgers) {
+  const maxLength = Math.max(
+    ...ledgers.map((ledger) => ledger.currency.length),
+  );
+
+  if (maxLength > 10) {
+    return {
+      negative: 'col-xxl-4 col-lg-4',
+      positive: 'col-xxl-7 col-lg-7',
+    };
+  } else {
+    return {
+      negative: 'col-xxl-3 col-lg-3',
+      positive: 'col-xxl-7 col-lg-7',
+    };
+  }
+}
+
 export async function copyToClipboard(textToCopy) {
   // Navigator clipboard api needs a secure context (https)
   if (navigator.clipboard && window.isSecureContext) {
@@ -125,8 +143,9 @@ export async function copyToClipboard(textToCopy) {
   }
 }
 
-export const formatDateToLocal = (date) => {
-  return moment(date).format('MM/DD/YYYY');
+export const formatDateToLocale = (date) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(date).toLocaleDateString(undefined, options);
 };
 
 export const parseValuesToLocale = (value, currency) => {
@@ -312,4 +331,10 @@ export const removeNegativeSign = (amount) => {
 export const formatDate = (dateString) => {
   const options = { year: 'numeric', month: 'long', day: 'numeric' };
   return new Date(dateString).toLocaleDateString(undefined, options);
+};
+
+export const saveAddressToLocalStorage = (address) => {
+  localStorage
+    .setItem('recentAddresses', JSON.stringify([address]))
+    .catch((error) => console.error(error));
 };

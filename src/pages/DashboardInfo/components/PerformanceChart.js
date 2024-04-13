@@ -4,6 +4,7 @@ import { fetchPerformance } from '../../../slices/transactions/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardBody, Col, Spinner } from 'reactstrap';
 import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
+import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 
 const PerformanceChart = ({
   address,
@@ -246,22 +247,41 @@ const PerformanceChart = ({
     }
   }, [series]);
 
+  if (
+    !loading &&
+    series.length === 0 &&
+    showMessage &&
+    !showMessage &&
+    !loading
+  ) {
+    <Col
+      className="d-flex text-center col-12 justify-content-center align-items-center"
+      style={{ display: 'flex', height: '50vh', width: '100%' }}
+    >
+      <h1 className="text-center">No data found </h1>
+    </Col>;
+  }
+
   return (
-    <div className="position-relative ">
-      <h1 className="ms-1 mt-0 mb-4">Dashboard</h1>
-      {
-        loading ? (
-          <Card>
-            <CardBody className="p-4">
-              <div style={{ backgroundColor: '#212529', height: '360px' }}>
-                {' '}
+    <div
+      style={{
+        marginTop: loading ? '-1rem' : '-2rem',
+      }}
+    >
+      <AddressWithDropdown />
+      <h1 className={`ms-1 mt-4 mb-4 `}>Performance Chart</h1>
+      <div className="position-relative">
+        {loading ? (
+          <Card className="mt-3">
+            <CardBody className="p-5 pb-4">
+              <div style={{ backgroundColor: '#212529', height: '353px' }}>
                 <div className="d-flex justify-content-center align-items-center h-100">
                   <Spinner color="white" />
                 </div>
               </div>
             </CardBody>
           </Card>
-        ) : series.length ? (
+        ) : (
           <div className="border border-2 rounded p-2" style={{ zIndex: 1 }}>
             <ReactApexChart
               options={options}
@@ -271,21 +291,8 @@ const PerformanceChart = ({
             />
             {renderFiltersButtons()}
           </div>
-        ) : (
-          <Col
-            className="d-flex text-center col-12 justify-content-center align-items-center"
-            style={{ display: 'flex', height: '50vh', width: '100%' }}
-          >
-            <h1 className="text-center">No data found </h1>
-          </Col>
-        )
-        // <ReactApexChart
-        //   options={{}}
-        //   series={[{ data: [] }]}
-        //   type="line"
-        //   height={350}
-        // />
-      }
+        )}
+      </div>
     </div>
   );
 };
