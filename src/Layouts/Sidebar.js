@@ -6,7 +6,7 @@ import logoSm from '../assets/images/logo-sm.png';
 import logoDark from '../assets/images/logo-dark.png';
 import logoLight from '../assets/images/logo-light.png';
 
-import logo from '../assets/images/logos/logo-dark.png';
+import logo from '../assets/images/logos/logo-light.png';
 
 //Import Components
 import VerticalLayout from './VerticalLayouts/index';
@@ -55,16 +55,16 @@ const Sidebar = ({ layoutType }) => {
               <img src={logo} alt="" height="20" width="63" />
             </span>
             <span className="logo-lg">
-              <img src={logo} alt="" height="30" />
+              <img src={logo} alt="" height="25" />
             </span>
           </div>
 
           <div className="logo logo-light">
             <span className="logo-sm">
-              <img src={logo} alt="" height="30" />
+              <img src={logo} alt="" height="26" />
             </span>
             <span className="logo-lg">
-              <img src={logo} alt="" height="30" />
+              <img src={logo} alt="" height="26" />
             </span>
           </div>
           <button
