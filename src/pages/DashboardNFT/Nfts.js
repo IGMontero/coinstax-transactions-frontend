@@ -45,7 +45,14 @@ const ethIcon = (
 const Nfts = ({ address }) => {
   const location = useLocation();
 
-  const isDashboardPage = location.pathname.includes('tokens');
+  let isDashboardPage;
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+
+  if (pathSegments.length === 2) {
+    isDashboardPage = true;
+  } else if (pathSegments.length > 2) {
+    isDashboardPage = false;
+  }
 
   const [loading, setLoading] = React.useState(false);
   const [imageError, setImageError] = useState(false);

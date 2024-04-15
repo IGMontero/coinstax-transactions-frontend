@@ -40,7 +40,14 @@ const HistorialTable = ({ data, setData }) => {
   const { user } = useSelector((state) => state.auth);
 
   const currentUser = user;
-  const isDashboardPage = location.pathname.includes('tokens');
+  let isDashboardPage;
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+
+  if (pathSegments.length === 2) {
+    isDashboardPage = true;
+  } else if (pathSegments.length > 2) {
+    isDashboardPage = false;
+  }
 
   // #region STATES
   const [hasPreview, setHasPreview] = useState(false);
@@ -346,8 +353,7 @@ const HistorialTable = ({ data, setData }) => {
         }),
       ).unwrap();
 
-
-      console.log(response)
+      console.log(response);
 
       if (response.error && response.error.code !== 'PROCESSING') {
         Swal.fire({
@@ -376,7 +382,7 @@ const HistorialTable = ({ data, setData }) => {
         //     Swal.showLoading();
         //   },
         // });
-        console.log("Will download file")
+        console.log('Will download file');
 
         const url = window.URL.createObjectURL(new Blob([response]));
         const link = document.createElement('a');
@@ -509,7 +515,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -527,8 +533,9 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
