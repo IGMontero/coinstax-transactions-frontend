@@ -161,7 +161,7 @@ const RenderTransactions = ({
                   }`}
                 >
                   {/* CODE FOR LIST */}
-                  {hasList && <ListTransactions transactions={transaction} />}
+                  {hasList && <ListTransactions transaction={transaction} />}
 
                   {/* HASH AND FEE  */}
                   <InformationLedger
