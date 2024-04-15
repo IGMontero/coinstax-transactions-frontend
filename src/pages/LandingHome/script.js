@@ -59,7 +59,9 @@ function toggle() {
   const planSwitch = document.getElementById('plan-switch');
   const plan = planSwitch.checked;
   planSwitch.checked = !plan;
+}
 
-  // Aquí puedes agregar cualquier lógica adicional que desees ejecutar cuando cambie el plan
-  // Por ejemplo, actualizar el precio mostrado o realizar alguna acción específica.
+function toggleAccordion(elementId) {
+  var element = document.getElementById(elementId);
+  element.classList.toggle('show');
 }
