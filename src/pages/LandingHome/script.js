@@ -47,21 +47,33 @@ document.addEventListener('DOMContentLoaded', function () {
     },
   });
 
-  document.getElementById('back-to-top').addEventListener('click', toTop);
-});
-
-document.addEventListener('DOMContentLoaded', function () {
   const planSwitchContainer = document.getElementById('plan-switch-container');
   planSwitchContainer.addEventListener('click', toggle);
+
+  function toggle() {
+    const planSwitch = document.getElementById('plan-switch');
+    const plan = planSwitch.checked;
+    planSwitch.checked = !plan;
+  }
+
+  function toggleAccordion(elementId) {
+    var element = document.getElementById(elementId);
+    element.classList.toggle('show');
+  }
+
+  var swiper = new Swiper('.mySwiper2', {
+    spaceBetween: 30,
+    effect: 'fade',
+    loop: true,
+    pagination: {
+      el: '.swiper-pagination',
+      clickable: true,
+    },
+    autoplay: {
+      delay: 2000,
+      disableOnInteraction: false,
+    },
+  });
+
+  document.getElementById('back-to-top').addEventListener('click', toTop);
 });
-
-function toggle() {
-  const planSwitch = document.getElementById('plan-switch');
-  const plan = planSwitch.checked;
-  planSwitch.checked = !plan;
-}
-
-function toggleAccordion(elementId) {
-  var element = document.getElementById(elementId);
-  element.classList.toggle('show');
-}
