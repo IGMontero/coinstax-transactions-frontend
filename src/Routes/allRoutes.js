@@ -23,7 +23,7 @@ import DashboardHome from '../pages/DashboardHome/DashboardHome';
 
 const authProtectedRoutes = [
   { path: '/dashboard', component: <DashboardInfo /> },
-  { path: '/address/:address/:type', component: <DashboardInfo /> },
+  { path: '/address/:address', component: <DashboardInfo /> },
   { path: '/index', component: <DashboardEcommerce /> },
 
   //User Profile
@@ -34,9 +34,9 @@ const authProtectedRoutes = [
   {
     path: '/',
     exact: true,
-    component: <Navigate to="/dashboard" />,
+    component: <Navigate to="/" />,
   },
-  { path: '*', component: <Navigate to="/dashboard" /> },
+  { path: '*', component: <Navigate to="/" /> },
 ];
 
 const publicRoutes = [
@@ -57,7 +57,7 @@ const allRoutes = [
   { path: '/register', component: <Register /> },
 
   { path: '/contract/:contractAddress', component: <DashboardNFT /> },
-  { path: '/address/:address/tokens', component: <DashboardInfo /> },
+  { path: '/address/:address', component: <DashboardInfo /> },
   { path: '/address/:address/assets', component: <DashboardAssets /> },
   { path: '/address/:address/nfts', component: <NFTsPage /> },
   { path: '/address/:address/history', component: <DashboardTransactions /> },

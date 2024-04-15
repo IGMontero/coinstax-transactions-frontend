@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 const SearchBar = () => {
   const navigate = useNavigate();
 
-
   const [searchInput, setSearchInput] = useState('');
 
   const originalOptions = [
@@ -26,17 +25,15 @@ const SearchBar = () => {
     {
       label: searchInput,
       value: searchInput,
-    }
+    },
   ];
 
   // Render current input value as option too.
-  const [options, setOptions] = useState(
-    originalOptions
-  );
+  const [options, setOptions] = useState(originalOptions);
 
   const handleChange = (selectedOption) => {
     if (selectedOption && selectedOption.value) {
-      navigate(`/address/${selectedOption.value}/tokens`);
+      navigate(`/address/${selectedOption.value}`);
     } else {
       return;
     }
@@ -44,7 +41,7 @@ const SearchBar = () => {
 
   const handleInputChange = (inputValue, actionMeta) => {
     const filteredInput = inputValue.replace(/[^a-zA-Z0-9]/g, '');
-    const options = originalOptions
+    const options = originalOptions;
 
     if (actionMeta.action === 'input-change') {
       setSearchInput(filteredInput);
@@ -56,7 +53,7 @@ const SearchBar = () => {
     }
   };
 
-  console.log(options)
+  console.log(options);
 
   const DropdownIndicator = (props) => {
     return (
@@ -132,14 +129,12 @@ const SearchBar = () => {
       components={{ DropdownIndicator }}
       styles={customStyles}
       // isClearable
-      onKeyDown={
-        (e) => {
-          console.log(e.key);
-          if (e.key === 'Enter') {
-            navigate(`/address/${searchInput}/tokens`);
-          }
+      onKeyDown={(e) => {
+        console.log(e.key);
+        if (e.key === 'Enter') {
+          navigate(`/address/${searchInput}`);
         }
-      }
+      }}
     />
   );
 };
