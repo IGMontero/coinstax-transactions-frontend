@@ -5,11 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import LedgerItem from './LedgerItem';
 import { getColSizeBasedOnContent } from '../../../../../utils/utils';
 
-const ListTransactionss = ({ transactions }) => {
+const ListTransactions = ({ transactions }) => {
   const [positiveLedgers, setPositiveLedgers] = useState([]);
   const [negativeLedgers, setNegativeLedgers] = useState([]);
 
   const [isCopied, setIsCopied] = useState(false);
+
+  const isPreview = transactions?.preview;
 
   useEffect(() => {
     if (transactions && transactions.ledgers) {
@@ -42,6 +44,7 @@ const ListTransactionss = ({ transactions }) => {
               <LedgerItem
                 key={index}
                 ledger={ledger}
+                isPreview={isPreview}
                 index={index}
                 isReceived={false}
                 isCopied={isCopied}
@@ -95,6 +98,7 @@ const ListTransactionss = ({ transactions }) => {
                   key={index}
                   ledger={ledger}
                   index={index}
+                  isPreview={isPreview}
                   isReceived={true}
                   isCopied={isCopied}
                   setIsCopied={setIsCopied}
@@ -108,4 +112,4 @@ const ListTransactionss = ({ transactions }) => {
   );
 };
 
-export default ListTransactionss;
+export default ListTransactions;
