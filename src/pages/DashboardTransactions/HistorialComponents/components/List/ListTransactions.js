@@ -5,27 +5,27 @@ import { useNavigate } from 'react-router-dom';
 import LedgerItem from './LedgerItem';
 import { getColSizeBasedOnContent } from '../../../../../utils/utils';
 
-const ListTransactions = ({ transactions }) => {
+const ListTransactions = ({ transaction }) => {
   const [positiveLedgers, setPositiveLedgers] = useState([]);
   const [negativeLedgers, setNegativeLedgers] = useState([]);
 
   const [isCopied, setIsCopied] = useState(false);
 
-  const isPreview = transactions?.preview;
+  const isPreview = transaction?.preview;
 
   useEffect(() => {
-    if (transactions && transactions.ledgers) {
-      const posLedgers = transactions.ledgers.filter(
+    if (transaction && transaction.ledgers) {
+      const posLedgers = transaction.ledgers.filter(
         (ledger) => !ledger.isFee && ledger.amount > 0,
       );
-      const negLedgers = transactions.ledgers.filter(
+      const negLedgers = transaction.ledgers.filter(
         (ledger) => !ledger.isFee && ledger.amount < 0,
       );
 
       setPositiveLedgers(posLedgers);
       setNegativeLedgers(negLedgers);
     }
-  }, [transactions]);
+  }, [transaction]);
 
   const negativeLedgersSize = getColSizeBasedOnContent(negativeLedgers);
   const positiveLedgersSize = getColSizeBasedOnContent(positiveLedgers);
