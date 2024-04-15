@@ -1,111 +1,764 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Coinstax | Home</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">   
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl.carousel/2.3.4/assets/owl.carousel.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/owl.carousel/2.3.4/assets/owl.theme.default.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" >
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/remixicon/fonts/remixicon.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Coinstax | Home</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/owl.carousel/2.3.4/assets/owl.carousel.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/owl.carousel/2.3.4/assets/owl.theme.default.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/remixicon/fonts/remixicon.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
 
-     <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+  </head>
+  <body>
+    <div class="layout-wrapper landing">
+      <!-- Navbar section  -->
+      <nav class="navbar navbar-expand-lg navbar-landing fixed-top" id="navbar">
+        <div class="container">
+          <a class="navbar-brand" href="/index">
+            <img
+              src="assets/logo-dark.png"
+              class="card-logo card-logo-dark"
+              alt="logo dark"
+              height="40"
+            />
+          </a>
 
-</head>
-<body>
-  <div class="layout-wrapper landing">
-  <!-- Navbar section  -->
-  <nav class="navbar navbar-expand-lg navbar-landing fixed-top" id="navbar">
-    <div class="container">
-      <a class="navbar-brand" href="/index">
-        <img src="assets/logo-dark.png" class="card-logo card-logo-dark" alt="logo dark" height="40">
-      </a>
-      
-      <button class="navbar-toggler py-0 fs-20 text-body" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <i class="mdi mdi-menu"></i>
-      </button>
+          <button
+            class="navbar-toggler py-0 fs-20 text-body"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <i class="mdi mdi-menu"></i>
+          </button>
 
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mx-auto mt-2 mt-lg-0">
-          <li class="nav-item"><a class="nav-link" href="#hero">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-          <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
-          <li class="nav-item"><a class="nav-link" href="#plans">Plans</a></li>
-          <li class="nav-item"><a class="nav-link" href="#reviews">Reviews</a></li>
-          <li class="nav-item"><a class="nav-link" href="#team">Team</a></li>
-          <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-        </ul>
-        <div>
-          <a href="/login" class="btn btn-link fw-medium text-decoration-none text-dark">Sign in</a>
-          <a href="/register" class="btn btn-primary">Sign Up</a>
-        </div>
-      </div>
-    </div>
-  </nav>
-    <!-- End Navbar section  -->
-    <!-- Hero section  -->
-<section class="section pb-0 hero-section" id="hero">
-    <div class="bg-overlay bg-overlay-pattern"></div>
-    <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-lg-8 col-sm-10">
-          <div class="text-center mt-lg-5 pt-5">
-            <h1 class="display-6 fw-semibold mb-3 lh-base">
-              The better way to manage your website with <span class="text-secondary">Velzon</span>
-            </h1>
-            <div class="d-flex align-items-center justify-content-center">
-              <div class="col-8 mt-2 ">
-                <!--  SearchBar -->
-              </div>
-            </div>
-            <div class="d-flex gap-2 justify-content-center mt-4">
-              <a href="/register" class="btn btn-primary"> Get Started<i class="ri-arrow-right-line align-middle ms-1"></i> </a>
-              <a href="/pages-pricing" class="btn btn-soft-secondary">View Plans <i class="ri-eye-line align-middle ms-1"></i></a>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-auto mt-2 mt-lg-0">
+              <li class="nav-item">
+                <a class="nav-link" href="#hero">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#services">Services</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#features">Features</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#plans">Plans</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#reviews">Reviews</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#team">Team</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#contact">Contact</a>
+              </li>
+            </ul>
+            <div>
+              <a
+                href="/login"
+                class="btn btn-link fw-medium text-decoration-none text-dark"
+                >Sign in</a
+              >
+              <a href="/register" class="btn btn-primary">Sign Up</a>
             </div>
           </div>
+        </div>
+      </nav>
+      <!-- End Navbar section  -->
 
-          <div class="mt-4 mt-sm-5 pt-sm-5 mb-sm-n5 demo-carousel">
-            <div class="demo-img-patten-top d-none d-sm-block">
-              <img src="assets/landing/img-pattern.png" class="d-block img-fluid" alt="...">
-            </div>
-            <div class="demo-img-patten-bottom d-none d-sm-block">
-              <img src="assets/landing/img-pattern.png" class="d-block img-fluid" alt="...">
-            </div>
-            <div class="swiper mySwiper">
-              <div class="swiper-wrapper">
-                <div class="swiper-slide carousel-inner shadow-lg p-2 bg-white rounded">
-                  <img src="assets/demos/default.png" class="d-block w-100" alt="...">
+      <!-- Hero section  -->
+      <section class="section pb-0 hero-section" id="hero">
+        <div class="bg-overlay bg-overlay-pattern"></div>
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-8 col-sm-10">
+              <div class="text-center mt-lg-5 pt-5">
+                <h1 class="display-6 fw-semibold mb-3 lh-base">
+                  The better way to manage your website with
+                  <span class="text-secondary">Velzon</span>
+                </h1>
+                <div class="d-flex align-items-center justify-content-center">
+                  <div class="col-8 mt-2">
+                    <!--  SearchBar -->
+                    
+                  </div>
+                </div>
+                <div class="d-flex gap-2 justify-content-center mt-4">
+                  <a href="/register" class="btn btn-primary">
+                    Get Started<i
+                      class="ri-arrow-right-line align-middle ms-1"
+                    ></i>
+                  </a>
+                  <a href="/pages-pricing" class="btn btn-soft-secondary"
+                    >View Plans <i class="ri-eye-line align-middle ms-1"></i
+                  ></a>
                 </div>
               </div>
-              <div class="swiper-pagination"></div>
+
+              <div class="mt-4 mt-sm-5 pt-sm-5 mb-sm-n5 demo-carousel">
+                <div class="demo-img-patten-top d-none d-sm-block">
+                  <img
+                    src="assets/landing/img-pattern.png"
+                    class="d-block img-fluid"
+                    alt="..."
+                  />
+                </div>
+                <div class="demo-img-patten-bottom d-none d-sm-block">
+                  <img
+                    src="assets/landing/img-pattern.png"
+                    class="d-block img-fluid"
+                    alt="..."
+                  />
+                </div>
+                <div class="swiper mySwiper">
+                  <div class="swiper-wrapper">
+                    <div
+                      class="swiper-slide carousel-inner shadow-lg p-2 bg-white rounded"
+                    >
+                      <img
+                        src="assets/demos/default.png"
+                        class="d-block w-100"
+                        alt="..."
+                      />
+                    </div>
+                  </div>
+                  <div class="swiper-pagination"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="position-absolute start-0 end-0 bottom-0 hero-shape-svg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            version="1.1"
+            viewBox="0 0 1440 120"
+          >
+            <g mask='url("#SvgjsMask1003")' fill="none">
+              <path
+                d="M 0,118 C 288,98.6 1152,40.4 1440,21L1440 140L0 140z"
+              ></path>
+            </g>
+          </svg>
+        </div>
+      </section>
+      <!-- End Hero section  -->
+
+      <!-- Client section  -->
+      <div class="pt-5 mt-5">
+        <div class="container">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="text-center mt-5">
+                <h5 class="fs-20">
+                  Trusted
+                  <span class="text-primary text-decoration-underline">by</span>
+                  the world's best
+                </h5>
+                <!-- Swiper Container -->
+                <div
+                  class="swiper mySwiper swiper trusted-client-slider mt-sm-5 mt-4 mb-sm-5 mb-4"
+                >
+                  <div class="swiper-wrapper">
+                    <!-- Swiper Slide -->
+                    <div class="swiper-slide">
+                      <div class="client-images">
+                        <img
+                          src="assets/clients/amazon.svg"
+                          alt="client-img"
+                          class="mx-auto img-fluid d-block"
+                        />
+                      </div>
+                    </div>
+                    <div class="swiper-slide">
+                      <div class="client-images">
+                        <img
+                          src="assets/clients/walmart.svg"
+                          alt="client-img"
+                          class="mx-auto img-fluid d-block"
+                        />
+                      </div>
+                    </div>
+                    <div class="swiper-slide">
+                      <div class="client-images">
+                        <img
+                          src="assets/clients/lenovo.svg"
+                          alt="client-img"
+                          class="mx-auto img-fluid d-block"
+                        />
+                      </div>
+                    </div>
+                    <div class="swiper-slide">
+                      <div class="client-images">
+                        <img
+                          src="assets/clients/paypal.svg"
+                          alt="client-img"
+                          class="mx-auto img-fluid d-block"
+                        />
+                      </div>
+                    </div>
+                    <div class="swiper-slide">
+                      <div class="client-images">
+                        <img
+                          src="assets/clients/shopify.svg"
+                          alt="client-img"
+                          class="mx-auto img-fluid d-block"
+                        />
+                      </div>
+                    </div>
+                    <div class="swiper-slide">
+                      <div class="client-images">
+                        <img
+                          src="assets/clients/google.svg"
+                          alt="client-img"
+                          class="mx-auto img-fluid d-block"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Add Pagination -->
+                  <div class="swiper-pagination"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <!-- End Client section  -->
+
+      <!-- Services section  -->
+      <section class="section" id="services">
+        <div class="container">
+          <div class="row justify-content-center">
+            <div class="col-lg-8">
+              <div class="text-center mb-5">
+                <h1 class="mb-3 ff-secondary fw-semibold lh-base">
+                  A Digital web design studio creating modern & engaging online
+                </h1>
+                <p class="text-muted">
+                  To achieve this, it would be necessary to have uniform
+                  grammar, pronunciation and more common words. If several
+                  languages coalesce the grammar
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="row g-3">
+            <div class="col-lg-4">
+              <div class="d-flex p-3">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar-sm icon-effect">
+                    <div
+                      class="avatar-title bg-transparent text-success rounded-circle"
+                    >
+                      <i class="ri-pencil-ruler-2-line fs-36"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fs-18">Creative Design</h5>
+                  <p class="text-muted my-3 ff-secondary">
+                    The creative design includes designs that are unique,
+                    effective and memorable.
+                  </p>
+                  <div>
+                    <a href="#" class="fs-13 fw-medium"
+                      >Learn More
+                      <i class="ri-arrow-right-s-line align-bottom"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Repeat similar blocks for other services -->
+            <!-- Example for "Unlimited Colors" service -->
+            <div class="col-lg-4">
+              <div class="d-flex p-3">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar-sm icon-effect">
+                    <div
+                      class="avatar-title bg-transparent text-success rounded-circle"
+                    >
+                      <i class="ri-palette-line fs-36"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fs-18">Unlimited Colors</h5>
+                  <p class="text-muted my-3 ff-secondary">
+                    The collection of rules and guidelines which designers use
+                    to communicate with users through appealing.
+                  </p>
+                  <div>
+                    <a href="#" class="fs-13 fw-medium"
+                      >Learn More
+                      <i class="ri-arrow-right-s-line align-bottom"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="d-flex p-3">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar-sm icon-effect">
+                    <div
+                      class="avatar-title bg-transparent text-success rounded-circle"
+                    >
+                      <i class="ri-lightbulb-flash-line fs-36"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fs-18">Strategy Solutions</h5>
+                  <p class="text-muted my-3 ff-secondary">
+                    Business development firm that provides strategic planning,
+                    market research services and project.
+                  </p>
+                  <div>
+                    <a href="#" class="fs-13 fw-medium"
+                      >Learn More
+                      <i class="ri-arrow-right-s-line align-bottom"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="d-flex p-3">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar-sm icon-effect">
+                    <div
+                      class="avatar-title bg-transparent text-success rounded-circle"
+                    >
+                      <i class="ri-customer-service-line fs-36"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fs-18">Awesome Support</h5>
+                  <p class="text-muted my-3 ff-secondary">
+                    Awesome Support is the most versatile and feature-rich
+                    support plugin for all version.
+                  </p>
+                  <div>
+                    <a href="#" class="fs-13 fw-medium"
+                      >Learn More
+                      <i class="ri-arrow-right-s-line align-bottom"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="d-flex p-3">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar-sm icon-effect">
+                    <div
+                      class="avatar-title bg-transparent text-success rounded-circle"
+                    >
+                      <i class="ri-stack-line fs-36"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fs-18">Truly Multipurpose</h5>
+                  <p class="text-muted my-3 ff-secondary">
+                    You usually get a broad range of options to play with. This
+                    enables you to use a single theme across multiple.
+                  </p>
+                  <div>
+                    <a href="#" class="fs-13 fw-medium"
+                      >Learn More
+                      <i class="ri-arrow-right-s-line align-bottom"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-lg-4">
+              <div class="d-flex p-3">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar-sm icon-effect">
+                    <div
+                      class="avatar-title bg-transparent text-success rounded-circle"
+                    >
+                      <i class="ri-settings-2-line fs-36"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fs-18">Easy to customize</h5>
+                  <p class="text-muted my-3 ff-secondary">
+                    Personalise your own website, no matter what theme and what
+                    customization options.
+                  </p>
+                  <div>
+                    <a href="#" class="fs-13 fw-medium"
+                      >Learn More
+                      <i class="ri-arrow-right-s-line align-bottom"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="d-flex p-3">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar-sm icon-effect">
+                    <div
+                      class="avatar-title bg-transparent text-success rounded-circle"
+                    >
+                      <i class="ri-slideshow-line fs-36"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fs-18">Responsive & Clean Design</h5>
+                  <p class="text-muted my-3 ff-secondary">
+                    Responsive design is a graphic user interface (GUI) design
+                    approach used to create content.
+                  </p>
+                  <div>
+                    <a href="#" class="fs-13 fw-medium"
+                      >Learn More
+                      <i class="ri-arrow-right-s-line align-bottom"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="d-flex p-3">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar-sm icon-effect">
+                    <div
+                      class="avatar-title bg-transparent text-success rounded-circle"
+                    >
+                      <i class="ri-google-fill fs-36"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fs-18">Google Font Collection</h5>
+                  <p class="text-muted my-3 ff-secondary">
+                    Google Fonts is a collection of 915 fonts, all available to
+                    use for free on your website.
+                  </p>
+                  <div>
+                    <a href="#" class="fs-13 fw-medium"
+                      >Learn More
+                      <i class="ri-arrow-right-s-line align-bottom"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="d-flex p-3">
+                <div class="flex-shrink-0 me-3">
+                  <div class="avatar-sm icon-effect">
+                    <div
+                      class="avatar-title bg-transparent text-success rounded-circle"
+                    >
+                      <i class="ri-briefcase-5-line fs-36"></i>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex-grow-1">
+                  <h5 class="fs-18">Top Industry Specialists</h5>
+                  <p class="text-muted my-3 ff-secondary">
+                    An industrial specialist works with industrial operations to
+                    ensure that manufacturing facilities work.
+                  </p>
+                  <div>
+                    <a href="#" class="fs-13 fw-medium"
+                      >Learn More
+                      <i class="ri-arrow-right-s-line align-bottom"></i
+                    ></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- End Services section  -->
+
+      <!-- Features section  -->
+      <section class="section bg-light py-5" id="features">
+        <div class="container">
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-6 col-sm-7 mx-auto">
+                    <div>
+                        <img src='assets/landing/features/img-1.png' alt="" class="img-fluid mx-auto" />
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="text-muted">
+                        <div class="avatar-sm icon-effect mb-4">
+                            <div class="avatar-title bg-transparent rounded-circle text-success h1">
+                                <i class="ri-collage-line fs-36"></i>
+                            </div>
+                        </div>
+                        <h3 class="mb-3 fs-20">Huge collection of widgets</h3>
+                        <p class="mb-4 ff-secondary fs-16">Collection widgets specialize in displaying many elements of the same type, such as a collection of pictures from a collection of articles from a news app or a collection of messages from a communication app.</p>
+    
+                        <div class="row pt-3">
+                            <div class="col-3">
+                                <div class="text-center">
+                                    <h4>5</h4>
+                                    <p>Dashboards</p>
+                                </div>
+                            </div>
+                            <div class="col-3">
+                                <div class="text-center">
+                                    <h4>150+</h4>
+                                    <p>Pages</p>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="text-center">
+                                    <h4>7+</h4>
+                                    <p>Functional Apps</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="py-5 bg-primary position-relative">
+        <div class="bg-overlay bg-overlay-pattern opacity-50"></div>
+        <div class="container">
+            <div class="row align-items-center gy-4">
+                <div class="col-sm">
+                    <div>
+                        <h4 class="text-white mb-0 fw-semibold">Build your web App/SaaS with Velzon dashboard</h4>
+                    </div>
+                </div>
+                <div class="col-sm-auto">
+                    <div>
+                        <a href="/1.envato.market/velzon-admin" target="_blank" class="btn bg-gradient btn-danger"><i class="ri-shopping-cart-2-line align-middle me-1"></i> Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="section">
+        <div class="container">
+            <div class="row align-items-center gy-4">
+                <div class="col-lg-6 order-2 order-lg-1">
+                    <div class="text-muted">
+                        <h5 class="fs-12 text-uppercase text-secondary">Design</h5>
+                        <h4 class="mb-3">Well Designed Dashboards</h4>
+                        <p class="mb-4 ff-secondary">Quality Dashboards (QD) is a condition-specific, actionable web-based application for quality reporting and population management that is integrated into the Electronic Health Record (EHR).</p>
+    
+                        <div class="row">
+                            <div class="col-sm-5">
+                                <div class="vstack gap-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0 me-2">
+                                            <div class="avatar-xs icon-effect">
+                                                <div class="avatar-title bg-transparent text-success rounded-circle h2">
+                                                    <i class="ri-check-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fs-14 mb-0">Ecommerce</h5>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0 me-2">
+                                            <div class="avatar-xs icon-effect">
+                                                <div class="avatar-title bg-transparent text-success rounded-circle h2">
+                                                    <i class="ri-check-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fs-14 mb-0">Analytics</h5>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0 me-2">
+                                            <div class="avatar-xs icon-effect">
+                                                <div class="avatar-title bg-transparent text-success rounded-circle h2">
+                                                    <i class="ri-check-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fs-14 mb-0">CRM</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="vstack gap-2">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0 me-2">
+                                            <div class="avatar-xs icon-effect">
+                                                <div class="avatar-title bg-transparent text-success rounded-circle h2">
+                                                    <i class="ri-check-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fs-14 mb-0">Crypto</h5>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-shrink-0 me-2">
+                                            <div class="avatar-xs icon-effect">
+                                                <div class="avatar-title bg-transparent text-success rounded-circle h2">
+                                                    <i class="ri-check-fill"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h5 class="fs-14 mb-0">Projects</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <div class="mt-4">
+                            <a href="/index" class="btn btn-primary">Learn More <i class="ri-arrow-right-line align-middle ms-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="col-lg-6 col-sm-7 col-10 ms-auto order-1 order-lg-2">
+                    <div>
+                        <img src='assets/landing/features/img-2.png' alt="" class="img-fluid" />
+                    </div>
+                </div>
+            </div>
+    
+            <div class="row align-items-center mt-5 pt-lg-5 gy-4">
+                <div class="col-lg-6 col-sm-7 col-10 mx-auto">
+                    <div>
+                        <img src='assets/landing/features/img-3.png' alt="" class="img-fluid" />
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="text-muted ps-lg-5">
+                        <h5 class="fs-12 text-uppercase text-secondary">structure</h5>
+                        <h4 class="mb-3">Well Documented</h4>
+                        <p class="mb-4">used to describe something that is known about or known to be true because there are many documents that describe it, prove it, etc.</p>
+    
+                        <div class="vstack gap-2">
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-2">
+                                    <div class="avatar-xs icon-effect">
+                                        <div class="avatar-title bg-transparent text-success rounded-circle h2">
+                                            <i class="ri-check-fill"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <p class="mb-0">Dynamic Conetnt</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-2">
+                                    <div class="avatar-xs icon-effect">
+                                        <div class="avatar-title bg-transparent text-success rounded-circle h2">
+                                            <i class="ri-check-fill"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <p class="mb-0">Setup plugin's information.</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="flex-shrink-0 me-2">
+                                    <div class="avatar-xs icon-effect">
+                                        <div class="avatar-title bg-transparent text-success rounded-circle h2">
+                                            <i class="ri-check-fill"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1">
+                                    <p class="mb-0">Themes customization information</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+      <!-- End Features section  -->
+
+      <button class="btn btn-danger btn-icon landing-back-top" id="back-to-top">
+        <i class="ri-arrow-up-line"></i>
+      </button>
     </div>
-
-    <div class="position-absolute start-0 end-0 bottom-0 hero-shape-svg">
-      <svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1440 120">
-        <g mask='url("#SvgjsMask1003")' fill="none">
-          <path d="M 0,118 C 288,98.6 1152,40.4 1440,21L1440 140L0 140z"></path>
-        </g>
-      </svg>
-    </div>
-  </section>
-    <!-- End Hero section  -->
-
-    <button class="btn btn-danger btn-icon landing-back-top" id="back-to-top">
-      <i class="ri-arrow-up-line"></i>
-    </button>
-  </div>
-
-</body>
+  </body>
 </html>
