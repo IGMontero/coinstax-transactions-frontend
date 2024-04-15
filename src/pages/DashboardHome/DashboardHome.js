@@ -1,18 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, Col, Container, Input, InputGroup, Row } from 'reactstrap';
 import Index from './OnePage/index';
 const DashboardHome = () => {
-  const navigate = useNavigate();
-  const [searchInput, setSearchInput] = useState('');
-
-  const handleSearchClick = () => {
-    // handlerClearAllData();
-    // setAddressForSearch(searchInput);
-    // setAddressTitle(searchInput);
-    navigate(`/address/${searchInput}/tokens`);
-  };
-
   return (
     <React.Fragment>
       {/* <Col className="col-12 mt-5 ">
