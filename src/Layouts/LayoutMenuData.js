@@ -66,7 +66,7 @@ const Navdata = () => {
   const dashboardLink = isUnsupported
     ? '/'
     : addressSearched
-      ? `/address/${addressSearched}/`
+      ? `/address/${addressSearched}`
       : '/';
 
   const adminMenuItems = [

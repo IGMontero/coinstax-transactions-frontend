@@ -2,9 +2,14 @@ import React, { useState } from 'react';
 import Select from 'react-select';
 import { components } from 'react-select';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { layoutModeTypes } from '../constants/layout';
 
 const SearchBar = () => {
   const navigate = useNavigate();
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
 
   const [searchInput, setSearchInput] = useState('');
 
@@ -53,12 +58,16 @@ const SearchBar = () => {
     }
   };
 
-  console.log(options);
-
   const DropdownIndicator = (props) => {
     return (
       <components.DropdownIndicator {...props}>
-        <i className="ri-search-line align-middle text-white"></i>
+        <div onClick={() => searchInput && navigate(`/address/${searchInput}`)}>
+          <i
+            className={`ri-search-line align-middle text-${
+              layoutModeType === layoutModeTypes['DARKMODE'] ? 'white' : 'dark'
+            } ${searchInput ? 'cursor-pointer' : ''}`}
+          ></i>
+        </div>
       </components.DropdownIndicator>
     );
   };
@@ -66,21 +75,31 @@ const SearchBar = () => {
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      backgroundColor: '#212529',
-      color: '#fff',
+      backgroundColor:
+        layoutModeType === layoutModeTypes['DARKMODE'] ? '#212529' : '#fff',
+      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
       cursor: 'text',
       maxHeight: 35,
       textAlign: 'left',
-      border: '1px solid #32383e',
+      border:
+        layoutModeType === layoutModeTypes['DARKMODE']
+          ? '1px solid #32383e'
+          : '1px solid #ddd',
       outline: 'none !important',
       boxShadow: 'none !important',
-      '&:hover': { border: '1px solid #555' },
+      '&:hover': {
+        border:
+          layoutModeType === layoutModeTypes['DARKMODE']
+            ? '1px solid #555'
+            : '1px solid #ccc',
+      },
     }),
     menu: (provided) => ({
       ...provided,
       zIndex: 9999,
-      backgroundColor: '#2a2f34',
-      color: '#fff',
+      backgroundColor:
+        layoutModeType === layoutModeTypes['DARKMODE'] ? '#2a2f34' : '#fff',
+      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
       textAlign: 'left',
       cursor: 'pointer',
       borderRadius: '5px',
@@ -89,31 +108,47 @@ const SearchBar = () => {
       ...provided,
       cursor: 'pointer',
       backgroundColor: state.isFocused
-        ? '#2a2f34'
+        ? layoutModeType === layoutModeTypes['DARKMODE']
+          ? '#2a2f34'
+          : '#e2e2e2'
         : state.isSelected
-          ? '#212529'
+          ? layoutModeType === layoutModeTypes['DARKMODE']
+            ? '#212529'
+            : '#ddd'
           : 'transparent',
-      color: state.isFocused || state.isSelected ? 'white' : '#fff',
+      color:
+        state.isFocused || state.isSelected
+          ? 'white'
+          : layoutModeType === layoutModeTypes['DARKMODE']
+            ? '#fff'
+            : 'black',
       ':active': {
         ...provided[':active'],
         backgroundColor: state.isFocused
-          ? '#2a2f34'
+          ? layoutModeType === layoutModeTypes['DARKMODE']
+            ? '#2a2f34'
+            : '#e2e2e2'
           : state.isSelected
-            ? '#212529'
+            ? layoutModeType === layoutModeTypes['DARKMODE']
+              ? '#212529'
+              : '#ddd'
             : 'transparent',
       },
       '&:hover': {
-        backgroundColor: '#1f252b',
+        backgroundColor:
+          layoutModeType === layoutModeTypes['DARKMODE']
+            ? '#1f252b'
+            : '#e2e2e2',
         color: 'white',
       },
     }),
     input: (provided) => ({
       ...provided,
-      color: '#fff',
+      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: '#fff',
+      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
     }),
   };
 
@@ -130,7 +165,6 @@ const SearchBar = () => {
       styles={customStyles}
       // isClearable
       onKeyDown={(e) => {
-        console.log(e.key);
         if (e.key === 'Enter') {
           navigate(`/address/${searchInput}`);
         }
