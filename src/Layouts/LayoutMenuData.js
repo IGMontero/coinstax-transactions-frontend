@@ -64,10 +64,10 @@ const Navdata = () => {
   const isAdmin = user;
 
   const dashboardLink = isUnsupported
-    ? '/dashboard'
+    ? '/'
     : addressSearched
-      ? `/address/${addressSearched}/tokens`
-      : '/dashboard';
+      ? `/address/${addressSearched}/`
+      : '/';
 
   const adminMenuItems = [
     {

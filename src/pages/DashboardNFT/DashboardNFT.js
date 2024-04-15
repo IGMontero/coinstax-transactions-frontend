@@ -72,7 +72,7 @@ const DashboardNFT = () => {
   }, []);
 
   const handleSeeProfile = () => {
-    navigate(`/address/${ownerAddress}/tokens`);
+    navigate(`/address/${ownerAddress}`);
   };
 
   const renderCardProfile = () => {
