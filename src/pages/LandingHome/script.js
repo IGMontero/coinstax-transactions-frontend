@@ -49,3 +49,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
   document.getElementById('back-to-top').addEventListener('click', toTop);
 });
+
+document.addEventListener('DOMContentLoaded', function () {
+  const planSwitchContainer = document.getElementById('plan-switch-container');
+  planSwitchContainer.addEventListener('click', toggle);
+});
+
+function toggle() {
+  const planSwitch = document.getElementById('plan-switch');
+  const plan = planSwitch.checked;
+  planSwitch.checked = !plan;
+
+  // Aquí puedes agregar cualquier lógica adicional que desees ejecutar cuando cambie el plan
+  // Por ejemplo, actualizar el precio mostrado o realizar alguna acción específica.
+}
