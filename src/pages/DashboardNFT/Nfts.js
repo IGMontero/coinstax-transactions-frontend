@@ -339,7 +339,7 @@ const Nfts = ({ address }) => {
                   <Input
                     id="customCheck1"
                     type="checkbox"
-                    className="form-check-input me-2"
+                    className="form-check-input cursor-pointer me-2"
                     onChange={handleShowSpam}
                     checked={includeSpam}
                   />
