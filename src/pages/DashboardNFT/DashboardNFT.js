@@ -44,6 +44,11 @@ const DashboardNFT = () => {
       );
       const res = response.payload;
       if ((res && res.error) || !res) {
+        if (window.history.length > 1) {
+          window.history.back();
+        } else {
+          window.location.href = '/';
+        }
         return;
       } else {
         setCollectionLogo(res.collection.logo);
@@ -57,7 +62,6 @@ const DashboardNFT = () => {
         setDescription(res.description);
         setDetails(['Network', 'Ethereum']);
       }
-
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -260,7 +264,7 @@ const DashboardNFT = () => {
               </>
             ) : null}
             {/* {details.length ? renderDetails() : null} */}
-            {renderDetails()}
+            {details.length ? renderDetails() : null}
             {description ? (
               <>
                 <hr />
