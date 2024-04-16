@@ -46,6 +46,7 @@ const ListTransactions = ({ transaction }) => {
                 ledger={ledger}
                 isPreview={isPreview}
                 index={index}
+                transaction={transaction}
                 isReceived={false}
                 isCopied={isCopied}
                 setIsCopied={setIsCopied}
@@ -99,6 +100,7 @@ const ListTransactions = ({ transaction }) => {
                   ledger={ledger}
                   index={index}
                   isPreview={isPreview}
+                  transaction={transaction}
                   isReceived={true}
                   isCopied={isCopied}
                   setIsCopied={setIsCopied}

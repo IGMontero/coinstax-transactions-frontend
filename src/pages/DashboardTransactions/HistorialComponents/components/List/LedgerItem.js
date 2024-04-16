@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import {
+  CurrencyUSD,
   copyToClipboard,
   parseValuesToLocale,
 } from '../../../../../utils/utils';
@@ -9,6 +10,7 @@ import {
 const LedgerItem = ({
   isPreview,
   ledger,
+  transaction,
   index,
   isReceived,
   isCopied,
@@ -41,7 +43,7 @@ const LedgerItem = ({
 
   const isNft = ledger.isNft;
   const prefix = isReceived ? 'received' : 'sent';
-  const targetId = `amount-list-${prefix}-${index}-${ledger.txHash}`;
+  const targetId = `amount-list-${prefix}-${index}-${transaction.txHash}`;
 
   return (
     <div
@@ -102,6 +104,11 @@ const LedgerItem = ({
                 {parseValuesToLocale(ledger.amount, '')}{' '}
                 {isNft ? '' : ledger.currency}
               </span>
+              <p className="text-start d-flex align-items-center my-0 text-muted">
+                {' '}
+                {parseValuesToLocale(ledger.nativeamount, CurrencyUSD)}
+              </p>
+
               {ledger.amount && (
                 <UncontrolledPopover
                   onClick={(e) => e.stopPropagation()}
