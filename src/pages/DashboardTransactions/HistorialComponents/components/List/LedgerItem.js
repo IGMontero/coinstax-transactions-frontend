@@ -21,6 +21,8 @@ const LedgerItem = ({
   const [showPlaceholder, setShowPlaceholder] = useState(false);
   const [hasError, setHasError] = useState(false);
 
+  const addressLink = ledger?.contractAddress;
+
   useEffect(() => {
     // Reset status every time preview state or logo changes
     setShowPlaceholder(false);
@@ -108,11 +110,14 @@ const LedgerItem = ({
         <h6 className="fw-semibold my-0">
           {isNft && (ledger.amount === 1 || ledger.amount === -1) ? (
             <span
-              onClick={() =>
-                navigate(
-                  `/contract/${ledger.txInfo.contractAddressInfo.address}/?tokenId=${ledger.txInfo.tokenId}`,
-                )
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                if (addressLink && ledger.txInfo.tokenId) {
+                  navigate(
+                    `/contract/${addressLink}/?tokenId=${ledger.txInfo.tokenId}`,
+                  );
+                }
+              }}
               className="text-displayList text-hover-underline text-hover-primary"
             >
               {ledger.currency}
