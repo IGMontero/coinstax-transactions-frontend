@@ -18,17 +18,17 @@ import {
   formatDateToLocale,
   getSelectedAssetFilters,
   updateTransactionsPreview,
-} from '../../../utils/utils';
+} from '../../utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchHistory,
   downloadTransactions,
-} from '../../../slices/transactions/thunk';
-import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
-import RenderTransactions from '../../DashboardTransactions/HistorialComponents/RenderTransactions';
+} from '../../slices/transactions/thunk';
+import { capitalizeFirstLetter, FILTER_NAMES } from '../../utils/utils';
+import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
-import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
+import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 
 const HistorialTable = ({ data, setData }) => {
   // #region HOOKS
@@ -668,10 +668,12 @@ const HistorialTable = ({ data, setData }) => {
   // #region RENDER
   return (
     <React.Fragment>
-      <AddressWithDropdown />
-      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-4 mb-4'}`}>
-        Transactions
-      </h1>
+      {isDashboardPage ? null : (
+        <>
+          <AddressWithDropdown />
+          <h1 className="ms-1 mt-4 mb-4">Transactions</h1>
+        </>
+      )}
 
       {data && !errorData ? (
         <div className={isDashboardPage ? 'd-none' : ''}>
