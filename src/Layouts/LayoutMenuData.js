@@ -68,10 +68,10 @@ const Navdata = () => {
   });
 
   const dashboardLink = !isUnsupported
-    ? '/'
+    ? ''
     : addressSearched
-      ? `/address/${addressSearched}`
-      : '/';
+      ? `/address/${addressSearched}/`
+      : '';
 
   let allMenuItems = [
     createMenuItem('home', 'Home', 'bx bx-home', `${dashboardLink}`),
