@@ -3,7 +3,11 @@ import {
   copyToClipboard,
   parseValuesToLocale,
 } from '../../../../../utils/utils';
-import { PopoverBody, UncontrolledPopover } from 'reactstrap';
+import {
+  PopoverBody,
+  UncontrolledPopover,
+  UncontrolledTooltip,
+} from 'reactstrap';
 
 const ApprovalColumn = ({ transaction }) => {
   const transactionApproval = transaction?.txSummary?.approval;
@@ -107,27 +111,34 @@ const ApprovalColumn = ({ transaction }) => {
                 </>
               </span>
               {transactionApproval?.value ? (
-                <UncontrolledPopover
-                  onClick={(e) => e.stopPropagation()}
+                // <UncontrolledPopover
+                //   onClick={(e) => e.stopPropagation()}
+                //   placement="bottom"
+                //   target={`amount-${transaction.txHash}`}
+                //   trigger="hover"
+                // >
+                //   <PopoverBody
+                //     style={{
+                //       width: 'auto',
+                //     }}
+                //     className="text-center w-auto p-2 "
+                //   >
+                //     <span
+                //       style={{
+                //         fontSize: '0.70rem',
+                //       }}
+                //     >
+                //       {isCopied ? 'Copied' : transactionApproval?.value}
+                //     </span>
+                //   </PopoverBody>
+                // </UncontrolledPopover>
+                <UncontrolledTooltip
                   placement="bottom"
                   target={`amount-${transaction.txHash}`}
                   trigger="hover"
                 >
-                  <PopoverBody
-                    style={{
-                      width: 'auto',
-                    }}
-                    className="text-center w-auto p-2 "
-                  >
-                    <span
-                      style={{
-                        fontSize: '0.70rem',
-                      }}
-                    >
-                      {isCopied ? 'Copied' : transactionApproval?.value}
-                    </span>
-                  </PopoverBody>
-                </UncontrolledPopover>
+                  {isCopied ? 'Copied' : transactionApproval?.value}
+                </UncontrolledTooltip>
               ) : null}
             </span>
             <p className="text-start d-flex align-items-center my-0 text-muted">

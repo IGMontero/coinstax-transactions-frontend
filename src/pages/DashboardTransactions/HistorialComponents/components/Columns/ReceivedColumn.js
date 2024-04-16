@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
-import { PopoverBody, UncontrolledPopover } from 'reactstrap';
+import {
+  PopoverBody,
+  UncontrolledPopover,
+  UncontrolledTooltip,
+} from 'reactstrap';
 import {
   CurrencyUSD,
   copyToClipboard,
@@ -81,6 +85,32 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
     }
   };
 
+  // const renderPophover = ({ ledger, positiveLedgers, isCopied }) => {
+  //   return (
+  //     <UncontrolledPopover
+  //       onClick={(e) => e.stopPropagation()}
+  //       placement="bottom"
+  //       target={`amount-${ledger.txHash}`}
+  //       trigger="hover"
+  //     >
+  //       <PopoverBody
+  //         style={{
+  //           width: 'auto',
+  //         }}
+  //         className="text-center w-auto p-2 "
+  //       >
+  //         <span
+  //           style={{
+  //             fontSize: '0.70rem',
+  //           }}
+  //         >
+  //           {isCopied ? 'Copied' : positiveLedgers?.value}
+  //         </span>
+  //       </PopoverBody>
+  //     </UncontrolledPopover>
+  //   );
+  // };
+
   return (
     <div
       className="d-flex align-items-center justify-content-start"
@@ -156,27 +186,13 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                     {positiveLedgers?.value &&
                     !isNft &&
                     !positiveLedgers.marketplaceName ? (
-                      <UncontrolledPopover
-                        onClick={(e) => e.stopPropagation()}
+                      <UncontrolledTooltip
                         placement="bottom"
                         target={`amount-${ledger.txHash}`}
                         trigger="hover"
                       >
-                        <PopoverBody
-                          style={{
-                            width: 'auto',
-                          }}
-                          className="text-center w-auto p-2 "
-                        >
-                          <span
-                            style={{
-                              fontSize: '0.70rem',
-                            }}
-                          >
-                            {isCopied ? 'Copied' : positiveLedgers?.value}
-                          </span>
-                        </PopoverBody>
-                      </UncontrolledPopover>
+                        {isCopied ? 'Copied' : positiveLedgers?.value}
+                      </UncontrolledTooltip>
                     ) : null}
                   </span>
 
@@ -194,36 +210,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                       {ledger &&
                       ledger.txHash &&
                       !positiveLedgers.hideNativeAmount
-                        ? // <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
-                          //   N/A
-                          //   <i
-                          //     id={`nativeAmount-${ledger.txHash}`}
-                          //     className="ri-information-line ms-1 fs-6 text-muted"
-                          //   ></i>
-                          //   <UncontrolledPopover
-                          //     onClick={(e) => e.stopPropagation()}
-                          //     placement="bottom"
-                          //     target={`nativeAmount-${ledger.txHash}`}
-                          //     trigger="hover"
-                          //   >
-                          //     <PopoverBody
-                          //       style={{
-                          //         width: 'auto',
-                          //       }}
-                          //       className="w-auto p-2 text-center"
-                          //     >
-                          //       <span
-                          //         style={{
-                          //           fontSize: '0.70rem',
-                          //         }}
-                          //       >
-                          //         The price is not available at the time of the
-                          //         transaction
-                          //       </span>
-                          //     </PopoverBody>
-                          //   </UncontrolledPopover>
-                          // </p>
-                          null
+                        ? null
                         : null}
                     </>
                   )}
