@@ -114,7 +114,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                 </div>
                 <div className="d-flex flex-column">
                   <span
-                    className={`d-flex ${hasAssetsCount ? 'text-white' : `text-${isNft ? 'hover-primary text-hover-underline' : 'success'}`}`}
+                    className={`d-flex ${hasAssetsCount ? 'text-dark' : `text-${isNft ? 'hover-primary text-hover-underline' : 'success'}`}`}
                   >
                     <span
                       onClick={(e) => {

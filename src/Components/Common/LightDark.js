@@ -1,13 +1,13 @@
-import React from "react";
+import React from 'react';
 
 //constants
-import { layoutModeTypes } from "../../Components/constants/layout";
+import { layoutModeTypes } from '../../Components/constants/layout';
 
 const LightDark = ({ layoutMode, onChangeLayoutMode }) => {
   const mode =
-    layoutMode === layoutModeTypes["DARKMODE"]
-      ? layoutModeTypes["DARKMODE"]
-      : layoutModeTypes["DARKMODE"];
+    layoutMode === layoutModeTypes['DARKMODE']
+      ? layoutModeTypes['LIGHTMODE']
+      : layoutModeTypes['DARKMODE'];
 
   return (
     <div className="ms-1 header-item d-none d-sm-flex">

@@ -32,6 +32,7 @@ import QrModal from '../pages/DashboardInfo/modals/QrModal';
 import { copyToClipboard, formatIdTransaction } from '../utils/utils';
 import SearchBar from '../Components/SearchBar/SearchBar';
 import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
+import { layoutModeTypes } from '../Components/constants/layout';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
@@ -174,7 +175,12 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
         <div className="layout-width">
           <Row
             className="navbar-header "
-            style={{ backgroundColor: '#16161a' }}
+            style={{
+              backgroundColor:
+                layoutModeType === layoutModeTypes['DARKMODE']
+                  ? '#16161a'
+                  : '#eff2f7',
+            }}
           >
             <Col
               lg={12}
@@ -201,10 +207,16 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                     <span></span>
                   </span>
                 </button>
-                <SearchBar />
+                <div className="ms-4">
+                  <SearchBar />
+                </div>
               </Col>
               <Col lg={8}>
                 <div className="d-flex align-items-center justify-content-end">
+                  <LightDark
+                    layoutMode={layoutModeType}
+                    onChangeLayoutMode={onChangeLayoutMode}
+                  />
                   {/* {commentedCode()} */}
                   {currentUser && <ProfileDropdown />}
                 </div>

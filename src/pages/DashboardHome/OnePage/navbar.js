@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 // Import Images
 // import logodark from "../../../assets/images/logo-dark.png";
 // import logolight from "../../../assets/images/logo-light.png";
-import logo from '../../../assets/images/logos/logo-dark.png';
+import logo from '../../../assets/images/logos/logo-light.png';
 
 const Navbar = () => {
   const [isOpenMenu, setisOpenMenu] = useState(false);

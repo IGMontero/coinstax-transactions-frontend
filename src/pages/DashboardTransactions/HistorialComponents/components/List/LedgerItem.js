@@ -2,24 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 import {
+  CurrencyUSD,
   copyToClipboard,
   parseValuesToLocale,
 } from '../../../../../utils/utils';
 
-const LedgerItem = ({ ledger, index, isReceived, isCopied, setIsCopied }) => {
+const LedgerItem = ({
+  isPreview,
+  ledger,
+  transaction,
+  index,
+  isReceived,
+  isCopied,
+  setIsCopied,
+}) => {
   const [imageSrc, setImageSrc] = useState(null);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     if (ledger.txInfo?.logo) {
-      setImageSrc(ledger.txInfo.logo);
+      setImageSrc(ledger.txInfo?.logo);
       setShowPlaceholder(false);
-    } else {
+    } else if (isPreview) {
       setShowPlaceholder(true);
+    } else {
+      setShowPlaceholder(false);
       setImageSrc(null);
     }
-  }, [ledger]);
+  }, [ledger, ledger.txInfo?.logo, isPreview]);
 
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
@@ -32,7 +43,7 @@ const LedgerItem = ({ ledger, index, isReceived, isCopied, setIsCopied }) => {
 
   const isNft = ledger.isNft;
   const prefix = isReceived ? 'received' : 'sent';
-  const targetId = `amount-list-${prefix}-${index}-${ledger.txHash}`;
+  const targetId = `amount-list-${prefix}-${index}-${transaction.txHash}`;
 
   return (
     <div
@@ -44,19 +55,18 @@ const LedgerItem = ({ ledger, index, isReceived, isCopied, setIsCopied }) => {
         {showPlaceholder ? (
           <div
             className={
-              ledger.isNft ? 'skeleton-avatar-square' : 'skeleton-avatar-circle'
+              isNft ? 'skeleton-avatar-square' : 'skeleton-avatar-circle'
             }
           ></div>
         ) : imageSrc ? (
           <img
             src={imageSrc}
-            alt={ledger.txInfo?.name || 'N/A'}
+            alt={ledger.currency}
             className="rounded"
             width={35}
             height={35}
             onError={() => {
               setShowPlaceholder(true);
-              setImageSrc(null);
             }}
           />
         ) : (
@@ -67,7 +77,7 @@ const LedgerItem = ({ ledger, index, isReceived, isCopied, setIsCopied }) => {
                 : 'skeleton-avatar-circle-error'
             }
           >
-            {ledger.currency}
+            {ledger?.currency}
           </div>
         )}
       </div>
@@ -94,6 +104,11 @@ const LedgerItem = ({ ledger, index, isReceived, isCopied, setIsCopied }) => {
                 {parseValuesToLocale(ledger.amount, '')}{' '}
                 {isNft ? '' : ledger.currency}
               </span>
+              <p className="text-start d-flex align-items-center my-0 text-muted">
+                {' '}
+                {parseValuesToLocale(ledger.nativeamount, CurrencyUSD)}
+              </p>
+
               {ledger.amount && (
                 <UncontrolledPopover
                   onClick={(e) => e.stopPropagation()}
