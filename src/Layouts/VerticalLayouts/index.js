@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
 import { Collapse } from 'reactstrap';
 // Import Data
@@ -11,6 +11,7 @@ import { useSelector } from 'react-redux';
 
 const VerticalLayout = (props) => {
   const navData = navdata().props.children;
+  const location = useLocation();
 
   /*
  layout settings
@@ -45,30 +46,32 @@ const VerticalLayout = (props) => {
           layoutType === 'twocolumn') &&
         document.querySelector('.hamburger-icon')
       ) {
-        document.querySelector('.hamburger-icon')?.classList?.remove('open');
+        document.querySelector('.hamburger-icon')?.classList.remove('open');
       } else {
-        document.querySelector('.hamburger-icon')?.classList?.add('open');
+        document.querySelector('.hamburger-icon')?.classList.add('open');
       }
-    } else if (windowSize < 1025 && windowSize > 767) {
-      document.body?.classList?.remove('twocolumn-panel');
-      if (document.documentElement.getAttribute('data-layout') === 'vertical') {
-        document.documentElement.setAttribute('data-sidebar-size', 'sm');
-      }
-      if (document.documentElement.getAttribute('data-layout') === 'semibox') {
-        document.documentElement.setAttribute('data-sidebar-size', 'sm');
-      }
-      if (document.querySelector('.hamburger-icon')) {
-        document.querySelector('.hamburger-icon')?.classList?.add('open');
-      }
-    } else if (windowSize <= 767) {
-      document.body?.classList?.remove('vertical-sidebar-enable');
+    }
+    // else if (windowSize < 1025 && windowSize > 767) {
+    //   document.body?.classList.remove("twocolumn-panel");
+    //   if (document.documentElement.getAttribute("data-layout") === "vertical") {
+    //     document.documentElement.setAttribute("data-sidebar-size", "sm");
+    //   }
+    //   if (document.documentElement.getAttribute("data-layout") === "semibox") {
+    //     document.documentElement.setAttribute("data-sidebar-size", "sm");
+    //   }
+    //   if (document.querySelector(".hamburger-icon")) {
+    //     document.querySelector(".hamburger-icon")?.classList.add("open");
+    //   }
+    // }
+    else if (windowSize < 1025 && windowSize <= 767) {
+      document.body?.classList.remove('vertical-sidebar-enable');
       if (
         document.documentElement.getAttribute('data-layout') !== 'horizontal'
       ) {
         document.documentElement.setAttribute('data-sidebar-size', 'lg');
       }
       if (document.querySelector('.hamburger-icon')) {
-        document.querySelector('.hamburger-icon')?.classList?.add('open');
+        document.querySelector('.hamburger-icon')?.classList.add('open');
       }
     }
   }, [leftsidbarSizeType, sidebarVisibilitytype, layoutType]);
@@ -103,13 +106,13 @@ const VerticalLayout = (props) => {
   }, [props.router.location.pathname, props.layoutType]);
 
   function activateParentDropdown(item) {
-    item?.classList?.add('active');
+    item?.classList.add('active');
     let parentCollapseDiv = item.closest('.collapse.menu-dropdown');
 
     if (parentCollapseDiv) {
       // to set aria expand true remaining
-      parentCollapseDiv?.classList?.add('show');
-      parentCollapseDiv.parentElement.children[0]?.classList?.add('active');
+      parentCollapseDiv?.classList.add('show');
+      parentCollapseDiv.parentElement.children[0]?.classList.add('active');
       parentCollapseDiv.parentElement.children[0].setAttribute(
         'aria-expanded',
         'true',
@@ -117,14 +120,14 @@ const VerticalLayout = (props) => {
       if (parentCollapseDiv.parentElement.closest('.collapse.menu-dropdown')) {
         parentCollapseDiv.parentElement
           .closest('.collapse')
-          ?.classList?.add('show');
+          ?.classList.add('show');
         if (
           parentCollapseDiv.parentElement.closest('.collapse')
             .previousElementSibling
         )
           parentCollapseDiv.parentElement
             .closest('.collapse')
-            .previousElementSibling?.classList?.add('active');
+            .previousElementSibling?.classList.add('active');
         if (
           parentCollapseDiv.parentElement
             .closest('.collapse')
@@ -133,11 +136,11 @@ const VerticalLayout = (props) => {
           parentCollapseDiv.parentElement
             .closest('.collapse')
             .previousElementSibling.closest('.collapse')
-            ?.classList?.add('show');
+            ?.classList.add('show');
           parentCollapseDiv.parentElement
             .closest('.collapse')
             .previousElementSibling.closest('.collapse')
-            .previousElementSibling?.classList?.add('active');
+            .previousElementSibling?.classList.add('active');
         }
       }
       return false;
@@ -146,31 +149,47 @@ const VerticalLayout = (props) => {
   }
 
   const removeActivation = (items) => {
-    let actiItems = items.filter((x) => x?.classList?.contains('active'));
+    let actiItems = items.filter((x) => x?.classList.contains('active'));
 
     actiItems.forEach((item) => {
-      if (item?.classList?.contains('menu-link')) {
-        if (!item?.classList?.contains('active')) {
+      if (item?.classList.contains('menu-link')) {
+        if (!item?.classList.contains('active')) {
           item.setAttribute('aria-expanded', false);
         }
         if (item.nextElementSibling) {
-          item.nextElementSibling?.classList?.remove('show');
+          item.nextElementSibling?.classList.remove('show');
         }
       }
-      if (item?.classList?.contains('nav-link')) {
+      if (item?.classList.contains('nav-link')) {
         if (item.nextElementSibling) {
-          item.nextElementSibling?.classList?.remove('show');
+          item.nextElementSibling?.classList.remove('show');
         }
         item.setAttribute('aria-expanded', false);
       }
-      item?.classList?.remove('active');
+      item?.classList.remove('active');
     });
+  };
+
+  const isMenuItemIsActive = (itemLink) => {
+    if (!location || !location.pathname || !itemLink) {
+      return false;
+    }
+
+    const currentPath = location.pathname.endsWith('/')
+      ? location.pathname.slice(0, -1)
+      : location.pathname;
+    const normalizedItemLink = itemLink.endsWith('/')
+      ? itemLink.slice(0, -1)
+      : itemLink;
+
+    return currentPath === normalizedItemLink;
   };
 
   return (
     <React.Fragment>
       {/* menu Items */}
       {(navData || []).map((item, key) => {
+        const isActive = isMenuItemIsActive(item.link);
         return (
           <React.Fragment key={key}>
             {/* Main Header */}
@@ -183,7 +202,7 @@ const VerticalLayout = (props) => {
                 <Link
                   onClick={item.click}
                   className="nav-link menu-link"
-                  to={item.link ? item.link : '/#'}
+                  to={item.link ? item.link : '/'}
                   data-bs-toggle="collapse"
                 >
                   <i className={item.icon}></i>{' '}
@@ -310,8 +329,8 @@ const VerticalLayout = (props) => {
               <li className="nav-item mt-2" style={{ marginLeft: '-.5rem' }}>
                 <Link
                   id={item.id}
-                  className="nav-link d-flex  ps-3 menu-link"
-                  to={item.link ? item.link : '/#'}
+                  className={`menu-link nav-link ${isActive ? 'nav-link-active' : ''} d-flex  ps-3 `}
+                  to={item.link ? item.link : '/'}
                 >
                   <i className={item.icon}></i>{' '}
                   <span className="ms-1" style={{ whiteSpace: 'nowrap' }}>

@@ -66,7 +66,14 @@ const ActivesTable = ({ data, loading }) => {
     setShowMenu(!showMenu);
   };
 
-  const isDashboardPage = location.pathname.includes('tokens');
+  let isDashboardPage;
+  const pathSegments = location.pathname.split('/').filter(Boolean);
+
+  if (pathSegments.length === 2) {
+    isDashboardPage = true;
+  } else if (pathSegments.length > 2) {
+    isDashboardPage = false;
+  }
 
   return (
     <React.Fragment>

@@ -88,7 +88,7 @@ const DashboardInfo = () => {
 
   useEffect(() => {
     if (address && previousAddress !== address && !type) {
-      navigate(`/address/${address}/tokens`);
+      navigate(`/address/${address}`);
     }
   }, [address, previousAddress, navigate, type]);
 
@@ -126,13 +126,6 @@ const DashboardInfo = () => {
     setAddressTitle('');
     setCustomActiveTab('1');
     setIsUnsupported(false);
-  };
-
-  const handleSearchClick = () => {
-    handlerClearAllData();
-    setAddressForSearch(searchInput);
-    setAddressTitle(searchInput);
-    navigate(`/address/${searchInput}/tokens`);
   };
 
   useEffect(() => {
