@@ -20,6 +20,7 @@ const SentColumn = ({ ledger }) => {
 
   const [imageSrc, setImageSrc] = useState(null);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const handleCopyValue = (e) => {
     e.stopPropagation();
@@ -34,16 +35,40 @@ const SentColumn = ({ ledger }) => {
   const isPreview = ledger?.preview;
   // This useEffect is used to set the image source and show the placeholder if the image is not available
   useEffect(() => {
-    if (negativeLedgers?.logo) {
-      setImageSrc(negativeLedgers.logo);
-      setShowPlaceholder(false);
-    } else if (isPreview) {
-      setShowPlaceholder(true);
+    // Reset status every time preview state or logo changes
+    setShowPlaceholder(false);
+    setHasError(false);
+
+    if (isPreview) {
+      if (negativeLedgers?.logo) {
+        setImageSrc(negativeLedgers.logo);
+      } else {
+        // Show placeholder if no logo in preview
+        setImageSrc(null);
+        setShowPlaceholder(true);
+      }
     } else {
-      setShowPlaceholder(false);
-      setImageSrc(null);
+      if (negativeLedgers?.logo) {
+        setImageSrc(negativeLedgers.logo);
+      } else {
+        // If no logo and not in preview, show error
+        setImageSrc(null);
+        setHasError(true);
+      }
     }
   }, [ledger, negativeLedgers?.logo, isPreview]);
+
+  const handleImageError = () => {
+    // If there is an error and we are in preview, show placeholder
+    if (isPreview) {
+      setShowPlaceholder(true);
+      setImageSrc(null);
+    } else {
+      // If there is an error and we are not in preview, show error
+      setShowPlaceholder(false);
+      setHasError(true);
+    }
+  };
 
   const parsedValue = parseValuesToLocale(negativeLedgers?.value, '');
 
@@ -70,19 +95,14 @@ const SentColumn = ({ ledger }) => {
                           : 'skeleton-avatar-circle'
                       }
                     ></div>
-                  ) : imageSrc ? (
+                  ) : imageSrc && !hasError ? (
                     <img
                       src={imageSrc}
-                      alt={
-                        negativeLedgers?.displayName ||
-                        negativeLedgers?.currency
-                      }
+                      alt={negativeLedgers?.currency || negativeLedgers?.name}
                       className="rounded"
                       width={35}
                       height={35}
-                      onError={() => {
-                        setShowPlaceholder(true);
-                      }}
+                      onError={handleImageError}
                     />
                   ) : (
                     <div
@@ -92,7 +112,7 @@ const SentColumn = ({ ledger }) => {
                           : 'skeleton-avatar-circle-error'
                       }
                     >
-                      {negativeLedgers?.currency}
+                      {negativeLedgers?.currency || negativeLedgers?.name}
                     </div>
                   )}
                 </div>
@@ -172,38 +192,7 @@ const SentColumn = ({ ledger }) => {
                           )}
                         </p>
                       ) : (
-                        <>
-                          {/* <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
-                            N/A
-                            <i
-                              id={`nativeAmount-id-${ledger.txHash}`}
-                              className="ri-information-line ms-1 fs-6 text-muted"
-                            ></i>
-                            <UncontrolledPopover
-                              onClick={(e) => e.stopPropagation()}
-                              placement="bottom"
-                              target={`nativeAmount-id-${ledger.txHash}`}
-                              trigger="hover"
-                            >
-                              <PopoverBody
-                                style={{
-                                  width: 'auto',
-                                }}
-                                className="w-auto p-2 text-center"
-                              >
-                                <span
-                                  style={{
-                                    fontSize: '0.70rem',
-                                  }}
-                                >
-                                  The price is not available at the time of the
-                                  transaction
-                                </span>
-                              </PopoverBody>
-                            </UncontrolledPopover>
-                          </p> */}
-                          {null}
-                        </>
+                        <>{null}</>
                       ))}
                   </p>
                 </div>
