@@ -42,7 +42,7 @@ const Navdata = () => {
     id,
     label,
     icon,
-    link: addressSearched ? `/address/${addressSearched}/${page}` : '',
+    link: `/address/${addressSearched}/${page}`,
     click: function (e) {
       e.preventDefault();
       navigate(link);
@@ -67,8 +67,14 @@ const Navdata = () => {
     isHeader: true,
   });
 
+  const dashboardLink = !isUnsupported
+    ? '/'
+    : addressSearched
+      ? `/address/${addressSearched}`
+      : '/';
+
   let allMenuItems = [
-    createMenuItem('home', 'Home', 'bx bx-home', ''),
+    createMenuItem('home', 'Home', 'bx bx-home', `${dashboardLink}`),
     createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
     createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
     createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),
