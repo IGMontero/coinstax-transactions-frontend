@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PopoverBody, UncontrolledPopover } from 'reactstrap';
+import { UncontrolledTooltip } from 'reactstrap';
 import {
   CurrencyUSD,
   copyToClipboard,
@@ -138,21 +138,13 @@ const LedgerItem = ({
               </p>
 
               {ledger.amount && (
-                <UncontrolledPopover
-                  onClick={(e) => e.stopPropagation()}
+                <UncontrolledTooltip
                   placement="bottom"
                   target={targetId}
                   trigger="hover"
                 >
-                  <PopoverBody
-                    style={{ width: 'auto' }}
-                    className="text-center w-auto p-2 "
-                  >
-                    <span style={{ fontSize: '0.70rem' }}>
-                      {isCopied ? 'Copied' : ledger.amount}
-                    </span>
-                  </PopoverBody>
-                </UncontrolledPopover>
+                  {isCopied ? 'Copied' : ledger.amount}
+                </UncontrolledTooltip>
               )}
             </>
           )}

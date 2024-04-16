@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { PopoverBody, UncontrolledPopover } from 'reactstrap';
+import {
+  PopoverBody,
+  UncontrolledPopover,
+  UncontrolledTooltip,
+} from 'reactstrap';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -158,27 +162,34 @@ const SentColumn = ({ ledger }) => {
                     {negativeLedgers?.value !== -1 &&
                     negativeLedgers?.value !== 0 &&
                     document.getElementById(`amount-left-${ledger.txHash}`) ? (
-                      <UncontrolledPopover
-                        onClick={(e) => e.stopPropagation()}
+                      // <UncontrolledPopover
+                      //   onClick={(e) => e.stopPropagation()}
+                      //   placement="bottom"
+                      //   target={`amount-left-${ledger?.txHash}`}
+                      //   trigger="hover"
+                      // >
+                      //   <PopoverBody
+                      //     style={{
+                      //       width: 'auto',
+                      //     }}
+                      //     className="text-center w-auto p-2 "
+                      //   >
+                      //     <span
+                      //       style={{
+                      //         fontSize: '0.70rem',
+                      //       }}
+                      //     >
+                      //       {isCopied ? 'Copied' : negativeLedgers?.value}
+                      //     </span>
+                      //   </PopoverBody>
+                      // </UncontrolledPopover>
+                      <UncontrolledTooltip
                         placement="bottom"
-                        target={`amount-left-${ledger?.txHash}`}
+                        target={`amount-left-${ledger.txHash}`}
                         trigger="hover"
                       >
-                        <PopoverBody
-                          style={{
-                            width: 'auto',
-                          }}
-                          className="text-center w-auto p-2 "
-                        >
-                          <span
-                            style={{
-                              fontSize: '0.70rem',
-                            }}
-                          >
-                            {isCopied ? 'Copied' : negativeLedgers?.value}
-                          </span>
-                        </PopoverBody>
-                      </UncontrolledPopover>
+                        {isCopied ? 'Copied' : negativeLedgers?.value}
+                      </UncontrolledTooltip>
                     ) : null}
                   </span>
                   <p className="text-start my-0">
