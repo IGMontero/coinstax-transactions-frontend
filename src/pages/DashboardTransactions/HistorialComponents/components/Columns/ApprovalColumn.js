@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   copyToClipboard,
   parseValuesToLocale,
@@ -11,9 +11,47 @@ const ApprovalColumn = ({ transaction }) => {
   const isPreview = transaction?.preview;
 
   const [isCopied, setIsCopied] = React.useState(false);
+  const [imageSrc, setImageSrc] = React.useState(null);
+  const [showPlaceholder, setShowPlaceholder] = React.useState(false);
+  const [hasError, setHasError] = React.useState(false);
 
   const parsedValue = parseValuesToLocale(transactionApproval?.value, '');
 
+  useEffect(() => {
+    // Reset status every time preview state or logo changes
+    setShowPlaceholder(false);
+    setHasError(false);
+
+    if (isPreview) {
+      if (transactionApproval.logo) {
+        setImageSrc(transactionApproval.logo);
+      } else {
+        // Show placeholder if no logo in preview
+        setImageSrc(null);
+        setShowPlaceholder(true);
+      }
+    } else {
+      if (transactionApproval?.logo) {
+        setImageSrc(transactionApproval.logo);
+      } else {
+        // If no logo and not in preview, show error
+        setImageSrc(null);
+        setHasError(true);
+      }
+    }
+  }, [transaction, transactionApproval?.logo, isPreview]);
+
+  const handleImageError = () => {
+    // If there is an error and we are in preview, show placeholder
+    if (isPreview) {
+      setShowPlaceholder(true);
+      setImageSrc(null);
+    } else {
+      // If there is an error and we are not in preview, show error
+      setShowPlaceholder(false);
+      setHasError(true);
+    }
+  };
   const handleCopyValue = (e, value) => {
     if (value) {
       e.stopPropagation();
@@ -32,31 +70,21 @@ const ApprovalColumn = ({ transaction }) => {
     >
       <>
         <div className="image-container me-2">
-          {isPreview && !transactionApproval?.logo ? (
+          {showPlaceholder ? (
             <div className="skeleton-avatar-circle"></div>
-          ) : (
+          ) : imageSrc && !hasError ? (
             <img
-              src={
-                transactionApproval?.logo ||
-                transactionApproval.currency ||
-                transactionApproval.displayName
-              }
-              alt={transactionApproval?.displayName}
-              className="ps-0 rounded"
+              src={imageSrc}
+              alt={transactionApproval?.currency || transactionApproval?.name}
+              className="rounded"
               width={35}
               height={35}
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.style.display = 'none';
-                const container = e.target.parentNode;
-                const textNode = document.createElement('div');
-                textNode.textContent =
-                  transactionApproval.currency ||
-                  transactionApproval.displayName;
-                textNode.className = 'currency-placeholder';
-                container.appendChild(textNode);
-              }}
+              onError={handleImageError}
             />
+          ) : (
+            <div className="skeleton-avatar-circle-error">
+              {transactionApproval?.currency || transactionApproval?.name}
+            </div>
           )}
         </div>
         <h6
