@@ -21,6 +21,7 @@ import { fetchNFTS } from '../../slices/transactions/thunk';
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
+import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 
 const ethIcon = (
   <svg
@@ -331,7 +332,9 @@ const Nfts = ({ address }) => {
                   As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}
                 </h6>
                 <span className="text-dark">Total value by floor price</span>
-                <h1>{data.prettyTotalNativeValue}</h1>
+                <h1>
+                  {parseValuesToLocale(data.totalNativeValue, CurrencyUSD)}
+                </h1>
                 <div className="d-flex">
                   <Input
                     id="customCheck1"
@@ -385,12 +388,7 @@ const Nfts = ({ address }) => {
                 {items &&
                   items.length > 0 &&
                   items.map((nft, index) => {
-                    const {
-                      floorPriceFiat,
-                      floorPriceNativeToken,
-                      prettyFiatFloorPrice,
-                      prettyNativeTokenFloorPrice,
-                    } = nft;
+                    const { floorPriceFiat, floorPriceNativeToken } = nft;
 
                     const hasFiatFloorPrice =
                       floorPriceFiat && Number(floorPriceFiat) > 0;
@@ -403,8 +401,8 @@ const Nfts = ({ address }) => {
                       : hasNativeTokenFloorPrice;
 
                     const floorPrice = showFiatValues
-                      ? prettyFiatFloorPrice
-                      : prettyNativeTokenFloorPrice;
+                      ? parseValuesToLocale(floorPriceFiat, CurrencyUSD)
+                      : parseValuesToLocale(floorPriceNativeToken) + ' ETH';
 
                     const shouldShowUnsupported = !nft.logo || imageError;
 
