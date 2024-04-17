@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Select from 'react-select';
 import { components } from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../constants/layout';
 import { Col } from 'reactstrap';
-import DropdownAddresses from '../DropdownAddresses/DropdownAddresses';
+import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
 
-const SearchBar = () => {
+const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -17,19 +17,6 @@ const SearchBar = () => {
 
   const originalOptions = [
     {
-      label: '0x768d280111e0fdc53e355cefb1962eb91b6cca2d',
-      value: '0x768d280111e0fdc53e355cefb1962eb91b6cca2d',
-    },
-    {
-      label: '0x89754b96dd367065ED6CA9d93a84A417527BE730',
-
-      value: '0x89754b96dd367065ED6CA9d93a84A417527BE730',
-    },
-    {
-      label: '0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6',
-      value: '0xdf7caf734b8657bcd4f8d3a64a08cca1d5c878a6',
-    },
-    {
       label: searchInput,
       value: searchInput,
     },
@@ -38,9 +25,30 @@ const SearchBar = () => {
   // Render current input value as option too.
   const [options, setOptions] = useState(originalOptions);
 
+  useEffect(() => {
+    if (selectedOption) {
+      setSearchInput(selectedOption.label);
+      setOptions([
+        selectedOption,
+        ...originalOptions.filter((o) => o.value !== selectedOption.value),
+      ]);
+    }
+  }, [selectedOption]);
+
   const handleChange = (selectedOption) => {
     if (selectedOption && selectedOption.value) {
       navigate(`/address/${selectedOption.value}`);
+
+      // Save Options to LocalStorage
+      const currentOptions = JSON.parse(
+        localStorage.getItem('searchOptions') || '[]',
+      );
+      if (
+        !currentOptions.find((option) => option.value === selectedOption.value)
+      ) {
+        const newOptions = [...currentOptions, selectedOption];
+        localStorage.setItem('searchOptions', JSON.stringify(newOptions));
+      }
     } else {
       return;
     }
@@ -174,7 +182,7 @@ const SearchBar = () => {
           }
         }}
       />
-      <DropdownAddresses options2={originalOptions} />
+      <DropdownAddresses onSelect={onDropdownSelect} />
     </Col>
   );
 };
