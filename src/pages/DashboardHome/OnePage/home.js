@@ -22,8 +22,7 @@ import creativeDemo from '../../../assets/images/demos/creative.png';
 import modernDemo from '../../../assets/images/demos/modern.png';
 import interactiveDemo from '../../../assets/images/demos/interactive.png';
 
-import SearchBar from '../../../Components/SearchBar/SearchBar';
-import DropdownAddresses from '../../../Components/DropdownAddresses/DropdownAddresses';
+import ParentComponentSearchBar from '../../../Components/SearchBar/ParentComponent';
 
 const Home = () => {
   return (
@@ -41,7 +40,7 @@ const Home = () => {
                 {/* <p className="lead text-muted lh-base">Velzon is a fully responsive, multipurpose and premium Bootstrap 5 Admin & Dashboard Template built in multiple frameworks.</p> */}
                 <div className="d-flex align-items-center justify-content-center">
                   <Col className="col-7 mt-2 ">
-                    <SearchBar />
+                    <ParentComponentSearchBar />
                   </Col>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-4">

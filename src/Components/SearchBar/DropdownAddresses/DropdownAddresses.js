@@ -6,24 +6,24 @@ import {
   DropdownItem,
 } from 'reactstrap';
 
-const DropdownAddresses = ({ options2 }) => {
+const DropdownAddresses = ({ onSelect }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [options, setOptions] = useState([]);
 
   useEffect(() => {
-    // Check if there are options passed as props
-    if (options2 && options2.length > 0) {
-      setOptions(options2);
-    } else {
-      // Load from localStorage if no options are provided as props
-      const storedOptions =
-        JSON.parse(localStorage.getItem('dropdownOptions')) || [];
-      setOptions(storedOptions);
-    }
-  }, [options2]);
+    const storedOptions =
+      JSON.parse(localStorage.getItem('searchOptions')) || [];
+    setOptions(storedOptions);
+  }, []);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleSelect = (option) => {
+    console.log('option', option);
+    onSelect(option);
+    setDropdownOpen(false);
   };
 
   return (
@@ -38,7 +38,9 @@ const DropdownAddresses = ({ options2 }) => {
       <DropdownMenu className="mt-1">
         {options.length > 0 ? (
           options.map((option, index) => (
-            <DropdownItem key={index}>{option.label}</DropdownItem>
+            <DropdownItem key={index} onClick={() => handleSelect(option)}>
+              {option.label}
+            </DropdownItem>
           ))
         ) : (
           <DropdownItem disabled>No results</DropdownItem>
