@@ -378,10 +378,10 @@ const DashboardInfo = () => {
                       </DropdownMenu>
                     </UncontrolledDropdown>
                   </div> */}
-                <div className="d-flex flex-row ">
+                <div className="d-flex flex-row mt-3">
                   {/* <h1 className="fw-semibold">{title}</h1> */}
                   {isUnsupported && (
-                    <div className="mt-5">
+                    <div className="mt-5  ">
                       <h1 className="fw-semibold text-danger">
                         Unsupported Address
                       </h1>

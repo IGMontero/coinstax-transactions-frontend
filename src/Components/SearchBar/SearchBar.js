@@ -15,13 +15,29 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
+  const { fetchData } = useSelector((state) => state);
+
+  console.log(fetchData);
   // #region STATES
+  const [isUnsupported, setIsUnsupported] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [options, setOptions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // #region USEEFFECTS / API CALLS
+
+  // If is unsupported close the menu
+  useEffect(() => {
+    if (
+      fetchData.assets.unsupported ||
+      fetchData.transactions.unsupported ||
+      fetchData.performance.unsupported
+    ) {
+      setIsUnsupported(true);
+    }
+  }, [fetchData]);
+
   useEffect(() => {
     if (selectedOption) {
       setSearchInput(selectedOption.label);
@@ -99,7 +115,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [searchInput]);
 
   useEffect(() => {
-    if (address === searchInput) {
+    if (address === searchInput || isUnsupported) {
       setIsMenuOpen(false);
       return;
     }
