@@ -17,7 +17,6 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }));
   const { fetchData } = useSelector((state) => state);
 
-  console.log(fetchData);
   // #region STATES
   const [isUnsupported, setIsUnsupported] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,8 +25,6 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // #region USEEFFECTS / API CALLS
-
-  // If is unsupported close the menu
   useEffect(() => {
     if (
       fetchData.assets.unsupported ||
@@ -139,6 +136,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       ...currentOptions.filter((o) => o.value !== newOption.value),
     ]);
   };
+
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
       setSearchInput(inputValue.replace(/[^a-zA-Z0-9]/g, ''));
