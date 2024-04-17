@@ -21,7 +21,6 @@ const DropdownAddresses = ({ onSelect }) => {
   };
 
   const handleSelect = (option) => {
-    console.log('option', option);
     onSelect(option);
     setDropdownOpen(false);
   };
@@ -37,11 +36,13 @@ const DropdownAddresses = ({ onSelect }) => {
       </DropdownToggle>
       <DropdownMenu className="mt-1">
         {options.length > 0 ? (
-          options.map((option, index) => (
-            <DropdownItem key={index} onClick={() => handleSelect(option)}>
-              {option.label}
-            </DropdownItem>
-          ))
+          options.map((option, index) =>
+            option ? (
+              <DropdownItem key={index} onClick={() => handleSelect(option)}>
+                {option.label}
+              </DropdownItem>
+            ) : null,
+          )
         ) : (
           <DropdownItem disabled>No results</DropdownItem>
         )}

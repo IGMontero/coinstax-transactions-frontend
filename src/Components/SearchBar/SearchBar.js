@@ -48,9 +48,10 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       ) {
         const newOptions = [...currentOptions, selectedOption];
         localStorage.setItem('searchOptions', JSON.stringify(newOptions));
+        console.log('Saving new option:', newOptions); // Log para depuración
+      } else {
+        console.log('Option already exists'); // Verificar si ya existe
       }
-    } else {
-      return;
     }
   };
 
@@ -68,10 +69,28 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     }
   };
 
+  const handleSearchIconClick = () => {
+    if (searchInput) {
+      navigate(`/address/${searchInput}`);
+
+      const currentOptions = JSON.parse(
+        localStorage.getItem('searchOptions') || '[]',
+      );
+      const optionToSave = { label: searchInput, value: searchInput };
+
+      if (!currentOptions.find((option) => option.value === searchInput)) {
+        const newOptions = [...currentOptions, optionToSave];
+        localStorage.setItem('searchOptions', JSON.stringify(newOptions));
+      } else {
+        console.log('Option already exists');
+      }
+    }
+  };
+
   const DropdownIndicator = (props) => {
     return (
       <components.DropdownIndicator {...props}>
-        <div onClick={() => searchInput && navigate(`/address/${searchInput}`)}>
+        <div onClick={handleSearchIconClick}>
           <i
             className={`ri-search-line align-middle text-${
               layoutModeType === layoutModeTypes['DARKMODE'] ? 'white' : 'dark'
