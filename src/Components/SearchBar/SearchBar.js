@@ -4,6 +4,8 @@ import { components } from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../constants/layout';
+import { Col } from 'reactstrap';
+import DropdownAddresses from '../DropdownAddresses/DropdownAddresses';
 
 const SearchBar = () => {
   const navigate = useNavigate();
@@ -153,23 +155,27 @@ const SearchBar = () => {
   };
 
   return (
-    <Select
-      name="address"
-      placeholder="Assets, wallet, domain, or identity"
-      classNamePrefix="select-custom-menu"
-      value={options?.find((option) => option.value === searchInput)}
-      options={options || []}
-      onChange={handleChange}
-      onInputChange={handleInputChange}
-      components={{ DropdownIndicator }}
-      styles={customStyles}
-      // isClearable
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          navigate(`/address/${searchInput}`);
-        }
-      }}
-    />
+    <Col className="d-flex col-12 w-100 align-items-center">
+      <Select
+        name="address"
+        placeholder="Assets, wallet, domain, or identity"
+        className="col-12 w-100"
+        classNamePrefix="select-custom-menu"
+        value={options?.find((option) => option.value === searchInput)}
+        options={options || []}
+        onChange={handleChange}
+        onInputChange={handleInputChange}
+        components={{ DropdownIndicator }}
+        styles={customStyles}
+        // isClearable
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            navigate(`/address/${searchInput}`);
+          }
+        }}
+      />
+      <DropdownAddresses options2={originalOptions} />
+    </Col>
   );
 };
 
