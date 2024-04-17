@@ -98,6 +98,13 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     }
   }, [searchInput]);
 
+  useEffect(() => {
+    if (address === searchInput) {
+      setIsMenuOpen(false);
+      return;
+    }
+  }, [address, searchInput, setIsMenuOpen]);
+
   // #region HANDLERS
   const handleSaveInLocalStorage = () => {
     const storedOptions =
@@ -239,12 +246,6 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       </div>
     </components.DropdownIndicator>
   );
-
-  useEffect(() => {
-    if (options.length === 0) {
-      setIsMenuOpen(false);
-    }
-  }, [options]);
 
   // #region RENDER
   return (
