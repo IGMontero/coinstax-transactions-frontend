@@ -10,7 +10,7 @@ const LightDark = ({ layoutMode, onChangeLayoutMode }) => {
       : layoutModeTypes['DARKMODE'];
 
   return (
-    <div className="ms-1 header-item d-none d-sm-flex">
+    <div className="ms-1 header-item d-sm-flex">
       <button
         onClick={() => onChangeLayoutMode(mode)}
         type="button"
