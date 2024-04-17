@@ -55,8 +55,14 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         );
 
         const suggestions = response.payload;
+
         if (Array.isArray(suggestions) && suggestions.length > 0) {
-          setOptions(suggestions.map((addr) => ({ label: addr, value: addr })));
+          setOptions(
+            suggestions.map((addr) => ({
+              label: addr.name,
+              value: addr.address,
+            })),
+          );
         } else {
           console.error('No suggestions found');
           setOptions([]);
@@ -93,6 +99,23 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [searchInput]);
 
   // #region HANDLERS
+  const handleSaveInLocalStorage = () => {
+    const storedOptions =
+      JSON.parse(localStorage.getItem('searchOptions')) || [];
+    const newOption = {
+      label: searchInput,
+      value: searchInput,
+    };
+    if (!storedOptions.find((o) => o.value === newOption.value)) {
+      storedOptions.push(newOption);
+      localStorage.setItem('searchOptions', JSON.stringify(storedOptions));
+    }
+
+    setOptions((currentOptions) => [
+      newOption,
+      ...currentOptions.filter((o) => o.value !== newOption.value),
+    ]);
+  };
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
       setSearchInput(inputValue.replace(/[^a-zA-Z0-9]/g, ''));
@@ -102,12 +125,14 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const handleChange = (selectedOption) => {
     if (selectedOption && selectedOption.value) {
       navigate(`/address/${selectedOption.value}`);
+      handleSaveInLocalStorage();
     }
   };
 
   const handleSearchIconClick = () => {
     if (searchInput) {
       navigate(`/address/${searchInput}`);
+      handleSaveInLocalStorage();
     }
   };
 
@@ -215,6 +240,12 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     </components.DropdownIndicator>
   );
 
+  useEffect(() => {
+    if (options.length === 0) {
+      setIsMenuOpen(false);
+    }
+  }, [options]);
+
   // #region RENDER
   return (
     <Col className="d-flex col-12 w-100 align-items-center">
@@ -234,6 +265,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             navigate(`/address/${searchInput}`);
+            handleSaveInLocalStorage();
           }
         }}
       />
