@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import appLogo from '../assets/images/logos/logo-dark.png';
+import appLogo from '../assets/images/logos/logo-light.png';
 //Layouts
 import NonAuthLayout from '../Layouts/NonAuthLayout';
 import VerticalLayout from '../Layouts/index';

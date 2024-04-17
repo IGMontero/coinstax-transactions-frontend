@@ -6,12 +6,18 @@ import {
   fetchHistory,
   downloadTransactions,
 } from './thunk';
+
 export const initialState = {
   transactions: [],
   performance: [],
   assets: [],
   history: [],
   error: null,
+  loadingNFTs: false,
+  loadingPerformance: false,
+  loadingAssets: false,
+  loadingHistory: false,
+  downloadingTransactions: false,
 };
 
 const TransactionsSlice = createSlice({
@@ -20,61 +26,61 @@ const TransactionsSlice = createSlice({
   reducers: {},
   extraReducers: {
     [fetchNFTS.pending]: (state) => {
-      state.loading = true;
+      state.loadingNFTs = true;
     },
     [fetchNFTS.fulfilled]: (state, action) => {
       state.transactions = action.payload;
-      state.loading = false;
+      state.loadingNFTs = false;
       state.error = null;
     },
     [fetchNFTS.rejected]: (state, action) => {
-      state.loading = false;
+      state.loadingNFTs = false;
       state.error = action.payload;
     },
     [fetchPerformance.pending]: (state) => {
-      state.loading = true;
+      state.loadingPerformance = true;
     },
     [fetchPerformance.fulfilled]: (state, action) => {
       state.performance = action.payload;
-      state.loading = false;
+      state.loadingPerformance = false;
       state.error = null;
     },
     [fetchPerformance.rejected]: (state, action) => {
-      state.loading = false;
+      state.loadingPerformance = false;
       state.error = action.payload;
     },
     [fetchAssets.pending]: (state) => {
-      state.loading = true;
+      state.loadingAssets = true;
     },
     [fetchAssets.fulfilled]: (state, action) => {
       state.assets = action.payload;
-      state.loading = false;
+      state.loadingAssets = false;
       state.error = null;
     },
     [fetchAssets.rejected]: (state, action) => {
-      state.loading = false;
+      state.loadingAssets = false;
       state.error = action.payload;
     },
     [fetchHistory.pending]: (state) => {
-      state.loading = true;
+      state.loadingHistory = true;
     },
     [fetchHistory.fulfilled]: (state, action) => {
       state.history = action.payload;
-      state.loading = false;
+      state.loadingHistory = false;
       state.error = null;
     },
     [fetchHistory.rejected]: (state, action) => {
-      state.loading = false;
+      state.loadingHistory = false;
       state.error = action.payload;
     },
     [downloadTransactions.pending]: (state) => {
-      state.loading = true;
+      state.downloadingTransactions = true;
     },
     [downloadTransactions.fulfilled]: (state) => {
-      state.loading = false;
+      state.downloadingTransactions = false;
     },
     [downloadTransactions.rejected]: (state, action) => {
-      state.loading = false;
+      state.downloadingTransactions = false;
       state.error = action.payload;
     },
   },

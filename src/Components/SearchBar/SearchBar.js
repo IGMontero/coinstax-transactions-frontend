@@ -1,106 +1,126 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Select from 'react-select';
 import { components } from 'react-select';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import { layoutModeTypes } from '../constants/layout';
 import { Col } from 'reactstrap';
+import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
 
 const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { address } = useParams();
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
-
+  // #region STATES
+  const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
+  const [options, setOptions] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const originalOptions = [
-    {
-      label: searchInput,
-      value: searchInput,
-    },
-  ];
-
-  // Render current input value as option too.
-  const [options, setOptions] = useState(originalOptions);
-
+  // #region USEEFFECTS / API CALLS
   useEffect(() => {
     if (selectedOption) {
       setSearchInput(selectedOption.label);
-      setOptions([
+      setOptions((currentOptions) => [
         selectedOption,
-        ...originalOptions.filter((o) => o.value !== selectedOption.value),
+        ...currentOptions.filter((o) => o.value !== selectedOption.value),
       ]);
     }
   }, [selectedOption]);
 
-  const handleChange = (selectedOption) => {
-    if (selectedOption && selectedOption.value) {
-      navigate(`/address/${selectedOption.value}`);
+  const debounce = (func, delay) => {
+    let timerId;
+    return (...args) => {
+      clearTimeout(timerId);
+      timerId = setTimeout(() => func(...args), delay);
+    };
+  };
 
-      // Save Options to LocalStorage
-      const currentOptions = JSON.parse(
-        localStorage.getItem('searchOptions') || '[]',
-      );
+  const fetchSuggestions = async () => {
+    setLoading(true);
+    try {
       if (
-        !currentOptions.find((option) => option.value === selectedOption.value)
+        (searchInput.length >= 3 && !searchInput.startsWith('0x')) ||
+        (searchInput.startsWith('0x') && searchInput.length >= 5)
       ) {
-        const newOptions = [...currentOptions, selectedOption];
-        localStorage.setItem('searchOptions', JSON.stringify(newOptions));
-        console.log('Saving new option:', newOptions); // Log para depuración
+        const response = await dispatch(
+          getAddressesSuggestions({
+            blockchain: 'eth-mainnet',
+            query: searchInput,
+          }),
+        );
+
+        const suggestions = response.payload;
+        if (Array.isArray(suggestions) && suggestions.length > 0) {
+          setOptions(suggestions.map((addr) => ({ label: addr, value: addr })));
+        } else {
+          console.error('No suggestions found');
+          setOptions([]);
+        }
       } else {
-        console.log('Option already exists'); // Verificar si ya existe
+        setOptions([]);
       }
+    } catch (error) {
+      console.error('Failed to fetch suggestions:', error);
+      setOptions([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleInputChange = (inputValue, actionMeta) => {
-    const filteredInput = inputValue.replace(/[^a-zA-Z0-9]/g, '');
-    const options = originalOptions;
+  const debouncedFetchSuggestions = useCallback(
+    debounce(fetchSuggestions, 300),
+    [searchInput],
+  );
 
+  useEffect(() => {
+    debouncedFetchSuggestions();
+  }, [searchInput, debouncedFetchSuggestions]);
+
+  useEffect(() => {
+    if (
+      (searchInput.startsWith('0x') && searchInput.length >= 5) ||
+      (!searchInput.startsWith('0x') && searchInput.length >= 3)
+    ) {
+      setIsMenuOpen(true);
+    } else {
+      setIsMenuOpen(false);
+    }
+  }, [searchInput]);
+
+  // #region HANDLERS
+  const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
-      setSearchInput(filteredInput);
-      if (!filteredInput.trim()) {
-        setOptions(options);
-      } else {
-        setOptions(options);
-      }
+      setSearchInput(inputValue.replace(/[^a-zA-Z0-9]/g, ''));
+    }
+  };
+
+  const handleChange = (selectedOption) => {
+    if (selectedOption && selectedOption.value) {
+      navigate(`/address/${selectedOption.value}`);
     }
   };
 
   const handleSearchIconClick = () => {
     if (searchInput) {
       navigate(`/address/${searchInput}`);
-
-      const currentOptions = JSON.parse(
-        localStorage.getItem('searchOptions') || '[]',
-      );
-      const optionToSave = { label: searchInput, value: searchInput };
-
-      if (!currentOptions.find((option) => option.value === searchInput)) {
-        const newOptions = [...currentOptions, optionToSave];
-        localStorage.setItem('searchOptions', JSON.stringify(newOptions));
-      } else {
-        console.log('Option already exists');
-      }
     }
   };
 
-  const DropdownIndicator = (props) => {
-    return (
-      <components.DropdownIndicator {...props}>
-        <div onClick={handleSearchIconClick}>
-          <i
-            className={`ri-search-line align-middle text-${
-              layoutModeType === layoutModeTypes['DARKMODE'] ? 'white' : 'dark'
-            } ${searchInput ? 'cursor-pointer' : ''}`}
-          ></i>
-        </div>
-      </components.DropdownIndicator>
-    );
-  };
+  const handleDropdownSelect = useCallback(
+    (option) => {
+      setSearchInput(option.label);
+      setOptions([option]);
+      navigate(`/address/${option.value}`);
+    },
+    [navigate],
+  );
 
+  // #region STYLES
   const customStyles = {
     control: (provided) => ({
       ...provided,
@@ -179,8 +199,23 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       ...provided,
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
     }),
+    loadingIndicator: (provided) => ({
+      ...provided,
+      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
+    }),
   };
 
+  const DropdownIndicator = (props) => (
+    <components.DropdownIndicator {...props}>
+      <div onClick={handleSearchIconClick}>
+        <i
+          className={`ri-search-line align-middle text-${layoutModeType === layoutModeTypes['DARKMODE'] ? 'white' : 'dark'} ${searchInput ? 'cursor-pointer' : ''}`}
+        ></i>
+      </div>
+    </components.DropdownIndicator>
+  );
+
+  // #region RENDER
   return (
     <Col className="d-flex col-12 w-100 align-items-center">
       <Select
@@ -188,20 +223,24 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         placeholder="Assets, wallet, domain, or identity"
         className="col-12 w-100"
         classNamePrefix="select-custom-menu"
-        value={options?.find((option) => option.value === searchInput)}
-        options={options || []}
+        value={options.find((option) => option.value === searchInput)}
+        options={options}
         onChange={handleChange}
+        isLoading={loading}
         onInputChange={handleInputChange}
         components={{ DropdownIndicator }}
         styles={customStyles}
-        // isClearable
+        menuIsOpen={isMenuOpen}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
             navigate(`/address/${searchInput}`);
           }
         }}
       />
-      <DropdownAddresses onSelect={onDropdownSelect} />
+      <DropdownAddresses
+        // onSelect={onDropdownSelect}
+        onSelect={handleDropdownSelect}
+      />
     </Col>
   );
 };
