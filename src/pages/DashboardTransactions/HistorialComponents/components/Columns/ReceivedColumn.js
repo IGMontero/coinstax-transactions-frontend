@@ -158,7 +158,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                     </div>
                   )}
                 </div>
-                <div className="d-flex flex-column">
+                <div className="d-flex flex-column ms-2">
                   <span
                     className={`d-flex ${hasAssetsCount ? 'text-dark' : `text-${isNft ? 'hover-primary text-hover-underline' : 'success'}`}`}
                   >
@@ -231,7 +231,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   height={35}
                 />
               </div>
-              <div className="ms-2 ">
+              <div className="ms-3 ">
                 <span className="text-success">
                   {positiveLedgers.displayName}
                 </span>

@@ -221,7 +221,7 @@ const SentColumn = ({ ledger }) => {
                 height={35}
               />
             </div>
-            <div className="ms-2 ">
+            <div className="ms-3 ">
               <span className="text-dark">{negativeLedgers.displayName}</span>{' '}
               <p className="text-start my-0 text-muted">
                 {negativeLedgers?.nativeAmount === 0
