@@ -137,6 +137,16 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     ]);
   };
 
+  // Delete from local storage if address is unsupported
+  useEffect(() => {
+    if (isUnsupported) {
+      const storedOptions =
+        JSON.parse(localStorage.getItem('searchOptions')) || [];
+      const newOptions = storedOptions.filter((o) => o.value !== address);
+      localStorage.setItem('searchOptions', JSON.stringify(newOptions));
+    }
+  }, [isUnsupported, address]);
+
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
       setSearchInput(inputValue.replace(/[^a-zA-Z0-9]/g, ''));
