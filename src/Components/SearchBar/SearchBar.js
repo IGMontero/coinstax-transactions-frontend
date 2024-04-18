@@ -1,16 +1,33 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import Select from 'react-select';
 import { components } from 'react-select';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { layoutModeTypes } from '../constants/layout';
 import { Col } from 'reactstrap';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
 
+const CustomOptions = (props) => {
+  return (
+    <components.Option {...props}>
+      {props.data.logo && (
+        <img
+          className="img-fluid rounded-circle me-2"
+          src={props.data.logo}
+          alt={props.data.label}
+          style={{ width: 30, height: 30 }}
+        />
+      )}
+      {props.data.label}
+    </components.Option>
+  );
+};
+
 const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { address } = useParams();
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -27,11 +44,12 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
     if (
-      fetchData.assets.unsupported ||
-      fetchData.transactions.unsupported ||
-      fetchData.performance.unsupported
+      fetchData &&
+      (fetchData.transactions.unsupported || fetchData.performance.unsupported)
     ) {
       setIsUnsupported(true);
+    } else {
+      setIsUnsupported(false);
     }
   }, [fetchData]);
 
@@ -69,19 +87,21 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
 
         const suggestions = response.payload;
 
-        if (Array.isArray(suggestions) && suggestions.length > 0) {
+        if (Array.isArray(suggestions)) {
+          const validSuggestions = suggestions.filter(
+            (s) => s.name && s.address,
+          );
           setOptions(
-            suggestions.map((addr) => ({
+            validSuggestions.map((addr) => ({
               label: addr.name,
               value: addr.address,
+              logo: addr.logo || null,
             })),
           );
         } else {
           console.error('No suggestions found');
           setOptions([]);
         }
-      } else {
-        setOptions([]);
       }
     } catch (error) {
       console.error('Failed to fetch suggestions:', error);
@@ -92,7 +112,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   };
 
   const debouncedFetchSuggestions = useCallback(
-    debounce(fetchSuggestions, 300),
+    debounce(fetchSuggestions, 1000),
     [searchInput],
   );
 
@@ -118,34 +138,45 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     }
   }, [address, searchInput, setIsMenuOpen]);
 
+  useEffect(() => {
+    if (!isUnsupported) {
+      handleSaveInLocalStorage();
+    }
+
+    if (address) {
+      setSearchInput(address);
+    }
+  }, [isUnsupported, address, location]);
+
   // #region HANDLERS
   const handleSaveInLocalStorage = () => {
-    const storedOptions =
-      JSON.parse(localStorage.getItem('searchOptions')) || [];
-    const newOption = {
-      label: searchInput,
-      value: searchInput,
-    };
-    if (!storedOptions.find((o) => o.value === newOption.value)) {
-      storedOptions.push(newOption);
-      localStorage.setItem('searchOptions', JSON.stringify(storedOptions));
-    }
-
-    setOptions((currentOptions) => [
-      newOption,
-      ...currentOptions.filter((o) => o.value !== newOption.value),
-    ]);
-  };
-
-  // Delete from local storage if address is unsupported
-  useEffect(() => {
-    if (isUnsupported) {
+    const validInput = searchInput.trim().length > 0;
+    if (!isUnsupported && validInput) {
       const storedOptions =
         JSON.parse(localStorage.getItem('searchOptions')) || [];
-      const newOptions = storedOptions.filter((o) => o.value !== address);
-      localStorage.setItem('searchOptions', JSON.stringify(newOptions));
+      const newOption = {
+        label: searchInput,
+        value: searchInput,
+        logo:
+          options.find((option) => option.value === searchInput)?.logo || null,
+      };
+
+      // Additional check for empty values before adding to storage
+      if (
+        newOption.label &&
+        newOption.value &&
+        !storedOptions.find((o) => o.value === newOption.value)
+      ) {
+        storedOptions.push(newOption);
+        localStorage.setItem('searchOptions', JSON.stringify(storedOptions));
+      }
+
+      setOptions((currentOptions) => [
+        newOption,
+        ...currentOptions.filter((o) => o.value !== newOption.value),
+      ]);
     }
-  }, [isUnsupported, address]);
+  };
 
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
@@ -155,15 +186,17 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
 
   const handleChange = (selectedOption) => {
     if (selectedOption && selectedOption.value) {
+      if (!selectedOption.value.trim()) {
+        console.error('Empty address selected, not navigating or saving.');
+        return;
+      }
       navigate(`/address/${selectedOption.value}`);
-      handleSaveInLocalStorage();
     }
   };
 
   const handleSearchIconClick = () => {
     if (searchInput) {
       navigate(`/address/${searchInput}`);
-      handleSaveInLocalStorage();
     }
   };
 
@@ -284,18 +317,19 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         onChange={handleChange}
         isLoading={loading}
         onInputChange={handleInputChange}
-        components={{ DropdownIndicator }}
+        components={{ DropdownIndicator, Option: CustomOptions }}
         styles={customStyles}
         menuIsOpen={isMenuOpen}
         onKeyDown={(e) => {
-          if (e.key === 'Enter') {
+          if (e.key === 'Enter' && searchInput.length >= 3) {
             navigate(`/address/${searchInput}`);
-            handleSaveInLocalStorage();
           }
         }}
       />
       <DropdownAddresses
         // onSelect={onDropdownSelect}
+
+        isUnsupported={isUnsupported}
         onSelect={handleDropdownSelect}
       />
     </Col>
