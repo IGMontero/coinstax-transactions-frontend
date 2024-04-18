@@ -1,5 +1,5 @@
 import React from 'react';
-import HistorialTable from '../DashboardInfo/components/HistorialTable';
+import HistorialTable from './HistorialTable';
 import { useParams } from 'react-router-dom';
 import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 

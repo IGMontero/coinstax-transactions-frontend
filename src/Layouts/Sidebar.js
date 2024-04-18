@@ -13,6 +13,8 @@ import VerticalLayout from './VerticalLayouts/index';
 import TwoColumnLayout from './TwoColumnLayout';
 import { Container } from 'reactstrap';
 import HorizontalLayout from './HorizontalLayout';
+import { layoutModeTypes } from '../Components/constants/layout';
+import { useSelector } from 'react-redux';
 
 const Sidebar = ({ layoutType }) => {
   // useEffect(() => {
@@ -23,6 +25,10 @@ const Sidebar = ({ layoutType }) => {
   //     });
   //   }
   // });
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
 
   const addEventListenerOnSmHoverMenu = () => {
     if (
@@ -43,13 +49,19 @@ const Sidebar = ({ layoutType }) => {
   };
   return (
     <React.Fragment>
-      <div className="app-menu navbar-menu">
-        <div
-          className="navbar-brand-box "
-          // style={{
-          //   background: '#23282C',
-          // }}
-        >
+      <div
+        className="app-menu navbar-menu"
+        style={{
+          backgroundColor:
+            layoutModeType === layoutModeTypes['DARKMODE']
+              ? '#16161a'
+              : '#4A5056',
+        }}
+        // style={{
+        //   background: '#23282C',
+        // }}
+      >
+        <div className="navbar-brand-box ">
           <div className="logo logo-dark">
             <span className="logo-sm">
               <img src={logo} alt="" height="20" width="63" />

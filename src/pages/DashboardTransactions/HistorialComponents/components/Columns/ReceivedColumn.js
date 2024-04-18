@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import assetsIcon from '../../../../../assets/images/svg/assets.svg';
-import { PopoverBody, UncontrolledPopover } from 'reactstrap';
+import {
+  PopoverBody,
+  UncontrolledPopover,
+  UncontrolledTooltip,
+} from 'reactstrap';
 import {
   CurrencyUSD,
   copyToClipboard,
@@ -24,6 +28,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
   const [isCopied, setIsCopied] = React.useState(false);
   const [imageSrc, setImageSrc] = useState(null);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
+  const [hasError, setHasError] = useState(false);
 
   const parseValue = parseValuesToLocale(positiveLedgers?.value, '');
 
@@ -34,16 +39,40 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
   const isPreview = ledger?.preview;
 
   useEffect(() => {
-    if (positiveLedgers?.logo) {
-      setImageSrc(positiveLedgers.logo);
-      setShowPlaceholder(false);
-    } else if (isPreview) {
-      setShowPlaceholder(true);
+    // Reset status every time preview state or logo changes
+    setShowPlaceholder(false);
+    setHasError(false);
+
+    if (isPreview) {
+      if (positiveLedgers?.logo) {
+        setImageSrc(positiveLedgers.logo);
+      } else {
+        // Show placeholder if no logo in preview
+        setImageSrc(null);
+        setShowPlaceholder(true);
+      }
     } else {
-      setShowPlaceholder(false);
-      setImageSrc(null);
+      if (positiveLedgers?.logo) {
+        setImageSrc(positiveLedgers.logo);
+      } else {
+        // If no logo and not in preview, show error
+        setImageSrc(null);
+        setHasError(true);
+      }
     }
   }, [ledger, positiveLedgers?.logo, isPreview]);
+
+  const handleImageError = () => {
+    // If there is an error and we are in preview, show placeholder
+    if (isPreview) {
+      setShowPlaceholder(true);
+      setImageSrc(null);
+    } else {
+      // If there is an error and we are not in preview, show error
+      setShowPlaceholder(false);
+      setHasError(true);
+    }
+  };
 
   const handleCopyValue = (e, value) => {
     if (value) {
@@ -55,6 +84,32 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
       }, 2000);
     }
   };
+
+  // const renderPophover = ({ ledger, positiveLedgers, isCopied }) => {
+  //   return (
+  //     <UncontrolledPopover
+  //       onClick={(e) => e.stopPropagation()}
+  //       placement="bottom"
+  //       target={`amount-${ledger.txHash}`}
+  //       trigger="hover"
+  //     >
+  //       <PopoverBody
+  //         style={{
+  //           width: 'auto',
+  //         }}
+  //         className="text-center w-auto p-2 "
+  //       >
+  //         <span
+  //           style={{
+  //             fontSize: '0.70rem',
+  //           }}
+  //         >
+  //           {isCopied ? 'Copied' : positiveLedgers?.value}
+  //         </span>
+  //       </PopoverBody>
+  //     </UncontrolledPopover>
+  //   );
+  // };
 
   return (
     <div
@@ -73,11 +128,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                 {!negativeLedgers ? null : (
                   <i className="ri-arrow-right-line text-dark text-end fs-4 me-2"></i>
                 )}
-                <div
-                  className={`image-container me-2 ${
-                    negativeLedgers ? '' : ''
-                  }`}
-                >
+                <div className="image-container me-1">
                   {showPlaceholder ? (
                     <div
                       className={
@@ -86,19 +137,14 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                           : 'skeleton-avatar-circle'
                       }
                     ></div>
-                  ) : imageSrc ? (
+                  ) : imageSrc && !hasError ? (
                     <img
                       src={imageSrc}
-                      alt={
-                        positiveLedgers?.displayName ||
-                        positiveLedgers?.currency
-                      }
+                      alt={positiveLedgers?.currency || positiveLedgers?.name}
                       className="rounded"
                       width={35}
                       height={35}
-                      onError={() => {
-                        setShowPlaceholder(true);
-                      }}
+                      onError={handleImageError}
                     />
                   ) : (
                     <div
@@ -108,11 +154,11 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                           : 'skeleton-avatar-circle-error'
                       }
                     >
-                      {positiveLedgers?.currency}
+                      {positiveLedgers?.currency || positiveLedgers?.name}
                     </div>
                   )}
                 </div>
-                <div className="d-flex flex-column">
+                <div className="d-flex flex-column ms-2">
                   <span
                     className={`d-flex ${hasAssetsCount ? 'text-dark' : `text-${isNft ? 'hover-primary text-hover-underline' : 'success'}`}`}
                   >
@@ -140,27 +186,13 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                     {positiveLedgers?.value &&
                     !isNft &&
                     !positiveLedgers.marketplaceName ? (
-                      <UncontrolledPopover
-                        onClick={(e) => e.stopPropagation()}
+                      <UncontrolledTooltip
                         placement="bottom"
                         target={`amount-${ledger.txHash}`}
                         trigger="hover"
                       >
-                        <PopoverBody
-                          style={{
-                            width: 'auto',
-                          }}
-                          className="text-center w-auto p-2 "
-                        >
-                          <span
-                            style={{
-                              fontSize: '0.70rem',
-                            }}
-                          >
-                            {isCopied ? 'Copied' : positiveLedgers?.value}
-                          </span>
-                        </PopoverBody>
-                      </UncontrolledPopover>
+                        {isCopied ? 'Copied' : positiveLedgers?.value}
+                      </UncontrolledTooltip>
                     ) : null}
                   </span>
 
@@ -178,36 +210,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                       {ledger &&
                       ledger.txHash &&
                       !positiveLedgers.hideNativeAmount
-                        ? // <p className="text-start d-flex fs-6 align-items-center my-0 text-muted">
-                          //   N/A
-                          //   <i
-                          //     id={`nativeAmount-${ledger.txHash}`}
-                          //     className="ri-information-line ms-1 fs-6 text-muted"
-                          //   ></i>
-                          //   <UncontrolledPopover
-                          //     onClick={(e) => e.stopPropagation()}
-                          //     placement="bottom"
-                          //     target={`nativeAmount-${ledger.txHash}`}
-                          //     trigger="hover"
-                          //   >
-                          //     <PopoverBody
-                          //       style={{
-                          //         width: 'auto',
-                          //       }}
-                          //       className="w-auto p-2 text-center"
-                          //     >
-                          //       <span
-                          //         style={{
-                          //           fontSize: '0.70rem',
-                          //         }}
-                          //       >
-                          //         The price is not available at the time of the
-                          //         transaction
-                          //       </span>
-                          //     </PopoverBody>
-                          //   </UncontrolledPopover>
-                          // </p>
-                          null
+                        ? null
                         : null}
                     </>
                   )}
@@ -228,7 +231,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   height={35}
                 />
               </div>
-              <div className="ms-2 ">
+              <div className="ms-3 ">
                 <span className="text-success">
                   {positiveLedgers.displayName}
                 </span>

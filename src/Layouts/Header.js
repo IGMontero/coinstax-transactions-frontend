@@ -28,11 +28,8 @@ import SearchOption from '../Components/Common/SearchOption';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { changeSidebarVisibility } from '../slices/thunks';
-import QrModal from '../pages/DashboardInfo/modals/QrModal';
-import { copyToClipboard, formatIdTransaction } from '../utils/utils';
-import SearchBar from '../Components/SearchBar/SearchBar';
-import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
 import { layoutModeTypes } from '../Components/constants/layout';
+import ParentComponentSearchBar from '../Components/SearchBar/ParentComponent';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
@@ -187,18 +184,11 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               xs={12}
               className="d-flex justify-content-between align-items-center"
             >
-              {/* <div>
-            {currentUser ? (
-             <div className="navbar-brand-bo horizonta-logo">
-              <span className="logo-lgs">
-                <img src={logo} alt="" height="40" />
-              </span>
-            </div> */}
-              <Col lg={4}>
+              <Col className="col-1 d-md-none d-lg-none">
                 <button
                   onClick={toogleMenuBtn}
                   type="button"
-                  className="btn btn-sm px-3 fs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
+                  className="btn btn-sfs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
                   id="topnav-hamburger-icon"
                 >
                   <span className="hamburger-icon">
@@ -207,11 +197,13 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                     <span></span>
                   </span>
                 </button>
-                <div className="ms-4">
-                  <SearchBar />
+              </Col>
+              <Col className="d-flex align-items-center  ms-lg-4  ms-md-4  ms-1  col-8">
+                <div className="col-sm-12 col-md-7 col-lg-7 col-xs-12 col-12 ">
+                  <ParentComponentSearchBar />
                 </div>
               </Col>
-              <Col lg={8}>
+              <Col lg={3}>
                 <div className="d-flex align-items-center justify-content-end">
                   <LightDark
                     layoutMode={layoutModeType}
