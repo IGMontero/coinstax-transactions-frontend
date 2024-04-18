@@ -112,7 +112,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   };
 
   const debouncedFetchSuggestions = useCallback(
-    debounce(fetchSuggestions, 1000),
+    debounce(fetchSuggestions, 300),
     [searchInput],
   );
 
