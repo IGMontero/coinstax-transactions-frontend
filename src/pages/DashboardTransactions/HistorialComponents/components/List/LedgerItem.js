@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PopoverBody, UncontrolledPopover } from 'reactstrap';
+import { UncontrolledTooltip } from 'reactstrap';
 import {
   CurrencyUSD,
   copyToClipboard,
@@ -16,21 +16,48 @@ const LedgerItem = ({
   isCopied,
   setIsCopied,
 }) => {
+  const navigate = useNavigate();
   const [imageSrc, setImageSrc] = useState(null);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
-  const navigate = useNavigate();
+  const [hasError, setHasError] = useState(false);
+
+  const addressLink = ledger?.contractAddress;
 
   useEffect(() => {
-    if (ledger.txInfo?.logo) {
-      setImageSrc(ledger.txInfo?.logo);
-      setShowPlaceholder(false);
-    } else if (isPreview) {
-      setShowPlaceholder(true);
+    // Reset status every time preview state or logo changes
+    setShowPlaceholder(false);
+    setHasError(false);
+
+    if (isPreview) {
+      if (ledger?.txInfo.logo) {
+        setImageSrc(ledger?.txInfo.logo);
+      } else {
+        // Show placeholder if no logo in preview
+        setImageSrc(null);
+        setShowPlaceholder(true);
+      }
     } else {
-      setShowPlaceholder(false);
-      setImageSrc(null);
+      if (ledger?.txInfo?.logo) {
+        setImageSrc(ledger?.txInfo.logo);
+      } else {
+        // If no logo and not in preview, show error
+        setImageSrc(null);
+        setHasError(true);
+      }
     }
-  }, [ledger, ledger.txInfo?.logo, isPreview]);
+  }, [ledger, ledger?.txInfo?.logo, isPreview]);
+
+  const handleImageError = () => {
+    // If there is an error and we are in preview, show placeholder
+    if (isPreview) {
+      setShowPlaceholder(true);
+      setImageSrc(null);
+    } else {
+      // If there is an error and we are not in preview, show error
+      setShowPlaceholder(false);
+      setHasError(true);
+    }
+  };
 
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
@@ -58,16 +85,14 @@ const LedgerItem = ({
               isNft ? 'skeleton-avatar-square' : 'skeleton-avatar-circle'
             }
           ></div>
-        ) : imageSrc ? (
+        ) : imageSrc && !hasError ? (
           <img
             src={imageSrc}
-            alt={ledger.currency}
+            alt={ledger?.currency || ledger?.name}
             className="rounded"
             width={35}
             height={35}
-            onError={() => {
-              setShowPlaceholder(true);
-            }}
+            onError={handleImageError}
           />
         ) : (
           <div
@@ -77,7 +102,7 @@ const LedgerItem = ({
                 : 'skeleton-avatar-circle-error'
             }
           >
-            {ledger?.currency}
+            {ledger?.currency || ledger?.name}
           </div>
         )}
       </div>
@@ -85,11 +110,14 @@ const LedgerItem = ({
         <h6 className="fw-semibold my-0">
           {isNft && (ledger.amount === 1 || ledger.amount === -1) ? (
             <span
-              onClick={() =>
-                navigate(
-                  `/contract/${ledger.txInfo.contractAddressInfo.address}/?tokenId=${ledger.txInfo.tokenId}`,
-                )
-              }
+              onClick={(e) => {
+                e.stopPropagation();
+                if (addressLink && ledger.txInfo.tokenId) {
+                  navigate(
+                    `/contract/${addressLink}/?tokenId=${ledger.txInfo.tokenId}`,
+                  );
+                }
+              }}
               className="text-displayList text-hover-underline text-hover-primary"
             >
               {ledger.currency}
@@ -110,21 +138,13 @@ const LedgerItem = ({
               </p>
 
               {ledger.amount && (
-                <UncontrolledPopover
-                  onClick={(e) => e.stopPropagation()}
+                <UncontrolledTooltip
                   placement="bottom"
                   target={targetId}
                   trigger="hover"
                 >
-                  <PopoverBody
-                    style={{ width: 'auto' }}
-                    className="text-center w-auto p-2 "
-                  >
-                    <span style={{ fontSize: '0.70rem' }}>
-                      {isCopied ? 'Copied' : ledger.amount}
-                    </span>
-                  </PopoverBody>
-                </UncontrolledPopover>
+                  {isCopied ? 'Copied' : ledger.amount}
+                </UncontrolledTooltip>
               )}
             </>
           )}

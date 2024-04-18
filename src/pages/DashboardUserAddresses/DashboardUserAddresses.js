@@ -394,7 +394,7 @@ const DashboardUserAddresses = () => {
             </tr>
           )}
         </tbody>
-        {!userAddresses && !loading && (
+        {userAddresses.length && !loading && (
           <TablePagination
             onChangePage={handleChangePage}
             currentPage={currentPage}

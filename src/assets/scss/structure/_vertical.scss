@@ -51,14 +51,14 @@
     width: $vertical-menu-width;
     z-index: $vertical-menu-z-index;
     // background: $vertical-menu-bg;
-    background: #16161a;
+    // background: #16161a;
     // background: rgba($color: #2a2f34, $alpha: 1.0);
     // border-right: 1px solid $vertical-menu-border-dark;
     bottom: 0;
     margin-top: 0;
     position: fixed;
     top: 0;
-    box-shadow: $vertical-menu-box-shadow;
+    // box-shadow: $vertical-menu-box-shadow;
     padding: 0 0 calc(#{$header-height} + 25px) 0;
     transition: all .1s ease-out;
 

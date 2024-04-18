@@ -14,8 +14,9 @@ import {
 } from 'reactstrap';
 import PerformanceChart from './components/PerformanceChart';
 import ActivesTable from './components/ActivesTable';
-import HistorialTable from './components/HistorialTable';
 import Nfts from '../DashboardNFT/Nfts';
+import HistorialTable from '../DashboardTransactions/HistorialTable';
+
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
 import btc from '../../assets/images/svg/crypto-icons/btc.svg';
 import arb from '../../assets/images/svg/crypto-icons/ankr.svg';
@@ -23,7 +24,6 @@ import pol from '../../assets/images/svg/crypto-icons/poly.svg';
 import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
 
 import { fetchAssets } from '../../slices/transactions/thunk';
-import DashboardHome from '../DashboardHome/DashboardHome';
 import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
@@ -34,6 +34,7 @@ import {
 } from '../../utils/utils';
 import QrModal from './modals/QrModal';
 import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
+
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -377,10 +378,10 @@ const DashboardInfo = () => {
                       </DropdownMenu>
                     </UncontrolledDropdown>
                   </div> */}
-                <div className="d-flex flex-row ">
+                <div className="d-flex flex-row mt-3">
                   {/* <h1 className="fw-semibold">{title}</h1> */}
                   {isUnsupported && (
-                    <div className="mt-5">
+                    <div className="mt-5  ">
                       <h1 className="fw-semibold text-danger">
                         Unsupported Address
                       </h1>

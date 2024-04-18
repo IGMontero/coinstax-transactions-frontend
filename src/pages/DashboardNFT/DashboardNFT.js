@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Button, Col, Row } from 'reactstrap';
-import { formatIdTransaction } from '../../utils/utils';
+import { formatIdTransaction, parseValuesToLocale } from '../../utils/utils';
 import { getNftsByContractAddress } from '../../slices/transactions/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
@@ -26,7 +26,7 @@ const DashboardNFT = () => {
 
   const [details, setDetails] = useState([]);
 
-  const [floorPriceFiat, setFloorPriceFiat] = useState(0);
+  const [floorPriceNativeToken, setFloorPriceNativeToken] = useState(0);
   const [symbol, setSymbol] = useState('');
 
   const queryParams = new URLSearchParams(location.search);
@@ -56,7 +56,7 @@ const DashboardNFT = () => {
         setLogo(res.logo);
         setName(res.name);
         setOwnerAddress(res.ownerAddress);
-        setFloorPriceFiat(res.floorPriceNativeToken);
+        setFloorPriceNativeToken(res.floorPriceNativeToken);
         setSymbol(res.symbol);
         setAttributes(res.metadata.attributes);
         setDescription(res.description);
@@ -231,13 +231,13 @@ const DashboardNFT = () => {
             <div className="my-3">
               <h1>{name}</h1>
             </div>
-            {floorPriceFiat != 0 ? (
+            {floorPriceNativeToken != 0 ? (
               <>
                 <div className="my-3">
                   <p>Price by floor Price</p>
                 </div>
                 <div className="my-3">
-                  <h1>{floorPriceFiat} ETH</h1>
+                  <h1>{parseValuesToLocale(floorPriceNativeToken, '')} ETH</h1>
                 </div>
               </>
             ) : null}

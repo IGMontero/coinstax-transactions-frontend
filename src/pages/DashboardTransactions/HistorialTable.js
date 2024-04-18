@@ -18,17 +18,17 @@ import {
   formatDateToLocale,
   getSelectedAssetFilters,
   updateTransactionsPreview,
-} from '../../../utils/utils';
+} from '../../utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   fetchHistory,
   downloadTransactions,
-} from '../../../slices/transactions/thunk';
-import { capitalizeFirstLetter, FILTER_NAMES } from '../../../utils/utils';
-import RenderTransactions from '../../DashboardTransactions/HistorialComponents/RenderTransactions';
+} from '../../slices/transactions/thunk';
+import { capitalizeFirstLetter, FILTER_NAMES } from '../../utils/utils';
+import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
-import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
+import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 
 const HistorialTable = ({ data, setData }) => {
   // #region HOOKS
@@ -665,15 +665,51 @@ const HistorialTable = ({ data, setData }) => {
     );
   };
 
+  const renderTitle = () => {
+    return (
+      <>
+        {isDashboardPage ? null : (
+          <>
+            <AddressWithDropdown />
+            <h1 className={`ms-1 mt-0 mt-4 mb-4`}>Transactions</h1>{' '}
+          </>
+        )}{' '}
+      </>
+    );
+  };
+
   // #region RENDER
+  if (data && data.length === 0 && !loading) {
+    return (
+      <>
+        {renderTitle()}
+        <Col
+          className="d-flex text-center col-12 justify-content-center align-items-center"
+          style={{
+            display: 'flex',
+            height: isDashboardPage ? '10vh' : '40vh',
+            width: '100%',
+          }}
+        >
+          {isDashboardPage ? (
+            <h4 className="text-center ">
+              This address does not have any transaction
+            </h4>
+          ) : (
+            <h1 className="text-center ">
+              This address does not have any transaction
+            </h1>
+          )}
+        </Col>
+      </>
+    );
+  }
+
   return (
     <React.Fragment>
-      <AddressWithDropdown />
-      <h1 className={`${isDashboardPage ? 'd-none' : 'ms-1 mt-4 mb-4'}`}>
-        Transactions
-      </h1>
+      {renderTitle()}
 
-      {data && !errorData ? (
+      {data && data.length && !errorData ? (
         <div className={isDashboardPage ? 'd-none' : ''}>
           {renderFiltersDropdown()}
           <Col className="col-12">
@@ -726,7 +762,7 @@ const HistorialTable = ({ data, setData }) => {
         </div>
       ) : null}
       {/* {renderSearchBar()} */}
-      {!isInitialLoad && !errorData && !isDashboardPage && (
+      {!isInitialLoad && !data && !errorData && !isDashboardPage && (
         <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
           <Col>
             <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
@@ -801,17 +837,6 @@ const HistorialTable = ({ data, setData }) => {
             >
               <div>
                 <h1>{errorData}</h1>
-              </div>
-            </Col>
-          )}
-          {!data && (
-            <Col
-              lg={12}
-              className="position-relative d-flex justify-content-center align-items-center"
-              style={{ minHeight: '50vh' }}
-            >
-              <div>
-                <h1>No results found</h1>
               </div>
             </Col>
           )}
