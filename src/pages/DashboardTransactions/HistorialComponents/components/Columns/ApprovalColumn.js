@@ -92,7 +92,7 @@ const ApprovalColumn = ({ transaction }) => {
           )}
         </div>
         <h6
-          className={`fw-semibold my-0  d-flex align-items-center justify-content-start`}
+          className={`fw-semibold my-0 ms-2  d-flex align-items-center justify-content-start`}
         >
           <div className="d-flex flex-column">
             <span className={`d-flex text-white'`}>
