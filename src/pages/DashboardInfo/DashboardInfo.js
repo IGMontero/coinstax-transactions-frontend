@@ -32,8 +32,7 @@ import {
   copyToClipboard,
   parseValuesToLocale,
 } from '../../utils/utils';
-import QrModal from './modals/QrModal';
-import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
+import QrModal from '../../Components/Modals/QrModal';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
