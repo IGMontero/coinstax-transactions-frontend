@@ -204,6 +204,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown }) => {
         open={renameModal}
         setOpen={setRenameModal}
         address={selectedOptionLabel}
+        options={options}
         onSave={(newName) => {
           handleRenameNameFromLocalStorage(selectedOptionValue, newName);
         }}
