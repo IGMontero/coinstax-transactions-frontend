@@ -40,10 +40,11 @@ const RenameAddressModal = ({ open, setOpen, onSave, address, options }) => {
 
   return (
     <Modal isOpen={open} toggle={() => setOpen(false)}>
-      <ModalHeader toggle={() => setOpen(false)}>Rename address</ModalHeader>
+      <ModalHeader toggle={() => setOpen(false)}>Rename Wallet</ModalHeader>
       <ModalBody>
         <Input
           type="text"
+          className="form-control"
           value={newAddress}
           onChange={(e) => setNewAddress(e.target.value)}
         />
