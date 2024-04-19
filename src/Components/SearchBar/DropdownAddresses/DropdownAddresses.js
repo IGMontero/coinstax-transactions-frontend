@@ -9,17 +9,26 @@ import {
 } from 'reactstrap';
 import Swal from 'sweetalert2';
 
-const DropdownAddresses = ({ onSelect }) => {
+const DropdownAddresses = ({ onSelect, optionDropdown }) => {
   const { address } = useParams();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
-  const [options, setOptions] = useState([]);
+  const [options, setOptions] = useState(
+    JSON.parse(localStorage.getItem('searchOptions')) || [],
+  );
 
   useEffect(() => {
-    const storedOptions =
-      JSON.parse(localStorage.getItem('searchOptions')) || [];
-    setOptions(storedOptions);
-  }, []);
+    if (optionDropdown && optionDropdown.value && optionDropdown.label) {
+      options.push(optionDropdown);
+
+      const filteredOptions = options.filter(
+        (option, index, self) =>
+          index === self.findIndex((t) => t.value === option.value),
+      );
+
+      setOptions(filteredOptions);
+    }
+  }, [optionDropdown]);
 
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);

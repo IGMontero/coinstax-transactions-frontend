@@ -41,6 +41,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const [options, setOptions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const [optionDropdown, setOptionDropdown] = useState([]);
+
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
     if (
@@ -168,6 +170,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         !storedOptions.find((o) => o.value === newOption.value)
       ) {
         storedOptions.push(newOption);
+        setOptionDropdown(newOption);
         localStorage.setItem('searchOptions', JSON.stringify(storedOptions));
       }
 
@@ -328,7 +331,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       />
       <DropdownAddresses
         // onSelect={onDropdownSelect}
-
+        optionDropdown={optionDropdown}
         isUnsupported={isUnsupported}
         onSelect={handleDropdownSelect}
       />
