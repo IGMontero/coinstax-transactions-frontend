@@ -8,6 +8,7 @@ import {
   Button,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
+import { formatIdTransaction } from '../../../utils/utils';
 
 const DropdownAddresses = ({ onSelect, optionDropdown }) => {
   const { address } = useParams();
@@ -93,7 +94,22 @@ const DropdownAddresses = ({ onSelect, optionDropdown }) => {
                       style={{ width: '20px' }}
                     />
                   ) : null}
-                  <span className="me-2"> {option.label}</span>{' '}
+                  <div className="d-flex flex-column">
+                    {option.label === option.value ? (
+                      <span className="me-2 text-muted">
+                        {formatIdTransaction(option.value, 6, 8)}
+                      </span>
+                    ) : (
+                      <>
+                        <span className="me-2">
+                          {formatIdTransaction(option.label, 6, 8)}
+                        </span>
+                        <span className="me-2 text-muted">
+                          {formatIdTransaction(option.value, 6, 8)}
+                        </span>
+                      </>
+                    )}
+                  </div>
                   <Button
                     color="soft-danger"
                     className="btn btn-sm ms-auto p-1 py-0"
