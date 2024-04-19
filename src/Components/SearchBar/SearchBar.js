@@ -163,11 +163,12 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           options.find((option) => option.value === searchInput)?.logo || null,
       };
 
-      // Additional check for empty values before adding to storage
       if (
         newOption.label &&
         newOption.value &&
-        !storedOptions.find((o) => o.value === newOption.value)
+        !storedOptions.some(
+          (o) => o.label === newOption.label || o.value === newOption.value,
+        )
       ) {
         storedOptions.push(newOption);
         setOptionDropdown(newOption);
