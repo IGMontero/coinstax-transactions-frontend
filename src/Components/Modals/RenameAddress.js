@@ -7,17 +7,35 @@ import {
   Button,
   Input,
 } from 'reactstrap';
+import Swal from 'sweetalert2';
 
-const RenameAddressModal = ({ open, setOpen, onSave, address }) => {
+const RenameAddressModal = ({ open, setOpen, onSave, address, options }) => {
   const [newAddress, setNewAddress] = useState(address);
+  const [originalAddress, setOriginalAddress] = useState(address);
 
   useEffect(() => {
-    setNewAddress(address);
+    if (open) {
+      setNewAddress(address);
+      setOriginalAddress(address);
+    }
   }, [address, open]);
 
   const handleSave = () => {
+    if (checkIfNameExists(newAddress)) {
+      Swal.fire({
+        title: 'Error',
+        text: 'Address name already exists',
+        icon: 'error',
+      });
+      return;
+    }
+
     onSave(newAddress);
     setOpen(false);
+  };
+
+  const checkIfNameExists = (name) => {
+    return options.some((option) => option.label === name);
   };
 
   return (
@@ -31,7 +49,11 @@ const RenameAddressModal = ({ open, setOpen, onSave, address }) => {
         />
       </ModalBody>
       <ModalFooter>
-        <Button color="primary" onClick={handleSave}>
+        <Button
+          color="primary"
+          onClick={handleSave}
+          disabled={newAddress === originalAddress}
+        >
           Save
         </Button>
         <Button color="secondary" onClick={() => setOpen(false)}>
