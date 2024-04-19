@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
+  Badge,
 } from 'reactstrap';
 
 import Swal from 'sweetalert2';
@@ -239,7 +240,9 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
               option ? (
                 <>
                   <DropdownItem
-                    className="d-flex justify-content-between align-items-center pe-2 "
+                    className={`d-flex justify-content-between align-items-center pe-2 ${
+                      option.value === address ? 'active' : ''
+                    }`}
                     key={index}
                     onClick={() => handleSelect(option)}
                   >
@@ -254,12 +257,18 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
                     <div className="d-flex flex-column me-3">
                       {option.label === option.value ? (
                         <span className="">
-                          {formatIdTransaction(option.value, 6, 8)}
+                          {formatIdTransaction(option.value, 6, 8)}{' '}
+                          {option.value === address ? (
+                            <div className="online-icon"></div>
+                          ) : null}
                         </span>
                       ) : (
                         <>
-                          <span className="">
+                          <span className="d-flex align-items-center">
                             {formatIdTransaction(option.label, 6, 8)}
+                            {option.value === address ? (
+                              <div className="online-icon"></div>
+                            ) : null}
                           </span>
                           <span className=" text-muted">
                             {formatIdTransaction(option.value, 6, 8)}
