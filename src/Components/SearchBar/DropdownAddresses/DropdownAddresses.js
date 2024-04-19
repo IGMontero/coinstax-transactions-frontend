@@ -7,16 +7,36 @@ import {
   DropdownItem,
   Button,
 } from 'reactstrap';
+
 import Swal from 'sweetalert2';
-import { formatIdTransaction } from '../../../utils/utils';
+import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
+import QrModal from '../../Modals/QrModal';
+import RenameAddressModal from '../../Modals/RenameAddress';
 
 const DropdownAddresses = ({ onSelect, optionDropdown }) => {
   const { address } = useParams();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
+
+  // #region STATES
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(null);
   const [options, setOptions] = useState(
     JSON.parse(localStorage.getItem('searchOptions')) || [],
   );
+  const [dropdownControlledByThisItem, setDropdownControlledByThisItem] =
+    useState({});
+  const [qrCodeModal, setQrCodeModal] = useState(false);
+  const [selectedOptionValue, setSelectedOptionValue] = useState('');
+  const [selectedOptionLabel, setSelectedOptionLabel] = useState('');
+
+  const [renameModal, setRenameModal] = useState(false);
+
+  // #region USE EFFECTS
+  useEffect(() => {
+    if (!dropdownOpen) {
+      setDropdownControlledByThisItem({});
+    }
+  }, [dropdownOpen]);
 
   useEffect(() => {
     if (optionDropdown && optionDropdown.value && optionDropdown.label) {
@@ -31,8 +51,25 @@ const DropdownAddresses = ({ onSelect, optionDropdown }) => {
     }
   }, [optionDropdown]);
 
+  // #region HANDLERS
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleSubDropdown = (e, index) => {
+    e.stopPropagation();
+    e.preventDefault();
+    setDropdownControlledByThisItem((prevState) => ({
+      ...prevState,
+      [index]: !prevState[index],
+    }));
+  };
+
+  const handleOpenModalRename = (e, option) => {
+    e.stopPropagation();
+    setSelectedOptionValue(option.value);
+    setSelectedOptionLabel(option.label);
+    setRenameModal(true);
   };
 
   const handleSelect = (option) => {
@@ -67,70 +104,167 @@ const DropdownAddresses = ({ onSelect, optionDropdown }) => {
     });
   };
 
-  return (
-    <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
-      <DropdownToggle
-        caret={false}
-        color="primary"
-        className="btn btn-primary dropdown-toggle btn-sm align-items-center d-flex justify-content-center ms-3 p-1 mb-0"
+  const handleShowQrCode = (e, optionValue) => {
+    e.stopPropagation();
+    setSelectedOptionValue(optionValue);
+    setQrCodeModal(true);
+  };
+
+  const handleCopy = async (e, text) => {
+    e.stopPropagation();
+    e.preventDefault();
+    try {
+      copyToClipboard(text);
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+
+  const handleRenameNameFromLocalStorage = (valueToFind, newName) => {
+    const storedOptions =
+      JSON.parse(localStorage.getItem('searchOptions')) || [];
+    const newOptions = storedOptions.map((storedOption) => {
+      if (storedOption.value === valueToFind) {
+        return { ...storedOption, label: newName };
+      }
+      return storedOption;
+    });
+    localStorage.setItem('searchOptions', JSON.stringify(newOptions));
+    setOptions(newOptions);
+  };
+
+  // #region RENDER FUNCTIONS
+  const renderSubDropdown = (option, index) => {
+    return (
+      <Dropdown
+        isOpen={dropdownControlledByThisItem[index]}
+        toggle={(e) => handleSubDropdown(e, index)}
+        direction="bottom-end"
+        className="ms-auto"
       >
-        <i className="bi bi-list fw-bold fs-8 px-0 pe-n1"></i>
-      </DropdownToggle>
-      <DropdownMenu className="mt-1">
-        {options.length > 0 ? (
-          options.map((option, index) =>
-            option ? (
-              <>
-                <DropdownItem
-                  className="d-flex justify-content-between align-items-center pe-2 "
-                  key={index}
-                  onClick={() => handleSelect(option)}
-                >
-                  {option.logo ? (
-                    <img
-                      src={option.logo}
-                      alt="logo"
-                      className="me-2"
-                      style={{ width: '20px' }}
-                    />
-                  ) : null}
-                  <div className="d-flex flex-column">
-                    {option.label === option.value ? (
-                      <span className="me-2 text-muted">
-                        {formatIdTransaction(option.value, 6, 8)}
-                      </span>
-                    ) : (
-                      <>
-                        <span className="me-2">
-                          {formatIdTransaction(option.label, 6, 8)}
-                        </span>
-                        <span className="me-2 text-muted">
+        <DropdownToggle
+          tag="span"
+          data-toggle="dropdown"
+          caret
+          aria-expanded={dropdownControlledByThisItem[index]}
+        ></DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem
+            onClick={(e) => handleCopy(e, option.value)}
+            className="d-flex align-items-center"
+          >
+            {isCopied ? (
+              <i className="ri-check-line  me-2 "></i>
+            ) : (
+              <i className="ri-file-copy-line  me-2"></i>
+            )}
+            Copy Address
+          </DropdownItem>
+          <DropdownItem
+            onClick={(e) => handleShowQrCode(e, option.value)}
+            className="d-flex align-items-center"
+          >
+            <i className="ri-qr-code-line me-2"></i> Show QR code
+          </DropdownItem>
+
+          <DropdownItem
+            onClick={(e) => handleOpenModalRename(e, option)}
+            className="d-flex align-items-center"
+          >
+            <i className="ri-edit-line me-2"></i>
+            Rename Wallet
+          </DropdownItem>
+          <DropdownItem divider />
+
+          <DropdownItem
+            className="d-flex align-items-center "
+            onClick={(e) => handleDeleteOptionFromLocalStorage(e, option)}
+          >
+            <i className="ri-delete-bin-line text-danger me-2"></i>
+            <span className="text-danger">Remove</span>
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+    );
+  };
+
+  // #region RENDER
+  return (
+    <>
+      <QrModal
+        showQrModal={qrCodeModal}
+        toggleQrModal={() => setQrCodeModal(!qrCodeModal)}
+        addressTitle={selectedOptionValue}
+      />
+      <RenameAddressModal
+        open={renameModal}
+        setOpen={setRenameModal}
+        address={selectedOptionLabel}
+        onSave={(newName) => {
+          handleRenameNameFromLocalStorage(selectedOptionValue, newName);
+        }}
+      />
+
+      <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
+        <DropdownToggle
+          caret={false}
+          color="primary"
+          className="btn btn-primary dropdown-toggle btn-sm align-items-center d-flex justify-content-center ms-3 p-1 mb-0"
+        >
+          <i className="bi bi-list fw-bold fs-8 px-0 pe-n1"></i>
+        </DropdownToggle>
+        <DropdownMenu className="mt-1">
+          {options.length > 0 ? (
+            options.map((option, index) =>
+              option ? (
+                <>
+                  <DropdownItem
+                    className="d-flex justify-content-between align-items-center pe-2 "
+                    key={index}
+                    onClick={() => handleSelect(option)}
+                  >
+                    {option.logo ? (
+                      <img
+                        src={option.logo}
+                        alt="logo"
+                        className="me-2"
+                        style={{ width: '20px' }}
+                      />
+                    ) : null}
+                    <div className="d-flex flex-column me-3">
+                      {option.label === option.value ? (
+                        <span className="">
                           {formatIdTransaction(option.value, 6, 8)}
                         </span>
-                      </>
-                    )}
-                  </div>
-                  <Button
-                    color="soft-danger"
-                    className="btn btn-sm ms-auto p-1 py-0"
-                    onClick={(e) =>
-                      handleDeleteOptionFromLocalStorage(e, option)
-                    }
-                  >
-                    <span>X</span>
-                  </Button>
-                </DropdownItem>
-                {options.length - 1 !== index ? (
-                  <hr className="my-auto ms-4" style={{ width: '83%' }} />
-                ) : null}
-              </>
-            ) : null,
-          )
-        ) : (
-          <DropdownItem disabled>No results</DropdownItem>
-        )}
-      </DropdownMenu>
-    </Dropdown>
+                      ) : (
+                        <>
+                          <span className="">
+                            {formatIdTransaction(option.label, 6, 8)}
+                          </span>
+                          <span className=" text-muted">
+                            {formatIdTransaction(option.value, 6, 8)}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {renderSubDropdown(option, index)}
+                  </DropdownItem>
+                  {options.length - 1 !== index ? (
+                    <DropdownItem divider />
+                  ) : null}
+                </>
+              ) : null,
+            )
+          ) : (
+            <DropdownItem disabled>No results</DropdownItem>
+          )}
+        </DropdownMenu>
+      </Dropdown>
+    </>
   );
 };
 
