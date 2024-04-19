@@ -9,11 +9,15 @@ import {
 } from 'reactstrap';
 
 import Swal from 'sweetalert2';
-import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
+import {
+  copyToClipboard,
+  formatIdTransaction,
+  removeOptionsFromLocalStorage,
+} from '../../../utils/utils';
 import QrModal from '../../Modals/QrModal';
 import RenameAddressModal from '../../Modals/RenameAddress';
 
-const DropdownAddresses = ({ onSelect, optionDropdown }) => {
+const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
   const { address } = useParams();
   const location = useLocation();
 
@@ -39,6 +43,12 @@ const DropdownAddresses = ({ onSelect, optionDropdown }) => {
   }, [dropdownOpen]);
 
   useEffect(() => {
+    if (isUnsupported) {
+      removeOptionsFromLocalStorage(setOptions, address);
+    }
+  }, [isUnsupported]);
+
+  useEffect(() => {
     if (optionDropdown && optionDropdown.value && optionDropdown.label) {
       options.push(optionDropdown);
 
@@ -46,6 +56,8 @@ const DropdownAddresses = ({ onSelect, optionDropdown }) => {
         (option, index, self) =>
           index === self.findIndex((t) => t.value === option.value),
       );
+      // order options by alphabetical order
+      filteredOptions.sort((a, b) => a.label.localeCompare(b.label));
 
       setOptions(filteredOptions);
     }
@@ -89,15 +101,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown }) => {
       cancelButtonText: 'Cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        const storedOptions =
-          JSON.parse(localStorage.getItem('searchOptions')) || [];
-        const newOptions = storedOptions.filter(
-          (storedOption) => storedOption.value !== option.value,
-        );
-        localStorage.setItem('searchOptions', JSON.stringify(newOptions));
-        setOptions((currentOptions) =>
-          currentOptions.filter((o) => o.value !== option.value),
-        );
+        removeOptionsFromLocalStorage(setOptions, option.value);
 
         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
       }
@@ -144,7 +148,9 @@ const DropdownAddresses = ({ onSelect, optionDropdown }) => {
         isOpen={dropdownControlledByThisItem[index]}
         toggle={(e) => handleSubDropdown(e, index)}
         direction="bottom-end"
-        className="ms-auto"
+        className="ms-auto
+       
+        "
       >
         <DropdownToggle
           tag="span"
@@ -214,11 +220,20 @@ const DropdownAddresses = ({ onSelect, optionDropdown }) => {
         <DropdownToggle
           caret={false}
           color="primary"
-          className="btn btn-primary dropdown-toggle btn-sm align-items-center d-flex justify-content-center ms-3 p-1 mb-0"
+          className="btn
+          btn-primary dropdown-toggle btn-sm align-items-center d-flex justify-content-center ms-3 p-1 mb-0"
         >
           <i className="bi bi-list fw-bold fs-8 px-0 pe-n1"></i>
         </DropdownToggle>
-        <DropdownMenu className="mt-1">
+        <DropdownMenu
+          className="mt-1
+        overflow-auto
+        "
+          style={{
+            maxHeight: '500px',
+            width: '300px',
+          }}
+        >
           {options.length > 0 ? (
             options.map((option, index) =>
               option ? (
