@@ -142,7 +142,7 @@ const ChartTokens = () => {
 
   return (
     <div className="border border-2 rounded p-2" style={{ zIndex: 1 }}>
-      <div className="d-flex align-items-end">
+      <div className="d-flex align-items-end mb-3">
         <h1 className="d-flex align-items-center">
           <span className="fs-2">$</span>
           {title}
@@ -155,19 +155,28 @@ const ChartTokens = () => {
         </h4>
       </div>
       {loading ? (
-        <Card>
-          <CardBody>
-            <div className="text-center">
+        <Card
+          className="mb-0"
+          style={{
+            height: '250px',
+          }}
+        >
+          <CardBody className="d-flex justify-content-center align-items-center">
+            <div className="text-center d-flex justify-content-center">
               <Spinner />
             </div>
           </CardBody>
         </Card>
       ) : (
-        <div className="">
-          <Line data={data} options={options} />
-          <div className="toolbar mb-3">{renderFilterButtons()}</div>
+        <div
+          style={{
+            height: '250px',
+          }}
+        >
+          <Line height={250} data={data} options={options} />
         </div>
       )}
+      <div className="toolbar mb-3">{renderFilterButtons()}</div>
     </div>
   );
 };
