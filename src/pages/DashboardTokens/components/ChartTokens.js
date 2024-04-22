@@ -1,7 +1,11 @@
-import { color } from 'echarts';
 import React, { useState } from 'react';
 import { Line } from 'react-chartjs-2';
 import { Card, CardBody, Spinner } from 'reactstrap';
+import {
+  CurrencyUSD,
+  formatDateToLocale,
+  parseValuesToLocale,
+} from '../../../utils/utils';
 
 const ChartTokens = () => {
   const [data, setData] = useState({
@@ -9,19 +13,19 @@ const ChartTokens = () => {
     datasets: [
       {
         label: '',
-        data: [12, 19, 3, 5, 2, 3],
+        data: [12.55, 19.03, -3.2, 5.98, 2.22, 9.87],
         fill: false,
         borderColor: '#0759BC',
         tension: 0.1,
       },
     ],
   });
-
   const [loading, setLoading] = useState(false);
   const [title, setTitle] = useState(
     data.datasets[0].data[data.datasets[0].data.length - 1],
   );
   const [subtitle, setSubtitle] = useState('0');
+  const [activeDate, setActiveDate] = useState('');
 
   const calculatePercentageChange = (currentIndex, data) => {
     if (currentIndex > 0) {
@@ -76,6 +80,7 @@ const ChartTokens = () => {
             );
             setTitle(`${salesValue}`);
             setSubtitle(percentageChange.toFixed(2));
+            setActiveDate(data.labels[index]);
           }
           return '';
         },
@@ -97,10 +102,10 @@ const ChartTokens = () => {
               data.datasets[0].data,
             ).toFixed(2),
           );
+          setActiveDate(data.labels[lastDataIndex]);
         }
       },
     },
-
     title: {
       display: false,
       text: title,
@@ -142,18 +147,18 @@ const ChartTokens = () => {
 
   return (
     <div className="border border-2 rounded p-2" style={{ zIndex: 1 }}>
-      <div className="d-flex align-items-end mb-3">
+      <div className="d-flex align-items-end">
         <h1 className="d-flex align-items-center">
-          <span className="fs-2">$</span>
-          {title}
+          {parseValuesToLocale(title, CurrencyUSD)}
         </h1>
         <h4
           style={{ marginBottom: '.7rem' }}
           className={`ms-2  text-${subtitle >= 0 ? 'success' : 'danger'}`}
         >
-          {subtitle}%
+          {parseValuesToLocale(subtitle, '')}%
         </h4>
       </div>
+      <span className="ms-2 text-muted mb-3">{activeDate}</span>
       {loading ? (
         <Card
           className="mb-0"
