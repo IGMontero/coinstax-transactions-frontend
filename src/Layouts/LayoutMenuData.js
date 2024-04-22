@@ -22,7 +22,10 @@ const Navdata = () => {
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
     setIsUnsupported(
-      assets.unsupported || transactions.unsupported || performance.unsupported,
+      assets.unsupported ||
+        transactions.unsupported ||
+        performance.unsupported ||
+        !address,
     );
   }, [fetchData]);
 
