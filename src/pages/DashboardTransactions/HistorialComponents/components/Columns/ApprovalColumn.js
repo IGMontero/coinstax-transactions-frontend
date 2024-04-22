@@ -3,11 +3,7 @@ import {
   copyToClipboard,
   parseValuesToLocale,
 } from '../../../../../utils/utils';
-import {
-  PopoverBody,
-  UncontrolledPopover,
-  UncontrolledTooltip,
-} from 'reactstrap';
+import { UncontrolledTooltip } from 'reactstrap';
 
 const ApprovalColumn = ({ transaction }) => {
   const transactionApproval = transaction?.txSummary?.approval;
