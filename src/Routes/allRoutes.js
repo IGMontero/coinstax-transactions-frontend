@@ -20,6 +20,7 @@ import DashboardAssets from '../pages/DashboardAssets/DashboardAssets';
 import DashboardTransactions from '../pages/DashboardTransactions/DashboardTransactions';
 import NFTsPage from '../pages/DashboardNFT/NFTsPage';
 import DashboardHome from '../pages/DashboardHome/DashboardHome';
+import DashboardTokens from '../pages/DashboardTokens/DashboardTokens';
 
 const authProtectedRoutes = [
   { path: '/dashboard', component: <DashboardInfo /> },
@@ -55,6 +56,7 @@ const allRoutes = [
   { path: '/login', component: <Login /> },
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
+  { path: '/tokens/:token', component: <DashboardTokens /> },
 
   { path: '/contract/:contractAddress', component: <DashboardNFT /> },
   { path: '/address/:address', component: <DashboardInfo /> },
