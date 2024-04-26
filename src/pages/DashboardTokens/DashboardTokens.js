@@ -6,6 +6,7 @@ import Stats from './components/Stats';
 import About from './components/About';
 import Tags from './components/Tags';
 import Explorers from './components/Explorers';
+import WalletCard from './components/WalletCard';
 
 const DashboardTokens = () => {
   const [tokenName, setTokenName] = useState('Ethereum');
@@ -25,6 +26,7 @@ const DashboardTokens = () => {
         </div>
         <Col className="col-12 mb-5">
           <ChartTokens />
+          <WalletCard />
         </Col>
 
         <Col className="col-12 my-5">
