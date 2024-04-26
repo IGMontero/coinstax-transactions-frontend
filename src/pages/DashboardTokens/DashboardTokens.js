@@ -3,6 +3,9 @@ import ChartTokens from './components/ChartTokens';
 import { Col } from 'reactstrap';
 import ethIcon from '../../assets/images/svg/crypto-icons/eth.svg';
 import Stats from './components/Stats';
+import About from './components/About';
+import Tags from './components/Tags';
+import Explorers from './components/Explorers';
 
 const DashboardTokens = () => {
   const [tokenName, setTokenName] = useState('Ethereum');
@@ -26,6 +29,15 @@ const DashboardTokens = () => {
 
         <Col className="col-12 my-5">
           <Stats />
+        </Col>
+        <Col className="col-12 my-5">
+          <About />
+        </Col>
+        <Col className="col-12 my-5">
+          <Tags />
+        </Col>
+        <Col className="col-12 my-5">
+          <Explorers />
         </Col>
       </div>
     </React.Fragment>
