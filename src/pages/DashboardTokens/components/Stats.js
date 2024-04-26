@@ -39,8 +39,8 @@ const Stats = () => {
         {statsData.map((stat, index) => {
           const hasAdditionalInfo = stat.additionalInfo;
           return (
-            <Col key={index} xs="12" md="3" className="p-2">
-              <div className="text-center">
+            <Col key={index} xs="12" md="3" className="p-2 ps-3">
+              <div className="text-start">
                 <h5 className="fw-semibold">{stat.label}</h5>
                 <h6
                   className={` text-${stat.value.includes('-') ? 'success' : 'danger'} d-block`}
@@ -49,9 +49,9 @@ const Stats = () => {
                 </h6>
               </div>
               {hasAdditionalInfo && (
-                <div className="text-center mt-5">
+                <div className="text-start mt-5">
                   <h5 className="fw-semibold">{stat.additionalInfo.label}</h5>
-                  <h6 className="text-center d-block">
+                  <h6 className="text-start d-block">
                     {parseValuesToLocale(
                       stat.additionalInfo.value,
                       CurrencyUSD,

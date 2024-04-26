@@ -52,6 +52,7 @@ const Explorers = () => {
       name: 'Arbitrum',
     },
   ];
+
   return (
     <div className=" mb-3 border-bottom pb-5 ">
       <div className="my-5">
