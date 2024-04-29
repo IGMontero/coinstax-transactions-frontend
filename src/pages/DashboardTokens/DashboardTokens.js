@@ -7,6 +7,7 @@ import About from './components/About';
 import Tags from './components/Tags';
 import Explorers from './components/Explorers';
 import WalletCard from './components/WalletCard';
+import History from './components/History';
 
 const DashboardTokens = () => {
   const [tokenName, setTokenName] = useState('Ethereum');
@@ -40,6 +41,9 @@ const DashboardTokens = () => {
         </Col>
         <Col className="col-12 my-5">
           <Explorers />
+        </Col>
+        <Col className="col-12 my-5">
+          <History />
         </Col>
       </div>
     </React.Fragment>
