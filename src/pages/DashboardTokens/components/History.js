@@ -1,6 +1,7 @@
 import React from 'react';
 import { Col, Row } from 'reactstrap';
 import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
+import HistoryModal from '../../../Components/Modals/HistoryModal';
 
 const History = () => {
   const dataHistory = [
@@ -30,13 +31,31 @@ const History = () => {
     },
   ];
 
+  const [selectedItem, setSelectedItem] = React.useState({});
+  const [showModal, setShowModal] = React.useState(false);
+
+  const toggleModal = (item) => {
+    setShowModal(!showModal);
+    setSelectedItem(item);
+  };
   return (
     <div className="mb-3 border-bottom pb-5">
+      <HistoryModal
+        selectedItem={selectedItem}
+        toggle={toggleModal}
+        isOpen={showModal}
+      />
       <div className="my-5">
         <h3>History</h3>
       </div>
       {dataHistory.map((item, index) => (
-        <Row key={index} className="mb-3 cursor-pointer">
+        <Row
+          key={index}
+          onClick={() => toggleModal(item)}
+          className="mb-1 cursor-pointer   rounded 
+          bg-hover-light
+          p-3"
+        >
           <Col className="">
             <div>
               <span className="text-dark">
