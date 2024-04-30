@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useLocation, useParams } from 'react-router-dom';
 import {
   Dropdown,
@@ -149,9 +150,8 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
         isOpen={dropdownControlledByThisItem[index]}
         toggle={(e) => handleSubDropdown(e, index)}
         direction="bottom-end"
-        className="ms-auto
-       
-        "
+        className="ms-auto"
+        style={{ zIndex: 9999 }}
       >
         <DropdownToggle
           tag="span"
@@ -227,9 +227,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
           <i className="bi bi-list fw-bold fs-8 px-0 pe-n1"></i>
         </DropdownToggle>
         <DropdownMenu
-          className="mt-1
-        overflow-auto
-        "
+          className="mt-1"
           style={{
             maxHeight: '500px',
             width: '300px',
