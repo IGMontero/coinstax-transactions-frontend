@@ -468,3 +468,18 @@
   padding: 0 4px; 
   overflow: hidden;
 }
+
+// Icon Online 
+.online-icon {
+  height: 7px;
+  width: 7px;
+  background-color: #28a746bc; 
+  border-radius: 50%;
+  display: inline-block;
+  margin-left: 5px;
+}
+
+// 
+.bg-hover-light:hover {
+  background-color: #6c6c6c45;
+}

@@ -338,3 +338,15 @@ export const saveAddressToLocalStorage = (address) => {
     .setItem('recentAddresses', JSON.stringify([address]))
     .catch((error) => console.error(error));
 };
+
+// remove options from local storage
+export const removeOptionsFromLocalStorage = (setOptions, value) => {
+  const storedOptions = JSON.parse(localStorage.getItem('searchOptions')) || [];
+  const newOptions = storedOptions.filter(
+    (storedOption) => storedOption.value !== value,
+  );
+  localStorage.setItem('searchOptions', JSON.stringify(newOptions));
+  setOptions((currentOptions) =>
+    currentOptions.filter((o) => o.value !== value),
+  );
+};

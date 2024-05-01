@@ -41,6 +41,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const [options, setOptions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const [optionDropdown, setOptionDropdown] = useState([]);
+
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
     if (
@@ -161,13 +163,15 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           options.find((option) => option.value === searchInput)?.logo || null,
       };
 
-      // Additional check for empty values before adding to storage
       if (
         newOption.label &&
         newOption.value &&
-        !storedOptions.find((o) => o.value === newOption.value)
+        !storedOptions.some(
+          (o) => o.label === newOption.label || o.value === newOption.value,
+        )
       ) {
         storedOptions.push(newOption);
+        setOptionDropdown(newOption);
         localStorage.setItem('searchOptions', JSON.stringify(storedOptions));
       }
 
@@ -191,6 +195,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         return;
       }
       navigate(`/address/${selectedOption.value}`);
+      setSearchInput('');
     }
   };
 
@@ -320,6 +325,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         components={{ DropdownIndicator, Option: CustomOptions }}
         styles={customStyles}
         menuIsOpen={isMenuOpen}
+        onMenuOpen={() => setIsMenuOpen(true)}
+        onMenuClose={() => setIsMenuOpen(false)}
         onKeyDown={(e) => {
           if (e.key === 'Enter' && searchInput.length >= 3) {
             navigate(`/address/${searchInput}`);
@@ -327,8 +334,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         }}
       />
       <DropdownAddresses
-        // onSelect={onDropdownSelect}
-
+        optionDropdown={optionDropdown}
         isUnsupported={isUnsupported}
         onSelect={handleDropdownSelect}
       />
