@@ -7,7 +7,7 @@ import {
 } from 'reactstrap';
 import { formatIdTransaction } from '../../utils/utils';
 import { useParams } from 'react-router-dom';
-import QrModal from '../../pages/DashboardInfo/modals/QrModal';
+import QrModal from '../Modals/QrModal';
 
 const AddressWithDropdown = () => {
   const { address } = useParams();
