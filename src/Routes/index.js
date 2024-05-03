@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, redirect } from 'react-router-dom';
 import appLogo from '../assets/images/logos/logo-light.png';
 //Layouts
 import NonAuthLayout from '../Layouts/NonAuthLayout';
@@ -44,6 +44,22 @@ const Index = () => {
     }
   }, [user, isLoginPage, navigate]);
 
+  useEffect(() => {
+    const isRoot = location.pathname === '/';
+
+    if (isRoot) {
+      // Redirect to app root url or base url
+
+      const isOriginSameAsCurrent = window.location.origin === process.env.REACT_APP_ROOT_URL;
+      const shouldRedirect = !isOriginSameAsCurrent && process.env.REACT_APP_ROOT_URL
+
+      if (shouldRedirect) {
+        window.location.href = process.env.REACT_APP_ROOT_URL
+      }
+    }
+  }, [location.pathname]);
+
+
   if (loading) {
     return (
       <div
@@ -69,12 +85,15 @@ const Index = () => {
     );
   }
 
+
   const isHomePage =
     location.pathname === '/dashboard' || location.pathname === '/';
 
   return (
     <React.Fragment>
       <Routes>
+
+
         {isHomePage && (
           <Route>
             {homePage.map((route, idx) => (
