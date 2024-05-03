@@ -1,25 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { Routes, Route, useNavigate, useLocation, redirect } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import appLogo from '../assets/images/logos/logo-light.png';
 //Layouts
 import NonAuthLayout from '../Layouts/NonAuthLayout';
 import VerticalLayout from '../Layouts/index';
 
 //routes
-import {
-  authProtectedRoutes,
-  publicRoutes,
-  allRoutes,
-  homePage,
-} from './allRoutes';
-import { AuthProtected } from './AuthProtected';
-import { useProfile } from '../Components/Hooks/UserHooks';
-import Header from '../Layouts/Header';
-import Footer from '../Layouts/Footer';
-import Sidebar from '../Layouts/Sidebar';
-import { authMe } from '../slices/auth2/thunk';
 import { useDispatch, useSelector } from 'react-redux';
-import Swal from 'sweetalert2';
+import { authMe } from '../slices/auth2/thunk';
+import {
+  allRoutes,
+  homePage
+} from './allRoutes';
 
 const Index = () => {
   const dispatch = useDispatch();
