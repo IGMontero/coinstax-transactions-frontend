@@ -27,7 +27,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [options, setOptions] = useState(
-    JSON.parse(localStorage.getItem('searchOptions')) || [],
+    JSON.parse(localStorage.getItem('userAddresses')) || [],
   );
   const [dropdownControlledByThisItem, setDropdownControlledByThisItem] =
     useState({});
@@ -36,6 +36,30 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
   const [selectedOptionLabel, setSelectedOptionLabel] = useState('');
 
   const [renameModal, setRenameModal] = useState(false);
+
+
+  useEffect(() => {
+    // If options change, save to local storage
+    localStorage.setItem('userAddresses', JSON.stringify(options));
+
+    // Create an iframe poitning to root url
+    const iframe = document.createElement('iframe');
+    iframe.src = process.env.REACT_APP_ROOT_URL || 'https://chainglance.com';
+    iframe.style.display = 'none';
+
+    // Set iframe on load function
+    iframe.onload = () => {
+      // Use postmessage to send the options to the iframe
+      iframe.contentWindow.postMessage(JSON.stringify(options), process.env.REACT_APP_ROOT_URL);
+
+      // Remove the iframe
+      document.body.removeChild(iframe);
+    };
+
+    // Append iframe to the body
+    document.body.appendChild(iframe);
+
+  }, [options]);
 
   // #region USE EFFECTS
   useEffect(() => {
@@ -132,14 +156,14 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
 
   const handleRenameNameFromLocalStorage = (valueToFind, newName) => {
     const storedOptions =
-      JSON.parse(localStorage.getItem('searchOptions')) || [];
+      JSON.parse(localStorage.getItem('userAddresses')) || [];
     const newOptions = storedOptions.map((storedOption) => {
       if (storedOption.value === valueToFind) {
         return { ...storedOption, label: newName };
       }
       return storedOption;
     });
-    localStorage.setItem('searchOptions', JSON.stringify(newOptions));
+    localStorage.setItem('userAddresses', JSON.stringify(newOptions));
     setOptions(newOptions);
   };
 
@@ -238,9 +262,8 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
               option ? (
                 <>
                   <DropdownItem
-                    className={`d-flex justify-content-between align-items-center pe-2 ${
-                      option.value === address ? 'active' : ''
-                    }`}
+                    className={`d-flex justify-content-between align-items-center pe-2 ${option.value === address ? 'active' : ''
+                      }`}
                     key={index}
                     onClick={() => handleSelect(option)}
                   >
@@ -283,7 +306,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
               ) : null,
             )
           ) : (
-            <DropdownItem disabled>No results</DropdownItem>
+            <DropdownItem disabled>No addresses saved</DropdownItem>
           )}
         </DropdownMenu>
       </Dropdown>

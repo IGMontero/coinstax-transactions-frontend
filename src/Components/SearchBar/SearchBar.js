@@ -155,7 +155,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     const validInput = searchInput.trim().length > 0;
     if (!isUnsupported && validInput) {
       const storedOptions =
-        JSON.parse(localStorage.getItem('searchOptions')) || [];
+        JSON.parse(localStorage.getItem('userAddresses')) || [];
       const newOption = {
         label: searchInput,
         value: searchInput,
@@ -172,7 +172,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       ) {
         storedOptions.push(newOption);
         setOptionDropdown(newOption);
-        localStorage.setItem('searchOptions', JSON.stringify(storedOptions));
+        localStorage.setItem('userAddresses', JSON.stringify(storedOptions));
       }
 
       setOptions((currentOptions) => [
