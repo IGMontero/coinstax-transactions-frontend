@@ -12,10 +12,9 @@ import {
   parseValuesToLocale,
 } from '../../../../../utils/utils';
 
-const SentColumn = ({ ledger }) => {
+const SentColumn = ({ transaction }) => {
   const navigate = useNavigate();
-  const negativeLedgers = ledger.txSummary.sent;
-  const addressLink = negativeLedgers?.nftInfo?.contractAddress;
+  const negativeLedgers = transaction.txSummary.sent;
 
   const currency = negativeLedgers?.currency || '';
   const hasMoreThanOne = negativeLedgers?.logo === 'assets';
@@ -25,6 +24,11 @@ const SentColumn = ({ ledger }) => {
   const [imageSrc, setImageSrc] = useState(null);
   const [showPlaceholder, setShowPlaceholder] = useState(false);
   const [hasError, setHasError] = useState(false);
+
+  const sentNftInfo = transaction?.txSummary?.sent?.nftInfo;
+
+  const nftTokenId = sentNftInfo?.tokenId;
+  const nftContractAddress = sentNftInfo?.contractAddress;
 
   const handleCopyValue = (e) => {
     e.stopPropagation();
@@ -36,7 +40,7 @@ const SentColumn = ({ ledger }) => {
     }, 2000);
   };
 
-  const isPreview = ledger?.preview;
+  const isPreview = transaction?.preview;
   // This useEffect is used to set the image source and show the placeholder if the image is not available
   useEffect(() => {
     // Reset status every time preview state or logo changes
@@ -60,7 +64,7 @@ const SentColumn = ({ ledger }) => {
         setHasError(true);
       }
     }
-  }, [ledger, negativeLedgers?.logo, isPreview]);
+  }, [transaction, negativeLedgers?.logo, isPreview]);
 
   const handleImageError = () => {
     // If there is an error and we are in preview, show placeholder
@@ -78,7 +82,7 @@ const SentColumn = ({ ledger }) => {
 
   const isNft = negativeLedgers?.isNft;
 
-  const hasAssetsCount = ledger.txSummary?.sentAssetsCount >= 2;
+  const hasAssetsCount = transaction.txSummary?.sentAssetsCount >= 2;
   const tokenId = negativeLedgers?.nftInfo?.tokenId || undefined;
 
   return (
@@ -124,11 +128,11 @@ const SentColumn = ({ ledger }) => {
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {!isNft &&
-                    negativeLedgers?.value !== 0 &&
-                    !hasAssetsCount ? (
+                      negativeLedgers?.value !== 0 &&
+                      !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
-                        id={`amount-left-${ledger?.txHash}`}
+                        id={`amount-left-${transaction?.txHash}`}
                         className="text-displayName"
                       >
                         {isNft
@@ -145,9 +149,9 @@ const SentColumn = ({ ledger }) => {
                       <span
                         onClick={(e) => {
                           e.stopPropagation();
-                          if (addressLink && tokenId) {
+                          if (nftContractAddress && nftTokenId) {
                             navigate(
-                              `/contract/${addressLink}?tokenId=${tokenId}`,
+                              `/contract/${nftContractAddress}?tokenId=${nftTokenId}`,
                             );
                           }
                         }}
@@ -160,8 +164,8 @@ const SentColumn = ({ ledger }) => {
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                    negativeLedgers?.value !== 0 &&
-                    document.getElementById(`amount-left-${ledger.txHash}`) ? (
+                      negativeLedgers?.value !== 0 &&
+                      document.getElementById(`amount-left-${transaction.txHash}`) ? (
                       // <UncontrolledPopover
                       //   onClick={(e) => e.stopPropagation()}
                       //   placement="bottom"
@@ -185,7 +189,7 @@ const SentColumn = ({ ledger }) => {
                       // </UncontrolledPopover>
                       <UncontrolledTooltip
                         placement="bottom"
-                        target={`amount-left-${ledger.txHash}`}
+                        target={`amount-left-${transaction.txHash}`}
                         trigger="hover"
                       >
                         {isCopied ? 'Copied' : negativeLedgers?.value}
@@ -227,9 +231,9 @@ const SentColumn = ({ ledger }) => {
                 {negativeLedgers?.nativeAmount === 0
                   ? ''
                   : parseValuesToLocale(
-                      negativeLedgers?.nativeAmount,
-                      CurrencyUSD,
-                    )}
+                    negativeLedgers?.nativeAmount,
+                    CurrencyUSD,
+                  )}
               </p>
             </div>
           </>

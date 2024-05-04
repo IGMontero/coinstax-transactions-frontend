@@ -232,7 +232,12 @@ const HistorialTable = ({ data, setData }) => {
         clearInterval(interval);
       });
     }
-  }, []);
+  }, [
+    // If any filter changes, clear all intervals
+    selectedFilters,
+    includeSpam,
+    selectedAssets,
+  ]);
 
 
 

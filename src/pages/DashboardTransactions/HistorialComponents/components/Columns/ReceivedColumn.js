@@ -13,13 +13,15 @@ import {
 
 import { useNavigate } from 'react-router-dom';
 
-const ReceivedColumn = ({ ledger, negativeLedgers }) => {
-  const positiveLedgers = ledger.txSummary.received;
+const ReceivedColumn = ({ transaction, negativeLedgers }) => {
+  const positiveLedgers = transaction.txSummary.received;
   const navigate = useNavigate();
 
-  const addressLink = negativeLedgers?.nftInfo?.contractAddress;
+  const receivedInfo = transaction?.txSummary?.received;
+  const nftInfo = receivedInfo?.nftInfo;
 
-  const tokenId = positiveLedgers?.nftInfo?.tokenId || undefined;
+  const nftTokenId = nftInfo?.tokenId;
+  const nftContractAddress = nftInfo?.contractAddress;
 
   const currency = positiveLedgers?.currency || '';
 
@@ -34,9 +36,9 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
 
   const isNft = positiveLedgers?.isNft;
 
-  const hasAssetsCount = ledger.txSummary?.receivedAssetsCount >= 2;
+  const hasAssetsCount = transaction.txSummary?.receivedAssetsCount >= 2;
 
-  const isPreview = ledger?.preview;
+  const isPreview = transaction?.preview;
 
   useEffect(() => {
     // Reset status every time preview state or logo changes
@@ -60,7 +62,7 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
         setHasError(true);
       }
     }
-  }, [ledger, positiveLedgers?.logo, isPreview]);
+  }, [transaction, positiveLedgers?.logo, isPreview]);
 
   const handleImageError = () => {
     // If there is an error and we are in preview, show placeholder
@@ -167,16 +169,18 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                         if (hasAssetsCount) return;
                         if (isNft) {
                           e.stopPropagation();
-                          if (addressLink && tokenId) {
+                          if (
+                            nftContractAddress && nftTokenId
+                          ) {
                             navigate(
-                              `/contract/${addressLink}?tokenId=${tokenId}`,
+                              `/contract/${nftContractAddress}?tokenId=${nftTokenId}`,
                             );
                           }
                         } else {
                           handleCopyValue(e, positiveLedgers?.value);
                         }
                       }}
-                      id={`amount-${ledger.txHash}`}
+                      id={`amount-${transaction.txHash}`}
                       className={`me-1 ${!negativeLedgers ? '' : 'text-displayName'} `}
                     >
                       {!isNft
@@ -184,11 +188,11 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                         : `${positiveLedgers?.displayName}`}
                     </span>
                     {positiveLedgers?.value &&
-                    !isNft &&
-                    !positiveLedgers.marketplaceName ? (
+                      !isNft &&
+                      !positiveLedgers.marketplaceName ? (
                       <UncontrolledTooltip
                         placement="bottom"
-                        target={`amount-${ledger.txHash}`}
+                        target={`amount-${transaction.txHash}`}
                         trigger="hover"
                       >
                         {isCopied ? 'Copied' : positiveLedgers?.value}
@@ -197,8 +201,8 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   </span>
 
                   {positiveLedgers &&
-                  !positiveLedgers.hideNativeAmount &&
-                  positiveLedgers.nativeAmount ? (
+                    !positiveLedgers.hideNativeAmount &&
+                    positiveLedgers.nativeAmount ? (
                     <p className="text-start d-flex align-items-center my-0 text-muted">
                       {parseValuesToLocale(
                         positiveLedgers?.nativeAmount,
@@ -207,9 +211,9 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                     </p>
                   ) : (
                     <>
-                      {ledger &&
-                      ledger.txHash &&
-                      !positiveLedgers.hideNativeAmount
+                      {transaction &&
+                        transaction.txHash &&
+                        !positiveLedgers.hideNativeAmount
                         ? null
                         : null}
                     </>
@@ -239,9 +243,9 @@ const ReceivedColumn = ({ ledger, negativeLedgers }) => {
                   {positiveLedgers?.nativeAmount === 0
                     ? ''
                     : parseValuesToLocale(
-                        positiveLedgers?.nativeAmount,
-                        CurrencyUSD,
-                      )}
+                      positiveLedgers?.nativeAmount,
+                      CurrencyUSD,
+                    )}
                 </p>
               </div>
             </div>
