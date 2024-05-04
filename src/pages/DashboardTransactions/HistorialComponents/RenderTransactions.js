@@ -75,11 +75,10 @@ const RenderTransactions = ({
         return (
           <div key={transaction.txHash} className="align-items-center">
             <div
-              className={` border-bottom bg-transparent px-0 ${
-                openCollapse.has(collapseId)
-                  ? 'border border-primary rounded px-2 mb-2'
-                  : 'bg-light'
-              }`}
+              className={` border-bottom bg-transparent px-0 ${openCollapse.has(collapseId)
+                ? 'border border-primary rounded px-2 mb-2'
+                : 'bg-light'
+                }`}
               style={{
                 transition: `all 0.3s ease-in-out`,
               }}
@@ -109,11 +108,10 @@ const RenderTransactions = ({
                   md={sentTxSummary ? 3 : 0}
                   sm={6}
                   xs={6}
-                  className={`mb-lg-0 mb-3 ${
-                    sentTxSummary ? 'd-flex justify-content-start ' : 'd-none'
-                  }`}
+                  className={`mb-lg-0 mb-3 ${sentTxSummary ? 'd-flex justify-content-start ' : 'd-none'
+                    }`}
                 >
-                  <SentColumn ledger={transaction} />
+                  <SentColumn transaction={transaction} />
                 </Col>
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
@@ -128,7 +126,7 @@ const RenderTransactions = ({
                   ) : (
                     <ReceivedColumn
                       isApproval={isApproval}
-                      ledger={transaction}
+                      transaction={transaction}
                       negativeLedgers={sentTxSummary}
                     />
                   )}
@@ -141,8 +139,8 @@ const RenderTransactions = ({
                   className="d-flex justify-content-end  align-items-center  pb-lg-0 pb-3"
                 >
                   {transaction.blockchainAction === blockchainActions.BURN ||
-                  transactions.blockchainAction === blockchainActions.MINT ||
-                  transaction.blockchainAction ===
+                    transaction.blockchainAction === blockchainActions.MINT ||
+                    transaction.blockchainAction ===
                     blockchainActions.OTHER ? null : (
                     <ContractInfoColumn
                       transaction={transaction}
@@ -156,9 +154,8 @@ const RenderTransactions = ({
               <Collapse isOpen={openCollapse.has(collapseId)}>
                 <CardBody
                   onClick={() => toggleCollapse(collapseId)}
-                  className={`cursor-pointer ${
-                    openCollapse === index ? 'border-info' : ''
-                  }`}
+                  className={`cursor-pointer ${openCollapse === index ? 'border-info' : ''
+                    }`}
                 >
                   {/* CODE FOR LIST */}
                   {hasList && <ListTransactions transaction={transaction} />}
