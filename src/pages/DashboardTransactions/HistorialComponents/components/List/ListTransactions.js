@@ -35,7 +35,7 @@ const ListTransactions = ({ transaction }) => {
     <Col xxl={12} lg={12} className="border-top ">
       <Row className=" g-0 mt-2">
         <Col xxl={12} className="d-flex mb-2"></Col>
-        {negativeLedgers && negativeLedgers.length > 0 && (
+        {negativeLedgers && negativeLedgers?.length > 0 && (
           <Col
             className={`d-flex align-items-start flex-column ps-2 ${negativeLedgersSize.negative}`}
           >
@@ -54,7 +54,7 @@ const ListTransactions = ({ transaction }) => {
             ))}
           </Col>
         )}
-        {negativeLedgers.length && positiveLedgers.length ? (
+        {negativeLedgers?.length && positiveLedgers?.length ? (
           <Col
             xxl={1}
             className="d-flex justify-content-center align-items-center"
@@ -88,7 +88,7 @@ const ListTransactions = ({ transaction }) => {
           </Col>
         ) : null}
 
-        {positiveLedgers && positiveLedgers.length > 0 && (
+        {positiveLedgers && positiveLedgers?.length > 0 && (
           <Col
             className={`d-flex align-items-center ps-2 flex-column justify-content-start ${positiveLedgersSize.positive}`}
           >
