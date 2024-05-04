@@ -74,6 +74,8 @@ const HistorialTable = ({ data, setData }) => {
   const [debouncedDisableGetMore, setDebouncedDisableGetMore] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
 
+  const [refreshPreviewIntervals, setRefreshPreviewIntervals] = useState({});
+
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
   useEffect(() => {
@@ -170,6 +172,21 @@ const HistorialTable = ({ data, setData }) => {
       setData(transactions);
       setTotalTransactions(transactionsCount);
       setHasMoreData(transactions.length > 0 || isProcessing);
+
+      const hasPreview = transactions.some(
+        (transaction) => transaction.preview === true,
+      );
+
+      console.log('Has preview:', hasPreview);
+      const isIntervalRunning = refreshPreviewIntervals[currentPage];
+
+      if (hasPreview && !isIntervalRunning) {
+        console.log('Starting interval for page', currentPage);
+        startRefreshPreviewPageInterval(currentPage);
+      }
+
+      // TODO: IF HAS PREVIEW, TRIGGER FETCHING UNTIL ALL TRANSACTIONS ARE PARSED
+
     } catch (error) {
       setErrorData(error);
       console.log(error);
@@ -180,26 +197,67 @@ const HistorialTable = ({ data, setData }) => {
     }
   };
 
+  const startRefreshPreviewPageInterval = (pageIndex) => {
+    const interval = setInterval(async () => {
+      console.log("Running interval for page", pageIndex)
+      await updateTransactionsPreview({
+        address,
+        debouncedSearchTerm,
+        selectedFilters,
+        includeSpam,
+        selectedAssets,
+        currentPage: pageIndex,
+        setData,
+        data,
+        dispatch,
+        pagesChecked: pagesCheckedRef.current,
+        onEnd: () => {
+          clearInterval(interval);
+          console.log('Clearing interval for page', pageIndex);
+        }
+      });
+    }, 5000);
+
+    // TODO: WHEN NO MORE TXS ARE PREVIEW, CLEAR INTERVAL.
+
+    setRefreshPreviewIntervals((prevIntervals) => ({
+      ...prevIntervals,
+      [pageIndex]: interval,
+    }));
+  };
+
   useEffect(() => {
-    let interval;
-    if (hasPreview) {
-      interval = setInterval(async () => {
-        await updateTransactionsPreview({
-          address,
-          debouncedSearchTerm,
-          selectedFilters,
-          includeSpam,
-          selectedAssets,
-          currentPage,
-          setData,
-          data,
-          dispatch,
-          pagesChecked: pagesCheckedRef.current,
-        });
-      }, 5000);
+    return () => {
+      Object.values(refreshPreviewIntervals).forEach((interval) => {
+        clearInterval(interval);
+      });
     }
-    return () => clearInterval(interval);
-  }, [hasPreview, data]);
+  }, []);
+
+
+
+
+
+  // useEffect(() => {
+  //   let interval;
+  //   if (hasPreview) {
+  //     interval = setInterval(async () => {
+  //       await updateTransactionsPreview({
+  //         address,
+  //         debouncedSearchTerm,
+  //         selectedFilters,
+  //         includeSpam,
+  //         selectedAssets,
+  //         currentPage,
+  //         setData,
+  //         data,
+  //         dispatch,
+  //         pagesChecked: pagesCheckedRef.current,
+  //       });
+  //     }, 5000);
+  //   }
+  //   return () => clearInterval(interval);
+  // }, [hasPreview, data]);
 
   useEffect(() => {
     fetchData();
@@ -284,6 +342,18 @@ const HistorialTable = ({ data, setData }) => {
         setData((prevData) => [...prevData, ...trasactions]);
         setCurrentPage(nextPage);
       }
+
+      // TODO: ADD INTERVAL TO REFRESH PREVIEW TRANSACTIONS
+
+      const hasPreview = trasactions.some(
+        (transaction) => transaction.preview === true,
+      );
+
+      if (hasPreview) {
+        console.log('Starting interval for page', nextPage);
+        startRefreshPreviewPageInterval(nextPage);
+      }
+
     } catch (error) {
       console.error('Error fetching more transactions:', error);
     } finally {
@@ -515,7 +585,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -533,9 +603,8 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
