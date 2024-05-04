@@ -101,7 +101,7 @@ export const getSelectedAssetFilters = (selectedAssets) => {
 
 export function getColSizeBasedOnContent(ledgers) {
   const maxLength = Math.max(
-    ...ledgers.map((ledger) => ledger.currency.length),
+    ...ledgers.map((ledger) => ledger.currency?.length),
   );
 
   if (maxLength > 10) {
@@ -233,18 +233,19 @@ export const updateTransactionsPreview = async ({
   setData,
   dispatch,
   pagesChecked,
+  onEnd
 }) => {
   // Pges checked
   try {
     const updatePage = async (page) => {
-      if (pagesChecked.has(page)) {
-        if (page < currentPage) {
-          // Continue with the next page
-          return updatePage(page + 1);
-        }
-        // Stop if the currentPage has been reached and all transactions are not in preview mode
-        return;
-      }
+      // if (pagesChecked.has(page)) {
+      //   if (page < currentPage) {
+      //     // Continue with the next page
+      //     return updatePage(page + 1);
+      //   }
+      //   // Stop if the currentPage has been reached and all transactions are not in preview mode
+      //   return;
+      // }
 
       const response = await dispatch(
         fetchHistory({
@@ -272,25 +273,28 @@ export const updateTransactionsPreview = async ({
       // If all transactions are not in preview mode, add the page to the set of checked pages
       if (allNotInPreview) {
         // Add the page to the set of checked pages
-        pagesChecked.add(page);
+        // pagesChecked.add(page);
 
-        if (page < currentPage) {
-          await updatePage(page + 1);
+        // if (page < currentPage) {
+        //   await updatePage(page + 1);
+        // }
+        // // Stop if the currentPage has been reached and all transactions are not in preview mode
+        // // Update one tx to trigger the re-render
+        // const newData = [...parsed];
+
+        // // return setData((currentData) => newData);
+        // // return setData && setData(newData);
+        // return setData((currentData) => {
+        //   return currentData.map((transaction) => {
+        //     const updatedTransaction = newData.find(
+        //       (t) => t.txHash === transaction.txHash,
+        //     );
+        //     return updatedTransaction || transaction;
+        //   });
+        // });
+        if (onEnd) {
+          onEnd();
         }
-        // Stop if the currentPage has been reached and all transactions are not in preview mode
-        // Update one tx to trigger the re-render
-        const newData = [...parsed];
-
-        // return setData((currentData) => newData);
-        // return setData && setData(newData);
-        return setData((currentData) => {
-          return currentData.map((transaction) => {
-            const updatedTransaction = newData.find(
-              (t) => t.txHash === transaction.txHash,
-            );
-            return updatedTransaction || transaction;
-          });
-        });
       }
 
       // Update the data
@@ -304,7 +308,7 @@ export const updateTransactionsPreview = async ({
       });
     };
     // Clear the checked pages if the address has changed
-    await updatePage(0);
+    await updatePage(currentPage);
     // if (address !== pagesChecked.address) {
     //   pagesChecked.clear();
     //   pagesChecked.address = address;
