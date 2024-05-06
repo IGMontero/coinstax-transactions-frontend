@@ -19,7 +19,15 @@ import {
   formatIdTransaction,
 } from '../../utils/utils';
 import { handleActionResult } from '../../utils/useHandleAction';
-import { deleteBlockchainContract } from '../../slices/blockchainContracts/thunk';
+import {
+  deleteBlockchainContract,
+  editBlockChainContract,
+  setBlockchainContractAsDirty,
+  updateTrustedState,
+  setAllAsDirty,
+} from '../../slices/blockchainContracts/thunk';
+import Swal from 'sweetalert2';
+import { useDispatch } from 'react-redux';
 
 const BlockChainContractTable = ({
   contracts,
@@ -27,13 +35,39 @@ const BlockChainContractTable = ({
   pagination,
   onRefresh,
   loading,
+  setLoading,
+  errorMessageEdit,
 }) => {
+  const dispatch = useDispatch();
+
   const [loadingUpdateTrustedState, setLoadingUpdateTrustedState] =
     useState(false);
-
   const [updatingContractId, setUpdatingContractId] = useState(null);
-
   const [isCopied, setIsCopied] = useState(false);
+
+  const [isEditingCoinGeckoId, setIsEditingCoinGeckoId] = useState(false);
+  const [coinGeckoIdValue, setCoinGeckoIdValue] = useState('');
+  const [activeEditId, setActiveEditId] = useState(null);
+
+  const handleCopyValue = (e, text) => {
+    e.stopPropagation();
+    copyToClipboard(text);
+    setIsCopied(true);
+    setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+  };
+
+  const handleEditClick = (contract) => {
+    setActiveEditId(contract.Id);
+    setCoinGeckoIdValue(contract.CoinGeckoId || '');
+
+    console.log('contract', contract);
+  };
+
+  const handleCancel = () => {
+    setActiveEditId(null);
+  };
 
   const handleSetAllAsDirty = async (address) => {
     const result = await Swal.fire({
@@ -82,6 +116,76 @@ const BlockChainContractTable = ({
     }
   };
 
+  const handleCheckIsERC20 = async (e, contract) => {
+    e.stopPropagation();
+    try {
+      const actionResult = await dispatch(
+        editBlockChainContract({
+          blockchain: 'ethereum',
+          address: contract.Address,
+          data: {
+            IsERC20: !contract.IsERC20,
+          },
+        }),
+      );
+
+      const errorMessage = 'Error editing blockchain contract';
+      const wasSuccessful = await handleActionResult(
+        editBlockChainContract,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        () => {
+          //   Swal.fire(
+          //     'Success',
+          //     'Blockchain Contract updated successfully',
+          //     'success',
+          //   );
+          onRefresh();
+        },
+      );
+
+      if (!wasSuccessful) {
+        return;
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', 'An unexpected error occurred.', 'error');
+    }
+  };
+
+  const handleChangeCoinGeckoId = async (
+    contract,
+    newCoinGeckoId = coinGeckoIdValue,
+  ) => {
+    try {
+      const actionResult = await dispatch(
+        editBlockChainContract({
+          blockchain: 'ethereum',
+          address: contract.Address,
+          data: {
+            CoinGeckoId: newCoinGeckoId,
+          },
+        }),
+      );
+
+      const errorMessage = 'Error editing blockchain contract';
+      await handleActionResult(
+        editBlockChainContract,
+        actionResult,
+        errorMessageEdit,
+        errorMessage,
+        () => {
+          onRefresh();
+          setActiveEditId(null); // Reset editing state
+        },
+      );
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', 'An unexpected error occurred.', 'error');
+    }
+  };
+
   const handleSetAsDirty = async (address) => {
     try {
       const actionResult = await dispatch(
@@ -115,15 +219,6 @@ const BlockChainContractTable = ({
       console.error('Error setting as dirty', error);
       Swal.fire('Error', error.toString(), 'error');
     }
-  };
-
-  const handleCopyValue = (e, text) => {
-    e.stopPropagation();
-    copyToClipboard(text);
-    setIsCopied(true);
-    setTimeout(() => {
-      setIsCopied(false);
-    }, 2000);
   };
 
   const handleDeleteBlockchainContract = async (contract) => {
@@ -246,6 +341,10 @@ const BlockChainContractTable = ({
           portalRoot,
         )
       : null;
+  };
+
+  const handleInputChange = (setState) => (e) => {
+    setState(e.target.value);
   };
 
   const renderDropdownTrustedState = (contract) => {
@@ -409,17 +508,64 @@ const BlockChainContractTable = ({
                 <td className="align-middle">
                   <input
                     type="checkbox"
-                    className="form-check-input"
+                    className="form-check-input cursor-pointer"
+                    onChange={(e) => handleCheckIsERC20(e, contract)}
                     checked={contract.IsERC20}
                   />
                 </td>
-                <td className="align-middle">{contract.CoinGeckoId}</td>
+                <td className="align-middle">
+                  {activeEditId !== contract.Id ? (
+                    <div className="d-flex align-items-center">
+                      {contract.CoinGeckoId}
+                      <span onClick={() => handleEditClick(contract)}>
+                        {contract.CoinGeckoId ? (
+                          <i className="ri-pencil-fill ms-2 cursor-pointer"></i>
+                        ) : (
+                          <i className="ri-add-fill ms-2 cursor-pointer"></i>
+                        )}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="d-flex align-items-center  px-0 ms-0 me-0">
+                      <input
+                        type="text"
+                        className="form-control text-start"
+                        style={{ height: '25px', width: '100px' }}
+                        value={coinGeckoIdValue}
+                        onChange={(e) => setCoinGeckoIdValue(e.target.value)}
+                      />
+                      <i
+                        className="ri-check-fill ms-2 cursor-pointer"
+                        onClick={() => handleChangeCoinGeckoId(contract)}
+                      ></i>
+                      {contract.CoinGeckoId ? (
+                        <i
+                          className="ri-delete-bin-6-line ms-2 cursor-pointer"
+                          onClick={() => {
+                            setCoinGeckoIdValue('');
+                            setActiveEditId(null);
+                            handleChangeCoinGeckoId(contract, '');
+                          }}
+                        ></i>
+                      ) : (
+                        <i
+                          className="ri-close-fill ms-2 cursor-pointer"
+                          onClick={() => handleCancel()}
+                        ></i>
+                      )}
+                    </div>
+                  )}
+                </td>
+
                 <td className="align-middle">
                   <ButtonGroup onClick={(e) => e.stopPropagation()}>
-                    <UncontrolledDropdown disabled={loadingUpdateTrustedState}>
+                    <UncontrolledDropdown
+                      className="d-flex align-items-center"
+                      disabled={loadingUpdateTrustedState}
+                    >
                       <DropdownToggle
                         tag="a"
-                        className="nav-link cursor-pointer"
+                        className="nav-link cursor-pointer "
                         caret
                       >
                         {updatingContractId === contract.Id ? (

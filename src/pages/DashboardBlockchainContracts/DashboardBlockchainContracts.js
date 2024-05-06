@@ -171,6 +171,8 @@ const DashboardBlockchainContracts = () => {
 
         <BlockChainContractTable
           loading={loading}
+          errorMessageEdit={errorMessageEdit}
+          setLoading={setLoading}
           contracts={contracts}
           setContracts={setContracts}
           setCurrentPage={setCurrentPage}
