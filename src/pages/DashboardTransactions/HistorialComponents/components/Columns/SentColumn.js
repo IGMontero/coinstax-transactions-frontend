@@ -95,7 +95,7 @@ const SentColumn = ({ transaction }) => {
               ''
             ) : (
               <>
-                <div className="image-container  me-2">
+                <div className="image-container">
                   {showPlaceholder ? (
                     <div
                       className={
