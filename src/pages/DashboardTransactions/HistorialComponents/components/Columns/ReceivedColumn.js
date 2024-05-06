@@ -130,7 +130,7 @@ const ReceivedColumn = ({ transaction, negativeLedgers }) => {
                 {!negativeLedgers ? null : (
                   <i className="ri-arrow-right-line text-dark text-end fs-4 me-2"></i>
                 )}
-                <div className="image-container me-2">
+                <div className="image-container">
                   {showPlaceholder ? (
                     <div
                       className={
