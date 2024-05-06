@@ -43,6 +43,8 @@ const HistorialTable = ({ data, setData }) => {
   let isDashboardPage;
   const pathSegments = location.pathname.split('/').filter(Boolean);
 
+  const isUserInTransactionsHistoryPage = pathSegments.includes('history');
+
   if (pathSegments.length === 2) {
     isDashboardPage = true;
   } else if (pathSegments.length > 2) {
@@ -93,6 +95,18 @@ const HistorialTable = ({ data, setData }) => {
       clearTimeout(timeout);
     };
   }, [isProcessing]);
+
+  useEffect(() => {
+    console.log("refresh intervals changed!", refreshPreviewIntervals)
+
+    // Check if any interval is running.
+    const hasAnyIntervalRunning = Object.values(refreshPreviewIntervals).some(
+      (interval) => interval,
+    );
+
+    // Set has preview state
+    setHasPreview(hasAnyIntervalRunning);
+  }, [refreshPreviewIntervals]);
 
   // useEffect(() => {
   //   const timeout = setTimeout(() => {
@@ -198,8 +212,25 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   const startRefreshPreviewPageInterval = (pageIndex) => {
+
+    if (!isUserInTransactionsHistoryPage) {
+      return;
+    }
+
     const interval = setInterval(async () => {
       console.log("Running interval for page", pageIndex)
+
+      // Check if user is in this page still
+
+      const isUserInTransactionsHistoryPage = location.pathname.includes('history');
+
+      if (!isUserInTransactionsHistoryPage) {
+        clearInterval(interval);
+        console.log('Clearing interval for page', pageIndex);
+        return;
+      }
+
+
       await updateTransactionsPreview({
         address,
         debouncedSearchTerm,
@@ -227,6 +258,19 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   useEffect(() => {
+
+    const hasRunningIntervals = Object.values(refreshPreviewIntervals).some((interval) => interval);
+
+    if (!hasRunningIntervals) {
+      console.log('No running intervals');
+
+      // Clear all intervals
+      Object.values(refreshPreviewIntervals).forEach((interval) => {
+        clearInterval(interval);
+      });
+    }
+
+
     return () => {
       Object.values(refreshPreviewIntervals).forEach((interval) => {
         clearInterval(interval);
@@ -237,6 +281,7 @@ const HistorialTable = ({ data, setData }) => {
     selectedFilters,
     includeSpam,
     selectedAssets,
+    refreshPreviewIntervals
   ]);
 
 
@@ -836,26 +881,30 @@ const HistorialTable = ({ data, setData }) => {
         </div>
       ) : null}
       {/* {renderSearchBar()} */}
-      {!isInitialLoad && !data && !errorData && !isDashboardPage && (
-        <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
-          <Col>
-            <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
-          </Col>
-          {hasPreview && (
+      {!isInitialLoad
+        // && !data 
+        // && !errorData 
+        && !isDashboardPage
+        && (
+          <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
             <Col>
-              <div className="d-flex align-items-center justify-content-end">
-                <Spinner
-                  className="me-2"
-                  style={{ width: '1rem', height: '1rem' }}
-                />
-                <h6 className="mb-0 fw-semibold">
-                  Loading transactions information ...
-                </h6>
-              </div>
+              <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
             </Col>
-          )}
-        </Col>
-      )}
+            {hasPreview && (
+              <Col>
+                <div className="d-flex align-items-center justify-content-end">
+                  <Spinner
+                    className="me-2"
+                    style={{ width: '1rem', height: '1rem' }}
+                  />
+                  <h6 className="mb-0 fw-semibold">
+                    Loading transactions information ...
+                  </h6>
+                </div>
+              </Col>
+            )}
+          </Col>
+        )}
       {loading && isInitialLoad ? (
         <div
           className="d-flex justify-content-center align-items-center"
