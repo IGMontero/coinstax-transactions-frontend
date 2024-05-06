@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Col,
   PopoverBody,
   UncontrolledPopover,
   UncontrolledTooltip,
@@ -94,7 +95,7 @@ const SentColumn = ({ transaction }) => {
               ''
             ) : (
               <>
-                <div className="image-container me-1">
+                <div className="image-container  me-2">
                   {showPlaceholder ? (
                     <div
                       className={
@@ -108,7 +109,7 @@ const SentColumn = ({ transaction }) => {
                       src={imageSrc}
                       alt={negativeLedgers?.currency || negativeLedgers?.name}
                       className="rounded"
-                      width={35}
+                      width="auto"
                       height={35}
                       onError={handleImageError}
                     />
@@ -128,8 +129,8 @@ const SentColumn = ({ transaction }) => {
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {!isNft &&
-                      negativeLedgers?.value !== 0 &&
-                      !hasAssetsCount ? (
+                    negativeLedgers?.value !== 0 &&
+                    !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
                         id={`amount-left-${transaction?.txHash}`}
@@ -164,29 +165,10 @@ const SentColumn = ({ transaction }) => {
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                      negativeLedgers?.value !== 0 &&
-                      document.getElementById(`amount-left-${transaction.txHash}`) ? (
-                      // <UncontrolledPopover
-                      //   onClick={(e) => e.stopPropagation()}
-                      //   placement="bottom"
-                      //   target={`amount-left-${ledger?.txHash}`}
-                      //   trigger="hover"
-                      // >
-                      //   <PopoverBody
-                      //     style={{
-                      //       width: 'auto',
-                      //     }}
-                      //     className="text-center w-auto p-2 "
-                      //   >
-                      //     <span
-                      //       style={{
-                      //         fontSize: '0.70rem',
-                      //       }}
-                      //     >
-                      //       {isCopied ? 'Copied' : negativeLedgers?.value}
-                      //     </span>
-                      //   </PopoverBody>
-                      // </UncontrolledPopover>
+                    negativeLedgers?.value !== 0 &&
+                    document.getElementById(
+                      `amount-left-${transaction.txHash}`,
+                    ) ? (
                       <UncontrolledTooltip
                         placement="bottom"
                         target={`amount-left-${transaction.txHash}`}
@@ -231,9 +213,9 @@ const SentColumn = ({ transaction }) => {
                 {negativeLedgers?.nativeAmount === 0
                   ? ''
                   : parseValuesToLocale(
-                    negativeLedgers?.nativeAmount,
-                    CurrencyUSD,
-                  )}
+                      negativeLedgers?.nativeAmount,
+                      CurrencyUSD,
+                    )}
               </p>
             </div>
           </>
