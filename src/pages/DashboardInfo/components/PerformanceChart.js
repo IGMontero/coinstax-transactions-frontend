@@ -4,7 +4,6 @@ import { useDispatch } from 'react-redux';
 import { Card, CardBody, Col, Spinner } from 'reactstrap';
 import {
   CurrencyUSD,
-  calculateTickAmount,
   getMaxMinValues,
   formatDateToLocale,
   parseValuesToLocale,
@@ -45,8 +44,11 @@ const PerformanceChart = ({
     scales: {
       yAxes: [
         {
+          position: 'right',
           gridLines: { display: false },
-          ticks: { display: false },
+          ticks: {
+            display: true,
+          },
         },
       ],
       xAxes: [
@@ -117,16 +119,39 @@ const PerformanceChart = ({
           if (response.unsupported) {
             setIsUnsupported(true);
           } else {
-            const newLabels = response.total.map((item) => {
-              const date = new Date(item.calendarDate);
-              date.setDate(date.getDate());
-              return date;
-            });
+            const newLabels = response.total.map(
+              (item) => new Date(item.calendarDate),
+            );
             const newData = response.total.map((item) => item.close.quote);
+            const { minValue, maxValue } = getMaxMinValues(newData);
+
             setChartData({
               labels: newLabels,
               datasets: [{ ...chartData.datasets[0], data: newData }],
             });
+
+            setChartOptions((prevOptions) => ({
+              ...prevOptions,
+              scales: {
+                ...prevOptions.scales,
+                yAxes: [
+                  {
+                    ...prevOptions.scales.yAxes[0],
+                    ticks: {
+                      ...prevOptions.scales.yAxes[0].ticks,
+                      min: minValue,
+                      max: maxValue,
+                      callback: function (value) {
+                        if (value === minValue || value === maxValue) {
+                          return parseValuesToLocale(value, CurrencyUSD);
+                        }
+                        return null;
+                      },
+                    },
+                  },
+                ],
+              },
+            }));
           }
           setLoading(false);
         })
