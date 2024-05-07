@@ -386,3 +386,12 @@ export const getMaxMinValues = (series) => {
 
   return { minValue, maxValue };
 };
+
+export const calculatePercentageChange = (currentIndex, data) => {
+  if (currentIndex > 0) {
+    const currentValue = data[currentIndex];
+    const previousValue = data[currentIndex - 1];
+    return ((currentValue - previousValue) / previousValue) * 100;
+  }
+  return 0;
+};
