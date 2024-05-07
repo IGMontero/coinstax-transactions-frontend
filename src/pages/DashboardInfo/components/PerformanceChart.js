@@ -3,7 +3,12 @@ import ReactApexChart from 'react-apexcharts';
 import { fetchPerformance } from '../../../slices/transactions/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { Card, CardBody, Col, Spinner } from 'reactstrap';
-import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
+import {
+  CurrencyUSD,
+  calculateTickAmount,
+  getMaxMinValues,
+  parseValuesToLocale,
+} from '../../../utils/utils';
 import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 
 const PerformanceChart = ({
@@ -178,10 +183,74 @@ const PerformanceChart = ({
     }
   }, [series, type, title, subtitle]);
 
+  useEffect(() => {
+    const newOptions = {
+      ...options,
+      xaxis: {
+        ...options.xaxis,
+        labels: {
+          ...options.xaxis.labels,
+          formatter: function (value, timestamp, index) {
+            const date = new Date(timestamp);
+            if (activeFilter === 'one_week') {
+              return date.toLocaleDateString('en-US', {
+                weekday: 'short',
+                day: 'numeric',
+              });
+            } else if (
+              activeFilter === 'one_month' ||
+              activeFilter === 'six_months'
+            ) {
+              return date.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+              });
+            } else if (activeFilter === 'one_year' || activeFilter === 'all') {
+              return date.toLocaleDateString('en-US', {
+                month: 'short',
+                year: 'numeric',
+              });
+            }
+          },
+          show: true,
+        },
+        tickAmount: calculateTickAmount(activeFilter),
+      },
+    };
+    setOptions(newOptions);
+  }, [activeFilter]);
+
   const handleFilterForDays = (days, filterId) => {
     fetchAndSetData(days);
     setActiveFilter(filterId);
   };
+
+  useEffect(() => {
+    if (series.length > 0 && series[0].data.length > 0) {
+      const { minValue, maxValue } = getMaxMinValues(series);
+
+      setOptions((prevOptions) => ({
+        ...prevOptions,
+        yaxis: {
+          ...prevOptions.yaxis,
+          min: minValue,
+          max: maxValue,
+          forceNiceScale: false,
+          labels: {
+            ...prevOptions.yaxis.labels,
+            show: true,
+
+            formatter: (value) => {
+              if (value === minValue || value === maxValue) {
+                return parseValuesToLocale(value, CurrencyUSD);
+              }
+              return '';
+            },
+          },
+        },
+      }));
+    }
+  }, [series]);
 
   const renderFiltersButtons = () => {
     return (

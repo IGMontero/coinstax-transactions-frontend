@@ -37,7 +37,6 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
 
   const [renameModal, setRenameModal] = useState(false);
 
-
   useEffect(() => {
     // If options change, save to local storage
     localStorage.setItem('userAddresses', JSON.stringify(options));
@@ -50,7 +49,10 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
     // Set iframe on load function
     iframe.onload = () => {
       // Use postmessage to send the options to the iframe
-      iframe.contentWindow.postMessage(JSON.stringify(options), process.env.REACT_APP_ROOT_URL);
+      iframe.contentWindow.postMessage(
+        JSON.stringify(options),
+        process.env.REACT_APP_ROOT_URL,
+      );
 
       // Remove the iframe
       document.body.removeChild(iframe);
@@ -58,7 +60,6 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
 
     // Append iframe to the body
     document.body.appendChild(iframe);
-
   }, [options]);
 
   // #region USE EFFECTS
@@ -175,7 +176,6 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
         toggle={(e) => handleSubDropdown(e, index)}
         direction="bottom-end"
         className="ms-auto"
-        style={{ zIndex: 9999 }}
       >
         <DropdownToggle
           tag="span"
@@ -262,8 +262,9 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
               option ? (
                 <>
                   <DropdownItem
-                    className={`d-flex justify-content-between align-items-center pe-2 ${option.value === address ? 'active' : ''
-                      }`}
+                    className={`d-flex justify-content-between align-items-center pe-2 ${
+                      option.value === address ? 'active' : ''
+                    }`}
                     key={index}
                     onClick={() => handleSelect(option)}
                   >
