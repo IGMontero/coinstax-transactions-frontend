@@ -1,134 +1,114 @@
 import React, { useEffect, useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
 import { fetchPerformance } from '../../../slices/transactions/thunk';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Card, CardBody, Col, Spinner } from 'reactstrap';
 import {
   CurrencyUSD,
   calculateTickAmount,
   getMaxMinValues,
+  formatDateToLocale,
   parseValuesToLocale,
+  calculatePercentageChange,
 } from '../../../utils/utils';
-import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
+import { Line } from 'react-chartjs-2';
 
 const PerformanceChart = ({
   address,
-  series,
-  setSeries,
-  title,
-  subtitle,
   setIsUnsupported,
   loading,
   setLoading,
-  type,
 }) => {
   const dispatch = useDispatch();
   const [activeFilter, setActiveFilter] = useState('one_week');
 
   const [showMessage, setShowMessage] = useState(false);
 
-  const [options, setOptions] = useState({
-    chart: {
-      type: 'line',
-      height: 350,
-      maxWidth: '100%',
-      minWidth: '100%',
-      toolbar: {
-        show: false,
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Performance',
+        data: [],
+        fill: false,
+        borderColor: '#0759BC',
+        tension: 0.1,
       },
-      zoom: {
-        enabled: false,
+    ],
+  });
+
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('0');
+  const [activeDate, setActiveDate] = useState('');
+
+  const [chartOptions, setChartOptions] = useState({
+    maintainAspectRatio: false,
+    scales: {
+      yAxes: [
+        {
+          gridLines: { display: false },
+          ticks: { display: false },
+        },
+      ],
+      xAxes: [
+        {
+          type: 'time',
+          time: {
+            parser: 'YYYY-MM-DD',
+            tooltipFormat: 'll',
+            unit: 'day',
+            displayFormats: {
+              day: 'MMM DD',
+            },
+          },
+          ticks: {
+            source: 'data',
+            autoSkip: true,
+          },
+          gridLines: { display: false },
+        },
+      ],
+    },
+    legend: { display: false },
+    tooltips: {
+      enabled: true,
+      mode: 'index',
+      intersect: false,
+      displayColors: false,
+      callbacks: {
+        title: function (tooltipItems, data) {
+          if (tooltipItems.length > 0) {
+            const index = tooltipItems[0].index;
+            const salesValue = data.datasets[0].data[index];
+            setTitle(parseValuesToLocale(salesValue, CurrencyUSD));
+            const percentageChange = calculatePercentageChange(
+              index,
+              data.datasets[0].data,
+            );
+            setSubtitle(percentageChange.toFixed(2));
+            const date = new Date(data.labels[index]);
+            setActiveDate(formatDateToLocale(date));
+          }
+          return '';
+        },
+        label: function (tooltipItem) {
+          return `${parseValuesToLocale(tooltipItem.yLabel, CurrencyUSD)}`;
+        },
       },
-      selection: {
-        enabled: false,
-      },
+    },
+    hover: {
+      mode: 'index',
+      intersect: false,
     },
     title: {
-      text: '',
-      align: 'left',
-      margin: 10,
-      offsetX: 0,
-      offsetY: 0,
-      floating: false,
-      style: {
-        fontSize: '36px',
-        fontWeight: 'semibold',
-      },
+      display: false,
     },
     subtitle: {
-      text: '',
-      align: 'left',
-      margin: 10,
-      offsetX: 0,
-      offsetY: 45,
-      floating: false,
-      style: {
-        fontSize: '15px',
-        fontWeight: 'normal',
-        color: ``,
-      },
-    },
-    xaxis: {
-      type: 'datetime',
-      labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      tooltip: {
-        enabled: false,
-      },
-    },
-    yaxis: {
-      tooltip: {
-        enabled: false,
-      },
-      labels: {
-        formatter: function (value) {
-          return value.toLocaleString();
-        },
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    tooltip: {
-      x: {
-        show: false,
-      },
-      y: {
-        formatter: function (value) {
-          return '' + value;
-        },
-      },
-      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-        const value = parseValuesToLocale(
-          series[seriesIndex][dataPointIndex],
-          CurrencyUSD,
-        );
-        const date = new Date(w.globals.seriesX[seriesIndex][dataPointIndex]);
-        const prettyDate = date.toLocaleDateString('en-US', {
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric',
-        });
-        return `<div class="p-2 fw-semibold text-dark"> ${value}
-          <div class="apexcharts-tooltip-text fs-6 text-muted ">${prettyDate} </div></div>`;
-      },
+      display: true,
     },
   });
 
   const fetchAndSetData = (days) => {
     setLoading(true);
-
     if (address) {
       const params = days ? { address, days } : { address };
       dispatch(fetchPerformance(params))
@@ -137,12 +117,16 @@ const PerformanceChart = ({
           if (response.unsupported) {
             setIsUnsupported(true);
           } else {
-            const lineData = response.total.map((item) => ({
-              date: item.calendarDate,
-              x: new Date(item.calendarDate).getTime(),
-              y: item.close.quote,
-            }));
-            setSeries([{ data: lineData }]);
+            const newLabels = response.total.map((item) => {
+              const date = new Date(item.calendarDate);
+              date.setDate(date.getDate());
+              return date;
+            });
+            const newData = response.total.map((item) => item.close.quote);
+            setChartData({
+              labels: newLabels,
+              datasets: [{ ...chartData.datasets[0], data: newData }],
+            });
           }
           setLoading(false);
         })
@@ -158,104 +142,30 @@ const PerformanceChart = ({
   }, [address, dispatch]);
 
   useEffect(() => {
-    if (series.length > 0 && series[0].data.length > 0) {
-      setOptions((prevOptions) => {
-        return {
-          ...prevOptions,
-          title: {
-            ...prevOptions.title,
-            text: title,
-            style: {
-              ...prevOptions.title.style,
-              color: '#878a99',
-            },
-          },
-          subtitle: {
-            ...prevOptions.subtitle,
-            text: subtitle,
-            style: {
-              ...prevOptions.subtitle.style,
-              color: subtitle[0] == '+' ? '#3ac47d' : '#f1556c',
-            },
-          },
-        };
-      });
+    if (chartData.labels.length > 0) {
+      const lastValue =
+        chartData.datasets[0].data[chartData.datasets[0].data.length - 1];
+      setTitle(parseValuesToLocale(lastValue, CurrencyUSD));
+      const percentageChange = calculatePercentageChange(
+        chartData.datasets[0].data.length - 1,
+        chartData.datasets[0].data,
+      );
+      setSubtitle(percentageChange.toFixed(2));
+      const date = new Date(chartData.labels[chartData.labels.length - 1]);
+      setActiveDate(formatDateToLocale(date));
     }
-  }, [series, type, title, subtitle]);
-
-  useEffect(() => {
-    const newOptions = {
-      ...options,
-      xaxis: {
-        ...options.xaxis,
-        labels: {
-          ...options.xaxis.labels,
-          formatter: function (value, timestamp, index) {
-            const date = new Date(timestamp);
-            if (activeFilter === 'one_week') {
-              return date.toLocaleDateString('en-US', {
-                weekday: 'short',
-                day: 'numeric',
-              });
-            } else if (
-              activeFilter === 'one_month' ||
-              activeFilter === 'six_months'
-            ) {
-              return date.toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              });
-            } else if (activeFilter === 'one_year' || activeFilter === 'all') {
-              return date.toLocaleDateString('en-US', {
-                month: 'short',
-                year: 'numeric',
-              });
-            }
-          },
-          show: true,
-        },
-        tickAmount: calculateTickAmount(activeFilter),
-      },
-    };
-    setOptions(newOptions);
-  }, [activeFilter]);
+  }, [chartData]);
 
   const handleFilterForDays = (days, filterId) => {
     fetchAndSetData(days);
     setActiveFilter(filterId);
   };
 
-  useEffect(() => {
-    if (series.length > 0 && series[0].data.length > 0) {
-      const { minValue, maxValue } = getMaxMinValues(series);
-
-      setOptions((prevOptions) => ({
-        ...prevOptions,
-        yaxis: {
-          ...prevOptions.yaxis,
-          min: minValue,
-          max: maxValue,
-          forceNiceScale: false,
-          labels: {
-            ...prevOptions.yaxis.labels,
-            show: true,
-
-            formatter: (value) => {
-              if (value === minValue || value === maxValue) {
-                return parseValuesToLocale(value, CurrencyUSD);
-              }
-              return '';
-            },
-          },
-        },
-      }));
-    }
-  }, [series]);
-
   const renderFiltersButtons = () => {
     return (
       <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1 p-2">
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(7, 'one_week')}
           type="button"
           className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
@@ -266,6 +176,7 @@ const PerformanceChart = ({
           7D
         </button>
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(30, 'one_month')}
           type="button"
           className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
@@ -276,6 +187,7 @@ const PerformanceChart = ({
           1M
         </button>
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(180, 'six_months')}
           type="button"
           className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
@@ -286,6 +198,7 @@ const PerformanceChart = ({
           6M
         </button>
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(365, 'one_year')}
           type="button"
           className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
@@ -296,6 +209,7 @@ const PerformanceChart = ({
           1Y
         </button>
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(10000, 'all')}
           type="button"
           className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
@@ -309,20 +223,7 @@ const PerformanceChart = ({
     );
   };
 
-  useEffect(() => {
-    if (!series.length) {
-      setShowMessage(true);
-      // setIsUnsupported(true);
-    }
-  }, [series]);
-
-  if (
-    !loading &&
-    series.length === 0 &&
-    showMessage &&
-    !showMessage &&
-    !loading
-  ) {
+  if (!loading && chartData.length === 0 && showMessage && !showMessage) {
     <Col
       className="d-flex text-center col-12 justify-content-center align-items-center"
       style={{ display: 'flex', height: '50vh', width: '100%' }}
@@ -332,36 +233,31 @@ const PerformanceChart = ({
   }
 
   return (
-    <div
-      style={{
-        marginTop: loading ? '-1rem' : '-2rem',
-      }}
-    >
-      <AddressWithDropdown />
-      <h1 className={`ms-1 mt-4 mb-4 `}>Performance Chart</h1>
-      <div className="position-relative">
-        {loading ? (
-          <Card className="mt-3">
-            <CardBody className="p-5 pb-4">
-              <div style={{ backgroundColor: '#212529', height: '353px' }}>
-                <div className="d-flex justify-content-center align-items-center h-100">
-                  <Spinner color="white" />
-                </div>
-              </div>
-            </CardBody>
-          </Card>
-        ) : (
-          <div className="border border-2 rounded p-2" style={{ zIndex: 1 }}>
-            <ReactApexChart
-              options={options}
-              series={series}
-              type="line"
-              height={350}
-            />
-            {renderFiltersButtons()}
+    <div className="border border-2 rounded p-2 mt-4" style={{ zIndex: 1 }}>
+      {loading ? (
+        <Card className="mb-0 mt-3" style={{ height: '390px' }}>
+          <CardBody className="d-flex justify-content-center align-items-center">
+            <Spinner />
+          </CardBody>
+        </Card>
+      ) : (
+        <>
+          <div className="d-flex align-items-end">
+            <h1 className="d-flex align-items-center">{title}</h1>
+            <h4
+              style={{ marginBottom: '.7rem' }}
+              className={`ms-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+            >
+              {subtitle}%
+            </h4>
           </div>
-        )}
-      </div>
+          <span className="ms-2 text-muted mb-3">{activeDate}</span>
+          <div>
+            <Line height={320} data={chartData} options={chartOptions} />
+          </div>
+        </>
+      )}
+      <div className="toolbar mb-3">{renderFiltersButtons()}</div>
     </div>
   );
 };
