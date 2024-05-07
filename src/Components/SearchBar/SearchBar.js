@@ -98,6 +98,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
               label: addr.name,
               value: addr.address,
               logo: addr.logo || null,
+              coingeckoId: addr.coingeckoId || null,
             })),
           );
         } else {
@@ -161,6 +162,9 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         value: searchInput,
         logo:
           options.find((option) => option.value === searchInput)?.logo || null,
+        coingeckoId:
+          options.find((option) => option.value === searchInput)?.coingeckoId ||
+          null,
       };
 
       if (
@@ -194,14 +198,22 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         console.error('Empty address selected, not navigating or saving.');
         return;
       }
-      navigate(`/address/${selectedOption.value}`);
+      if (selectedOption.coingeckoId) {
+        navigate(`/tokens/${selectedOption.coingeckoId}`);
+      } else {
+        navigate(`/address/${selectedOption.value}`);
+      }
       setSearchInput('');
     }
   };
 
   const handleSearchIconClick = () => {
     if (searchInput) {
-      navigate(`/address/${searchInput}`);
+      if (selectedOption.coingeckoId) {
+        navigate(`/tokens/${selectedOption.coingeckoId}`);
+      } else {
+        navigate(`/address/${searchInput}`);
+      }
     }
   };
 
