@@ -233,7 +233,7 @@ export const updateTransactionsPreview = async ({
   setData,
   dispatch,
   pagesChecked,
-  onEnd
+  onEnd,
 }) => {
   // Pges checked
   try {
@@ -355,3 +355,34 @@ export const removeOptionsFromLocalStorage = (setOptions, value) => {
   );
 };
 
+// Functions helpers for chart
+export const calculateTickAmount = (filter) => {
+  switch (filter) {
+    case 'one_week':
+      return 7;
+    case 'one_month':
+      return 7;
+    case 'six_months':
+      return 6;
+    case 'one_year':
+      return 12;
+    case 'all':
+      return 24;
+    default:
+      return 10;
+  }
+};
+
+export const getMaxMinValues = (series) => {
+  let minValue = Infinity;
+  let maxValue = -Infinity;
+
+  series.forEach((serie) => {
+    serie.data.forEach((dataPoint) => {
+      if (dataPoint.y < minValue) minValue = dataPoint.y;
+      if (dataPoint.y > maxValue) maxValue = dataPoint.y;
+    });
+  });
+
+  return { minValue, maxValue };
+};
