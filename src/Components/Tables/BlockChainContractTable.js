@@ -45,9 +45,28 @@ const BlockChainContractTable = ({
   const [updatingContractId, setUpdatingContractId] = useState(null);
   const [isCopied, setIsCopied] = useState(false);
 
-  const [isEditingCoinGeckoId, setIsEditingCoinGeckoId] = useState(false);
   const [coinGeckoIdValue, setCoinGeckoIdValue] = useState('');
   const [activeEditId, setActiveEditId] = useState(null);
+
+  const [unlockedContractId, setUnlockedContractId] = useState(null);
+
+  const [unlockedcoinGeckoId, setUnlockedcoinGeckoId] = useState(null);
+
+  const toggleInputBlocked = (contractId) => {
+    if (unlockedcoinGeckoId === contractId) {
+      setUnlockedcoinGeckoId(null);
+    } else {
+      setUnlockedcoinGeckoId(contractId);
+    }
+  };
+
+  const toggleCheckBoxBlocked = (contractId) => {
+    if (unlockedContractId === contractId) {
+      setUnlockedContractId(null);
+    } else {
+      setUnlockedContractId(contractId);
+    }
+  };
 
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
@@ -61,8 +80,6 @@ const BlockChainContractTable = ({
   const handleEditClick = (contract) => {
     setActiveEditId(contract.Id);
     setCoinGeckoIdValue(contract.CoinGeckoId || '');
-
-    console.log('contract', contract);
   };
 
   const handleCancel = () => {
@@ -343,10 +360,6 @@ const BlockChainContractTable = ({
       : null;
   };
 
-  const handleInputChange = (setState) => (e) => {
-    setState(e.target.value);
-  };
-
   const renderDropdownTrustedState = (contract) => {
     const portalRoot = document.getElementById('portal-root');
     return portalRoot
@@ -404,6 +417,101 @@ const BlockChainContractTable = ({
           portalRoot,
         )
       : null;
+  };
+
+  const renderCoinGeckoIdColumn = (contract) => {
+    return (
+      <>
+        {activeEditId !== contract.Id ? (
+          <div className="d-flex align-items-center">
+            <span
+              className={`text-${
+                unlockedcoinGeckoId === contract.Id ? 'dark ' : 'muted '
+              }
+       `}
+              style={{
+                cursor:
+                  unlockedcoinGeckoId === contract.Id
+                    ? 'pointer'
+                    : 'not-allowed',
+              }}
+            >
+              {contract.CoinGeckoId}
+            </span>
+            <span
+              className={`text-${
+                unlockedcoinGeckoId === contract.Id ? 'dark ' : 'muted '
+              }`}
+              style={{
+                cursor:
+                  unlockedcoinGeckoId === contract.Id
+                    ? 'pointer'
+                    : 'not-allowed',
+              }}
+              onClick={
+                unlockedcoinGeckoId === contract.Id
+                  ? () => handleEditClick(contract)
+                  : () => {}
+              }
+            >
+              {contract.CoinGeckoId ? (
+                <i
+                  style={{
+                    cursor:
+                      unlockedcoinGeckoId === contract.Id
+                        ? 'pointer'
+                        : 'not-allowed',
+                  }}
+                  className="ri-pencil-fill ms-2 "
+                ></i>
+              ) : (
+                <i
+                  style={{
+                    cursor:
+                      unlockedcoinGeckoId === contract.Id
+                        ? 'pointer'
+                        : 'not-allowed',
+                  }}
+                  className="ri-add-fill ms-2 cursor-pointer"
+                ></i>
+              )}
+            </span>
+            <span>
+              {unlockedcoinGeckoId === contract.Id ? (
+                <i
+                  onClick={() => toggleInputBlocked(contract.Id)}
+                  className="ri-lock-unlock-line ms-2 mb-1 cursor-pointer"
+                ></i>
+              ) : (
+                <i
+                  onClick={() => toggleInputBlocked(contract.Id)}
+                  className="ri-lock-2-fill ms-2 mb-1 cursor-pointer"
+                ></i>
+              )}
+            </span>
+          </div>
+        ) : (
+          <div className="d-flex align-items-center  px-0 ms-0 me-0">
+            <input
+              type="text"
+              className="form-control text-start"
+              style={{ height: '25px', width: '80px' }}
+              value={coinGeckoIdValue}
+              onChange={(e) => setCoinGeckoIdValue(e.target.value)}
+            />
+            <i
+              className="ri-check-fill ms-2 cursor-pointer"
+              onClick={() => handleChangeCoinGeckoId(contract)}
+            ></i>
+
+            <i
+              className="ri-close-fill ms-2 px-0 cursor-pointer"
+              onClick={() => handleCancel()}
+            ></i>
+          </div>
+        )}
+      </>
+    );
   };
 
   return (
@@ -505,56 +613,30 @@ const BlockChainContractTable = ({
                   />
                 </td>
                 <td className="align-middle">{contract.Symbol}</td>
-                <td className="align-middle">
-                  <input
-                    type="checkbox"
-                    className="form-check-input cursor-pointer"
-                    onChange={(e) => handleCheckIsERC20(e, contract)}
-                    checked={contract.IsERC20}
-                  />
+                <td className="align-middle ">
+                  <div className="d-flex align-items-center">
+                    <input
+                      type="checkbox"
+                      disabled={unlockedContractId !== contract.Id}
+                      className={`form-check-input cursor-${unlockedContractId === contract.Id ? 'pointer' : 'not-allowed'}`}
+                      onChange={(e) => handleCheckIsERC20(e, contract)}
+                      checked={contract.IsERC20}
+                    />
+                    {unlockedContractId === contract.Id ? (
+                      <i
+                        onClick={() => toggleCheckBoxBlocked(contract.Id)}
+                        className="ri-lock-unlock-line ms-3 mt-1 mb-0 cursor-pointer"
+                      ></i>
+                    ) : (
+                      <i
+                        onClick={() => toggleCheckBoxBlocked(contract.Id)}
+                        className="ri-lock-2-fill ms-3 mb-0 mt-1 cursor-pointer"
+                      ></i>
+                    )}
+                  </div>
                 </td>
                 <td className="align-middle">
-                  {activeEditId !== contract.Id ? (
-                    <div className="d-flex align-items-center">
-                      {contract.CoinGeckoId}
-                      <span onClick={() => handleEditClick(contract)}>
-                        {contract.CoinGeckoId ? (
-                          <i className="ri-pencil-fill ms-2 cursor-pointer"></i>
-                        ) : (
-                          <i className="ri-add-fill ms-2 cursor-pointer"></i>
-                        )}
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="d-flex align-items-center  px-0 ms-0 me-0">
-                      <input
-                        type="text"
-                        className="form-control text-start"
-                        style={{ height: '25px', width: '100px' }}
-                        value={coinGeckoIdValue}
-                        onChange={(e) => setCoinGeckoIdValue(e.target.value)}
-                      />
-                      <i
-                        className="ri-check-fill ms-2 cursor-pointer"
-                        onClick={() => handleChangeCoinGeckoId(contract)}
-                      ></i>
-                      {contract.CoinGeckoId ? (
-                        <i
-                          className="ri-delete-bin-6-line ms-2 cursor-pointer"
-                          onClick={() => {
-                            setCoinGeckoIdValue('');
-                            setActiveEditId(null);
-                            handleChangeCoinGeckoId(contract, '');
-                          }}
-                        ></i>
-                      ) : (
-                        <i
-                          className="ri-close-fill ms-2 cursor-pointer"
-                          onClick={() => handleCancel()}
-                        ></i>
-                      )}
-                    </div>
-                  )}
+                  {renderCoinGeckoIdColumn(contract)}
                 </td>
 
                 <td className="align-middle">
