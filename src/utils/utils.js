@@ -355,38 +355,24 @@ export const removeOptionsFromLocalStorage = (setOptions, value) => {
   );
 };
 
-// Functions helpers for chart
-export const calculateTickAmount = (filter) => {
-  switch (filter) {
-    case 'one_week':
-      return 7;
-    case 'one_month':
-      return 7;
-    case 'six_months':
-      return 6;
-    case 'one_year':
-      return 12;
-    case 'all':
-      return 24;
-    default:
-      return 10;
-  }
-};
-
-export const getMaxMinValues = (series) => {
+// This function takes an array of dataPoints as input
+export const getMaxMinValues = (dataPoints) => {
+  // Initialize minValue to positive infinity and maxValue to negative infinity
   let minValue = Infinity;
   let maxValue = -Infinity;
 
-  series.forEach((serie) => {
-    serie.data.forEach((dataPoint) => {
-      if (dataPoint.y < minValue) minValue = dataPoint.y;
-      if (dataPoint.y > maxValue) maxValue = dataPoint.y;
-    });
+  // Iterate over each dataPoint in the array
+  dataPoints.forEach((point) => {
+    // If the current dataPoint is smaller than the current minValue, update minValue
+    if (point < minValue) minValue = point;
+    // If the current dataPoint is larger than the current maxValue, update maxValue
+    if (point > maxValue) maxValue = point;
   });
-
+  // Return an object containing the minimum and maximum values
   return { minValue, maxValue };
 };
 
+// This function calculates the percentage change between the current value and the previous value in a given data array.
 export const calculatePercentageChange = (currentIndex, data) => {
   if (currentIndex > 0) {
     const currentValue = data[currentIndex];
