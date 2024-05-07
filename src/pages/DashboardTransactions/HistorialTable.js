@@ -97,7 +97,7 @@ const HistorialTable = ({ data, setData }) => {
   }, [isProcessing]);
 
   useEffect(() => {
-    console.log("refresh intervals changed!", refreshPreviewIntervals)
+    console.log('refresh intervals changed!', refreshPreviewIntervals);
 
     // Check if any interval is running.
     const hasAnyIntervalRunning = Object.values(refreshPreviewIntervals).some(
@@ -200,7 +200,6 @@ const HistorialTable = ({ data, setData }) => {
       }
 
       // TODO: IF HAS PREVIEW, TRIGGER FETCHING UNTIL ALL TRANSACTIONS ARE PARSED
-
     } catch (error) {
       setErrorData(error);
       console.log(error);
@@ -212,24 +211,23 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   const startRefreshPreviewPageInterval = (pageIndex) => {
-
     if (!isUserInTransactionsHistoryPage) {
       return;
     }
 
     const interval = setInterval(async () => {
-      console.log("Running interval for page", pageIndex)
+      console.log('Running interval for page', pageIndex);
 
       // Check if user is in this page still
 
-      const isUserInTransactionsHistoryPage = location.pathname.includes('history');
+      const isUserInTransactionsHistoryPage =
+        location.pathname.includes('history');
 
       if (!isUserInTransactionsHistoryPage) {
         clearInterval(interval);
         console.log('Clearing interval for page', pageIndex);
         return;
       }
-
 
       await updateTransactionsPreview({
         address,
@@ -245,7 +243,7 @@ const HistorialTable = ({ data, setData }) => {
         onEnd: () => {
           clearInterval(interval);
           console.log('Clearing interval for page', pageIndex);
-        }
+        },
       });
     }, 5000);
 
@@ -258,8 +256,9 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   useEffect(() => {
-
-    const hasRunningIntervals = Object.values(refreshPreviewIntervals).some((interval) => interval);
+    const hasRunningIntervals = Object.values(refreshPreviewIntervals).some(
+      (interval) => interval,
+    );
 
     if (!hasRunningIntervals) {
       console.log('No running intervals');
@@ -270,23 +269,18 @@ const HistorialTable = ({ data, setData }) => {
       });
     }
 
-
     return () => {
       Object.values(refreshPreviewIntervals).forEach((interval) => {
         clearInterval(interval);
       });
-    }
+    };
   }, [
     // If any filter changes, clear all intervals
     selectedFilters,
     includeSpam,
     selectedAssets,
-    refreshPreviewIntervals
+    refreshPreviewIntervals,
   ]);
-
-
-
-
 
   // useEffect(() => {
   //   let interval;
@@ -403,7 +397,6 @@ const HistorialTable = ({ data, setData }) => {
         console.log('Starting interval for page', nextPage);
         startRefreshPreviewPageInterval(nextPage);
       }
-
     } catch (error) {
       console.error('Error fetching more transactions:', error);
     } finally {
@@ -635,7 +628,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -653,8 +646,9 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -798,7 +792,7 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   // #region RENDER
-  if (data && data.length === 0 && !loading) {
+  if (data && data.length === 0 && totalTransactions === 0 && !loading) {
     return (
       <>
         {renderTitle()}
@@ -828,7 +822,7 @@ const HistorialTable = ({ data, setData }) => {
     <React.Fragment>
       {renderTitle()}
 
-      {data && data.length && !errorData ? (
+      {totalTransactions && !errorData ? (
         <div className={isDashboardPage ? 'd-none' : ''}>
           {renderFiltersDropdown()}
           <Col className="col-12">
@@ -850,19 +844,21 @@ const HistorialTable = ({ data, setData }) => {
           </Col>
           <Row>
             <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
-              <div className="d-flex justify-content-start">
-                <Input
-                  disabled={isInitialLoad}
-                  id="customCheck1"
-                  type="checkbox"
-                  className="form-check-input me-2 cursor-pointer"
-                  onChange={handleShowSpamTransactions}
-                  checked={includeSpam}
-                />
-                <label className="form-check-label" htmlFor="customCheck1">
-                  Include Spam Transactions
-                </label>
-              </div>
+              {totalTransactions > 0 && (
+                <div className="d-flex justify-content-start">
+                  <Input
+                    disabled={isInitialLoad}
+                    id="customCheck1"
+                    type="checkbox"
+                    className="form-check-input me-2 cursor-pointer"
+                    onChange={handleShowSpamTransactions}
+                    checked={includeSpam}
+                  />
+                  <label className="form-check-label" htmlFor="customCheck1">
+                    Include Spam Transactions
+                  </label>
+                </div>
+              )}
               <div className={`d-flex justify-content-end`}>
                 {currentUser ? (
                   <Button
@@ -877,15 +873,14 @@ const HistorialTable = ({ data, setData }) => {
                 ) : null}
               </div>
             </div>
-          </Row>{' '}
+          </Row>
         </div>
       ) : null}
       {/* {renderSearchBar()} */}
-      {!isInitialLoad
-        // && !data 
-        // && !errorData 
-        && !isDashboardPage
-        && (
+      {!isInitialLoad &&
+        // && !data
+        // && !errorData
+        !isDashboardPage && (
           <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
             <Col>
               <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
