@@ -36,6 +36,7 @@ const BlockChainContractTable = ({
   onRefresh,
   loading,
   setLoading,
+  onOpenModalEdit,
   errorMessageEdit,
 }) => {
   const dispatch = useDispatch();
@@ -66,6 +67,10 @@ const BlockChainContractTable = ({
     } else {
       setUnlockedContractId(contractId);
     }
+  };
+
+  const handleOpenModalEdit = (contract) => {
+    onOpenModalEdit(contract);
   };
 
   const handleCopyValue = (e, text) => {
@@ -421,7 +426,7 @@ const BlockChainContractTable = ({
 
   const renderCoinGeckoIdColumn = (contract) => {
     return (
-      <>
+      <div className="pt-1">
         {activeEditId !== contract.Id ? (
           <div className="d-flex align-items-center">
             <span
@@ -480,12 +485,12 @@ const BlockChainContractTable = ({
               {unlockedcoinGeckoId === contract.Id ? (
                 <i
                   onClick={() => toggleInputBlocked(contract.Id)}
-                  className="ri-lock-unlock-line ms-2 mb-1 cursor-pointer"
+                  className="ri-lock-unlock-line ms-3 mb-0 cursor-pointer"
                 ></i>
               ) : (
                 <i
                   onClick={() => toggleInputBlocked(contract.Id)}
-                  className="ri-lock-2-fill ms-2 mb-1 cursor-pointer"
+                  className="ri-lock-2-fill ms-3 mb-0 cursor-pointer"
                 ></i>
               )}
             </span>
@@ -510,7 +515,7 @@ const BlockChainContractTable = ({
             ></i>
           </div>
         )}
-      </>
+      </div>
     );
   };
 

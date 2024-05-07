@@ -170,6 +170,7 @@ const DashboardBlockchainContracts = () => {
         </div>
 
         <BlockChainContractTable
+          onOpenModalEdit={handleOpenModalEdit}
           loading={loading}
           errorMessageEdit={errorMessageEdit}
           setLoading={setLoading}

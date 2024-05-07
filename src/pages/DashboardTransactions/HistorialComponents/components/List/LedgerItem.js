@@ -89,7 +89,7 @@ const LedgerItem = ({
           <img
             src={imageSrc}
             alt={ledger?.currency || ledger?.name}
-            className="rounded"
+            className="rounded img-transaction"
             width="auto"
             height={35}
             onError={handleImageError}

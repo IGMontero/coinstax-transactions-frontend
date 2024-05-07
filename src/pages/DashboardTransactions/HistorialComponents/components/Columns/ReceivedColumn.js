@@ -143,7 +143,7 @@ const ReceivedColumn = ({ transaction, negativeLedgers }) => {
                     <img
                       src={imageSrc}
                       alt={positiveLedgers?.currency || positiveLedgers?.name}
-                      className="rounded"
+                      className="rounded img-transaction"
                       width="auto"
                       height={35}
                       onError={handleImageError}

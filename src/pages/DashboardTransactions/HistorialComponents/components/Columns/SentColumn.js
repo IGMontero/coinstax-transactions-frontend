@@ -108,7 +108,7 @@ const SentColumn = ({ transaction }) => {
                     <img
                       src={imageSrc}
                       alt={negativeLedgers?.currency || negativeLedgers?.name}
-                      className="rounded"
+                      className="rounded img-transaction"
                       width="auto"
                       height={35}
                       onError={handleImageError}
