@@ -27,6 +27,7 @@ import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../../utils/utils';
 import QrModal from '../../Components/Modals/QrModal';
+import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -455,6 +456,9 @@ const DashboardInfo = () => {
                         <Col xxl={12} className="mb-4">
                           <div className="d-flex justify-content-start">
                             <Col className="col-12 ">
+                              <div className={loading ? 'pt-3' : ''}>
+                                <AddressWithDropdown />
+                              </div>
                               <PerformanceChart
                                 loading={loading}
                                 setLoading={setLoading}
