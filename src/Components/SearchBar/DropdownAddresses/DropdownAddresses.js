@@ -120,7 +120,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
     e.preventDefault();
     e.stopPropagation();
     Swal.fire({
-      title: 'Are you sure?',
+      title: `Are you sure you want to remove My Label (${option.label})?`,
       text: '',
       icon: 'warning',
       showCancelButton: true,

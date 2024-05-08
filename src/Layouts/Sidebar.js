@@ -51,7 +51,6 @@ const Sidebar = ({ layoutType }) => {
     }
   };
 
-  console.log(process.env.NODE_ENV);
   return (
     <React.Fragment>
       <div
