@@ -10,7 +10,6 @@ import {
   calculatePercentageChange,
 } from '../../../utils/utils';
 import { Line } from 'react-chartjs-2';
-import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 
 const PerformanceChart = ({
   address,
@@ -261,10 +260,6 @@ const PerformanceChart = ({
 
   return (
     <>
-      <div className={loading ? 'pt-3' : ''}>
-        <AddressWithDropdown />
-      </div>
-
       <div className="border border-2 rounded p-2 mt-4" style={{ zIndex: 1 }}>
         {loading ? (
           <Card className="mb-1" style={{ height: '320px' }}>
