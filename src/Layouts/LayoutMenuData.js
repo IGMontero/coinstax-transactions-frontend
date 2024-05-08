@@ -77,7 +77,7 @@ const Navdata = () => {
       : '';
 
   let allMenuItems = [
-    createMenuItem('home', 'Home', 'bx bx-home', `${dashboardLink}`),
+    createMenuItem('summary', 'Summary', 'bx bx-home', `${dashboardLink}`),
     createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
     createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
     createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),
