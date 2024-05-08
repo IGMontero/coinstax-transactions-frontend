@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetchPerformance } from '../../../slices/transactions/thunk';
 import { useDispatch } from 'react-redux';
 import { Card, CardBody, Col, Spinner } from 'reactstrap';
@@ -10,6 +10,7 @@ import {
   calculatePercentageChange,
 } from '../../../utils/utils';
 import { Line } from 'react-chartjs-2';
+import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 
 const PerformanceChart = ({
   address,
@@ -28,9 +29,10 @@ const PerformanceChart = ({
       {
         label: 'Performance',
         data: [],
-        fill: false,
+        fill: true,
         borderColor: '#0759BC',
         tension: 0.1,
+        backgroundColor: '#0758bc35',
       },
     ],
   });
@@ -258,32 +260,38 @@ const PerformanceChart = ({
   }
 
   return (
-    <div className="border border-2 rounded p-2 mt-4" style={{ zIndex: 1 }}>
-      {loading ? (
-        <Card className="mb-0 mt-3" style={{ height: '390px' }}>
-          <CardBody className="d-flex justify-content-center align-items-center">
-            <Spinner />
-          </CardBody>
-        </Card>
-      ) : (
-        <>
-          <div className="d-flex align-items-end">
-            <h1 className="d-flex align-items-center">{title}</h1>
-            <h4
-              style={{ marginBottom: '.7rem' }}
-              className={`ms-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
-            >
-              {subtitle}%
-            </h4>
-          </div>
-          <span className="ms-2 text-muted mb-3">{activeDate}</span>
-          <div>
-            <Line height={320} data={chartData} options={chartOptions} />
-          </div>
-        </>
-      )}
-      <div className="toolbar mb-3">{renderFiltersButtons()}</div>
-    </div>
+    <>
+      <div className={loading ? 'pt-3' : ''}>
+        <AddressWithDropdown />
+      </div>
+
+      <div className="border border-2 rounded p-2 mt-4" style={{ zIndex: 1 }}>
+        {loading ? (
+          <Card className="mb-1" style={{ height: '320px' }}>
+            <CardBody className="d-flex justify-content-center align-items-center">
+              <Spinner />
+            </CardBody>
+          </Card>
+        ) : (
+          <>
+            <div className="d-flex align-items-end">
+              <h1 className="d-flex align-items-center">{title}</h1>
+              <h4
+                style={{ marginBottom: '.7rem' }}
+                className={`ms-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+              >
+                {subtitle}%
+              </h4>
+            </div>
+            <span className="ms-2 text-muted mb-3">{activeDate}</span>
+            <div>
+              <Line height={250} data={chartData} options={chartOptions} />
+            </div>
+          </>
+        )}
+        <div className="toolbar mb-3">{renderFiltersButtons()}</div>
+      </div>
+    </>
   );
 };
 export default PerformanceChart;
