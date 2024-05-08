@@ -205,7 +205,7 @@ const ActivesTable = ({ data, loading }) => {
                     style={{ fontWeight: 'inherit' }}
                   >
                     {' '}
-                    <span className="text-dark">100%</span>
+                    {/* <span className="text-dark">100%</span> */}
                   </Badge>
                 </div>
               )}
