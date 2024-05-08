@@ -571,6 +571,7 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   // #region RENDER FUNCTIONS
+
   const renderBadges = () => {
     return selectedFilters.map((filterName) => (
       <Badge
@@ -791,8 +792,54 @@ const HistorialTable = ({ data, setData }) => {
     );
   };
 
+  const renderMessageNoResults = () => {
+    return (
+      <Col
+        lg={12}
+        className="position-relative d-flex justify-content-center align-items-center"
+        style={{ minHeight: isDashboardPage ? '10vh' : '50vh' }}
+      >
+        <div>
+          {isDashboardPage ? (
+            <h4> No Transactions found </h4>
+          ) : (
+            <h1>No results found </h1>
+          )}
+        </div>
+      </Col>
+    );
+  };
+
   // #region RENDER
-  if (data && data.length === 0 && totalTransactions === 0 && !loading) {
+  if (loading && isInitialLoad) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: '50vh' }}
+      >
+        <Spinner style={{ width: '4rem', height: '4rem' }} />
+        {showDownloadMessage && (
+          <div className="ms-3">
+            <h3>Downloading Transactions</h3>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (errorData) {
+    return (
+      <Col
+        lg={12}
+        className="position-relative d-flex justify-content-center align-items-center"
+        style={{ minHeight: '50vh' }}
+      >
+        <h1>{errorData}</h1>
+      </Col>
+    );
+  }
+
+  if (totalTransactions === 0) {
     return (
       <>
         {renderTitle()}
@@ -805,16 +852,52 @@ const HistorialTable = ({ data, setData }) => {
           }}
         >
           {isDashboardPage ? (
-            <h4 className="text-center ">
-              This address does not have any transaction
-            </h4>
+            <h4>This address does not have any transactions</h4>
           ) : (
-            <h1 className="text-center ">
-              This address does not have any transaction
-            </h1>
+            <h1>This address does not have any transactions</h1>
           )}
         </Col>
       </>
+    );
+  }
+
+  if (data && data.length === 0) {
+    return (
+      <div>
+        <div className={isDashboardPage ? 'd-none' : ''}>
+          {renderTitle()}
+          {renderFiltersDropdown()}
+          <Col className="col-12">
+            {renderBadges()}
+            {hasActiveFilters && (
+              <span
+                className="text-primary ms-2 cursor-pointer"
+                onClick={handleClearAllFilters}
+              >
+                Reset
+              </span>
+            )}
+          </Col>
+          <Row>
+            <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
+              <div className="d-flex justify-content-start">
+                <Input
+                  disabled={isInitialLoad}
+                  id="customCheck1"
+                  type="checkbox"
+                  className="form-check-input me-2 cursor-pointer"
+                  onChange={handleShowSpamTransactions}
+                  checked={includeSpam}
+                />
+                <label className="form-check-label" htmlFor="customCheck1">
+                  Include Spam Transactions
+                </label>
+              </div>
+            </div>
+          </Row>
+        </div>
+        {renderMessageNoResults()}
+      </div>
     );
   }
 
@@ -822,143 +905,66 @@ const HistorialTable = ({ data, setData }) => {
     <React.Fragment>
       {renderTitle()}
 
-      {totalTransactions && !errorData ? (
-        <div className={isDashboardPage ? 'd-none' : ''}>
-          {renderFiltersDropdown()}
-          <Col className="col-12">
-            {renderBadges()}
-            {hasActiveFilters && (
-              <span
-                className={
-                  isInitialLoad ? 'd-none' : 'text-primary ms-2 cursor-pointer'
-                }
-                onClick={() => {
-                  handleClearAllFilters();
-                }}
-              >
-                <span className={isInitialLoad ? 'd-none' : 'text-hover-dark'}>
-                  Reset
-                </span>
-              </span>
-            )}
-          </Col>
-          <Row>
-            <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
-              {totalTransactions > 0 && (
-                <div className="d-flex justify-content-start">
-                  <Input
-                    disabled={isInitialLoad}
-                    id="customCheck1"
-                    type="checkbox"
-                    className="form-check-input me-2 cursor-pointer"
-                    onChange={handleShowSpamTransactions}
-                    checked={includeSpam}
-                  />
-                  <label className="form-check-label" htmlFor="customCheck1">
-                    Include Spam Transactions
-                  </label>
-                </div>
-              )}
-              <div className={`d-flex justify-content-end`}>
-                {currentUser ? (
-                  <Button
-                    disabled={isInitialLoad}
-                    onClick={handleDownloadTransactions}
-                    className={`${isInitialLoad ? 'd-none' : 'btn btn-sm'} `}
-                    color={isInitialLoad ? 'muted' : 'primary'}
-                    size="sm"
-                  >
-                    Download CSV
-                  </Button>
-                ) : null}
-              </div>
-            </div>
-          </Row>
-        </div>
-      ) : null}
-      {/* {renderSearchBar()} */}
-      {!isInitialLoad &&
-        // && !data
-        // && !errorData
-        !isDashboardPage && (
-          <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
-            <Col>
-              <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
-            </Col>
-            {hasPreview && (
-              <Col>
-                <div className="d-flex align-items-center justify-content-end">
-                  <Spinner
-                    className="me-2"
-                    style={{ width: '1rem', height: '1rem' }}
-                  />
-                  <h6 className="mb-0 fw-semibold">
-                    Loading transactions information ...
-                  </h6>
-                </div>
-              </Col>
-            )}
-          </Col>
-        )}
-      {loading && isInitialLoad ? (
-        <div
-          className="d-flex justify-content-center align-items-center"
-          style={{ height: '50vh' }}
-        >
-          <Spinner style={{ width: '4rem', height: '4rem' }} />
-          {showDownloadMessage && (
-            <div className="ms-3">
-              <h3>Downloading Transactions</h3>
-            </div>
+      <div className={isDashboardPage ? 'd-none' : ''}>
+        {renderFiltersDropdown()}
+        <Col className="col-12">
+          {renderBadges()}
+          {hasActiveFilters && (
+            <span
+              className="text-primary ms-2 cursor-pointer"
+              onClick={handleClearAllFilters}
+            >
+              Reset
+            </span>
           )}
-        </div>
-      ) : Object.keys(groupedTransactions).length > 0 ? (
+        </Col>
+        <Row>
+          <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
+            <div className="d-flex justify-content-start">
+              <Input
+                disabled={isInitialLoad}
+                id="customCheck1"
+                type="checkbox"
+                className="form-check-input me-2 cursor-pointer"
+                onChange={handleShowSpamTransactions}
+                checked={includeSpam}
+              />
+              <label className="form-check-label" htmlFor="customCheck1">
+                Include Spam Transactions
+              </label>
+            </div>
+            {currentUser && (
+              <Button
+                onClick={handleDownloadTransactions}
+                className="btn btn-sm"
+                color="primary"
+                size="sm"
+                disabled={isInitialLoad}
+              >
+                Download CSV
+              </Button>
+            )}
+          </div>
+        </Row>
+      </div>
+
+      {!isInitialLoad && Object.keys(groupedTransactions).length > 0 && (
         <Col
           lg={12}
           className="position-relative"
           style={{ minHeight: '50vh' }}
         >
-          <div>
-            {Object.keys(groupedTransactions).map((date, index) => (
-              <RenderTransactions
-                key={index}
-                date={date}
-                transactions={groupedTransactions[date]}
-                onRefresh={fetchData}
-                setTransactions={setData}
-              />
-            ))}
-            {!isInitialLoad &&
-              hasMoreData &&
-              !isDashboardPage &&
-              renderGetMoreButton()}
-          </div>
+          {Object.keys(groupedTransactions).map((date, index) => (
+            <RenderTransactions
+              key={index}
+              date={date}
+              transactions={groupedTransactions[date]}
+              onRefresh={fetchData}
+              setTransactions={setData}
+            />
+          ))}
+          {!isDashboardPage && hasMoreData && renderGetMoreButton()}
         </Col>
-      ) : (
-        <>
-          {!loading && hasAppliedFilters && !errorData && (
-            <Col
-              lg={12}
-              className="position-relative d-flex justify-content-center align-items-center"
-              style={{ minHeight: '50vh' }}
-            >
-              <div>
-                <h1>No results found </h1>
-              </div>
-            </Col>
-          )}
-          {errorData && (
-            <Col
-              lg={12}
-              className="position-relative d-flex justify-content-center align-items-center"
-              style={{ minHeight: '50vh' }}
-            >
-              <div>
-                <h1>{errorData}</h1>
-              </div>
-            </Col>
-          )}
-        </>
       )}
     </React.Fragment>
   );

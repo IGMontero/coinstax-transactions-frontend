@@ -43,6 +43,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
 
   const [optionDropdown, setOptionDropdown] = useState([]);
 
+  const savedOptions = localStorage.getItem('userAddresses');
+
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
     if (
@@ -62,6 +64,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         selectedOption,
         ...currentOptions.filter((o) => o.value !== selectedOption.value),
       ]);
+    } else {
+      savedOptions && setOptions(JSON.parse(savedOptions));
     }
   }, [selectedOption]);
 
@@ -175,6 +179,9 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         )
       ) {
         storedOptions.push(newOption);
+        if (storedOptions.length > 10) {
+          storedOptions.shift();
+        }
         setOptionDropdown(newOption);
         localStorage.setItem('userAddresses', JSON.stringify(storedOptions));
       }
