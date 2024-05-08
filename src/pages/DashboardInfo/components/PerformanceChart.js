@@ -32,7 +32,7 @@ const PerformanceChart = ({
         fill: true,
         borderColor: '#0759BC',
         tension: 0.1,
-        backgroundColor: '#0758bc35',
+        backgroundColor: '#0758bc1b',
       },
     ],
   });
