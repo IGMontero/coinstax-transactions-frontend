@@ -8,6 +8,7 @@ import navdata from '../LayoutMenuData';
 //i18n
 import { withTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
+import { layoutModeTypes } from '../../Components/constants/layout';
 
 const VerticalLayout = (props) => {
   const navData = navdata().props.children;
@@ -23,6 +24,12 @@ const VerticalLayout = (props) => {
       layoutType: state.Layout.layoutType,
     }),
   );
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+
+  const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
   //vertical and semibox resize events
   const resizeSidebarMenu = useCallback(() => {
@@ -329,7 +336,10 @@ const VerticalLayout = (props) => {
               <li className="nav-item mt-2" style={{ marginLeft: '-.5rem' }}>
                 <Link
                   id={item.id}
-                  className={`menu-link nav-link ${isActive ? 'nav-link-active' : ''} d-flex  ps-3 `}
+                  className={`menu-link nav-link
+                  ${isActive && !isLightMode ? 'nav-link-active-dark' : ''}
+                   ${isActive && isLightMode ? 'nav-link-active text-light' : 'text-dark'} 
+                   d-flex  ps-3 `}
                   to={item.link ? item.link : '/'}
                 >
                   <i className={item.icon}></i>{' '}

@@ -4,9 +4,10 @@ import SimpleBar from 'simplebar-react';
 //import logo
 import logoSm from '../assets/images/logo-sm.png';
 import logoDark from '../assets/images/logo-dark.png';
-import logoLight from '../assets/images/logo-light.png';
+// import logoLight from '../assets/images/logo-light.png';
 
 import logo from '../assets/images/logos/coinstax_logos/logo-dark.png';
+import logoLight from '../assets/images/logos/coinstax_logos/logo-light.png';
 
 //Import Components
 import VerticalLayout from './VerticalLayouts/index';
@@ -30,6 +31,8 @@ const Sidebar = ({ layoutType }) => {
     layoutModeType: state.Layout.layoutModeType,
   }));
 
+  const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
+
   const addEventListenerOnSmHoverMenu = () => {
     if (
       document.documentElement.getAttribute('data-sidebar-size') === 'sm-hover'
@@ -47,6 +50,8 @@ const Sidebar = ({ layoutType }) => {
       document.documentElement.setAttribute('data-sidebar-size', 'sm-hover');
     }
   };
+
+  console.log(process.env.NODE_ENV);
   return (
     <React.Fragment>
       <div
@@ -55,30 +60,54 @@ const Sidebar = ({ layoutType }) => {
           backgroundColor:
             layoutModeType === layoutModeTypes['DARKMODE']
               ? '#16161a'
-              : '#4A5056',
+              : // : '#4A5056',
+                '#eff2f7',
         }}
         // style={{
         //   background: '#23282C',
         // }}
       >
         <div className="navbar-brand-box ">
-          <div className="logo logo-dark">
-            <span className="logo-sm">
-              <img src={logo} alt="" height="20" width="63" />
-            </span>
-            <span className="logo-lg">
-              <img src={logo} alt="" height="25" />
-            </span>
-          </div>
+          <Link
+            to={
+              process.env.NODE_ENV === 'development'
+                ? '/'
+                : 'https://chainglance.com/'
+            }
+          >
+            <div className="logo logo-dark">
+              <span className="logo-sm">
+                <img
+                  src={isLightMode ? logoLight : logo}
+                  alt=""
+                  height="20"
+                  width="63"
+                />
+              </span>
+              <span className="logo-lg">
+                <img src={isLightMode ? logoLight : logo} alt="" height="25" />
+              </span>
+            </div>
 
-          <div className="logo logo-light">
-            <span className="logo-sm">
-              <img src={logo} alt="" height="55" width="auto" />
-            </span>
-            <span className="logo-lg">
-              <img src={logo} alt="" height="55" width="auto" />
-            </span>
-          </div>
+            <div className="logo logo-light">
+              <span className="logo-sm">
+                <img
+                  src={isLightMode ? logoLight : logo}
+                  alt=""
+                  height="55"
+                  width="auto"
+                />
+              </span>
+              <span className="logo-lg">
+                <img
+                  src={isLightMode ? logoLight : logo}
+                  alt=""
+                  height="55"
+                  width="auto"
+                />
+              </span>
+            </div>
+          </Link>
           <button
             onClick={addEventListenerOnSmHoverMenu}
             type="button"
