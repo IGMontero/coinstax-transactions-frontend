@@ -29,7 +29,7 @@ const DashboardTokens = () => {
       setLoading(true);
       const response = await dispatch(fetchCoingeckoId({ coingeckoId: token }));
 
-      if (!response.error) {
+      if (response.payload) {
         setData(response.payload);
       } else {
         navigate('/');
@@ -44,11 +44,15 @@ const DashboardTokens = () => {
     fetchToken();
   }, [token]);
 
-  if (!data && !loading) {
-    navigate('/');
-  }
+  // if (!data && !loading) {
+  //   navigate('/');
+  // }
   if (loading) {
-    <div>
+    <div
+      style={{
+        height: '100vh',
+      }}
+    >
       <Spinner color="primary" className="m-2" />;
     </div>;
   }
