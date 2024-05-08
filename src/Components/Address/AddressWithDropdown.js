@@ -60,7 +60,7 @@ const AddressWithDropdown = () => {
               ) : (
                 <i className="ri-file-copy-line fs-2 me-2"></i>
               )}
-              <span className="fw-semibold">Copy direction</span>
+              <span className="fw-semibold">Copy Address</span>
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
