@@ -810,58 +810,7 @@ const HistorialTable = ({ data, setData }) => {
     );
   };
 
-  // #region RENDER
-  if (loading && isInitialLoad) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{ height: '50vh' }}
-      >
-        <Spinner style={{ width: '4rem', height: '4rem' }} />
-        {showDownloadMessage && (
-          <div className="ms-3">
-            <h3>Downloading Transactions</h3>
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (errorData) {
-    return (
-      <Col
-        lg={12}
-        className="position-relative d-flex justify-content-center align-items-center"
-        style={{ minHeight: '50vh' }}
-      >
-        <h1>{errorData}</h1>
-      </Col>
-    );
-  }
-
-  if (totalTransactions === 0) {
-    return (
-      <>
-        {renderTitle()}
-        <Col
-          className="d-flex text-center col-12 justify-content-center align-items-center"
-          style={{
-            display: 'flex',
-            height: isDashboardPage ? '10vh' : '40vh',
-            width: '100%',
-          }}
-        >
-          {isDashboardPage ? (
-            <h4>This address does not have any transactions</h4>
-          ) : (
-            <h1>This address does not have any transactions</h1>
-          )}
-        </Col>
-      </>
-    );
-  }
-
-  if (data && data.length === 0) {
+  const renderHeader = () => {
     return (
       <div>
         <div className={isDashboardPage ? 'd-none' : ''}>
@@ -896,9 +845,67 @@ const HistorialTable = ({ data, setData }) => {
             </div>
           </Row>
         </div>
-        {renderMessageNoResults()}
+        {!loading && !isInitialLoad && renderMessageNoResults()}
       </div>
     );
+  };
+
+  // #region RENDER
+  if (loading && isInitialLoad) {
+    return (
+      <>
+        {renderHeader()}
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: '50vh' }}
+        >
+          <Spinner style={{ width: '4rem', height: '4rem' }} />
+          {showDownloadMessage && (
+            <div className="ms-3">
+              <h3>Downloading Transactions</h3>
+            </div>
+          )}
+        </div>
+      </>
+    );
+  }
+
+  if (errorData) {
+    return (
+      <Col
+        lg={12}
+        className="position-relative d-flex justify-content-center align-items-center"
+        style={{ minHeight: '50vh' }}
+      >
+        <h1>{errorData}</h1>
+      </Col>
+    );
+  }
+
+  if (totalTransactions === 0 && !loading && !isInitialLoad) {
+    return (
+      <>
+        {renderTitle()}
+        <Col
+          className="d-flex text-center col-12 justify-content-center align-items-center"
+          style={{
+            display: 'flex',
+            height: isDashboardPage ? '10vh' : '40vh',
+            width: '100%',
+          }}
+        >
+          {isDashboardPage ? (
+            <h4>This address does not have any transactions</h4>
+          ) : (
+            <h1>This address does not have any transactions</h1>
+          )}
+        </Col>
+      </>
+    );
+  }
+
+  if (data && data.length === 0) {
+    return renderHeader();
   }
 
   return (

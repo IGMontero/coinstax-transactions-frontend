@@ -64,10 +64,7 @@ const DashboardTokens = () => {
     <React.Fragment>
       <div className="page-content ">
         {loading ? (
-          <div
-            className="d-flex mt-5 justify-content-center align-items-center h-100vh"
-            // style={{ height: !isDashboardPage ? '50vh' : '40vh' }}
-          >
+          <div className="d-flex mt-5 justify-content-center align-items-center h-100vh">
             <Spinner style={{ width: '4rem', height: '4rem' }} />
           </div>
         ) : (
@@ -95,11 +92,10 @@ const DashboardTokens = () => {
                 loading={loadingChart}
                 setLoading={setLoadingChart}
               />
-
               {/* <WalletCard /> */}
             </Col>
             <Col className="col-12 my-3">
-              <Stats stats={data.marketData} />
+              <Stats stats={data?.marketData} />
             </Col>
             <Col className="col-12 my-3">
               <About description={data?.description} name={data?.name} />
