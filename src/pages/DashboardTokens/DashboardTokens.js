@@ -35,6 +35,8 @@ const DashboardTokens = () => {
 
       const res = response.payload;
 
+      console.log(res, 'res');
+
       if (res) {
         setData(res);
         setAddress(res.platforms?.ethereum);
@@ -98,7 +100,11 @@ const DashboardTokens = () => {
               <Stats stats={data?.marketData} />
             </Col>
             <Col className="col-12 my-3">
-              <About description={data?.description} name={data?.name} />
+              <About
+                description={data?.description}
+                links={data?.links}
+                name={data?.name}
+              />
             </Col>
             {/* <Col className="col-12 my-5">
               <Tags />
