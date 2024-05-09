@@ -183,12 +183,12 @@ const DashboardUserAddresses = () => {
 
   const handleDeleteUserAddress = async (address) => {
     const result = await Swal.fire({
-      title: 'Are you sure?',
-      text: `You won't be able to revert this!`,
+      title: `Are you sure you want to delete all transactions for address ${address}?`,
+      // text: `You won't be able to revert this!`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete all transactions',
-      cancelButtonText: 'Cancel!',
+      cancelButtonText: 'Cancel',
     });
 
     if (result.isConfirmed) {

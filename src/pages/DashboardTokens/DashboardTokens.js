@@ -9,23 +9,22 @@ import Explorers from './components/Explorers';
 import WalletCard from './components/WalletCard';
 import History from './components/History';
 import { fetchCoingeckoId } from '../../slices/tokens/thunk';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import PerformanceChart from '../DashboardInfo/components/PerformanceChart';
 
 const DashboardTokens = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { token } = useParams();
+  const { fetchData } = useSelector((state) => state);
 
+  // #region STATES
+  const [isUnsupported, setIsUnsupported] = useState(false);
   const [loading, setLoading] = useState(false);
-
   const [loadingChart, setLoadingChart] = useState(false);
-
   const [data, setData] = useState();
   const [address, setAddress] = useState();
-
-  const dispatch = useDispatch();
-
-  const { token } = useParams();
 
   const fetchToken = async () => {
     try {
@@ -41,9 +40,6 @@ const DashboardTokens = () => {
         setData(res);
         setAddress(res.platforms?.ethereum);
       } else {
-        if (!address) {
-          navigate('/');
-        }
         navigate('/');
       }
       setLoadingChart(false);
@@ -54,13 +50,18 @@ const DashboardTokens = () => {
       setLoadingChart(false);
     }
   };
+
   useEffect(() => {
     fetchToken();
   }, [token]);
 
-  // if (!data && !loading) {
-  //   navigate('/');
-  // }
+  useEffect(() => {
+    if (fetchData && fetchData.performance.unsupported) {
+      setIsUnsupported(true);
+    } else {
+      setIsUnsupported(false);
+    }
+  }, [fetchData]);
 
   return (
     <React.Fragment>
@@ -88,12 +89,23 @@ const DashboardTokens = () => {
               </h1>
             </div>
             <Col className="col-12 mb-3">
-              <PerformanceChart
-                address={address}
-                setIsUnsupported={false}
-                loading={loadingChart}
-                setLoading={setLoadingChart}
-              />
+              {address && isUnsupported ? (
+                <div
+                  className="d-flex border rounded  justify-content-center align-items-center"
+                  style={{
+                    height: '400px',
+                  }}
+                >
+                  <h3 className="text-center">No Chart Available</h3>
+                </div>
+              ) : (
+                <PerformanceChart
+                  address={address}
+                  setIsUnsupported={false}
+                  loading={loadingChart}
+                  setLoading={setLoadingChart}
+                />
+              )}
               {/* <WalletCard /> */}
             </Col>
             <Col className="col-12 my-3">
