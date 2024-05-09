@@ -63,6 +63,8 @@ const DashboardTokens = () => {
     }
   }, [fetchData]);
 
+  console.log(address);
+
   return (
     <React.Fragment>
       <div className="page-content ">
@@ -100,7 +102,7 @@ const DashboardTokens = () => {
                 </div>
               ) : (
                 <PerformanceChart
-                  address={address}
+                  address={token}
                   setIsUnsupported={false}
                   loading={loadingChart}
                   setLoading={setLoadingChart}

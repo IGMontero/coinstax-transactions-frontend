@@ -1,5 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { fetchPerformance } from '../../../slices/transactions/thunk';
+import {
+  fetchPerformance,
+  fetchPerformanceToken,
+} from '../../../slices/transactions/thunk';
 import { useDispatch } from 'react-redux';
 import { Card, CardBody, Col, Spinner } from 'reactstrap';
 import {
@@ -19,6 +22,7 @@ const PerformanceChart = ({
   setLoading,
 }) => {
   const dispatch = useDispatch();
+  const { token } = useParams();
 
   const [activeFilter, setActiveFilter] = useState('one_week');
 
@@ -165,9 +169,66 @@ const PerformanceChart = ({
     }
   };
 
+  const fetchAndSetDataForToken = (days) => {
+    setLoading(true);
+    if (address) {
+      const params = days ? { address, days } : { address };
+      dispatch(fetchPerformanceToken(params))
+        .unwrap()
+        .then((response) => {
+          if (response.unsupported) {
+            setIsUnsupported(true);
+          } else {
+            const newLabels = response.prices.map((item) => new Date(item[0]));
+            const newData = response.prices.map((item) => item[1]);
+            const { minValue, maxValue } = getMaxMinValues(newData);
+
+            setChartData({
+              labels: newLabels,
+              datasets: [{ ...chartData.datasets[0], data: newData }],
+            });
+
+            setChartOptions((prevOptions) => ({
+              ...prevOptions,
+              scales: {
+                ...prevOptions.scales,
+                yAxes: [
+                  {
+                    ...prevOptions.scales.yAxes[0],
+                    ticks: {
+                      ...prevOptions.scales.yAxes[0].ticks,
+                      min: minValue,
+                      max: maxValue,
+                      callback: function (value) {
+                        if (value === minValue || value === maxValue) {
+                          return parseValuesToLocale(value, CurrencyUSD);
+                        }
+                        return null;
+                      },
+                    },
+                  },
+                ],
+              },
+            }));
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching performance data:', error);
+          setLoading(false);
+        });
+    }
+  };
+
+  console.log(token);
+
   useEffect(() => {
-    fetchAndSetData();
-  }, [address, dispatch]);
+    if (!token) {
+      fetchAndSetData();
+    } else {
+      fetchAndSetDataForToken(7);
+    }
+  }, [token, address]);
 
   useEffect(() => {
     if (chartData.labels.length > 0) {
@@ -185,7 +246,11 @@ const PerformanceChart = ({
   }, [chartData]);
 
   const handleFilterForDays = (days, filterId) => {
-    fetchAndSetData(days);
+    if (token) {
+      fetchAndSetDataForToken(days);
+    } else {
+      fetchAndSetData(days);
+    }
     setActiveFilter(filterId);
   };
 

@@ -10,10 +10,9 @@ import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
 import { formatIdTransaction } from '../../utils/utils';
 
 const CustomOptions = (props) => {
-
   return (
     <components.Option {...props}>
-      <div className='d-flex align-items-center'>
+      <div className="d-flex align-items-center">
         {props.data.logo && (
           <img
             className="img-fluid rounded-circle me-2"
@@ -22,7 +21,7 @@ const CustomOptions = (props) => {
             style={{ width: 30, height: 30 }}
           />
         )}
-        <div className='d-flex flex-column'>
+        <div className="d-flex flex-column">
           {props.data.label}
 
           {props.data.address && (
@@ -32,9 +31,6 @@ const CustomOptions = (props) => {
           )}
         </div>
       </div>
-
-
-
     </components.Option>
   );
 };
@@ -134,8 +130,6 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     }
   };
 
-
-
   const debouncedFetchSuggestions = useCallback(
     debounce(fetchSuggestions, 300),
     [searchInput],
@@ -173,20 +167,16 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [isUnsupported, address, location]);
 
   useEffect(() => {
-
-    console.log("Is menu open changed:", isMenuOpen)
+    console.log('Is menu open changed:', isMenuOpen);
   }, [isMenuOpen]);
-
 
   const handleMenuClose = () => {
     // Clean up options al
-
-  }
-
+  };
 
   useEffect(() => {
-    console.log("Search input changed:", searchInput)
-  }, [searchInput])
+    console.log('Search input changed:', searchInput);
+  }, [searchInput]);
 
   // #region HANDLERS
   const handleSaveInLocalStorage = () => {
@@ -292,7 +282,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     }),
     menu: (provided) => ({
       ...provided,
-      // zIndex: 9999,
+      zIndex: 9999,
       backgroundColor:
         layoutModeType === layoutModeTypes['DARKMODE'] ? '#2a2f34' : '#fff',
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',

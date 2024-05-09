@@ -1,8 +1,13 @@
 import React from 'react';
 import { Col, Row } from 'reactstrap';
-import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
+import {
+  CurrencyUSD,
+  formatNumberWithBillion,
+  parseValuesToLocale,
+} from '../../../utils/utils';
 
 const Stats = ({ stats }) => {
+  const billion = 1000000000;
   const statsData = [
     {
       label: '1 Day',
@@ -29,22 +34,22 @@ const Stats = ({ stats }) => {
   const additionalInfo = [
     {
       label: 'Market Cap',
-      value: `${parseValuesToLocale(stats?.marketCap, CurrencyUSD)} B`,
+      value: `${formatNumberWithBillion(stats?.marketCap)} `,
     },
     {
       label: 'Circulating Supply',
-      value: `${parseValuesToLocale(stats?.circulatingSupply, CurrencyUSD)} B`,
+      value: `${formatNumberWithBillion(stats?.circulatingSupply)}`,
     },
     {
       label: 'Total Supply',
-      value: `${parseValuesToLocale(stats?.totalSupply, CurrencyUSD)} B`,
+      value: `${formatNumberWithBillion(stats?.totalSupply)} `,
     },
   ];
 
   return (
     <div className="border-top mb-3 border-bottom pb-4">
       <div className="my-3">
-        <h3>Stats?</h3>
+        <h3>Stats</h3>
       </div>
       <Row className="w-100 mt-2 col-12">
         {statsData &&
@@ -53,14 +58,12 @@ const Stats = ({ stats }) => {
               <Col key={index} xs="12" md="3" className="p-2 ps-3">
                 <div className="text-start">
                   <h5 className="fw-semibold">{stat.label}</h5>
-                  <div className="d-flex align-items-center">
-                    <h6
-                      className={`mb-0 me-2 text-${stat.value.includes('-') ? 'danger' : 'success'} d-block`}
-                    >
-                      {stat.value}
-                    </h6>
-                    ({stat.percentage})
-                  </div>
+
+                  <h6
+                    className={`mb-0 me-2 text-${stat.value.includes('-') ? 'danger' : 'success'} d-block`}
+                  >
+                    {stat.value} ({stat.percentage})
+                  </h6>
                 </div>
               </Col>
             );
