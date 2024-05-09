@@ -7,19 +7,34 @@ import { layoutModeTypes } from '../constants/layout';
 import { Col } from 'reactstrap';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
+import { formatIdTransaction } from '../../utils/utils';
 
 const CustomOptions = (props) => {
+
   return (
     <components.Option {...props}>
-      {props.data.logo && (
-        <img
-          className="img-fluid rounded-circle me-2"
-          src={props.data.logo}
-          alt={props.data.label}
-          style={{ width: 30, height: 30 }}
-        />
-      )}
-      {props.data.label}
+      <div className='d-flex align-items-center'>
+        {props.data.logo && (
+          <img
+            className="img-fluid rounded-circle me-2"
+            src={props.data.logo}
+            alt={props.data.label}
+            style={{ width: 30, height: 30 }}
+          />
+        )}
+        <div className='d-flex flex-column'>
+          {props.data.label}
+
+          {props.data.address && (
+            <span className="text-muted me-2">
+              {formatIdTransaction(props.data.address, 6, 8)}
+            </span>
+          )}
+        </div>
+      </div>
+
+
+
     </components.Option>
   );
 };
@@ -101,6 +116,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
             validSuggestions.map((addr) => ({
               label: addr.name,
               value: addr.address,
+              address: addr.address,
               logo: addr.logo || null,
               coingeckoId: addr.coingeckoId || null,
             })),
@@ -118,6 +134,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     }
   };
 
+
+
   const debouncedFetchSuggestions = useCallback(
     debounce(fetchSuggestions, 300),
     [searchInput],
@@ -128,22 +146,21 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [searchInput, debouncedFetchSuggestions]);
 
   useEffect(() => {
-    if (
-      (searchInput.startsWith('0x') && searchInput.length >= 5) ||
-      (!searchInput.startsWith('0x') && searchInput.length >= 3)
-    ) {
-      setIsMenuOpen(true);
-    } else {
-      setIsMenuOpen(false);
+    // if (
+    //   (searchInput.startsWith('0x') && searchInput.length >= 5) ||
+    //   (!searchInput.startsWith('0x') && searchInput.length >= 3)
+    // ) {
+    //   setIsMenuOpen(true);
+    // }
+    // else {
+    //   setIsMenuOpen(false);
+    // }
+    // If lenght is less than 3, close the menu and reset the options
+    if (searchInput.length < 3) {
+      // setIsMenuOpen(false);
+      setOptions([]);
     }
   }, [searchInput]);
-
-  useEffect(() => {
-    if (address === searchInput || isUnsupported) {
-      setIsMenuOpen(false);
-      return;
-    }
-  }, [address, searchInput, setIsMenuOpen]);
 
   useEffect(() => {
     if (!isUnsupported) {
@@ -154,6 +171,22 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       setSearchInput(address);
     }
   }, [isUnsupported, address, location]);
+
+  useEffect(() => {
+
+    console.log("Is menu open changed:", isMenuOpen)
+  }, [isMenuOpen]);
+
+
+  const handleMenuClose = () => {
+    // Clean up options al
+
+  }
+
+
+  useEffect(() => {
+    console.log("Search input changed:", searchInput)
+  }, [searchInput])
 
   // #region HANDLERS
   const handleSaveInLocalStorage = () => {
@@ -195,7 +228,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
 
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
-      setSearchInput(inputValue.replace(/[^a-zA-Z0-9]/g, ''));
+      // const resultWithoutTrailingspaces = inputValue.trim();
+      setSearchInput(inputValue);
     }
   };
 
@@ -258,11 +292,12 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     }),
     menu: (provided) => ({
       ...provided,
-      zIndex: 9999,
+      // zIndex: 9999,
       backgroundColor:
         layoutModeType === layoutModeTypes['DARKMODE'] ? '#2a2f34' : '#fff',
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
       textAlign: 'left',
+      alignItems: 'left',
       cursor: 'pointer',
       borderRadius: '5px',
     }),
@@ -336,16 +371,22 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         placeholder="Assets, wallet, domain, or identity"
         className="col-12 w-100"
         classNamePrefix="select-custom-menu"
-        value={options.find((option) => option.value === searchInput)}
+        value={null}
+        inputValue={searchInput}
         options={options}
         onChange={handleChange}
+        onMenuClose={() => setIsMenuOpen(false)}
+        onMenuOpen={() => setIsMenuOpen(true)}
         isLoading={loading}
         onInputChange={handleInputChange}
         components={{ DropdownIndicator, Option: CustomOptions }}
         styles={customStyles}
         menuIsOpen={isMenuOpen}
-        onMenuOpen={() => setIsMenuOpen(true)}
-        onMenuClose={() => setIsMenuOpen(false)}
+        noOptionsMessage={
+          searchInput.length < 3
+            ? () => 'Type at least 3 characters to search'
+            : () => 'We were unable to find any results for your search'
+        }
         onKeyDown={(e) => {
           if (e.key === 'Enter' && searchInput.length >= 3) {
             navigate(`/address/${searchInput}`);
