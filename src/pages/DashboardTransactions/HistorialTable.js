@@ -810,6 +810,24 @@ const HistorialTable = ({ data, setData }) => {
     );
   };
 
+  const renderInfoTransactions = () => {
+    return (
+      <Row className="col-12">
+        <div className="d-flex justify-content-between w-100">
+          <div>Total transactions: {totalTransactions}</div>
+          <div>
+            {hasPreview && (
+              <div className="d-flex align-items-center">
+                <Spinner size="sm" />
+                <span className="ms-2">Loading transactions...</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </Row>
+    );
+  };
+
   const renderHeader = () => {
     return (
       <div>
@@ -844,13 +862,14 @@ const HistorialTable = ({ data, setData }) => {
               </div>
             </div>
           </Row>
+          {renderInfoTransactions()}
         </div>
         {!loading && !isInitialLoad && renderMessageNoResults()}
       </div>
     );
   };
 
-  // #region RENDER
+  // #region RENDER CONDITIONALS
   if (loading && isInitialLoad) {
     return (
       <>
@@ -908,10 +927,10 @@ const HistorialTable = ({ data, setData }) => {
     return renderHeader();
   }
 
+  // #region RENDER
   return (
     <React.Fragment>
       {renderTitle()}
-
       <div className={isDashboardPage ? 'd-none' : ''}>
         {renderFiltersDropdown()}
         <Col className="col-12">
@@ -954,6 +973,8 @@ const HistorialTable = ({ data, setData }) => {
           </div>
         </Row>
       </div>
+
+      {renderInfoTransactions()}
 
       {!isInitialLoad && Object.keys(groupedTransactions).length > 0 && (
         <Col
