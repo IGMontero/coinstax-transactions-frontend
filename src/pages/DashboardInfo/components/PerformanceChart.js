@@ -10,6 +10,7 @@ import {
   calculatePercentageChange,
 } from '../../../utils/utils';
 import { Line } from 'react-chartjs-2';
+import { useParams } from 'react-router-dom';
 
 const PerformanceChart = ({
   address,
@@ -18,6 +19,7 @@ const PerformanceChart = ({
   setLoading,
 }) => {
   const dispatch = useDispatch();
+
   const [activeFilter, setActiveFilter] = useState('one_week');
 
   const [showMessage, setShowMessage] = useState(false);
