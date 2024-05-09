@@ -20,7 +20,7 @@ const QrModal = ({ showQrModal, toggleQrModal, addressTitle }) => {
           <QRCode className="p-1" value={addressTitle} size={256} level="H" />
         </div>
         <div className="bg-soft-dark rounded py-1 my-3">
-          <p className="my-0">ethereum:{addressTitle}</p>
+          <p className="my-0">{addressTitle}</p>
         </div>
         <div className="border-top pt-4 pb-1">
           <Button

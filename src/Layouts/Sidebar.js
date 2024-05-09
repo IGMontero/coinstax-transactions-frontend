@@ -60,7 +60,8 @@ const Sidebar = ({ layoutType }) => {
             layoutModeType === layoutModeTypes['DARKMODE']
               ? '#16161a'
               : // : '#4A5056',
-                '#eff2f7',
+                'RGB(215, 218, 222)',
+          // '#eff2f7
         }}
         // style={{
         //   background: '#23282C',
