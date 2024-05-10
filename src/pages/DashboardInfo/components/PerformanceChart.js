@@ -55,7 +55,6 @@ const PerformanceChart = ({
           gridLines: { display: false },
           ticks: {
             display: true,
-
           },
         },
       ],
@@ -74,11 +73,9 @@ const PerformanceChart = ({
             source: 'data',
             autoSkip: true,
             beginAtZero: true,
-
           },
           gridLines: { display: false },
         },
-
       ],
     },
     legend: { display: false },
@@ -110,7 +107,9 @@ const PerformanceChart = ({
     },
     hover: {
       mode: 'index',
-      intersect: false,
+      // intersect: false,
+      // Show lines in axis Y and X when hovering
+      // intersect: true,
     },
     title: {
       display: false,
@@ -121,8 +120,8 @@ const PerformanceChart = ({
     elements: {
       point: {
         radius: 0,
-      }
-    }
+      },
+    },
   });
 
   const fetchAndSetData = (days) => {
@@ -141,6 +140,9 @@ const PerformanceChart = ({
             const newData = response.total.map((item) => item.close.quote);
             const { minValue, maxValue } = getMaxMinValues(newData);
 
+            const minTick = minValue - (maxValue - minValue) * 1;
+            const maxTick = maxValue + (maxValue - minValue) * 1;
+
             setChartData({
               labels: newLabels,
               datasets: [{ ...chartData.datasets[0], data: newData }],
@@ -155,13 +157,13 @@ const PerformanceChart = ({
                     ...prevOptions.scales.yAxes[0],
                     ticks: {
                       ...prevOptions.scales.yAxes[0].ticks,
-                      min: minValue,
-                      max: maxValue,
+                      min: minTick,
+                      max: maxTick,
                       callback: function (value) {
-                        if (value === minValue || value === maxValue) {
+                        // only show min and max values
+                        if (value === minTick || value === maxTick) {
                           return parseValuesToLocale(value, CurrencyUSD);
                         }
-                        return null;
                       },
                     },
                   },
@@ -192,8 +194,8 @@ const PerformanceChart = ({
             const newData = response.prices.map((item) => item[1]);
             const { minValue, maxValue } = getMaxMinValues(newData);
 
-            const minTick = minValue - 0.005
-            const maxTick = maxValue + 0.005
+            const minTick = minValue - (maxValue - minValue) * 1;
+            const maxTick = maxValue + (maxValue - minValue) * 1;
 
             setChartData({
               labels: newLabels,
@@ -211,12 +213,12 @@ const PerformanceChart = ({
                       ...prevOptions.scales.yAxes[0].ticks,
                       min: minTick,
                       max: maxTick,
-                      // beginAtZero: true,
+                      stepSize: (maxTick - minTick) / 10,
                       callback: function (value) {
-                        if (value === minValue || value === maxValue) {
+                        // only show min and max values
+                        if (value === minTick || value === maxTick) {
                           return parseValuesToLocale(value, CurrencyUSD);
                         }
-                        return null;
                       },
                     },
                   },
@@ -232,8 +234,6 @@ const PerformanceChart = ({
         });
     }
   };
-
-  console.log(token);
 
   useEffect(() => {
     if (!token) {
@@ -274,8 +274,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(7, 'one_week')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_week' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'one_week' ? 'active' : ''
+          }`}
           id="one_week"
         >
           7D
@@ -284,8 +285,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(30, 'one_month')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_month' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'one_month' ? 'active' : ''
+          }`}
           id="one_month"
         >
           1M
@@ -294,8 +296,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(180, 'six_months')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'six_months' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'six_months' ? 'active' : ''
+          }`}
           id="six_months"
         >
           6M
@@ -304,8 +307,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(365, 'one_year')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_year' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'one_year' ? 'active' : ''
+          }`}
           id="one_year"
         >
           1Y
@@ -314,8 +318,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(10000, 'all')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'all' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'all' ? 'active' : ''
+          }`}
           id="all"
         >
           ALL
@@ -355,8 +360,7 @@ const PerformanceChart = ({
             </div>
             <span className="ms-2 text-muted mb-3">{activeDate}</span>
             <div>
-              <Line
-                height={250} data={chartData} options={chartOptions} />
+              <Line height={250} data={chartData} options={chartOptions} />
             </div>
           </>
         )}
