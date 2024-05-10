@@ -26,6 +26,7 @@ const PerformanceChart = ({
 
   const [activeFilter, setActiveFilter] = useState('one_week');
   const [isHovering, setIsHovering] = useState(false);
+  const [cursorStyle, setCursorStyle] = useState('default');
   const [showMessage, setShowMessage] = useState(false);
   const [chartData, setChartData] = useState({
     labels: [],
@@ -108,8 +109,10 @@ const PerformanceChart = ({
       onHover: (event, chartElements) => {
         if (chartElements.length > 0) {
           setIsHovering(true);
+          setCursorStyle('crosshair');
         } else {
           setIsHovering(false);
+          setCursorStyle('default');
         }
       },
     },
@@ -393,7 +396,7 @@ const PerformanceChart = ({
               </h4>
             </div>
             <span className="ms-2 text-muted mb-3">{activeDate}</span>
-            <div>
+            <div style={{ cursor: cursorStyle }}>
               <Line height={250} data={chartData} options={chartOptions} />
             </div>
           </>
