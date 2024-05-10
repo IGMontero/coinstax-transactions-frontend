@@ -8,13 +8,34 @@ import {
 import { formatIdTransaction } from '../../utils/utils';
 import { useParams } from 'react-router-dom';
 import QrModal from '../Modals/QrModal';
+import RenameAddressModal from '../Modals/RenameAddress';
 
 const AddressWithDropdown = () => {
   const { address } = useParams();
+
   const [showQrModal, setShowQrModal] = useState(false);
+  const [renameModal, setRenameModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [formattedAddressLabel, setFormattedAddressLabel] = useState('');
   const [formattedValue, setFormattedValue] = useState('');
+  const [selectedOptionLabel, setSelectedOptionLabel] = useState('');
+  const [selectedOptionValue, setSelectedOptionValue] = useState('');
+
+  const userAddresses = JSON.parse(localStorage.getItem('userAddresses'));
+
+  useEffect(() => {
+    const userAddresses = JSON.parse(localStorage.getItem('userAddresses'));
+    const matchingAddress = userAddresses.find(
+      (addr) => addr.value === address,
+    );
+    const currentFormattedValue = formatIdTransaction(address, 6, 8);
+    setFormattedValue(currentFormattedValue);
+    if (matchingAddress) {
+      setFormattedAddressLabel(matchingAddress.label);
+      setSelectedOptionLabel(matchingAddress.label);
+      setSelectedOptionValue(matchingAddress.value);
+    }
+  }, [address]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -34,8 +55,27 @@ const AddressWithDropdown = () => {
     }
   };
 
+  const handleRenameNameFromLocalStorage = (valueToFind, newName) => {
+    const storedOptions =
+      JSON.parse(localStorage.getItem('userAddresses')) || [];
+    const newOptions = storedOptions.map((storedOption) => {
+      if (storedOption.value === valueToFind) {
+        return { ...storedOption, label: newName };
+      }
+      return storedOption;
+    });
+    localStorage.setItem('userAddresses', JSON.stringify(newOptions));
+    setFormattedAddressLabel(newName);
+  };
+
+  const handleOpenModalRename = (e, option) => {
+    e.stopPropagation();
+    setSelectedOptionLabel(option.label);
+    setSelectedOptionValue(option.value);
+    setRenameModal(true);
+  };
+
   useEffect(() => {
-    const userAddresses = JSON.parse(localStorage.getItem('userAddresses'));
     const matchingAddress = userAddresses.find(
       (addr) => addr.value === address,
     );
@@ -85,6 +125,18 @@ const AddressWithDropdown = () => {
               )}
               <span className="fw-semibold">Copy Address</span>
             </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={(e) =>
+                handleOpenModalRename(e, {
+                  label: formattedAddressLabel,
+                  value: address,
+                })
+              }
+            >
+              <i className="ri-pencil-line fs-2 me-2"></i>
+              <span className="fw-semibold">Rename</span>
+            </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
       </div>
@@ -94,6 +146,15 @@ const AddressWithDropdown = () => {
   return (
     <div className="">
       {' '}
+      <RenameAddressModal
+        open={renameModal}
+        setOpen={setRenameModal}
+        address={selectedOptionLabel}
+        options={userAddresses}
+        onSave={(newName) =>
+          handleRenameNameFromLocalStorage(selectedOptionValue, newName)
+        }
+      />
       <QrModal
         showQrModal={showQrModal}
         toggleQrModal={toggleQrModal}
