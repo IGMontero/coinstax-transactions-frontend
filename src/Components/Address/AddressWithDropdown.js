@@ -5,6 +5,7 @@ import {
   DropdownToggle,
   UncontrolledDropdown,
 } from 'reactstrap';
+import Cookies from 'js-cookie';
 import { formatIdTransaction } from '../../utils/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import QrModal from '../Modals/QrModal';
@@ -26,7 +27,7 @@ const AddressWithDropdown = () => {
   const [userAddresses, setUserAddresses] = useState([]);
 
   useEffect(() => {
-    setUserAddresses(JSON.parse(localStorage.getItem('userAddresses')) || []);
+    setUserAddresses(JSON.parse(Cookies.get('userAddresses')) || []);
   }, []);
 
   useEffect(() => {
@@ -60,31 +61,29 @@ const AddressWithDropdown = () => {
     }
   };
 
-  const handleRenameNameFromLocalStorage = (valueToFind, newName) => {
-    const storedOptions =
-      JSON.parse(localStorage.getItem('userAddresses')) || [];
+  const handleRenameAddressInCookies = (valueToFind, newName) => {
+    const storedOptions = JSON.parse(Cookies.get('userAddresses') || '[]');
     const newOptions = storedOptions.map((storedOption) => {
       if (storedOption.value === valueToFind) {
         return { ...storedOption, label: newName };
       }
       return storedOption;
     });
-    localStorage.setItem('userAddresses', JSON.stringify(newOptions));
+    Cookies.set('userAddresses', JSON.stringify(newOptions), { expires: 7 });
     setUserAddresses(newOptions);
     setFormattedAddressLabel(newName);
   };
 
-  const removeOptionsFromLocalStorage = (value) => {
-    const storedOptions =
-      JSON.parse(localStorage.getItem('userAddresses')) || [];
+  const removeOptionsFromCookies = (value) => {
+    const storedOptions = JSON.parse(Cookies.get('userAddresses') || '[]');
     const newOptions = storedOptions.filter(
       (storedOption) => storedOption.value !== value,
     );
-    localStorage.setItem('userAddresses', JSON.stringify(newOptions));
+    Cookies.set('userAddresses', JSON.stringify(newOptions), { expires: 7 });
     setUserAddresses(newOptions);
   };
 
-  const handleDeleteOptionFromLocalStorage = (e, option) => {
+  const handleDeleteOptionsFromCookies = (e, option) => {
     e.preventDefault();
     e.stopPropagation();
     Swal.fire({
@@ -96,7 +95,7 @@ const AddressWithDropdown = () => {
       cancelButtonText: 'Cancel',
     }).then((result) => {
       if (result.isConfirmed) {
-        removeOptionsFromLocalStorage(option.value);
+        removeOptionsFromCookies(option.value);
         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
       }
     });
@@ -176,7 +175,7 @@ const AddressWithDropdown = () => {
             <DropdownItem
               className="d-flex align-items-center"
               onClick={(e) =>
-                handleDeleteOptionFromLocalStorage(e, {
+                handleDeleteOptionsFromCookies(e, {
                   label: formattedAddressLabel,
                   value: address,
                 })
@@ -200,7 +199,7 @@ const AddressWithDropdown = () => {
         address={selectedOptionLabel}
         options={userAddresses}
         onSave={(newName) =>
-          handleRenameNameFromLocalStorage(selectedOptionValue, newName)
+          handleRenameAddressInCookies(selectedOptionValue, newName)
         }
       />
       <QrModal

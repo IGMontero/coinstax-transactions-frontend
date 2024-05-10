@@ -4,6 +4,7 @@ import { components } from 'react-select';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { layoutModeTypes } from '../constants/layout';
+import Cookies from 'js-cookie';
 import { Col } from 'reactstrap';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
@@ -54,7 +55,9 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
 
   const [optionDropdown, setOptionDropdown] = useState([]);
 
-  const savedOptions = localStorage.getItem('userAddresses');
+  const savedOptions = Cookies.get('userAddresses');
+
+  console.log('Cookies', options);
 
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
@@ -75,8 +78,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         selectedOption,
         ...currentOptions.filter((o) => o.value !== selectedOption.value),
       ]);
-    } else {
-      savedOptions && setOptions(JSON.parse(savedOptions));
+    } else if (savedOptions) {
+      setOptions(JSON.parse(savedOptions));
     }
   }, [selectedOption]);
 
@@ -140,25 +143,14 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [searchInput, debouncedFetchSuggestions]);
 
   useEffect(() => {
-    // if (
-    //   (searchInput.startsWith('0x') && searchInput.length >= 5) ||
-    //   (!searchInput.startsWith('0x') && searchInput.length >= 3)
-    // ) {
-    //   setIsMenuOpen(true);
-    // }
-    // else {
-    //   setIsMenuOpen(false);
-    // }
-    // If lenght is less than 3, close the menu and reset the options
     if (searchInput.length < 3) {
-      // setIsMenuOpen(false);
       setOptions([]);
     }
   }, [searchInput]);
 
   useEffect(() => {
     if (!isUnsupported) {
-      handleSaveInLocalStorage();
+      handleSaveInCookies();
     }
 
     if (address) {
@@ -179,11 +171,10 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [searchInput]);
 
   // #region HANDLERS
-  const handleSaveInLocalStorage = () => {
+  const handleSaveInCookies = () => {
     const validInput = searchInput.trim().length > 0;
-    if (!isUnsupported && validInput) {
-      const storedOptions =
-        JSON.parse(localStorage.getItem('userAddresses')) || [];
+    if (validInput) {
+      const storedOptions = JSON.parse(Cookies.get('userAddresses') || '[]');
       const newOption = {
         label: searchInput,
         value: searchInput,
@@ -195,8 +186,6 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       };
 
       if (
-        newOption.label &&
-        newOption.value &&
         !storedOptions.some(
           (o) => o.label === newOption.label || o.value === newOption.value,
         )
@@ -205,20 +194,19 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         if (storedOptions.length > 10) {
           storedOptions.shift();
         }
-        setOptionDropdown(newOption);
-        localStorage.setItem('userAddresses', JSON.stringify(storedOptions));
+        Cookies.set('userAddresses', JSON.stringify(storedOptions), {
+          expires: 7,
+        });
+        setOptions((currentOptions) => [
+          newOption,
+          ...currentOptions.filter((o) => o.value !== newOption.value),
+        ]);
       }
-
-      setOptions((currentOptions) => [
-        newOption,
-        ...currentOptions.filter((o) => o.value !== newOption.value),
-      ]);
     }
   };
 
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
-      // const resultWithoutTrailingspaces = inputValue.trim();
       setSearchInput(inputValue);
     }
   };
