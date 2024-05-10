@@ -166,7 +166,6 @@ const PerformanceChart = ({
                       min: minTick,
                       max: maxTick,
                       callback: function (value) {
-                        // only show min and max values
                         if (value === minTick || value === maxTick) {
                           return parseValuesToLocale(value, CurrencyUSD);
                         }

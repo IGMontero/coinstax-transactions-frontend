@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DropdownItem,
   DropdownMenu,
@@ -13,6 +13,8 @@ const AddressWithDropdown = () => {
   const { address } = useParams();
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
+  const [formattedAddressLabel, setFormattedAddressLabel] = useState('');
+  const [formattedValue, setFormattedValue] = useState('');
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -32,12 +34,33 @@ const AddressWithDropdown = () => {
     }
   };
 
+  useEffect(() => {
+    const userAddresses = JSON.parse(localStorage.getItem('userAddresses'));
+    const matchingAddress = userAddresses.find(
+      (addr) => addr.value === address,
+    );
+    const currentFormattedValue = formatIdTransaction(address, 6, 8);
+    setFormattedValue(currentFormattedValue);
+    if (matchingAddress) {
+      if (matchingAddress.label === matchingAddress.value) {
+        setFormattedAddressLabel(currentFormattedValue);
+      } else {
+        setFormattedAddressLabel(matchingAddress.label);
+      }
+    }
+  }, [address]);
+
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
         <h4 className="text-address mb-0">
-          {formatIdTransaction(address, 6, 8)}
+          {formattedAddressLabel || formatIdTransaction(address, 6, 8)}
         </h4>
+        {formattedAddressLabel && formattedAddressLabel !== formattedValue && (
+          <span className="badge bg-soft-dark text-dark fw-semibold fs-6 mb-0 ms-2">
+            {formattedValue}
+          </span>
+        )}
         <UncontrolledDropdown className="card-header-dropdown">
           <DropdownToggle tag="a" className="text-reset" role="button">
             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
@@ -67,6 +90,7 @@ const AddressWithDropdown = () => {
       </div>
     );
   };
+
   return (
     <div className="">
       {' '}
