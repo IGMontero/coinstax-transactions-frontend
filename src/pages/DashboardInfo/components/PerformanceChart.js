@@ -107,9 +107,7 @@ const PerformanceChart = ({
     },
     hover: {
       mode: 'index',
-      // intersect: false,
-      // Show lines in axis Y and X when hovering
-      // intersect: true,
+      intersect: false,
     },
     title: {
       display: false,
@@ -190,10 +188,24 @@ const PerformanceChart = ({
           if (response.unsupported) {
             setIsUnsupported(true);
           } else {
-            const newLabels = response.prices.map((item) => new Date(item[0]));
-            const newData = response.prices.map((item) => item[1]);
-            const { minValue, maxValue } = getMaxMinValues(newData);
+            const uniqueDates = new Set();
+            const newLabels = [];
+            const newData = [];
 
+            response.prices.forEach((item) => {
+              const date = new Date(item[0]);
+              const dateString = date.toISOString().split('T')[0];
+
+              // Check if the date string is not already present in the set
+              if (!uniqueDates.has(dateString)) {
+                uniqueDates.add(dateString);
+                newLabels.push(dateString);
+                // Add the price value to the data array
+                newData.push(item[1]);
+              }
+            });
+
+            const { minValue, maxValue } = getMaxMinValues(newData);
             const minTick = minValue - (maxValue - minValue) * 1;
             const maxTick = maxValue + (maxValue - minValue) * 1;
 
@@ -329,7 +341,7 @@ const PerformanceChart = ({
     );
   };
 
-  if (!loading && chartData.length === 0 && showMessage && !showMessage) {
+  if (!loading && chartData.length === 0 && !showMessage) {
     <Col
       className="d-flex text-center col-12 justify-content-center align-items-center"
       style={{ display: 'flex', height: '50vh', width: '100%' }}
