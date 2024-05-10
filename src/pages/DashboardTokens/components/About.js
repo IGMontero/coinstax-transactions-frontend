@@ -8,7 +8,16 @@ const About = ({ description, name, links }) => {
         {' '}
         <h3>About {capitalizeFirstLetter(name)}</h3>
       </div>
-      <p>{description}</p>
+      <div
+        style={{
+          whiteSpace: 'pre-wrap',
+        }}
+        dangerouslySetInnerHTML={{ __html: description }}
+      ></div>
+
+      {/* <p>
+        {description}
+      </p> */}
       <div>
         {links &&
           Object.keys(links).map((link, index) => {

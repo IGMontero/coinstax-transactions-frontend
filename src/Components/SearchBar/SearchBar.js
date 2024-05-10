@@ -9,6 +9,10 @@ import { Col } from 'reactstrap';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
 import { formatIdTransaction } from '../../utils/utils';
+import {
+  getUserSavedAddresses,
+  setUserSavedAddresses,
+} from '../../helpers/cookies_helper';
 
 const CustomOptions = (props) => {
   return (
@@ -55,7 +59,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
 
   const [optionDropdown, setOptionDropdown] = useState([]);
 
-  const savedOptions = Cookies.get('userAddresses');
+  const savedOptions = getUserSavedAddresses();
 
   console.log('Cookies', options);
 
@@ -79,7 +83,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         ...currentOptions.filter((o) => o.value !== selectedOption.value),
       ]);
     } else if (savedOptions) {
-      setOptions(JSON.parse(savedOptions));
+      setOptions(savedOptions);
     }
   }, [selectedOption]);
 
@@ -153,9 +157,9 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       handleSaveInCookies();
     }
 
-    if (address) {
-      setSearchInput(address);
-    }
+    // if (address) {
+    //   setSearchInput(address);
+    // }
   }, [isUnsupported, address, location]);
 
   useEffect(() => {
@@ -174,7 +178,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const handleSaveInCookies = () => {
     const validInput = searchInput.trim().length > 0;
     if (validInput) {
-      const storedOptions = JSON.parse(Cookies.get('userAddresses') || '[]');
+      const storedOptions = getUserSavedAddresses();
       const newOption = {
         label: searchInput,
         value: searchInput,
@@ -185,18 +189,20 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           null,
       };
 
-      if (
-        !storedOptions.some(
-          (o) => o.label === newOption.label || o.value === newOption.value,
-        )
-      ) {
-        storedOptions.push(newOption);
+      const isAddressAlreadySaved = storedOptions.some(
+        (o) => o.value === newOption.value,
+      );
+
+      if (!isAddressAlreadySaved) {
+        // Add address at the beginning of the list
+        storedOptions.unshift(newOption);
+
         if (storedOptions.length > 10) {
           storedOptions.shift();
         }
-        Cookies.set('userAddresses', JSON.stringify(storedOptions), {
-          expires: 7,
-        });
+
+        setUserSavedAddresses(storedOptions);
+
         setOptions((currentOptions) => [
           newOption,
           ...currentOptions.filter((o) => o.value !== newOption.value),
@@ -367,6 +373,9 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         }
         onKeyDown={(e) => {
           if (e.key === 'Enter' && searchInput.length >= 3) {
+            setSearchInput('');
+            // Close dropdown
+            setIsMenuOpen(false);
             navigate(`/address/${searchInput}`);
           }
         }}

@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import {
   Dropdown,
-  DropdownToggle,
-  DropdownMenu,
   DropdownItem,
-  Button,
-  Badge,
+  DropdownMenu,
+  DropdownToggle,
 } from 'reactstrap';
 
 import Swal from 'sweetalert2';
+import { getUserSavedAddresses } from '../../../helpers/cookies_helper';
 import {
   copyToClipboard,
   formatIdTransaction,
@@ -23,12 +21,12 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
   const { address } = useParams();
   const location = useLocation();
 
+  const savedAddresses = getUserSavedAddresses();
+
   // #region STATES
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
-  const [options, setOptions] = useState(
-    JSON.parse(localStorage.getItem('userAddresses')) || [],
-  );
+  const [options, setOptions] = useState(savedAddresses);
   const [dropdownControlledByThisItem, setDropdownControlledByThisItem] =
     useState({});
   const [qrCodeModal, setQrCodeModal] = useState(false);
@@ -39,7 +37,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
 
   useEffect(() => {
     // If options change, save to local storage
-    localStorage.setItem('userAddresses', JSON.stringify(options));
+    localStorage.setItem('addressess', JSON.stringify(options));
 
     // Create an iframe poitning to root url
     const iframe = document.createElement('iframe');
@@ -156,15 +154,14 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
   };
 
   const handleRenameNameFromLocalStorage = (valueToFind, newName) => {
-    const storedOptions =
-      JSON.parse(localStorage.getItem('userAddresses')) || [];
+    const storedOptions = JSON.parse(localStorage.getItem('addressess')) || [];
     const newOptions = storedOptions.map((storedOption) => {
       if (storedOption.value === valueToFind) {
         return { ...storedOption, label: newName };
       }
       return storedOption;
     });
-    localStorage.setItem('userAddresses', JSON.stringify(newOptions));
+    localStorage.setItem('addressess', JSON.stringify(newOptions));
     setOptions(newOptions);
   };
 
@@ -262,9 +259,8 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
               option ? (
                 <>
                   <DropdownItem
-                    className={`d-flex justify-content-between align-items-center pe-2 ${
-                      option.value === address ? 'active' : ''
-                    }`}
+                    className={`d-flex justify-content-between align-items-center pe-2 ${option.value === address ? 'active' : ''
+                      }`}
                     key={index}
                     onClick={() => handleSelect(option)}
                   >

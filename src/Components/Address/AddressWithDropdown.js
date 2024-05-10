@@ -11,6 +11,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import QrModal from '../Modals/QrModal';
 import RenameAddressModal from '../Modals/RenameAddress';
 import Swal from 'sweetalert2';
+import {
+  getUserSavedAddresses,
+  setUserSavedAddresses,
+} from '../../helpers/cookies_helper';
 
 const AddressWithDropdown = () => {
   const { address } = useParams();
@@ -27,7 +31,7 @@ const AddressWithDropdown = () => {
   const [userAddresses, setUserAddresses] = useState([]);
 
   useEffect(() => {
-    setUserAddresses(JSON.parse(Cookies.get('userAddresses')) || []);
+    setUserAddresses(getUserSavedAddresses());
   }, []);
 
   useEffect(() => {
@@ -62,24 +66,25 @@ const AddressWithDropdown = () => {
   };
 
   const handleRenameAddressInCookies = (valueToFind, newName) => {
-    const storedOptions = JSON.parse(Cookies.get('userAddresses') || '[]');
+    const storedOptions = getUserSavedAddresses();
     const newOptions = storedOptions.map((storedOption) => {
       if (storedOption.value === valueToFind) {
         return { ...storedOption, label: newName };
       }
       return storedOption;
     });
-    Cookies.set('userAddresses', JSON.stringify(newOptions), { expires: 7 });
+
+    setUserSavedAddresses(newOptions);
     setUserAddresses(newOptions);
     setFormattedAddressLabel(newName);
   };
 
   const removeOptionsFromCookies = (value) => {
-    const storedOptions = JSON.parse(Cookies.get('userAddresses') || '[]');
+    const storedOptions = getUserSavedAddresses();
     const newOptions = storedOptions.filter(
       (storedOption) => storedOption.value !== value,
     );
-    Cookies.set('userAddresses', JSON.stringify(newOptions), { expires: 7 });
+    setUserSavedAddresses(newOptions);
     setUserAddresses(newOptions);
   };
 
@@ -129,11 +134,11 @@ const AddressWithDropdown = () => {
         <h4 className="text-address mb-0">
           {formattedAddressLabel || formatIdTransaction(address, 6, 8)}
         </h4>
-        {formattedAddressLabel && formattedAddressLabel !== formattedValue && (
+        {/* {formattedAddressLabel && formattedAddressLabel !== formattedValue && (
           <span className="badge bg-soft-dark text-dark fw-semibold fs-6 mb-0 ms-2">
             {formattedValue}
           </span>
-        )}
+        )} */}
         <UncontrolledDropdown className="card-header-dropdown">
           <DropdownToggle tag="a" className="text-reset" role="button">
             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
