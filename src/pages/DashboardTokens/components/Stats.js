@@ -60,6 +60,7 @@ const Stats = ({ stats }) => {
                   <h5 className="fw-semibold">{stat.label}</h5>
 
                   <h6
+                    style={{ fontWeight: 100 }}
                     className={`mb-0 me-2 text-${stat.value.includes('-') ? 'danger' : 'success'} d-block`}
                   >
                     {stat.value} ({stat.percentage})
