@@ -24,6 +24,8 @@ const PerformanceChart = ({
   const dispatch = useDispatch();
   const { token } = useParams();
 
+  const chartRef = useRef(null);
+
   const [activeFilter, setActiveFilter] = useState('one_week');
 
   const [showMessage, setShowMessage] = useState(false);
@@ -196,11 +198,9 @@ const PerformanceChart = ({
               const date = new Date(item[0]);
               const dateString = date.toISOString().split('T')[0];
 
-              // Check if the date string is not already present in the set
               if (!uniqueDates.has(dateString)) {
                 uniqueDates.add(dateString);
-                newLabels.push(dateString);
-                // Add the price value to the data array
+                newLabels.push(dateString); // Push dateString if you want labels as YYYY-MM-DD or date for Date objects
                 newData.push(item[1]);
               }
             });
@@ -210,7 +210,7 @@ const PerformanceChart = ({
             const maxTick = maxValue + (maxValue - minValue) * 1;
 
             setChartData({
-              labels: newLabels,
+              labels: newLabels.map((label) => new Date(label)), // Ensure the labels are Date objects if needed
               datasets: [{ ...chartData.datasets[0], data: newData }],
             });
 
@@ -227,7 +227,6 @@ const PerformanceChart = ({
                       max: maxTick,
                       stepSize: (maxTick - minTick) / 10,
                       callback: function (value) {
-                        // only show min and max values
                         if (value === minTick || value === maxTick) {
                           return parseValuesToLocale(value, CurrencyUSD);
                         }
@@ -256,19 +255,79 @@ const PerformanceChart = ({
   }, [token, address]);
 
   useEffect(() => {
-    if (chartData.labels.length > 0) {
-      const lastValue =
-        chartData.datasets[0].data[chartData.datasets[0].data.length - 1];
-      setTitle(parseValuesToLocale(lastValue, CurrencyUSD));
+    if (chartData.datasets[0].data.length > 0) {
+      const currentDate = new Date();
+      let closestIndex = 0;
+      let closestDate = new Date(chartData.labels[0]);
+      let closestDiff = Math.abs(currentDate - closestDate);
+
+      for (let i = 1; i < chartData.labels.length; i++) {
+        const date = new Date(chartData.labels[i]);
+        const diff = Math.abs(currentDate - date);
+        if (diff < closestDiff) {
+          closestIndex = i;
+          closestDate = date;
+          closestDiff = diff;
+        }
+      }
+
+      const closestValue = chartData.datasets[0].data[closestIndex];
+      setTitle(parseValuesToLocale(closestValue, CurrencyUSD));
+
       const percentageChange = calculatePercentageChange(
-        chartData.datasets[0].data.length - 1,
+        closestIndex,
         chartData.datasets[0].data,
       );
       setSubtitle(percentageChange.toFixed(2));
-      const date = new Date(chartData.labels[chartData.labels.length - 1]);
-      setActiveDate(formatDateToLocale(date));
+
+      setActiveDate(formatDateToLocale(closestDate));
     }
-  }, [chartData]);
+  }, [chartData, showMessage]);
+
+  useEffect(() => {
+    const chart = chartRef.current;
+    if (chart) {
+      const handleMouseLeave = () => {
+        const currentDate = new Date();
+        let closestIndex = 0;
+        let closestDate = new Date(chartData.labels[0]);
+        let closestDiff = Math.abs(currentDate - closestDate);
+
+        for (let i = 1; i < chartData.labels.length; i++) {
+          const date = new Date(chartData.labels[i]);
+          const diff = Math.abs(currentDate - date);
+          if (diff < closestDiff) {
+            closestIndex = i;
+            closestDate = date;
+            closestDiff = diff;
+          }
+        }
+
+        const closestValue = chartData.datasets[0].data[closestIndex];
+        setTitle(parseValuesToLocale(closestValue, CurrencyUSD));
+
+        const percentageChange = calculatePercentageChange(
+          closestIndex,
+          chartData.datasets[0].data,
+        );
+        setSubtitle(percentageChange.toFixed(2));
+
+        setActiveDate(formatDateToLocale(closestDate));
+      };
+
+      chart.addEventListener('mouseleave', handleMouseLeave);
+
+      // Función de limpieza
+      return () => {
+        chart.removeEventListener('mouseleave', handleMouseLeave);
+      };
+    }
+  }, [
+    chartData,
+    calculatePercentageChange,
+    parseValuesToLocale,
+    formatDateToLocale,
+  ]);
 
   const handleFilterForDays = (days, filterId) => {
     if (token) {
@@ -371,7 +430,7 @@ const PerformanceChart = ({
               </h4>
             </div>
             <span className="ms-2 text-muted mb-3">{activeDate}</span>
-            <div>
+            <div ref={chartRef}>
               <Line height={250} data={chartData} options={chartOptions} />
             </div>
           </>
