@@ -13,6 +13,10 @@ const RenameAddressModal = ({ open, setOpen, onSave, address, options }) => {
   const [newAddress, setNewAddress] = useState(address);
   const [originalAddress, setOriginalAddress] = useState(address);
 
+  const checkIfNameExists = (name) => {
+    return options.some((option) => option.label === name);
+  };
+
   useEffect(() => {
     if (open) {
       setNewAddress(address);
@@ -32,10 +36,6 @@ const RenameAddressModal = ({ open, setOpen, onSave, address, options }) => {
 
     onSave(newAddress);
     setOpen(false);
-  };
-
-  const checkIfNameExists = (name) => {
-    return options.some((option) => option.label === name);
   };
 
   return (

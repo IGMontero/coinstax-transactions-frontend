@@ -109,7 +109,7 @@ const PerformanceChart = ({
       onHover: (event, chartElements) => {
         if (chartElements.length > 0) {
           setIsHovering(true);
-          setCursorStyle('crosshair');
+          setCursorStyle('default');
         } else {
           setIsHovering(false);
           setCursorStyle('default');
