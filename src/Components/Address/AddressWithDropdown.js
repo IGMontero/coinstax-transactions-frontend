@@ -6,12 +6,14 @@ import {
   UncontrolledDropdown,
 } from 'reactstrap';
 import { formatIdTransaction } from '../../utils/utils';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import QrModal from '../Modals/QrModal';
 import RenameAddressModal from '../Modals/RenameAddress';
+import Swal from 'sweetalert2';
 
 const AddressWithDropdown = () => {
   const { address } = useParams();
+  const navigate = useNavigate();
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [renameModal, setRenameModal] = useState(false);
@@ -21,10 +23,13 @@ const AddressWithDropdown = () => {
   const [selectedOptionLabel, setSelectedOptionLabel] = useState('');
   const [selectedOptionValue, setSelectedOptionValue] = useState('');
 
-  const userAddresses = JSON.parse(localStorage.getItem('userAddresses'));
+  const [userAddresses, setUserAddresses] = useState([]);
 
   useEffect(() => {
-    const userAddresses = JSON.parse(localStorage.getItem('userAddresses'));
+    setUserAddresses(JSON.parse(localStorage.getItem('userAddresses')) || []);
+  }, []);
+
+  useEffect(() => {
     const matchingAddress = userAddresses.find(
       (addr) => addr.value === address,
     );
@@ -35,7 +40,7 @@ const AddressWithDropdown = () => {
       setSelectedOptionLabel(matchingAddress.label);
       setSelectedOptionValue(matchingAddress.value);
     }
-  }, [address]);
+  }, [address, userAddresses]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -65,7 +70,36 @@ const AddressWithDropdown = () => {
       return storedOption;
     });
     localStorage.setItem('userAddresses', JSON.stringify(newOptions));
+    setUserAddresses(newOptions);
     setFormattedAddressLabel(newName);
+  };
+
+  const removeOptionsFromLocalStorage = (value) => {
+    const storedOptions =
+      JSON.parse(localStorage.getItem('userAddresses')) || [];
+    const newOptions = storedOptions.filter(
+      (storedOption) => storedOption.value !== value,
+    );
+    localStorage.setItem('userAddresses', JSON.stringify(newOptions));
+    setUserAddresses(newOptions);
+  };
+
+  const handleDeleteOptionFromLocalStorage = (e, option) => {
+    e.preventDefault();
+    e.stopPropagation();
+    Swal.fire({
+      title: `Are you sure you want to remove ${option.label} (${option.value})?`,
+      text: 'You cannot undo this action!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeOptionsFromLocalStorage(option.value);
+        Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
+      }
+    });
   };
 
   const handleOpenModalRename = (e, option) => {
@@ -136,6 +170,20 @@ const AddressWithDropdown = () => {
             >
               <i className="ri-pencil-line fs-2 me-2"></i>
               <span className="fw-semibold">Rename</span>
+            </DropdownItem>
+            <DropdownItem divider />
+
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={(e) =>
+                handleDeleteOptionFromLocalStorage(e, {
+                  label: formattedAddressLabel,
+                  value: address,
+                })
+              }
+            >
+              <i className="ri-delete-bin-line fs-2 text-danger me-2"></i>
+              <span className="text-danger fw-semibold">Remove</span>
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
