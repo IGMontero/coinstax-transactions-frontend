@@ -24,12 +24,9 @@ const PerformanceChart = ({
   const dispatch = useDispatch();
   const { token } = useParams();
 
-  const chartRef = useRef(null);
-
   const [activeFilter, setActiveFilter] = useState('one_week');
-
+  const [isHovering, setIsHovering] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
-
   const [chartData, setChartData] = useState({
     labels: [],
     datasets: [
@@ -43,11 +40,9 @@ const PerformanceChart = ({
       },
     ],
   });
-
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('0');
   const [activeDate, setActiveDate] = useState('');
-
   const [chartOptions, setChartOptions] = useState({
     maintainAspectRatio: false,
     scales: {
@@ -110,6 +105,13 @@ const PerformanceChart = ({
     hover: {
       mode: 'index',
       intersect: false,
+      onHover: (event, chartElements) => {
+        if (chartElements.length > 0) {
+          setIsHovering(true);
+        } else {
+          setIsHovering(false);
+        }
+      },
     },
     title: {
       display: false,
@@ -124,6 +126,7 @@ const PerformanceChart = ({
     },
   });
 
+  // #region Api Calls
   const fetchAndSetData = (days) => {
     setLoading(true);
     if (address) {
@@ -246,6 +249,28 @@ const PerformanceChart = ({
     }
   };
 
+  // #region Handlers
+  const handleFilterForDays = (days, filterId) => {
+    if (token) {
+      fetchAndSetDataForToken(days);
+    } else {
+      fetchAndSetData(days);
+    }
+    setActiveFilter(filterId);
+  };
+
+  const updateValues = (index) => {
+    const value = chartData.datasets[0].data[index];
+    setTitle(parseValuesToLocale(value, CurrencyUSD));
+    const percentageChange = calculatePercentageChange(
+      index,
+      chartData.datasets[0].data,
+    );
+    setSubtitle(percentageChange.toFixed(2));
+    setActiveDate(formatDateToLocale(new Date(chartData.labels[index])));
+  };
+
+  // #region UseEffects
   useEffect(() => {
     if (!token) {
       fetchAndSetData();
@@ -254,8 +279,9 @@ const PerformanceChart = ({
     }
   }, [token, address]);
 
+  // This useEffect set the most recent value as the active value
   useEffect(() => {
-    if (chartData.datasets[0].data.length > 0) {
+    if (!isHovering && chartData.datasets[0].data.length > 0) {
       const currentDate = new Date();
       let closestIndex = 0;
       let closestDate = new Date(chartData.labels[0]);
@@ -270,74 +296,11 @@ const PerformanceChart = ({
           closestDiff = diff;
         }
       }
-
-      const closestValue = chartData.datasets[0].data[closestIndex];
-      setTitle(parseValuesToLocale(closestValue, CurrencyUSD));
-
-      const percentageChange = calculatePercentageChange(
-        closestIndex,
-        chartData.datasets[0].data,
-      );
-      setSubtitle(percentageChange.toFixed(2));
-
-      setActiveDate(formatDateToLocale(closestDate));
+      updateValues(closestIndex);
     }
-  }, [chartData, showMessage]);
+  }, [isHovering, chartData, showMessage]);
 
-  useEffect(() => {
-    const chart = chartRef.current;
-    if (chart) {
-      const handleMouseLeave = () => {
-        const currentDate = new Date();
-        let closestIndex = 0;
-        let closestDate = new Date(chartData.labels[0]);
-        let closestDiff = Math.abs(currentDate - closestDate);
-
-        for (let i = 1; i < chartData.labels.length; i++) {
-          const date = new Date(chartData.labels[i]);
-          const diff = Math.abs(currentDate - date);
-          if (diff < closestDiff) {
-            closestIndex = i;
-            closestDate = date;
-            closestDiff = diff;
-          }
-        }
-
-        const closestValue = chartData.datasets[0].data[closestIndex];
-        setTitle(parseValuesToLocale(closestValue, CurrencyUSD));
-
-        const percentageChange = calculatePercentageChange(
-          closestIndex,
-          chartData.datasets[0].data,
-        );
-        setSubtitle(percentageChange.toFixed(2));
-
-        setActiveDate(formatDateToLocale(closestDate));
-      };
-
-      chart.addEventListener('mouseleave', handleMouseLeave);
-
-      // Función de limpieza
-      return () => {
-        chart.removeEventListener('mouseleave', handleMouseLeave);
-      };
-    }
-  }, [
-    chartData,
-    calculatePercentageChange,
-    parseValuesToLocale,
-    formatDateToLocale,
-  ]);
-
-  const handleFilterForDays = (days, filterId) => {
-    if (token) {
-      fetchAndSetDataForToken(days);
-    } else {
-      fetchAndSetData(days);
-    }
-    setActiveFilter(filterId);
-  };
-
+  // #region Renders
   const renderFiltersButtons = () => {
     return (
       <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1 p-2">
@@ -430,7 +393,7 @@ const PerformanceChart = ({
               </h4>
             </div>
             <span className="ms-2 text-muted mb-3">{activeDate}</span>
-            <div ref={chartRef}>
+            <div>
               <Line height={250} data={chartData} options={chartOptions} />
             </div>
           </>
