@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import ChartTokens from './components/ChartTokens';
-import { Col, Spinner } from 'reactstrap';
-import ethIcon from '../../assets/images/svg/crypto-icons/eth.svg';
-import Stats from './components/Stats';
-import About from './components/About';
-import Tags from './components/Tags';
-import Explorers from './components/Explorers';
-import WalletCard from './components/WalletCard';
-import History from './components/History';
-import { fetchCoingeckoId } from '../../slices/tokens/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Col, Spinner } from 'reactstrap';
+import { fetchCoingeckoId } from '../../slices/tokens/thunk';
 import PerformanceChart from '../DashboardInfo/components/PerformanceChart';
+import About from './components/About';
+import Stats from './components/Stats';
 
 const DashboardTokens = () => {
   const navigate = useNavigate();

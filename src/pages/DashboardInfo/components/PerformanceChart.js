@@ -71,6 +71,8 @@ const PerformanceChart = ({
             source: 'data',
             autoSkip: true,
             beginAtZero: true,
+            maxTicksLimit: 7,
+            // interval: 1,
           },
           gridLines: { display: false },
         },
@@ -201,18 +203,25 @@ const PerformanceChart = ({
 
             response.prices.forEach((item) => {
               const date = new Date(item[0]);
-              const dateString = date.toISOString().split('T')[0];
+              const dateString = date.toISOString();
+              // .split('T')[0];
 
-              if (!uniqueDates.has(dateString)) {
-                uniqueDates.add(dateString);
-                newLabels.push(dateString); // Push dateString if you want labels as YYYY-MM-DD or date for Date objects
-                newData.push(item[1]);
-              }
+              // if (!uniqueDates.has(dateString)) {
+              //   uniqueDates.add(dateString);
+              //   newLabels.push(dateString); // Push dateString if you want labels as YYYY-MM-DD or date for Date objects
+              //   newData.push(item[1]);
+              // }
+
+              // Add all
+              newLabels.push(dateString);
+              newData.push(item[1]);
             });
 
+            console.log('New data length', newData.length);
+
             const { minValue, maxValue } = getMaxMinValues(newData);
-            const minTick = minValue - (maxValue - minValue) * 1;
-            const maxTick = maxValue + (maxValue - minValue) * 1;
+            const minTick = minValue - Math.abs(maxValue - minValue);
+            const maxTick = maxValue + Math.abs(maxValue - minValue);
 
             setChartData({
               labels: newLabels.map((label) => new Date(label)), // Ensure the labels are Date objects if needed
@@ -236,6 +245,13 @@ const PerformanceChart = ({
                           return parseValuesToLocale(value, CurrencyUSD);
                         }
                       },
+                      // callback: (value, index, values) => {
+                      //   // Only display label for the highest value
+                      //   if (value === Math.max(...values)) {
+                      //     return `${value} (Highest)`;
+                      //   }
+                      //   return null;
+                      // },
                     },
                   },
                 ],
@@ -310,9 +326,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(7, 'one_week')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_week' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_week' ? 'active' : ''
+            }`}
           id="one_week"
         >
           7D
@@ -321,9 +336,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(30, 'one_month')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_month' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_month' ? 'active' : ''
+            }`}
           id="one_month"
         >
           1M
@@ -332,9 +346,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(180, 'six_months')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'six_months' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'six_months' ? 'active' : ''
+            }`}
           id="six_months"
         >
           6M
@@ -343,9 +356,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(365, 'one_year')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_year' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_year' ? 'active' : ''
+            }`}
           id="one_year"
         >
           1Y
@@ -354,9 +366,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(10000, 'all')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'all' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'all' ? 'active' : ''
+            }`}
           id="all"
         >
           ALL
