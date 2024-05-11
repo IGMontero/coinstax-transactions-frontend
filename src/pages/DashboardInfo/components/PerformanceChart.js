@@ -37,7 +37,10 @@ const PerformanceChart = ({
         fill: true,
         borderColor: '#0759BC',
         tension: 0.1,
-        backgroundColor: '#0758bc1b',
+        // backgroundColor: '#0758bc1b',
+        backgroundColor: 'rgba(7, 88, 188, 0.1)', // Transparent fill color
+        pointBackgroundColor: '#0759BC', // Color of the points
+        pointBorderColor: '#0759BC', // Border color of the points
       },
     ],
   });
@@ -49,10 +52,11 @@ const PerformanceChart = ({
     scales: {
       yAxes: [
         {
-          position: 'right',
+          position: 'left',
           gridLines: { display: false },
           ticks: {
             display: true,
+            align: 'inner',
           },
         },
       ],
@@ -72,7 +76,12 @@ const PerformanceChart = ({
             autoSkip: true,
             beginAtZero: true,
             maxTicksLimit: 7,
+            maxRotation: 0, // Set maximum rotation to 0 degrees
+            minRotation: 0, // Set minimum rotation to 0 degrees
             // interval: 1,
+          },
+          label: {
+            avoidCollisions: false,
           },
           gridLines: { display: false },
         },
@@ -103,6 +112,19 @@ const PerformanceChart = ({
         label: function (tooltipItem) {
           return `${parseValuesToLocale(tooltipItem.yLabel, CurrencyUSD)}`;
         },
+        footer: function (tooltipItems, data) {
+          // Show date formatted
+          const date = new Date(data.labels[tooltipItems[0].index]);
+          // console.log(tooltipItems);
+          return formatDateToLocale(date, true);
+        },
+        // label: function (tooltipItem, data) {
+        //   // Your label callback logic
+        //   const value = tooltipItem.yLabel;
+        //   const formattedValue = parseValuesToLocale(value, CurrencyUSD);
+        //   const labelHTML = `<div>${formattedValue}</div>`; // HTML markup for the tooltip label
+        //   return labelHTML;
+        // },
       },
     },
     hover: {
@@ -129,6 +151,15 @@ const PerformanceChart = ({
         radius: 0,
       },
     },
+
+    // layout: {
+    //   padding: {
+    //     left: -10,
+    //     right: -10,
+    //     top: 0,
+    //     bottom: 0,
+    //   },
+    // },
   });
 
   // #region Api Calls
@@ -148,13 +179,19 @@ const PerformanceChart = ({
             const newData = response.total.map((item) => item.close.quote);
             const { minValue, maxValue } = getMaxMinValues(newData);
 
-            const minTick = minValue - (maxValue - minValue) * 1;
-            const maxTick = maxValue + (maxValue - minValue) * 1;
+            const minTick = minValue - Math.abs(maxValue - minValue);
+            const maxTick = maxValue + Math.abs(maxValue - minValue);
 
             setChartData({
               labels: newLabels,
               datasets: [{ ...chartData.datasets[0], data: newData }],
             });
+
+            const range = maxValue - minValue;
+            const numTicks = 5; // Adjust this value based on your preference
+            const tolerance = 0.001; // Adjust as needed for your precision
+
+            const stepSize = range / (numTicks - 1);
 
             setChartOptions((prevOptions) => ({
               ...prevOptions,
@@ -167,10 +204,15 @@ const PerformanceChart = ({
                       ...prevOptions.scales.yAxes[0].ticks,
                       min: minTick,
                       max: maxTick,
+                      stepSize: stepSize,
                       callback: function (value) {
-                        if (value === minTick || value === maxTick) {
+                        if (
+                          Math.abs(value - minValue) < tolerance ||
+                          Math.abs(value - maxValue) < tolerance
+                        ) {
                           return parseValuesToLocale(value, CurrencyUSD);
                         }
+                        return ''; // Return empty string for other values
                       },
                     },
                   },
@@ -203,7 +245,7 @@ const PerformanceChart = ({
 
             response.prices.forEach((item) => {
               const date = new Date(item[0]);
-              const dateString = date.toISOString();
+              // const dateString = date.toISOString();
               // .split('T')[0];
 
               // if (!uniqueDates.has(dateString)) {
@@ -213,7 +255,7 @@ const PerformanceChart = ({
               // }
 
               // Add all
-              newLabels.push(dateString);
+              newLabels.push(date);
               newData.push(item[1]);
             });
 
@@ -224,9 +266,15 @@ const PerformanceChart = ({
             const maxTick = maxValue + Math.abs(maxValue - minValue);
 
             setChartData({
-              labels: newLabels.map((label) => new Date(label)), // Ensure the labels are Date objects if needed
+              labels: newLabels, // Ensure the labels are Date objects if needed
               datasets: [{ ...chartData.datasets[0], data: newData }],
             });
+
+            const range = maxValue - minValue;
+            const numTicks = 5; // Adjust this value based on your preference
+            const tolerance = 0.001; // Adjust as needed for your precision
+
+            const stepSize = range / (numTicks - 1);
 
             setChartOptions((prevOptions) => ({
               ...prevOptions,
@@ -239,11 +287,15 @@ const PerformanceChart = ({
                       ...prevOptions.scales.yAxes[0].ticks,
                       min: minTick,
                       max: maxTick,
-                      stepSize: (maxTick - minTick) / 10,
+                      stepSize: stepSize,
                       callback: function (value) {
-                        if (value === minTick || value === maxTick) {
+                        if (
+                          Math.abs(value - minValue) < tolerance ||
+                          Math.abs(value - maxValue) < tolerance
+                        ) {
                           return parseValuesToLocale(value, CurrencyUSD);
                         }
+                        return ''; // Return empty string for other values
                       },
                       // callback: (value, index, values) => {
                       //   // Only display label for the highest value
