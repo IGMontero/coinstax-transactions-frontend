@@ -43,6 +43,8 @@ const HistorialTable = ({ data, setData }) => {
   let isDashboardPage;
   const pathSegments = location.pathname.split('/').filter(Boolean);
 
+  const isUserInTransactionsHistoryPage = pathSegments.includes('history');
+
   if (pathSegments.length === 2) {
     isDashboardPage = true;
   } else if (pathSegments.length > 2) {
@@ -93,6 +95,18 @@ const HistorialTable = ({ data, setData }) => {
       clearTimeout(timeout);
     };
   }, [isProcessing]);
+
+  useEffect(() => {
+    console.log('refresh intervals changed!', refreshPreviewIntervals);
+
+    // Check if any interval is running.
+    const hasAnyIntervalRunning = Object.values(refreshPreviewIntervals).some(
+      (interval) => interval,
+    );
+
+    // Set has preview state
+    setHasPreview(hasAnyIntervalRunning);
+  }, [refreshPreviewIntervals]);
 
   // useEffect(() => {
   //   const timeout = setTimeout(() => {
@@ -186,7 +200,6 @@ const HistorialTable = ({ data, setData }) => {
       }
 
       // TODO: IF HAS PREVIEW, TRIGGER FETCHING UNTIL ALL TRANSACTIONS ARE PARSED
-
     } catch (error) {
       setErrorData(error);
       console.log(error);
@@ -198,8 +211,24 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   const startRefreshPreviewPageInterval = (pageIndex) => {
+    if (!isUserInTransactionsHistoryPage) {
+      return;
+    }
+
     const interval = setInterval(async () => {
-      console.log("Running interval for page", pageIndex)
+      console.log('Running interval for page', pageIndex);
+
+      // Check if user is in this page still
+
+      const isUserInTransactionsHistoryPage =
+        location.pathname.includes('history');
+
+      if (!isUserInTransactionsHistoryPage) {
+        clearInterval(interval);
+        console.log('Clearing interval for page', pageIndex);
+        return;
+      }
+
       await updateTransactionsPreview({
         address,
         debouncedSearchTerm,
@@ -214,7 +243,7 @@ const HistorialTable = ({ data, setData }) => {
         onEnd: () => {
           clearInterval(interval);
           console.log('Clearing interval for page', pageIndex);
-        }
+        },
       });
     }, 5000);
 
@@ -227,21 +256,31 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   useEffect(() => {
-    return () => {
+    const hasRunningIntervals = Object.values(refreshPreviewIntervals).some(
+      (interval) => interval,
+    );
+
+    if (!hasRunningIntervals) {
+      console.log('No running intervals');
+
+      // Clear all intervals
       Object.values(refreshPreviewIntervals).forEach((interval) => {
         clearInterval(interval);
       });
     }
+
+    return () => {
+      Object.values(refreshPreviewIntervals).forEach((interval) => {
+        clearInterval(interval);
+      });
+    };
   }, [
     // If any filter changes, clear all intervals
     selectedFilters,
     includeSpam,
     selectedAssets,
+    refreshPreviewIntervals,
   ]);
-
-
-
-
 
   // useEffect(() => {
   //   let interval;
@@ -358,7 +397,6 @@ const HistorialTable = ({ data, setData }) => {
         console.log('Starting interval for page', nextPage);
         startRefreshPreviewPageInterval(nextPage);
       }
-
     } catch (error) {
       console.error('Error fetching more transactions:', error);
     } finally {
@@ -533,6 +571,7 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   // #region RENDER FUNCTIONS
+
   const renderBadges = () => {
     return selectedFilters.map((filterName) => (
       <Badge
@@ -590,7 +629,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -608,8 +647,9 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -752,54 +792,56 @@ const HistorialTable = ({ data, setData }) => {
     );
   };
 
-  // #region RENDER
-  if (data && data.length === 0 && !loading) {
+  const renderMessageNoResults = () => {
     return (
-      <>
-        {renderTitle()}
-        <Col
-          className="d-flex text-center col-12 justify-content-center align-items-center"
-          style={{
-            display: 'flex',
-            height: isDashboardPage ? '10vh' : '40vh',
-            width: '100%',
-          }}
-        >
+      <Col
+        lg={12}
+        className="position-relative d-flex justify-content-center align-items-center"
+        style={{ minHeight: isDashboardPage ? '10vh' : '50vh' }}
+      >
+        <div>
           {isDashboardPage ? (
-            <h4 className="text-center ">
-              This address does not have any transaction
-            </h4>
+            <h4> No Transactions found </h4>
           ) : (
-            <h1 className="text-center ">
-              This address does not have any transaction
-            </h1>
+            <h1>No results found </h1>
           )}
-        </Col>
-      </>
+        </div>
+      </Col>
     );
-  }
+  };
 
-  return (
-    <React.Fragment>
-      {renderTitle()}
+  const renderInfoTransactions = () => {
+    return (
+      <Row className="col-12">
+        <div className="d-flex justify-content-between w-100">
+          <div>Total transactions: {totalTransactions}</div>
+          <div>
+            {hasPreview && (
+              <div className="d-flex align-items-center">
+                <Spinner size="sm" />
+                <span className="ms-2">Loading transactions...</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </Row>
+    );
+  };
 
-      {data && data.length && !errorData ? (
+  const renderHeader = () => {
+    return (
+      <div>
         <div className={isDashboardPage ? 'd-none' : ''}>
+          {renderTitle()}
           {renderFiltersDropdown()}
           <Col className="col-12">
             {renderBadges()}
             {hasActiveFilters && (
               <span
-                className={
-                  isInitialLoad ? 'd-none' : 'text-primary ms-2 cursor-pointer'
-                }
-                onClick={() => {
-                  handleClearAllFilters();
-                }}
+                className="text-primary ms-2 cursor-pointer"
+                onClick={handleClearAllFilters}
               >
-                <span className={isInitialLoad ? 'd-none' : 'text-hover-dark'}>
-                  Reset
-                </span>
+                Reset
               </span>
             )}
           </Col>
@@ -818,45 +860,20 @@ const HistorialTable = ({ data, setData }) => {
                   Include Spam Transactions
                 </label>
               </div>
-              <div className={`d-flex justify-content-end`}>
-                {currentUser ? (
-                  <Button
-                    disabled={isInitialLoad}
-                    onClick={handleDownloadTransactions}
-                    className={`${isInitialLoad ? 'd-none' : 'btn btn-sm'} `}
-                    color={isInitialLoad ? 'muted' : 'primary'}
-                    size="sm"
-                  >
-                    Download CSV
-                  </Button>
-                ) : null}
-              </div>
             </div>
-          </Row>{' '}
+          </Row>
+          {renderInfoTransactions()}
         </div>
-      ) : null}
-      {/* {renderSearchBar()} */}
-      {!isInitialLoad && !data && !errorData && !isDashboardPage && (
-        <Col className="my-0 d-flex px-1 mt-4 mb-2 align-items-center justify-content-between">
-          <Col>
-            <h6 className="mb-0">Total Transactions: {totalTransactions}</h6>
-          </Col>
-          {hasPreview && (
-            <Col>
-              <div className="d-flex align-items-center justify-content-end">
-                <Spinner
-                  className="me-2"
-                  style={{ width: '1rem', height: '1rem' }}
-                />
-                <h6 className="mb-0 fw-semibold">
-                  Loading transactions information ...
-                </h6>
-              </div>
-            </Col>
-          )}
-        </Col>
-      )}
-      {loading && isInitialLoad ? (
+        {!loading && !isInitialLoad && renderMessageNoResults()}
+      </div>
+    );
+  };
+
+  // #region RENDER CONDITIONALS
+  if (loading && isInitialLoad) {
+    return (
+      <>
+        {renderHeader()}
         <div
           className="d-flex justify-content-center align-items-center"
           style={{ height: '50vh' }}
@@ -868,53 +885,114 @@ const HistorialTable = ({ data, setData }) => {
             </div>
           )}
         </div>
-      ) : Object.keys(groupedTransactions).length > 0 ? (
+      </>
+    );
+  }
+
+  if (errorData) {
+    return (
+      <Col
+        lg={12}
+        className="position-relative d-flex justify-content-center align-items-center"
+        style={{ minHeight: '50vh' }}
+      >
+        <h1>{errorData}</h1>
+      </Col>
+    );
+  }
+
+  if (totalTransactions === 0 && !loading && !isInitialLoad) {
+    return (
+      <>
+        {renderTitle()}
+        <Col
+          className="d-flex text-center col-12 justify-content-center align-items-center"
+          style={{
+            display: 'flex',
+            height: isDashboardPage ? '10vh' : '40vh',
+            width: '100%',
+          }}
+        >
+          {isDashboardPage ? (
+            <h4>This address does not have any transactions</h4>
+          ) : (
+            <h1>This address does not have any transactions</h1>
+          )}
+        </Col>
+      </>
+    );
+  }
+
+  if (data && data.length === 0) {
+    return renderHeader();
+  }
+
+  // #region RENDER
+  return (
+    <React.Fragment>
+      {renderTitle()}
+      <div className={isDashboardPage ? 'd-none' : ''}>
+        {renderFiltersDropdown()}
+        <Col className="col-12">
+          {renderBadges()}
+          {hasActiveFilters && (
+            <span
+              className="text-primary ms-2 cursor-pointer"
+              onClick={handleClearAllFilters}
+            >
+              Reset
+            </span>
+          )}
+        </Col>
+        <Row>
+          <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
+            <div className="d-flex justify-content-start">
+              <Input
+                disabled={isInitialLoad}
+                id="customCheck1"
+                type="checkbox"
+                className="form-check-input me-2 cursor-pointer"
+                onChange={handleShowSpamTransactions}
+                checked={includeSpam}
+              />
+              <label className="form-check-label" htmlFor="customCheck1">
+                Include Spam Transactions
+              </label>
+            </div>
+            {currentUser && (
+              <Button
+                onClick={handleDownloadTransactions}
+                className="btn btn-sm"
+                color="primary"
+                size="sm"
+                disabled={isInitialLoad}
+              >
+                Download CSV
+              </Button>
+            )}
+          </div>
+        </Row>
+      </div>
+
+      {renderInfoTransactions()}
+
+      {!isInitialLoad && Object.keys(groupedTransactions).length > 0 && (
         <Col
           lg={12}
           className="position-relative"
           style={{ minHeight: '50vh' }}
         >
-          <div>
-            {Object.keys(groupedTransactions).map((date, index) => (
-              <RenderTransactions
-                key={index}
-                date={date}
-                transactions={groupedTransactions[date]}
-                onRefresh={fetchData}
-                setTransactions={setData}
-              />
-            ))}
-            {!isInitialLoad &&
-              hasMoreData &&
-              !isDashboardPage &&
-              renderGetMoreButton()}
-          </div>
+          {Object.keys(groupedTransactions).map((date, index) => (
+            <RenderTransactions
+              key={index}
+              date={date}
+              transactions={groupedTransactions[date]}
+              onRefresh={fetchData}
+              setTransactions={setData}
+            />
+          ))}
+          {!isDashboardPage && hasMoreData && renderGetMoreButton()}
         </Col>
-      ) : (
-        <>
-          {!loading && hasAppliedFilters && !errorData && (
-            <Col
-              lg={12}
-              className="position-relative d-flex justify-content-center align-items-center"
-              style={{ minHeight: '50vh' }}
-            >
-              <div>
-                <h1>No results found </h1>
-              </div>
-            </Col>
-          )}
-          {errorData && (
-            <Col
-              lg={12}
-              className="position-relative d-flex justify-content-center align-items-center"
-              style={{ minHeight: '50vh' }}
-            >
-              <div>
-                <h1>{errorData}</h1>
-              </div>
-            </Col>
-          )}
-        </>
       )}
     </React.Fragment>
   );

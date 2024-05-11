@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import {
   Dropdown,
-  DropdownToggle,
-  DropdownMenu,
   DropdownItem,
-  Button,
-  Badge,
+  DropdownMenu,
+  DropdownToggle,
 } from 'reactstrap';
 
 import Swal from 'sweetalert2';
+import { getUserSavedAddresses } from '../../../helpers/cookies_helper';
 import {
   copyToClipboard,
   formatIdTransaction,
@@ -23,12 +21,12 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
   const { address } = useParams();
   const location = useLocation();
 
+  const savedAddresses = getUserSavedAddresses();
+
   // #region STATES
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
-  const [options, setOptions] = useState(
-    JSON.parse(localStorage.getItem('userAddresses')) || [],
-  );
+  const [options, setOptions] = useState(savedAddresses);
   const [dropdownControlledByThisItem, setDropdownControlledByThisItem] =
     useState({});
   const [qrCodeModal, setQrCodeModal] = useState(false);
@@ -37,10 +35,9 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
 
   const [renameModal, setRenameModal] = useState(false);
 
-
   useEffect(() => {
     // If options change, save to local storage
-    localStorage.setItem('userAddresses', JSON.stringify(options));
+    localStorage.setItem('addressess', JSON.stringify(options));
 
     // Create an iframe poitning to root url
     const iframe = document.createElement('iframe');
@@ -50,7 +47,10 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
     // Set iframe on load function
     iframe.onload = () => {
       // Use postmessage to send the options to the iframe
-      iframe.contentWindow.postMessage(JSON.stringify(options), process.env.REACT_APP_ROOT_URL);
+      iframe.contentWindow.postMessage(
+        JSON.stringify(options),
+        process.env.REACT_APP_ROOT_URL,
+      );
 
       // Remove the iframe
       document.body.removeChild(iframe);
@@ -58,7 +58,6 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
 
     // Append iframe to the body
     document.body.appendChild(iframe);
-
   }, [options]);
 
   // #region USE EFFECTS
@@ -119,7 +118,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
     e.preventDefault();
     e.stopPropagation();
     Swal.fire({
-      title: 'Are you sure?',
+      title: `Are you sure you want to remove ${option.label} (${option.value})?`,
       text: '',
       icon: 'warning',
       showCancelButton: true,
@@ -155,15 +154,14 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
   };
 
   const handleRenameNameFromLocalStorage = (valueToFind, newName) => {
-    const storedOptions =
-      JSON.parse(localStorage.getItem('userAddresses')) || [];
+    const storedOptions = JSON.parse(localStorage.getItem('addressess')) || [];
     const newOptions = storedOptions.map((storedOption) => {
       if (storedOption.value === valueToFind) {
         return { ...storedOption, label: newName };
       }
       return storedOption;
     });
-    localStorage.setItem('userAddresses', JSON.stringify(newOptions));
+    localStorage.setItem('addressess', JSON.stringify(newOptions));
     setOptions(newOptions);
   };
 
@@ -175,7 +173,6 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
         toggle={(e) => handleSubDropdown(e, index)}
         direction="bottom-end"
         className="ms-auto"
-        style={{ zIndex: 9999 }}
       >
         <DropdownToggle
           tag="span"

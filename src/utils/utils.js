@@ -223,6 +223,22 @@ export const parseValuesToLocale = (value, currency) => {
   }
 };
 
+export function formatNumberWithBillion(number) {
+  if (number === undefined || number === null || isNaN(number)) {
+    return 'N/A';
+  }
+
+  const billion = 1000000000;
+  if (number >= billion) {
+    return (
+      (number / billion).toLocaleString(undefined, {
+        maximumFractionDigits: 1,
+      }) + ' B'
+    );
+  }
+  return number.toLocaleString();
+}
+
 export const updateTransactionsPreview = async ({
   address,
   debouncedSearchTerm,
@@ -233,7 +249,7 @@ export const updateTransactionsPreview = async ({
   setData,
   dispatch,
   pagesChecked,
-  onEnd
+  onEnd,
 }) => {
   // Pges checked
   try {
@@ -345,13 +361,39 @@ export const saveAddressToLocalStorage = (address) => {
 
 // remove options from local storage
 export const removeOptionsFromLocalStorage = (setOptions, value) => {
-  const storedOptions = JSON.parse(localStorage.getItem('userAddresses')) || [];
+  const storedOptions = JSON.parse(localStorage.getItem('addressess')) || [];
   const newOptions = storedOptions.filter(
     (storedOption) => storedOption.value !== value,
   );
-  localStorage.setItem('userAddresses', JSON.stringify(newOptions));
+  localStorage.setItem('addressess', JSON.stringify(newOptions));
   setOptions((currentOptions) =>
     currentOptions.filter((o) => o.value !== value),
   );
 };
 
+// This function takes an array of dataPoints as input
+export const getMaxMinValues = (dataPoints) => {
+  // Initialize minValue to positive infinity and maxValue to negative infinity
+  let minValue = Infinity;
+  let maxValue = -Infinity;
+
+  // Iterate over each dataPoint in the array
+  dataPoints.forEach((point) => {
+    // If the current dataPoint is smaller than the current minValue, update minValue
+    if (point < minValue) minValue = point;
+    // If the current dataPoint is larger than the current maxValue, update maxValue
+    if (point > maxValue) maxValue = point;
+  });
+  // Return an object containing the minimum and maximum values
+  return { minValue, maxValue };
+};
+
+// This function calculates the percentage change between the current value and the previous value in a given data array.
+export const calculatePercentageChange = (currentIndex, data) => {
+  if (currentIndex > 0) {
+    const currentValue = data[currentIndex];
+    const previousValue = data[currentIndex - 1];
+    return ((currentValue - previousValue) / previousValue) * 100;
+  }
+  return 0;
+};

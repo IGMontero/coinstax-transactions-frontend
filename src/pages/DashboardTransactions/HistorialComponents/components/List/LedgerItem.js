@@ -78,7 +78,7 @@ const LedgerItem = ({
       className="d-flex align-items-center mb-2 w-100 ps-2"
       style={{ minHeight: '50px' }}
     >
-      <div className="image-container me-2 d-flex align-items-center justify-content-center">
+      <div className="image-container me-2">
         {showPlaceholder ? (
           <div
             className={
@@ -89,8 +89,8 @@ const LedgerItem = ({
           <img
             src={imageSrc}
             alt={ledger?.currency || ledger?.name}
-            className="rounded"
-            width={35}
+            className="rounded img-transaction"
+            width="auto"
             height={35}
             onError={handleImageError}
           />

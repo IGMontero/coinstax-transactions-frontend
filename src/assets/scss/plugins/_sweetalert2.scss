@@ -36,6 +36,10 @@
 }
 
 .swal2-icon{
+  // New icon style
+  width: 3em;
+  height: 3em;
+
   &.swal2-question{
     border-color: $info;
     color: $info;
@@ -53,6 +57,12 @@
     border-color: $warning;
     color: $warning;
   }
+  
+}
+// Icon content Swal 
+.swal2-icon-content {
+  font-size: 2.5em;
+
 }
 
 .swal2-styled{

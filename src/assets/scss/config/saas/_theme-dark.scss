@@ -483,3 +483,21 @@
 .bg-hover-light:hover {
   background-color: #6c6c6c45;
 }
+
+
+// Assets img 
+.image-container {
+  display: flex;
+  align-items: center;  
+  justify-content: center;  
+  width: 50px;  
+  height: 45px;  
+}
+
+
+.img-transaction {
+  max-width: 35px;
+  max-height: 35px;
+  width: auto;
+  height: auto;
+}
