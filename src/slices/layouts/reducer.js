@@ -1,23 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit';
 //constants
 import {
-  layoutTypes,
-  leftSidebarTypes,
   layoutModeTypes,
-  layoutWidthTypes,
   layoutPositionTypes,
-  topbarThemeTypes,
-  leftsidbarSizeTypes,
-  leftSidebarViewTypes,
+  layoutTypes,
+  layoutWidthTypes,
   leftSidebarImageTypes,
+  leftSidebarTypes,
+  leftSidebarViewTypes,
+  leftsidbarSizeTypes,
   preloaderTypes,
   sidebarVisibilitytypes,
+  topbarThemeTypes,
 } from '../../Components/constants/layout';
+import {
+  getCurrentThemeCookie,
+  setCurrentThemeCookie,
+} from '../../helpers/cookies_helper';
 
 export const initialState = {
   layoutType: layoutTypes.VERTICAL,
   leftSidebarType: leftSidebarTypes.DARK,
-  layoutModeType: layoutModeTypes.DARKMODE,
+  layoutModeType:
+    getCurrentThemeCookie() === 'dark'
+      ? layoutModeTypes.DARKMODE
+      : layoutModeTypes.LIGHTMODE,
+
   layoutWidthType: layoutWidthTypes.FLUID,
   layoutPositionType: layoutPositionTypes.FIXED,
   topbarThemeType: topbarThemeTypes.DARK,
@@ -36,6 +44,10 @@ const LayoutSlice = createSlice({
       state.layoutType = action.payload;
     },
     changeLayoutModeAction(state, action) {
+      setCurrentThemeCookie(
+        action.payload === layoutModeTypes.DARKMODE ? 'dark' : 'light',
+      );
+
       state.layoutModeType = action.payload;
     },
     changeSidebarThemeAction(state, action) {
