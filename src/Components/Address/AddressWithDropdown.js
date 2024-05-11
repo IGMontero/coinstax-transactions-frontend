@@ -89,15 +89,20 @@ const AddressWithDropdown = () => {
   };
 
   const handleDeleteOptionsFromCookies = (e, option) => {
+    const optionDisplay =
+      option.label === option.value
+        ? option.value
+        : `${option.label} (${option.value})`;
+
     e.preventDefault();
     e.stopPropagation();
     Swal.fire({
-      title: `Are you sure you want to remove ${option.label} (${option.value})?`,
+      title: `Are you sure you want to remove ${optionDisplay}?`,
       text: 'You cannot undo this action!',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'Cancel',
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Close',
     }).then((result) => {
       if (result.isConfirmed) {
         removeOptionsFromCookies(option.value);

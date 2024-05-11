@@ -143,9 +143,28 @@ export async function copyToClipboard(textToCopy) {
   }
 }
 
-export const formatDateToLocale = (date) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(date).toLocaleDateString(undefined, options);
+// export const formatDateToLocale = (date, showTime) => {
+//   const options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+//   if (showTime) {
+//     options.hour = 'numeric';
+//     options.minute = '2-digit'; // Two-digit minute format
+//     options.hour12 = true; // Use 12-hour clock
+//   }
+
+//   return new Date(date).toLocaleDateString(undefined, options);
+// };
+
+export const formatDateToLocale = (date, showTime) => {
+  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
+
+  const dateString = new Date(date).toLocaleDateString(undefined, dateOptions);
+  const timeString = showTime
+    ? new Date(date).toLocaleTimeString(undefined, timeOptions)
+    : '';
+
+  return `${dateString}${showTime ? ', ' + timeString : ''}`;
 };
 
 export const parseValuesToLocale = (value, currency) => {
