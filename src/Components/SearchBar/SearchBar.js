@@ -4,22 +4,38 @@ import { components } from 'react-select';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { layoutModeTypes } from '../constants/layout';
+import Cookies from 'js-cookie';
 import { Col } from 'reactstrap';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
+import { formatIdTransaction } from '../../utils/utils';
+import {
+  getUserSavedAddresses,
+  setUserSavedAddresses,
+} from '../../helpers/cookies_helper';
 
 const CustomOptions = (props) => {
   return (
     <components.Option {...props}>
-      {props.data.logo && (
-        <img
-          className="img-fluid rounded-circle me-2"
-          src={props.data.logo}
-          alt={props.data.label}
-          style={{ width: 30, height: 30 }}
-        />
-      )}
-      {props.data.label}
+      <div className="d-flex align-items-center">
+        {props.data.logo && (
+          <img
+            className="img-fluid rounded-circle me-2"
+            src={props.data.logo}
+            alt={props.data.label}
+            style={{ width: 30, height: 30 }}
+          />
+        )}
+        <div className="d-flex flex-column">
+          {props.data.label}
+
+          {props.data.address && (
+            <span className="text-muted me-2">
+              {formatIdTransaction(props.data.address, 6, 8)}
+            </span>
+          )}
+        </div>
+      </div>
     </components.Option>
   );
 };
@@ -43,6 +59,10 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
 
   const [optionDropdown, setOptionDropdown] = useState([]);
 
+  const savedOptions = getUserSavedAddresses();
+
+  console.log('Cookies', options);
+
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
     if (
@@ -62,6 +82,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         selectedOption,
         ...currentOptions.filter((o) => o.value !== selectedOption.value),
       ]);
+    } else if (savedOptions) {
+      setOptions(savedOptions);
     }
   }, [selectedOption]);
 
@@ -97,7 +119,9 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
             validSuggestions.map((addr) => ({
               label: addr.name,
               value: addr.address,
+              address: addr.address,
               logo: addr.logo || null,
+              coingeckoId: addr.coingeckoId || null,
             })),
           );
         } else {
@@ -123,68 +147,73 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [searchInput, debouncedFetchSuggestions]);
 
   useEffect(() => {
-    if (
-      (searchInput.startsWith('0x') && searchInput.length >= 5) ||
-      (!searchInput.startsWith('0x') && searchInput.length >= 3)
-    ) {
-      setIsMenuOpen(true);
-    } else {
-      setIsMenuOpen(false);
+    if (searchInput.length < 3) {
+      setOptions([]);
     }
   }, [searchInput]);
 
   useEffect(() => {
-    if (address === searchInput || isUnsupported) {
-      setIsMenuOpen(false);
-      return;
-    }
-  }, [address, searchInput, setIsMenuOpen]);
-
-  useEffect(() => {
     if (!isUnsupported) {
-      handleSaveInLocalStorage();
+      handleSaveInCookies();
     }
 
-    if (address) {
-      setSearchInput(address);
-    }
+    // if (address) {
+    //   setSearchInput(address);
+    // }
   }, [isUnsupported, address, location]);
 
+  useEffect(() => {
+    console.log('Is menu open changed:', isMenuOpen);
+  }, [isMenuOpen]);
+
+  const handleMenuClose = () => {
+    // Clean up options al
+  };
+
+  useEffect(() => {
+    console.log('Search input changed:', searchInput);
+  }, [searchInput]);
+
   // #region HANDLERS
-  const handleSaveInLocalStorage = () => {
+  const handleSaveInCookies = () => {
     const validInput = searchInput.trim().length > 0;
-    if (!isUnsupported && validInput) {
-      const storedOptions =
-        JSON.parse(localStorage.getItem('userAddresses')) || [];
+    if (validInput) {
+      const storedOptions = getUserSavedAddresses();
       const newOption = {
         label: searchInput,
         value: searchInput,
         logo:
           options.find((option) => option.value === searchInput)?.logo || null,
+        coingeckoId:
+          options.find((option) => option.value === searchInput)?.coingeckoId ||
+          null,
       };
 
-      if (
-        newOption.label &&
-        newOption.value &&
-        !storedOptions.some(
-          (o) => o.label === newOption.label || o.value === newOption.value,
-        )
-      ) {
-        storedOptions.push(newOption);
-        setOptionDropdown(newOption);
-        localStorage.setItem('userAddresses', JSON.stringify(storedOptions));
-      }
+      const isAddressAlreadySaved = storedOptions.some(
+        (o) => o.value === newOption.value,
+      );
 
-      setOptions((currentOptions) => [
-        newOption,
-        ...currentOptions.filter((o) => o.value !== newOption.value),
-      ]);
+      if (!isAddressAlreadySaved) {
+        // Add address at the beginning of the list
+        storedOptions.unshift(newOption);
+
+        if (storedOptions.length > 10) {
+          storedOptions.shift();
+        }
+
+        setUserSavedAddresses(storedOptions);
+
+        setOptions((currentOptions) => [
+          newOption,
+          ...currentOptions.filter((o) => o.value !== newOption.value),
+        ]);
+      }
     }
   };
 
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
-      setSearchInput(inputValue.replace(/[^a-zA-Z0-9]/g, ''));
+      setSearchInput(inputValue);
     }
   };
 
@@ -194,14 +223,22 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         console.error('Empty address selected, not navigating or saving.');
         return;
       }
-      navigate(`/address/${selectedOption.value}`);
+      if (selectedOption.coingeckoId) {
+        navigate(`/tokens/${selectedOption.coingeckoId}`);
+      } else {
+        navigate(`/address/${selectedOption.value}`);
+      }
       setSearchInput('');
     }
   };
 
   const handleSearchIconClick = () => {
     if (searchInput) {
-      navigate(`/address/${searchInput}`);
+      if (selectedOption.coingeckoId) {
+        navigate(`/tokens/${selectedOption.coingeckoId}`);
+      } else {
+        navigate(`/address/${searchInput}`);
+      }
     }
   };
 
@@ -244,6 +281,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         layoutModeType === layoutModeTypes['DARKMODE'] ? '#2a2f34' : '#fff',
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
       textAlign: 'left',
+      alignItems: 'left',
       cursor: 'pointer',
       borderRadius: '5px',
     }),
@@ -317,18 +355,27 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         placeholder="Assets, wallet, domain, or identity"
         className="col-12 w-100"
         classNamePrefix="select-custom-menu"
-        value={options.find((option) => option.value === searchInput)}
+        value={null}
+        inputValue={searchInput}
         options={options}
         onChange={handleChange}
+        onMenuClose={() => setIsMenuOpen(false)}
+        onMenuOpen={() => setIsMenuOpen(true)}
         isLoading={loading}
         onInputChange={handleInputChange}
         components={{ DropdownIndicator, Option: CustomOptions }}
         styles={customStyles}
         menuIsOpen={isMenuOpen}
-        onMenuOpen={() => setIsMenuOpen(true)}
-        onMenuClose={() => setIsMenuOpen(false)}
+        noOptionsMessage={
+          searchInput.length < 3
+            ? () => 'Type at least 3 characters to search'
+            : () => 'We were unable to find any results for your search'
+        }
         onKeyDown={(e) => {
           if (e.key === 'Enter' && searchInput.length >= 3) {
+            setSearchInput('');
+            // Close dropdown
+            setIsMenuOpen(false);
             navigate(`/address/${searchInput}`);
           }
         }}

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  Container,
   Col,
   Row,
   UncontrolledDropdown,
@@ -25,14 +24,10 @@ import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
 
 import { fetchAssets } from '../../slices/transactions/thunk';
 import { useDispatch } from 'react-redux';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
-import {
-  CurrencyUSD,
-  capitalizeFirstLetter,
-  copyToClipboard,
-  parseValuesToLocale,
-} from '../../utils/utils';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { capitalizeFirstLetter } from '../../utils/utils';
 import QrModal from '../../Components/Modals/QrModal';
+import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -46,10 +41,8 @@ const DashboardInfo = () => {
 
   const [addressTitle, setAddressTitle] = useState('');
 
-  const [isCopied, setIsCopied] = useState(false);
   const [isUnsupported, setIsUnsupported] = useState(false);
 
-  const [searchInput, setSearchInput] = useState('');
   const [addressForSearch, setAddressForSearch] = useState('');
 
   const [historyData, setHistoryData] = useState([]);
@@ -59,18 +52,7 @@ const DashboardInfo = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const [series, setSeries] = useState([]);
-
-  const [title, setTitle] = useState('');
-  const [subtitle, setSubtitle] = useState('');
-
   const [showQrModal, setShowQrModal] = useState(false);
-
-  const toggleCustom = (tab) => {
-    if (customActiveTab !== tab) {
-      setCustomActiveTab(tab);
-    }
-  };
 
   function usePrevious(value) {
     const ref = useRef();
@@ -79,12 +61,6 @@ const DashboardInfo = () => {
     }, [value]);
     return ref.current;
   }
-
-  useEffect(() => {
-    if (address) {
-      setSearchInput(address);
-    }
-  }, [address]);
 
   useEffect(() => {
     if (address && previousAddress !== address && !type) {
@@ -117,54 +93,12 @@ const DashboardInfo = () => {
       });
   };
 
-  const handlerClearAllData = () => {
-    setAssetsData([]);
-    setSeries([]);
-    setHistoryData([]);
-    setTitle('');
-    setSubtitle('');
-    setAddressTitle('');
-    setCustomActiveTab('1');
-    setIsUnsupported(false);
-  };
-
   useEffect(() => {
     if (addressForSearch) {
       fetchDataAssets();
     }
   }, [addressForSearch, type, dispatch, isUnsupported]);
 
-  useEffect(() => {
-    if (series.length > 0 && series[0].data.length > 0) {
-      const firstPointValue = series[0].data[0].y;
-      setTitle(`${parseValuesToLocale(firstPointValue, CurrencyUSD)}`);
-      const lastPointValue = series[0].data[series[0].data.length - 1].y;
-      const change = firstPointValue - lastPointValue;
-      let changePercentage = (change / firstPointValue) * 100;
-
-      if (isNaN(changePercentage)) {
-        changePercentage = 0;
-      }
-      const formattedChange = isNaN(change) ? 0 : change;
-      const sign = changePercentage >= 0 ? '+' : '';
-      setSubtitle(
-        `${sign}${parseValuesToLocale(changePercentage, '')}% (${parseValuesToLocale(formattedChange, CurrencyUSD)})`,
-      );
-    }
-  }, [series, title, subtitle]);
-
-  const handleCopy = async (e, text) => {
-    e.stopPropagation();
-    try {
-      copyToClipboard(text);
-      setIsCopied(true);
-      setTimeout(() => {
-        setIsCopied(null);
-      }, 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-    }
-  };
   useEffect(() => {
     if (address) {
       setIsUnsupported(false);
@@ -180,11 +114,6 @@ const DashboardInfo = () => {
       );
     }
   }, [type]);
-
-  const handleNavLinkClick = (route, toggle) => {
-    setCustomActiveTab(toggle);
-    navigate(`/address/${addressForSearch}/${route}`);
-  };
 
   const renderDropdownMenu = () => {
     return (
@@ -527,16 +456,14 @@ const DashboardInfo = () => {
                         <Col xxl={12} className="mb-4">
                           <div className="d-flex justify-content-start">
                             <Col className="col-12 ">
+                              <div className={loading ? 'pt-3' : ''}>
+                                <AddressWithDropdown />
+                              </div>
                               <PerformanceChart
-                                type={type}
                                 loading={loading}
                                 setLoading={setLoading}
                                 setIsUnsupported={setIsUnsupported}
                                 address={addressForSearch}
-                                series={series}
-                                setSeries={setSeries}
-                                title={title}
-                                subtitle={subtitle}
                               />
                             </Col>
                           </div>

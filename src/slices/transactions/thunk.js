@@ -39,6 +39,26 @@ export const fetchPerformance = createAsyncThunk(
   },
 );
 
+export const fetchPerformanceToken = createAsyncThunk(
+  'transactions/fetchPerformanceToken',
+  async ({ address, days }, { rejectWithValue }) => {
+    let url = `${API_BASE}/contracts/coin/historical/${address}`;
+    if (days) {
+      url += `?days=${days}`;
+    }
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const fetchAssets = createAsyncThunk(
   'transactions/fetchAssets',
   async (address, { rejectWithValue }) => {
@@ -136,7 +156,6 @@ export const downloadTransactions = createAsyncThunk(
         },
       });
 
-
       // Check if response is a readable stream
 
       if (!response.ok) {
@@ -156,7 +175,6 @@ export const downloadTransactions = createAsyncThunk(
         // Do something with the blob
         return blob;
       }
-
 
       const data = await response.json();
       return data;

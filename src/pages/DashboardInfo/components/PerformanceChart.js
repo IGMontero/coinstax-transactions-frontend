@@ -1,129 +1,139 @@
-import React, { useEffect, useState } from 'react';
-import ReactApexChart from 'react-apexcharts';
-import { fetchPerformance } from '../../../slices/transactions/thunk';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  fetchPerformance,
+  fetchPerformanceToken,
+} from '../../../slices/transactions/thunk';
+import { useDispatch } from 'react-redux';
 import { Card, CardBody, Col, Spinner } from 'reactstrap';
-import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
-import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
+import {
+  CurrencyUSD,
+  getMaxMinValues,
+  formatDateToLocale,
+  parseValuesToLocale,
+  calculatePercentageChange,
+} from '../../../utils/utils';
+import { Line } from 'react-chartjs-2';
+import { useParams } from 'react-router-dom';
 
 const PerformanceChart = ({
   address,
-  series,
-  setSeries,
-  title,
-  subtitle,
   setIsUnsupported,
   loading,
   setLoading,
-  type,
 }) => {
   const dispatch = useDispatch();
+  const { token } = useParams();
+
   const [activeFilter, setActiveFilter] = useState('one_week');
-
+  const [isHovering, setIsHovering] = useState(false);
+  const [cursorStyle, setCursorStyle] = useState('default');
   const [showMessage, setShowMessage] = useState(false);
-
-  const [options, setOptions] = useState({
-    chart: {
-      type: 'line',
-      height: 350,
-      maxWidth: '100%',
-      minWidth: '100%',
-      toolbar: {
-        show: false,
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: 'Performance',
+        data: [],
+        fill: true,
+        borderColor: '#0759BC',
+        tension: 0.1,
+        backgroundColor: '#0758bc1b',
       },
-      zoom: {
-        enabled: false,
+    ],
+  });
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('0');
+  const [activeDate, setActiveDate] = useState('');
+  const [chartOptions, setChartOptions] = useState({
+    maintainAspectRatio: false,
+    scales: {
+      yAxes: [
+        {
+          position: 'right',
+          gridLines: { display: false },
+          ticks: {
+            display: true,
+          },
+        },
+      ],
+      xAxes: [
+        {
+          type: 'time',
+          time: {
+            parser: 'YYYY-MM-DD',
+            tooltipFormat: 'll',
+            unit: 'day',
+            displayFormats: {
+              day: 'MMM DD',
+            },
+          },
+          ticks: {
+            source: 'data',
+            autoSkip: true,
+            beginAtZero: true,
+            maxTicksLimit: 7,
+            // interval: 1,
+          },
+          gridLines: { display: false },
+        },
+      ],
+    },
+    legend: { display: false },
+    tooltips: {
+      enabled: true,
+      mode: 'index',
+      intersect: false,
+      displayColors: false,
+      callbacks: {
+        title: function (tooltipItems, data) {
+          if (tooltipItems.length > 0) {
+            const index = tooltipItems[0].index;
+            const salesValue = data.datasets[0].data[index];
+            setTitle(parseValuesToLocale(salesValue, CurrencyUSD));
+            const percentageChange = calculatePercentageChange(
+              index,
+              data.datasets[0].data,
+            );
+            setSubtitle(percentageChange.toFixed(2));
+            const date = new Date(data.labels[index]);
+            setActiveDate(formatDateToLocale(date));
+          }
+          return '';
+        },
+        label: function (tooltipItem) {
+          return `${parseValuesToLocale(tooltipItem.yLabel, CurrencyUSD)}`;
+        },
       },
-      selection: {
-        enabled: false,
+    },
+    hover: {
+      mode: 'index',
+      intersect: false,
+      onHover: (event, chartElements) => {
+        if (chartElements.length > 0) {
+          setIsHovering(true);
+          setCursorStyle('default');
+        } else {
+          setIsHovering(false);
+          setCursorStyle('default');
+        }
       },
     },
     title: {
-      text: '',
-      align: 'left',
-      margin: 10,
-      offsetX: 0,
-      offsetY: 0,
-      floating: false,
-      style: {
-        fontSize: '36px',
-        fontWeight: 'semibold',
-      },
+      display: false,
     },
     subtitle: {
-      text: '',
-      align: 'left',
-      margin: 10,
-      offsetX: 0,
-      offsetY: 45,
-      floating: false,
-      style: {
-        fontSize: '15px',
-        fontWeight: 'normal',
-        color: ``,
-      },
+      display: true,
     },
-    xaxis: {
-      type: 'datetime',
-      labels: {
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-      tooltip: {
-        enabled: false,
-      },
-    },
-    yaxis: {
-      tooltip: {
-        enabled: false,
-      },
-      labels: {
-        formatter: function (value) {
-          return value.toLocaleString();
-        },
-        show: false,
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    tooltip: {
-      x: {
-        show: false,
-      },
-      y: {
-        formatter: function (value) {
-          return '' + value;
-        },
-      },
-      custom: function ({ series, seriesIndex, dataPointIndex, w }) {
-        const value = parseValuesToLocale(
-          series[seriesIndex][dataPointIndex],
-          CurrencyUSD,
-        );
-        const date = new Date(w.globals.seriesX[seriesIndex][dataPointIndex]);
-        const prettyDate = date.toLocaleDateString('en-US', {
-          month: 'short',
-          day: '2-digit',
-          year: 'numeric',
-        });
-        return `<div class="p-2 fw-semibold text-dark"> ${value}
-          <div class="apexcharts-tooltip-text fs-6 text-muted ">${prettyDate} </div></div>`;
+    elements: {
+      point: {
+        radius: 0,
       },
     },
   });
 
+  // #region Api Calls
   const fetchAndSetData = (days) => {
     setLoading(true);
-
     if (address) {
       const params = days ? { address, days } : { address };
       dispatch(fetchPerformance(params))
@@ -132,12 +142,41 @@ const PerformanceChart = ({
           if (response.unsupported) {
             setIsUnsupported(true);
           } else {
-            const lineData = response.total.map((item) => ({
-              date: item.calendarDate,
-              x: new Date(item.calendarDate).getTime(),
-              y: item.close.quote,
+            const newLabels = response.total.map(
+              (item) => new Date(item.calendarDate),
+            );
+            const newData = response.total.map((item) => item.close.quote);
+            const { minValue, maxValue } = getMaxMinValues(newData);
+
+            const minTick = minValue - (maxValue - minValue) * 1;
+            const maxTick = maxValue + (maxValue - minValue) * 1;
+
+            setChartData({
+              labels: newLabels,
+              datasets: [{ ...chartData.datasets[0], data: newData }],
+            });
+
+            setChartOptions((prevOptions) => ({
+              ...prevOptions,
+              scales: {
+                ...prevOptions.scales,
+                yAxes: [
+                  {
+                    ...prevOptions.scales.yAxes[0],
+                    ticks: {
+                      ...prevOptions.scales.yAxes[0].ticks,
+                      min: minTick,
+                      max: maxTick,
+                      callback: function (value) {
+                        if (value === minTick || value === maxTick) {
+                          return parseValuesToLocale(value, CurrencyUSD);
+                        }
+                      },
+                    },
+                  },
+                ],
+              },
             }));
-            setSeries([{ data: lineData }]);
           }
           setLoading(false);
         })
@@ -148,90 +187,187 @@ const PerformanceChart = ({
     }
   };
 
-  useEffect(() => {
-    fetchAndSetData();
-  }, [address, dispatch]);
+  const fetchAndSetDataForToken = (days) => {
+    setLoading(true);
+    if (address) {
+      const params = days ? { address, days } : { address };
+      dispatch(fetchPerformanceToken(params))
+        .unwrap()
+        .then((response) => {
+          if (response.unsupported) {
+            setIsUnsupported(true);
+          } else {
+            const uniqueDates = new Set();
+            const newLabels = [];
+            const newData = [];
 
-  useEffect(() => {
-    if (series.length > 0 && series[0].data.length > 0) {
-      setOptions((prevOptions) => {
-        return {
-          ...prevOptions,
-          title: {
-            ...prevOptions.title,
-            text: title,
-            style: {
-              ...prevOptions.title.style,
-              color: '#878a99',
-            },
-          },
-          subtitle: {
-            ...prevOptions.subtitle,
-            text: subtitle,
-            style: {
-              ...prevOptions.subtitle.style,
-              color: subtitle[0] == '+' ? '#3ac47d' : '#f1556c',
-            },
-          },
-        };
-      });
+            response.prices.forEach((item) => {
+              const date = new Date(item[0]);
+              const dateString = date.toISOString();
+              // .split('T')[0];
+
+              // if (!uniqueDates.has(dateString)) {
+              //   uniqueDates.add(dateString);
+              //   newLabels.push(dateString); // Push dateString if you want labels as YYYY-MM-DD or date for Date objects
+              //   newData.push(item[1]);
+              // }
+
+              // Add all
+              newLabels.push(dateString);
+              newData.push(item[1]);
+            });
+
+            console.log('New data length', newData.length);
+
+            const { minValue, maxValue } = getMaxMinValues(newData);
+            const minTick = minValue - Math.abs(maxValue - minValue);
+            const maxTick = maxValue + Math.abs(maxValue - minValue);
+
+            setChartData({
+              labels: newLabels.map((label) => new Date(label)), // Ensure the labels are Date objects if needed
+              datasets: [{ ...chartData.datasets[0], data: newData }],
+            });
+
+            setChartOptions((prevOptions) => ({
+              ...prevOptions,
+              scales: {
+                ...prevOptions.scales,
+                yAxes: [
+                  {
+                    ...prevOptions.scales.yAxes[0],
+                    ticks: {
+                      ...prevOptions.scales.yAxes[0].ticks,
+                      min: minTick,
+                      max: maxTick,
+                      stepSize: (maxTick - minTick) / 10,
+                      callback: function (value) {
+                        if (value === minTick || value === maxTick) {
+                          return parseValuesToLocale(value, CurrencyUSD);
+                        }
+                      },
+                      // callback: (value, index, values) => {
+                      //   // Only display label for the highest value
+                      //   if (value === Math.max(...values)) {
+                      //     return `${value} (Highest)`;
+                      //   }
+                      //   return null;
+                      // },
+                    },
+                  },
+                ],
+              },
+            }));
+          }
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error('Error fetching performance data:', error);
+          setLoading(false);
+        });
     }
-  }, [series, type, title, subtitle]);
+  };
 
+  // #region Handlers
   const handleFilterForDays = (days, filterId) => {
-    fetchAndSetData(days);
+    if (token) {
+      fetchAndSetDataForToken(days);
+    } else {
+      fetchAndSetData(days);
+    }
     setActiveFilter(filterId);
   };
 
+  const updateValues = (index) => {
+    const value = chartData.datasets[0].data[index];
+    setTitle(parseValuesToLocale(value, CurrencyUSD));
+    const percentageChange = calculatePercentageChange(
+      index,
+      chartData.datasets[0].data,
+    );
+    setSubtitle(percentageChange.toFixed(2));
+    setActiveDate(formatDateToLocale(new Date(chartData.labels[index])));
+  };
+
+  // #region UseEffects
+  useEffect(() => {
+    if (!token) {
+      fetchAndSetData();
+    } else {
+      fetchAndSetDataForToken(7);
+    }
+  }, [token, address]);
+
+  // This useEffect set the most recent value as the active value
+  useEffect(() => {
+    if (!isHovering && chartData.datasets[0].data.length > 0) {
+      const currentDate = new Date();
+      let closestIndex = 0;
+      let closestDate = new Date(chartData.labels[0]);
+      let closestDiff = Math.abs(currentDate - closestDate);
+
+      for (let i = 1; i < chartData.labels.length; i++) {
+        const date = new Date(chartData.labels[i]);
+        const diff = Math.abs(currentDate - date);
+        if (diff < closestDiff) {
+          closestIndex = i;
+          closestDate = date;
+          closestDiff = diff;
+        }
+      }
+      updateValues(closestIndex);
+    }
+  }, [isHovering, chartData, showMessage]);
+
+  // #region Renders
   const renderFiltersButtons = () => {
     return (
       <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1 p-2">
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(7, 'one_week')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_week' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_week' ? 'active' : ''
+            }`}
           id="one_week"
         >
           7D
         </button>
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(30, 'one_month')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_month' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_month' ? 'active' : ''
+            }`}
           id="one_month"
         >
           1M
         </button>
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(180, 'six_months')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'six_months' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'six_months' ? 'active' : ''
+            }`}
           id="six_months"
         >
           6M
         </button>
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(365, 'one_year')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_year' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_year' ? 'active' : ''
+            }`}
           id="one_year"
         >
           1Y
         </button>
         <button
+          disabled={loading}
           onClick={() => handleFilterForDays(10000, 'all')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'all' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'all' ? 'active' : ''
+            }`}
           id="all"
         >
           ALL
@@ -240,20 +376,7 @@ const PerformanceChart = ({
     );
   };
 
-  useEffect(() => {
-    if (!series.length) {
-      setShowMessage(true);
-      // setIsUnsupported(true);
-    }
-  }, [series]);
-
-  if (
-    !loading &&
-    series.length === 0 &&
-    showMessage &&
-    !showMessage &&
-    !loading
-  ) {
+  if (!loading && chartData.length === 0 && !showMessage) {
     <Col
       className="d-flex text-center col-12 justify-content-center align-items-center"
       style={{ display: 'flex', height: '50vh', width: '100%' }}
@@ -263,37 +386,34 @@ const PerformanceChart = ({
   }
 
   return (
-    <div
-      style={{
-        marginTop: loading ? '-1rem' : '-2rem',
-      }}
-    >
-      <AddressWithDropdown />
-      <h1 className={`ms-1 mt-4 mb-4 `}>Performance Chart</h1>
-      <div className="position-relative">
+    <>
+      <div className="border border-2 rounded p-2 mt-4" style={{ zIndex: 1 }}>
         {loading ? (
-          <Card className="mt-3">
-            <CardBody className="p-5 pb-4">
-              <div style={{ backgroundColor: '#212529', height: '353px' }}>
-                <div className="d-flex justify-content-center align-items-center h-100">
-                  <Spinner color="white" />
-                </div>
-              </div>
+          <Card className="mb-1" style={{ height: '320px' }}>
+            <CardBody className="d-flex justify-content-center align-items-center">
+              <Spinner />
             </CardBody>
           </Card>
         ) : (
-          <div className="border border-2 rounded p-2" style={{ zIndex: 1 }}>
-            <ReactApexChart
-              options={options}
-              series={series}
-              type="line"
-              height={350}
-            />
-            {renderFiltersButtons()}
-          </div>
+          <>
+            <div className="d-flex align-items-end">
+              <h1 className="d-flex align-items-center">{title}</h1>
+              <h4
+                style={{ marginBottom: '.7rem' }}
+                className={`ms-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+              >
+                {subtitle}%
+              </h4>
+            </div>
+            <span className="ms-2 text-muted mb-3">{activeDate}</span>
+            <div style={{ cursor: cursorStyle }}>
+              <Line height={250} data={chartData} options={chartOptions} />
+            </div>
+          </>
         )}
+        <div className="toolbar mb-3">{renderFiltersButtons()}</div>
       </div>
-    </div>
+    </>
   );
 };
 export default PerformanceChart;

@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 // Import Images
 // import logodark from "../../../assets/images/logo-dark.png";
 // import logolight from "../../../assets/images/logo-light.png";
-import logo from '../../../assets/images/logos/logo-light.png';
+import logo from '../../../assets/images/logos/coinstax_logos/logo-dark.png';
 
 const Navbar = () => {
   const [isOpenMenu, setisOpenMenu] = useState(false);
@@ -36,20 +36,22 @@ const Navbar = () => {
         id="navbar"
       >
         <Container>
-          <Link className="navbar-brand" to="/index">
+          <div className="mt-2">
             <img
               src={logo}
               className="card-logo card-logo-dark"
               alt="logo dark"
-              height="40"
+              height="70"
+              width="auto"
             />
             <img
               src={logo}
               className="card-logo card-logo-light"
               alt="logo light"
-              height="40"
+              height="70"
+              width="auto"
             />
-          </Link>
+          </div>
 
           <NavbarToggler
             className="navbar-toggler py-0 fs-20 text-body"

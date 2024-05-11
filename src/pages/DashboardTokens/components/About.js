@@ -1,22 +1,42 @@
 import React from 'react';
+import { capitalizeFirstLetter } from '../../../utils/utils';
 
-const About = () => {
+const About = ({ description, name, links }) => {
   return (
-    <div className=" mb-3 border-bottom pb-5">
-      <div className="my-5">
+    <div className=" mb-3 border-bottom pb-4">
+      <div className="my-3">
         {' '}
-        <h3>About Ethereum</h3>
+        <h3>About {capitalizeFirstLetter(name)}</h3>
       </div>
-      <p>
-        Ethereum is a global, open-source platform for decentralized
-        applications. In other words, the vision is to create a world computer
-        that anyone can build applications in a decentralized manner; while all
-        states and data are distributed and publicly accessible. Ethereum
-        supports smart contracts in which developers can write code in order to
-        program digital value. Examples of decentralized apps (dapps) built on
-        Ethereum include token, non-fungible tokens, decentralized finance apps,
-        lending protocol, decentralized exchanges, and much more.
-      </p>
+      <div
+        style={{
+          whiteSpace: 'pre-wrap',
+        }}
+        dangerouslySetInnerHTML={{ __html: description }}
+      ></div>
+
+      {/* <p>
+        {description}
+      </p> */}
+      <div>
+        {links &&
+          Object.keys(links).map((link, index) => {
+            return (
+              <a
+                key={index}
+                href={links[link]}
+                target="_blank"
+                rel="noreferrer"
+                className="text-primary text-decoration-none  me-3 "
+              >
+                <span className="text-hover-underline fs-7 fw-semibold">
+                  {capitalizeFirstLetter(link)}{' '}
+                </span>
+                <i className="mdi mdi-open-in-new"></i>{' '}
+              </a>
+            );
+          })}
+      </div>
     </div>
   );
 };

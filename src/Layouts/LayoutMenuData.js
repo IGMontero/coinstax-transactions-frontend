@@ -3,7 +3,8 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Navdata = () => {
-  const { address } = useParams();
+  const { address, token } = useParams();
+
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const { fetchData } = useSelector((state) => ({
@@ -30,7 +31,7 @@ const Navdata = () => {
   }, [fetchData]);
 
   const filterMenuItems = (menuItems) => {
-    if (isUnsupported) {
+    if (isUnsupported || token) {
       return menuItems.filter(
         (item) =>
           item.id !== 'assets' &&
@@ -45,7 +46,8 @@ const Navdata = () => {
     id,
     label,
     icon,
-    link: `/address/${addressSearched}/${page}`,
+    link: `${token ? `/tokens/${token}` : `/address/${addressSearched}/${page}`}`,
+
     click: function (e) {
       e.preventDefault();
       navigate(link);
@@ -69,15 +71,20 @@ const Navdata = () => {
     label,
     isHeader: true,
   });
+  let dashboardLink = '';
 
-  const dashboardLink = !isUnsupported
-    ? ''
-    : addressSearched
-      ? `/address/${addressSearched}/`
-      : '';
+  if (!address) {
+    dashboardLink = `/token/${token}`;
+  } else {
+    dashboardLink = !isUnsupported
+      ? ''
+      : addressSearched
+        ? `/address/${addressSearched}/`
+        : '';
+  }
 
   let allMenuItems = [
-    createMenuItem('home', 'Home', 'bx bx-home', `${dashboardLink}`),
+    createMenuItem('summary', 'Summary', 'bx bx-home', `${dashboardLink}`),
     createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
     createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
     createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),

@@ -1,68 +1,86 @@
 import React from 'react';
 import { Col, Row } from 'reactstrap';
-import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
+import {
+  CurrencyUSD,
+  formatNumberWithBillion,
+  parseValuesToLocale,
+} from '../../../utils/utils';
 
-const Stats = () => {
+const Stats = ({ stats }) => {
+  const billion = 1000000000;
   const statsData = [
     {
       label: '1 Day',
-      value: '-0.61%',
-      additionalInfo: {
-        label: 'Market Cap',
-        value: '385',
-      },
+      value: `${parseValuesToLocale(stats?.priceChange24h, CurrencyUSD)}`,
+      percentage: `${parseValuesToLocale(stats?.priceChangePercentage24h)}%`,
     },
     {
       label: '1 Month',
-      value: '-9.4%',
-      additionalInfo: {
-        label: 'Circulating Supply',
-        value: '18.8 ',
-      },
+      value: `${parseValuesToLocale(stats?.priceChange30d, CurrencyUSD)}`,
+      percentage: `${parseValuesToLocale(stats?.priceChangePercentage30d)}%`,
     },
     {
-      label: '3 Months',
-      value: '+38.5%',
+      label: '2 Months',
+      value: `${parseValuesToLocale(stats?.priceChange60d, CurrencyUSD)}`,
+      percentage: `${parseValuesToLocale(stats?.priceChangePercentage60d)}%`,
     },
     {
       label: '1 Year',
-      value: '+63.9%',
+      value: `${parseValuesToLocale(stats?.priceChange1y, CurrencyUSD)}`,
+      percentage: `${parseValuesToLocale(stats?.priceChangePercentage1y)}%`,
+    },
+  ];
+
+  const additionalInfo = [
+    {
+      label: 'Market Cap',
+      value: `${formatNumberWithBillion(stats?.marketCap)} `,
+    },
+    {
+      label: 'Circulating Supply',
+      value: `${formatNumberWithBillion(stats?.circulatingSupply)}`,
+    },
+    {
+      label: 'Total Supply',
+      value: `${formatNumberWithBillion(stats?.totalSupply)} `,
     },
   ];
 
   return (
-    <div className="border-top mb-3 border-bottom pb-5">
-      <div className="my-5">
+    <div className="border-top mb-3 border-bottom pb-4">
+      <div className="my-3">
         <h3>Stats</h3>
       </div>
-      <Row className="w-100 mt-5">
-        {statsData.map((stat, index) => {
-          const hasAdditionalInfo = stat.additionalInfo;
-          return (
-            <Col key={index} xs="12" md="3" className="p-2 ps-3">
-              <div className="text-start">
-                <h5 className="fw-semibold">{stat.label}</h5>
-                <h6
-                  className={` text-${stat.value.includes('-') ? 'success' : 'danger'} d-block`}
-                >
-                  {stat.value}
-                </h6>
-              </div>
-              {hasAdditionalInfo && (
-                <div className="text-start mt-5">
-                  <h5 className="fw-semibold">{stat.additionalInfo.label}</h5>
-                  <h6 className="text-start d-block">
-                    {parseValuesToLocale(
-                      stat.additionalInfo.value,
-                      CurrencyUSD,
-                    )}{' '}
-                    B
+      <Row className="w-100 mt-2 col-12">
+        {statsData &&
+          statsData?.map((stat, index) => {
+            return (
+              <Col key={index} xs="12" md="3" className="p-2 ps-3">
+                <div className="text-start">
+                  <h5 className="fw-semibold">{stat.label}</h5>
+
+                  <h6
+                    style={{ fontWeight: 100 }}
+                    className={`mb-0 me-2 text-${stat.value.includes('-') ? 'danger' : 'success'} d-block`}
+                  >
+                    {stat.value} ({stat.percentage})
                   </h6>
                 </div>
-              )}
-            </Col>
-          );
-        })}
+              </Col>
+            );
+          })}
+
+        {additionalInfo &&
+          additionalInfo?.map((stat, index) => {
+            return (
+              <Col key={index} xs="12" md="3" className="p-2 ps-3">
+                <div className="text-start">
+                  <h5 className="fw-semibold">{stat.label}</h5>
+                  <h6 className="mb-0">{stat.value}</h6>
+                </div>
+              </Col>
+            );
+          })}
       </Row>
     </div>
   );
