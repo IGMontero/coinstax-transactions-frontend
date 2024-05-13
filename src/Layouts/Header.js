@@ -176,7 +176,11 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               backgroundColor:
                 layoutModeType === layoutModeTypes['DARKMODE']
                   ? '#16161a'
-                  : '#eff2f7',
+                  : '#fff',
+              borderBottom:
+                layoutModeType === layoutModeTypes['DARKMODE']
+                  ? '1px solid rgba(255, 255, 255, 0.04)'
+                  : '1px solid rgba(0, 0, 0, 0.04)',
             }}
           >
             <Col
