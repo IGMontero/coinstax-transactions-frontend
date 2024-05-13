@@ -18,8 +18,10 @@ export const setUserSavedAddresses = (addresses) => {
     Cookies.set('addresses', JSON.stringify(addresses), {
         domain: isDevelopment
             ? 'localhost'
-            : `.${process.env.REACT_APP_ROOT_DOMAIN}`,
+            : `${process.env.REACT_APP_ROOT_DOMAIN}`,
     });
+
+    Cookies.set('addresses', JSON.stringify(addresses));
 };
 
 export const getCurrentThemeCookie = () => {
@@ -33,6 +35,8 @@ export const setCurrentThemeCookie = (theme) => {
     Cookies.set('data-bs-theme', theme, {
         domain: isDevelopment
             ? 'localhost'
-            : `.${process.env.REACT_APP_ROOT_DOMAIN}`,
+            : `${process.env.REACT_APP_ROOT_DOMAIN}`,
     });
+
+    Cookies.set('data-bs-theme', theme);
 };
