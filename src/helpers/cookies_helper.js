@@ -1,17 +1,38 @@
 import Cookies from 'js-cookie';
+import { isDevelopment } from '../common/constants';
 
 export const getUserSavedAddresses = () => {
-    return Cookies.get('addressess') ? JSON.parse(Cookies.get('addressess')) : [];
+    // Get addresses cookie with domain set to the root domain
+    return Cookies.get('addresses', {
+        domain: process.env.REACT_APP_ROOT_DOMAIN,
+    })
+        ? JSON.parse(
+            Cookies.get('addresses', {
+                domain: process.env.REACT_APP_ROOT_DOMAIN,
+            }),
+        )
+        : [];
 };
 
 export const setUserSavedAddresses = (addresses) => {
-    Cookies.set('addressess', JSON.stringify(addresses));
+    Cookies.set('addresses', JSON.stringify(addresses), {
+        domain: isDevelopment
+            ? 'localhost'
+            : `.${process.env.REACT_APP_ROOT_DOMAIN}`,
+    });
 };
 
 export const getCurrentThemeCookie = () => {
-    return Cookies.get('data-bs-theme');
+    // Get theme cookie with domain set to the root domain
+    return Cookies.get('data-bs-theme', {
+        domain: process.env.REACT_APP_ROOT_DOMAIN,
+    });
 };
 
 export const setCurrentThemeCookie = (theme) => {
-    Cookies.set('data-bs-theme', theme);
+    Cookies.set('data-bs-theme', theme, {
+        domain: isDevelopment
+            ? 'localhost'
+            : `.${process.env.REACT_APP_ROOT_DOMAIN}`,
+    });
 };
