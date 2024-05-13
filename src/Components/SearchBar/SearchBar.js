@@ -250,7 +250,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     control: (provided) => ({
       ...provided,
       backgroundColor:
-        layoutModeType === layoutModeTypes['DARKMODE'] ? '#212529' : '#fff',
+        layoutModeType === layoutModeTypes['DARKMODE'] ? ' #1d1d21' : '#fff',
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
       cursor: 'text',
       maxHeight: 35,
@@ -272,7 +272,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       ...provided,
       zIndex: 9999,
       backgroundColor:
-        layoutModeType === layoutModeTypes['DARKMODE'] ? '#2a2f34' : '#fff',
+        layoutModeType === layoutModeTypes['DARKMODE'] ? '#1d1d21' : '#fff',
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
       textAlign: 'left',
       alignItems: 'left',
@@ -284,7 +284,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       cursor: 'pointer',
       backgroundColor: state.isFocused
         ? layoutModeType === layoutModeTypes['DARKMODE']
-          ? '#2a2f34'
+          ? '#1d1d21'
           : '#e2e2e2'
         : state.isSelected
           ? layoutModeType === layoutModeTypes['DARKMODE']
