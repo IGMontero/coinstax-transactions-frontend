@@ -4,41 +4,14 @@ import { components } from 'react-select';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { layoutModeTypes } from '../constants/layout';
-import Cookies from 'js-cookie';
 import { Col } from 'reactstrap';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
-import { formatIdTransaction } from '../../utils/utils';
 import {
   getUserSavedAddresses,
   setUserSavedAddresses,
 } from '../../helpers/cookies_helper';
-
-const CustomOptions = (props) => {
-  return (
-    <components.Option {...props}>
-      <div className="d-flex align-items-center">
-        {props.data.logo && (
-          <img
-            className="img-fluid rounded-circle me-2"
-            src={props.data.logo}
-            alt={props.data.label}
-            style={{ width: 30, height: 30 }}
-          />
-        )}
-        <div className="d-flex flex-column">
-          {props.data.label}
-
-          {props.data.address && (
-            <span className="text-muted me-2">
-              {formatIdTransaction(props.data.address, 6, 8)}
-            </span>
-          )}
-        </div>
-      </div>
-    </components.Option>
-  );
-};
+import CustomOptions from './components/CustomOptions';
 
 const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
@@ -85,6 +58,15 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       setOptions(savedOptions);
     }
   }, [selectedOption, savedOptions]);
+
+  useEffect(() => {
+    setOptions((currentOptions) => [
+      ...savedOptions,
+      ...currentOptions.filter(
+        (o) => !savedOptions.some((opt) => opt.value === o.value),
+      ),
+    ]);
+  }, [savedOptions]);
 
   useEffect(() => {
     setOptions(savedOptions);
@@ -378,11 +360,11 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           }
         }}
       />
-      <DropdownAddresses
+      {/* <DropdownAddresses
         optionDropdown={optionDropdown}
         isUnsupported={isUnsupported}
         onSelect={handleDropdownSelect}
-      />
+      /> */}
     </Col>
   );
 };
