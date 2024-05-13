@@ -241,18 +241,24 @@ export const parseValuesToLocale = (value, currency) => {
     return parseFloat(value).toFixed(2) + ' ' + currency;
   }
 };
-
-export function formatNumberWithBillion(number) {
+export function formatNumberWithBillionOrMillion(number) {
   if (number === undefined || number === null || isNaN(number)) {
     return 'N/A';
   }
 
   const billion = 1000000000;
+  const million = 1000000;
   if (number >= billion) {
     return (
       (number / billion).toLocaleString(undefined, {
         maximumFractionDigits: 1,
       }) + ' B'
+    );
+  } else if (number >= million) {
+    return (
+      (number / million).toLocaleString(undefined, {
+        maximumFractionDigits: 1,
+      }) + ' M'
     );
   }
   return number.toLocaleString();
