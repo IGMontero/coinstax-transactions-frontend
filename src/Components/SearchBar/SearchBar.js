@@ -83,6 +83,20 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const fetchSuggestions = async () => {
     setLoading(true);
     try {
+      const addressesFromCookies = getUserSavedAddresses();
+
+      console.log(addressesFromCookies);
+      const suggestions = [];
+
+      // Add suggestions from cookies
+      if (addressesFromCookies.length > 0 && searchInput.startsWith('0x')) {
+        suggestions.push(
+          ...addressesFromCookies.filter((addr) =>
+            addr.value.toLowerCase().includes(searchInput.toLowerCase()),
+          ),
+        );
+      }
+
       if (
         (searchInput.length >= 3 && !searchInput.startsWith('0x')) ||
         (searchInput.startsWith('0x') && searchInput.length >= 5)
@@ -94,14 +108,14 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           }),
         );
 
-        const suggestions = response.payload;
+        const apiSuggestions = response.payload;
 
-        if (Array.isArray(suggestions)) {
-          const validSuggestions = suggestions.filter(
+        if (Array.isArray(apiSuggestions)) {
+          const validApiSuggestions = apiSuggestions.filter(
             (s) => s.name && s.address,
           );
-          setOptions(
-            validSuggestions.map((addr) => ({
+          suggestions.push(
+            ...validApiSuggestions.map((addr) => ({
               label: addr.name,
               value: addr.address,
               address: addr.address,
@@ -111,11 +125,12 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           );
         } else {
           console.error('No suggestions found');
-          setOptions([]);
         }
       }
+
+      setOptions(suggestions);
     } catch (error) {
-      console.error('Failed to fetch suggestions:', error);
+      console.log('Failed to fetch suggestions:', error);
       setOptions([]);
     } finally {
       setLoading(false);
