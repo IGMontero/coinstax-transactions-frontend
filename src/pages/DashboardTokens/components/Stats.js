@@ -2,12 +2,11 @@ import React from 'react';
 import { Col, Row } from 'reactstrap';
 import {
   CurrencyUSD,
-  formatNumberWithBillion,
+  formatNumberWithBillionOrMillion,
   parseValuesToLocale,
 } from '../../../utils/utils';
 
 const Stats = ({ stats }) => {
-  const billion = 1000000000;
   const statsData = [
     {
       label: '1 Day',
@@ -34,15 +33,15 @@ const Stats = ({ stats }) => {
   const additionalInfo = [
     {
       label: 'Market Cap',
-      value: `${formatNumberWithBillion(stats?.marketCap)} `,
+      value: `${formatNumberWithBillionOrMillion(stats?.marketCap)} `,
     },
     {
       label: 'Circulating Supply',
-      value: `${formatNumberWithBillion(stats?.circulatingSupply)}`,
+      value: `${formatNumberWithBillionOrMillion(stats?.circulatingSupply)}`,
     },
     {
       label: 'Total Supply',
-      value: `${formatNumberWithBillion(stats?.totalSupply)} `,
+      value: `${formatNumberWithBillionOrMillion(stats?.totalSupply)} `,
     },
   ];
 
