@@ -37,7 +37,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
 
   useEffect(() => {
     // If options change, save to local storage
-    localStorage.setItem('addressess', JSON.stringify(options));
+    localStorage.setItem('addresses', JSON.stringify(options));
 
     // Create an iframe poitning to root url
     const iframe = document.createElement('iframe');
@@ -159,14 +159,14 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
   };
 
   const handleRenameNameFromLocalStorage = (valueToFind, newName) => {
-    const storedOptions = JSON.parse(localStorage.getItem('addressess')) || [];
+    const storedOptions = JSON.parse(localStorage.getItem('addresses')) || [];
     const newOptions = storedOptions.map((storedOption) => {
       if (storedOption.value === valueToFind) {
         return { ...storedOption, label: newName };
       }
       return storedOption;
     });
-    localStorage.setItem('addressess', JSON.stringify(newOptions));
+    localStorage.setItem('addresses', JSON.stringify(newOptions));
     setOptions(newOptions);
   };
 
