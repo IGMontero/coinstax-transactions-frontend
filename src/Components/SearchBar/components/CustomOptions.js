@@ -143,48 +143,50 @@ const CustomOptions = (props) => {
             </div>
           </div>
 
-          <Dropdown isOpen={isMenuOpen} toggle={toggleDropdown}>
-            <DropdownToggle
-              tag="span"
-              className="dropdown-toggle"
-            ></DropdownToggle>
-            <DropdownMenu>
-              <DropdownItem
-                onClick={(e) => handleCopy(e, props.data.value)}
-                className="d-flex align-items-center"
-              >
-                {isCopied ? (
-                  <i className="ri-check-line me-2 "></i>
-                ) : (
-                  <i className="ri-file-copy-line me-2"></i>
-                )}
-                Copy Address
-              </DropdownItem>
+          {userAddresses.some((addr) => addr.value === props.data.value) && (
+            <Dropdown isOpen={isMenuOpen} toggle={toggleDropdown}>
+              <DropdownToggle
+                tag="span"
+                className="dropdown-toggle"
+              ></DropdownToggle>
+              <DropdownMenu>
+                <DropdownItem
+                  onClick={(e) => handleCopy(e, props.data.value)}
+                  className="d-flex align-items-center"
+                >
+                  {isCopied ? (
+                    <i className="ri-check-line me-2 "></i>
+                  ) : (
+                    <i className="ri-file-copy-line me-2"></i>
+                  )}
+                  Copy Address
+                </DropdownItem>
 
-              <DropdownItem
-                onClick={(e) =>
-                  handleOpenModalRename(e, {
-                    label: displayLabel,
-                    value: props.data.value,
-                  })
-                }
-              >
-                <i className="ri-edit-line me-2"></i> Rename
-              </DropdownItem>
+                <DropdownItem
+                  onClick={(e) =>
+                    handleOpenModalRename(e, {
+                      label: displayLabel,
+                      value: props.data.value,
+                    })
+                  }
+                >
+                  <i className="ri-edit-line me-2"></i> Rename
+                </DropdownItem>
 
-              <DropdownItem
-                onClick={(e) =>
-                  handleDelete(e, {
-                    label: displayLabel,
-                    value: props.data.label,
-                  })
-                }
-              >
-                <i className="ri-delete-bin-line me-2"></i>
-                Delete
-              </DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+                <DropdownItem
+                  onClick={(e) =>
+                    handleDelete(e, {
+                      label: displayLabel,
+                      value: props.data.label,
+                    })
+                  }
+                >
+                  <i className="ri-delete-bin-line me-2"></i>
+                  Delete
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          )}
         </div>
       </components.Option>
     </>
