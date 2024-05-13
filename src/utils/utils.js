@@ -380,11 +380,11 @@ export const saveAddressToLocalStorage = (address) => {
 
 // remove options from local storage
 export const removeOptionsFromLocalStorage = (setOptions, value) => {
-  const storedOptions = JSON.parse(localStorage.getItem('addressess')) || [];
+  const storedOptions = JSON.parse(localStorage.getItem('addresses')) || [];
   const newOptions = storedOptions.filter(
     (storedOption) => storedOption.value !== value,
   );
-  localStorage.setItem('addressess', JSON.stringify(newOptions));
+  localStorage.setItem('addresses', JSON.stringify(newOptions));
   setOptions((currentOptions) =>
     currentOptions.filter((o) => o.value !== value),
   );
