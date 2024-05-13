@@ -269,6 +269,7 @@ export const updateTransactionsPreview = async ({
   dispatch,
   pagesChecked,
   onEnd,
+  onError,
 }) => {
   // Pges checked
   try {
@@ -281,66 +282,72 @@ export const updateTransactionsPreview = async ({
       //   // Stop if the currentPage has been reached and all transactions are not in preview mode
       //   return;
       // }
+      try {
+        const response = await dispatch(
+          fetchHistory({
+            address,
+            query: debouncedSearchTerm,
+            filters: {
+              blockchainAction: selectedFilters,
+              includeSpam: includeSpam,
+            },
+            assetsFilters: getSelectedAssetFilters(selectedAssets),
+            page: page,
+          }),
+        ).unwrap();
 
-      const response = await dispatch(
-        fetchHistory({
-          address,
-          query: debouncedSearchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
-          assetsFilters: getSelectedAssetFilters(selectedAssets),
-          page: page,
-        }),
-      ).unwrap();
+        const { parsed } = response;
+        if (!parsed || parsed.length === 0) {
+          return;
+        }
 
-      const { parsed } = response;
-      if (!parsed || parsed.length === 0) {
-        return;
-      }
+        // Verify if all transactions are not in preview mode
+        const allNotInPreview = parsed.every(
+          (transaction) => !transaction.preview,
+        );
 
-      // Verify if all transactions are not in preview mode
-      const allNotInPreview = parsed.every(
-        (transaction) => !transaction.preview,
-      );
+        // If all transactions are not in preview mode, add the page to the set of checked pages
+        if (allNotInPreview) {
+          // Add the page to the set of checked pages
+          // pagesChecked.add(page);
 
-      // If all transactions are not in preview mode, add the page to the set of checked pages
-      if (allNotInPreview) {
-        // Add the page to the set of checked pages
-        // pagesChecked.add(page);
+          // if (page < currentPage) {
+          //   await updatePage(page + 1);
+          // }
+          // // Stop if the currentPage has been reached and all transactions are not in preview mode
+          // // Update one tx to trigger the re-render
+          // const newData = [...parsed];
 
-        // if (page < currentPage) {
-        //   await updatePage(page + 1);
-        // }
-        // // Stop if the currentPage has been reached and all transactions are not in preview mode
-        // // Update one tx to trigger the re-render
-        // const newData = [...parsed];
+          // // return setData((currentData) => newData);
+          // // return setData && setData(newData);
+          // return setData((currentData) => {
+          //   return currentData.map((transaction) => {
+          //     const updatedTransaction = newData.find(
+          //       (t) => t.txHash === transaction.txHash,
+          //     );
+          //     return updatedTransaction || transaction;
+          //   });
+          // });
+          if (onEnd) {
+            onEnd();
+          }
+        }
 
-        // // return setData((currentData) => newData);
-        // // return setData && setData(newData);
-        // return setData((currentData) => {
-        //   return currentData.map((transaction) => {
-        //     const updatedTransaction = newData.find(
-        //       (t) => t.txHash === transaction.txHash,
-        //     );
-        //     return updatedTransaction || transaction;
-        //   });
-        // });
-        if (onEnd) {
-          onEnd();
+        // Update the data
+        setData((currentData) => {
+          return currentData.map((transaction) => {
+            const updatedTransaction = parsed.find(
+              (t) => t.txHash === transaction.txHash,
+            );
+            return updatedTransaction || transaction;
+          });
+        });
+      } catch (error) {
+        console.log(error);
+        if (onError) {
+          onError(error);
         }
       }
-
-      // Update the data
-      setData((currentData) => {
-        return currentData.map((transaction) => {
-          const updatedTransaction = parsed.find(
-            (t) => t.txHash === transaction.txHash,
-          );
-          return updatedTransaction || transaction;
-        });
-      });
     };
     // Clear the checked pages if the address has changed
     await updatePage(currentPage);
