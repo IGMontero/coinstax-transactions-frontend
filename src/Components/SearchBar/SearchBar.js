@@ -166,10 +166,6 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     console.log('Is menu open changed:', isMenuOpen);
   }, [isMenuOpen]);
 
-  const handleMenuClose = () => {
-    // Clean up options al
-  };
-
   useEffect(() => {
     console.log('Search input changed:', searchInput);
   }, [searchInput]);
