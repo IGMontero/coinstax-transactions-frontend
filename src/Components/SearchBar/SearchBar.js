@@ -56,12 +56,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const [searchInput, setSearchInput] = useState('');
   const [options, setOptions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const [optionDropdown, setOptionDropdown] = useState([]);
-
-  const savedOptions = getUserSavedAddresses();
-
-  console.log('Cookies', options);
+  const [savedOptions, setSavedOptions] = useState(getUserSavedAddresses());
 
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
@@ -81,11 +77,18 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       setOptions((currentOptions) => [
         selectedOption,
         ...currentOptions.filter((o) => o.value !== selectedOption.value),
+        ...savedOptions.filter(
+          (o) => !currentOptions.some((opt) => opt.value === o.value),
+        ),
       ]);
-    } else if (savedOptions) {
+    } else {
       setOptions(savedOptions);
     }
-  }, [selectedOption]);
+  }, [selectedOption, savedOptions]);
+
+  useEffect(() => {
+    setOptions(savedOptions);
+  }, [isMenuOpen, savedOptions]);
 
   const debounce = (func, delay) => {
     let timerId;
@@ -194,19 +197,13 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       );
 
       if (!isAddressAlreadySaved) {
-        // Add address at the beginning of the list
         storedOptions.unshift(newOption);
 
         if (storedOptions.length > 10) {
-          storedOptions.shift();
+          storedOptions.pop();
         }
 
         setUserSavedAddresses(storedOptions);
-
-        setOptions((currentOptions) => [
-          newOption,
-          ...currentOptions.filter((o) => o.value !== newOption.value),
-        ]);
       }
     }
   };
@@ -377,6 +374,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
             // Close dropdown
             setIsMenuOpen(false);
             navigate(`/address/${searchInput}`);
+            handleSaveInCookies();
           }
         }}
       />
