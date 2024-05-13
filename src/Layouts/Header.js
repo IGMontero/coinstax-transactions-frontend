@@ -44,9 +44,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     (state) => state.fetchData,
   );
 
-  const isUnsupported =
-    assets.unsupported || transactions.unsupported || performance.unsupported;
-  const { address } = useParams();
+  const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
   const currentUser = user;
 
@@ -192,13 +190,19 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 <button
                   onClick={toogleMenuBtn}
                   type="button"
-                  className="btn btn-sfs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
+                  className="btn ms-n2 btn-sfs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
                   id="topnav-hamburger-icon"
                 >
-                  <span className="hamburger-icon">
-                    <span></span>
-                    <span></span>
-                    <span></span>
+                  <span className="hamburger-icon text-dark">
+                    <span
+                      style={{ background: isLightMode ? 'black' : '' }}
+                    ></span>
+                    <span
+                      style={{ background: isLightMode ? 'black' : '' }}
+                    ></span>
+                    <span
+                      style={{ background: isLightMode ? 'black' : '' }}
+                    ></span>
                   </span>
                 </button>
               </Col>
