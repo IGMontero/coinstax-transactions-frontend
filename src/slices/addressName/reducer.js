@@ -26,8 +26,15 @@ const addressNameSlice = createSlice({
       state.addresses = updatedAddresses;
       setUserSavedAddresses(updatedAddresses);
     },
+    removeAddressName: (state, action) => {
+      const updatedAddresses = state.addresses.filter(
+        (address) => address.value !== action.payload.value,
+      );
+      state.addresses = updatedAddresses;
+      setUserSavedAddresses(updatedAddresses);
+    },
   },
 });
 
-export const { setAddressName } = addressNameSlice.actions;
+export const { setAddressName, removeAddressName } = addressNameSlice.actions;
 export default addressNameSlice.reducer;
