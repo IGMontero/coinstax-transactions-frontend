@@ -4,41 +4,14 @@ import { components } from 'react-select';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { layoutModeTypes } from '../constants/layout';
-import Cookies from 'js-cookie';
 import { Col } from 'reactstrap';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
-import { formatIdTransaction } from '../../utils/utils';
 import {
   getUserSavedAddresses,
   setUserSavedAddresses,
 } from '../../helpers/cookies_helper';
-
-const CustomOptions = (props) => {
-  return (
-    <components.Option {...props}>
-      <div className="d-flex align-items-center">
-        {props.data.logo && (
-          <img
-            className="img-fluid rounded-circle me-2"
-            src={props.data.logo}
-            alt={props.data.label}
-            style={{ width: 30, height: 30 }}
-          />
-        )}
-        <div className="d-flex flex-column">
-          {props.data.label}
-
-          {props.data.address && (
-            <span className="text-muted me-2">
-              {formatIdTransaction(props.data.address, 6, 8)}
-            </span>
-          )}
-        </div>
-      </div>
-    </components.Option>
-  );
-};
+import CustomOptions from './components/CustomOptions';
 
 const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
@@ -56,12 +29,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const [searchInput, setSearchInput] = useState('');
   const [options, setOptions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-
   const [optionDropdown, setOptionDropdown] = useState([]);
-
-  const savedOptions = getUserSavedAddresses();
-
-  console.log('Cookies', options);
+  const [savedOptions, setSavedOptions] = useState(getUserSavedAddresses());
 
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
@@ -81,11 +50,27 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       setOptions((currentOptions) => [
         selectedOption,
         ...currentOptions.filter((o) => o.value !== selectedOption.value),
+        ...savedOptions.filter(
+          (o) => !currentOptions.some((opt) => opt.value === o.value),
+        ),
       ]);
-    } else if (savedOptions) {
+    } else {
       setOptions(savedOptions);
     }
-  }, [selectedOption]);
+  }, [selectedOption, savedOptions]);
+
+  useEffect(() => {
+    setOptions((currentOptions) => [
+      ...savedOptions,
+      ...currentOptions.filter(
+        (o) => !savedOptions.some((opt) => opt.value === o.value),
+      ),
+    ]);
+  }, [savedOptions]);
+
+  useEffect(() => {
+    setOptions(savedOptions);
+  }, [isMenuOpen, savedOptions]);
 
   const debounce = (func, delay) => {
     let timerId;
@@ -98,6 +83,20 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const fetchSuggestions = async () => {
     setLoading(true);
     try {
+      const addressesFromCookies = getUserSavedAddresses();
+
+      console.log(addressesFromCookies);
+      const suggestions = [];
+
+      // Add suggestions from cookies
+      if (addressesFromCookies.length > 0 && searchInput.startsWith('0x')) {
+        suggestions.push(
+          ...addressesFromCookies.filter((addr) =>
+            addr.value.toLowerCase().includes(searchInput.toLowerCase()),
+          ),
+        );
+      }
+
       if (
         (searchInput.length >= 3 && !searchInput.startsWith('0x')) ||
         (searchInput.startsWith('0x') && searchInput.length >= 5)
@@ -109,14 +108,14 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           }),
         );
 
-        const suggestions = response.payload;
+        const apiSuggestions = response.payload;
 
-        if (Array.isArray(suggestions)) {
-          const validSuggestions = suggestions.filter(
+        if (Array.isArray(apiSuggestions)) {
+          const validApiSuggestions = apiSuggestions.filter(
             (s) => s.name && s.address,
           );
-          setOptions(
-            validSuggestions.map((addr) => ({
+          suggestions.push(
+            ...validApiSuggestions.map((addr) => ({
               label: addr.name,
               value: addr.address,
               address: addr.address,
@@ -126,11 +125,12 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           );
         } else {
           console.error('No suggestions found');
-          setOptions([]);
         }
       }
+
+      setOptions(suggestions);
     } catch (error) {
-      console.error('Failed to fetch suggestions:', error);
+      console.log('Failed to fetch suggestions:', error);
       setOptions([]);
     } finally {
       setLoading(false);
@@ -166,10 +166,6 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     console.log('Is menu open changed:', isMenuOpen);
   }, [isMenuOpen]);
 
-  const handleMenuClose = () => {
-    // Clean up options al
-  };
-
   useEffect(() => {
     console.log('Search input changed:', searchInput);
   }, [searchInput]);
@@ -194,19 +190,13 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       );
 
       if (!isAddressAlreadySaved) {
-        // Add address at the beginning of the list
         storedOptions.unshift(newOption);
 
         if (storedOptions.length > 10) {
-          storedOptions.shift();
+          storedOptions.pop();
         }
 
         setUserSavedAddresses(storedOptions);
-
-        setOptions((currentOptions) => [
-          newOption,
-          ...currentOptions.filter((o) => o.value !== newOption.value),
-        ]);
       }
     }
   };
@@ -256,7 +246,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     control: (provided) => ({
       ...provided,
       backgroundColor:
-        layoutModeType === layoutModeTypes['DARKMODE'] ? '#212529' : '#fff',
+        layoutModeType === layoutModeTypes['DARKMODE'] ? ' #1d1d21' : '#fff',
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
       cursor: 'text',
       maxHeight: 35,
@@ -278,7 +268,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       ...provided,
       zIndex: 9999,
       backgroundColor:
-        layoutModeType === layoutModeTypes['DARKMODE'] ? '#2a2f34' : '#fff',
+        layoutModeType === layoutModeTypes['DARKMODE'] ? '#1d1d21' : '#fff',
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
       textAlign: 'left',
       alignItems: 'left',
@@ -290,7 +280,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       cursor: 'pointer',
       backgroundColor: state.isFocused
         ? layoutModeType === layoutModeTypes['DARKMODE']
-          ? '#2a2f34'
+          ? '#1d1d21'
           : '#e2e2e2'
         : state.isSelected
           ? layoutModeType === layoutModeTypes['DARKMODE']
@@ -377,14 +367,15 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
             // Close dropdown
             setIsMenuOpen(false);
             navigate(`/address/${searchInput}`);
+            handleSaveInCookies();
           }
         }}
       />
-      <DropdownAddresses
+      {/* <DropdownAddresses
         optionDropdown={optionDropdown}
         isUnsupported={isUnsupported}
         onSelect={handleDropdownSelect}
-      />
+      /> */}
     </Col>
   );
 };

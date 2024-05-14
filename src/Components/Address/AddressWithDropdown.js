@@ -6,7 +6,7 @@ import {
   UncontrolledDropdown,
 } from 'reactstrap';
 import Cookies from 'js-cookie';
-import { formatIdTransaction } from '../../utils/utils';
+import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import QrModal from '../Modals/QrModal';
 import RenameAddressModal from '../Modals/RenameAddress';
@@ -61,7 +61,7 @@ const AddressWithDropdown = () => {
         setIsCopied(null);
       }, 2000);
     } catch (err) {
-      console.error('Failed to copy: ', err);
+      console.log('Failed to copy: ', err);
     }
   };
 
@@ -180,7 +180,7 @@ const AddressWithDropdown = () => {
               <i className="ri-pencil-line fs-2 me-2"></i>
               <span className="fw-semibold">Rename</span>
             </DropdownItem>
-            <DropdownItem divider />
+            {/* <DropdownItem divider />
 
             <DropdownItem
               className="d-flex align-items-center"
@@ -193,7 +193,7 @@ const AddressWithDropdown = () => {
             >
               <i className="ri-delete-bin-line fs-2 text-danger me-2"></i>
               <span className="text-danger fw-semibold">Remove</span>
-            </DropdownItem>
+            </DropdownItem> */}
           </DropdownMenu>
         </UncontrolledDropdown>
       </div>

@@ -5,8 +5,6 @@ import {
   Row,
   Col,
   InputGroup,
-  Collapse,
-  CardBody,
   Spinner,
   Dropdown,
   DropdownToggle,
@@ -50,7 +48,6 @@ const HistorialTable = ({ data, setData }) => {
   } else if (pathSegments.length > 2) {
     isDashboardPage = false;
   }
-
   // #region STATES
   const [hasPreview, setHasPreview] = useState(false);
   const [errorData, setErrorData] = useState(null);
@@ -243,6 +240,14 @@ const HistorialTable = ({ data, setData }) => {
         onEnd: () => {
           clearInterval(interval);
           console.log('Clearing interval for page', pageIndex);
+        },
+        onError: (err) => {
+          console.error('Error updating preview:', err);
+          clearInterval(interval);
+          console.log(
+            'Clearing interval for page because of an error',
+            pageIndex,
+          );
         },
       });
     }, 5000);
@@ -629,7 +634,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -647,9 +652,8 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -861,8 +865,8 @@ const HistorialTable = ({ data, setData }) => {
                 </label>
               </div>
             </div>
+            {!loading && !isInitialLoad && renderInfoTransactions()}
           </Row>
-          {renderInfoTransactions()}
         </div>
         {!loading && !isInitialLoad && renderMessageNoResults()}
       </div>
@@ -974,9 +978,9 @@ const HistorialTable = ({ data, setData }) => {
         </Row>
       </div>
 
-      {renderInfoTransactions()}
+      {!loading && !isInitialLoad && renderInfoTransactions()}
 
-      {!isInitialLoad && Object.keys(groupedTransactions).length > 0 && (
+      {Object.keys(groupedTransactions).length > 0 && (
         <Col
           lg={12}
           className="position-relative"
