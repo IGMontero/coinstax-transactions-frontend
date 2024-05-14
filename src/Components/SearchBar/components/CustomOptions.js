@@ -4,8 +4,6 @@ import ReactDOM from 'react-dom';
 import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
 import {
   setUserSavedAddresses,
-  renameAddressInCookies,
-  getUserSavedAddresses,
   removeAddressFromCookies,
 } from '../../../helpers/cookies_helper';
 import {
@@ -15,19 +13,15 @@ import {
   DropdownToggle,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAddressName } from '../../../slices/addressName/reducer';
 
 const CustomOptions = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
-
   const [displayLabel, setDisplayLabel] = useState('');
-
-  const [userAddresses, setUserAddresses] = useState(getUserSavedAddresses());
-
-  useEffect(() => {
-    const addresses = getUserSavedAddresses();
-    setUserAddresses(addresses);
-  }, []);
+  const dispatch = useDispatch();
+  const addresses = useSelector((state) => state.addressName.addresses);
 
   useEffect(() => {
     if (props.data.label === props.data.value) {
@@ -57,7 +51,7 @@ const CustomOptions = (props) => {
           return 'You need to write something!';
         }
         if (
-          userAddresses.some(
+          addresses.some(
             (addr) => addr.label === value && addr.value !== option.value,
           )
         ) {
@@ -103,16 +97,15 @@ const CustomOptions = (props) => {
     }).then((result) => {
       if (result.isConfirmed) {
         const updatedOptions = removeAddressFromCookies(option.value);
-        setUserAddresses(updatedOptions);
+        setUserSavedAddresses(updatedOptions);
+        dispatch(setAddressName({ addresses: updatedOptions }));
         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
       }
     });
   };
 
-  const handleRenameAddress = async (valueToFind, newName) => {
-    const newOptions = renameAddressInCookies(valueToFind, newName);
-    setUserSavedAddresses(newOptions);
-    setUserAddresses(newOptions);
+  const handleRenameAddress = (valueToFind, newName) => {
+    dispatch(setAddressName({ value: valueToFind, label: newName }));
     if (newName === valueToFind) {
       setDisplayLabel(valueToFind);
     } else {
@@ -165,7 +158,7 @@ const CustomOptions = (props) => {
               onClick={(e) =>
                 handleDelete(e, {
                   label: displayLabel,
-                  value: props.data.label,
+                  value: props.data.value,
                 })
               }
             >
@@ -201,7 +194,7 @@ const CustomOptions = (props) => {
             </div>
           </div>
 
-          {userAddresses.some((addr) => addr.value === props.data.value) && (
+          {addresses.some((addr) => addr.value === props.data.value) && (
             <>{renderDropdownMenu()}</>
           )}
         </div>

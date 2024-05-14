@@ -5,20 +5,19 @@ import {
   DropdownToggle,
   UncontrolledDropdown,
 } from 'reactstrap';
-import Cookies from 'js-cookie';
-import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import { useNavigate, useParams } from 'react-router-dom';
 import QrModal from '../Modals/QrModal';
 import RenameAddressModal from '../Modals/RenameAddress';
 import Swal from 'sweetalert2';
-import {
-  getUserSavedAddresses,
-  setUserSavedAddresses,
-} from '../../helpers/cookies_helper';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAddressName } from '../../slices/addressName/reducer';
+import { getUserSavedAddresses } from '../../helpers/cookies_helper';
+import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 
 const AddressWithDropdown = () => {
   const { address } = useParams();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [renameModal, setRenameModal] = useState(false);
@@ -28,16 +27,10 @@ const AddressWithDropdown = () => {
   const [selectedOptionLabel, setSelectedOptionLabel] = useState('');
   const [selectedOptionValue, setSelectedOptionValue] = useState('');
 
-  const [userAddresses, setUserAddresses] = useState([]);
+  const addresses = useSelector((state) => state.addressName.addresses);
 
   useEffect(() => {
-    setUserAddresses(getUserSavedAddresses());
-  }, []);
-
-  useEffect(() => {
-    const matchingAddress = userAddresses.find(
-      (addr) => addr.value === address,
-    );
+    const matchingAddress = addresses.find((addr) => addr.value === address);
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
     if (matchingAddress) {
@@ -45,7 +38,7 @@ const AddressWithDropdown = () => {
       setSelectedOptionLabel(matchingAddress.label);
       setSelectedOptionValue(matchingAddress.value);
     }
-  }, [address, userAddresses]);
+  }, [address, addresses]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -65,52 +58,6 @@ const AddressWithDropdown = () => {
     }
   };
 
-  const handleRenameAddressInCookies = (valueToFind, newName) => {
-    const storedOptions = getUserSavedAddresses();
-    const newOptions = storedOptions.map((storedOption) => {
-      if (storedOption.value === valueToFind) {
-        return { ...storedOption, label: newName };
-      }
-      return storedOption;
-    });
-
-    setUserSavedAddresses(newOptions);
-    setUserAddresses(newOptions);
-    setFormattedAddressLabel(newName);
-  };
-
-  const removeOptionsFromCookies = (value) => {
-    const storedOptions = getUserSavedAddresses();
-    const newOptions = storedOptions.filter(
-      (storedOption) => storedOption.value !== value,
-    );
-    setUserSavedAddresses(newOptions);
-    setUserAddresses(newOptions);
-  };
-
-  const handleDeleteOptionsFromCookies = (e, option) => {
-    const optionDisplay =
-      option.label === option.value
-        ? option.value
-        : `${option.label} (${option.value})`;
-
-    e.preventDefault();
-    e.stopPropagation();
-    Swal.fire({
-      title: `Are you sure you want to remove ${optionDisplay}?`,
-      text: 'You cannot undo this action!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Close',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        removeOptionsFromCookies(option.value);
-        Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
-      }
-    });
-  };
-
   const handleOpenModalRename = (e, option) => {
     e.stopPropagation();
     setSelectedOptionLabel(option.label);
@@ -118,10 +65,13 @@ const AddressWithDropdown = () => {
     setRenameModal(true);
   };
 
+  const handleRenameAddress = (newName) => {
+    dispatch(setAddressName({ value: selectedOptionValue, label: newName }));
+    setRenameModal(false);
+  };
+
   useEffect(() => {
-    const matchingAddress = userAddresses.find(
-      (addr) => addr.value === address,
-    );
+    const matchingAddress = addresses.find((addr) => addr.value === address);
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
 
@@ -134,17 +84,12 @@ const AddressWithDropdown = () => {
     } else {
       setFormattedAddressLabel(currentFormattedValue);
     }
-  }, [address, userAddresses]);
+  }, [address, addresses]);
 
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
         <h4 className="text-address mb-0">{formattedAddressLabel}</h4>
-        {/* {formattedAddressLabel && formattedAddressLabel !== formattedValue && (
-          <span className="badge bg-soft-dark text-dark fw-semibold fs-6 mb-0 ms-2">
-            {formattedValue}
-          </span>
-        )} */}
         <UncontrolledDropdown className="card-header-dropdown">
           <DropdownToggle tag="a" className="text-reset" role="button">
             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
@@ -154,7 +99,6 @@ const AddressWithDropdown = () => {
               className="d-flex align-items-center"
               onClick={toggleQrModal}
             >
-              {' '}
               <i className="ri-qr-code-line fs-2 me-2"></i>
               <span className="fw-semibold">Show QR code</span>
             </DropdownItem>
@@ -181,20 +125,6 @@ const AddressWithDropdown = () => {
               <i className="ri-pencil-line fs-2 me-2"></i>
               <span className="fw-semibold">Rename</span>
             </DropdownItem>
-            {/* <DropdownItem divider />
-
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={(e) =>
-                handleDeleteOptionsFromCookies(e, {
-                  label: formattedAddressLabel,
-                  value: address,
-                })
-              }
-            >
-              <i className="ri-delete-bin-line fs-2 text-danger me-2"></i>
-              <span className="text-danger fw-semibold">Remove</span>
-            </DropdownItem> */}
           </DropdownMenu>
         </UncontrolledDropdown>
       </div>
@@ -203,28 +133,19 @@ const AddressWithDropdown = () => {
 
   return (
     <div className="">
-      {' '}
       <RenameAddressModal
         open={renameModal}
         setOpen={setRenameModal}
         address={selectedOptionLabel}
-        options={userAddresses}
-        onSave={(newName) =>
-          handleRenameAddressInCookies(selectedOptionValue, newName)
-        }
+        options={addresses}
+        onSave={handleRenameAddress}
       />
       <QrModal
         showQrModal={showQrModal}
         toggleQrModal={toggleQrModal}
         addressTitle={address}
       />
-      <div
-        className="mt-5
-      
-      "
-      >
-        {renderAddressWithDropdown()}
-      </div>
+      <div className="mt-5">{renderAddressWithDropdown()}</div>
     </div>
   );
 };

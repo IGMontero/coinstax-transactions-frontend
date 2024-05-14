@@ -14,6 +14,8 @@ import DataReducer from './transactions/reducer';
 import AddressesReducer from './addresses/reducer';
 // API Key
 import APIKeyReducer from './apiKey/reducer';
+// Address Name
+import AddressNameReducer from './addressName/reducer';
 
 const rootReducer = combineReducers({
   Layout: LayoutReducer,
@@ -26,6 +28,7 @@ const rootReducer = combineReducers({
   auth: Auth2Reducer,
   fetchData: DataReducer,
   addresses: AddressesReducer,
+  addressName: AddressNameReducer,
 });
 
 export default rootReducer;

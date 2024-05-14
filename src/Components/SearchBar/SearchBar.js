@@ -23,14 +23,14 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }));
   const { fetchData } = useSelector((state) => state);
 
+  const addresses = useSelector((state) => state.addressName.addresses);
+
   // #region STATES
   const [isUnsupported, setIsUnsupported] = useState(false);
   const [loading, setLoading] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const [options, setOptions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [optionDropdown, setOptionDropdown] = useState([]);
-  const [savedOptions, setSavedOptions] = useState(getUserSavedAddresses());
 
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
@@ -50,27 +50,27 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       setOptions((currentOptions) => [
         selectedOption,
         ...currentOptions.filter((o) => o.value !== selectedOption.value),
-        ...savedOptions.filter(
+        ...addresses.filter(
           (o) => !currentOptions.some((opt) => opt.value === o.value),
         ),
       ]);
     } else {
-      setOptions(savedOptions);
+      setOptions(addresses);
     }
-  }, [selectedOption, savedOptions]);
+  }, [selectedOption, addresses]);
 
   useEffect(() => {
     setOptions((currentOptions) => [
-      ...savedOptions,
+      ...addresses,
       ...currentOptions.filter(
-        (o) => !savedOptions.some((opt) => opt.value === o.value),
+        (o) => !addresses.some((opt) => opt.value === o.value),
       ),
     ]);
-  }, [savedOptions]);
+  }, [addresses]);
 
   useEffect(() => {
-    setOptions(savedOptions);
-  }, [isMenuOpen, savedOptions]);
+    setOptions(addresses);
+  }, [isMenuOpen, addresses]);
 
   const debounce = (func, delay) => {
     let timerId;
@@ -83,16 +83,15 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const fetchSuggestions = async () => {
     setLoading(true);
     try {
-      const addressesFromCookies = getUserSavedAddresses();
-
-      console.log(addressesFromCookies);
       const suggestions = [];
 
       // Add suggestions from cookies
-      if (addressesFromCookies.length > 0 && searchInput.startsWith('0x')) {
+      if (addresses.length > 0) {
         suggestions.push(
-          ...addressesFromCookies.filter((addr) =>
-            addr.value.toLowerCase().includes(searchInput.toLowerCase()),
+          ...addresses.filter(
+            (addr) =>
+              addr.value.toLowerCase().includes(searchInput.toLowerCase()) ||
+              addr.label.toLowerCase().includes(searchInput.toLowerCase()),
           ),
         );
       }
