@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  document.title = 'Coinstax | Home';
+  document.title = 'Chain Glance | Home';
 
   window.onscroll = function () {
     scrollFunction();

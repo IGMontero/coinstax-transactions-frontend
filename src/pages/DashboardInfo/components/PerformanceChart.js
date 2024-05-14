@@ -396,8 +396,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(7, 'one_week')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_week' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'one_week' ? 'active' : ''
+          }`}
           id="one_week"
         >
           7D
@@ -406,8 +407,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(30, 'one_month')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_month' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'one_month' ? 'active' : ''
+          }`}
           id="one_month"
         >
           1M
@@ -416,8 +418,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(180, 'six_months')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'six_months' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'six_months' ? 'active' : ''
+          }`}
           id="six_months"
         >
           6M
@@ -426,8 +429,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(365, 'one_year')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_year' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'one_year' ? 'active' : ''
+          }`}
           id="one_year"
         >
           1Y
@@ -436,8 +440,9 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(10000, 'all')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'all' ? 'active' : ''
-            }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
+            activeFilter === 'all' ? 'active' : ''
+          }`}
           id="all"
         >
           ALL

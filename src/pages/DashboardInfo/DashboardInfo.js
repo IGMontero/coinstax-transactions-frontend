@@ -455,7 +455,12 @@ const DashboardInfo = () => {
                       <div className="flex-grow-1">
                         <Col xxl={12} className="mb-4">
                           <div className="d-flex justify-content-start">
-                            <Col className="col-12 ">
+                            <Col
+                              className="col-12"
+                              style={{
+                                marginTop: '-2rem',
+                              }}
+                            >
                               <div className={loading ? 'pt-3' : ''}>
                                 <AddressWithDropdown />
                               </div>

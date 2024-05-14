@@ -16,7 +16,7 @@ import Cta from './cta';
 import Footer from './footer';
 
 const Index = () => {
-  document.title = ' Coinstax |  Home';
+  document.title = 'Chain Glance |  Home';
 
   window.onscroll = function () {
     scrollFunction();
