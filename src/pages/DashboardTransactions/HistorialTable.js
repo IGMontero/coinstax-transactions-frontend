@@ -5,8 +5,6 @@ import {
   Row,
   Col,
   InputGroup,
-  Collapse,
-  CardBody,
   Spinner,
   Dropdown,
   DropdownToggle,
@@ -50,7 +48,6 @@ const HistorialTable = ({ data, setData }) => {
   } else if (pathSegments.length > 2) {
     isDashboardPage = false;
   }
-
   // #region STATES
   const [hasPreview, setHasPreview] = useState(false);
   const [errorData, setErrorData] = useState(null);
@@ -868,8 +865,8 @@ const HistorialTable = ({ data, setData }) => {
                 </label>
               </div>
             </div>
+            {!loading && !isInitialLoad && renderInfoTransactions()}
           </Row>
-          {renderInfoTransactions()}
         </div>
         {!loading && !isInitialLoad && renderMessageNoResults()}
       </div>
@@ -981,9 +978,9 @@ const HistorialTable = ({ data, setData }) => {
         </Row>
       </div>
 
-      {renderInfoTransactions()}
+      {!loading && !isInitialLoad && renderInfoTransactions()}
 
-      {!isInitialLoad && Object.keys(groupedTransactions).length > 0 && (
+      {Object.keys(groupedTransactions).length > 0 && (
         <Col
           lg={12}
           className="position-relative"
