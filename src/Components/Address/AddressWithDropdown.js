@@ -124,21 +124,22 @@ const AddressWithDropdown = () => {
     );
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
+
     if (matchingAddress) {
       if (matchingAddress.label === matchingAddress.value) {
         setFormattedAddressLabel(currentFormattedValue);
       } else {
         setFormattedAddressLabel(matchingAddress.label);
       }
+    } else {
+      setFormattedAddressLabel(currentFormattedValue);
     }
-  }, [address]);
+  }, [address, userAddresses]);
 
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
-        <h4 className="text-address mb-0">
-          {formattedAddressLabel || formatIdTransaction(address, 6, 8)}
-        </h4>
+        <h4 className="text-address mb-0">{formattedAddressLabel}</h4>
         {/* {formattedAddressLabel && formattedAddressLabel !== formattedValue && (
           <span className="badge bg-soft-dark text-dark fw-semibold fs-6 mb-0 ms-2">
             {formattedValue}
