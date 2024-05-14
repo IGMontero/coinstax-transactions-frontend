@@ -35,6 +35,7 @@ export const getCurrentThemeCookie = () => {
 };
 
 export const setCurrentThemeCookie = (theme) => {
+  console.log('Will set theme:', theme);
   Cookies.set('data-bs-theme', theme, {
     domain: cookiesDomain,
     expires: 365,
