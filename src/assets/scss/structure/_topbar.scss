@@ -205,8 +205,8 @@
 
 [data-topbar="dark"] {
     #page-topbar {
-        background-color: $header-bg-dark !important;
-        border-color: $header-bg-dark;
+        background-color: transparent !important;
+        // border-color: $header-bg-dark;
     }
 
     .navbar-header {
