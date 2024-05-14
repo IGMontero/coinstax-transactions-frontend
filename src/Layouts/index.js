@@ -105,7 +105,7 @@ const Layout = (props) => {
     if (changeLayoutMode) {
       dispatch(changeLayoutMode(value));
       setCurrentThemeCookie(
-        action.payload === layoutModeTypes.DARKMODE ? 'dark' : 'light',
+        value === layoutModeTypes.DARKMODE ? 'dark' : 'light',
       );
     }
   };
