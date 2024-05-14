@@ -18,14 +18,14 @@ import { layoutModeTypes } from '../Components/constants/layout';
 import { useSelector } from 'react-redux';
 
 const Sidebar = ({ layoutType }) => {
-  // useEffect(() => {
-  //   var verticalOverlay = document.getElementsByClassName('vertical-overlay');
-  //   if (verticalOverlay) {
-  //     verticalOverlay[0].addEventListener('click', function () {
-  //       document.body?.classList?.remove('vertical-sidebar-enable');
-  //     });
-  //   }
-  // });
+  useEffect(() => {
+    var verticalOverlay = document.getElementsByClassName('vertical-overlay');
+    if (verticalOverlay) {
+      verticalOverlay[0].addEventListener('click', function () {
+        document.body?.classList?.remove('vertical-sidebar-enable');
+      });
+    }
+  });
 
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -58,56 +58,14 @@ const Sidebar = ({ layoutType }) => {
         style={{
           backgroundColor:
             layoutModeType === layoutModeTypes['DARKMODE']
-              ? '#16161a'
-              : // : '#4A5056',
-                'RGB(215, 218, 222)',
-          // '#eff2f7
+              ? '#1d1d21'
+              : '#F1F2FA',
         }}
-        // style={{
-        //   background: '#23282C',
-        // }}
+      // style={{
+      //   background: '#23282C',
+      // }}
       >
         <div className="navbar-brand-box ">
-          <Link
-            to={
-              process.env.NODE_ENV === 'development'
-                ? '/'
-                : 'https://chainglance.com/'
-            }
-          >
-            <div className="logo logo-dark">
-              <span className="logo-sm">
-                <img
-                  src={isLightMode ? logoLight : logo}
-                  alt=""
-                  height="20"
-                  width="63"
-                />
-              </span>
-              <span className="logo-lg">
-                <img src={isLightMode ? logoLight : logo} alt="" height="25" />
-              </span>
-            </div>
-
-            <div className="logo logo-light">
-              <span className="logo-sm">
-                <img
-                  src={isLightMode ? logoLight : logo}
-                  alt=""
-                  height="55"
-                  width="auto"
-                />
-              </span>
-              <span className="logo-lg">
-                <img
-                  src={isLightMode ? logoLight : logo}
-                  alt=""
-                  height="55"
-                  width="auto"
-                />
-              </span>
-            </div>
-          </Link>
           <button
             onClick={addEventListenerOnSmHoverMenu}
             type="button"
@@ -134,6 +92,23 @@ const Sidebar = ({ layoutType }) => {
         ) : (
           <React.Fragment>
             <SimpleBar id="scrollbar" className="h-100 ">
+              <Link
+                to={
+                  process.env.NODE_ENV === 'development'
+                    ? '/'
+                    : 'https://chainglance.com/'
+                }
+              >
+                <span className="logo-lg d-flex align-items-center justify-content-center">
+                  <img
+                    src={isLightMode ? logoLight : logo}
+                    alt=""
+                    className="pt-1"
+                    height="auto"
+                    width="100"
+                  />
+                </span>
+              </Link>
               <Container fluid>
                 <div id="two-column-menu"></div>
                 <ul className="navbar-nav" id="navbar-nav">
