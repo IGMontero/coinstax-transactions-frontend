@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom';
 import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
 import {
   setUserSavedAddresses,
+  renameAddressInCookies,
+  getUserSavedAddresses,
   removeAddressFromCookies,
 } from '../../../helpers/cookies_helper';
 import {
@@ -20,7 +22,9 @@ const CustomOptions = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [displayLabel, setDisplayLabel] = useState('');
+
   const dispatch = useDispatch();
+
   const addresses = useSelector((state) => state.addressName.addresses);
 
   useEffect(() => {
@@ -98,7 +102,6 @@ const CustomOptions = (props) => {
       if (result.isConfirmed) {
         const updatedOptions = removeAddressFromCookies(option.value);
         setUserSavedAddresses(updatedOptions);
-        dispatch(setAddressName({ addresses: updatedOptions }));
         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
       }
     });
@@ -106,11 +109,9 @@ const CustomOptions = (props) => {
 
   const handleRenameAddress = (valueToFind, newName) => {
     dispatch(setAddressName({ value: valueToFind, label: newName }));
-    if (newName === valueToFind) {
-      setDisplayLabel(valueToFind);
-    } else {
-      setDisplayLabel(newName);
-    }
+    const updatedAddresses = renameAddressInCookies(valueToFind, newName); // Actualiza las cookies
+    setUserSavedAddresses(updatedAddresses);
+    setDisplayLabel(newName);
     Swal.fire('Updated!', 'Your address has been renamed.', 'success');
   };
 
@@ -158,7 +159,7 @@ const CustomOptions = (props) => {
               onClick={(e) =>
                 handleDelete(e, {
                   label: displayLabel,
-                  value: props.data.value,
+                  value: props.data.label,
                 })
               }
             >
