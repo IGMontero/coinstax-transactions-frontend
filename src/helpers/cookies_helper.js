@@ -24,7 +24,7 @@ export const setUserSavedAddresses = (addresses) => {
     expires: 365,
   });
 
-  Cookies.set('addresses', JSON.stringify(addresses));
+  // Cookies.set('addresses', JSON.stringify(addresses));
 };
 
 export const getCurrentThemeCookie = () => {
@@ -41,7 +41,6 @@ export const setCurrentThemeCookie = (theme) => {
     expires: 365,
   });
 
-  Cookies.set('data-bs-theme', theme);
 };
 
 export const renameAddressInCookies = (valueToFind, newName) => {
