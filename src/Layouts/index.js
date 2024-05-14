@@ -26,6 +26,7 @@ import {
 import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
+import { layoutModeTypes } from '../Components/constants/layout';
 
 const Layout = (props) => {
   const [headerClass, setHeaderClass] = useState('');
@@ -99,8 +100,12 @@ const Layout = (props) => {
     call dark/light mode
     */
   const onChangeLayoutMode = (value) => {
+    console.log('onChangeLayoutMode:', value);
     if (changeLayoutMode) {
       dispatch(changeLayoutMode(value));
+      setCurrentThemeCookie(
+        action.payload === layoutModeTypes.DARKMODE ? 'dark' : 'light',
+      );
     }
   };
 
