@@ -169,16 +169,16 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       >
         <div className="layout-width">
           <Row
-            className="navbar-header "
+            className={`navbar-header `}
             style={{
               backgroundColor:
                 layoutModeType === layoutModeTypes['DARKMODE']
                   ? '#16161a'
                   : '#fff',
-              borderBottom:
-                layoutModeType === layoutModeTypes['DARKMODE']
-                  ? '1px solid rgba(255, 255, 255, 0.04)'
-                  : '1px solid rgba(0, 0, 0, 0.04)',
+              // borderBottom:
+              //   layoutModeType === layoutModeTypes['DARKMODE']
+              //     ? ' rgba(255, 255, 255, 0.04)'
+              //     : ' rgba(0, 0, 0, 0.04)',
             }}
           >
             <Col
@@ -223,6 +223,8 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               </Col>
             </Col>
           </Row>
+
+          <div className="border-bottom border-2 mx-5 d-flex justify-content-center"></div>
         </div>
       </header>
     </React.Fragment>
