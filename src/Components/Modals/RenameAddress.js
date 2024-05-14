@@ -13,10 +13,6 @@ const RenameAddressModal = ({ open, setOpen, onSave, address, options }) => {
   const [newAddress, setNewAddress] = useState(address);
   const [originalAddress, setOriginalAddress] = useState(address);
 
-  useEffect(() => {
-    console.log('Modal Props:', { open, address, options });
-  }, [open, address, options]);
-
   const checkIfNameExists = (name) => {
     return options.some((option) => option.label === name);
   };
@@ -40,9 +36,8 @@ const RenameAddressModal = ({ open, setOpen, onSave, address, options }) => {
 
     onSave(newAddress);
     setOpen(false);
+    Swal.fire('Updated!', 'Your address has been renamed.', 'success');
   };
-
-  console.log('open modal', open);
 
   return (
     <Modal isOpen={open} toggle={() => setOpen(false)}>

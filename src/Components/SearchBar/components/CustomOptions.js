@@ -16,7 +16,10 @@ import {
 } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAddressName } from '../../../slices/addressName/reducer';
+import {
+  removeAddressName,
+  setAddressName,
+} from '../../../slices/addressName/reducer';
 
 const CustomOptions = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -26,6 +29,8 @@ const CustomOptions = (props) => {
   const dispatch = useDispatch();
 
   const addresses = useSelector((state) => state.addressName.addresses);
+
+  console.log(addresses);
 
   useEffect(() => {
     if (props.data.label === props.data.value) {
@@ -84,15 +89,11 @@ const CustomOptions = (props) => {
   };
 
   const handleDelete = (e, option) => {
-    const optionDisplay =
-      option.label === option.value
-        ? option.value
-        : `${option.label} (${option.value})`;
-
     e.preventDefault();
     e.stopPropagation();
+
     Swal.fire({
-      title: `Are you sure you want to remove ${optionDisplay}?`,
+      title: `Are you sure you want to remove ${option.label}?`,
       text: 'You cannot undo this action!',
       icon: 'warning',
       showCancelButton: true,
@@ -102,6 +103,7 @@ const CustomOptions = (props) => {
       if (result.isConfirmed) {
         const updatedOptions = removeAddressFromCookies(option.value);
         setUserSavedAddresses(updatedOptions);
+        dispatch(removeAddressName({ value: option.value }));
         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
       }
     });
@@ -109,7 +111,7 @@ const CustomOptions = (props) => {
 
   const handleRenameAddress = (valueToFind, newName) => {
     dispatch(setAddressName({ value: valueToFind, label: newName }));
-    const updatedAddresses = renameAddressInCookies(valueToFind, newName); // Actualiza las cookies
+    const updatedAddresses = renameAddressInCookies(valueToFind, newName);
     setUserSavedAddresses(updatedAddresses);
     setDisplayLabel(newName);
     Swal.fire('Updated!', 'Your address has been renamed.', 'success');
