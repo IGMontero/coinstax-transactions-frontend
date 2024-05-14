@@ -1,14 +1,18 @@
 import Cookies from 'js-cookie';
 import { isDevelopment } from '../common/constants';
 
+const cookiesDomain = isDevelopment
+  ? 'localhost'
+  : `.${process.env.REACT_APP_ROOT_DOMAIN}`;
+
 export const getUserSavedAddresses = () => {
   // Get addresses cookie with domain set to the root domain
   return Cookies.get('addresses', {
-    domain: process.env.REACT_APP_ROOT_DOMAIN,
+    domain: cookiesDomain,
   })
     ? JSON.parse(
       Cookies.get('addresses', {
-        domain: process.env.REACT_APP_ROOT_DOMAIN,
+        domain: cookiesDomain,
       }),
     )
     : [];
@@ -16,9 +20,7 @@ export const getUserSavedAddresses = () => {
 
 export const setUserSavedAddresses = (addresses) => {
   Cookies.set('addresses', JSON.stringify(addresses), {
-    domain: isDevelopment
-      ? 'localhost'
-      : `${process.env.REACT_APP_ROOT_DOMAIN}`,
+    domain: cookiesDomain,
     expires: 365,
   });
 
@@ -28,15 +30,13 @@ export const setUserSavedAddresses = (addresses) => {
 export const getCurrentThemeCookie = () => {
   // Get theme cookie with domain set to the root domain
   return Cookies.get('data-bs-theme', {
-    domain: process.env.REACT_APP_ROOT_DOMAIN,
+    domain: cookiesDomain,
   });
 };
 
 export const setCurrentThemeCookie = (theme) => {
   Cookies.set('data-bs-theme', theme, {
-    domain: isDevelopment
-      ? 'localhost'
-      : `${process.env.REACT_APP_ROOT_DOMAIN}`,
+    domain: cookiesDomain,
     expires: 365,
   });
 
