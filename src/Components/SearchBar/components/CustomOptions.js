@@ -5,7 +5,6 @@ import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
 import {
   setUserSavedAddresses,
   renameAddressInCookies,
-  getUserSavedAddresses,
   removeAddressFromCookies,
 } from '../../../helpers/cookies_helper';
 import {
@@ -98,11 +97,9 @@ const CustomOptions = (props) => {
       cancelButtonText: 'Close',
     }).then((result) => {
       if (result.isConfirmed) {
-        // Remover de las cookies
+        // Remove from cookies
         const updatedOptions = removeAddressFromCookies(option.value);
         setUserSavedAddresses(updatedOptions);
-
-        // Despachar acción para remover del estado global
         dispatch(removeAddressName({ value: option.value }));
 
         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
