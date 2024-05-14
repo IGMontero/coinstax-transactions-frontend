@@ -44,9 +44,9 @@ const LayoutSlice = createSlice({
       state.layoutType = action.payload;
     },
     changeLayoutModeAction(state, action) {
-      setCurrentThemeCookie(
-        action.payload === layoutModeTypes.DARKMODE ? 'dark' : 'light',
-      );
+      // setCurrentThemeCookie(
+      //   action.payload === layoutModeTypes.DARKMODE ? 'dark' : 'light',
+      // );
 
       state.layoutModeType = action.payload;
     },
