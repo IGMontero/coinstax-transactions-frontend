@@ -37,8 +37,7 @@
 
 .swal2-icon{
   // New icon style
-  width: 3em;
-  height: 3em;
+  font-size: 10px;
 
   &.swal2-question{
     border-color: $info;
@@ -61,7 +60,7 @@
 }
 // Icon content Swal 
 .swal2-icon-content {
-  font-size: 2.5em;
+  // font-size: 2.5em;
 
 }
 
