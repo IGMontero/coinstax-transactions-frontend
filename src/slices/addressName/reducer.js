@@ -7,7 +7,6 @@ import {
 const initialState = {
   addresses: getUserSavedAddresses(),
 };
-
 const addressNameSlice = createSlice({
   name: 'addressName',
   initialState,
@@ -19,6 +18,11 @@ const addressNameSlice = createSlice({
         }
         return address;
       });
+      if (
+        !updatedAddresses.some((addr) => addr.value === action.payload.value)
+      ) {
+        updatedAddresses.unshift(action.payload);
+      }
       state.addresses = updatedAddresses;
       setUserSavedAddresses(updatedAddresses);
     },
