@@ -27,6 +27,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
 import { layoutModeTypes } from '../Components/constants/layout';
+import { setCurrentThemeCookie } from '../helpers/cookies_helper';
 
 const Layout = (props) => {
   const [headerClass, setHeaderClass] = useState('');
