@@ -12,6 +12,7 @@ import {
   setUserSavedAddresses,
 } from '../../helpers/cookies_helper';
 import CustomOptions from './components/CustomOptions';
+import { setAddressName } from '../../slices/addressName/reducer';
 
 const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
@@ -85,7 +86,6 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     try {
       const suggestions = [];
 
-      // Add suggestions from cookies
       if (addresses.length > 0) {
         suggestions.push(
           ...addresses.filter(
@@ -153,24 +153,20 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
 
   useEffect(() => {
     if (!isUnsupported) {
-      handleSaveInCookies();
+      handleSaveInCookiesAndGlobalState();
     }
-
-    // if (address) {
-    //   setSearchInput(address);
-    // }
   }, [isUnsupported, address, location]);
 
-  useEffect(() => {
-    console.log('Is menu open changed:', isMenuOpen);
-  }, [isMenuOpen]);
+  // useEffect(() => {
+  //   console.log('Is menu open changed:', isMenuOpen);
+  // }, [isMenuOpen]);
 
-  useEffect(() => {
-    console.log('Search input changed:', searchInput);
-  }, [searchInput]);
+  // useEffect(() => {
+  //   console.log('Search input changed:', searchInput);
+  // }, [searchInput]);
 
   // #region HANDLERS
-  const handleSaveInCookies = () => {
+  const handleSaveInCookiesAndGlobalState = () => {
     const validInput = searchInput.trim().length > 0;
     if (validInput) {
       const storedOptions = getUserSavedAddresses();
@@ -196,6 +192,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         }
 
         setUserSavedAddresses(storedOptions);
+
+        dispatch(setAddressName(newOption));
       }
     }
   };
@@ -366,7 +364,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
             // Close dropdown
             setIsMenuOpen(false);
             navigate(`/address/${searchInput}`);
-            handleSaveInCookies();
+            handleSaveInCookiesAndGlobalState();
           }
         }}
       />
