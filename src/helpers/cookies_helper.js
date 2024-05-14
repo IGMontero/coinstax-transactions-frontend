@@ -7,10 +7,10 @@ export const getUserSavedAddresses = () => {
     domain: process.env.REACT_APP_ROOT_DOMAIN,
   })
     ? JSON.parse(
-      Cookies.get('addresses', {
-        domain: process.env.REACT_APP_ROOT_DOMAIN,
-      }),
-    )
+        Cookies.get('addresses', {
+          domain: process.env.REACT_APP_ROOT_DOMAIN,
+        }),
+      )
     : [];
 };
 

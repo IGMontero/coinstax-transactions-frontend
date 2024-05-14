@@ -27,10 +27,7 @@ const CustomOptions = (props) => {
   const [displayLabel, setDisplayLabel] = useState('');
 
   const dispatch = useDispatch();
-
   const addresses = useSelector((state) => state.addressName.addresses);
-
-  console.log(addresses);
 
   useEffect(() => {
     if (props.data.label === props.data.value) {
@@ -101,9 +98,13 @@ const CustomOptions = (props) => {
       cancelButtonText: 'Close',
     }).then((result) => {
       if (result.isConfirmed) {
+        // Remover de las cookies
         const updatedOptions = removeAddressFromCookies(option.value);
         setUserSavedAddresses(updatedOptions);
+
+        // Despachar acción para remover del estado global
         dispatch(removeAddressName({ value: option.value }));
+
         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
       }
     });
@@ -161,7 +162,7 @@ const CustomOptions = (props) => {
               onClick={(e) =>
                 handleDelete(e, {
                   label: displayLabel,
-                  value: props.data.label,
+                  value: props.data.value,
                 })
               }
             >

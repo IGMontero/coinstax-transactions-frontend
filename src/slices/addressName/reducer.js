@@ -7,6 +7,7 @@ import {
 const initialState = {
   addresses: getUserSavedAddresses(),
 };
+
 const addressNameSlice = createSlice({
   name: 'addressName',
   initialState,
