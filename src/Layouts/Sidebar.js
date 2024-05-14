@@ -61,9 +61,9 @@ const Sidebar = ({ layoutType }) => {
               ? '#1d1d21'
               : '#F1F2FA',
         }}
-      // style={{
-      //   background: '#23282C',
-      // }}
+        // style={{
+        //   background: '#23282C',
+        // }}
       >
         <div className="navbar-brand-box ">
           <button
@@ -103,7 +103,10 @@ const Sidebar = ({ layoutType }) => {
                   <img
                     src={isLightMode ? logoLight : logo}
                     alt=""
-                    className="pt-1"
+                    className="pt-2"
+                    style={{
+                      marginBottom: '1.1rem',
+                    }}
                     height="auto"
                     width="100"
                   />

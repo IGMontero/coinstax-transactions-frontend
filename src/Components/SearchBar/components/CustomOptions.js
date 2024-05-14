@@ -5,7 +5,6 @@ import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
 import {
   setUserSavedAddresses,
   renameAddressInCookies,
-  getUserSavedAddresses,
   removeAddressFromCookies,
 } from '../../../helpers/cookies_helper';
 import {
@@ -15,19 +14,19 @@ import {
   DropdownToggle,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  removeAddressName,
+  setAddressName,
+} from '../../../slices/addressName/reducer';
 
 const CustomOptions = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
-
   const [displayLabel, setDisplayLabel] = useState('');
 
-  const [userAddresses, setUserAddresses] = useState(getUserSavedAddresses());
-
-  useEffect(() => {
-    const addresses = getUserSavedAddresses();
-    setUserAddresses(addresses);
-  }, []);
+  const dispatch = useDispatch();
+  const addresses = useSelector((state) => state.addressName.addresses);
 
   useEffect(() => {
     if (props.data.label === props.data.value) {
@@ -57,7 +56,7 @@ const CustomOptions = (props) => {
           return 'You need to write something!';
         }
         if (
-          userAddresses.some(
+          addresses.some(
             (addr) => addr.label === value && addr.value !== option.value,
           )
         ) {
@@ -86,15 +85,11 @@ const CustomOptions = (props) => {
   };
 
   const handleDelete = (e, option) => {
-    const optionDisplay =
-      option.label === option.value
-        ? option.value
-        : `${option.label} (${option.value})`;
-
     e.preventDefault();
     e.stopPropagation();
+
     Swal.fire({
-      title: `Are you sure you want to remove ${optionDisplay}?`,
+      title: `Are you sure you want to remove ${option.label}?`,
       text: 'You cannot undo this action!',
       icon: 'warning',
       showCancelButton: true,
@@ -102,22 +97,21 @@ const CustomOptions = (props) => {
       cancelButtonText: 'Close',
     }).then((result) => {
       if (result.isConfirmed) {
+        // Remove from cookies
         const updatedOptions = removeAddressFromCookies(option.value);
-        setUserAddresses(updatedOptions);
+        setUserSavedAddresses(updatedOptions);
+        dispatch(removeAddressName({ value: option.value }));
+
         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
       }
     });
   };
 
-  const handleRenameAddress = async (valueToFind, newName) => {
-    const newOptions = renameAddressInCookies(valueToFind, newName);
-    setUserSavedAddresses(newOptions);
-    setUserAddresses(newOptions);
-    if (newName === valueToFind) {
-      setDisplayLabel(valueToFind);
-    } else {
-      setDisplayLabel(newName);
-    }
+  const handleRenameAddress = (valueToFind, newName) => {
+    dispatch(setAddressName({ value: valueToFind, label: newName }));
+    const updatedAddresses = renameAddressInCookies(valueToFind, newName);
+    setUserSavedAddresses(updatedAddresses);
+    setDisplayLabel(newName);
     Swal.fire('Updated!', 'Your address has been renamed.', 'success');
   };
 
@@ -165,7 +159,7 @@ const CustomOptions = (props) => {
               onClick={(e) =>
                 handleDelete(e, {
                   label: displayLabel,
-                  value: props.data.label,
+                  value: props.data.value,
                 })
               }
             >
@@ -201,7 +195,7 @@ const CustomOptions = (props) => {
             </div>
           </div>
 
-          {userAddresses.some((addr) => addr.value === props.data.value) && (
+          {addresses.some((addr) => addr.value === props.data.value) && (
             <>{renderDropdownMenu()}</>
           )}
         </div>
