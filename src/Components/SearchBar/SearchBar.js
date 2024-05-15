@@ -13,6 +13,7 @@ import {
 } from '../../helpers/cookies_helper';
 import CustomOptions from './components/CustomOptions';
 import { setAddressName } from '../../slices/addressName/reducer';
+import { color } from 'echarts';
 
 const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
@@ -286,7 +287,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           : 'transparent',
       color:
         state.isFocused || state.isSelected
-          ? 'white'
+          ? 'muted'
           : layoutModeType === layoutModeTypes['DARKMODE']
             ? '#fff'
             : 'black',
@@ -307,7 +308,10 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           layoutModeType === layoutModeTypes['DARKMODE']
             ? '#1f252b'
             : '#e2e2e2',
-        color: 'white',
+        color:
+          layoutModeType === layoutModeTypes['DARKMODE']
+            ? '#4B8EE0'
+            : '#0759BC',
       },
     }),
     input: (provided) => ({
