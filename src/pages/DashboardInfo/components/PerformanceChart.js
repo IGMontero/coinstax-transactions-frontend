@@ -106,6 +106,7 @@ const PerformanceChart = ({
               index,
               data.datasets[0].data,
             );
+
             setSubtitle(percentageChange.toFixed(2));
             const date = new Date(data.labels[index]);
             setActiveDate(formatDateToLocale(date));
@@ -187,9 +188,6 @@ const PerformanceChart = ({
             return result;
           });
           const { minValue, maxValue } = getMaxMinValues(newData);
-
-          console.log('New data:', newData);
-          console.log('minValue maxValue', minValue, maxValue);
 
           const minTick = minValue;
           const maxTick = maxValue;
@@ -287,8 +285,6 @@ const PerformanceChart = ({
               newData.push(item[1]);
             });
 
-            console.log('New data length', newData.length);
-
             const { minValue, maxValue } = getMaxMinValues(newData);
             const minTick = minValue;
             // - Math.abs(maxValue - minValue);
@@ -367,6 +363,7 @@ const PerformanceChart = ({
       index,
       chartData.datasets[0].data,
     );
+
     setSubtitle(percentageChange.toFixed(2));
     setActiveDate(formatDateToLocale(new Date(chartData.labels[index])));
   };
@@ -405,7 +402,11 @@ const PerformanceChart = ({
       const firstValue =
         chartData.datasets[0].data[chartData.datasets[0].data.length - 1];
       const lastValue = chartData.datasets[0].data[0];
-      const percentageChange = ((lastValue - firstValue) / firstValue) * 100;
+      const percentageChange = calculatePercentageChange(
+        0,
+        chartData.datasets[0].data,
+      );
+
       setSubtitle(percentageChange.toFixed(2));
       setDiferenceValue(lastValue - firstValue);
     }

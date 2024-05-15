@@ -201,9 +201,13 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         //   null,
       };
 
+      console.log('New option:', newOption);
+
       const isAddressAlreadySaved = storedOptions.some(
         (o) => o.value === newOption.value,
       );
+
+      console.log('Is address already saved:', isAddressAlreadySaved);
 
       if (!isAddressAlreadySaved) {
         storedOptions.unshift(newOption);
@@ -211,6 +215,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         if (storedOptions.length > 10) {
           storedOptions.pop();
         }
+
+        console.log('New stored options: ', storedOptions);
 
         setUserSavedAddresses(storedOptions);
 
