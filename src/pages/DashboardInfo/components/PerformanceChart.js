@@ -95,7 +95,7 @@ const PerformanceChart = ({
       displayColors: false,
       callbacks: {
         title: function (tooltipItems, data) {
-          if (tooltipItems.length > 0) {
+          if (tooltipItems.length > 0 && token) {
             const index = tooltipItems[0].index;
             const salesValue = data.datasets[0].data[index];
             setTitle(parseValuesToLocale(salesValue, CurrencyUSD));
@@ -132,7 +132,11 @@ const PerformanceChart = ({
       intersect: false,
       onHover: (event, chartElements) => {
         if (chartElements.length > 0) {
-          setIsHovering(true);
+          if (!token) {
+            setIsHovering(false);
+          } else {
+            setIsHovering(true);
+          }
           setCursorStyle('default');
         } else {
           setIsHovering(false);
@@ -367,7 +371,6 @@ const PerformanceChart = ({
     }
   }, [token, address]);
 
-  // This useEffect set the most recent value as the active value
   useEffect(() => {
     if (!isHovering && chartData.datasets[0].data.length > 0) {
       const currentDate = new Date();
@@ -387,6 +390,16 @@ const PerformanceChart = ({
       updateValues(closestIndex);
     }
   }, [isHovering, chartData, showMessage]);
+
+  useEffect(() => {
+    if (!token && chartData.datasets[0].data.length > 0) {
+      const firstValue =
+        chartData.datasets[0].data[chartData.datasets[0].data.length - 1];
+      const lastValue = chartData.datasets[0].data[0];
+      const percentageChange = ((lastValue - firstValue) / firstValue) * 100;
+      setSubtitle(percentageChange.toFixed(2));
+    }
+  }, [chartData, token]);
 
   // #region Renders
   const renderFiltersButtons = () => {
