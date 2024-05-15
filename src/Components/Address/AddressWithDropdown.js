@@ -5,27 +5,21 @@ import {
   DropdownToggle,
   UncontrolledDropdown,
 } from 'reactstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import QrModal from '../Modals/QrModal';
-import RenameAddressModal from '../Modals/RenameAddress';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAddressName } from '../../slices/addressName/reducer';
-import { getUserSavedAddresses } from '../../helpers/cookies_helper';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 
 const AddressWithDropdown = () => {
   const { address } = useParams();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const [showQrModal, setShowQrModal] = useState(false);
-  const [renameModal, setRenameModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [formattedAddressLabel, setFormattedAddressLabel] = useState('');
   const [formattedValue, setFormattedValue] = useState('');
-  const [selectedOptionLabel, setSelectedOptionLabel] = useState('');
-  const [selectedOptionValue, setSelectedOptionValue] = useState('');
 
   const addresses = useSelector((state) => state.addressName.addresses);
 
@@ -33,10 +27,11 @@ const AddressWithDropdown = () => {
     const matchingAddress = addresses.find((addr) => addr.value === address);
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
+
     if (matchingAddress) {
-      setFormattedAddressLabel(matchingAddress.label);
-      setSelectedOptionLabel(matchingAddress.label);
-      setSelectedOptionValue(matchingAddress.value);
+      setFormattedAddressLabel(matchingAddress.label || currentFormattedValue);
+    } else {
+      setFormattedAddressLabel(currentFormattedValue);
     }
   }, [address, addresses]);
 
@@ -54,37 +49,42 @@ const AddressWithDropdown = () => {
         setIsCopied(null);
       }, 2000);
     } catch (err) {
-      console.log('Failed to copy: ', err);
+      console.error('Failed to copy: ', err);
     }
   };
 
   const handleOpenModalRename = (e, option) => {
+    e.preventDefault();
     e.stopPropagation();
-    setSelectedOptionLabel(option.label);
-    setSelectedOptionValue(option.value);
-    setRenameModal(true);
-  };
-
-  const handleRenameAddress = (newName) => {
-    dispatch(setAddressName({ value: selectedOptionValue, label: newName }));
-    setRenameModal(false);
-  };
-
-  useEffect(() => {
-    const matchingAddress = addresses.find((addr) => addr.value === address);
-    const currentFormattedValue = formatIdTransaction(address, 6, 8);
-    setFormattedValue(currentFormattedValue);
-
-    if (matchingAddress) {
-      if (matchingAddress.label === matchingAddress.value) {
-        setFormattedAddressLabel(currentFormattedValue);
-      } else {
-        setFormattedAddressLabel(matchingAddress.label);
+    Swal.fire({
+      title: 'Rename Wallet',
+      input: 'text',
+      inputValue: option.label,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write something!';
+        }
+        if (
+          addresses.some(
+            (addr) => addr.label === value && addr.value !== option.value,
+          )
+        ) {
+          return 'This name already exists!';
+        }
+      },
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        handleRenameAddress(option.value, result.value);
       }
-    } else {
-      setFormattedAddressLabel(currentFormattedValue);
-    }
-  }, [address, addresses]);
+    });
+  };
+
+  const handleRenameAddress = (value, newName) => {
+    dispatch(setAddressName({ value, label: newName }));
+    Swal.fire('Updated!', 'Your address has been renamed.', 'success');
+  };
 
   const renderAddressWithDropdown = () => {
     return (
@@ -107,7 +107,7 @@ const AddressWithDropdown = () => {
               onClick={(e) => handleCopy(e, address)}
             >
               {isCopied ? (
-                <i className="ri-check-line fs-2 me-2 "></i>
+                <i className="ri-check-line fs-2 me-2"></i>
               ) : (
                 <i className="ri-file-copy-line fs-2 me-2"></i>
               )}
@@ -133,13 +133,6 @@ const AddressWithDropdown = () => {
 
   return (
     <div className="">
-      <RenameAddressModal
-        open={renameModal}
-        setOpen={setRenameModal}
-        address={selectedOptionLabel}
-        options={addresses}
-        onSave={handleRenameAddress}
-      />
       <QrModal
         showQrModal={showQrModal}
         toggleQrModal={toggleQrModal}
