@@ -15,7 +15,7 @@ import {
   removeOptionsFromLocalStorage,
 } from '../../../utils/utils';
 import QrModal from '../../Modals/QrModal';
-import RenameAddressModal from '../../Modals/RenameAddress';
+// import RenameAddressModal from '../../Modals/RenameAddress';
 
 const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
   const { address } = useParams();
@@ -233,7 +233,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
         toggleQrModal={() => setQrCodeModal(!qrCodeModal)}
         addressTitle={selectedOptionValue}
       />
-      <RenameAddressModal
+      {/* <RenameAddressModal
         open={renameModal}
         setOpen={setRenameModal}
         address={selectedOptionLabel}
@@ -241,7 +241,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
         onSave={(newName) => {
           handleRenameNameFromLocalStorage(selectedOptionValue, newName);
         }}
-      />
+      /> */}
 
       <Dropdown isOpen={dropdownOpen} toggle={toggleDropdown}>
         <DropdownToggle
@@ -264,8 +264,9 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
               option ? (
                 <>
                   <DropdownItem
-                    className={`d-flex justify-content-between align-items-center pe-2 ${option.value === address ? 'active' : ''
-                      }`}
+                    className={`d-flex justify-content-between align-items-center pe-2 ${
+                      option.value === address ? 'active' : ''
+                    }`}
                     key={index}
                     onClick={() => handleSelect(option)}
                   >

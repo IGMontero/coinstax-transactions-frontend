@@ -29,11 +29,8 @@ const CustomOptions = (props) => {
   const addresses = useSelector((state) => state.addressName.addresses);
 
   useEffect(() => {
-    if (props.data.label === props.data.value) {
-      setDisplayLabel(props.data.value);
-    } else {
-      setDisplayLabel(props.data.label);
-    }
+    const { label, value } = props.data;
+    setDisplayLabel(label || value);
   }, [props.data.label, props.data.value]);
 
   const toggleDropdown = (e) => {
@@ -90,7 +87,7 @@ const CustomOptions = (props) => {
 
     Swal.fire({
       title: `Are you sure you want to remove ${option.label}?`,
-      text: 'You cannot undo this action!',
+      // text: 'You cannot undo this action!',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -187,7 +184,7 @@ const CustomOptions = (props) => {
             )}
             <div className="d-flex flex-column">
               {displayLabel}
-              {props.data.label !== props.data.value && (
+              {props.data.label && (
                 <span className="text-muted">
                   {formatIdTransaction(props.data.value, 6, 8)}
                 </span>
