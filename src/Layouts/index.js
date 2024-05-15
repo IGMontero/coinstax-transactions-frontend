@@ -101,7 +101,6 @@ const Layout = (props) => {
     call dark/light mode
     */
   const onChangeLayoutMode = (value) => {
-    console.log('onChangeLayoutMode:', value);
     if (changeLayoutMode) {
       dispatch(changeLayoutMode(value));
       setCurrentThemeCookie(

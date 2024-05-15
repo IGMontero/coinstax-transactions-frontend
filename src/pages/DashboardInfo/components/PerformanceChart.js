@@ -11,6 +11,7 @@ import {
   formatDateToLocale,
   parseValuesToLocale,
   calculatePercentageChange,
+  formatNumberWithBillionOrMillion,
 } from '../../../utils/utils';
 import { Line } from 'react-chartjs-2';
 import { useParams } from 'react-router-dom';
@@ -46,18 +47,20 @@ const PerformanceChart = ({
   });
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('0');
+  const [diferenceValue, setDiferenceValue] = useState('0');
   const [activeDate, setActiveDate] = useState('');
   const [chartOptions, setChartOptions] = useState({
     maintainAspectRatio: false,
+
     scales: {
       yAxes: [
         {
           position: 'left',
           gridLines: { display: false },
-          ticks: {
-            display: true,
-            align: 'inner',
-          },
+          // ticks: {
+          //   display: true,
+          //   align: 'inner',
+          // },
         },
       ],
       xAxes: [
@@ -95,7 +98,7 @@ const PerformanceChart = ({
       displayColors: false,
       callbacks: {
         title: function (tooltipItems, data) {
-          if (tooltipItems.length > 0) {
+          if (tooltipItems.length > 0 && token) {
             const index = tooltipItems[0].index;
             const salesValue = data.datasets[0].data[index];
             setTitle(parseValuesToLocale(salesValue, CurrencyUSD));
@@ -103,6 +106,7 @@ const PerformanceChart = ({
               index,
               data.datasets[0].data,
             );
+
             setSubtitle(percentageChange.toFixed(2));
             const date = new Date(data.labels[index]);
             setActiveDate(formatDateToLocale(date));
@@ -132,7 +136,11 @@ const PerformanceChart = ({
       intersect: false,
       onHover: (event, chartElements) => {
         if (chartElements.length > 0) {
-          setIsHovering(true);
+          if (!token) {
+            setIsHovering(false);
+          } else {
+            setIsHovering(true);
+          }
           setCursorStyle('default');
         } else {
           setIsHovering(false);
@@ -170,74 +178,74 @@ const PerformanceChart = ({
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
-          if (response.unsupported) {
-            setIsUnsupported(true);
-          } else {
-            const newLabels = response.total.map(
-              (item) => new Date(item.calendarDate),
-            );
-            const newData = response.total.map((item) => item.close.quote);
-            const { minValue, maxValue } = getMaxMinValues(newData);
+          const newLabels = response.total.map(
+            (item) => new Date(item.calendarDate),
+          );
+          const newData = response.total.map((item) => {
+            // Min value is 0 for all points.
+            const result = Math.max(0, item.close.quote);
 
-            console.log('New data:', newData);
+            return result;
+          });
+          const { minValue, maxValue } = getMaxMinValues(newData);
 
-            const minTick = minValue - Math.abs(maxValue - minValue) / 2;
-            const maxTick = maxValue + Math.abs(maxValue - minValue) / 2;
+          const minTick = minValue;
+          const maxTick = maxValue;
 
-            console.log('minValue maxValue', minValue, maxValue);
+          setChartData({
+            labels: newLabels,
+            datasets: [{ ...chartData.datasets[0], data: newData }],
+          });
 
-            setChartData({
-              labels: newLabels,
-              datasets: [{ ...chartData.datasets[0], data: newData }],
-            });
+          const range = maxValue - minValue;
+          const numTicks = 2; // Adjust this value based on your preference
+          const tolerance = range / 10;
+          const allItemsAreIntegers = newData.every((item) =>
+            Number.isInteger(item),
+          );
+          // const stepSize = range / (numTicks - 1);
 
-            const range = maxValue - minValue;
-            const numTicks = 5; // Adjust this value based on your preference
-            // const tolerance = 0.1; // Adjust as needed for your precision
+          let yAxesOptions;
 
-            // Calculate tolerance based on the difference of consecutive values
-            const tolerance = range / 10;
+          // Only for 10000 days
+          yAxesOptions = {
+            min: minTick,
+            max: maxTick,
+            maxTicksLimit: 2,
+            // stepSize: stepSize,
+            autoSkip: true,
+            // stepSize: allItemsAreIntegers ? 1 : stepSize,
+            callback: function (value) {
+              if (allItemsAreIntegers) {
+                if (value === minValue || value === maxValue) {
+                  return parseValuesToLocale(value, CurrencyUSD);
+                }
+              } else {
+                if (
+                  Math.abs(value - minValue) < tolerance ||
+                  Math.abs(value - maxValue) < tolerance
+                ) {
+                  return parseValuesToLocale(value, CurrencyUSD);
+                }
+              }
+              return ''; // Return empty string for other values
+            },
+          };
 
-            const allItemsAreIntegers = newData.every((item) =>
-              Number.isInteger(item),
-            );
+          setChartOptions((prevOptions) => ({
+            ...prevOptions,
+            scales: {
+              ...prevOptions.scales,
 
-            const stepSize = range / (numTicks - 1);
+              yAxes: [
+                {
+                  ...prevOptions.scales.yAxes[0],
+                  ticks: yAxesOptions,
+                },
+              ],
+            },
+          }));
 
-            setChartOptions((prevOptions) => ({
-              ...prevOptions,
-              scales: {
-                ...prevOptions.scales,
-                yAxes: [
-                  {
-                    ...prevOptions.scales.yAxes[0],
-                    ticks: {
-                      ...prevOptions.scales.yAxes[0].ticks,
-                      min: minTick,
-                      max: maxTick,
-                      stepSize: allItemsAreIntegers ? 1 : stepSize,
-                      callback: function (value) {
-                        if (allItemsAreIntegers) {
-                          if (value === minValue || value === maxValue) {
-                            return parseValuesToLocale(value, CurrencyUSD);
-                          }
-                        } else {
-                          if (
-                            Math.abs(value - minValue) < tolerance ||
-                            Math.abs(value - maxValue) < tolerance
-                          ) {
-                            return parseValuesToLocale(value, CurrencyUSD);
-                          }
-                        }
-
-                        return ''; // Return empty string for other values
-                      },
-                    },
-                  },
-                ],
-              },
-            }));
-          }
           setLoading(false);
         })
         .catch((error) => {
@@ -277,11 +285,11 @@ const PerformanceChart = ({
               newData.push(item[1]);
             });
 
-            console.log('New data length', newData.length);
-
             const { minValue, maxValue } = getMaxMinValues(newData);
-            const minTick = minValue - Math.abs(maxValue - minValue);
-            const maxTick = maxValue + Math.abs(maxValue - minValue);
+            const minTick = minValue;
+            // - Math.abs(maxValue - minValue);
+            const maxTick = maxValue;
+            //  + Math.abs(maxValue - minValue);
 
             setChartData({
               labels: newLabels, // Ensure the labels are Date objects if needed
@@ -289,7 +297,7 @@ const PerformanceChart = ({
             });
 
             const range = maxValue - minValue;
-            const numTicks = 5; // Adjust this value based on your preference
+            const numTicks = 2; // Adjust this value based on your preference
             const tolerance = 0.001; // Adjust as needed for your precision
 
             const stepSize = range / (numTicks - 1);
@@ -305,7 +313,8 @@ const PerformanceChart = ({
                       ...prevOptions.scales.yAxes[0].ticks,
                       min: minTick,
                       max: maxTick,
-                      stepSize: stepSize,
+                      maxTicksLimit: 2,
+                      // stepSize: stepSize,
                       callback: function (value) {
                         if (
                           Math.abs(value - minValue) < tolerance ||
@@ -354,6 +363,7 @@ const PerformanceChart = ({
       index,
       chartData.datasets[0].data,
     );
+
     setSubtitle(percentageChange.toFixed(2));
     setActiveDate(formatDateToLocale(new Date(chartData.labels[index])));
   };
@@ -367,7 +377,6 @@ const PerformanceChart = ({
     }
   }, [token, address]);
 
-  // This useEffect set the most recent value as the active value
   useEffect(() => {
     if (!isHovering && chartData.datasets[0].data.length > 0) {
       const currentDate = new Date();
@@ -388,6 +397,21 @@ const PerformanceChart = ({
     }
   }, [isHovering, chartData, showMessage]);
 
+  useEffect(() => {
+    if (!token && chartData.datasets[0].data.length > 0) {
+      const firstValue =
+        chartData.datasets[0].data[chartData.datasets[0].data.length - 1];
+      const lastValue = chartData.datasets[0].data[0];
+      const percentageChange = calculatePercentageChange(
+        0,
+        chartData.datasets[0].data,
+      );
+
+      setSubtitle(percentageChange.toFixed(2));
+      setDiferenceValue(lastValue - firstValue);
+    }
+  }, [chartData, token]);
+
   // #region Renders
   const renderFiltersButtons = () => {
     return (
@@ -396,9 +420,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(7, 'one_week')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_week' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_week' ? 'active' : ''
+            }`}
           id="one_week"
         >
           7D
@@ -407,9 +430,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(30, 'one_month')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_month' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_month' ? 'active' : ''
+            }`}
           id="one_month"
         >
           1M
@@ -418,9 +440,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(180, 'six_months')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'six_months' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'six_months' ? 'active' : ''
+            }`}
           id="six_months"
         >
           6M
@@ -429,9 +450,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(365, 'one_year')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_year' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_year' ? 'active' : ''
+            }`}
           id="one_year"
         >
           1Y
@@ -440,9 +460,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(10000, 'all')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'all' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'all' ? 'active' : ''
+            }`}
           id="all"
         >
           ALL
@@ -471,16 +490,21 @@ const PerformanceChart = ({
           </Card>
         ) : (
           <>
-            <div className="d-flex align-items-end">
+            <div className="d-flex flex-column align-items-start">
               <h1 className="d-flex align-items-center">{title}</h1>
-              <h4
-                style={{ marginBottom: '.7rem' }}
-                className={`ms-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+              <h5
+                // style={{ marginBottom: '.7rem' }}
+                className={`mb-1 text-${subtitle >= 0 ? 'success' : 'danger'}`}
               >
-                {subtitle}%
-              </h4>
+                {subtitle}%{' '}
+                {!token && (
+                  <span>
+                    ({parseValuesToLocale(diferenceValue, CurrencyUSD)})
+                  </span>
+                )}
+              </h5>
             </div>
-            <span className="ms-2 text-muted mb-3">{activeDate}</span>
+            <span className="text-muted mb-3">{token && activeDate}</span>
             <div style={{ cursor: cursorStyle }}>
               <Line height={250} data={chartData} options={chartOptions} />
             </div>

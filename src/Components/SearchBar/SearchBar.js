@@ -13,6 +13,7 @@ import {
 } from '../../helpers/cookies_helper';
 import CustomOptions from './components/CustomOptions';
 import { setAddressName } from '../../slices/addressName/reducer';
+import { color } from 'echarts';
 
 const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
@@ -85,13 +86,13 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     setLoading(true);
     try {
       const suggestions = [];
-
       if (addresses.length > 0) {
+        // Filter addresses that match the search input (case-insensitive)
         suggestions.push(
           ...addresses.filter(
             (addr) =>
-              addr.value.toLowerCase().includes(searchInput.toLowerCase()) ||
-              addr.label.toLowerCase().includes(searchInput.toLowerCase()),
+              addr.value?.toLowerCase().includes(searchInput.toLowerCase()) ||
+              addr.label?.toLowerCase().includes(searchInput.toLowerCase()),
           ),
         );
       }
@@ -100,6 +101,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         (searchInput.length >= 3 && !searchInput.startsWith('0x')) ||
         (searchInput.startsWith('0x') && searchInput.length >= 5)
       ) {
+        // Fetch suggestions from the API if the search input meets the length criteria
         const response = await dispatch(
           getAddressesSuggestions({
             blockchain: 'eth-mainnet',
@@ -110,9 +112,11 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         const apiSuggestions = response.payload;
 
         if (Array.isArray(apiSuggestions)) {
+          // Filter valid API suggestions (with name and address)
           const validApiSuggestions = apiSuggestions.filter(
             (s) => s.name && s.address,
           );
+          // Map valid API suggestions to the desired format and add them to the suggestions array
           suggestions.push(
             ...validApiSuggestions.map((addr) => ({
               label: addr.name,
@@ -127,6 +131,23 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         }
       }
 
+      // If the search input is a valid Ethereum address and not already in the suggestions or addresses,
+      // add it to the suggestions array
+      if (
+        searchInput.startsWith('0x') &&
+        searchInput.length >= 5 &&
+        !suggestions.some((s) => s?.value === searchInput) &&
+        !addresses.some((a) => a?.value === searchInput)
+      ) {
+        suggestions.push({
+          label: null,
+          value: searchInput,
+          address: searchInput,
+          // logo: null,
+          // coingeckoId: null,
+        });
+      }
+      // Update the options state with the fetched suggestions
       setOptions(suggestions);
     } catch (error) {
       console.log('Failed to fetch suggestions:', error);
@@ -168,21 +189,25 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   // #region HANDLERS
   const handleSaveInCookiesAndGlobalState = () => {
     const validInput = searchInput.trim().length > 0;
-    if (validInput) {
+    if (validInput && !isUnsupported) {
       const storedOptions = getUserSavedAddresses();
       const newOption = {
-        label: searchInput,
+        label: null,
         value: searchInput,
-        logo:
-          options.find((option) => option.value === searchInput)?.logo || null,
-        coingeckoId:
-          options.find((option) => option.value === searchInput)?.coingeckoId ||
-          null,
+        // logo:
+        //   options.find((option) => option.value === searchInput)?.logo || null,
+        // coingeckoId:
+        //   options.find((option) => option.value === searchInput)?.coingeckoId ||
+        //   null,
       };
+
+      console.log('New option:', newOption);
 
       const isAddressAlreadySaved = storedOptions.some(
         (o) => o.value === newOption.value,
       );
+
+      console.log('Is address already saved:', isAddressAlreadySaved);
 
       if (!isAddressAlreadySaved) {
         storedOptions.unshift(newOption);
@@ -190,6 +215,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         if (storedOptions.length > 10) {
           storedOptions.pop();
         }
+
+        console.log('New stored options: ', storedOptions);
 
         setUserSavedAddresses(storedOptions);
 
@@ -286,7 +313,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           : 'transparent',
       color:
         state.isFocused || state.isSelected
-          ? 'white'
+          ? 'muted'
           : layoutModeType === layoutModeTypes['DARKMODE']
             ? '#fff'
             : 'black',
@@ -307,7 +334,10 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           layoutModeType === layoutModeTypes['DARKMODE']
             ? '#1f252b'
             : '#e2e2e2',
-        color: 'white',
+        color:
+          layoutModeType === layoutModeTypes['DARKMODE']
+            ? '#4B8EE0'
+            : '#0759BC',
       },
     }),
     input: (provided) => ({
