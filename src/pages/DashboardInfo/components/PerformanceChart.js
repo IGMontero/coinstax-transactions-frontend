@@ -11,6 +11,7 @@ import {
   formatDateToLocale,
   parseValuesToLocale,
   calculatePercentageChange,
+  formatNumberWithBillionOrMillion,
 } from '../../../utils/utils';
 import { Line } from 'react-chartjs-2';
 import { useParams } from 'react-router-dom';
@@ -174,74 +175,79 @@ const PerformanceChart = ({
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
-          if (response.unsupported) {
-            setIsUnsupported(true);
-          } else {
-            const newLabels = response.total.map(
-              (item) => new Date(item.calendarDate),
-            );
-            const newData = response.total.map((item) => item.close.quote);
-            const { minValue, maxValue } = getMaxMinValues(newData);
+          const newLabels = response.total.map(
+            (item) => new Date(item.calendarDate),
+          );
+          const newData = response.total.map((item) => item.close.quote);
+          const { minValue, maxValue } = getMaxMinValues(newData);
 
-            console.log('New data:', newData);
+          console.log('New data:', newData);
+          console.log('minValue maxValue', minValue, maxValue);
 
-            const minTick = minValue - Math.abs(maxValue - minValue) / 2;
-            const maxTick = maxValue + Math.abs(maxValue - minValue) / 2;
+          const minTick = minValue - Math.abs(maxValue - minValue) / 2;
+          const maxTick = maxValue + Math.abs(maxValue - minValue) / 2;
 
-            console.log('minValue maxValue', minValue, maxValue);
+          setChartData({
+            labels: newLabels,
+            datasets: [{ ...chartData.datasets[0], data: newData }],
+          });
 
-            setChartData({
-              labels: newLabels,
-              datasets: [{ ...chartData.datasets[0], data: newData }],
-            });
+          const range = maxValue - minValue;
+          const numTicks = 5; // Adjust this value based on your preference
+          const tolerance = range / 10;
+          const allItemsAreIntegers = newData.every((item) =>
+            Number.isInteger(item),
+          );
+          const stepSize = range / (numTicks - 1);
 
-            const range = maxValue - minValue;
-            const numTicks = 5; // Adjust this value based on your preference
-            // const tolerance = 0.1; // Adjust as needed for your precision
+          let yAxesOptions;
 
-            // Calculate tolerance based on the difference of consecutive values
-            const tolerance = range / 10;
-
-            const allItemsAreIntegers = newData.every((item) =>
-              Number.isInteger(item),
-            );
-
-            const stepSize = range / (numTicks - 1);
-
-            setChartOptions((prevOptions) => ({
-              ...prevOptions,
-              scales: {
-                ...prevOptions.scales,
-                yAxes: [
-                  {
-                    ...prevOptions.scales.yAxes[0],
-                    ticks: {
-                      ...prevOptions.scales.yAxes[0].ticks,
-                      min: minTick,
-                      max: maxTick,
-                      stepSize: allItemsAreIntegers ? 1 : stepSize,
-                      callback: function (value) {
-                        if (allItemsAreIntegers) {
-                          if (value === minValue || value === maxValue) {
-                            return parseValuesToLocale(value, CurrencyUSD);
-                          }
-                        } else {
-                          if (
-                            Math.abs(value - minValue) < tolerance ||
-                            Math.abs(value - maxValue) < tolerance
-                          ) {
-                            return parseValuesToLocale(value, CurrencyUSD);
-                          }
-                        }
-
-                        return ''; // Return empty string for other values
-                      },
-                    },
-                  },
-                ],
+          // Only for 10000 days
+          if (days === 10000) {
+            yAxesOptions = {
+              min: minValue,
+              max: maxValue,
+              stepSize: (maxValue - minValue) / 100,
+              callback: function (value) {
+                return formatNumberWithBillionOrMillion(value);
               },
-            }));
+            };
+          } else {
+            yAxesOptions = {
+              min: minTick,
+              max: maxTick,
+              stepSize: allItemsAreIntegers ? 1 : stepSize,
+              callback: function (value) {
+                if (allItemsAreIntegers) {
+                  if (value === minValue || value === maxValue) {
+                    return parseValuesToLocale(value, CurrencyUSD);
+                  }
+                } else {
+                  if (
+                    Math.abs(value - minValue) < tolerance ||
+                    Math.abs(value - maxValue) < tolerance
+                  ) {
+                    return parseValuesToLocale(value, CurrencyUSD);
+                  }
+                }
+                return ''; // Return empty string for other values
+              },
+            };
           }
+
+          setChartOptions((prevOptions) => ({
+            ...prevOptions,
+            scales: {
+              ...prevOptions.scales,
+              yAxes: [
+                {
+                  ...prevOptions.scales.yAxes[0],
+                  ticks: yAxesOptions,
+                },
+              ],
+            },
+          }));
+
           setLoading(false);
         })
         .catch((error) => {
