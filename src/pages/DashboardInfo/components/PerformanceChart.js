@@ -47,6 +47,7 @@ const PerformanceChart = ({
   });
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('0');
+  const [diferenceValue, setDiferenceValue] = useState('0');
   const [activeDate, setActiveDate] = useState('');
   const [chartOptions, setChartOptions] = useState({
     maintainAspectRatio: false,
@@ -404,6 +405,7 @@ const PerformanceChart = ({
       const lastValue = chartData.datasets[0].data[0];
       const percentageChange = ((lastValue - firstValue) / firstValue) * 100;
       setSubtitle(percentageChange.toFixed(2));
+      setDiferenceValue(lastValue - firstValue);
     }
   }, [chartData, token]);
 
@@ -490,16 +492,21 @@ const PerformanceChart = ({
           </Card>
         ) : (
           <>
-            <div className="d-flex align-items-end">
+            <div className="d-flex flex-column align-items-start">
               <h1 className="d-flex align-items-center">{title}</h1>
-              <h4
-                style={{ marginBottom: '.7rem' }}
-                className={`ms-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+              <h5
+                // style={{ marginBottom: '.7rem' }}
+                className={`mb-1 text-${subtitle >= 0 ? 'success' : 'danger'}`}
               >
-                {subtitle}%
-              </h4>
+                {subtitle}%{' '}
+                {!token && (
+                  <span>
+                    ({parseValuesToLocale(diferenceValue, CurrencyUSD)})
+                  </span>
+                )}
+              </h5>
             </div>
-            <span className="ms-2 text-muted mb-3">{activeDate}</span>
+            <span className="text-muted mb-3">{token && activeDate}</span>
             <div style={{ cursor: cursorStyle }}>
               <Line height={250} data={chartData} options={chartOptions} />
             </div>
