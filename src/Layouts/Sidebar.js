@@ -105,7 +105,7 @@ const Sidebar = ({ layoutType }) => {
                     alt=""
                     className="pt-2"
                     style={{
-                      marginBottom: '1.1rem',
+                      marginBottom: '0.85rem',
                     }}
                     height="auto"
                     width="100"
