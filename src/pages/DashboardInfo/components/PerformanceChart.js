@@ -51,15 +51,16 @@ const PerformanceChart = ({
   const [activeDate, setActiveDate] = useState('');
   const [chartOptions, setChartOptions] = useState({
     maintainAspectRatio: false,
+
     scales: {
       yAxes: [
         {
           position: 'left',
           gridLines: { display: false },
-          ticks: {
-            display: true,
-            align: 'inner',
-          },
+          // ticks: {
+          //   display: true,
+          //   align: 'inner',
+          // },
         },
       ],
       xAxes: [
@@ -179,14 +180,19 @@ const PerformanceChart = ({
           const newLabels = response.total.map(
             (item) => new Date(item.calendarDate),
           );
-          const newData = response.total.map((item) => item.close.quote);
+          const newData = response.total.map((item) => {
+            // Min value is 0 for all points.
+            const result = Math.max(0, item.close.quote);
+
+            return result;
+          });
           const { minValue, maxValue } = getMaxMinValues(newData);
 
           console.log('New data:', newData);
           console.log('minValue maxValue', minValue, maxValue);
 
-          const minTick = minValue - Math.abs(maxValue - minValue) / 2;
-          const maxTick = maxValue + Math.abs(maxValue - minValue) / 2;
+          const minTick = minValue;
+          const maxTick = maxValue;
 
           setChartData({
             labels: newLabels,
@@ -194,52 +200,45 @@ const PerformanceChart = ({
           });
 
           const range = maxValue - minValue;
-          const numTicks = 5; // Adjust this value based on your preference
+          const numTicks = 2; // Adjust this value based on your preference
           const tolerance = range / 10;
           const allItemsAreIntegers = newData.every((item) =>
             Number.isInteger(item),
           );
-          const stepSize = range / (numTicks - 1);
+          // const stepSize = range / (numTicks - 1);
 
           let yAxesOptions;
 
           // Only for 10000 days
-          if (days === 10000) {
-            yAxesOptions = {
-              min: minValue,
-              max: maxValue,
-              stepSize: (maxValue - minValue) / 100,
-              callback: function (value) {
-                return formatNumberWithBillionOrMillion(value);
-              },
-            };
-          } else {
-            yAxesOptions = {
-              min: minTick,
-              max: maxTick,
-              stepSize: allItemsAreIntegers ? 1 : stepSize,
-              callback: function (value) {
-                if (allItemsAreIntegers) {
-                  if (value === minValue || value === maxValue) {
-                    return parseValuesToLocale(value, CurrencyUSD);
-                  }
-                } else {
-                  if (
-                    Math.abs(value - minValue) < tolerance ||
-                    Math.abs(value - maxValue) < tolerance
-                  ) {
-                    return parseValuesToLocale(value, CurrencyUSD);
-                  }
+          yAxesOptions = {
+            min: minTick,
+            max: maxTick,
+            maxTicksLimit: 2,
+            // stepSize: stepSize,
+            autoSkip: true,
+            // stepSize: allItemsAreIntegers ? 1 : stepSize,
+            callback: function (value) {
+              if (allItemsAreIntegers) {
+                if (value === minValue || value === maxValue) {
+                  return parseValuesToLocale(value, CurrencyUSD);
                 }
-                return ''; // Return empty string for other values
-              },
-            };
-          }
+              } else {
+                if (
+                  Math.abs(value - minValue) < tolerance ||
+                  Math.abs(value - maxValue) < tolerance
+                ) {
+                  return parseValuesToLocale(value, CurrencyUSD);
+                }
+              }
+              return ''; // Return empty string for other values
+            },
+          };
 
           setChartOptions((prevOptions) => ({
             ...prevOptions,
             scales: {
               ...prevOptions.scales,
+
               yAxes: [
                 {
                   ...prevOptions.scales.yAxes[0],
@@ -291,8 +290,10 @@ const PerformanceChart = ({
             console.log('New data length', newData.length);
 
             const { minValue, maxValue } = getMaxMinValues(newData);
-            const minTick = minValue - Math.abs(maxValue - minValue);
-            const maxTick = maxValue + Math.abs(maxValue - minValue);
+            const minTick = minValue;
+            // - Math.abs(maxValue - minValue);
+            const maxTick = maxValue;
+            //  + Math.abs(maxValue - minValue);
 
             setChartData({
               labels: newLabels, // Ensure the labels are Date objects if needed
@@ -300,7 +301,7 @@ const PerformanceChart = ({
             });
 
             const range = maxValue - minValue;
-            const numTicks = 5; // Adjust this value based on your preference
+            const numTicks = 2; // Adjust this value based on your preference
             const tolerance = 0.001; // Adjust as needed for your precision
 
             const stepSize = range / (numTicks - 1);
@@ -316,7 +317,8 @@ const PerformanceChart = ({
                       ...prevOptions.scales.yAxes[0].ticks,
                       min: minTick,
                       max: maxTick,
-                      stepSize: stepSize,
+                      maxTicksLimit: 2,
+                      // stepSize: stepSize,
                       callback: function (value) {
                         if (
                           Math.abs(value - minValue) < tolerance ||
@@ -417,9 +419,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(7, 'one_week')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_week' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_week' ? 'active' : ''
+            }`}
           id="one_week"
         >
           7D
@@ -428,9 +429,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(30, 'one_month')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_month' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_month' ? 'active' : ''
+            }`}
           id="one_month"
         >
           1M
@@ -439,9 +439,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(180, 'six_months')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'six_months' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'six_months' ? 'active' : ''
+            }`}
           id="six_months"
         >
           6M
@@ -450,9 +449,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(365, 'one_year')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'one_year' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_year' ? 'active' : ''
+            }`}
           id="one_year"
         >
           1Y
@@ -461,9 +459,8 @@ const PerformanceChart = ({
           disabled={loading}
           onClick={() => handleFilterForDays(10000, 'all')}
           type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${
-            activeFilter === 'all' ? 'active' : ''
-          }`}
+          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'all' ? 'active' : ''
+            }`}
           id="all"
         >
           ALL
