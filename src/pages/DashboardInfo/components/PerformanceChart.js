@@ -183,7 +183,7 @@ const PerformanceChart = ({
           );
           const newData = response.total.map((item) => {
             // Min value is 0 for all points.
-            const result = Math.max(0, item.close.quote);
+            const result = Math.max(0, item.value.quote);
 
             return result;
           });
