@@ -86,13 +86,13 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     setLoading(true);
     try {
       const suggestions = [];
-
       if (addresses.length > 0) {
+        // Filter addresses that match the search input (case-insensitive)
         suggestions.push(
           ...addresses.filter(
             (addr) =>
-              addr.value.toLowerCase().includes(searchInput.toLowerCase()) ||
-              addr.label.toLowerCase().includes(searchInput.toLowerCase()),
+              addr.value?.toLowerCase().includes(searchInput.toLowerCase()) ||
+              addr.label?.toLowerCase().includes(searchInput.toLowerCase()),
           ),
         );
       }
@@ -101,6 +101,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         (searchInput.length >= 3 && !searchInput.startsWith('0x')) ||
         (searchInput.startsWith('0x') && searchInput.length >= 5)
       ) {
+        // Fetch suggestions from the API if the search input meets the length criteria
         const response = await dispatch(
           getAddressesSuggestions({
             blockchain: 'eth-mainnet',
@@ -111,9 +112,11 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         const apiSuggestions = response.payload;
 
         if (Array.isArray(apiSuggestions)) {
+          // Filter valid API suggestions (with name and address)
           const validApiSuggestions = apiSuggestions.filter(
             (s) => s.name && s.address,
           );
+          // Map valid API suggestions to the desired format and add them to the suggestions array
           suggestions.push(
             ...validApiSuggestions.map((addr) => ({
               label: addr.name,
@@ -128,6 +131,23 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         }
       }
 
+      // If the search input is a valid Ethereum address and not already in the suggestions or addresses,
+      // add it to the suggestions array
+      if (
+        searchInput.startsWith('0x') &&
+        searchInput.length >= 5 &&
+        !suggestions.some((s) => s?.value === searchInput) &&
+        !addresses.some((a) => a?.value === searchInput)
+      ) {
+        suggestions.push({
+          label: null,
+          value: searchInput,
+          address: searchInput,
+          // logo: null,
+          // coingeckoId: null,
+        });
+      }
+      // Update the options state with the fetched suggestions
       setOptions(suggestions);
     } catch (error) {
       console.log('Failed to fetch suggestions:', error);
@@ -169,7 +189,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   // #region HANDLERS
   const handleSaveInCookiesAndGlobalState = () => {
     const validInput = searchInput.trim().length > 0;
-    if (validInput) {
+    if (validInput && !isUnsupported) {
       const storedOptions = getUserSavedAddresses();
       const newOption = {
         label: null,
