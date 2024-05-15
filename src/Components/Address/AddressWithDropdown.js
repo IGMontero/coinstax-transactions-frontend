@@ -56,10 +56,15 @@ const AddressWithDropdown = () => {
   const handleOpenModalRename = (e, option) => {
     e.preventDefault();
     e.stopPropagation();
+
+    const optionLabel = addresses.find(
+      (addr) => addr.value === option.value,
+    )?.label;
+
     Swal.fire({
       title: 'Rename Wallet',
       input: 'text',
-      inputValue: option.label,
+      inputValue: optionLabel,
       showCancelButton: true,
       confirmButtonText: 'Save',
       inputValidator: (value) => {
@@ -83,7 +88,7 @@ const AddressWithDropdown = () => {
 
   const handleRenameAddress = (value, newName) => {
     dispatch(setAddressName({ value, label: newName }));
-    Swal.fire('Updated!', 'Your address has been renamed.', 'success');
+    Swal.fire('Updated!', 'Your wallet has been renamed.', 'success');
   };
 
   const renderAddressWithDropdown = () => {

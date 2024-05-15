@@ -42,10 +42,16 @@ const CustomOptions = (props) => {
     e.preventDefault();
     e.stopPropagation();
 
+    console.log('Option:', option);
+
+    const optionLabel = addresses.find(
+      (addr) => addr.value === option.value,
+    )?.label;
+
     Swal.fire({
       title: 'Rename Wallet',
       input: 'text',
-      inputValue: option.label,
+      inputValue: optionLabel,
       showCancelButton: true,
       confirmButtonText: 'Save',
       inputValidator: (value) => {

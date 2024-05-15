@@ -425,7 +425,19 @@ export const calculatePercentageChange = (currentIndex, data) => {
   if (currentIndex > 0) {
     const currentValue = data[currentIndex];
     const previousValue = data[currentIndex - 1];
+    if (previousValue === 0) {
+      return currentValue === 0 ? 0 : 100;
+    }
     return ((currentValue - previousValue) / previousValue) * 100;
   }
-  return 0;
+
+  // Current index is always 0 and prev value must be the latest value in the array
+  const currentValue = data[currentIndex];
+  const previousValue = data[data.length - 1];
+
+  if (previousValue === 0) {
+    return currentValue === 0 ? 0 : 100;
+  }
+
+  return ((currentValue - previousValue) / previousValue) * 100;
 };
