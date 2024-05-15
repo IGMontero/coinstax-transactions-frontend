@@ -171,13 +171,13 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     if (validInput) {
       const storedOptions = getUserSavedAddresses();
       const newOption = {
-        label: searchInput,
+        label: null,
         value: searchInput,
-        logo:
-          options.find((option) => option.value === searchInput)?.logo || null,
-        coingeckoId:
-          options.find((option) => option.value === searchInput)?.coingeckoId ||
-          null,
+        // logo:
+        //   options.find((option) => option.value === searchInput)?.logo || null,
+        // coingeckoId:
+        //   options.find((option) => option.value === searchInput)?.coingeckoId ||
+        //   null,
       };
 
       const isAddressAlreadySaved = storedOptions.some(
