@@ -21,19 +21,32 @@ import {
   removeAddressName,
   setAddressName,
 } from '../../../slices/addressName/reducer';
-import { useParams } from 'react-router-dom';
 
 const CustomOptions = (props) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(null);
-  const [displayLabel, setDisplayLabel] = useState('');
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1221);
   const dispatch = useDispatch();
   const addresses = useSelector((state) => state.addressName.addresses);
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(null);
+  const [displayLabel, setDisplayLabel] = useState('');
+  // Window size states
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1221);
+  const [isMediumScreen, setIsMediumScreen] = useState(
+    window.innerWidth >= 768 && window.innerWidth <= 850,
+  );
+  const [isMoreSmallScreen, setIsMoreSmallScreen] = useState(
+    window.innerWidth < 768,
+  );
+  const [isVerySmallScreen, setIsVerySmallScreen] = useState(
+    window.innerWidth < 485,
+  );
+
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 768);
+      setIsSmallScreen(window.innerWidth < 1221);
+      setIsMediumScreen(window.innerWidth >= 768 && window.innerWidth <= 850);
+      setIsMoreSmallScreen(window.innerWidth < 768);
+      setIsVerySmallScreen(window.innerWidth < 485);
     };
 
     window.addEventListener('resize', handleResize);
@@ -45,12 +58,23 @@ const CustomOptions = (props) => {
 
   useEffect(() => {
     const { label, value } = props.data;
-    if (isSmallScreen) {
+    if (isVerySmallScreen) {
+      setDisplayLabel(label || formatIdTransaction(value, 8, 6));
+    } else if (isMediumScreen) {
+      setDisplayLabel(label || formatIdTransaction(value, 12, 15));
+    } else if (isMoreSmallScreen) {
       setDisplayLabel(label || formatIdTransaction(value, 15, 15));
     } else {
       setDisplayLabel(label || value);
     }
-  }, [props.data.label, props.data.value, isSmallScreen]);
+  }, [
+    props.data.label,
+    props.data.value,
+    isSmallScreen,
+    isMediumScreen,
+    isMoreSmallScreen,
+    isVerySmallScreen,
+  ]);
 
   const toggleDropdown = (e) => {
     e.stopPropagation();
