@@ -62,8 +62,7 @@ const PerformanceChart = ({
           ticks: {
             // display: true,
             // beginAtZero: true,
-            // Add padding to move the chart down
-            paddingTop: 20,
+            padding: 35,
           },
         },
       ],
@@ -84,7 +83,7 @@ const PerformanceChart = ({
             maxTicksLimit: 7,
             maxRotation: 0,
             minRotation: 0,
-            padding: 20, // Add padding to move the chart to the right
+            padding: 35, // Add padding to move the chart to the right
           },
           label: {
             avoidCollisions: false,
@@ -453,7 +452,7 @@ const PerformanceChart = ({
               <h1 className="d-flex align-items-center">{title}</h1>
               <h5
                 // style={{ marginBottom: '.7rem' }}
-                className={`mb-1 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+                className={`mb-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
               >
                 {subtitle}%{' '}
                 {!token && (
