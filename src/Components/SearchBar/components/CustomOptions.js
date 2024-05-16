@@ -26,6 +26,7 @@ const CustomOptions = (props) => {
   const dispatch = useDispatch();
   const addresses = useSelector((state) => state.addressName.addresses);
 
+  const [hasImgError, setHasImgError] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [displayLabel, setDisplayLabel] = useState('');
@@ -161,6 +162,10 @@ const CustomOptions = (props) => {
     Swal.fire('Updated!', 'Your address has been renamed.', 'success');
   };
 
+  const handleError = () => {
+    setHasImgError(true);
+  };
+
   const DropdownMenuPortal = ({ children }) => {
     return ReactDOM.createPortal(
       children,
@@ -231,6 +236,18 @@ const CustomOptions = (props) => {
                     src={props.data.logo}
                     alt={props.data.label}
                     style={{ width: 30, height: 30 }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.style.display = 'none';
+                      const textNode = document.createElement('div');
+                      textNode.textContent = props.data.label
+                        ?.substring(0, 3)
+                        .toUpperCase();
+                      textNode.className =
+                        'img-assets-placeholder avatar-xs me-2';
+                      const container = e.target.parentNode;
+                      container.insertBefore(textNode, container.firstChild);
+                    }}
                   />
                 )}
                 <div className="d-flex flex-column">

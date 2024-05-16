@@ -74,6 +74,18 @@ const DashboardTokens = () => {
                   src={data?.image}
                   alt="Ethereum"
                   className="icon-lg me-2"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.style.display = 'none';
+                    const textNode = document.createElement('div');
+                    textNode.textContent = data?.name
+                      ?.substring(0, 3)
+                      .toUpperCase();
+                    textNode.className =
+                      'img-assets-placeholder avatar-xs me-2';
+                    const container = e.target.parentNode;
+                    container.insertBefore(textNode, container.firstChild);
+                  }}
                 />
                 <span className="fs-4">{data?.symbol}</span>
               </div>
