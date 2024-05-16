@@ -21,19 +21,36 @@ import {
   removeAddressName,
   setAddressName,
 } from '../../../slices/addressName/reducer';
+import { useParams } from 'react-router-dom';
 
 const CustomOptions = (props) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [displayLabel, setDisplayLabel] = useState('');
-
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1221);
   const dispatch = useDispatch();
   const addresses = useSelector((state) => state.addressName.addresses);
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
     const { label, value } = props.data;
-    setDisplayLabel(label || value);
-  }, [props.data.label, props.data.value]);
+    if (isSmallScreen) {
+      setDisplayLabel(label || formatIdTransaction(value, 15, 15));
+    } else {
+      setDisplayLabel(label || value);
+    }
+  }, [props.data.label, props.data.value, isSmallScreen]);
 
   const toggleDropdown = (e) => {
     e.stopPropagation();
@@ -193,9 +210,9 @@ const CustomOptions = (props) => {
                   />
                 )}
                 <div className="d-flex flex-column">
-                  <span span className="text-custom-menu-suggestions">
-                    {displayLabel}
-                  </span>
+                  {/* <span span className="text-custom-menu-suggestions"> */}
+                  {displayLabel}
+                  {/* </span> */}
                   {props.data.label && (
                     <span className="text-muted">
                       {formatIdTransaction(props.data.value, 6, 8)}

@@ -514,7 +514,7 @@
 }
 
 
-// text for menu suggestions in searh bar 
+// text for menu suggestions in search bar 
 .text-custom-menu-suggestions {
   max-width: 100%;
   white-space: nowrap;
@@ -540,7 +540,7 @@
 
 @media (max-width: 992px) {
   .text-custom-menu-suggestions {
-    font-size: 14px;
+    font-size: 13px;
     margin-left: 0px;
     max-width: 270px;
   }
@@ -548,9 +548,9 @@
 
 @media (max-width: 768px) {
   .text-custom-menu-suggestions {
-    font-size: 14px;
+    font-size: 13px;
     margin-left: 0px;
-    max-width: 250px;
+    max-width: 280px;
   }
 }
 
@@ -558,7 +558,7 @@
   .text-custom-menu-suggestions {
     font-size: 12px;
     margin-left: 0px;
-    max-width: 140px;
+    max-width: 220px;
   }
 }
 
@@ -566,6 +566,6 @@
   .text-custom-menu-suggestions {
     font-size: 10px;
     margin-left: 0px;
-    max-width: 100px;
+    max-width: 150px;
   }
 }
