@@ -62,7 +62,7 @@ const PerformanceChart = ({
           ticks: {
             // display: true,
             // beginAtZero: true,
-            padding: 35,
+            padding: 20,
           },
         },
       ],
@@ -83,7 +83,7 @@ const PerformanceChart = ({
             maxTicksLimit: 7,
             maxRotation: 0,
             minRotation: 0,
-            padding: 35, // Add padding to move the chart to the right
+            padding: 20,
           },
           label: {
             avoidCollisions: false,

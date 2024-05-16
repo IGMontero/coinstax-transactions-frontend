@@ -505,6 +505,67 @@
 .css-1fdsijx-ValueContainer {
   height: 35px;
   max-height: 35px;
+  
   width: 100%;
   text-overflow: ellipsis;
+}
+.css-6u2elf-control {
+  min-width: 100%;
+}
+
+
+// text for menu suggestions in searh bar 
+.text-custom-menu-suggestions {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 1300px) {
+  .text-custom-menu-suggestions {
+    font-size: 14px;
+    margin-left: 0px;
+    max-width: 200px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .text-custom-menu-suggestions {
+    font-size: 14px;
+    margin-left: 0px;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 992px) {
+  .text-custom-menu-suggestions {
+    font-size: 14px;
+    margin-left: 0px;
+    max-width: 270px;
+  }
+}
+
+@media (max-width: 768px) {
+  .text-custom-menu-suggestions {
+    font-size: 14px;
+    margin-left: 0px;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 576px) {
+  .text-custom-menu-suggestions {
+    font-size: 12px;
+    margin-left: 0px;
+    max-width: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .text-custom-menu-suggestions {
+    font-size: 10px;
+    margin-left: 0px;
+    max-width: 100px;
+  }
 }

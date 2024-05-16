@@ -8,10 +8,12 @@ import {
   removeAddressFromCookies,
 } from '../../../helpers/cookies_helper';
 import {
+  Col,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Row,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
@@ -178,29 +180,36 @@ const CustomOptions = (props) => {
   return (
     <>
       <components.Option {...props}>
-        <div className="d-flex justify-content-between align-items-center">
-          <div className="d-flex justify-content-start align-items-center">
-            {props.data.logo && (
-              <img
-                className="img-fluid rounded-circle me-2"
-                src={props.data.logo}
-                alt={props.data.label}
-                style={{ width: 30, height: 30 }}
-              />
-            )}
-            <div className="d-flex flex-column">
-              {displayLabel}
-              {props.data.label && (
-                <span className="text-muted">
-                  {formatIdTransaction(props.data.value, 6, 8)}
-                </span>
+        <div>
+          <Row className="d-flex justify-content-between align-items-center">
+            <Col className="col-10">
+              <div className="d-flex justify-content-start align-items-center">
+                {props.data.logo && (
+                  <img
+                    className="img-fluid rounded-circle me-2"
+                    src={props.data.logo}
+                    alt={props.data.label}
+                    style={{ width: 30, height: 30 }}
+                  />
+                )}
+                <div className="d-flex flex-column">
+                  <span span className="text-custom-menu-suggestions">
+                    {displayLabel}
+                  </span>
+                  {props.data.label && (
+                    <span className="text-muted">
+                      {formatIdTransaction(props.data.value, 6, 8)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Col>
+            <Col className="col-2 d-flex justify-content-end align-items-center">
+              {addresses.some((addr) => addr.value === props.data.value) && (
+                <>{renderDropdownMenu()}</>
               )}
-            </div>
-          </div>
-
-          {addresses.some((addr) => addr.value === props.data.value) && (
-            <>{renderDropdownMenu()}</>
-          )}
+            </Col>
+          </Row>
         </div>
       </components.Option>
     </>
