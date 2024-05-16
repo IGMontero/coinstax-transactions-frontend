@@ -1,6 +1,14 @@
 import moment from 'moment';
 import { fetchHistory } from '../slices/transactions/thunk';
 
+export const filtersChart = [
+  { label: '7D', days: 7, id: 'one_week' },
+  { label: '1M', days: 30, id: 'one_month' },
+  { label: '6M', days: 180, id: 'six_months' },
+  { label: '1Y', days: 365, id: 'one_year' },
+  { label: 'ALL', days: 10000, id: 'all' },
+];
+
 export const getActionMapping = (action) => {
   switch (action) {
     case 'RECEIVE':
