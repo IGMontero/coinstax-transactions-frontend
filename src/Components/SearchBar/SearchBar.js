@@ -9,6 +9,7 @@ import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
 import {
   getUserSavedAddresses,
+  handleSaveInCookiesAndGlobalState,
   setUserSavedAddresses,
 } from '../../helpers/cookies_helper';
 import CustomOptions from './components/CustomOptions';
@@ -174,56 +175,15 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
 
   useEffect(() => {
     if (!isUnsupported) {
-      handleSaveInCookiesAndGlobalState();
-    }
-  }, [isUnsupported, address, location]);
-
-  // useEffect(() => {
-  //   console.log('Is menu open changed:', isMenuOpen);
-  // }, [isMenuOpen]);
-
-  // useEffect(() => {
-  //   console.log('Search input changed:', searchInput);
-  // }, [searchInput]);
-
-  // #region HANDLERS
-  const handleSaveInCookiesAndGlobalState = () => {
-    const validInput = searchInput.trim().length > 0;
-    if (validInput && !isUnsupported) {
-      const storedOptions = getUserSavedAddresses();
-      const newOption = {
-        label: null,
-        value: searchInput,
-        // logo:
-        //   options.find((option) => option.value === searchInput)?.logo || null,
-        // coingeckoId:
-        //   options.find((option) => option.value === searchInput)?.coingeckoId ||
-        //   null,
-      };
-
-      console.log('New option:', newOption);
-
-      const isAddressAlreadySaved = storedOptions.some(
-        (o) => o.value === newOption.value,
+      handleSaveInCookiesAndGlobalState(
+        address,
+        isUnsupported,
+        dispatch,
+        setAddressName,
       );
-
-      console.log('Is address already saved:', isAddressAlreadySaved);
-
-      if (!isAddressAlreadySaved) {
-        storedOptions.unshift(newOption);
-
-        if (storedOptions.length > 10) {
-          storedOptions.pop();
-        }
-
-        console.log('New stored options: ', storedOptions);
-
-        setUserSavedAddresses(storedOptions);
-
-        dispatch(setAddressName(newOption));
-      }
     }
-  };
+  }),
+    [address, isUnsupported];
 
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
@@ -394,7 +354,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
             // Close dropdown
             setIsMenuOpen(false);
             navigate(`/address/${searchInput}`);
-            handleSaveInCookiesAndGlobalState();
+            // handleSaveInCookiesAndGlobalState();
           }
         }}
       />

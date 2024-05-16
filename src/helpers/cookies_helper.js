@@ -11,10 +11,10 @@ export const getUserSavedAddresses = () => {
     domain: cookiesDomain,
   })
     ? JSON.parse(
-      Cookies.get('addresses', {
-        domain: cookiesDomain,
-      }),
-    )
+        Cookies.get('addresses', {
+          domain: cookiesDomain,
+        }),
+      )
     : [];
 };
 
@@ -40,7 +40,6 @@ export const setCurrentThemeCookie = (theme) => {
     domain: cookiesDomain,
     expires: 365,
   });
-
 };
 
 export const renameAddressInCookies = (valueToFind, newName) => {
@@ -64,4 +63,37 @@ export const removeAddressFromCookies = (value) => {
 
   setUserSavedAddresses(newOptions);
   return newOptions;
+};
+
+export const handleSaveInCookiesAndGlobalState = (
+  address,
+  isUnsupported,
+  dispatch,
+  setAddressName,
+) => {
+  if (address && !isUnsupported) {
+    const storedOptions = getUserSavedAddresses();
+    const newOption = {
+      label: null,
+      value: address,
+    };
+
+    const isAddressAlreadySaved = storedOptions.some(
+      (o) => o.value === newOption.value,
+    );
+
+    if (!isAddressAlreadySaved) {
+      storedOptions.unshift(newOption);
+
+      if (storedOptions.length > 10) {
+        storedOptions.pop();
+      }
+
+      console.log('New stored options: ', storedOptions);
+
+      setUserSavedAddresses(storedOptions);
+
+      dispatch(setAddressName(newOption));
+    }
+  }
 };
