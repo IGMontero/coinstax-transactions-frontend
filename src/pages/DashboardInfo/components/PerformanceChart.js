@@ -59,10 +59,12 @@ const PerformanceChart = ({
         {
           position: 'left',
           gridLines: { display: false },
-          // ticks: {
-          //   display: true,
-          //   align: 'inner',
-          // },
+          ticks: {
+            // display: true,
+            // beginAtZero: true,
+            // Add padding to move the chart down
+            paddingTop: 20,
+          },
         },
       ],
       xAxes: [
@@ -79,11 +81,10 @@ const PerformanceChart = ({
           ticks: {
             source: 'data',
             autoSkip: true,
-            beginAtZero: true,
             maxTicksLimit: 7,
-            maxRotation: 0, // Set maximum rotation to 0 degrees
-            minRotation: 0, // Set minimum rotation to 0 degrees
-            // interval: 1,
+            maxRotation: 0,
+            minRotation: 0,
+            padding: 20, // Add padding to move the chart to the right
           },
           label: {
             avoidCollisions: false,
@@ -410,8 +411,8 @@ const PerformanceChart = ({
       setDiferenceValue(lastValue - firstValue);
     }
   }, [chartData, token]);
- 
-  // #region Renders Fitlers 
+
+  // #region Renders
   const renderFiltersButtons = () => {
     return (
       <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1 p-2">
