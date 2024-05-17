@@ -94,7 +94,7 @@ const AddressWithDropdown = () => {
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
-        <h4 className="text-address mb-0">{formattedAddressLabel}</h4>
+        <h4 className="mb-0 ms-3">{formattedAddressLabel}</h4>
         <UncontrolledDropdown className="card-header-dropdown">
           <DropdownToggle tag="a" className="text-reset" role="button">
             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
