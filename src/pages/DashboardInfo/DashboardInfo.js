@@ -475,7 +475,7 @@ const DashboardInfo = () => {
                   {/* Dropdown Menu  here  renderDropdownMenu()*/}
                 </div>
 
-                <div className="d-flex ">
+                <div className="d-flex">
                   <div className="flex-grow-1">
                     <Col xxl={12} className="mb-4">
                       <div className="d-flex justify-content-start">
