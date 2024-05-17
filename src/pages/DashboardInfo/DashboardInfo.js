@@ -10,6 +10,7 @@ import {
   TabPane,
   TabContent,
   Spinner,
+  Container,
 } from 'reactstrap';
 import PerformanceChart from './components/PerformanceChart';
 import ActivesTable from './components/ActivesTable';
@@ -371,7 +372,7 @@ const DashboardInfo = () => {
                     {subtitle}
                   </h5>{' '} */}
               </Col>
-              <Col
+              {/* <Col
                 xxl={3}
                 lg={3}
                 md={3}
@@ -386,7 +387,7 @@ const DashboardInfo = () => {
                   xxl: '2',
                 }}
               >
-                {/* <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
+                <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
                       <i className="ri-share-forward-fill text-dark fs-4 p-1"></i>
                     </Button>
                     <Button className="rounded-circle bg-transparent border-1 mx-3 border-dark btn btn-sm">
@@ -394,8 +395,8 @@ const DashboardInfo = () => {
                     </Button>
                     <Button color="primary" className="btn btn-sm">
                       Add wallet
-                    </Button> */}
-              </Col>
+                    </Button>
+              </Col> */}
             </Row>
           )}
           <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
@@ -473,85 +474,71 @@ const DashboardInfo = () => {
 
                   {/* Dropdown Menu  here  renderDropdownMenu()*/}
                 </div>
-                <TabContent activeTab={customActiveTab} className="text-muted">
-                  <TabPane tabId="1" id="home1">
-                    <div className="d-flex ">
-                      <div className="flex-grow-1">
-                        <Col xxl={12} className="mb-4">
-                          <div className="d-flex justify-content-start">
-                            <Col
-                              className="col-12"
-                              style={{
-                                marginTop: '-2rem',
-                              }}
-                            >
-                              <div className={loading ? 'pt-3' : ''}>
-                                <AddressWithDropdown />
-                              </div>
-                              <PerformanceChart
-                                loading={loading}
-                                setLoading={setLoading}
-                                setIsUnsupported={setIsUnsupported}
-                                address={addressForSearch}
-                              />
-                            </Col>
-                          </div>
-                        </Col>
 
-                        <Col className={`${loading ? 'mt-n2' : ''}`} xxl={12}>
-                          <ActivesTable
-                            loading={loadingAssets}
-                            data={assetsData}
+                <div className="d-flex ">
+                  <div className="flex-grow-1">
+                    <Col xxl={12} className="mb-4">
+                      <div className="d-flex justify-content-start">
+                        <Col
+                          className="col-12"
+                          style={{
+                            marginTop: '-2rem',
+                          }}
+                        >
+                          <div className={loading ? 'pt-3' : ''}>
+                            <AddressWithDropdown />
+                          </div>
+                          <PerformanceChart
+                            loading={loading}
+                            setLoading={setLoading}
+                            setIsUnsupported={setIsUnsupported}
+                            address={addressForSearch}
                           />
                         </Col>
-                        <Col xxl={12} className="mt-3 d-flex flex-column">
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <h2 className="ms-1 mt-2">NFTs</h2>
-                            <Button
-                              onClick={() =>
-                                navigate(`/address/${address}/nfts`)
-                              }
-                              className="btn btn-sm btn-soft-primary rounded"
-                            >
-                              <span className="p-1">See more NFTs</span>
-                            </Button>
-                          </div>
-                          <div className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden">
-                            <Nfts address={addressForSearch} />
-                          </div>
-                        </Col>
-
-                        <Col xxl={12} className="mt-3">
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            <h2 className="ms-1 mt-2">Transactions</h2>
-                            <Button
-                              onClick={() =>
-                                navigate(`/address/${address}/history`)
-                              }
-                              className="btn btn-sm btn-soft-primary rounded"
-                            >
-                              <span className="p-1">See more activity</span>
-                            </Button>
-                          </div>
-                          <div className="border border-2 rounded p-3 ">
-                            <HistorialTable
-                              data={historyData}
-                              setData={setHistoryData}
-                              activeTab={customActiveTab}
-                              address={addressForSearch}
-                            />
-                          </div>
-                        </Col>
                       </div>
-                    </div>
-                  </TabPane>
+                    </Col>
 
-                  <TabPane tabId="2">
-                    <div className="d-flex">
-                      <div className="flex-grow-1 ms-2"></div>
-                    </div>
-                  </TabPane>
-                </TabContent>
+                    <Col className={`${loading ? 'mt-n2' : ''}`} xxl={12}>
+                      <ActivesTable loading={loadingAssets} data={assetsData} />
+                    </Col>
+                    <Col xxl={12} className="mt-3 d-flex flex-column">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h2 className="ms-1 mt-2">NFTs</h2>
+                        <Button
+                          onClick={() => navigate(`/address/${address}/nfts`)}
+                          className="btn btn-sm btn-soft-primary rounded"
+                        >
+                          <span className="p-1">See more NFTs</span>
+                        </Button>
+                      </div>
+                      <div className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden">
+                        <Nfts address={addressForSearch} />
+                      </div>
+                    </Col>
+
+                    <Col xxl={12} className="mt-3">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h2 className="ms-1 mt-2">Transactions</h2>
+                        <Button
+                          onClick={() =>
+                            navigate(`/address/${address}/history`)
+                          }
+                          className="btn btn-sm btn-soft-primary rounded"
+                        >
+                          <span className="p-1">See more activity</span>
+                        </Button>
+                      </div>
+                      <div className="border border-2 rounded p-3 ">
+                        <HistorialTable
+                          data={historyData}
+                          setData={setHistoryData}
+                          activeTab={customActiveTab}
+                          address={addressForSearch}
+                        />
+                      </div>
+                    </Col>
+                  </div>
+                </div>
               </Col>
             ) : (
               <div style={{ minHeight: '100vh' }}></div>
