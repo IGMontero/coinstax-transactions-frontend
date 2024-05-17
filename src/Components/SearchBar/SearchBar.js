@@ -1,20 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import Select from 'react-select';
-import { components } from 'react-select';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { layoutModeTypes } from '../constants/layout';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import Select, { components } from 'react-select';
 import { Col } from 'reactstrap';
-import { getAddressesSuggestions } from '../../slices/addresses/thunk';
-import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
-import {
-  getUserSavedAddresses,
-  handleSaveInCookiesAndGlobalState,
-  setUserSavedAddresses,
-} from '../../helpers/cookies_helper';
-import CustomOptions from './components/CustomOptions';
+import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
 import { setAddressName } from '../../slices/addressName/reducer';
-import { color } from 'echarts';
+import { getAddressesSuggestions } from '../../slices/addresses/thunk';
+import { layoutModeTypes } from '../constants/layout';
+import CustomOptions from './components/CustomOptions';
 
 const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
@@ -174,6 +167,8 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [searchInput]);
 
   useEffect(() => {
+    console.log('address', address);
+    console.log('isUnsupported', isUnsupported);
     if (!isUnsupported) {
       handleSaveInCookiesAndGlobalState(
         address,
@@ -182,8 +177,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         setAddressName,
       );
     }
-  }),
-    [address, isUnsupported];
+  }, [address, isUnsupported]);
 
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
