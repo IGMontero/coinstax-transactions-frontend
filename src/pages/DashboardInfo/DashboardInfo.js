@@ -23,11 +23,13 @@ import pol from '../../assets/images/svg/crypto-icons/poly.svg';
 import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
 
 import { fetchAssets } from '../../slices/transactions/thunk';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../../utils/utils';
 import QrModal from '../../Components/Modals/QrModal';
 import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
+import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
+import { setAddressName } from '../../slices/addressName/reducer';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -54,6 +56,8 @@ const DashboardInfo = () => {
 
   const [showQrModal, setShowQrModal] = useState(false);
 
+  const { fetchData } = useSelector((state) => state.fetchData);
+
   function usePrevious(value) {
     const ref = useRef();
     useEffect(() => {
@@ -61,6 +65,26 @@ const DashboardInfo = () => {
     }, [value]);
     return ref.current;
   }
+
+  useEffect(() => {
+    if (fetchData && fetchData.performance.unsupported) {
+      setIsUnsupported(true);
+    } else {
+      setIsUnsupported(false);
+    }
+  }, [fetchData]);
+
+  useEffect(() => {
+    if (!isUnsupported) {
+      handleSaveInCookiesAndGlobalState(
+        address,
+        isUnsupported,
+        dispatch,
+        setAddressName,
+      );
+    }
+  }),
+    [address, isUnsupported];
 
   useEffect(() => {
     if (address && previousAddress !== address && !type) {

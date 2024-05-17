@@ -1,23 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { capitalizeFirstLetter } from '../../../utils/utils';
 
 const About = ({ description, name, links }) => {
+  const [seeMore, setSeeMore] = useState(false);
+
+  const handleSeeMore = () => {
+    setSeeMore(!seeMore);
+  };
+
+  const getTruncatedDescription = (desc) => {
+    const paragraphs = desc?.split('\n');
+
+    return paragraphs?.length > 0 ? `${paragraphs[0]}` : desc;
+  };
+
   return (
-    <div className=" mb-3 border-bottom pb-4">
+    <div className="mb-3 border-bottom pb-4">
       <div className="my-3">
-        {' '}
         <h3>About {capitalizeFirstLetter(name)}</h3>
       </div>
       <div
+        className="d-flex"
         style={{
           whiteSpace: 'pre-wrap',
         }}
-        dangerouslySetInnerHTML={{ __html: description }}
+        dangerouslySetInnerHTML={{
+          __html: seeMore ? description : getTruncatedDescription(description),
+        }}
       ></div>
-
-      {/* <p>
-        {description}
-      </p> */}
+      <button onClick={handleSeeMore} className="btn btn-link mb-2 p-0">
+        {seeMore ? 'See Less' : 'See More'}
+      </button>
       <div>
         {links &&
           Object.keys(links).map((link, index) => {
@@ -27,12 +40,12 @@ const About = ({ description, name, links }) => {
                 href={links[link]}
                 target="_blank"
                 rel="noreferrer"
-                className="text-primary text-decoration-none  me-3 "
+                className="text-primary text-decoration-none me-3"
               >
                 <span className="text-hover-underline fs-7 fw-semibold">
-                  {capitalizeFirstLetter(link)}{' '}
+                  {capitalizeFirstLetter(link)}
                 </span>
-                <i className="mdi mdi-open-in-new"></i>{' '}
+                <i className="mdi mdi-open-in-new"></i>
               </a>
             );
           })}

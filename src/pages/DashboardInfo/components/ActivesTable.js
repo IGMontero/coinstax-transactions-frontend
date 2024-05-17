@@ -94,17 +94,18 @@ const ActivesTable = ({ data, loading }) => {
             Assets
           </h2>
           <div className="d-flex justify-content-between align-items-center mb-3">
-            <i className="ri-expand-left-right-line p-1 py-0 btn btn-soft-primary rounded"></i>
             <Button
-              className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
-                }`}
+              className={`btn btn-sm btn-soft-primary rounded ${
+                viewMode === 'byPlatform' ? 'active' : ''
+              }`}
               onClick={() => handleViewModeChange('byPlatform')}
             >
               By Platform
             </Button>
             <Button
-              className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
-                }`}
+              className={`mx-2 btn btn-sm btn-soft-primary rounded ${
+                viewMode === 'perPosition' ? 'active' : ''
+              }`}
               onClick={() => handleViewModeChange('perPosition')}
             >
               Per Position
@@ -301,9 +302,9 @@ const ActivesTable = ({ data, loading }) => {
                               <td>
                                 {asset.price
                                   ? parseValuesToLocale(
-                                    asset.price,
-                                    CurrencyUSD,
-                                  )
+                                      asset.price,
+                                      CurrencyUSD,
+                                    )
                                   : '$0.00'}
                               </td>
                               <td>
@@ -322,40 +323,41 @@ const ActivesTable = ({ data, loading }) => {
                                   <span>
                                     {asset.value
                                       ? parseValuesToLocale(
-                                        asset.value,
-                                        CurrencyUSD,
-                                      )
+                                          asset.value,
+                                          CurrencyUSD,
+                                        )
                                       : parseValuesToLocale(0, CurrencyUSD)}
                                   </span>
                                   <small
-                                    className={`${asset.prettyDeltaValuePercent === '0.00%'
+                                    className={`${
+                                      asset.prettyDeltaValuePercent === '0.00%'
                                         ? 'text-primary'
                                         : asset.prettyDeltaValuePercent[0] ===
-                                          '-'
+                                            '-'
                                           ? 'text-danger'
                                           : 'text-success'
-                                      }`}
+                                    }`}
                                   >
                                     {asset.prettyDeltaValuePercent === '0.00%'
                                       ? parseValuesToLocale(
-                                        asset.deltaValuePercent,
-                                        '',
-                                      )
+                                          asset.deltaValuePercent,
+                                          '',
+                                        )
                                       : (asset.prettyDeltaValuePercent[0] ===
                                         '-'
-                                        ? ''
-                                        : '+') +
-                                      parseValuesToLocale(
-                                        asset.deltaValuePercent,
-                                        '',
-                                      )}
+                                          ? ''
+                                          : '+') +
+                                        parseValuesToLocale(
+                                          asset.deltaValuePercent,
+                                          '',
+                                        )}
                                     {asset.deltaValue
                                       ? ' (' +
-                                      parseValuesToLocale(
-                                        asset.deltaValue,
-                                        CurrencyUSD,
-                                      ) +
-                                      ')'
+                                        parseValuesToLocale(
+                                          asset.deltaValue,
+                                          CurrencyUSD,
+                                        ) +
+                                        ')'
                                       : null}
                                   </small>
                                 </div>
