@@ -8,10 +8,12 @@ import {
   removeAddressFromCookies,
 } from '../../../helpers/cookies_helper';
 import {
+  Col,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Row,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
@@ -21,17 +23,59 @@ import {
 } from '../../../slices/addressName/reducer';
 
 const CustomOptions = (props) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(null);
-  const [displayLabel, setDisplayLabel] = useState('');
-
   const dispatch = useDispatch();
   const addresses = useSelector((state) => state.addressName.addresses);
 
+  const [hasImgError, setHasImgError] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isCopied, setIsCopied] = useState(null);
+  const [displayLabel, setDisplayLabel] = useState('');
+  // Window size states
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1221);
+  const [isMediumScreen, setIsMediumScreen] = useState(
+    window.innerWidth >= 768 && window.innerWidth <= 850,
+  );
+  const [isMoreSmallScreen, setIsMoreSmallScreen] = useState(
+    window.innerWidth < 768,
+  );
+  const [isVerySmallScreen, setIsVerySmallScreen] = useState(
+    window.innerWidth < 485,
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 1221);
+      setIsMediumScreen(window.innerWidth >= 768 && window.innerWidth <= 850);
+      setIsMoreSmallScreen(window.innerWidth < 768);
+      setIsVerySmallScreen(window.innerWidth < 485);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   useEffect(() => {
     const { label, value } = props.data;
-    setDisplayLabel(label || value);
-  }, [props.data.label, props.data.value]);
+    if (isVerySmallScreen) {
+      setDisplayLabel(label || formatIdTransaction(value, 8, 6));
+    } else if (isMediumScreen) {
+      setDisplayLabel(label || formatIdTransaction(value, 12, 15));
+    } else if (isMoreSmallScreen) {
+      setDisplayLabel(label || formatIdTransaction(value, 15, 15));
+    } else {
+      setDisplayLabel(label || value);
+    }
+  }, [
+    props.data.label,
+    props.data.value,
+    isSmallScreen,
+    isMediumScreen,
+    isMoreSmallScreen,
+    isVerySmallScreen,
+  ]);
 
   const toggleDropdown = (e) => {
     e.stopPropagation();
@@ -118,6 +162,10 @@ const CustomOptions = (props) => {
     Swal.fire('Updated!', 'Your address has been renamed.', 'success');
   };
 
+  const handleError = () => {
+    setHasImgError(true);
+  };
+
   const DropdownMenuPortal = ({ children }) => {
     return ReactDOM.createPortal(
       children,
@@ -178,29 +226,48 @@ const CustomOptions = (props) => {
   return (
     <>
       <components.Option {...props}>
-        <div className="d-flex justify-content-between align-items-center">
-          <div className="d-flex justify-content-start align-items-center">
-            {props.data.logo && (
-              <img
-                className="img-fluid rounded-circle me-2"
-                src={props.data.logo}
-                alt={props.data.label}
-                style={{ width: 30, height: 30 }}
-              />
-            )}
-            <div className="d-flex flex-column">
-              {displayLabel}
-              {props.data.label && (
-                <span className="text-muted">
-                  {formatIdTransaction(props.data.value, 6, 8)}
-                </span>
+        <div>
+          <Row className="d-flex justify-content-between align-items-center">
+            <Col className="col-10">
+              <div className="d-flex justify-content-start align-items-center">
+                {props.data.logo && (
+                  <img
+                    className="img-fluid rounded-circle me-2"
+                    src={props.data.logo}
+                    alt={props.data.label}
+                    style={{ width: 30, height: 30 }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.style.display = 'none';
+                      const textNode = document.createElement('div');
+                      textNode.textContent = props.data.label
+                        ?.substring(0, 3)
+                        .toUpperCase();
+                      textNode.className =
+                        'img-assets-placeholder avatar-xs me-2';
+                      const container = e.target.parentNode;
+                      container.insertBefore(textNode, container.firstChild);
+                    }}
+                  />
+                )}
+                <div className="d-flex flex-column">
+                  {/* <span span className="text-custom-menu-suggestions"> */}
+                  {displayLabel}
+                  {/* </span> */}
+                  {props.data.label && (
+                    <span className="text-muted">
+                      {formatIdTransaction(props.data.value, 6, 8)}
+                    </span>
+                  )}
+                </div>
+              </div>
+            </Col>
+            <Col className="col-2 d-flex justify-content-end align-items-center">
+              {addresses.some((addr) => addr.value === props.data.value) && (
+                <>{renderDropdownMenu()}</>
               )}
-            </div>
-          </div>
-
-          {addresses.some((addr) => addr.value === props.data.value) && (
-            <>{renderDropdownMenu()}</>
-          )}
+            </Col>
+          </Row>
         </div>
       </components.Option>
     </>

@@ -12,9 +12,11 @@ import {
   parseValuesToLocale,
   calculatePercentageChange,
   formatNumberWithBillionOrMillion,
+  filtersChart,
 } from '../../../utils/utils';
 import { Line } from 'react-chartjs-2';
 import { useParams } from 'react-router-dom';
+import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
 
 const PerformanceChart = ({
   address,
@@ -57,10 +59,11 @@ const PerformanceChart = ({
         {
           position: 'left',
           gridLines: { display: false },
-          // ticks: {
-          //   display: true,
-          //   align: 'inner',
-          // },
+          ticks: {
+            // display: true,
+            // beginAtZero: true,
+            padding: 20,
+          },
         },
       ],
       xAxes: [
@@ -77,11 +80,10 @@ const PerformanceChart = ({
           ticks: {
             source: 'data',
             autoSkip: true,
-            beginAtZero: true,
             maxTicksLimit: 7,
-            maxRotation: 0, // Set maximum rotation to 0 degrees
-            minRotation: 0, // Set minimum rotation to 0 degrees
-            // interval: 1,
+            maxRotation: 0,
+            minRotation: 0,
+            padding: 20,
           },
           label: {
             avoidCollisions: false,
@@ -375,6 +377,7 @@ const PerformanceChart = ({
     } else {
       fetchAndSetDataForToken(7);
     }
+    handleFilterForDays(7, 'one_week');
   }, [token, address]);
 
   useEffect(() => {
@@ -399,14 +402,10 @@ const PerformanceChart = ({
 
   useEffect(() => {
     if (!token && chartData.datasets[0].data.length > 0) {
-      const firstValue =
+      const lastValue =
         chartData.datasets[0].data[chartData.datasets[0].data.length - 1];
-      const lastValue = chartData.datasets[0].data[0];
-      const percentageChange = calculatePercentageChange(
-        0,
-        chartData.datasets[0].data,
-      );
-
+      const firstValue = chartData.datasets[0].data[0];
+      const percentageChange = ((lastValue - firstValue) / firstValue) * 100;
       setSubtitle(percentageChange.toFixed(2));
       setDiferenceValue(lastValue - firstValue);
     }
@@ -416,56 +415,15 @@ const PerformanceChart = ({
   const renderFiltersButtons = () => {
     return (
       <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1 p-2">
-        <button
-          disabled={loading}
-          onClick={() => handleFilterForDays(7, 'one_week')}
-          type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_week' ? 'active' : ''
-            }`}
-          id="one_week"
-        >
-          7D
-        </button>
-        <button
-          disabled={loading}
-          onClick={() => handleFilterForDays(30, 'one_month')}
-          type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_month' ? 'active' : ''
-            }`}
-          id="one_month"
-        >
-          1M
-        </button>
-        <button
-          disabled={loading}
-          onClick={() => handleFilterForDays(180, 'six_months')}
-          type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'six_months' ? 'active' : ''
-            }`}
-          id="six_months"
-        >
-          6M
-        </button>
-        <button
-          disabled={loading}
-          onClick={() => handleFilterForDays(365, 'one_year')}
-          type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'one_year' ? 'active' : ''
-            }`}
-          id="one_year"
-        >
-          1Y
-        </button>
-        <button
-          disabled={loading}
-          onClick={() => handleFilterForDays(10000, 'all')}
-          type="button"
-          className={`btn btn-soft-primary  rounded-pill  timeline-btn btn-sm  ${activeFilter === 'all' ? 'active' : ''
-            }`}
-          id="all"
-        >
-          ALL
-        </button>
+        {filtersChart.map((filter) => (
+          <FilterButtonsChart
+            key={filter.id}
+            {...filter}
+            loading={loading}
+            activeFilter={activeFilter}
+            handleFilterForDays={handleFilterForDays}
+          />
+        ))}
       </div>
     );
   };
@@ -494,7 +452,7 @@ const PerformanceChart = ({
               <h1 className="d-flex align-items-center">{title}</h1>
               <h5
                 // style={{ marginBottom: '.7rem' }}
-                className={`mb-1 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+                className={`mb-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
               >
                 {subtitle}%{' '}
                 {!token && (

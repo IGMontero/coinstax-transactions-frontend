@@ -1,19 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import Select from 'react-select';
-import { components } from 'react-select';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { layoutModeTypes } from '../constants/layout';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import Select, { components } from 'react-select';
 import { Col } from 'reactstrap';
-import { getAddressesSuggestions } from '../../slices/addresses/thunk';
-import DropdownAddresses from './DropdownAddresses/DropdownAddresses';
-import {
-  getUserSavedAddresses,
-  setUserSavedAddresses,
-} from '../../helpers/cookies_helper';
-import CustomOptions from './components/CustomOptions';
+import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
 import { setAddressName } from '../../slices/addressName/reducer';
-import { color } from 'echarts';
+import { getAddressesSuggestions } from '../../slices/addresses/thunk';
+import { layoutModeTypes } from '../constants/layout';
+import CustomOptions from './components/CustomOptions';
 
 const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   const navigate = useNavigate();
@@ -173,57 +167,17 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [searchInput]);
 
   useEffect(() => {
+    console.log('address', address);
+    console.log('isUnsupported', isUnsupported);
     if (!isUnsupported) {
-      handleSaveInCookiesAndGlobalState();
-    }
-  }, [isUnsupported, address, location]);
-
-  // useEffect(() => {
-  //   console.log('Is menu open changed:', isMenuOpen);
-  // }, [isMenuOpen]);
-
-  // useEffect(() => {
-  //   console.log('Search input changed:', searchInput);
-  // }, [searchInput]);
-
-  // #region HANDLERS
-  const handleSaveInCookiesAndGlobalState = () => {
-    const validInput = searchInput.trim().length > 0;
-    if (validInput && !isUnsupported) {
-      const storedOptions = getUserSavedAddresses();
-      const newOption = {
-        label: null,
-        value: searchInput,
-        // logo:
-        //   options.find((option) => option.value === searchInput)?.logo || null,
-        // coingeckoId:
-        //   options.find((option) => option.value === searchInput)?.coingeckoId ||
-        //   null,
-      };
-
-      console.log('New option:', newOption);
-
-      const isAddressAlreadySaved = storedOptions.some(
-        (o) => o.value === newOption.value,
+      handleSaveInCookiesAndGlobalState(
+        address,
+        isUnsupported,
+        dispatch,
+        setAddressName,
       );
-
-      console.log('Is address already saved:', isAddressAlreadySaved);
-
-      if (!isAddressAlreadySaved) {
-        storedOptions.unshift(newOption);
-
-        if (storedOptions.length > 10) {
-          storedOptions.pop();
-        }
-
-        console.log('New stored options: ', storedOptions);
-
-        setUserSavedAddresses(storedOptions);
-
-        dispatch(setAddressName(newOption));
-      }
     }
-  };
+  }, [address, isUnsupported]);
 
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
@@ -394,7 +348,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
             // Close dropdown
             setIsMenuOpen(false);
             navigate(`/address/${searchInput}`);
-            handleSaveInCookiesAndGlobalState();
+            // handleSaveInCookiesAndGlobalState();
           }
         }}
       />

@@ -207,7 +207,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 </button>
               </Col>
               <Col className="d-flex align-items-center  ms-lg-4  ms-md-4  ms-1  col-8">
-                <div className="col-sm-12 col-md-7 col-lg-7 col-xs-12 col-12 ">
+                <div className="col-sm-12 col-md-12 col-lg-7 col-xs-12 col-12 ">
                   <ParentComponentSearchBar />
                 </div>
               </Col>

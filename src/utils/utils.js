@@ -1,5 +1,18 @@
 import moment from 'moment';
 import { fetchHistory } from '../slices/transactions/thunk';
+import {
+  getUserSavedAddresses,
+  setUserSavedAddresses,
+} from '../helpers/cookies_helper';
+import { setAddressName } from '../slices/addressName/reducer';
+
+export const filtersChart = [
+  { label: '7D', days: 7, id: 'one_week' },
+  { label: '1M', days: 30, id: 'one_month' },
+  { label: '6M', days: 180, id: 'six_months' },
+  { label: '1Y', days: 365, id: 'one_year' },
+  { label: 'ALL', days: 10000, id: 'all' },
+];
 
 export const getActionMapping = (action) => {
   switch (action) {
@@ -441,3 +454,5 @@ export const calculatePercentageChange = (currentIndex, data) => {
 
   return ((currentValue - previousValue) / previousValue) * 100;
 };
+
+//Save address
