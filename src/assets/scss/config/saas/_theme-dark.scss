@@ -569,3 +569,23 @@
     max-width: 150px;
   }
 }
+
+
+// Header 
+.header-container {
+ margin-left: 0;
+}
+
+
+
+@media (min-width: 768px) and (max-width: 1040px) {
+  .header-container {
+      margin-left: 235px;
+  }
+}
+
+@media (min-width: 1041px) {
+  .header-container {
+      margin-left: 207px; 
+  }
+}

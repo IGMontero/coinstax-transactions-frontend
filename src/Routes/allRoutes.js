@@ -28,7 +28,7 @@ const authProtectedRoutes = [
   { path: '/index', component: <DashboardEcommerce /> },
 
   //User Profile
-  { path: '/profile', component: <UserProfile /> },
+  // { path: '/profile', component: <UserProfile /> },
 
   // this route should be at the end of all other routes
   // eslint-disable-next-line react/display-name
@@ -73,7 +73,7 @@ const allRoutes = [
   },
 
   //User Profile
-  { path: '/profile', component: <UserProfile /> },
+  // { path: '/profile', component: <UserProfile /> },
 
   // this route should be at the end of all other routes
   // eslint-disable-next-line react/display-name
