@@ -36,13 +36,13 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [showQrModal, setShowQrModal] = useState(false);
-  const [isCopied, setIsCopied] = useState(false);
   const [searchInput, setSearchInput] = useState('');
   const { user } = useSelector((state) => state.auth);
   const { assets, transactions, performance } = useSelector(
     (state) => state.fetchData,
   );
+
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
@@ -58,8 +58,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   };
 
   const toogleMenuBtn = () => {
-    var windowSize = document.documentElement.clientWidth;
-
     if (windowSize > 767) {
       return;
     }
@@ -98,6 +96,18 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
         : document.body?.classList?.add('twocolumn-panel');
     }
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize(window.innerWidth);
+    };
+
+    // Escucha los cambios de tamaño de la ventana
+    window.addEventListener('resize', handleResize);
+
+    // Limpieza del evento
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     setSearchInput('');
@@ -151,23 +161,24 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       </>
     );
   };
-  {
-    /* {!currentUser && (
-                <div className="navbar-brand-bo horizonta-logo">
-                  <span className="logo-lgs">
-                    <img src={logo} alt="" height="40" />
-                  </span>
-                </div>
-              )} */
-  }
+
   return (
     <React.Fragment>
       <header
         id="page-topbar"
-        // className={headerClass}
-        className="mb-4"
+        style={{
+          width: '100%',
+          left: 0,
+        }}
+        className="mb-4 d-flex align-items-center justify-content-center"
       >
-        <div className="layout-width">
+        <div
+          className="header-container" // Usamos la clase aquí
+          style={{
+            width: '100%',
+            maxWidth: '1250px',
+          }}
+        >
           <Row
             className={`navbar-header `}
             style={{

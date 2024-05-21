@@ -15,8 +15,10 @@ import {
   filtersChart,
 } from '../../../utils/utils';
 import { Line } from 'react-chartjs-2';
+import { Chart } from 'chart.js';
 import { useParams } from 'react-router-dom';
 import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
+import _ from 'lodash';
 
 const PerformanceChart = ({
   address,
@@ -26,6 +28,8 @@ const PerformanceChart = ({
 }) => {
   const dispatch = useDispatch();
   const { token } = useParams();
+  const chartContainerRef = useRef(null);
+  const chartInstanceRef = useRef(null);
 
   const [activeFilter, setActiveFilter] = useState('one_week');
   const [isHovering, setIsHovering] = useState(false);
@@ -173,6 +177,7 @@ const PerformanceChart = ({
   });
 
   // #region Api Calls
+
   const fetchAndSetData = (days) => {
     setLoading(true);
     if (address) {
@@ -348,6 +353,39 @@ const PerformanceChart = ({
     }
   };
 
+  useEffect(() => {
+    /* The above code is a React useEffect hook that initializes a Chart.js chart inside a canvas
+  element. It sets up a debounce function to handle resizing of the chart when the parent container
+  is resized. It uses a ResizeObserver to monitor changes in the parent container's size and
+  triggers a resize of the chart accordingly. The useEffect hook returns a cleanup function to
+  disconnect the ResizeObserver when the component unmounts. */
+    const ctx = chartContainerRef.current.getContext('2d');
+    chartInstanceRef.current = new Chart(ctx, {
+      type: 'line',
+      data: chartData,
+      options: chartOptions,
+    });
+    const debounceResize = _.debounce(() => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.resize();
+      }
+    }, 100);
+
+    const resizeObserver = new ResizeObserver(debounceResize);
+    const container = chartContainerRef.current.parentElement;
+
+    if (container) {
+      resizeObserver.observe(container);
+    }
+
+    return () => {
+      if (container) {
+        resizeObserver.unobserve(container);
+      }
+      resizeObserver.disconnect();
+    };
+  }, [chartData, chartOptions]);
+
   // #region Handlers
   const handleFilterForDays = (days, filterId) => {
     if (token) {
@@ -463,9 +501,17 @@ const PerformanceChart = ({
               </h5>
             </div>
             <span className="text-muted mb-3">{token && activeDate}</span>
-            <div style={{ cursor: cursorStyle }}>
-              <Line height={250} data={chartData} options={chartOptions} />
+
+            <div
+              className="chart-container"
+              style={{ position: 'relative', height: '40vh', width: '99%' }}
+            >
+              <canvas ref={chartContainerRef} />
             </div>
+
+            {/* <div style={{ cursor: cursorStyle }}>
+              <Line height={250} data={chartData} options={chartOptions} />
+            </div> */}
           </>
         )}
         <div className="toolbar mb-3">{renderFiltersButtons()}</div>

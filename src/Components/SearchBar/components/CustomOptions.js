@@ -176,7 +176,11 @@ const CustomOptions = (props) => {
   const renderDropdownMenu = () => {
     return (
       <Dropdown isOpen={isMenuOpen} toggle={toggleDropdown}>
-        <DropdownToggle tag="span" className="dropdown-toggle"></DropdownToggle>
+        <DropdownToggle
+          style={{ zIndex: 10000 }}
+          tag="span"
+          className="dropdown-toggle"
+        ></DropdownToggle>
         <DropdownMenuPortal>
           <DropdownMenu
             style={{

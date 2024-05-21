@@ -44,8 +44,13 @@
     padding-bottom: calc(20px + 50px); 
     margin-left: auto;
     margin-right: auto;
-    max-width: 1250px
+    max-width: 1250px;
+
+    @media screen and (max-width: 473px) {
+        padding-left:  13px;
+    }
 }
+
 
 .navbar-menu {
     width: $vertical-menu-width;
