@@ -64,9 +64,9 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
     ]);
   }, [addresses]);
 
-  useEffect(() => {
-    setOptions(addresses);
-  }, [isMenuOpen, addresses]);
+  // useEffect(() => {
+  //   setOptions(addresses);
+  // }, [isMenuOpen, addresses]);
 
   const debounce = (func, delay) => {
     let timerId;
@@ -141,6 +141,7 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
           // coingeckoId: null,
         });
       }
+
       // Update the options state with the fetched suggestions
       setOptions(suggestions);
     } catch (error) {
@@ -326,13 +327,14 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
         placeholder="Assets, wallet, domain, or identity"
         className="col-12 w-100"
         classNamePrefix="select-custom-menu"
-        value={null}
+        value={selectedOption}
         inputValue={searchInput}
         options={options}
         onChange={handleChange}
         onMenuClose={() => setIsMenuOpen(false)}
         onMenuOpen={() => setIsMenuOpen(true)}
         isLoading={loading}
+        filterOption={() => true}
         onInputChange={handleInputChange}
         components={{ DropdownIndicator, Option: CustomOptions }}
         styles={customStyles}
