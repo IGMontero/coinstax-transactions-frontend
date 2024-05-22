@@ -4,17 +4,15 @@ import {
   fetchPerformanceToken,
 } from '../../../slices/transactions/thunk';
 import { useDispatch } from 'react-redux';
-import { Card, CardBody, Col, Spinner } from 'reactstrap';
+import { Col, Spinner } from 'reactstrap';
 import {
   CurrencyUSD,
   getMaxMinValues,
   formatDateToLocale,
   parseValuesToLocale,
   calculatePercentageChange,
-  formatNumberWithBillionOrMillion,
   filtersChart,
 } from '../../../utils/utils';
-import { Line } from 'react-chartjs-2';
 import { Chart } from 'chart.js';
 import { useParams } from 'react-router-dom';
 import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
@@ -535,7 +533,7 @@ const PerformanceChart = ({
                 )}
               </div>
               <div
-                className={`${token && loading ? 'pt-3 mt-3' : 'pt-4 mt-4 mb-1'}`}
+                className={`mb-1 ${token && loading ? 'pt-3 mt-3 ' : 'pt-4 mt-4'}`}
               >
                 {renderFiltersButtons()}
               </div>{' '}
