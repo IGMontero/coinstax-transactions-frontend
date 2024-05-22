@@ -7,9 +7,7 @@ const Navdata = () => {
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const { fetchData } = useSelector((state) => ({
-    fetchData: state.fetchData,
-  }));
+  const { fetchData } = useSelector((state) => state);
 
   const [addressSearched, setAddressSearched] = useState('');
   const [isUnsupported, setIsUnsupported] = useState(false);
@@ -21,13 +19,12 @@ const Navdata = () => {
   }, [address]);
 
   useEffect(() => {
-    const { assets, transactions, performance } = fetchData;
-    setIsUnsupported(
-      assets.unsupported ||
-        transactions.unsupported ||
-        performance.unsupported ||
-        !address,
-    );
+    if (fetchData === null) return;
+    fetchData &&
+      (fetchData.transactions.unsupported ||
+        fetchData.performance.unsupported ||
+        fetchData.assets.unsupported);
+    setIsUnsupported(true);
   }, [fetchData]);
 
   const filterMenuItems = (menuItems) => {
