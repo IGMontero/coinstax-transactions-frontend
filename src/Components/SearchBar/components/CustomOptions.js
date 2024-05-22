@@ -99,9 +99,9 @@ const CustomOptions = (props) => {
       showCancelButton: true,
       confirmButtonText: 'Save',
       inputValidator: (value) => {
-        if (!value) {
-          return 'You need to write something!';
-        }
+        // if (!value) {
+        //   return 'You need to write something!';
+        // }
         if (
           addresses.some(
             (addr) => addr.label === value && addr.value !== option.value,
@@ -111,8 +111,9 @@ const CustomOptions = (props) => {
         }
       },
     }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        handleRenameAddress(option.value, result.value);
+      if (result.isConfirmed) {
+        const newName = result.value.trim() ? result.value : null;
+        handleRenameAddress(option.value, newName);
       }
     });
   };
