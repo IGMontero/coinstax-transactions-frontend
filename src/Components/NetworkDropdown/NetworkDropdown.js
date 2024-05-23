@@ -1,6 +1,6 @@
 import React from 'react';
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
-import pol from '../../assets/images/svg/crypto-icons/poly.svg';
+import pol from '../../assets/images/svg/crypto-icons/polygon.svg';
 // import btc from '../../assets/images/svg/crypto-icons/btc.svg';
 // import arb from '../../assets/images/svg/crypto-icons/ankr.svg';
 // import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
