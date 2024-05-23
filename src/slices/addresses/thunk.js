@@ -1,4 +1,3 @@
-// /addresses/eth-mainnet/search?query=0x1
 import { createAsyncThunk } from '@reduxjs/toolkit';
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
