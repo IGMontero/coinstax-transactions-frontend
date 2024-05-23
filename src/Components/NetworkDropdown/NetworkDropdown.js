@@ -79,10 +79,10 @@ const NetworkDropdown = () => {
                 height={30}
               />
               <div className="d-flex flex-column">
-                <span className="fw-semibold">Ethereum</span>
+                <span className="">Ethereum</span>
                 <div className="d-flex flex-row align-items-center">
                   {/* <small>$8.6k </small>{' '}
-                      <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
+                  <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
                       <small>$12.7k </small> */}
                 </div>
               </div>
@@ -100,10 +100,10 @@ const NetworkDropdown = () => {
                 height={30}
               />
               <div className="d-flex flex-column">
-                <span className="fw-semibold">Polygon</span>
+                <span className="">Polygon</span>
                 <div className="d-flex flex-row align-items-center">
                   {/* <small>$434.44k </small>
-                      <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
+                  <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
                       <small>$0.352901k </small> */}
                 </div>
               </div>
