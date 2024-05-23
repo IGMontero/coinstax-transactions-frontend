@@ -68,9 +68,9 @@ const AddressWithDropdown = () => {
       showCancelButton: true,
       confirmButtonText: 'Save',
       inputValidator: (value) => {
-        if (!value) {
-          return 'You need to write something!';
-        }
+        // if (!value) {
+        //   return 'You need to write something!';
+        // }
         if (
           addresses.some(
             (addr) => addr.label === value && addr.value !== option.value,
@@ -80,15 +80,16 @@ const AddressWithDropdown = () => {
         }
       },
     }).then((result) => {
-      if (result.isConfirmed && result.value) {
-        handleRenameAddress(option.value, result.value);
+      if (result.isConfirmed) {
+        const newName = result.value.trim() ? result.value : null;
+        handleRenameAddress(option.value, newName);
       }
     });
   };
 
   const handleRenameAddress = (value, newName) => {
-    dispatch(setAddressName({ value, label: newName }));
-    Swal.fire('Updated!', 'Your wallet has been renamed.', 'success');
+    dispatch(setAddressName({ value, label: newName || null }));
+    // Swal.fire('Updated!', 'Your wallet has been renamed.', 'success');
   };
 
   const renderAddressWithDropdown = () => {
