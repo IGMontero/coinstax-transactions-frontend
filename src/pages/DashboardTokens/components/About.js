@@ -22,7 +22,7 @@ const About = ({ description, name, links }) => {
         <h3>About {capitalizeFirstLetter(name)}</h3>
       </div>
       <div
-        className="d-flex"
+        // className="d-flex"
         style={{
           whiteSpace: 'pre-wrap',
         }}
