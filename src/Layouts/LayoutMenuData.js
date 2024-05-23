@@ -13,6 +13,7 @@ const Navdata = () => {
 
   const [addressSearched, setAddressSearched] = useState('');
   const [isUnsupported, setIsUnsupported] = useState(false);
+  const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
     if (address && address !== addressSearched) {
@@ -23,12 +24,12 @@ const Navdata = () => {
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
     setIsUnsupported(
-      assets.unsupported ||
-        transactions.unsupported ||
-        performance.unsupported ||
+      assets?.unsupported ||
+        transactions?.unsupported ||
+        performance?.unsupported ||
         !address,
     );
-  }, [fetchData]);
+  }, [fetchData, address]);
 
   const filterMenuItems = (menuItems) => {
     if (isUnsupported || token) {
@@ -50,7 +51,7 @@ const Navdata = () => {
 
     click: function (e) {
       e.preventDefault();
-      navigate(link);
+      navigate(this.link);
       setIscurrentState(label);
     },
   });
@@ -61,7 +62,7 @@ const Navdata = () => {
     link: `/${page}`,
     click: function (e) {
       e.preventDefault();
-      navigate(link);
+      navigate(this.link);
       setIscurrentState(label);
     },
   });
