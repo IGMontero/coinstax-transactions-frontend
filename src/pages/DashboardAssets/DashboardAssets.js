@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import AcitvesTable from '../DashboardInfo/components/ActivesTable';
 import { fetchAssets } from '../../slices/transactions/thunk';
 import { useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 
 const DashboardAssets = () => {
   const { address } = useParams();
   const dispatch = useDispatch();
+  const networkType = useSelector(selectNetworkType);
+
   const [assetsData, setAssetsData] = useState([]);
   const [loadingAssets, setLoadingAssets] = useState(false);
   const [isUnsupported, setIsUnsupported] = useState(false);
@@ -14,7 +17,12 @@ const DashboardAssets = () => {
   const fetchDataAssets = () => {
     setLoadingAssets(true);
 
-    dispatch(fetchAssets(address))
+    const params = {
+      address,
+      networkType,
+    };
+
+    dispatch(fetchAssets(params))
       .unwrap()
       .then((response) => {
         if (response?.unsupported == true) {
@@ -27,14 +35,14 @@ const DashboardAssets = () => {
         setLoadingAssets(false);
       })
       .catch((error) => {
-        console.error('Error fetching performance data:', error);
+        console.log('Error fetching performance data:', error);
         setLoadingAssets(false);
       });
   };
 
   useEffect(() => {
     fetchDataAssets();
-  }, []);
+  }, [networkType, address]);
 
   return (
     <div className="page-content ">

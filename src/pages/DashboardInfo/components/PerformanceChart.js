@@ -3,7 +3,7 @@ import {
   fetchPerformance,
   fetchPerformanceToken,
 } from '../../../slices/transactions/thunk';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Col, Spinner } from 'reactstrap';
 import {
   CurrencyUSD,
@@ -18,6 +18,7 @@ import { useParams } from 'react-router-dom';
 import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
 import _ from 'lodash';
 import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
+import { selectNetworkType } from '../../../slices/networkType/reducer';
 
 const PerformanceChart = ({
   address,
@@ -30,6 +31,8 @@ const PerformanceChart = ({
   const { token } = useParams();
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
+
+  const networkType = useSelector(selectNetworkType);
 
   const [activeFilter, setActiveFilter] = useState('one_week');
   const [isHovering, setIsHovering] = useState(false);
@@ -181,10 +184,14 @@ const PerformanceChart = ({
   const fetchAndSetData = (days) => {
     setLoading(true);
     if (address) {
-      const params = days ? { address, days } : { address };
+      const params = days
+        ? { address, days, networkType }
+        : { address, networkType };
+
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
+          console.log(response.total);
           const newLabels = response.total.map(
             (item) => new Date(item.calendarDate),
           );
@@ -381,7 +388,7 @@ const PerformanceChart = ({
         resizeObserver.disconnect();
       };
     }
-  }, [chartData, chartOptions, isUnsupported]);
+  }, [chartData, networkType, chartOptions, isUnsupported]);
 
   // #region Handlers
   const handleFilterForDays = (days, filterId) => {
@@ -413,7 +420,7 @@ const PerformanceChart = ({
       fetchAndSetDataForToken(7);
     }
     handleFilterForDays(7, 'one_week');
-  }, [token, address]);
+  }, [token, networkType, address]);
 
   useEffect(() => {
     if (!isHovering && chartData.datasets[0].data.length > 0) {
@@ -433,7 +440,7 @@ const PerformanceChart = ({
       }
       updateValues(closestIndex);
     }
-  }, [isHovering, chartData, showMessage]);
+  }, [isHovering, chartData, networkType, showMessage]);
 
   useEffect(() => {
     if (!token && chartData.datasets[0].data.length > 0) {
@@ -444,7 +451,7 @@ const PerformanceChart = ({
       setSubtitle(percentageChange.toFixed(2));
       setDiferenceValue(lastValue - firstValue);
     }
-  }, [chartData, token]);
+  }, [chartData, networkType, token]);
 
   // #region Renders
   const renderFiltersButtons = () => {

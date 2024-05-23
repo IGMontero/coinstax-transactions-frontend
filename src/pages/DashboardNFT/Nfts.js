@@ -16,12 +16,13 @@ import {
   Badge,
 } from 'reactstrap';
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { fetchNFTS } from '../../slices/transactions/thunk';
 import { useLocation, useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 
 const ethIcon = (
   <svg
@@ -45,6 +46,7 @@ const ethIcon = (
 
 const Nfts = ({ address }) => {
   const location = useLocation();
+  const networkType = useSelector(selectNetworkType);
 
   let isDashboardPage;
   const pathSegments = location.pathname.split('/').filter(Boolean);
@@ -82,7 +84,7 @@ const Nfts = ({ address }) => {
     } else {
       setLoading(true);
     }
-    dispatch(fetchNFTS({ address: address, spam: includeSpam }))
+    dispatch(fetchNFTS({ address: address, spam: includeSpam, networkType }))
       .unwrap()
       .then((response) => {
         setData(response);
@@ -101,7 +103,7 @@ const Nfts = ({ address }) => {
     if (address) {
       fetchDataNFTS();
     }
-  }, [address, dispatch, includeSpam]);
+  }, [address, dispatch, includeSpam, networkType]);
 
   const handleVisitNFT = (contractAddress, tokenId) => {
     navigate(`/contract/${contractAddress}?tokenId=${tokenId}`);
