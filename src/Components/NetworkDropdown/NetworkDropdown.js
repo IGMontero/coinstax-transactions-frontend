@@ -45,11 +45,13 @@ const NetworkDropdown = () => {
               <img
                 src={networkIcons[networkType]}
                 alt={networkType}
-                width={20}
-                height={20}
+                width={22}
+                height={22}
                 className="me-2"
               />
-              <span className="fs-6">{capitalizeFirstLetter(networkType)}</span>
+              <span className="fs-6 text-dark">
+                {capitalizeFirstLetter(networkType)}
+              </span>
             </span>
             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
           </DropdownToggle>
