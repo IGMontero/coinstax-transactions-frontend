@@ -7,10 +7,13 @@ const Navdata = () => {
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-  const { fetchData } = useSelector((state) => state);
+  const { fetchData } = useSelector((state) => ({
+    fetchData: state.fetchData,
+  }));
 
   const [addressSearched, setAddressSearched] = useState('');
   const [isUnsupported, setIsUnsupported] = useState(false);
+  const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
     if (address && address !== addressSearched) {
@@ -19,13 +22,14 @@ const Navdata = () => {
   }, [address]);
 
   useEffect(() => {
-    if (fetchData === null) return;
-    fetchData &&
-      (fetchData.transactions.unsupported ||
-        fetchData.performance.unsupported ||
-        fetchData.assets.unsupported);
-    setIsUnsupported(true);
-  }, [fetchData]);
+    const { assets, transactions, performance } = fetchData;
+    setIsUnsupported(
+      assets?.unsupported ||
+        transactions?.unsupported ||
+        performance?.unsupported ||
+        !address,
+    );
+  }, [fetchData, address]);
 
   const filterMenuItems = (menuItems) => {
     if (isUnsupported || token) {
@@ -47,7 +51,7 @@ const Navdata = () => {
 
     click: function (e) {
       e.preventDefault();
-      navigate(link);
+      navigate(this.link);
       setIscurrentState(label);
     },
   });
@@ -58,7 +62,7 @@ const Navdata = () => {
     link: `/${page}`,
     click: function (e) {
       e.preventDefault();
-      navigate(link);
+      navigate(this.link);
       setIscurrentState(label);
     },
   });
