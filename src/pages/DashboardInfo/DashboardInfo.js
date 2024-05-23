@@ -68,24 +68,12 @@ const DashboardInfo = () => {
   }
 
   useEffect(() => {
-    if (fetchData && fetchData.performance.unsupported) {
+    if (fetchData && fetchData.performance?.unsupported) {
       setIsUnsupported(true);
     } else {
       setIsUnsupported(false);
     }
   }, [fetchData]);
-
-  useEffect(() => {
-    if (!isUnsupported) {
-      handleSaveInCookiesAndGlobalState(
-        address,
-        isUnsupported,
-        dispatch,
-        setAddressName,
-      );
-    }
-  }),
-    [address, isUnsupported];
 
   useEffect(() => {
     if (address && previousAddress !== address && !type) {
@@ -108,6 +96,11 @@ const DashboardInfo = () => {
           setLoadingAssets(false);
         } else {
           setIsUnsupported(false);
+          handleSaveInCookiesAndGlobalState(
+            addressForSearch,
+            dispatch,
+            setAddressName,
+          );
         }
         setAssetsData(response);
         setLoadingAssets(false);
@@ -477,28 +470,14 @@ const DashboardInfo = () => {
 
                 <div className="d-flex">
                   <div className="flex-grow-1">
-                    <Col xxl={12} className="mb-4">
-                      <div className="d-flex justify-content-start">
-                        <Col
-                          className="col-12"
-                          style={{
-                            marginTop: '-2rem',
-                          }}
-                        >
-                          <div className={loading ? 'pt-3' : ''}>
-                            <AddressWithDropdown />
-                          </div>
-                          <PerformanceChart
-                            loading={loading}
-                            setLoading={setLoading}
-                            setIsUnsupported={setIsUnsupported}
-                            address={addressForSearch}
-                          />
-                        </Col>
-                      </div>
-                    </Col>
+                    <PerformanceChart
+                      loading={loading}
+                      setLoading={setLoading}
+                      setIsUnsupported={setIsUnsupported}
+                      address={addressForSearch}
+                    />
 
-                    <Col className={`${loading ? 'mt-n2' : ''}`} xxl={12}>
+                    <Col className={`${loading ? '' : ''}`} xxl={12}>
                       <ActivesTable loading={loadingAssets} data={assetsData} />
                     </Col>
                     <Col xxl={12} className="mt-3 d-flex flex-column">

@@ -9,9 +9,11 @@ const About = ({ description, name, links }) => {
   };
 
   const getTruncatedDescription = (desc) => {
-    const paragraphs = desc?.split('\n');
-
-    return paragraphs?.length > 0 ? `${paragraphs[0]}` : desc;
+    if (!desc) return '';
+    if (desc.length > 300) {
+      return `${desc.substring(0, 300)}...`;
+    }
+    return desc;
   };
 
   return (
@@ -20,7 +22,7 @@ const About = ({ description, name, links }) => {
         <h3>About {capitalizeFirstLetter(name)}</h3>
       </div>
       <div
-        className="d-flex"
+        // className="d-flex"
         style={{
           whiteSpace: 'pre-wrap',
         }}
@@ -28,9 +30,11 @@ const About = ({ description, name, links }) => {
           __html: seeMore ? description : getTruncatedDescription(description),
         }}
       ></div>
-      <button onClick={handleSeeMore} className="btn btn-link mb-2 p-0">
-        {seeMore ? 'See Less' : 'See More'}
-      </button>
+      {description && description.length > 255 && (
+        <button onClick={handleSeeMore} className="btn btn-link mb-2 p-0">
+          {seeMore ? 'See Less' : 'See More'}
+        </button>
+      )}
       <div>
         {links &&
           Object.keys(links).map((link, index) => {
