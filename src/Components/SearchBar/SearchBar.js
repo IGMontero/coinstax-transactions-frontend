@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Select, { components } from 'react-select';
 import { Col } from 'reactstrap';
-import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
-import { setAddressName } from '../../slices/addressName/reducer';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import { layoutModeTypes } from '../constants/layout';
 import CustomOptions from './components/CustomOptions';
@@ -32,13 +30,14 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   useEffect(() => {
     if (
       fetchData &&
-      (fetchData.transactions.unsupported || fetchData.performance.unsupported)
+      (fetchData.transactions?.unsupported ||
+        fetchData.performance?.unsupported)
     ) {
       setIsUnsupported(true);
     } else {
       setIsUnsupported(false);
     }
-  }, [fetchData]);
+  }, [fetchData, isUnsupported]);
 
   useEffect(() => {
     if (selectedOption) {
@@ -56,17 +55,21 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
   }, [selectedOption, addresses]);
 
   useEffect(() => {
-    setOptions((currentOptions) => [
-      ...addresses,
-      ...currentOptions.filter(
-        (o) => !addresses.some((opt) => opt.value === o.value),
-      ),
-    ]);
-  }, [addresses]);
+    if (!isUnsupported) {
+      setOptions((currentOptions) => [
+        ...addresses,
+        ...currentOptions.filter(
+          (o) => !addresses.some((opt) => opt.value === o.value),
+        ),
+      ]);
+    }
+  }, [addresses, isUnsupported]);
 
-  // useEffect(() => {
-  //   setOptions(addresses);
-  // }, [isMenuOpen, addresses]);
+  useEffect(() => {
+    if (!isUnsupported) {
+      setOptions(addresses);
+    }
+  }, [isMenuOpen, addresses, isUnsupported]);
 
   const debounce = (func, delay) => {
     let timerId;
@@ -166,19 +169,6 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       setOptions([]);
     }
   }, [searchInput]);
-
-  useEffect(() => {
-    console.log('address', address);
-    console.log('isUnsupported', isUnsupported);
-    if (!isUnsupported) {
-      handleSaveInCookiesAndGlobalState(
-        address,
-        isUnsupported,
-        dispatch,
-        setAddressName,
-      );
-    }
-  }, [address, isUnsupported]);
 
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {

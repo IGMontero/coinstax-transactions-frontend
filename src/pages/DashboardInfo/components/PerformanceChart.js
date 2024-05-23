@@ -22,6 +22,7 @@ import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown
 const PerformanceChart = ({
   address,
   setIsUnsupported,
+  isUnsupported,
   loading,
   setLoading,
 }) => {
@@ -353,37 +354,34 @@ const PerformanceChart = ({
   };
 
   useEffect(() => {
-    /* The above code is a React useEffect hook that initializes a Chart.js chart inside a canvas
-  element. It sets up a debounce function to handle resizing of the chart when the parent container
-  is resized. It uses a ResizeObserver to monitor changes in the parent container's size and
-  triggers a resize of the chart accordingly. The useEffect hook returns a cleanup function to
-  disconnect the ResizeObserver when the component unmounts. */
-    const ctx = chartContainerRef.current.getContext('2d');
-    chartInstanceRef.current = new Chart(ctx, {
-      type: 'line',
-      data: chartData,
-      options: chartOptions,
-    });
-    const debounceResize = _.debounce(() => {
-      if (chartInstanceRef.current) {
-        chartInstanceRef.current.resize();
-      }
-    }, 100);
+    if (chartContainerRef.current) {
+      const ctx = chartContainerRef.current.getContext('2d');
+      chartInstanceRef.current = new Chart(ctx, {
+        type: 'line',
+        data: chartData,
+        options: chartOptions,
+      });
+      const debounceResize = _.debounce(() => {
+        if (chartInstanceRef.current) {
+          chartInstanceRef.current.resize();
+        }
+      }, 100);
 
-    const resizeObserver = new ResizeObserver(debounceResize);
-    const container = chartContainerRef.current.parentElement;
+      const resizeObserver = new ResizeObserver(debounceResize);
+      const container = chartContainerRef.current.parentElement;
 
-    if (container) {
-      resizeObserver.observe(container);
-    }
-
-    return () => {
       if (container) {
-        resizeObserver.unobserve(container);
+        resizeObserver.observe(container);
       }
-      resizeObserver.disconnect();
-    };
-  }, [chartData, chartOptions]);
+
+      return () => {
+        if (container) {
+          resizeObserver.unobserve(container);
+        }
+        resizeObserver.disconnect();
+      };
+    }
+  }, [chartData, chartOptions, isUnsupported]);
 
   // #region Handlers
   const handleFilterForDays = (days, filterId) => {
