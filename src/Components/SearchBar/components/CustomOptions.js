@@ -160,7 +160,7 @@ const CustomOptions = (props) => {
     const updatedAddresses = renameAddressInCookies(valueToFind, newName);
     setUserSavedAddresses(updatedAddresses);
     setDisplayLabel(newName);
-    Swal.fire('Updated!', 'Your address has been renamed.', 'success');
+    // Swal.fire('Updated!', 'Your address has been renamed.', 'success');
   };
 
   const handleError = () => {
