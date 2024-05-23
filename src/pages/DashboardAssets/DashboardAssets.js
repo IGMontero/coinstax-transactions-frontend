@@ -17,7 +17,7 @@ const DashboardAssets = () => {
     dispatch(fetchAssets(address))
       .unwrap()
       .then((response) => {
-        if (response.unsupported == true) {
+        if (response?.unsupported == true) {
           setIsUnsupported(true);
           setLoadingAssets(false);
         } else {

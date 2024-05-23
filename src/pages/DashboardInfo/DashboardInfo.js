@@ -68,7 +68,7 @@ const DashboardInfo = () => {
   }
 
   useEffect(() => {
-    if (fetchData && fetchData.performance?.unsupported) {
+    if (fetchData && fetchData?.performance?.unsupported) {
       setIsUnsupported(true);
     } else {
       setIsUnsupported(false);
