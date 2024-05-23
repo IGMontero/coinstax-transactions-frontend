@@ -82,9 +82,9 @@ const PerformanceChart = ({
             },
           },
           ticks: {
-            source: 'data',
+            // source: 'data',
             autoSkip: true,
-            maxTicksLimit: 7,
+            maxTicksLimit: 10,
             maxRotation: 0,
             minRotation: 0,
             padding: 20,
