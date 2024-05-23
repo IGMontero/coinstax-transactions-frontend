@@ -46,9 +46,8 @@ const ethIcon = (
 
 const Nfts = ({ address, isUnsupported }) => {
   const location = useLocation();
+  const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
-
-  console.log('NFTs.js', address, isUnsupported, networkType);
 
   let isDashboardPage;
   const pathSegments = location.pathname.split('/').filter(Boolean);
@@ -58,12 +57,11 @@ const Nfts = ({ address, isUnsupported }) => {
   } else if (pathSegments.length > 2) {
     isDashboardPage = false;
   }
+  const [itemsToShow, setItemsToShow] = useState(20);
 
   const [loading, setLoading] = React.useState(false);
   const [loadingIncludeSpam, setLoadingIncludeSpam] = useState(false);
   const [includeSpam, setIncludeSpam] = useState(false);
-
-  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const [data, setData] = React.useState([]);
@@ -116,15 +114,15 @@ const Nfts = ({ address, isUnsupported }) => {
     setLoadingIncludeSpam(true);
   };
 
-  // show only 4 NFTs if is dashboard page
-  let items = [];
+  const handleShowMoreItems = () => {
+    setItemsToShow(itemsToShow + 20);
+  };
 
+  let items = data.items || [];
   if (isDashboardPage) {
-    if (data && Array.isArray(data.items)) {
-      items = data.items.slice(0, 5);
-    }
+    items = items.slice(0, 5);
   } else {
-    items = data.items;
+    items = items.slice(0, itemsToShow);
   }
 
   const renderDropdown = () => {
@@ -301,7 +299,6 @@ const Nfts = ({ address, isUnsupported }) => {
     );
   }
 
-  console.log(data);
   return (
     <React.Fragment>
       {renderTitle()}
@@ -346,7 +343,7 @@ const Nfts = ({ address, isUnsupported }) => {
                     width: '32px',
                   }}
                   color="transparent"
-                  className="btn btn-sm rounded text-white border border-1 me-2"
+                  className="btn btn-sm rounded text-dark border border-1 me-2"
                   onClick={handleChangeSymbol}
                 >
                   {currencySymbol === 'ETH' ? ethIcon : '$'}
@@ -366,12 +363,27 @@ const Nfts = ({ address, isUnsupported }) => {
                 <Spinner style={{ width: '4rem', height: '4rem' }} />
               </div>
             ) : (
-              <NftsCards
-                items={items}
-                loading={loading}
-                onVisitNft={handleVisitNFT}
-                showFiatValues={showFiatValues}
-              />
+              <Col>
+                <NftsCards
+                  items={items}
+                  loading={loading}
+                  onVisitNft={handleVisitNFT}
+                  showFiatValues={showFiatValues}
+                />
+                {!isDashboardPage &&
+                  data.items &&
+                  data.items.length > itemsToShow && (
+                    <div className="d-flex justify-content-center">
+                      <Button
+                        className="mt-3 d-flex justify-content-center align-items-center "
+                        color="soft-primary"
+                        onClick={handleShowMoreItems}
+                      >
+                        More Items
+                      </Button>
+                    </div>
+                  )}
+              </Col>
             )}
           </Col>
           {/* No NFTs found */}
