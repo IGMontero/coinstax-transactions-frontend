@@ -314,6 +314,7 @@ const HistorialTable = ({ data, setData }) => {
 
   useEffect(() => {
     fetchData();
+    setErrorData(null);
     setHasMoreData(true);
     setShowDownloadMessage('');
     setCurrentPage(0);
