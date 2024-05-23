@@ -68,24 +68,12 @@ const DashboardInfo = () => {
   }
 
   useEffect(() => {
-    if (fetchData && fetchData.performance.unsupported) {
+    if (fetchData && fetchData.performance?.unsupported) {
       setIsUnsupported(true);
     } else {
       setIsUnsupported(false);
     }
   }, [fetchData]);
-
-  useEffect(() => {
-    if (!isUnsupported) {
-      handleSaveInCookiesAndGlobalState(
-        address,
-        isUnsupported,
-        dispatch,
-        setAddressName,
-      );
-    }
-  }),
-    [address, isUnsupported];
 
   useEffect(() => {
     if (address && previousAddress !== address && !type) {
@@ -108,6 +96,11 @@ const DashboardInfo = () => {
           setLoadingAssets(false);
         } else {
           setIsUnsupported(false);
+          handleSaveInCookiesAndGlobalState(
+            addressForSearch,
+            dispatch,
+            setAddressName,
+          );
         }
         setAssetsData(response);
         setLoadingAssets(false);

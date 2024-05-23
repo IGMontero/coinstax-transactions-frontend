@@ -67,11 +67,11 @@ export const removeAddressFromCookies = (value) => {
 
 export const handleSaveInCookiesAndGlobalState = (
   address,
-  isUnsupported,
+  // isUnsupported,
   dispatch,
   setAddressName,
 ) => {
-  if (address && !isUnsupported) {
+  if (address) {
     const storedOptions = getUserSavedAddresses();
     const newOption = {
       label: null,
