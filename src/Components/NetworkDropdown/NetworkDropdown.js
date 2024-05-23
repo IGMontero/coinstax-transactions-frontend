@@ -45,11 +45,11 @@ const NetworkDropdown = () => {
               <img
                 src={networkIcons[networkType]}
                 alt={networkType}
-                width={30}
-                height={30}
+                width={20}
+                height={20}
                 className="me-2"
               />
-              {capitalizeFirstLetter(networkType)}
+              <span className="fs-6">{capitalizeFirstLetter(networkType)}</span>
             </span>
             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
           </DropdownToggle>
@@ -67,7 +67,7 @@ const NetworkDropdown = () => {
                   </div>
                 </DropdownItem> */}
             <DropdownItem
-              className="d-flex align-items-center"
+              className="d-flex align-items-center mb-2"
               onClick={() => handleChangeNetwork('ethereum')}
             >
               {' '}
@@ -75,8 +75,8 @@ const NetworkDropdown = () => {
                 src={eth}
                 alt="btc"
                 className="ms-n1 me-2"
-                width={30}
-                height={30}
+                width={20}
+                height={20}
               />
               <div className="d-flex flex-column">
                 <span className="">Ethereum</span>
@@ -96,8 +96,8 @@ const NetworkDropdown = () => {
                 src={pol}
                 alt="btc"
                 className="ms-n1 me-2"
-                width={30}
-                height={30}
+                width={20}
+                height={20}
               />
               <div className="d-flex flex-column">
                 <span className="">Polygon</span>
