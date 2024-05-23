@@ -232,7 +232,10 @@ const DashboardInfo = () => {
                         </Button>
                       </div>
                       <div className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden">
-                        <Nfts address={addressForSearch} />
+                        <Nfts
+                          isUnsupported={isUnsupported}
+                          address={addressForSearch}
+                        />
                       </div>
                     </Col>
 
