@@ -123,22 +123,6 @@ const Nfts = ({ address }) => {
     items = data.items;
   }
 
-  if (imageError) {
-    return (
-      <div
-        className="d-flex justify-content-center align-items-center"
-        style={{
-          width: '100%',
-          height: '100%',
-          borderRadius: '8px',
-          backgroundColor: '#f0f0f0',
-        }}
-      >
-        <span>Unsupported</span>
-      </div>
-    );
-  }
-
   const renderDropdown = () => {
     return (
       <Row>
@@ -313,6 +297,8 @@ const Nfts = ({ address }) => {
     );
   }
 
+  console.log('Loading: ', loading);
+
   return (
     <React.Fragment>
       {renderTitle()}
@@ -456,7 +442,7 @@ const Nfts = ({ address }) => {
                                     objectFit: 'cover',
                                     borderRadius: '8px',
                                   }}
-                                  onError={() => setImageError(true)}
+                                // onError={() => setImageError(true)}
                                 />
                               )}
                               <div className="">
