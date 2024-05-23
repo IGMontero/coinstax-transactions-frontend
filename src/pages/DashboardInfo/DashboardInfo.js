@@ -17,26 +17,21 @@ import ActivesTable from './components/ActivesTable';
 import Nfts from '../DashboardNFT/Nfts';
 import HistorialTable from '../DashboardTransactions/HistorialTable';
 
-import eth from '../../assets/images/svg/crypto-icons/eth.svg';
-import btc from '../../assets/images/svg/crypto-icons/btc.svg';
-import arb from '../../assets/images/svg/crypto-icons/ankr.svg';
-import pol from '../../assets/images/svg/crypto-icons/poly.svg';
-import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
-
 import { fetchAssets } from '../../slices/transactions/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { capitalizeFirstLetter } from '../../utils/utils';
 import QrModal from '../../Components/Modals/QrModal';
-import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
 import { setAddressName } from '../../slices/addressName/reducer';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
+  const { fetchData } = useSelector((state) => state.fetchData);
+  const networkType = useSelector(selectNetworkType);
   const { address, type } = useParams();
   const previousAddress = usePrevious(address);
 
@@ -57,8 +52,6 @@ const DashboardInfo = () => {
 
   const [showQrModal, setShowQrModal] = useState(false);
 
-  const { fetchData } = useSelector((state) => state.fetchData);
-
   function usePrevious(value) {
     const ref = useRef();
     useEffect(() => {
@@ -73,7 +66,7 @@ const DashboardInfo = () => {
     } else {
       setIsUnsupported(false);
     }
-  }, [fetchData]);
+  }, [fetchData, networkType]);
 
   useEffect(() => {
     if (address && previousAddress !== address && !type) {
@@ -88,7 +81,7 @@ const DashboardInfo = () => {
   const fetchDataAssets = () => {
     setLoadingAssets(true);
 
-    dispatch(fetchAssets(addressForSearch))
+    dispatch(fetchAssets({ address, networkType }))
       .unwrap()
       .then((response) => {
         if (response.unsupported == true) {
@@ -115,7 +108,7 @@ const DashboardInfo = () => {
     if (addressForSearch) {
       fetchDataAssets();
     }
-  }, [addressForSearch, type, dispatch, isUnsupported]);
+  }, [addressForSearch, type, dispatch, isUnsupported, networkType]);
 
   useEffect(() => {
     if (address) {
@@ -123,7 +116,7 @@ const DashboardInfo = () => {
       setAddressForSearch(address);
       setAddressTitle(address);
     }
-  }, [address, location]);
+  }, [address, location, networkType]);
 
   useEffect(() => {
     if (type) {
@@ -132,133 +125,6 @@ const DashboardInfo = () => {
       );
     }
   }, [type]);
-
-  const renderDropdownMenu = () => {
-    return (
-      <Col xxl={6} className="d-flex justify-content-end align-items-center">
-        <div className="d-flex justify-content-end align-items-center">
-          <UncontrolledDropdown className="card-header-dropdown ">
-            <DropdownToggle
-              tag="a"
-              className="btn btn-sm p-1 btn-primary d-flex align-items-center"
-              role="button"
-            >
-              <span className="ms-2 d-flex align-items-center">
-                {' '}
-                <i className="ri-function-line text-white fs-4 me-2"></i>
-                All Networks
-              </span>
-              <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
-            </DropdownToggle>
-            <DropdownMenu className="dropdown-menu-end mt-2 ">
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <i className="ri-function-line text-primary fs-2 me-2"></i>
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold ">All Networks</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>$9k </small>{' '}
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>$12.7k </small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={eth}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">Ethereum</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>$8.6k </small>{' '}
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>$12.7k </small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={pol}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">Polygon</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>$434.44k </small>
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>$0.352901k </small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={btc}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">BNB Chain</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>$0.020028</small>
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small></small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={arb}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">Arbitrum</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>{'<'} $0.0001 </small>
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>{'<'} $0.0001</small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={gnosis}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">Gnosis Chain</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>{'<'} $0.0001 </small>
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>{'<'} $0.0001</small>
-                  </div>
-                </div>
-              </DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
-        </div>
-      </Col>
-    );
-  };
 
   document.title = `${type ? capitalizeFirstLetter(type) : 'Dashboard'} ${addressTitle ? '- ' + addressTitle : ''}`;
 
@@ -291,41 +157,7 @@ const DashboardInfo = () => {
                 className="d-flex flex-column"
                 order="1"
               >
-                {/* <div className="d-flex flex-row">
-                    <h4>{formatIdTransaction(addressTitle, 6, 8)}</h4>
-                    <UncontrolledDropdown className="card-header-dropdown">
-                      <DropdownToggle
-                        tag="a"
-                        className="text-reset"
-                        role="button"
-                      >
-                        <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
-                      </DropdownToggle>
-                      <DropdownMenu className="dropdown-menu-end ms-3">
-                        <DropdownItem
-                          className="d-flex align-items-center"
-                          onClick={toggleQrModal}
-                        >
-                          {' '}
-                          <i className="ri-qr-code-line fs-2 me-2"></i>
-                          <span className="fw-semibold">Show QR code</span>
-                        </DropdownItem>
-                        <DropdownItem
-                          className="d-flex align-items-center"
-                          onClick={(e) => handleCopy(e, addressTitle)}
-                        >
-                          {isCopied ? (
-                            <i className="ri-check-line fs-2 me-2 "></i>
-                          ) : (
-                            <i className="ri-file-copy-line fs-2 me-2"></i>
-                          )}
-                          <span className="fw-semibold">Copy direction</span>
-                        </DropdownItem>
-                      </DropdownMenu>
-                    </UncontrolledDropdown>
-                  </div> */}
                 <div className="d-flex flex-row mt-3">
-                  {/* <h1 className="fw-semibold">{title}</h1> */}
                   {isUnsupported && (
                     <div className="mt-5  ">
                       <h1 className="fw-semibold text-danger">
@@ -336,34 +168,7 @@ const DashboardInfo = () => {
                       </h5>
                     </div>
                   )}
-                  {/* <UncontrolledDropdown className="card-header-dropdown">
-                      <DropdownToggle
-                        tag="a"
-                        className="text-reset "
-                        role="button"
-                      >
-                        <i className="ri-more-fill ms-2 fs-5 btn btn-light px-1 py-0 ms-3"></i>
-                      </DropdownToggle>
-                      <DropdownMenu className="dropdown-menu-end ms-3">
-                        <DropdownItem className="d-flex align-items-center">
-                          <span className="fw-semibold">
-                            Include NFTs in Totals
-                            <input
-                              type="checkbox"
-                              className="form-check-input ms-2"
-                            />
-                          </span>
-                        </DropdownItem>
-                      </DropdownMenu>
-                    </UncontrolledDropdown> */}
                 </div>
-                {/* <h5
-                    className={`mt-0 text-${
-                      subtitle[0] == '+' ? 'success' : 'danger'
-                    }`}
-                  >
-                    {subtitle}
-                  </h5>{' '} */}
               </Col>
               {/* <Col
                 xxl={3}
@@ -402,71 +207,7 @@ const DashboardInfo = () => {
                     zIndex: 5,
                     backgroundColor: '#16161a',
                   }}
-                >
-                  {/* <Col xxl={6} className="">
-                      <Nav
-                        tabs
-                        className="  nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
-                      >
-                        <NavItem>
-                          <NavLink
-                            style={{
-                              cursor: 'pointer',
-                              paddingTop: '.7rem',
-                              paddingBottom: '.7rem',
-                              fontWeight: 'bold',
-                            }}
-                            className={classnames({
-                              active: customActiveTab === '1',
-                            })}
-                            onClick={() => {
-                              handleNavLinkClick('tokens', '1');
-                            }}
-                          >
-                            Tokens
-                          </NavLink>
-                        </NavItem>
-                        <NavItem>
-                          <NavLink
-                            style={{
-                              cursor: 'pointer',
-                              paddingTop: '.7rem',
-                              paddingBottom: '.7rem',
-                              fontWeight: 'bold',
-                            }}
-                            className={classnames({
-                              active: customActiveTab === '2',
-                            })}
-                            onClick={() => {
-                              handleNavLinkClick('nfts', '2');
-                            }}
-                          >
-                            NFTs
-                          </NavLink>
-                        </NavItem>
-                        <NavItem>
-                          <NavLink
-                            style={{
-                              cursor: 'pointer',
-                              paddingTop: '.7rem',
-                              paddingBottom: '.7rem',
-                              fontWeight: 'bold',
-                            }}
-                            className={classnames({
-                              active: customActiveTab === '3',
-                            })}
-                            onClick={() => {
-                              handleNavLinkClick('history', '3');
-                            }}
-                          >
-                            History
-                          </NavLink>
-                        </NavItem>
-                      </Nav>
-                    </Col> */}
-
-                  {/* Dropdown Menu  here  renderDropdownMenu()*/}
-                </div>
+                ></div>
 
                 <div className="d-flex">
                   <div className="flex-grow-1">
