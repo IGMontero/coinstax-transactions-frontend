@@ -6,7 +6,7 @@ export const getUserAddresses = createAsyncThunk(
   async ({ page, address, blockchain }, { rejectWithValue }) => {
     const token = localStorage.getItem('token');
     try {
-      let url = `${API_BASE}/admin/addresses/${blockchain}`;
+      let url = `${API_BASE}/admin/addresses`;
       if (address) {
         url += `/${address}`;
       }
