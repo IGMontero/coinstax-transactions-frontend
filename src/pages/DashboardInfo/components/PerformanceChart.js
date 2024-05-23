@@ -4,21 +4,20 @@ import {
   fetchPerformanceToken,
 } from '../../../slices/transactions/thunk';
 import { useDispatch } from 'react-redux';
-import { Card, CardBody, Col, Spinner } from 'reactstrap';
+import { Col, Spinner } from 'reactstrap';
 import {
   CurrencyUSD,
   getMaxMinValues,
   formatDateToLocale,
   parseValuesToLocale,
   calculatePercentageChange,
-  formatNumberWithBillionOrMillion,
   filtersChart,
 } from '../../../utils/utils';
-import { Line } from 'react-chartjs-2';
 import { Chart } from 'chart.js';
 import { useParams } from 'react-router-dom';
 import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
 import _ from 'lodash';
+import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 
 const PerformanceChart = ({
   address,
@@ -452,7 +451,7 @@ const PerformanceChart = ({
   // #region Renders
   const renderFiltersButtons = () => {
     return (
-      <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-1 p-2">
+      <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-5 p-2">
         {filtersChart.map((filter) => (
           <FilterButtonsChart
             key={filter.id}
@@ -477,45 +476,71 @@ const PerformanceChart = ({
 
   return (
     <>
-      <div className="border border-2 rounded p-2 mt-4" style={{ zIndex: 1 }}>
-        {loading ? (
-          <Card className="mb-1" style={{ height: '320px' }}>
-            <CardBody className="d-flex justify-content-center align-items-center">
-              <Spinner />
-            </CardBody>
-          </Card>
-        ) : (
-          <>
-            <div className="d-flex flex-column align-items-start">
-              <h1 className="d-flex align-items-center">{title}</h1>
-              <h5
-                // style={{ marginBottom: '.7rem' }}
-                className={`mb-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+      <Col xxl={12} className="mb-4">
+        <div className="d-flex justify-content-start">
+          <Col className="col-12" style={{ marginTop: '-2rem' }}>
+            <div className={loading ? 'pt-3' : ''}>
+              {!token && <AddressWithDropdown />}
+            </div>
+            <div className="border border-2 p-2 mt-4 rounded">
+              <div
+                className="chart-container position-relative"
+                style={{
+                  zIndex: 1,
+                  height: '40vh',
+                  width: '99%',
+                }}
               >
-                {subtitle}%{' '}
-                {!token && (
-                  <span>
-                    ({parseValuesToLocale(diferenceValue, CurrencyUSD)})
-                  </span>
+                {loading ? (
+                  <div
+                    className="position-absolute d-flex justify-content-center align-items-center"
+                    style={{
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      // backgroundColor: 'rgba(0, 0, 0, 0.2)',
+                      zIndex: 2,
+                      backdropFilter: 'blur(10px)',
+                      height: '50vh',
+                    }}
+                  >
+                    <Spinner
+                      style={{ width: '3rem', height: '3rem' }}
+                      color="primary"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <div className="d-flex flex-column align-items-start">
+                      <h1 className="d-flex align-items-center">{title}</h1>
+                      <h5
+                        className={`mb-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+                      >
+                        {subtitle}%{' '}
+                        {!token && (
+                          <span>
+                            ({parseValuesToLocale(diferenceValue, CurrencyUSD)})
+                          </span>
+                        )}
+                      </h5>
+                    </div>
+                    <span className="text-muted mb-3">
+                      {token && activeDate}
+                    </span>
+                    <canvas ref={chartContainerRef} />
+                  </>
                 )}
-              </h5>
+              </div>
+              <div
+                className={`mb-1 ${token && loading ? 'pt-3 mt-3 ' : 'pt-4 mt-4'}`}
+              >
+                {renderFiltersButtons()}
+              </div>{' '}
             </div>
-            <span className="text-muted mb-3">{token && activeDate}</span>
-
-            <div
-              className="chart-container"
-              style={{ position: 'relative', height: '40vh', width: '99%' }}
-            >
-              <canvas ref={chartContainerRef} />
-            </div>
-
-            {/* <div style={{ cursor: cursorStyle }}>
-              <Line height={250} data={chartData} options={chartOptions} />
-            </div> */}
-          </>
-        )}
-        <div className="toolbar mb-3">{renderFiltersButtons()}</div>
-      </div>
+          </Col>
+        </div>
+      </Col>
     </>
   );
 };
