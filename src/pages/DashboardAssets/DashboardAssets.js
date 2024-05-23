@@ -16,12 +16,10 @@ const DashboardAssets = () => {
 
   const fetchDataAssets = () => {
     setLoadingAssets(true);
-
     const params = {
       address,
       networkType,
     };
-
     dispatch(fetchAssets(params))
       .unwrap()
       .then((response) => {
