@@ -477,7 +477,7 @@ const PerformanceChart = ({
       <Col xxl={12} className="mb-4">
         <div className="d-flex justify-content-start">
           <Col className="col-12" style={{ marginTop: '-2rem' }}>
-            <div className={loading ? 'pt-3' : ''}>
+            <div className={loading ? (token ? ' mt-0 mb-4' : 'pt-3') : ''}>
               {!token && <AddressWithDropdown />}
             </div>
             <div className="border border-2 p-2 mt-4 rounded">
@@ -497,7 +497,7 @@ const PerformanceChart = ({
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      // backgroundColor: 'rgba(0, 0, 0, 0.2)',
+
                       zIndex: 2,
                       backdropFilter: 'blur(10px)',
                       height: '50vh',
@@ -523,18 +523,14 @@ const PerformanceChart = ({
                         )}
                       </h5>
                     </div>
-                    <span className="text-muted mb-3">
-                      {token && activeDate}
-                    </span>
+                    {token && (
+                      <span className="text-muted mb-3">{activeDate}</span>
+                    )}
                     <canvas ref={chartContainerRef} />
                   </>
                 )}
               </div>
-              <div
-                className={`mb-1 ${token && loading ? 'pt-3 mt-3 ' : 'pt-4 mt-4'}`}
-              >
-                {renderFiltersButtons()}
-              </div>{' '}
+              <div className={`mb-1 pt-4 mt-4`}>{renderFiltersButtons()}</div>{' '}
             </div>
           </Col>
         </div>
