@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { handleActionResult } from '../../utils/useHandleAction';
 import EditBlockChainContract from '../DashboardTransactions/HistorialComponents/modals/EditBlockChainContract';
 import BlockChainContractTable from '../../Components/Tables/BlockChainContractTable';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,7 @@ const DashboardBlockchainContracts = () => {
   const errorMessageEdit = useSelector(
     (state) => state.blockchainContracts.error,
   );
+  const networkType = useSelector(selectNetworkType);
 
   const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -42,7 +44,7 @@ const DashboardBlockchainContracts = () => {
       setLoading(true);
       const response = await dispatch(
         fetchBlockchainContracts({
-          blockchain: 'ethereum',
+          networkType,
           page: currentPage,
           address: search,
         }),
