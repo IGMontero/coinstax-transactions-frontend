@@ -237,6 +237,7 @@ const HistorialTable = ({ data, setData }) => {
         selectedAssets,
         currentPage: pageIndex,
         setData,
+        networkType,
         data,
         dispatch,
         pagesChecked: pagesCheckedRef.current,
@@ -370,6 +371,7 @@ const HistorialTable = ({ data, setData }) => {
           },
           assetsFilters: selectAsset,
           page: nextPage,
+          networkType,
         }),
       ).unwrap();
 
