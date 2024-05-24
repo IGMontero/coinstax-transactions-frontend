@@ -195,7 +195,6 @@ const PerformanceChart = ({
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
-          console.log(response.total);
           const newLabels = response.total.map(
             (item) => new Date(item.calendarDate),
           );
@@ -225,30 +224,48 @@ const PerformanceChart = ({
 
           let yAxesOptions;
 
-          // Only for 10000 days
-          yAxesOptions = {
-            min: minTick,
-            max: maxTick,
-            maxTicksLimit: 2,
-            // stepSize: stepSize,
-            autoSkip: true,
-            // stepSize: allItemsAreIntegers ? 1 : stepSize,
-            callback: function (value) {
-              if (allItemsAreIntegers) {
-                if (value === minValue || value === maxValue) {
-                  return parseValuesToLocale(value, CurrencyUSD);
+          if (newData.length === 0 || newData.every((val) => val === 0)) {
+            yAxesOptions = {
+              min: -1,
+              max: 1,
+              // beginAtZero: false,
+              maxTicksLimit: 1,
+              autoSkip: false,
+              ticks: {
+                callback: function (value) {
+                  if (value === 0) {
+                    return parseValuesToLocale(value, CurrencyUSD);
+                  }
+                  return '';
+                },
+              },
+            };
+          } else {
+            yAxesOptions = {
+              min: minTick,
+              max: maxTick,
+              maxTicksLimit: 2,
+              // stepSize: stepSize,
+              autoSkip: true,
+
+              // stepSize: allItemsAreIntegers ? 1 : stepSize,
+              callback: function (value) {
+                if (allItemsAreIntegers) {
+                  if (value === minValue || value === maxValue) {
+                    return parseValuesToLocale(value, CurrencyUSD);
+                  }
+                } else {
+                  if (
+                    Math.abs(value - minValue) < tolerance ||
+                    Math.abs(value - maxValue) < tolerance
+                  ) {
+                    return parseValuesToLocale(value, CurrencyUSD);
+                  }
                 }
-              } else {
-                if (
-                  Math.abs(value - minValue) < tolerance ||
-                  Math.abs(value - maxValue) < tolerance
-                ) {
-                  return parseValuesToLocale(value, CurrencyUSD);
-                }
-              }
-              return ''; // Return empty string for other values
-            },
-          };
+                return ''; // Return empty string for other values
+              },
+            };
+          }
 
           setChartOptions((prevOptions) => ({
             ...prevOptions,
