@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Col,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Row,
   UncontrolledDropdown,
 } from 'reactstrap';
 import { useParams } from 'react-router-dom';
@@ -11,6 +13,7 @@ import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAddressName } from '../../slices/addressName/reducer';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
+import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
 
 const AddressWithDropdown = () => {
   const { address } = useParams();
@@ -89,7 +92,6 @@ const AddressWithDropdown = () => {
 
   const handleRenameAddress = (value, newName) => {
     dispatch(setAddressName({ value, label: newName || null }));
-    // Swal.fire('Updated!', 'Your wallet has been renamed.', 'success');
   };
 
   const renderAddressWithDropdown = () => {
@@ -144,7 +146,14 @@ const AddressWithDropdown = () => {
         toggleQrModal={toggleQrModal}
         addressTitle={address}
       />
-      <div className="mt-5">{renderAddressWithDropdown()}</div>
+      <div className="mt-5">
+        <Row className="col-12 d-flex justify-content-between align-items-center">
+          <Col>{renderAddressWithDropdown()}</Col>
+          <Col className="d-flex justify-content-end align-items-center">
+            <NetworkDropdown />
+          </Col>
+        </Row>
+      </div>
     </div>
   );
 };

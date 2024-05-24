@@ -3,10 +3,10 @@ const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const fetchNFTS = createAsyncThunk(
   'transactions/fetchNFTS',
-  async ({ address, spam }, { rejectWithValue }) => {
+  async ({ address, spam, networkType }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/nfts?allowSpam=${spam}`,
+        `${API_BASE}/transactions/${networkType}/${address}/nfts?allowSpam=${spam}`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -21,8 +21,8 @@ export const fetchNFTS = createAsyncThunk(
 
 export const fetchPerformance = createAsyncThunk(
   'transactions/fetchPerformance',
-  async ({ address, days }, { rejectWithValue }) => {
-    let url = `${API_BASE}/transactions/eth-mainnet/${address}/balances/historical`;
+  async ({ address, days, networkType }, { rejectWithValue }) => {
+    let url = `${API_BASE}/transactions/${networkType}/${address}/balances/historical`;
     if (days) {
       url += `?days=${days}`;
     }
@@ -61,10 +61,10 @@ export const fetchPerformanceToken = createAsyncThunk(
 
 export const fetchAssets = createAsyncThunk(
   'transactions/fetchAssets',
-  async (address, { rejectWithValue }) => {
+  async ({ address, networkType }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/balances/current?allowSpam=false`,
+        `${API_BASE}/transactions/${networkType}/${address}/balances/current?allowSpam=false`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -80,7 +80,7 @@ export const fetchAssets = createAsyncThunk(
 export const fetchHistory = createAsyncThunk(
   'transactions/fetchTransactions',
   async (
-    { address, query = '', filters = {}, page = 0, assetsFilters },
+    { address, query = '', filters = {}, page = 0, assetsFilters, networkType },
     { rejectWithValue },
   ) => {
     try {
@@ -106,7 +106,7 @@ export const fetchHistory = createAsyncThunk(
       }
 
       const response = await fetch(
-        `${API_BASE}/transactions/eth-mainnet/${address}/new?${queryString}${assetsFilters}`,
+        `${API_BASE}/transactions/${networkType}/${address}/new?${queryString}${assetsFilters}`,
       );
       if (!response.ok) {
         const errorBody = await response.json();

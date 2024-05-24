@@ -27,6 +27,7 @@ import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 
 const HistorialTable = ({ data, setData }) => {
   // #region HOOKS
@@ -36,6 +37,7 @@ const HistorialTable = ({ data, setData }) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
+  const networkType = useSelector(selectNetworkType);
 
   const currentUser = user;
   let isDashboardPage;
@@ -134,7 +136,7 @@ const HistorialTable = ({ data, setData }) => {
     return () => {
       setHasPreview(false);
     };
-  }, [data]);
+  }, [data, networkType]);
 
   // #region FETCH DATA
   const fetchData = async () => {
@@ -159,6 +161,7 @@ const HistorialTable = ({ data, setData }) => {
           },
           assetsFilters: selectAsset,
           page: currentPage,
+          networkType,
         }),
       ).unwrap();
 
@@ -285,6 +288,7 @@ const HistorialTable = ({ data, setData }) => {
     includeSpam,
     selectedAssets,
     refreshPreviewIntervals,
+    networkType,
   ]);
 
   // useEffect(() => {
@@ -310,6 +314,7 @@ const HistorialTable = ({ data, setData }) => {
 
   useEffect(() => {
     fetchData();
+    setErrorData(null);
     setHasMoreData(true);
     setShowDownloadMessage('');
     setCurrentPage(0);
@@ -320,6 +325,7 @@ const HistorialTable = ({ data, setData }) => {
     selectedFilters,
     includeSpam,
     debouncedSearchTerm,
+    networkType,
   ]);
 
   // #region GROUPS
@@ -634,7 +640,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -652,8 +658,9 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -895,13 +902,16 @@ const HistorialTable = ({ data, setData }) => {
 
   if (errorData) {
     return (
-      <Col
-        lg={12}
-        className="position-relative d-flex justify-content-center align-items-center"
-        style={{ minHeight: '50vh' }}
-      >
-        <h1>{errorData}</h1>
-      </Col>
+      <>
+        {isDashboardPage ? null : <AddressWithDropdown />}
+        <Col
+          lg={12}
+          className="position-relative d-flex justify-content-center align-items-center"
+          style={{ minHeight: '50vh' }}
+        >
+          <h1>No data found</h1>
+        </Col>
+      </>
     );
   }
 
