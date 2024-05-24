@@ -38,7 +38,7 @@ const NetworkDropdown = () => {
         <UncontrolledDropdown className="card-header-dropdown ">
           <DropdownToggle
             tag="a"
-            className="btn btn-sm p-1 btn-soft-primary d-flex align-items-center"
+            className="btn btn-sm p-1 btn-soft-primary  border rounded d-flex align-items-center"
             role="button"
           >
             <span className="ms-2 d-flex align-items-center">
@@ -49,11 +49,9 @@ const NetworkDropdown = () => {
                 height={22}
                 className="me-2"
               />
-              <span className="fs-6 text-dark">
-                {capitalizeFirstLetter(networkType)}
-              </span>
+              <span className="fs-6">{capitalizeFirstLetter(networkType)}</span>
             </span>
-            <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
+            <i className="mdi mdi-chevron-down text-dark ms-2 fs-5"></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-end mt-2 ">
             {/* <DropdownItem className="d-flex align-items-center">
