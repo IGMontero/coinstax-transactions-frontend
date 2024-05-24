@@ -12,6 +12,7 @@ import {
   parseValuesToLocale,
   calculatePercentageChange,
   filtersChart,
+  formatPercentageChange,
 } from '../../../utils/utils';
 import { Chart } from 'chart.js';
 import { useParams } from 'react-router-dom';
@@ -43,7 +44,7 @@ const PerformanceChart = ({
     datasets: [
       {
         label: 'Performance',
-        data: [],
+        data: [0],
         fill: true,
         borderColor: '#0759BC',
         tension: 0.1,
@@ -116,7 +117,10 @@ const PerformanceChart = ({
               data.datasets[0].data,
             );
 
-            setSubtitle(percentageChange.toFixed(2));
+            const percentageChangeFormatted =
+              formatPercentageChange(percentageChange);
+
+            setSubtitle(percentageChangeFormatted);
             const date = new Date(data.labels[index]);
             setActiveDate(formatDateToLocale(date));
           }
@@ -408,7 +412,9 @@ const PerformanceChart = ({
       chartData.datasets[0].data,
     );
 
-    setSubtitle(percentageChange.toFixed(2));
+    const percentageChangeFormatted = formatPercentageChange(percentageChange);
+
+    setSubtitle(percentageChangeFormatted);
     setActiveDate(formatDateToLocale(new Date(chartData.labels[index])));
   };
 
@@ -448,7 +454,9 @@ const PerformanceChart = ({
         chartData.datasets[0].data[chartData.datasets[0].data.length - 1];
       const firstValue = chartData.datasets[0].data[0];
       const percentageChange = ((lastValue - firstValue) / firstValue) * 100;
-      setSubtitle(percentageChange.toFixed(2));
+      const percentageChangeFormatted =
+        formatPercentageChange(percentageChange);
+      setSubtitle(percentageChangeFormatted);
       setDiferenceValue(lastValue - firstValue);
     }
   }, [chartData, networkType, token]);
