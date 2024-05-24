@@ -228,7 +228,6 @@ const PerformanceChart = ({
             yAxesOptions = {
               min: -1,
               max: 1,
-              // beginAtZero: false,
               maxTicksLimit: 1,
               autoSkip: false,
               ticks: {
@@ -424,6 +423,7 @@ const PerformanceChart = ({
   const updateValues = (index) => {
     const value = chartData.datasets[0].data[index];
     setTitle(parseValuesToLocale(value, CurrencyUSD));
+
     const percentageChange = calculatePercentageChange(
       index,
       chartData.datasets[0].data,

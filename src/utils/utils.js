@@ -97,10 +97,45 @@ export const formatDateToLocale = (date, showTime) => {
 };
 
 export const formatPercentageChange = (percentage) => {
-  if (isNaN(percentage) || percentage === null || percentage === undefined) {
+  if (
+    isNaN(percentage) ||
+    percentage === null ||
+    percentage === undefined ||
+    !isFinite(percentage)
+  ) {
     return '0.00';
   }
-  return percentage.toFixed(2);
+
+  const numericPercentage = Number(percentage);
+
+  if (isNaN(numericPercentage)) {
+    return '0.00';
+  }
+
+  // Manejo de valores extremadamente pequeños y grandes usando notación exponencial
+  if (Math.abs(numericPercentage) < 1e-6 || Math.abs(numericPercentage) > 1e6) {
+    return numericPercentage.toExponential(2);
+  }
+
+  return numericPercentage.toFixed(2);
+};
+
+export const calculatePercentageChange = (currentIndex, data) => {
+  const currentValue = data[currentIndex];
+  let previousValue;
+
+  if (currentIndex > 0) {
+    previousValue = data[currentIndex - 1];
+  } else {
+    // Current index is 0, use the last value in the array as the previous value
+    previousValue = data[data.length - 1];
+  }
+
+  if (previousValue === 0) {
+    return currentValue === 0 ? 0 : 100;
+  }
+
+  return ((currentValue - previousValue) / previousValue) * 100;
 };
 
 export const capitalizeFirstLetter = (string) => {
@@ -327,27 +362,6 @@ export const updateTransactionsPreview = async ({
   } catch (error) {
     console.log(error);
   }
-};
-
-export const calculatePercentageChange = (currentIndex, data) => {
-  if (currentIndex > 0) {
-    const currentValue = data[currentIndex];
-    const previousValue = data[currentIndex - 1];
-    if (previousValue === 0) {
-      return currentValue === 0 ? 0 : 100;
-    }
-    return ((currentValue - previousValue) / previousValue) * 100;
-  }
-
-  // Current index is always 0 and prev value must be the latest value in the array
-  const currentValue = data[currentIndex];
-  const previousValue = data[data.length - 1];
-
-  if (previousValue === 0) {
-    return currentValue === 0 ? 0 : 100;
-  }
-
-  return ((currentValue - previousValue) / previousValue) * 100;
 };
 
 // #region Getters
