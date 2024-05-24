@@ -112,7 +112,7 @@ const NftsCards = ({ items, onVisitNft, showFiatValues }) => {
                     style={{ height: '100%' }}
                   >
                     <div>
-                      {nft?.collection?.name && (
+                      {nft?.collection?.name ? (
                         <span
                           style={{
                             fontSize: '11px',
@@ -123,18 +123,18 @@ const NftsCards = ({ items, onVisitNft, showFiatValues }) => {
                         >
                           {nft.collection.name || ' '}
                         </span>
-                      )}
+                      ) : null}
 
                       <h6 style={{ fontSize: '14px' }} className="text-dark">
                         {nft.name || ' '}
                       </h6>
                     </div>
-                    {hasFloorPrice && (
+                    {hasFloorPrice ? (
                       <div>
                         <span>{hasFloorPrice ? 'Floor Price' : ' '}</span>
                         <h6 className="text-dark d-flex mb-0">{floorPrice}</h6>
                       </div>
-                    )}
+                    ) : null}
                   </div>
                 </CardBody>
               </Card>
