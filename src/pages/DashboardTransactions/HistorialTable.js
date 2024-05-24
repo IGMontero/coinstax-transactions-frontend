@@ -902,13 +902,16 @@ const HistorialTable = ({ data, setData }) => {
 
   if (errorData) {
     return (
-      <Col
-        lg={12}
-        className="position-relative d-flex justify-content-center align-items-center"
-        style={{ minHeight: '50vh' }}
-      >
-        <h1>{errorData}</h1>
-      </Col>
+      <>
+        {isDashboardPage ? null : <AddressWithDropdown />}
+        <Col
+          lg={12}
+          className="position-relative d-flex justify-content-center align-items-center"
+          style={{ minHeight: '50vh' }}
+        >
+          <h1>No data found</h1>
+        </Col>
+      </>
     );
   }
 
