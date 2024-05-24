@@ -266,7 +266,7 @@ export const updateTransactionsPreview = async ({
   currentPage,
   setData,
   dispatch,
-  pagesChecked,
+  networkType,
   onEnd,
   onError,
 }) => {
@@ -292,6 +292,7 @@ export const updateTransactionsPreview = async ({
             },
             assetsFilters: getSelectedAssetFilters(selectedAssets),
             page: page,
+            networkType,
           }),
         ).unwrap();
 
