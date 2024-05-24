@@ -1,7 +1,7 @@
 import React from 'react';
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
 import pol from '../../assets/images/svg/crypto-icons/polygon.webp';
-// import btc from '../../assets/images/svg/crypto-icons/btc.svg';
+import btc from '../../assets/images/svg/crypto-icons/btc.svg';
 // import arb from '../../assets/images/svg/crypto-icons/ankr.svg';
 // import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
 import {
@@ -26,6 +26,13 @@ const NetworkDropdown = () => {
   const networkIcons = {
     ethereum: eth,
     polygon: pol,
+    all: (
+      <i
+        className="ri-drag-move-line text-warning me-2"
+        style={{ fontSize: '18px' }}
+      ></i>
+    ),
+    btc: btc,
   };
 
   const handleChangeNetwork = (newType) => {
@@ -42,30 +49,48 @@ const NetworkDropdown = () => {
             role="button"
           >
             <span className="ms-2 d-flex align-items-center">
-              <img
-                src={networkIcons[networkType]}
-                alt={networkType}
-                width={22}
-                height={22}
-                className="me-2"
-              />
-              <span className="fs-6">{capitalizeFirstLetter(networkType)}</span>
+              {networkType === 'all' ? (
+                networkIcons['all']
+              ) : (
+                <img
+                  src={networkIcons[networkType]}
+                  alt={networkType}
+                  width={22}
+                  height={22}
+                  className="me-2"
+                />
+              )}
+              <span className="fs-6">
+                {networkType === 'all'
+                  ? 'All Networks'
+                  : capitalizeFirstLetter(networkType)}
+              </span>
             </span>
-            <i className="mdi mdi-chevron-down text-dark ms-2 fs-5"></i>
+            <i className="mdi mdi-chevron-down  ms-2 fs-5"></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-end mt-2 ">
-            {/* <DropdownItem className="d-flex align-items-center">
-                  {' '}
-                  <i className="ri-function-line text-primary fs-2 me-2"></i>
-                  <div className="d-flex flex-column">
-                    <span className="fw-semibold ">All Networks</span>
-                    <div className="d-flex flex-row align-items-center">
-                      <small>$9k </small>{' '}
+            <DropdownItem
+              className="d-flex align-items-center my-0"
+              onClick={() => handleChangeNetwork('all')}
+            >
+              <i
+                style={{
+                  fontSize: '24px',
+                  paddingRight: '7px',
+                  marginLeft: '-6px',
+                }}
+                className="ri-drag-move-line text-warning "
+              ></i>
+              <div className="d-flex flex-column">
+                <span className="fw-semibold">All Networks</span>
+                <div className="d-flex flex-row align-items-center">
+                  {/* <small>$9k </small>{' '}
                       <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                      <small>$12.7k </small>
-                    </div>
-                  </div>
-                </DropdownItem> */}
+                      <small>$12.7k </small> */}
+                </div>
+              </div>
+            </DropdownItem>
+            <DropdownItem divider className="mt-0" />
             <DropdownItem
               className="d-flex align-items-center mb-2"
               onClick={() => handleChangeNetwork('ethereum')}
@@ -79,7 +104,7 @@ const NetworkDropdown = () => {
                 height={20}
               />
               <div className="d-flex flex-column">
-                <span className="">Ethereum</span>
+                <span className="fw-semibold">Ethereum</span>
                 <div className="d-flex flex-row align-items-center">
                   {/* <small>$8.6k </small>{' '}
                   <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
@@ -88,7 +113,7 @@ const NetworkDropdown = () => {
               </div>
             </DropdownItem>
             <DropdownItem
-              className="d-flex align-items-center"
+              className="d-flex align-items-center mb-2"
               onClick={() => handleChangeNetwork('polygon')}
             >
               {' '}
@@ -99,8 +124,8 @@ const NetworkDropdown = () => {
                 width={20}
                 height={20}
               />
-              <div className="d-flex flex-column">
-                <span className="">Polygon</span>
+              <div className="d-flex flex-column ">
+                <span className="fw-semibold">Polygon</span>
                 <div className="d-flex flex-row align-items-center">
                   {/* <small>$434.44k </small>
                   <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
@@ -108,25 +133,29 @@ const NetworkDropdown = () => {
                 </div>
               </div>
             </DropdownItem>
-            {/* <DropdownItem className="d-flex align-items-center">
-                  {' '}
-                  <img
-                    src={btc}
-                    alt="btc"
-                    className="ms-n1 me-2"
-                    width={30}
-                    height={30}
-                  />
-                  <div className="d-flex flex-column">
-                    <span className="fw-semibold">BNB Chain</span>
-                    <div className="d-flex flex-row align-items-center">
-                      <small>$0.020028</small>
-                      <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                      <small></small>
-                    </div>
-                  </div>
-                </DropdownItem>
-                <DropdownItem className="d-flex align-items-center">
+            <DropdownItem
+              disabled
+              className="d-flex align-items-center"
+              onClick={() => handleChangeNetwork('bsc-mainnet')}
+            >
+              {' '}
+              <img
+                src={btc}
+                alt="btc"
+                className="ms-n1 me-2"
+                width={20}
+                height={20}
+              />
+              <div className="d-flex flex-column">
+                <span className="fw-semibold">BNB Chain</span>
+                <div className="d-flex flex-row align-items-center">
+                  {/* <small>$0.020028</small>
+                  <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
+                  <small></small> */}
+                </div>
+              </div>
+            </DropdownItem>
+            {/*  <DropdownItem className="d-flex align-items-center">
                   {' '}
                   <img
                     src={arb}
