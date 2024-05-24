@@ -12,6 +12,7 @@ import {
   parseValuesToLocale,
   calculatePercentageChange,
   filtersChart,
+  formatPercentageChange,
 } from '../../../utils/utils';
 import { Chart } from 'chart.js';
 import { useParams } from 'react-router-dom';
@@ -43,7 +44,7 @@ const PerformanceChart = ({
     datasets: [
       {
         label: 'Performance',
-        data: [],
+        data: [0],
         fill: true,
         borderColor: '#0759BC',
         tension: 0.1,
@@ -116,7 +117,10 @@ const PerformanceChart = ({
               data.datasets[0].data,
             );
 
-            setSubtitle(percentageChange.toFixed(2));
+            const percentageChangeFormatted =
+              formatPercentageChange(percentageChange);
+
+            setSubtitle(percentageChangeFormatted);
             const date = new Date(data.labels[index]);
             setActiveDate(formatDateToLocale(date));
           }
@@ -191,7 +195,6 @@ const PerformanceChart = ({
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
-          console.log(response.total);
           const newLabels = response.total.map(
             (item) => new Date(item.calendarDate),
           );
@@ -221,30 +224,47 @@ const PerformanceChart = ({
 
           let yAxesOptions;
 
-          // Only for 10000 days
-          yAxesOptions = {
-            min: minTick,
-            max: maxTick,
-            maxTicksLimit: 2,
-            // stepSize: stepSize,
-            autoSkip: true,
-            // stepSize: allItemsAreIntegers ? 1 : stepSize,
-            callback: function (value) {
-              if (allItemsAreIntegers) {
-                if (value === minValue || value === maxValue) {
-                  return parseValuesToLocale(value, CurrencyUSD);
+          if (newData.length === 0 || newData.every((val) => val === 0)) {
+            yAxesOptions = {
+              min: -1,
+              max: 1,
+              maxTicksLimit: 1,
+              autoSkip: false,
+              ticks: {
+                callback: function (value) {
+                  if (value === 0) {
+                    return parseValuesToLocale(value, CurrencyUSD);
+                  }
+                  return '';
+                },
+              },
+            };
+          } else {
+            yAxesOptions = {
+              min: minTick,
+              max: maxTick,
+              maxTicksLimit: 2,
+              // stepSize: stepSize,
+              autoSkip: true,
+
+              // stepSize: allItemsAreIntegers ? 1 : stepSize,
+              callback: function (value) {
+                if (allItemsAreIntegers) {
+                  if (value === minValue || value === maxValue) {
+                    return parseValuesToLocale(value, CurrencyUSD);
+                  }
+                } else {
+                  if (
+                    Math.abs(value - minValue) < tolerance ||
+                    Math.abs(value - maxValue) < tolerance
+                  ) {
+                    return parseValuesToLocale(value, CurrencyUSD);
+                  }
                 }
-              } else {
-                if (
-                  Math.abs(value - minValue) < tolerance ||
-                  Math.abs(value - maxValue) < tolerance
-                ) {
-                  return parseValuesToLocale(value, CurrencyUSD);
-                }
-              }
-              return ''; // Return empty string for other values
-            },
-          };
+                return ''; // Return empty string for other values
+              },
+            };
+          }
 
           setChartOptions((prevOptions) => ({
             ...prevOptions,
@@ -403,12 +423,15 @@ const PerformanceChart = ({
   const updateValues = (index) => {
     const value = chartData.datasets[0].data[index];
     setTitle(parseValuesToLocale(value, CurrencyUSD));
+
     const percentageChange = calculatePercentageChange(
       index,
       chartData.datasets[0].data,
     );
 
-    setSubtitle(percentageChange.toFixed(2));
+    const percentageChangeFormatted = formatPercentageChange(percentageChange);
+
+    setSubtitle(percentageChangeFormatted);
     setActiveDate(formatDateToLocale(new Date(chartData.labels[index])));
   };
 
@@ -448,7 +471,9 @@ const PerformanceChart = ({
         chartData.datasets[0].data[chartData.datasets[0].data.length - 1];
       const firstValue = chartData.datasets[0].data[0];
       const percentageChange = ((lastValue - firstValue) / firstValue) * 100;
-      setSubtitle(percentageChange.toFixed(2));
+      const percentageChangeFormatted =
+        formatPercentageChange(percentageChange);
+      setSubtitle(percentageChangeFormatted);
       setDiferenceValue(lastValue - firstValue);
     }
   }, [chartData, networkType, token]);
