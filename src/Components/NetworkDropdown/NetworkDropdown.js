@@ -27,12 +27,19 @@ const NetworkDropdown = () => {
     ethereum: eth,
     polygon: pol,
     all: (
+      <span className="bg bg-light me-2 border rounded-circle">
+        <i
+          className="ri-function-line p-1 text-dark "
+          style={{ fontSize: '18px' }}
+        ></i>
+      </span>
+    ),
+    bnb: (
       <i
         className="ri-drag-move-line text-warning me-2"
         style={{ fontSize: '18px' }}
       ></i>
     ),
-    btc: btc,
   };
 
   const handleChangeNetwork = (newType) => {
@@ -49,7 +56,9 @@ const NetworkDropdown = () => {
             role="button"
           >
             <span className="ms-2 d-flex align-items-center">
-              {networkType === 'all' ? (
+              {networkType === 'bsc-mainnet' ? (
+                networkIcons['bnb']
+              ) : networkType === 'all' ? (
                 networkIcons['all']
               ) : (
                 <img
@@ -61,9 +70,11 @@ const NetworkDropdown = () => {
                 />
               )}
               <span className="fs-6">
-                {networkType === 'all'
-                  ? 'All Networks'
-                  : capitalizeFirstLetter(networkType)}
+                {networkType === 'bsc-mainnet'
+                  ? 'BNB Chain'
+                  : networkType === 'all'
+                    ? 'All Networks'
+                    : capitalizeFirstLetter(networkType)}
               </span>
             </span>
             <i className="mdi mdi-chevron-down  ms-2 fs-5"></i>
@@ -73,13 +84,21 @@ const NetworkDropdown = () => {
               className="d-flex align-items-center my-0"
               onClick={() => handleChangeNetwork('all')}
             >
-              <i
+              {/* <i
                 style={{
                   fontSize: '24px',
                   paddingRight: '7px',
                   marginLeft: '-6px',
                 }}
                 className="ri-drag-move-line text-warning "
+              ></i> */}
+              <i
+                style={{
+                  fontSize: '20px',
+                  paddingRight: '8px',
+                  marginLeft: '-4px',
+                }}
+                className="ri-function-line"
               ></i>
               <div className="d-flex flex-column">
                 <span className="fw-semibold">All Networks</span>
@@ -134,18 +153,18 @@ const NetworkDropdown = () => {
               </div>
             </DropdownItem>
             <DropdownItem
-              disabled
-              className="d-flex align-items-center"
+              className="d-flex align-items-center py-0 my-0"
               onClick={() => handleChangeNetwork('bsc-mainnet')}
             >
               {' '}
-              <img
-                src={btc}
-                alt="btc"
-                className="ms-n1 me-2"
-                width={20}
-                height={20}
-              />
+              <i
+                style={{
+                  fontSize: '20px',
+                  paddingRight: '7px',
+                  marginLeft: '-4px',
+                }}
+                className="ri-drag-move-line py-0 my-0 text-warning "
+              ></i>
               <div className="d-flex flex-column">
                 <span className="fw-semibold">BNB Chain</span>
                 <div className="d-flex flex-row align-items-center">
