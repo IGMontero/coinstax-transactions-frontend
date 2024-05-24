@@ -65,14 +65,19 @@ export const FILTER_NAMES = ['TRADE', 'MINT', 'SEND', 'RECEIVE', 'OTHERS'];
 export const CurrencyUSD = 'USD';
 
 export const formatIdTransaction = (address, prefixLength, suffixLength) => {
-  if (!address || typeof address !== 'string' || !address.startsWith('0x')) {
+  if (typeof address !== 'string') {
     return address;
   }
 
-  const prefix = address.slice(0, prefixLength + 2);
+  const prefix = address.slice(0, prefixLength);
   const suffix = address.slice(-suffixLength);
 
-  return `${prefix}...${suffix}`;
+  // Verify if the address is too short
+  if (address.length > prefixLength + suffixLength) {
+    return `${prefix}...${suffix}`;
+  } else {
+    return address;
+  }
 };
 
 export const formatNumber = (number) => {
