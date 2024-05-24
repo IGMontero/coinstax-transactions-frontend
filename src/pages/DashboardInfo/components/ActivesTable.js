@@ -14,10 +14,8 @@ import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown
 
 const ActivesTable = ({ data, loading }) => {
   const [viewMode, setViewMode] = useState('byPlatform');
-
   const [showMenu, setShowMenu] = useState(false);
   const [hideSmallBalances, setHideSmallBalances] = useState(false);
-
   const [hideZeroBalances, setHideZeroBalances] = useState(true);
 
   const formatBalance = (number) => {
@@ -75,9 +73,16 @@ const ActivesTable = ({ data, loading }) => {
     isDashboardPage = false;
   }
 
+  const filteredItems = data.items
+    ? data.items.filter(
+        (asset) =>
+          (!hideSmallBalances || asset.value >= 1) &&
+          (!hideZeroBalances || (asset.value !== 0 && asset.value !== null)),
+      )
+    : [];
+
   return (
     <React.Fragment>
-      {' '}
       {isDashboardPage ? null : (
         <div className="mt-0">
           <AddressWithDropdown />
@@ -182,9 +187,9 @@ const ActivesTable = ({ data, loading }) => {
           </div>
         </div>
         <div className="border border-2 rounded p-3">
-          {(data.items && data.items.length === 0) || !data ? (
-            <div className="text-center py-2 mt-3 ">
-              <h4>No Assets Found</h4>
+          {!loading && (!data || !data.items || data.items.length === 0) ? (
+            <div className="text-center py-2 mt-3">
+              <h4>No Data Found</h4>
             </div>
           ) : (
             <>
@@ -197,25 +202,20 @@ const ActivesTable = ({ data, loading }) => {
                         ? null
                         : `$${formatBalance(data.total)} US`
                       : null}
-                  </h4>{' '}
-                  {/* <Badge
-                    color="soft-dark"
-                    className="mb-2 ms-2 p-1 fs-7"
-                    style={{ fontWeight: 'inherit' }}
-                  >
-                    <span className="text-dark">100%</span>
-                  </Badge> */}
+                  </h4>
                 </div>
               )}
 
-              <table className="table table-borderless ">
+              <table className="table table-borderless">
                 <thead>
-                  <tr className="text-muted ">
-                    <th scope="col">ASSETS</th>
-                    <th scope="col">PRICE</th>
-                    <th scope="col">BALANCE</th>
-                    <th scope="col">VALUE</th>
-                  </tr>
+                  {filteredItems.length === 0 ? null : (
+                    <tr className="text-muted">
+                      <th scope="col">ASSETS</th>
+                      <th scope="col">PRICE</th>
+                      <th scope="col">BALANCE</th>
+                      <th scope="col">VALUE</th>
+                    </tr>
+                  )}
                 </thead>
                 {loading ? (
                   <tbody>
@@ -228,143 +228,131 @@ const ActivesTable = ({ data, loading }) => {
                       </td>
                     </tr>
                   </tbody>
+                ) : filteredItems.length === 0 ? (
+                  <tbody>
+                    <tr>
+                      <td colSpan="4" className="text-center pb-2 pt-5">
+                        <h4>No Assets Yet</h4>
+                      </td>
+                    </tr>
+                  </tbody>
                 ) : (
                   <tbody>
-                    {data.items &&
-                      data?.items
-                        .filter(
-                          (asset) =>
-                            (!hideSmallBalances || asset.value >= 1) &&
-                            (!hideZeroBalances ||
-                              (asset.value !== 0 && asset.value !== null)),
-                        )
-                        .map((asset, index) => {
-                          return (
-                            <tr key={index}>
-                              <td>
-                                <div className="d-flex align-items-center fw-high">
-                                  <img
-                                    src={asset.logo}
-                                    alt={asset.name}
-                                    className="rounded-circle avatar-xs me-2"
-                                    onError={(e) => {
-                                      e.target.onerror = null;
-                                      e.target.style.display = 'none';
+                    {filteredItems.map((asset, index) => (
+                      <tr key={index}>
+                        <td>
+                          <div className="d-flex align-items-center fw-high">
+                            <img
+                              src={asset.logo}
+                              alt={asset.name}
+                              className="rounded-circle avatar-xs me-2"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.style.display = 'none';
 
-                                      const textNode =
-                                        document.createElement('div');
-                                      textNode.textContent = asset.name
-                                        ?.substring(0, 3)
-                                        .toUpperCase();
-                                      textNode.className =
-                                        'img-assets-placeholder avatar-xs me-2';
+                                const textNode = document.createElement('div');
+                                textNode.textContent = asset.name
+                                  ?.substring(0, 3)
+                                  .toUpperCase();
+                                textNode.className =
+                                  'img-assets-placeholder avatar-xs me-2';
 
-                                      const container = e.target.parentNode;
+                                const container = e.target.parentNode;
 
-                                      container.insertBefore(
-                                        textNode,
-                                        container.firstChild,
-                                      );
-                                    }}
-                                  />
+                                container.insertBefore(
+                                  textNode,
+                                  container.firstChild,
+                                );
+                              }}
+                            />
 
-                                  <div className="d-flex flex-column">
-                                    <div className="d-flex flex-row align-items-center">
-                                      {asset.name}{' '}
-                                      {viewMode === 'perPosition' && (
-                                        <Badge
-                                          color="soft-dark"
-                                          style={{ fontWeight: 'inherit' }}
-                                          className="mx-2 p-1 fs-7"
-                                        >
-                                          <span className="text-dark">
-                                            {' '}
-                                            {asset.percentage < 1
-                                              ? '<0.01'
-                                              : asset.percentage}
-                                            {'%'}
-                                          </span>
-                                        </Badge>
-                                      )}
-                                    </div>
-                                    <div className="d-flex align-items-center text-muted">
-                                      <img
-                                        src={eth}
-                                        width={15}
-                                        height={15}
-                                        className="me-1 "
-                                      />
-                                      Ethereum · Wallet
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td>
-                                {asset.price
-                                  ? parseValuesToLocale(
-                                      asset.price,
-                                      CurrencyUSD,
-                                    )
-                                  : '$0.00'}
-                              </td>
-                              <td>
-                                {asset.balance ? (
-                                  <span>
-                                    {parseValuesToLocale(asset.balance, '') +
-                                      ' ' +
-                                      asset.symbol}
-                                  </span>
-                                ) : (
-                                  '0.00'
-                                )}
-                              </td>
-                              <td>
-                                <div className="d-flex flex-column align-items-start">
-                                  <span>
-                                    {asset.value
-                                      ? parseValuesToLocale(
-                                          asset.value,
-                                          CurrencyUSD,
-                                        )
-                                      : parseValuesToLocale(0, CurrencyUSD)}
-                                  </span>
-                                  <small
-                                    className={`${
-                                      asset.prettyDeltaValuePercent === '0.00%'
-                                        ? 'text-primary'
-                                        : asset.prettyDeltaValuePercent[0] ===
-                                            '-'
-                                          ? 'text-danger'
-                                          : 'text-success'
-                                    }`}
+                            <div className="d-flex flex-column">
+                              <div className="d-flex flex-row align-items-center">
+                                {asset.name}{' '}
+                                {viewMode === 'perPosition' && (
+                                  <Badge
+                                    color="soft-dark"
+                                    style={{ fontWeight: 'inherit' }}
+                                    className="mx-2 p-1 fs-7"
                                   >
-                                    {asset.prettyDeltaValuePercent === '0.00%'
-                                      ? parseValuesToLocale(
-                                          asset.deltaValuePercent,
-                                          '',
-                                        )
-                                      : (asset.prettyDeltaValuePercent[0] ===
-                                        '-'
-                                          ? ''
-                                          : '+') +
-                                        parseValuesToLocale(
-                                          asset.deltaValuePercent,
-                                          '',
-                                        )}
-                                    {asset.deltaValue
-                                      ? ' (' +
-                                        parseValuesToLocale(
-                                          asset.deltaValue,
-                                          CurrencyUSD,
-                                        ) +
-                                        ')'
-                                      : null}
-                                  </small>
-                                </div>
-                              </td>
-                            </tr>
-                          );
-                        })}
+                                    <span className="text-dark">
+                                      {asset.percentage < 1
+                                        ? '<0.01'
+                                        : asset.percentage}
+                                      {'%'}
+                                    </span>
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="d-flex align-items-center text-muted">
+                                <img
+                                  src={eth}
+                                  width={15}
+                                  height={15}
+                                  className="me-1"
+                                />
+                                Ethereum · Wallet
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td>
+                          {asset.price
+                            ? parseValuesToLocale(asset.price, CurrencyUSD)
+                            : '$0.00'}
+                        </td>
+                        <td>
+                          {asset.balance ? (
+                            <span>
+                              {parseValuesToLocale(asset.balance, '') +
+                                ' ' +
+                                asset.symbol}
+                            </span>
+                          ) : (
+                            '0.00'
+                          )}
+                        </td>
+                        <td>
+                          <div className="d-flex flex-column align-items-start">
+                            <span>
+                              {asset.value
+                                ? parseValuesToLocale(asset.value, CurrencyUSD)
+                                : parseValuesToLocale(0, CurrencyUSD)}
+                            </span>
+                            <small
+                              className={`${
+                                asset.prettyDeltaValuePercent === '0.00%'
+                                  ? 'text-primary'
+                                  : asset.prettyDeltaValuePercent[0] === '-'
+                                    ? 'text-danger'
+                                    : 'text-success'
+                              }`}
+                            >
+                              {asset.prettyDeltaValuePercent === '0.00%'
+                                ? parseValuesToLocale(
+                                    asset.deltaValuePercent,
+                                    '',
+                                  )
+                                : (asset.prettyDeltaValuePercent[0] === '-'
+                                    ? ''
+                                    : '+') +
+                                  parseValuesToLocale(
+                                    asset.deltaValuePercent,
+                                    '',
+                                  )}
+                              {asset.deltaValue
+                                ? ' (' +
+                                  parseValuesToLocale(
+                                    asset.deltaValue,
+                                    CurrencyUSD,
+                                  ) +
+                                  ')'
+                                : null}
+                            </small>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                   </tbody>
                 )}
               </table>

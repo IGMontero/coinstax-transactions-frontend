@@ -147,12 +147,12 @@ const AddressWithDropdown = () => {
         addressTitle={address}
       />
       <div className="mt-5">
-        <Row className="col-12 d-flex justify-content-between align-items-center">
+        <Col className="col-12 d-flex justify-content-between align-items-center">
           <Col>{renderAddressWithDropdown()}</Col>
           <Col className="d-flex justify-content-end align-items-center">
             <NetworkDropdown />
           </Col>
-        </Row>
+        </Col>
       </div>
     </div>
   );

@@ -6,6 +6,7 @@ import {
 } from '../helpers/cookies_helper';
 import { setAddressName } from '../slices/addressName/reducer';
 
+// #region Constants
 export const filtersChart = [
   { label: '7D', days: 7, id: 'one_week' },
   { label: '1M', days: 30, id: 'one_month' },
@@ -13,33 +14,6 @@ export const filtersChart = [
   { label: '1Y', days: 365, id: 'one_year' },
   { label: 'ALL', days: 10000, id: 'all' },
 ];
-
-export const getActionMapping = (action) => {
-  switch (action) {
-    case 'RECEIVE':
-      return { color: 'success', icon: ' ri-arrow-down-line fs-3' };
-    case 'SEND':
-      return { color: 'dark', icon: 'ri-arrow-up-line fs-3' };
-    case 'APPROVE':
-      return { color: 'dark', icon: 'ri-lock-unlock-line fs-3' };
-    case 'DESPOSIT':
-      return { color: 'dark', icon: 'ri-download-2-line fs-3' };
-    case 'TRADE':
-      return { color: 'dark', icon: 'ri-arrow-left-right-line fs-3' };
-    case 'WITHDRAW':
-      return { color: 'dark', icon: 'ri-upload-2-line fs-3' };
-    case 'EXECUTE':
-      return { color: 'warning', icon: 'ri-file-3-line fs-3' };
-    case 'BURN':
-      return { color: 'dark', icon: 'ri-fire-line fs-3' };
-    case 'MINT':
-      return { color: 'dark', icon: 'ri-vip-diamond-line fs-3' };
-    case 'OTHER':
-      return { color: 'dark', icon: 'ri-question-mark fs-3' };
-    default:
-      return { color: 'dark', icon: 'ri-question-mark fs-3' };
-  }
-};
 
 export const blockchainActions = {
   EXECUTE: 'EXECUTE',
@@ -64,6 +38,7 @@ export const FILTER_NAMES = ['TRADE', 'MINT', 'SEND', 'RECEIVE', 'OTHERS'];
 
 export const CurrencyUSD = 'USD';
 
+// #region Format functions
 export const formatIdTransaction = (address, prefixLength, suffixLength) => {
   if (typeof address !== 'string') {
     return address;
@@ -97,70 +72,6 @@ export const formatNumber = (number) => {
 
   return roundedNumber.toFixed(shift + 1);
 };
-
-export const capitalizeFirstLetter = (string) => {
-  if (!string) {
-    return '';
-  }
-
-  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-};
-
-export const getSelectedAssetFilters = (selectedAssets) => {
-  switch (selectedAssets) {
-    case 'Tokens':
-      return '&erc20Only=true';
-    case 'NFTs':
-      return '&nftOnly=true';
-    default:
-      return '';
-  }
-};
-
-export function getColSizeBasedOnContent(ledgers) {
-  const maxLength = Math.max(
-    ...ledgers.map((ledger) => ledger.currency?.length),
-  );
-
-  if (maxLength > 10) {
-    return {
-      negative: 'col-xxl-4 col-lg-4',
-      positive: 'col-xxl-7 col-lg-7',
-    };
-  } else {
-    return {
-      negative: 'col-xxl-3 col-lg-3',
-      positive: 'col-xxl-7 col-lg-7',
-    };
-  }
-}
-
-export async function copyToClipboard(textToCopy) {
-  // Navigator clipboard api needs a secure context (https)
-  if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(textToCopy);
-  } else {
-    // Use the 'out of viewport hidden text area' trick
-    const textArea = document.createElement('textarea');
-    textArea.value = textToCopy;
-
-    // Move textarea out of the viewport so it's not visible
-    textArea.style.position = 'absolute';
-    textArea.style.left = '-999999px';
-
-    document.body.prepend(textArea);
-    textArea.select();
-
-    try {
-      document.execCommand('copy');
-    } catch (error) {
-      console.error(error);
-    } finally {
-      textArea.remove();
-    }
-  }
-}
-
 // export const formatDateToLocale = (date, showTime) => {
 //   const options = { year: 'numeric', month: 'long', day: 'numeric' };
 
@@ -183,6 +94,56 @@ export const formatDateToLocale = (date, showTime) => {
     : '';
 
   return `${dateString}${showTime ? ', ' + timeString : ''}`;
+};
+
+export const formatPercentageChange = (percentage) => {
+  if (
+    isNaN(percentage) ||
+    percentage === null ||
+    percentage === undefined ||
+    !isFinite(percentage)
+  ) {
+    return '0.00';
+  }
+
+  const numericPercentage = Number(percentage);
+
+  if (isNaN(numericPercentage)) {
+    return '0.00';
+  }
+
+  // Manejo de valores extremadamente pequeños y grandes usando notación exponencial
+  if (Math.abs(numericPercentage) < 1e-6 || Math.abs(numericPercentage) > 1e6) {
+    return numericPercentage.toExponential(2);
+  }
+
+  return numericPercentage.toFixed(2);
+};
+
+export const calculatePercentageChange = (currentIndex, data) => {
+  const currentValue = data[currentIndex];
+  let previousValue;
+
+  if (currentIndex > 0) {
+    previousValue = data[currentIndex - 1];
+  } else {
+    // Current index is 0, use the last value in the array as the previous value
+    previousValue = data[data.length - 1];
+  }
+
+  if (previousValue === 0) {
+    return currentValue === 0 ? 0 : 100;
+  }
+
+  return ((currentValue - previousValue) / previousValue) * 100;
+};
+
+export const capitalizeFirstLetter = (string) => {
+  if (!string) {
+    return '';
+  }
+
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
 
 export const parseValuesToLocale = (value, currency) => {
@@ -259,6 +220,7 @@ export const parseValuesToLocale = (value, currency) => {
     return parseFloat(value).toFixed(2) + ' ' + currency;
   }
 };
+
 export function formatNumberWithBillionOrMillion(number) {
   if (number === undefined || number === null || isNaN(number)) {
     return 'N/A';
@@ -281,6 +243,19 @@ export function formatNumberWithBillionOrMillion(number) {
   }
   return number.toLocaleString();
 }
+
+export const removeNegativeSign = (amount) => {
+  if (amount === undefined || amount === null) {
+    return '';
+  }
+
+  return amount.replace('-', '');
+};
+
+export const formatDate = (dateString) => {
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
+};
 
 export const updateTransactionsPreview = async ({
   address,
@@ -389,19 +364,107 @@ export const updateTransactionsPreview = async ({
   }
 };
 
-// Remove negative sign from the string
-export const removeNegativeSign = (amount) => {
-  if (amount === undefined || amount === null) {
-    return '';
+// #region Getters
+
+export const getSelectedAssetFilters = (selectedAssets) => {
+  switch (selectedAssets) {
+    case 'Tokens':
+      return '&erc20Only=true';
+    case 'NFTs':
+      return '&nftOnly=true';
+    default:
+      return '';
   }
-
-  return amount.replace('-', '');
 };
 
-export const formatDate = (dateString) => {
-  const options = { year: 'numeric', month: 'long', day: 'numeric' };
-  return new Date(dateString).toLocaleDateString(undefined, options);
+export function getColSizeBasedOnContent(ledgers) {
+  const maxLength = Math.max(
+    ...ledgers.map((ledger) => ledger.currency?.length),
+  );
+
+  if (maxLength > 10) {
+    return {
+      negative: 'col-xxl-4 col-lg-4',
+      positive: 'col-xxl-7 col-lg-7',
+    };
+  } else {
+    return {
+      negative: 'col-xxl-3 col-lg-3',
+      positive: 'col-xxl-7 col-lg-7',
+    };
+  }
+}
+
+export const getMaxMinValues = (dataPoints) => {
+  // Initialize minValue to positive infinity and maxValue to negative infinity
+  let minValue = Infinity;
+  let maxValue = -Infinity;
+
+  // Iterate over each dataPoint in the array
+  dataPoints.forEach((point) => {
+    // If the current dataPoint is smaller than the current minValue, update minValue
+    if (point < minValue) minValue = point;
+    // If the current dataPoint is larger than the current maxValue, update maxValue
+    if (point > maxValue) maxValue = point;
+  });
+  // Return an object containing the minimum and maximum values
+  return { minValue, maxValue };
 };
+
+export const getActionMapping = (action) => {
+  switch (action) {
+    case 'RECEIVE':
+      return { color: 'success', icon: ' ri-arrow-down-line fs-3' };
+    case 'SEND':
+      return { color: 'dark', icon: 'ri-arrow-up-line fs-3' };
+    case 'APPROVE':
+      return { color: 'dark', icon: 'ri-lock-unlock-line fs-3' };
+    case 'DESPOSIT':
+      return { color: 'dark', icon: 'ri-download-2-line fs-3' };
+    case 'TRADE':
+      return { color: 'dark', icon: 'ri-arrow-left-right-line fs-3' };
+    case 'WITHDRAW':
+      return { color: 'dark', icon: 'ri-upload-2-line fs-3' };
+    case 'EXECUTE':
+      return { color: 'warning', icon: 'ri-file-3-line fs-3' };
+    case 'BURN':
+      return { color: 'dark', icon: 'ri-fire-line fs-3' };
+    case 'MINT':
+      return { color: 'dark', icon: 'ri-vip-diamond-line fs-3' };
+    case 'OTHER':
+      return { color: 'dark', icon: 'ri-question-mark fs-3' };
+    default:
+      return { color: 'dark', icon: 'ri-question-mark fs-3' };
+  }
+};
+
+export async function copyToClipboard(textToCopy) {
+  // Navigator clipboard api needs a secure context (https)
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(textToCopy);
+  } else {
+    // Use the 'out of viewport hidden text area' trick
+    const textArea = document.createElement('textarea');
+    textArea.value = textToCopy;
+
+    // Move textarea out of the viewport so it's not visible
+    textArea.style.position = 'absolute';
+    textArea.style.left = '-999999px';
+
+    document.body.prepend(textArea);
+    textArea.select();
+
+    try {
+      document.execCommand('copy');
+    } catch (error) {
+      console.error(error);
+    } finally {
+      textArea.remove();
+    }
+  }
+}
+
+// #region Local Storage
 
 export const saveAddressToLocalStorage = (address) => {
   localStorage
@@ -420,44 +483,3 @@ export const removeOptionsFromLocalStorage = (setOptions, value) => {
     currentOptions.filter((o) => o.value !== value),
   );
 };
-
-// This function takes an array of dataPoints as input
-export const getMaxMinValues = (dataPoints) => {
-  // Initialize minValue to positive infinity and maxValue to negative infinity
-  let minValue = Infinity;
-  let maxValue = -Infinity;
-
-  // Iterate over each dataPoint in the array
-  dataPoints.forEach((point) => {
-    // If the current dataPoint is smaller than the current minValue, update minValue
-    if (point < minValue) minValue = point;
-    // If the current dataPoint is larger than the current maxValue, update maxValue
-    if (point > maxValue) maxValue = point;
-  });
-  // Return an object containing the minimum and maximum values
-  return { minValue, maxValue };
-};
-
-// This function calculates the percentage change between the current value and the previous value in a given data array.
-export const calculatePercentageChange = (currentIndex, data) => {
-  if (currentIndex > 0) {
-    const currentValue = data[currentIndex];
-    const previousValue = data[currentIndex - 1];
-    if (previousValue === 0) {
-      return currentValue === 0 ? 0 : 100;
-    }
-    return ((currentValue - previousValue) / previousValue) * 100;
-  }
-
-  // Current index is always 0 and prev value must be the latest value in the array
-  const currentValue = data[currentIndex];
-  const previousValue = data[data.length - 1];
-
-  if (previousValue === 0) {
-    return currentValue === 0 ? 0 : 100;
-  }
-
-  return ((currentValue - previousValue) / previousValue) * 100;
-};
-
-//Save address
