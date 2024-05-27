@@ -16,12 +16,22 @@ import {
 } from '../../../utils/utils';
 import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
+import { getAppOptions, setAppOptions } from '../../../helpers/cookies_helper';
 
 const ActivesTable = ({ data, loading }) => {
+  const appOptions = getAppOptions();
   const [viewMode, setViewMode] = useState('byPlatform');
   const [showMenu, setShowMenu] = useState(false);
-  const [hideSmallBalances, setHideSmallBalances] = useState(false);
-  const [hideZeroBalances, setHideZeroBalances] = useState(true);
+  const [hideSmallBalances, setHideSmallBalances] = useState(
+    appOptions.hideSmallBalances,
+  );
+  const [hideZeroBalances, setHideZeroBalances] = useState(
+    appOptions.hideZeroBalances,
+  );
+
+  useEffect(() => {
+    setAppOptions({ ...appOptions, hideSmallBalances, hideZeroBalances });
+  }, [hideSmallBalances, hideZeroBalances]);
 
   const formatBalance = (number) => {
     if (typeof number !== 'number' || isNaN(number)) {
