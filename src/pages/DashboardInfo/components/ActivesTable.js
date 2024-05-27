@@ -296,8 +296,12 @@ const ActivesTable = ({ data, loading }) => {
                                   className={'me-1'}
                                   blockchainType={asset.blockchain}
                                 />
-                                {capitalizeFirstLetter(asset.blockchain)} ·
-                                Wallet
+                                {asset.blockchain === 'bnb'
+                                  ? 'BNB Chain'
+                                  : capitalizeFirstLetter(
+                                      asset.blockchain,
+                                    )}{' '}
+                                · Wallet
                               </div>
                             </div>
                           </div>

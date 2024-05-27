@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import AcitvesTable from '../DashboardInfo/components/ActivesTable';
 import { fetchAssets } from '../../slices/transactions/thunk';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectNetworkType } from '../../slices/networkType/reducer';
+import ActivesTable from '../DashboardInfo/components/ActivesTable';
 
 const DashboardAssets = () => {
   const { address } = useParams();
@@ -44,7 +44,7 @@ const DashboardAssets = () => {
 
   return (
     <div className="page-content ">
-      <AcitvesTable loading={loadingAssets} data={assetsData} />
+      <ActivesTable loading={loadingAssets} data={assetsData} />
     </div>
   );
 };
