@@ -171,7 +171,7 @@ const ReceivedColumn = ({ transaction, negativeLedgers }) => {
                           e.stopPropagation();
                           if (nftContractAddress && nftTokenId) {
                             navigate(
-                              `/contract/${nftContractAddress}?tokenId=${nftTokenId}`,
+                              `/contract/${nftContractAddress}?networkType${transaction.blockchain}&tokenId=${nftTokenId}`,
                             );
                           }
                         } else {

@@ -114,7 +114,7 @@ const LedgerItem = ({
                 e.stopPropagation();
                 if (addressLink && ledger.txInfo.tokenId) {
                   navigate(
-                    `/contract/${addressLink}/?tokenId=${ledger.txInfo.tokenId}`,
+                    `/contract/${addressLink}/?networkType=${transaction.blockchain}&tokenId=${ledger.txInfo.tokenId}`,
                   );
                 }
               }}

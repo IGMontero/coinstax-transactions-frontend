@@ -64,7 +64,14 @@ const DashboardNFT = () => {
         setSymbol(res.symbol);
         setAttributes(res.metadata.attributes);
         setDescription(res.description);
-        setDetails(['Network', `${capitalizeFirstLetter(networkType)}`]);
+        setDetails([
+          'Network',
+          `${
+            networkType === 'bnb'
+              ? 'BNB Chain'
+              : capitalizeFirstLetter(networkType)
+          }`,
+        ]);
       }
       setLoading(false);
     } catch (error) {
