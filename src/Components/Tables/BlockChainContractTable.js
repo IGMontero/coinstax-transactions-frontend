@@ -684,7 +684,7 @@ const BlockChainContractTable = ({
             ))
           ) : (
             <tr>
-              <td colSpan="9" className="text-center">
+              <td colSpan="12" className="text-center">
                 <h4>No contracts found</h4>
               </td>
             </tr>

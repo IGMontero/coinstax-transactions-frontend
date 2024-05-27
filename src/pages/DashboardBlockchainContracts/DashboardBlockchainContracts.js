@@ -10,6 +10,7 @@ import { handleActionResult } from '../../utils/useHandleAction';
 import EditBlockChainContract from '../DashboardTransactions/HistorialComponents/modals/EditBlockChainContract';
 import BlockChainContractTable from '../../Components/Tables/BlockChainContractTable';
 import { selectNetworkType } from '../../slices/networkType/reducer';
+import NetworkDropdown from '../../Components/NetworkDropdown/NetworkDropdown';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
@@ -91,7 +92,7 @@ const DashboardBlockchainContracts = () => {
 
   useEffect(() => {
     getBlockchainContracts();
-  }, [currentPage]);
+  }, [currentPage, networkType]);
 
   const handleEditBlockChainContract = async (data) => {
     try {
@@ -149,6 +150,9 @@ const DashboardBlockchainContracts = () => {
         transactionToEdit={selectedContract}
       />
       <div className="page-content mt-5">
+        <div className="d-flex justify-content-end">
+          <NetworkDropdown />
+        </div>
         <h3>Blockchain Contracts</h3>
         <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
           <Input
