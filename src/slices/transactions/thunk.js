@@ -1,4 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { getTokenFromCookies } from '../../helpers/cookies_helper';
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const fetchNFTS = createAsyncThunk(
@@ -126,7 +127,7 @@ export const downloadTransactions = createAsyncThunk(
     { blockchain, address, query = '', filters = {}, assetsFilters },
     { rejectWithValue },
   ) => {
-    const token = localStorage.getItem('token');
+    const token = getTokenFromCookies();
     try {
       let queryString = '';
       if (query) {

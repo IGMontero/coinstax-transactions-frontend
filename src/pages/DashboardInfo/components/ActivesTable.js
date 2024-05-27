@@ -194,7 +194,7 @@ const ActivesTable = ({ data, loading }) => {
         <div className="border border-2 rounded p-3">
           {!loading && (!data || !data.items || data.items.length === 0) ? (
             <div className="text-center py-2 mt-3">
-              <h4>No Data Found</h4>
+              <h4>No Assets Found</h4>
             </div>
           ) : (
             <>
