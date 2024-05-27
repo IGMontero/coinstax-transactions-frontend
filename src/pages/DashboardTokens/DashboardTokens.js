@@ -129,7 +129,11 @@ const DashboardTokens = () => {
               <Tags />
             </Col>*/}
             <Col className="col-12 my-5">
-              <Explorers platforms={data?.platforms} />
+              {data?.platforms ? (
+                <Explorers platforms={data?.platforms} />
+              ) : (
+                <Spinner style={{ width: '4rem', height: '4rem' }} />
+              )}
             </Col>
             {/* <Col className="col-12 my-5">
               <History />
