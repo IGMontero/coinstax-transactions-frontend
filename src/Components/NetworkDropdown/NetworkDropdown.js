@@ -27,13 +27,14 @@ const NetworkDropdown = () => {
       icon: (
         <i
           style={{
-            fontSize: '20px',
+            fontSize: '16px',
             paddingRight: '8px',
             marginLeft: '-4px',
           }}
           className="ri-function-line "
         ></i>
       ),
+      withDivider: true,
     },
     {
       key: 'ethereum',
@@ -66,17 +67,23 @@ const NetworkDropdown = () => {
   };
 
   const renderNetworkIcon = (network) => {
-    if (network.key === 'all') {
-      return network.icon;
-    }
     return (
-      <img
-        src={network.icon}
-        alt={network.iconAlt}
-        width={network.width}
-        height={network.height}
-        className="ms-n1 me-2"
-      />
+      <>
+        {network.key === 'all' ? (
+          <>
+            {network.icon}
+            <DropdownItem divider />
+          </>
+        ) : (
+          <img
+            src={network.icon}
+            alt={network.iconAlt}
+            width={network.width}
+            height={network.height}
+            className="ms-n1 me-2"
+          />
+        )}
+      </>
     );
   };
 
@@ -89,9 +96,9 @@ const NetworkDropdown = () => {
             className="btn btn-sm p-1 btn-soft-primary  border rounded d-flex align-items-center"
             role="button"
           >
-            <span className="ms-2 d-flex align-items-center">
+            <span className="ms-2 d-flex align-items-center py-0">
               {renderNetworkIcon(networks.find((n) => n.key === networkType))}
-              <span className="fs-6">
+              <span className="fs-6 py-0">
                 {networkType === 'all'
                   ? 'All Networks'
                   : capitalizeFirstLetter(networkType)}
@@ -101,16 +108,21 @@ const NetworkDropdown = () => {
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-end mt-2 ">
             {networks.map((network) => (
-              <DropdownItem
-                key={network.key}
-                className="d-flex align-items-center py-2 "
-                onClick={() => handleChangeNetwork(network.key)}
-              >
-                {renderNetworkIcon(network)}
-                <div className="d-flex flex-column">
-                  <span className="fw-normal">{network.label}</span>
-                </div>
-              </DropdownItem>
+              <>
+                <DropdownItem
+                  key={network.key}
+                  className="d-flex align-items-center mt-0 py-2"
+                  onClick={() => handleChangeNetwork(network.key)}
+                >
+                  {renderNetworkIcon(network)}
+                  <div className="d-flex flex-column">
+                    <span className="fw-normal">{network.label}</span>
+                  </div>
+                </DropdownItem>
+                {network.withDivider ? (
+                  <DropdownItem divider className="my-0 py-0" />
+                ) : null}
+              </>
             ))}
           </DropdownMenu>
         </UncontrolledDropdown>
