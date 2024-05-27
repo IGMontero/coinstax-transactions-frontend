@@ -9,8 +9,13 @@ import {
   Spinner,
 } from 'reactstrap';
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
-import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
+import {
+  CurrencyUSD,
+  capitalizeFirstLetter,
+  parseValuesToLocale,
+} from '../../../utils/utils';
 import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
+import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
 
 const ActivesTable = ({ data, loading }) => {
   const [viewMode, setViewMode] = useState('byPlatform');
@@ -285,13 +290,14 @@ const ActivesTable = ({ data, loading }) => {
                                 )}
                               </div>
                               <div className="d-flex align-items-center text-muted">
-                                <img
-                                  src={eth}
+                                <BlockchainImage
                                   width={15}
                                   height={15}
-                                  className="me-1"
+                                  className={'me-1'}
+                                  blockchainType={asset.blockchain}
                                 />
-                                Ethereum · Wallet
+                                {capitalizeFirstLetter(asset.blockchain)} ·
+                                Wallet
                               </div>
                             </div>
                           </div>
