@@ -117,7 +117,7 @@ const ContractInfoColumn = ({
       }
       const actionResult = await dispatch(
         editBlockChainContract({
-          blockchain: 'ethereum',
+          networkType: transaction.blockchain,
           address: blockchainContractAddress,
           data,
         }),

@@ -105,8 +105,10 @@ const Nfts = ({ address, isUnsupported }) => {
     }
   }, [address, dispatch, includeSpam, networkType]);
 
-  const handleVisitNFT = (contractAddress, tokenId) => {
-    navigate(`/contract/${contractAddress}?tokenId=${tokenId}`);
+  const handleVisitNFT = (contractAddress, tokenId, network) => {
+    navigate(
+      `/contract/${contractAddress}?networkType=${network}&tokenId=${tokenId}`,
+    );
   };
 
   const handleShowSpam = () => {
@@ -367,6 +369,7 @@ const Nfts = ({ address, isUnsupported }) => {
             ) : (
               <Col>
                 <NftsCards
+                  isDashboardPage={isDashboardPage}
                   items={items}
                   loading={loading}
                   onVisitNft={handleVisitNFT}
