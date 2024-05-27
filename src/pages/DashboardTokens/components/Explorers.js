@@ -1,8 +1,8 @@
-import React from 'react';
-import { Col, Row, Button, Badge } from 'reactstrap';
-import { formatIdTransaction } from '../../../utils/utils';
+import React, { useState } from 'react';
+import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
 
 const Explorers = ({ platforms }) => {
+  const [copiedKey, setCopiedKey] = useState(null);
   const explorerData = [
     {
       image: 'https://chain-icons.s3.amazonaws.com/zora',
@@ -73,12 +73,25 @@ const Explorers = ({ platforms }) => {
   };
   const findExplorer = (platformName) => {
     const normalizedName = normalizeName(platformName);
-    // Primero verifica si hay una excepción definida
     const mappedName = exceptionMap[normalizedName] || normalizedName;
 
     return explorerData.find(({ name }) =>
       normalizeName(name).includes(mappedName),
     );
+  };
+
+  const handleCopy = async (e, text, key) => {
+    e.stopPropagation();
+    e.preventDefault();
+    try {
+      copyToClipboard(text);
+      setCopiedKey(key);
+      setTimeout(() => {
+        setCopiedKey(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
   };
 
   return (
@@ -92,22 +105,41 @@ const Explorers = ({ platforms }) => {
           if (!explorer) return null;
 
           return (
-            <Col key={index} md={2} className="mb-4 me-2">
-              <div className="w-100 p-1 border borde-1 rounded d-flex align-items-center justify-content-start text-left">
+            <div
+              key={index}
+              className="mb-4 me-3"
+              style={{ cursor: 'pointer', minWidth: 180, overflow: 'hidden' }}
+            >
+              <div className="w-100 p-1 py-2 border border-1 rounded d-flex align-items-center justify-content-start text-left">
                 <img
                   src={explorer.image}
                   alt={explorer.name}
                   style={{ width: 30, height: 30 }}
-                  className="me-2"
+                  className="mx-2"
                 />
-                <div>
-                  <div>{explorer.name}</div>
-                  <small className="text-muted">
-                    {formatIdTransaction(address, 4, 6)}
-                  </small>
+                <div className="flex-grow-1">
+                  <div className="d-flex justify-content-between align-items-center">
+                    <div>
+                      <div>{explorer.name}</div>
+                      <small
+                        onClick={(e) => handleCopy(e, address, key)}
+                        className="text-muted d-flex"
+                      >
+                        {formatIdTransaction(address, 4, 6)}{' '}
+                        {copiedKey === key ? (
+                          <i className="ri-check-line ms-2"></i>
+                        ) : (
+                          <i className="ri-file-copy-line ms-2"></i>
+                        )}
+                      </small>
+                    </div>
+                    <div className="ms-auto d-flex">
+                      <i className="ri-arrow-right-up-line fs-4 pb-1"></i>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </Col>
+            </div>
           );
         })}
       </div>
