@@ -45,24 +45,6 @@ const ActivesTable = ({ data, loading }) => {
     return formattedNumber;
   };
 
-  const formatPriceAndValue = (number) => {
-    if (typeof number !== 'number' || isNaN(number)) {
-      return 'Invalid Number';
-    }
-
-    const hasComma = number > 999;
-    const hasDecimal = number % 1 !== 0;
-    const minimumFractionDigits = hasComma ? 2 : hasDecimal ? 2 : 0;
-
-    const formattedNumber = number.toLocaleString(undefined, {
-      minimumFractionDigits:
-        number === 0 && hasDecimal ? 6 : minimumFractionDigits,
-      maximumFractionDigits: 6,
-    });
-
-    return formattedNumber;
-  };
-
   const handleViewModeChange = (mode) => {
     setViewMode(mode);
   };
@@ -262,22 +244,28 @@ const ActivesTable = ({ data, loading }) => {
                               alt={asset.name}
                               className="rounded-circle avatar-xs me-2"
                               onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.style.display = 'none';
+                                e.target.onerror = null; // Previene la reactivación del evento onError
+                                if (
+                                  !e.target.parentNode.querySelector(
+                                    '.img-assets-placeholder',
+                                  )
+                                ) {
+                                  e.target.style.display = 'none'; // Oculta la imagen que no pudo cargar
 
-                                const textNode = document.createElement('div');
-                                textNode.textContent = asset.name
-                                  ?.substring(0, 3)
-                                  .toUpperCase();
-                                textNode.className =
-                                  'img-assets-placeholder avatar-xs me-2';
+                                  const textNode =
+                                    document.createElement('div');
+                                  textNode.textContent = asset.name
+                                    ?.substring(0, 3)
+                                    .toUpperCase();
+                                  textNode.className =
+                                    'img-assets-placeholder avatar-xs me-2';
 
-                                const container = e.target.parentNode;
-
-                                container.insertBefore(
-                                  textNode,
-                                  container.firstChild,
-                                );
+                                  const container = e.target.parentNode;
+                                  container.insertBefore(
+                                    textNode,
+                                    container.firstChild,
+                                  );
+                                }
                               }}
                             />
 
