@@ -365,6 +365,7 @@ const Nfts = ({ address, isUnsupported }) => {
             ) : (
               <Col>
                 <NftsCards
+                  isDashboardPage={isDashboardPage}
                   items={items}
                   loading={loading}
                   onVisitNft={handleVisitNFT}
