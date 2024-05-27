@@ -3,7 +3,7 @@ const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const getUserAddresses = createAsyncThunk(
   'userAddresses/getUserAddresses',
-  async ({ page, address, blockchain }, { rejectWithValue }) => {
+  async ({ page, address }, { rejectWithValue }) => {
     const token = localStorage.getItem('token');
     try {
       let url = `${API_BASE}/admin/addresses`;

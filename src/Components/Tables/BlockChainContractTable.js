@@ -27,7 +27,8 @@ import {
   setAllAsDirty,
 } from '../../slices/blockchainContracts/thunk';
 import Swal from 'sweetalert2';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 
 const BlockChainContractTable = ({
   contracts,
@@ -40,6 +41,8 @@ const BlockChainContractTable = ({
   errorMessageEdit,
 }) => {
   const dispatch = useDispatch();
+
+  const networkType = useSelector(selectNetworkType);
 
   const [loadingUpdateTrustedState, setLoadingUpdateTrustedState] =
     useState(false);
@@ -106,7 +109,7 @@ const BlockChainContractTable = ({
         const actionResult = await dispatch(
           setAllAsDirty({
             type: 'contracts',
-            blockchain: 'ethereum',
+            networkType,
             address,
           }),
         );
@@ -143,7 +146,7 @@ const BlockChainContractTable = ({
     try {
       const actionResult = await dispatch(
         editBlockChainContract({
-          blockchain: 'ethereum',
+          networkType,
           address: contract.Address,
           data: {
             IsERC20: !contract.IsERC20,
@@ -183,7 +186,7 @@ const BlockChainContractTable = ({
     try {
       const actionResult = await dispatch(
         editBlockChainContract({
-          blockchain: 'ethereum',
+          networkType,
           address: contract.Address,
           data: {
             CoinGeckoId: newCoinGeckoId,
@@ -212,7 +215,7 @@ const BlockChainContractTable = ({
     try {
       const actionResult = await dispatch(
         setBlockchainContractAsDirty({
-          blockchain: 'ethereum',
+          networkType,
           address,
         }),
       );
@@ -258,7 +261,7 @@ const BlockChainContractTable = ({
         setLoading(true);
         const actionResult = await dispatch(
           deleteBlockchainContract({
-            blockchain: 'ethereum',
+            networkType,
             address: contract.Address,
           }),
         );
@@ -300,7 +303,7 @@ const BlockChainContractTable = ({
       setUpdatingContractId(contract.Id);
       const actionResult = await dispatch(
         updateTrustedState({
-          blockchain: 'ethereum',
+          networkType,
           address: contract.Address,
           trustedState: state,
         }),
@@ -681,7 +684,7 @@ const BlockChainContractTable = ({
             ))
           ) : (
             <tr>
-              <td colSpan="9" className="text-center">
+              <td colSpan="12" className="text-center">
                 <h4>No contracts found</h4>
               </td>
             </tr>
