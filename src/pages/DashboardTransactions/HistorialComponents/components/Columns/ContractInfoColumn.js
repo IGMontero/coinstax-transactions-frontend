@@ -5,7 +5,6 @@ import {
   copyToClipboard,
   formatIdTransaction,
 } from '../../../../../utils/utils';
-import { Link } from 'react-router-dom';
 import EditBlockChainContract from '../../modals/EditBlockChainContract';
 import Swal from 'sweetalert2';
 import { editBlockChainContract } from '../../../../../slices/blockchainContracts/thunk';
