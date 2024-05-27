@@ -1,17 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Select, { components } from 'react-select';
 import { Col } from 'reactstrap';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import { layoutModeTypes } from '../constants/layout';
 import CustomOptions from './components/CustomOptions';
+import { setAddressName } from '../../slices/addressName/reducer';
 
-const SearchBar = ({ onDropdownSelect, selectedOption }) => {
+const SearchBar = ({ selectedOption }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
-  const { address } = useParams();
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
@@ -175,18 +174,25 @@ const SearchBar = ({ onDropdownSelect, selectedOption }) => {
       setSearchInput(inputValue);
     }
   };
-
   const handleChange = (selectedOption) => {
     if (selectedOption && selectedOption.value) {
       if (!selectedOption.value.trim()) {
         console.error('Empty address selected, not navigating or saving.');
         return;
       }
+
       if (selectedOption.coingeckoId) {
         navigate(`/tokens/${selectedOption.coingeckoId}`);
       } else {
         navigate(`/address/${selectedOption.value}`);
       }
+
+      dispatch(
+        setAddressName({
+          value: selectedOption.value,
+          label: selectedOption.label || null,
+        }),
+      );
       setSearchInput('');
     }
   };
