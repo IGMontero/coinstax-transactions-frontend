@@ -5,6 +5,25 @@ const cookiesDomain = isDevelopment
   ? 'localhost'
   : `.${process.env.REACT_APP_ROOT_DOMAIN}`;
 
+export const saveTokenInCookies = (token) => {
+  Cookies.set('token', token, {
+    expires: 365,
+    domain: cookiesDomain,
+  });
+};
+
+export const getTokenFromCookies = () => {
+  return Cookies.get('token', {
+    domain: cookiesDomain,
+  });
+};
+
+export const removeTokenFromCookies = () => {
+  Cookies.remove('token', {
+    domain: cookiesDomain,
+  });
+};
+
 export const getUserSavedAddresses = () => {
   // Get addresses cookie with domain set to the root domain
   return Cookies.get('addresses', {
