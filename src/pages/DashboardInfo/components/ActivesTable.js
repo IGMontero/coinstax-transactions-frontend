@@ -244,13 +244,13 @@ const ActivesTable = ({ data, loading }) => {
                               alt={asset.name}
                               className="rounded-circle avatar-xs me-2"
                               onError={(e) => {
-                                e.target.onerror = null; // Previene la reactivación del evento onError
+                                e.target.onerror = null;
                                 if (
                                   !e.target.parentNode.querySelector(
                                     '.img-assets-placeholder',
                                   )
                                 ) {
-                                  e.target.style.display = 'none'; // Oculta la imagen que no pudo cargar
+                                  e.target.style.display = 'none';
 
                                   const textNode =
                                     document.createElement('div');
