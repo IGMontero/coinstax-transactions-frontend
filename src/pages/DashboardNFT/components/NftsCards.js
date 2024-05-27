@@ -7,8 +7,8 @@ import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage
 const NftsCards = ({ items, onVisitNft, showFiatValues, isDashboardPage }) => {
   const [imageErrors, setImageErrors] = useState({});
 
-  const handleVisitNFT = (contractAddress, tokenId) => {
-    onVisitNft(contractAddress, tokenId);
+  const handleVisitNFT = (contractAddress, tokenId, networkType) => {
+    onVisitNft(contractAddress, tokenId, networkType);
   };
 
   return (
@@ -43,7 +43,13 @@ const NftsCards = ({ items, onVisitNft, showFiatValues, isDashboardPage }) => {
               style={{ maxWidth: '100%' }}
             >
               <Card
-                onClick={() => handleVisitNFT(nft.contractAddress, nft.tokenId)}
+                onClick={() =>
+                  handleVisitNFT(
+                    nft.contractAddress,
+                    nft.tokenId,
+                    nft.blockchain,
+                  )
+                }
                 className="cursor-pointer border-2 border bg-transparent shadow-none"
                 style={{
                   borderRadius: '10px',
