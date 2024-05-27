@@ -101,13 +101,13 @@ const DashboardUserAddresses = () => {
     setCurrentPage(page);
   };
 
-  const handleRefreshAllTransactions = async (address) => {
+  const handleRefreshAllTransactions = async (item) => {
     setLoading(true);
     try {
       const actionResult = await dispatch(
         refreshAllTransactions({
-          blockchain: 'ethereum',
-          address,
+          networkType: item.Blockchain,
+          address: item.Address,
         }),
       );
 
@@ -137,10 +137,10 @@ const DashboardUserAddresses = () => {
     }
   };
 
-  const handleSetAllAsDirty = async (address) => {
+  const handleSetAllAsDirty = async (item) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: `All transactions linked to address ${address} will be set as dirty.`,
+      text: `All transactions linked to address ${item.Address} will be set as dirty.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Continue',
@@ -152,8 +152,8 @@ const DashboardUserAddresses = () => {
         const actionResult = await dispatch(
           setAllAsDirty({
             type: 'addresses',
-            blockchain: 'ethereum',
-            address: address,
+            networkType: item.Blockchain,
+            address: item.Address,
           }),
         );
 
@@ -167,7 +167,7 @@ const DashboardUserAddresses = () => {
           () => {
             Swal.fire(
               'Success',
-              `All transactions with address ${address} have been set as dirty.`,
+              `All transactions with address ${item.Address} have been set as dirty.`,
               'success',
             );
 
@@ -184,9 +184,9 @@ const DashboardUserAddresses = () => {
     }
   };
 
-  const handleDeleteUserAddress = async (address) => {
+  const handleDeleteUserAddress = async (item) => {
     const result = await Swal.fire({
-      title: `Are you sure you want to delete all transactions for address ${address}?`,
+      title: `Are you sure you want to delete all transactions for address ${item.Address}?`,
       // text: `You won't be able to revert this!`,
       icon: 'warning',
       showCancelButton: true,
@@ -199,8 +199,8 @@ const DashboardUserAddresses = () => {
         setLoading(true);
         const actionResult = await dispatch(
           deleteUsersAddress({
-            blockchain: 'ethereum',
-            address,
+            networkType: item.Blockchain,
+            address: item.Address,
           }),
         );
 
@@ -246,26 +246,26 @@ const DashboardUserAddresses = () => {
     }, 2000);
   };
 
-  const renderDropdown = (address) => {
+  const renderDropdown = (item) => {
     const portalRoot = document.getElementById('portal-root');
     return portalRoot
       ? ReactDOM.createPortal(
           <DropdownMenu>
             <DropdownItem
               className="d-flex align-items-center"
-              onClick={() => handleRefreshAllTransactions(address.Address)}
+              onClick={() => handleRefreshAllTransactions(item)}
             >
               Refresh All Transactions
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
-              onClick={() => handleSetAllAsDirty(address.Address)}
+              onClick={() => handleSetAllAsDirty(item)}
             >
               Set All Tx as Dirty
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
-              onClick={() => handleDeleteUserAddress(address.Address)}
+              onClick={() => handleDeleteUserAddress(item)}
             >
               Delete All Transactions
             </DropdownItem>
@@ -338,22 +338,22 @@ const DashboardUserAddresses = () => {
             </div>
           )}
           {userAddresses && userAddresses.length > 0 ? (
-            userAddresses?.map((address) => (
-              <tr style={{ height: 60 }} key={address.Id}>
-                <td className="align-middle">{address.Id}</td>
-                <td className="align-middle">{address.Blockchain}</td>
+            userAddresses?.map((item) => (
+              <tr style={{ height: 60 }} key={item.Id}>
+                <td className="align-middle">{item.Id}</td>
+                <td className="align-middle">{item.Blockchain}</td>
                 <td className="align-middle">
                   <span
-                    id={`popoverAddress-${address.Id}-${address.Address}`}
+                    id={`popoverAddress-${item.Id}-${item.Address}`}
                     style={{ cursor: 'pointer' }}
-                    onClick={(e) => handleCopyValue(e, address.Address)}
+                    onClick={(e) => handleCopyValue(e, item.Address)}
                   >
-                    {formatIdTransaction(address.Address, 4, 4)}
+                    {formatIdTransaction(item.Address, 4, 4)}
                   </span>
                   <UncontrolledPopover
                     trigger="hover"
                     placement="right"
-                    target={`popoverAddress-${address.Id}-${address.Address}`}
+                    target={`popoverAddress-${item.Id}-${item.Address}`}
                   >
                     <PopoverBody
                       style={{
@@ -366,19 +366,19 @@ const DashboardUserAddresses = () => {
                           fontSize: '0.70rem',
                         }}
                       >
-                        {isCopied ? 'Copied' : address.Address}
+                        {isCopied ? 'Copied' : item.Address}
                       </span>
                     </PopoverBody>
                   </UncontrolledPopover>
                 </td>
                 <td className="align-middle">
-                  {address.IsProcessingTransactions ? 'Yes' : 'No'}
+                  {item.IsProcessingTransactions ? 'Yes' : 'No'}
                 </td>
                 <td className="align-middle">
-                  {address.LastTransactionsPageProcessed}
+                  {item.LastTransactionsPageProcessed}
                 </td>
                 <td className="align-middle">
-                  {address.AllTransactionsProcessed ? 'Yes' : 'No'}
+                  {item.AllTransactionsProcessed ? 'Yes' : 'No'}
                 </td>
                 <td className="align-middle ">
                   <ButtonGroup onClick={(e) => e.stopPropagation()}>
@@ -386,7 +386,7 @@ const DashboardUserAddresses = () => {
                       <DropdownToggle tag="a" className="nav-link">
                         <i className="ri-more-2-fill"></i>
                       </DropdownToggle>
-                      {renderDropdown(address)}
+                      {renderDropdown(item)}
                     </UncontrolledDropdown>
                   </ButtonGroup>
                 </td>

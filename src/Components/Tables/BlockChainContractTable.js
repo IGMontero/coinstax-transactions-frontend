@@ -94,10 +94,10 @@ const BlockChainContractTable = ({
     setActiveEditId(null);
   };
 
-  const handleSetAllAsDirty = async (address) => {
+  const handleSetAllAsDirty = async (contract) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: `All transactions linked to address ${address} will be set as dirty.`,
+      text: `All transactions linked to address ${contract.Address} will be set as dirty.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Continue',
@@ -109,8 +109,8 @@ const BlockChainContractTable = ({
         const actionResult = await dispatch(
           setAllAsDirty({
             type: 'contracts',
-            networkType,
-            address,
+            networkType: contract.Blockchain,
+            address: contract.Address,
           }),
         );
 
@@ -124,7 +124,7 @@ const BlockChainContractTable = ({
           () => {
             Swal.fire(
               'Success',
-              `All transactions with address ${address} have been set as dirty.`,
+              `All transactions with address ${contract.Address} have been set as dirty.`,
               'success',
             );
 
@@ -146,7 +146,7 @@ const BlockChainContractTable = ({
     try {
       const actionResult = await dispatch(
         editBlockChainContract({
-          networkType,
+          networkType: contract.Blockchain,
           address: contract.Address,
           data: {
             IsERC20: !contract.IsERC20,
@@ -186,7 +186,7 @@ const BlockChainContractTable = ({
     try {
       const actionResult = await dispatch(
         editBlockChainContract({
-          networkType,
+          networkType: contract.Blockchain,
           address: contract.Address,
           data: {
             CoinGeckoId: newCoinGeckoId,
@@ -211,12 +211,12 @@ const BlockChainContractTable = ({
     }
   };
 
-  const handleSetAsDirty = async (address) => {
+  const handleSetAsDirty = async (contract) => {
     try {
       const actionResult = await dispatch(
         setBlockchainContractAsDirty({
-          networkType,
-          address,
+          networkType: contract.Blockchain,
+          address: contract.Address,
         }),
       );
 
@@ -229,7 +229,7 @@ const BlockChainContractTable = ({
         () => {
           Swal.fire(
             'Success',
-            `All transactions with address ${address} have been set as dirty.`,
+            `All transactions with address ${contract.Address} have been set as dirty.`,
             'success',
           );
 
@@ -261,7 +261,7 @@ const BlockChainContractTable = ({
         setLoading(true);
         const actionResult = await dispatch(
           deleteBlockchainContract({
-            networkType,
+            networkType: contract.Blockchain,
             address: contract.Address,
           }),
         );
@@ -350,7 +350,7 @@ const BlockChainContractTable = ({
             <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
               Edit
             </DropdownItem>
-            <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
+            <DropdownItem onClick={() => handleSetAllAsDirty(contract)}>
               Set All Tx as Dirty
             </DropdownItem>
             <DropdownItem
@@ -358,7 +358,7 @@ const BlockChainContractTable = ({
             >
               Delete
             </DropdownItem>
-            <DropdownItem onClick={() => handleSetAsDirty(contract.Address)}>
+            <DropdownItem onClick={() => handleSetAsDirty(contract)}>
               Set as Dirty
             </DropdownItem>
           </DropdownMenu>,

@@ -4,6 +4,7 @@ import eth from '../../../../../assets/images/svg/crypto-icons/eth.svg';
 
 import ValueColumn from './ValueColumn';
 import { getActionMapping } from '../../../../../utils/utils';
+import BlockchainImage from '../../../../../Components/BlockchainImage/BlockchainImage';
 
 function capitalizeFirstLetter(text) {
   if (!text) return text;
@@ -39,7 +40,7 @@ const BlockChainActionColumn = ({ transaction }) => {
                 getActionMapping(transaction.blockchainAction).icon
               } fs-2`}
             ></i>
-            <img
+            {/* <img
               src={eth}
               alt="Ethereum"
               className="position-absolute"
@@ -49,6 +50,16 @@ const BlockChainActionColumn = ({ transaction }) => {
                 width: '15px',
                 height: '15px',
               }}
+            /> */}
+            <BlockchainImage
+              style={{
+                bottom: '-3px',
+                right: '-2px',
+                width: '15px',
+                height: '15px',
+              }}
+              className="position-absolute"
+              blockchainType={transaction.blockchain}
             />
           </span>
         )}

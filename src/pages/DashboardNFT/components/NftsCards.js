@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Card, CardBody, CardHeader } from 'reactstrap';
 import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
+import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
 
-const NftsCards = ({ items, onVisitNft, showFiatValues }) => {
+const NftsCards = ({ items, onVisitNft, showFiatValues, isDashboardPage }) => {
   const [imageErrors, setImageErrors] = useState({});
 
-  const handleVisitNFT = (contractAddress, tokenId) => {
-    onVisitNft(contractAddress, tokenId);
+  const handleVisitNFT = (contractAddress, tokenId, networkType) => {
+    onVisitNft(contractAddress, tokenId, networkType);
   };
 
   return (
@@ -42,7 +43,13 @@ const NftsCards = ({ items, onVisitNft, showFiatValues }) => {
               style={{ maxWidth: '100%' }}
             >
               <Card
-                onClick={() => handleVisitNFT(nft.contractAddress, nft.tokenId)}
+                onClick={() =>
+                  handleVisitNFT(
+                    nft.contractAddress,
+                    nft.tokenId,
+                    nft.blockchain,
+                  )
+                }
                 className="cursor-pointer border-2 border bg-transparent shadow-none"
                 style={{
                   borderRadius: '10px',
@@ -91,17 +98,16 @@ const NftsCards = ({ items, onVisitNft, showFiatValues }) => {
                       />
                     )}
                     <div className="">
-                      <img
-                        src={eth}
-                        alt=""
-                        className="img-fluid border-dark border border-circle border-1 d-flex justify-content-start shadow-md rounded-circle"
+                      <BlockchainImage
+                        blockchainType={nft.blockchain}
                         style={{
                           position: 'absolute',
-                          bottom: '5%',
-                          left: '5%',
-                          width: '10%',
+                          bottom: `${isDashboardPage ? '11%' : '7%'}`,
+                          left: '2%',
+                          width: 'auto',
                           height: '10%',
                         }}
+                        className="img-fluid border-dark border border-rounded  border-1 d-flex justify-content-start shadow-md rounded-circle"
                       />
                     </div>
                   </div>
