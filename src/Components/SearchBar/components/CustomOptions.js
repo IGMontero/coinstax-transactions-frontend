@@ -59,18 +59,21 @@ const CustomOptions = (props) => {
 
   useEffect(() => {
     const { label, value } = props.data;
+    let formattedLabel = label || value;
+
     if (isVerySmallScreen) {
-      setDisplayLabel(label || formatIdTransaction(value, 8, 6));
+      formattedLabel = label || formatIdTransaction(value, 8, 6);
     } else if (isMediumScreen) {
-      setDisplayLabel(label || formatIdTransaction(value, 12, 15));
-    } else if (isMoreSmallScreen) {
-      setDisplayLabel(label || formatIdTransaction(value, 15, 15));
+      formattedLabel = label || formatIdTransaction(value, 8, 12);
+    } else if (isSmallScreen) {
+      formattedLabel = label || formatIdTransaction(value, 8, 15);
     } else {
-      setDisplayLabel(label || value);
+      formattedLabel = label || formatIdTransaction(value, 15, 25);
     }
+
+    setDisplayLabel(formattedLabel);
   }, [
-    props.data.label,
-    props.data.value,
+    props.data,
     isSmallScreen,
     isMediumScreen,
     isMoreSmallScreen,
@@ -163,10 +166,6 @@ const CustomOptions = (props) => {
     // Swal.fire('Updated!', 'Your address has been renamed.', 'success');
   };
 
-  const handleError = () => {
-    setHasImgError(true);
-  };
-
   const DropdownMenuPortal = ({ children }) => {
     return ReactDOM.createPortal(
       children,
@@ -255,10 +254,12 @@ const CustomOptions = (props) => {
                     }}
                   />
                 )}
-                <div className="d-flex flex-column">
-                  {/* <span span className="text-custom-menu-suggestions"> */}
-                  {displayLabel}
-                  {/* </span> */}
+                <div className="d-flex flex-column ">
+                  {!props.data.label ? (
+                    <span>{displayLabel}</span>
+                  ) : (
+                    displayLabel
+                  )}
                   {props.data.label && (
                     <span className="text-muted">
                       {formatIdTransaction(props.data.value, 6, 8)}
