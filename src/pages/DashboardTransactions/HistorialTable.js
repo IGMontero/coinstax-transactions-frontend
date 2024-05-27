@@ -642,7 +642,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -660,9 +660,8 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -874,7 +873,7 @@ const HistorialTable = ({ data, setData }) => {
                 </label>
               </div>
             </div>
-            {!loading && !isInitialLoad && renderInfoTransactions()}
+            {!isInitialLoad && renderInfoTransactions()}
           </Row>
         </div>
         {!loading && !isInitialLoad && renderMessageNoResults()}
