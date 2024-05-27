@@ -5,6 +5,7 @@ const cookiesDomain = isDevelopment
   ? 'localhost'
   : `.${process.env.REACT_APP_ROOT_DOMAIN}`;
 
+// Token functions
 export const saveTokenInCookies = (token) => {
   Cookies.set('token', token, {
     expires: 365,
@@ -21,6 +22,24 @@ export const getTokenFromCookies = () => {
 export const removeTokenFromCookies = () => {
   Cookies.remove('token', {
     domain: cookiesDomain,
+  });
+};
+
+// App options
+export const getAppOptions = () => {
+  const defaultOptions = {
+    blockchain: 'ethereum',
+    hideSmallBalances: false,
+    hideZeroBalances: true,
+  };
+  const options = Cookies.get('appOptions');
+  return options ? JSON.parse(options) : defaultOptions;
+};
+
+export const setAppOptions = (options) => {
+  Cookies.set('appOptions', JSON.stringify(options), {
+    domain: cookiesDomain,
+    expires: 365,
   });
 };
 

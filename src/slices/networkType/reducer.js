@@ -1,7 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { getAppOptions, setAppOptions } from '../../helpers/cookies_helper';
 
 const initialState = {
-  networkType: 'ethereum',
+  networkType: getAppOptions().blockchain || 'ethereum',
 };
 
 const networkTypeSlice = createSlice({
@@ -10,6 +11,9 @@ const networkTypeSlice = createSlice({
   reducers: {
     setNetworkType: (state, action) => {
       state.networkType = action.payload;
+      const appOptions = getAppOptions();
+      appOptions.blockchain = action.payload;
+      setAppOptions(appOptions);
     },
   },
 });
