@@ -31,11 +31,11 @@ export const getUserAddresses = createAsyncThunk(
 
 export const refreshAllTransactions = createAsyncThunk(
   'userAddresses/refreshAllTransactions',
-  async ({ blockchain, address }, { rejectWithValue }) => {
+  async ({ networkType, address }, { rejectWithValue }) => {
     const token = localStorage.getItem('token');
     try {
       const response = await fetch(
-        `${API_BASE}/admin/addresses/${blockchain}/${address}/refresh`,
+        `${API_BASE}/admin/addresses/${networkType}/${address}/refresh`,
         {
           method: 'POST',
           headers: {
@@ -58,11 +58,11 @@ export const refreshAllTransactions = createAsyncThunk(
 
 export const deleteUsersAddress = createAsyncThunk(
   'userAddresses/deleteUsersAddress',
-  async ({ blockchain, address }, { rejectWithValue }) => {
+  async ({ networkType, address }, { rejectWithValue }) => {
     const token = localStorage.getItem('token');
     try {
       const response = await fetch(
-        `${API_BASE}/admin/addresses/${blockchain}/${address}`,
+        `${API_BASE}/admin/addresses/${networkType}/${address}`,
         {
           method: 'DELETE',
           headers: {
