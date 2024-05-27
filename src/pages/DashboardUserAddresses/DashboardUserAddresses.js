@@ -24,6 +24,8 @@ import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
 import { setAllAsDirty } from '../../slices/blockchainContracts/thunk';
 import { handleActionResult } from '../../utils/useHandleAction';
+import NetworkDropdown from '../../Components/NetworkDropdown/NetworkDropdown';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 
 const DashboardUserAddresses = () => {
   const dispatch = useDispatch();
@@ -37,6 +39,8 @@ const DashboardUserAddresses = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [userAddresses, setUserAddresses] = useState([]);
 
+  const networkType = useSelector(selectNetworkType);
+
   const errorMessageEdit = useSelector(
     (state) => state.blockchainContracts.error,
   );
@@ -48,7 +52,6 @@ const DashboardUserAddresses = () => {
         getUserAddresses({
           page: currentPage,
           address: search,
-          blockchain: 'ethereum',
         }),
       );
       const responseData = response.payload.data || response.payload;
@@ -274,6 +277,9 @@ const DashboardUserAddresses = () => {
 
   return (
     <div className="page-content mt-5" style={{ minHeight: '100vh' }}>
+      <div className="d-flex justify-content-end">
+        <NetworkDropdown />
+      </div>
       <h3>User Addresses</h3>
       <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
         <Input
@@ -394,13 +400,13 @@ const DashboardUserAddresses = () => {
             </tr>
           )}
         </tbody>
-        {userAddresses.length && !loading && (
+        {userAddresses.length && !loading ? (
           <TablePagination
             onChangePage={handleChangePage}
             currentPage={currentPage}
             totalPages={Math.ceil(total / pageSize)}
           />
-        )}
+        ) : null}
       </Table>
       <div id="portal-root"></div>
     </div>
