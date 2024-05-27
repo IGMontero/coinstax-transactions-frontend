@@ -186,10 +186,10 @@ export const downloadTransactions = createAsyncThunk(
 
 export const getNftsByContractAddress = createAsyncThunk(
   'transactions/getNftsByContractAddress',
-  async ({ blockchain, contractAddress, tokenId }, { rejectWithValue }) => {
+  async ({ networkType, contractAddress, tokenId }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/transactions/${blockchain}/${contractAddress}/nft?tokenId=${tokenId}`,
+        `${API_BASE}/transactions/${networkType}/${contractAddress}/nft?tokenId=${tokenId}`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
