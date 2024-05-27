@@ -21,12 +21,13 @@ import {
   removeAddressName,
   setAddressName,
 } from '../../../slices/addressName/reducer';
+import { useParams } from 'react-router-dom';
 
 const CustomOptions = (props) => {
   const dispatch = useDispatch();
+  const { address } = useParams();
   const addresses = useSelector((state) => state.addressName.addresses);
 
-  const [hasImgError, setHasImgError] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [displayLabel, setDisplayLabel] = useState('');
@@ -254,12 +255,17 @@ const CustomOptions = (props) => {
                     }}
                   />
                 )}
-                <div className="d-flex flex-column ">
-                  {!props.data.label ? (
-                    <span>{displayLabel}</span>
-                  ) : (
-                    displayLabel
-                  )}
+                <div className="d-flex flex-column">
+                  <div className="d-flex align-items-center">
+                    {!props.data.label ? (
+                      <span>{displayLabel}</span>
+                    ) : (
+                      displayLabel
+                    )}
+                    {address === props.data.value && (
+                      <i className="ri-checkbox-blank-circle-fill fs-10 text-success ms-2"></i>
+                    )}{' '}
+                  </div>
                   {props.data.label && (
                     <span className="text-muted">
                       {formatIdTransaction(props.data.value, 6, 8)}
