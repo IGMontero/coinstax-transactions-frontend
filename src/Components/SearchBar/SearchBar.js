@@ -185,14 +185,14 @@ const SearchBar = ({ selectedOption }) => {
         navigate(`/tokens/${selectedOption.coingeckoId}`);
       } else {
         navigate(`/address/${selectedOption.value}`);
+        dispatch(
+          setAddressName({
+            value: selectedOption.value,
+            label: selectedOption.label || null,
+          }),
+        );
       }
 
-      dispatch(
-        setAddressName({
-          value: selectedOption.value,
-          label: selectedOption.label || null,
-        }),
-      );
       setSearchInput('');
     }
   };
