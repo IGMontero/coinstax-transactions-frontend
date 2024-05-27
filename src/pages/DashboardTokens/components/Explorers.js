@@ -56,6 +56,22 @@ const Explorers = ({ platforms }) => {
       name: 'Binance',
       image: 'https://chain-icons.s3.amazonaws.com/bsc.png',
     },
+    {
+      name: 'Fantom',
+      image: 'https://chain-icons.s3.amazonaws.com/fantom.png',
+    },
+    {
+      name: 'Arbitrum-one',
+      image: 'https://chain-icons.s3.amazonaws.com/arbitrum.png',
+    },
+    {
+      name: 'Avalanche',
+      image: 'https://chain-icons.s3.amazonaws.com/avalanche.png',
+    },
+    {
+      name: 'Celo',
+      image: 'https://chain-icons.s3.amazonaws.com/chainlist/42220',
+    },
   ];
 
   const normalizeName = (name) => {
@@ -66,6 +82,9 @@ const Explorers = ({ platforms }) => {
     'binance smart chain': 'binance',
     ethereum: 'ethereum',
     binance: 'binance',
+    fantom: 'fantom',
+    arbitrum: 'arbitrum',
+    avalanche: 'avalanche',
     'optimistic ethereum': 'optimism',
     'zk rollup': 'zkSync',
     'zk rollups': 'zkSync',
