@@ -99,7 +99,7 @@ const DashboardBlockchainContracts = () => {
       setLoadingUpdate(true);
       const actionResult = await dispatch(
         editBlockChainContract({
-          blockchain: 'ethereum',
+          blockchain: selectedContract.blockchain,
           address: selectedContract.Address,
           data,
         }),
