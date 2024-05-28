@@ -70,8 +70,10 @@ const ActivesTable = ({ data, loading }) => {
     isDashboardPage = false;
   }
 
+  console.log(loading);
+
   const filteredItems = data.items
-    ? data.items.filter(
+    ? data?.items?.filter(
         (asset) =>
           (!hideSmallBalances || asset.value >= 1) &&
           (!hideZeroBalances || (asset.value !== 0 && asset.value !== null)),
@@ -87,9 +89,9 @@ const ActivesTable = ({ data, loading }) => {
         </div>
       )}
       <div
-        className={
-          Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
-        }
+      // className={
+      //   Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
+      // }
       >
         <div className="flex-grow-1 d-flex justify-content-between">
           <h2 className={`${!isDashboardPage ? 'd-none' : 'ms-1 mb-3'}`}>
@@ -184,7 +186,7 @@ const ActivesTable = ({ data, loading }) => {
           </div>
         </div>
         <div className="border border-2 rounded p-3">
-          {!loading && (!data || !data.items || data.items.length === 0) ? (
+          {!loading && (!data || !data.items || data.items?.length === 0) ? (
             <div className="text-center py-2 mt-3">
               <h4>No Assets Found</h4>
             </div>

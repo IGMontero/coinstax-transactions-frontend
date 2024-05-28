@@ -23,8 +23,8 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
       }}
     >
       {item &&
-        item.length > 0 &&
-        item.map((nft, index) => {
+        item?.length > 0 &&
+        item?.map((nft, index) => {
           const { floorPriceFiat, floorPriceNativeToken } = nft;
           const hasFiatFloorPrice =
             floorPriceFiat && Number(floorPriceFiat) > 0;
@@ -77,7 +77,9 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
                           backgroundColor: '',
                         }}
                       >
-                        <h3 className="text-center">Unsupported content</h3>
+                        <h3 className="text-center pt-5">
+                          Unsupported content
+                        </h3>
                       </div>
                     ) : (
                       <img
