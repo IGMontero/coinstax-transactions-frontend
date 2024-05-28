@@ -387,10 +387,16 @@ const Nfts = ({ address, isUnsupported }) => {
                     <div className="d-flex justify-content-center">
                       <Button
                         className="mt-3 d-flex justify-content-center align-items-center "
-                        color="soft-primary"
+                        color="soft-light"
+                        style={{
+                          borderRadius: '10px',
+                          border: '.5px solid grey',
+                        }}
                         onClick={handleShowMoreItems}
                       >
-                        More Items
+                        <h6 className="text-dark fw-semibold my-2">
+                          More Items
+                        </h6>
                       </Button>
                     </div>
                   )}
