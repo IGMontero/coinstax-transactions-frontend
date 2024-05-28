@@ -30,6 +30,7 @@ const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const fetchControllerRef = useRef(new AbortController());
   const { fetchData } = useSelector((state) => state.fetchData);
   const networkType = useSelector(selectNetworkType);
   const { address, type } = useParams();
@@ -80,8 +81,11 @@ const DashboardInfo = () => {
 
   const fetchDataAssets = () => {
     setLoadingAssets(true);
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
 
-    dispatch(fetchAssets({ address, networkType }))
+    dispatch(fetchAssets({ address, networkType, signal }))
       .unwrap()
       .then((response) => {
         if (response.unsupported == true) {
@@ -99,8 +103,12 @@ const DashboardInfo = () => {
         setLoadingAssets(false);
       })
       .catch((error) => {
-        console.error('Error fetching performance data:', error);
-        setLoadingAssets(false);
+        if (error.name === 'AbortError') {
+          console.log('Fetch aborted');
+        } else {
+          console.error('Error fetching performance data:', error);
+          setLoadingAssets(false);
+        }
       });
   };
 
@@ -108,6 +116,9 @@ const DashboardInfo = () => {
     if (addressForSearch) {
       fetchDataAssets();
     }
+    return () => {
+      fetchControllerRef.current.abort();
+    };
   }, [addressForSearch, type, dispatch, isUnsupported, networkType]);
 
   useEffect(() => {
