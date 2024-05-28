@@ -19,43 +19,50 @@ export const fetchNFTS = createAsyncThunk(
     }
   },
 );
-
 export const fetchPerformance = createAsyncThunk(
   'transactions/fetchPerformance',
-  async ({ address, days, networkType }, { rejectWithValue }) => {
+  async ({ address, days, networkType, signal }, { rejectWithValue }) => {
     let url = `${API_BASE}/transactions/${networkType}/${address}/balances/historical`;
     if (days) {
       url += `?days=${days}`;
     }
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal });
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted');
+      } else {
+        return rejectWithValue(error.message);
+      }
     }
   },
 );
 
 export const fetchPerformanceToken = createAsyncThunk(
   'transactions/fetchPerformanceToken',
-  async ({ address, days }, { rejectWithValue }) => {
+  async ({ address, days, signal }, { rejectWithValue }) => {
     let url = `${API_BASE}/contracts/coin/historical/${address}`;
     if (days) {
       url += `?days=${days}`;
     }
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { signal });
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
       const data = await response.json();
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted');
+      } else {
+        return rejectWithValue(error.message);
+      }
     }
   },
 );

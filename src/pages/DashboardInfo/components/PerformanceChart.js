@@ -32,6 +32,7 @@ const PerformanceChart = ({
   const { token } = useParams();
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
+  const fetchControllerRef = useRef(new AbortController());
 
   const networkType = useSelector(selectNetworkType);
 
@@ -185,12 +186,12 @@ const PerformanceChart = ({
 
   // #region Api Calls
 
-  const fetchAndSetData = (days) => {
+  const fetchAndSetData = (days, signal) => {
     setLoading(true);
     if (address) {
       const params = days
-        ? { address, days, networkType }
-        : { address, networkType };
+        ? { address, days, networkType, signal }
+        : { address, networkType, signal };
 
       dispatch(fetchPerformance(params))
         .unwrap()
@@ -289,10 +290,10 @@ const PerformanceChart = ({
     }
   };
 
-  const fetchAndSetDataForToken = (days) => {
+  const fetchAndSetDataForToken = (days, signal) => {
     setLoading(true);
     if (address) {
-      const params = days ? { address, days } : { address };
+      const params = days ? { address, days, signal } : { address, signal };
       dispatch(fetchPerformanceToken(params))
         .unwrap()
         .then((response) => {
@@ -412,10 +413,13 @@ const PerformanceChart = ({
 
   // #region Handlers
   const handleFilterForDays = (days, filterId) => {
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
     if (token) {
-      fetchAndSetDataForToken(days);
+      fetchAndSetDataForToken(days, signal);
     } else {
-      fetchAndSetData(days);
+      fetchAndSetData(days, signal);
     }
     setActiveFilter(filterId);
   };
@@ -437,12 +441,18 @@ const PerformanceChart = ({
 
   // #region UseEffects
   useEffect(() => {
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
     if (!token) {
-      fetchAndSetData();
+      fetchAndSetData(7, signal);
     } else {
-      fetchAndSetDataForToken(7);
+      fetchAndSetDataForToken(7, signal);
     }
     handleFilterForDays(7, 'one_week');
+    return () => {
+      fetchControllerRef.current.abort();
+    };
   }, [token, networkType, address]);
 
   useEffect(() => {
