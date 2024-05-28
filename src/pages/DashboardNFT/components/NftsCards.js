@@ -4,12 +4,14 @@ import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
 import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
 
-const NftsCards = ({ items, onVisitNft, showFiatValues, isDashboardPage }) => {
+const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
   const [imageErrors, setImageErrors] = useState({});
 
-  const handleVisitNFT = (contractAddress, tokenId, networkType) => {
-    onVisitNft(contractAddress, tokenId, networkType);
+  const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
+    onVisitNft(contractAddress, tokenId, blockchain);
   };
+
+  console.log(item);
 
   return (
     <div
@@ -20,9 +22,9 @@ const NftsCards = ({ items, onVisitNft, showFiatValues, isDashboardPage }) => {
         justifyContent: 'center',
       }}
     >
-      {items &&
-        items.length > 0 &&
-        items.map((nft, index) => {
+      {item &&
+        item.length > 0 &&
+        item.map((nft, index) => {
           const { floorPriceFiat, floorPriceNativeToken } = nft;
           const hasFiatFloorPrice =
             floorPriceFiat && Number(floorPriceFiat) > 0;
@@ -65,7 +67,7 @@ const NftsCards = ({ items, onVisitNft, showFiatValues, isDashboardPage }) => {
                   >
                     {shouldShowUnsupported ? (
                       <div
-                        className="d-flex justify-content-center align-items-center"
+                        className="d-flex justify-content-center align-item-center"
                         style={{
                           maxWidth: '100%',
                           maxHeight: '100%',

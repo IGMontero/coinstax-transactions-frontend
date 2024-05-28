@@ -34,14 +34,14 @@ const DashboardNFT = () => {
 
   const queryParams = new URLSearchParams(location.search);
   const tokenId = queryParams.get('tokenId');
-  const networkType = queryParams.get('networkType');
+  const blockchain = queryParams.get('blockchain');
 
   const fetchNftByContractAddress = async () => {
     try {
       setLoading(true);
       const response = await dispatch(
         getNftsByContractAddress({
-          networkType,
+          blockchain,
           contractAddress,
           tokenId,
         }),
@@ -67,9 +67,9 @@ const DashboardNFT = () => {
         setDetails([
           'Network',
           `${
-            networkType === 'bnb'
+            blockchain === 'bnb'
               ? 'BNB Chain'
-              : capitalizeFirstLetter(networkType)
+              : capitalizeFirstLetter(blockchain)
           }`,
         ]);
       }
