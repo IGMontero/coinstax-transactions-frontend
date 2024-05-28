@@ -152,7 +152,7 @@ const SentColumn = ({ transaction }) => {
                           e.stopPropagation();
                           if (nftContractAddress && nftTokenId) {
                             navigate(
-                              `/contract/${nftContractAddress}?networkType=${transaction.blockchain}&tokenId=${nftTokenId}`,
+                              `/contract/${nftContractAddress}?blockchain=${transaction.blockchain}&tokenId=${nftTokenId}`,
                             );
                           }
                         }}

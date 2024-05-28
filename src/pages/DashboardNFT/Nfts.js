@@ -86,7 +86,6 @@ const Nfts = ({ address, isUnsupported }) => {
     dispatch(fetchNFTS({ address: address, spam: includeSpam, networkType }))
       .unwrap()
       .then((response) => {
-        console.log(response);
         setData(response);
         setUpdatedAt(response.updatedAt);
         setLoading(false);
@@ -105,9 +104,9 @@ const Nfts = ({ address, isUnsupported }) => {
     }
   }, [address, dispatch, includeSpam, networkType]);
 
-  const handleVisitNFT = (contractAddress, tokenId, network) => {
+  const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     navigate(
-      `/contract/${contractAddress}?networkType=${network}&tokenId=${tokenId}`,
+      `/contract/${contractAddress}?blockchain=${blockchain}&tokenId=${tokenId}`,
     );
   };
 
@@ -368,7 +367,7 @@ const Nfts = ({ address, isUnsupported }) => {
               <Col>
                 <NftsCards
                   isDashboardPage={isDashboardPage}
-                  items={items}
+                  item={items}
                   loading={loading}
                   onVisitNft={handleVisitNFT}
                   showFiatValues={showFiatValues}

@@ -19,6 +19,8 @@ const Explorers = ({ platforms }) => {
     {
       image: 'https://chain-icons.s3.amazonaws.com/chainlist/1101',
       name: 'Polygon',
+      key: 'polygon-pos',
+      base_url: 'https://polygonscan.com/address/',
     },
     {
       image: 'https://chain-icons.s3.amazonaws.com/optimism.png',
@@ -31,6 +33,8 @@ const Explorers = ({ platforms }) => {
     {
       image: 'https://chain-icons.s3.amazonaws.com/ethereum.png',
       name: 'Ethereum',
+      key: 'ethereum',
+      base_url: 'https://etherscan.io/address/',
     },
     {
       image: 'https://chain-icons.s3.amazonaws.com/chainlist/81457',
@@ -59,6 +63,8 @@ const Explorers = ({ platforms }) => {
     {
       name: 'Fantom',
       image: 'https://chain-icons.s3.amazonaws.com/fantom.png',
+      key: 'fantom',
+      base_url: 'https://ftmscan.com/address/',
     },
     {
       name: 'Arbitrum-one',
@@ -67,37 +73,16 @@ const Explorers = ({ platforms }) => {
     {
       name: 'Avalanche',
       image: 'https://chain-icons.s3.amazonaws.com/avalanche.png',
+      key: 'avalanche',
+      base_url: 'https://cchain.explorer.avax.network/address/',
     },
     {
       name: 'Celo',
       image: 'https://chain-icons.s3.amazonaws.com/chainlist/42220',
+      key: 'celo',
+      base_url: 'https://explorer.celo.org/address/',
     },
   ];
-
-  const normalizeName = (name) => {
-    return name.toLowerCase().replace(/[\s-]/g, ' ');
-  };
-  const exceptionMap = {
-    'polygon pos': 'polygon',
-    'binance smart chain': 'binance',
-    ethereum: 'ethereum',
-    binance: 'binance',
-    fantom: 'fantom',
-    arbitrum: 'arbitrum',
-    avalanche: 'avalanche',
-    'optimistic ethereum': 'optimism',
-    'zk rollup': 'zkSync',
-    'zk rollups': 'zkSync',
-    'zk rollup era': 'zkSync',
-  };
-  const findExplorer = (platformName) => {
-    const normalizedName = normalizeName(platformName);
-    const mappedName = exceptionMap[normalizedName] || normalizedName;
-
-    return explorerData.find(({ name }) =>
-      normalizeName(name).includes(mappedName),
-    );
-  };
 
   const handleCopy = async (e, text, key) => {
     e.stopPropagation();
@@ -120,7 +105,9 @@ const Explorers = ({ platforms }) => {
       </div>
       <div className="d-flex flex-wrap">
         {Object.entries(platforms).map(([key, address], index) => {
-          const explorer = findExplorer(key);
+          const explorer = explorerData.find(
+            ({ key: explorerKey }) => explorerKey === key,
+          );
           if (!explorer) return null;
 
           return (
