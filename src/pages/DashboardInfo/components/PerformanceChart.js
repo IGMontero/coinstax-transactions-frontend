@@ -200,9 +200,7 @@ const PerformanceChart = ({
             (item) => new Date(item.calendarDate),
           );
           const newData = response.total.map((item) => {
-            // Min value is 0 for all points.
             const result = Math.max(0, item.value.quote);
-
             return result;
           });
           const { minValue, maxValue } = getMaxMinValues(newData);
@@ -216,12 +214,11 @@ const PerformanceChart = ({
           });
 
           const range = maxValue - minValue;
-          const numTicks = 2; // Adjust this value based on your preference
+          const numTicks = 2;
           const tolerance = range / 10;
           const allItemsAreIntegers = newData.every((item) =>
             Number.isInteger(item),
           );
-          // const stepSize = range / (numTicks - 1);
 
           let yAxesOptions;
 
@@ -245,10 +242,7 @@ const PerformanceChart = ({
               min: minTick,
               max: maxTick,
               maxTicksLimit: 2,
-              // stepSize: stepSize,
               autoSkip: true,
-
-              // stepSize: allItemsAreIntegers ? 1 : stepSize,
               callback: function (value) {
                 if (allItemsAreIntegers) {
                   if (value === minValue || value === maxValue) {
@@ -262,7 +256,7 @@ const PerformanceChart = ({
                     return parseValuesToLocale(value, CurrencyUSD);
                   }
                 }
-                return ''; // Return empty string for other values
+                return '';
               },
             };
           }
@@ -271,7 +265,6 @@ const PerformanceChart = ({
             ...prevOptions,
             scales: {
               ...prevOptions.scales,
-
               yAxes: [
                 {
                   ...prevOptions.scales.yAxes[0],
@@ -316,24 +309,23 @@ const PerformanceChart = ({
               // }
 
               // Add all
+
               newLabels.push(date);
               newData.push(item[1]);
             });
 
             const { minValue, maxValue } = getMaxMinValues(newData);
             const minTick = minValue;
-            // - Math.abs(maxValue - minValue);
             const maxTick = maxValue;
-            //  + Math.abs(maxValue - minValue);
 
             setChartData({
-              labels: newLabels, // Ensure the labels are Date objects if needed
+              labels: newLabels,
               datasets: [{ ...chartData.datasets[0], data: newData }],
             });
 
             const range = maxValue - minValue;
-            const numTicks = 2; // Adjust this value based on your preference
-            const tolerance = 0.001; // Adjust as needed for your precision
+            const numTicks = 2;
+            const tolerance = 0.001;
 
             const stepSize = range / (numTicks - 1);
 
@@ -349,7 +341,6 @@ const PerformanceChart = ({
                       min: minTick,
                       max: maxTick,
                       maxTicksLimit: 2,
-                      // stepSize: stepSize,
                       callback: function (value) {
                         if (
                           Math.abs(value - minValue) < tolerance ||
@@ -357,15 +348,8 @@ const PerformanceChart = ({
                         ) {
                           return parseValuesToLocale(value, CurrencyUSD);
                         }
-                        return ''; // Return empty string for other values
+                        return '';
                       },
-                      // callback: (value, index, values) => {
-                      //   // Only display label for the highest value
-                      //   if (value === Math.max(...values)) {
-                      //     return `${value} (Highest)`;
-                      //   }
-                      //   return null;
-                      // },
                     },
                   },
                 ],
@@ -383,6 +367,9 @@ const PerformanceChart = ({
 
   useEffect(() => {
     if (chartContainerRef.current) {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
       const ctx = chartContainerRef.current.getContext('2d');
       chartInstanceRef.current = new Chart(ctx, {
         type: 'line',
@@ -443,12 +430,7 @@ const PerformanceChart = ({
   useEffect(() => {
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
-    const signal = fetchControllerRef.current.signal;
-    if (!token) {
-      fetchAndSetData(7, signal);
-    } else {
-      fetchAndSetDataForToken(7, signal);
-    }
+
     handleFilterForDays(7, 'one_week');
     return () => {
       fetchControllerRef.current.abort();
