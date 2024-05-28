@@ -11,17 +11,23 @@ const Navdata = () => {
     fetchData: state.fetchData,
   }));
 
+  const [prevAddress, setPrevAddress] = useState('');
   const [addressSearched, setAddressSearched] = useState('');
   const [isUnsupported, setIsUnsupported] = useState(false);
   const [iscurrentState, setIscurrentState] = useState('');
-  const [previousAddress, setPreviousAddress] = useState('');
 
   useEffect(() => {
     if (address && address !== addressSearched) {
-      setPreviousAddress(addressSearched || address);
       setAddressSearched(address);
+      setPrevAddress(address);
     }
   }, [address]);
+
+  useEffect(() => {
+    if (!address && contractAddress) {
+      setAddressSearched(prevAddress);
+    }
+  }, [contractAddress, address]);
 
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
@@ -29,40 +35,18 @@ const Navdata = () => {
       assets?.unsupported ||
         transactions?.unsupported ||
         performance?.unsupported ||
-        !address,
+        !addressSearched,
     );
-  }, [fetchData, address]);
-
-  const filterMenuItems = (menuItems) => {
-    if (token) {
-      if (user) {
-        return menuItems.filter(
-          (item) =>
-            item.id === 'summary' ||
-            item.id === 'userAddresses' ||
-            item.id === 'blockchain',
-        );
-      }
-      return menuItems.filter((item) => item.id === 'summary');
-    }
-    if ((isUnsupported || !contractAddress) && !user) {
-      return menuItems.filter(
-        (item) =>
-          item.id !== 'assets' &&
-          item.id !== 'nfts' &&
-          item.id !== 'transactions',
-      );
-    }
-    return menuItems;
-  };
+  }, [fetchData, addressSearched]);
 
   const createMenuItem = (id, label, icon, page) => ({
     id,
     label,
     icon,
-    link: contractAddress
-      ? `/address/${previousAddress}/${page}`
-      : `${token ? `/tokens/${token}` : `/address/${address || previousAddress}/${page}`}`,
+    link:
+      contractAddress && !address
+        ? `/address/${prevAddress}/${page}`
+        : `${token ? `/tokens/${token}` : `/address/${addressSearched}/${page}`}`,
     click: function (e) {
       e.preventDefault();
       navigate(this.link);
@@ -74,7 +58,7 @@ const Navdata = () => {
     id,
     label,
     icon,
-    link: contractAddress ? `/address/${previousAddress}/${page}` : `/${page}`,
+    link: `/${page}`,
     click: function (e) {
       e.preventDefault();
       navigate(this.link);
@@ -88,16 +72,20 @@ const Navdata = () => {
     isHeader: true,
   });
 
-  let dashboardLink = '';
-
-  if (token) {
-    dashboardLink = `/token/${token}`;
-  } else {
-    dashboardLink = !isUnsupported ? '' : address ? `/address/${address}/` : '';
-  }
+  const filterMenuItems = (menuItems) => {
+    if (isUnsupported || token) {
+      return menuItems.filter(
+        (item) =>
+          item.id !== 'assets' &&
+          item.id !== 'nfts' &&
+          item.id !== 'transactions',
+      );
+    }
+    return menuItems;
+  };
 
   let allMenuItems = [
-    createMenuItem('summary', 'Summary', 'bx bx-home', `${dashboardLink}`),
+    createMenuItem('summary', 'Summary', 'bx bx-home', ''),
     createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
     createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
     createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),

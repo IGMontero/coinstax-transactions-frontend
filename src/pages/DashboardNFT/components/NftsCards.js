@@ -11,8 +11,6 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
     onVisitNft(contractAddress, tokenId, blockchain);
   };
 
-  console.log(item);
-
   return (
     <div
       className="d-grid position-relative justify-content-center"
