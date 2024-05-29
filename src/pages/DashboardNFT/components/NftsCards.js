@@ -34,7 +34,9 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
           const floorPrice = showFiatValues
             ? parseValuesToLocale(floorPriceFiat, CurrencyUSD)
             : parseValuesToLocale(floorPriceNativeToken) + ' ETH';
-          const shouldShowUnsupported = !nft.logo || imageErrors[nft.tokenId];
+          const shouldShowUnsupported =
+            !nft.logo || imageErrors[nft.contractAddress + nft.tokenId];
+
 
           return (
             <div
@@ -94,7 +96,7 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
                         onError={() =>
                           setImageErrors((prev) => ({
                             ...prev,
-                            [nft.tokenId]: true,
+                            [nft.contractAddress + nft.tokenId]: true,
                           }))
                         }
                       />
