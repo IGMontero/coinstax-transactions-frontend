@@ -13,19 +13,16 @@ const addressNameSlice = createSlice({
   initialState,
   reducers: {
     setAddressName: (state, action) => {
-      const updatedAddresses = state.addresses.map((address) => {
-        if (address.value === action.payload.value) {
-          return { ...address, label: action.payload.label };
-        }
-        return address;
-      });
-      if (
-        !updatedAddresses.some((addr) => addr.value === action.payload.value)
-      ) {
-        updatedAddresses.unshift(action.payload);
+      const index = state.addresses.findIndex(
+        (addr) => addr.value === action.payload.value,
+      );
+      if (index !== -1) {
+        const [existingAddress] = state.addresses.splice(index, 1);
+        state.addresses.unshift({ ...existingAddress, ...action.payload });
+      } else {
+        state.addresses.unshift(action.payload);
       }
-      state.addresses = updatedAddresses;
-      setUserSavedAddresses(updatedAddresses);
+      setUserSavedAddresses(state.addresses);
     },
     removeAddressName: (state, action) => {
       const updatedAddresses = state.addresses.filter(

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Col,
   Row,
@@ -48,6 +48,7 @@ const Nfts = ({ address, isUnsupported }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
+  const fetchControllerRef = useRef(new AbortController());
 
   let isDashboardPage;
   const pathSegments = location.pathname.split('/').filter(Boolean);
@@ -78,15 +79,19 @@ const Nfts = ({ address, isUnsupported }) => {
   };
 
   const fetchDataNFTS = () => {
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
     if (loadingIncludeSpam) {
       setLoading(false);
     } else {
       setLoading(true);
     }
-    dispatch(fetchNFTS({ address: address, spam: includeSpam, networkType }))
+    dispatch(
+      fetchNFTS({ address: address, spam: includeSpam, networkType, signal }),
+    )
       .unwrap()
       .then((response) => {
-        console.log(response);
         setData(response);
         setUpdatedAt(response.updatedAt);
         setLoading(false);
@@ -103,11 +108,14 @@ const Nfts = ({ address, isUnsupported }) => {
     if (address) {
       fetchDataNFTS();
     }
+    return () => {
+      fetchControllerRef.current.abort();
+    };
   }, [address, dispatch, includeSpam, networkType]);
 
-  const handleVisitNFT = (contractAddress, tokenId, network) => {
+  const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     navigate(
-      `/contract/${contractAddress}?networkType=${network}&tokenId=${tokenId}`,
+      `/contract/${contractAddress}?blockchain=${blockchain}&tokenId=${tokenId}`,
     );
   };
 
@@ -120,7 +128,7 @@ const Nfts = ({ address, isUnsupported }) => {
     setItemsToShow(itemsToShow + 20);
   };
 
-  let items = data.items || [];
+  let items = data?.items || [];
   if (isDashboardPage) {
     items = items.slice(0, 5);
   } else {
@@ -370,21 +378,27 @@ const Nfts = ({ address, isUnsupported }) => {
               <Col>
                 <NftsCards
                   isDashboardPage={isDashboardPage}
-                  items={items}
+                  item={items}
                   loading={loading}
                   onVisitNft={handleVisitNFT}
                   showFiatValues={showFiatValues}
                 />
                 {!isDashboardPage &&
-                  data.items &&
-                  data.items.length > itemsToShow && (
+                  data?.items &&
+                  data.items?.length > itemsToShow && (
                     <div className="d-flex justify-content-center">
                       <Button
                         className="mt-3 d-flex justify-content-center align-items-center "
-                        color="soft-primary"
+                        color="soft-light"
+                        style={{
+                          borderRadius: '10px',
+                          border: '.5px solid grey',
+                        }}
                         onClick={handleShowMoreItems}
                       >
-                        More Items
+                        <h6 className="text-dark fw-semibold my-2">
+                          More Items
+                        </h6>
                       </Button>
                     </div>
                   )}

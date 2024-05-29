@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Navdata = () => {
-  const { address, token } = useParams();
+  const { address, token, contractAddress } = useParams();
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
@@ -11,6 +11,7 @@ const Navdata = () => {
     fetchData: state.fetchData,
   }));
 
+  const [prevAddress, setPrevAddress] = useState('');
   const [addressSearched, setAddressSearched] = useState('');
   const [isUnsupported, setIsUnsupported] = useState(false);
   const [iscurrentState, setIscurrentState] = useState('');
@@ -18,8 +19,15 @@ const Navdata = () => {
   useEffect(() => {
     if (address && address !== addressSearched) {
       setAddressSearched(address);
+      setPrevAddress(address);
     }
   }, [address]);
+
+  useEffect(() => {
+    if (!address && contractAddress) {
+      setAddressSearched(prevAddress);
+    }
+  }, [contractAddress, address]);
 
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
@@ -27,34 +35,25 @@ const Navdata = () => {
       assets?.unsupported ||
         transactions?.unsupported ||
         performance?.unsupported ||
-        !address,
+        !addressSearched,
     );
-  }, [fetchData, address]);
-
-  const filterMenuItems = (menuItems) => {
-    if (isUnsupported || token) {
-      return menuItems.filter(
-        (item) =>
-          item.id !== 'assets' &&
-          item.id !== 'nfts' &&
-          item.id !== 'transactions',
-      );
-    }
-    return menuItems;
-  };
+  }, [fetchData, addressSearched]);
 
   const createMenuItem = (id, label, icon, page) => ({
     id,
     label,
     icon,
-    link: `${token ? `/tokens/${token}` : `/address/${addressSearched}/${page}`}`,
-
+    link:
+      contractAddress && !address
+        ? `/address/${prevAddress}/${page}`
+        : `${token ? `/tokens/${token}` : `/address/${addressSearched}/${page}`}`,
     click: function (e) {
       e.preventDefault();
       navigate(this.link);
       setIscurrentState(label);
     },
   });
+
   const createMenuItemAdmin = (id, label, icon, page) => ({
     id,
     label,
@@ -72,20 +71,21 @@ const Navdata = () => {
     label,
     isHeader: true,
   });
-  let dashboardLink = '';
 
-  if (!address) {
-    dashboardLink = `/token/${token}`;
-  } else {
-    dashboardLink = !isUnsupported
-      ? ''
-      : addressSearched
-        ? `/address/${addressSearched}/`
-        : '';
-  }
+  const filterMenuItems = (menuItems) => {
+    if (isUnsupported || token) {
+      return menuItems.filter(
+        (item) =>
+          item.id !== 'assets' &&
+          item.id !== 'nfts' &&
+          item.id !== 'transactions',
+      );
+    }
+    return menuItems;
+  };
 
   let allMenuItems = [
-    createMenuItem('summary', 'Summary', 'bx bx-home', `${dashboardLink}`),
+    createMenuItem('summary', 'Summary', 'bx bx-home', ''),
     createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
     createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
     createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),

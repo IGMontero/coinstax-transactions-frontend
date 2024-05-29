@@ -8,10 +8,8 @@ import VerticalLayout from '../Layouts/index';
 //routes
 import { useDispatch, useSelector } from 'react-redux';
 import { authMe } from '../slices/auth2/thunk';
-import {
-  allRoutes,
-  homePage
-} from './allRoutes';
+import { allRoutes, homePage } from './allRoutes';
+import { getTokenFromCookies } from '../helpers/cookies_helper';
 
 const Index = () => {
   const dispatch = useDispatch();
@@ -23,8 +21,10 @@ const Index = () => {
 
   const isLoginPage = location.pathname.includes('/login');
 
+  const token = getTokenFromCookies();
+
   useEffect(() => {
-    if (localStorage.getItem('token')) {
+    if (token) {
       dispatch(authMe());
     }
     setLoading(false);
@@ -42,15 +42,16 @@ const Index = () => {
     if (isRoot) {
       // Redirect to app root url or base url
 
-      const isOriginSameAsCurrent = window.location.origin === process.env.REACT_APP_ROOT_URL;
-      const shouldRedirect = !isOriginSameAsCurrent && process.env.REACT_APP_ROOT_URL
+      const isOriginSameAsCurrent =
+        window.location.origin === process.env.REACT_APP_ROOT_URL;
+      const shouldRedirect =
+        !isOriginSameAsCurrent && process.env.REACT_APP_ROOT_URL;
 
       if (shouldRedirect) {
-        window.location.href = process.env.REACT_APP_ROOT_URL
+        window.location.href = process.env.REACT_APP_ROOT_URL;
       }
     }
   }, [location.pathname]);
-
 
   if (loading) {
     return (
@@ -77,15 +78,12 @@ const Index = () => {
     );
   }
 
-
   const isHomePage =
     location.pathname === '/dashboard' || location.pathname === '/';
 
   return (
     <React.Fragment>
       <Routes>
-
-
         {isHomePage && (
           <Route>
             {homePage.map((route, idx) => (

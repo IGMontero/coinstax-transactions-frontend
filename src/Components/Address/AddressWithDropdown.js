@@ -107,19 +107,19 @@ const AddressWithDropdown = () => {
               className="d-flex align-items-center"
               onClick={toggleQrModal}
             >
-              <i className="ri-qr-code-line fs-2 me-2"></i>
-              <span className="fw-semibold">Show QR code</span>
+              <i className="ri-qr-code-line fs-4 me-2"></i>
+              <span className="fw-normal">Show QR code</span>
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
               onClick={(e) => handleCopy(e, address)}
             >
               {isCopied ? (
-                <i className="ri-check-line fs-2 me-2"></i>
+                <i className="ri-check-line fs-4 me-2"></i>
               ) : (
-                <i className="ri-file-copy-line fs-2 me-2"></i>
+                <i className="ri-file-copy-line fs-4 me-2"></i>
               )}
-              <span className="fw-semibold">Copy Address</span>
+              <span className="fw-normal">Copy Address</span>
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
@@ -130,8 +130,8 @@ const AddressWithDropdown = () => {
                 })
               }
             >
-              <i className="ri-pencil-line fs-2 me-2"></i>
-              <span className="fw-semibold">Rename</span>
+              <i className="ri-pencil-line fs-4 me-2"></i>
+              <span className="fw-normal">Rename</span>
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>

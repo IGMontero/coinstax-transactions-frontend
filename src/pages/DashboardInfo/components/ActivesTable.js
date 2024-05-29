@@ -16,12 +16,22 @@ import {
 } from '../../../utils/utils';
 import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
+import { getAppOptions, setAppOptions } from '../../../helpers/cookies_helper';
 
 const ActivesTable = ({ data, loading }) => {
+  const appOptions = getAppOptions();
   const [viewMode, setViewMode] = useState('byPlatform');
   const [showMenu, setShowMenu] = useState(false);
-  const [hideSmallBalances, setHideSmallBalances] = useState(false);
-  const [hideZeroBalances, setHideZeroBalances] = useState(true);
+  const [hideSmallBalances, setHideSmallBalances] = useState(
+    appOptions.hideSmallBalances,
+  );
+  const [hideZeroBalances, setHideZeroBalances] = useState(
+    appOptions.hideZeroBalances,
+  );
+
+  useEffect(() => {
+    setAppOptions({ ...appOptions, hideSmallBalances, hideZeroBalances });
+  }, [hideSmallBalances, hideZeroBalances]);
 
   const formatBalance = (number) => {
     if (typeof number !== 'number' || isNaN(number)) {
@@ -32,24 +42,6 @@ const ActivesTable = ({ data, loading }) => {
       minimumFractionDigits: hasComma ? 4 : 0,
       maximumFractionDigits: 4,
     });
-    return formattedNumber;
-  };
-
-  const formatPriceAndValue = (number) => {
-    if (typeof number !== 'number' || isNaN(number)) {
-      return 'Invalid Number';
-    }
-
-    const hasComma = number > 999;
-    const hasDecimal = number % 1 !== 0;
-    const minimumFractionDigits = hasComma ? 2 : hasDecimal ? 2 : 0;
-
-    const formattedNumber = number.toLocaleString(undefined, {
-      minimumFractionDigits:
-        number === 0 && hasDecimal ? 6 : minimumFractionDigits,
-      maximumFractionDigits: 6,
-    });
-
     return formattedNumber;
   };
 
@@ -78,8 +70,10 @@ const ActivesTable = ({ data, loading }) => {
     isDashboardPage = false;
   }
 
+  console.log(loading);
+
   const filteredItems = data.items
-    ? data.items.filter(
+    ? data?.items?.filter(
         (asset) =>
           (!hideSmallBalances || asset.value >= 1) &&
           (!hideZeroBalances || (asset.value !== 0 && asset.value !== null)),
@@ -95,9 +89,9 @@ const ActivesTable = ({ data, loading }) => {
         </div>
       )}
       <div
-        className={
-          Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
-        }
+      // className={
+      //   Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
+      // }
       >
         <div className="flex-grow-1 d-flex justify-content-between">
           <h2 className={`${!isDashboardPage ? 'd-none' : 'ms-1 mb-3'}`}>
@@ -192,9 +186,9 @@ const ActivesTable = ({ data, loading }) => {
           </div>
         </div>
         <div className="border border-2 rounded p-3">
-          {!loading && (!data || !data.items || data.items.length === 0) ? (
+          {!loading && (!data || !data.items || data.items?.length === 0) ? (
             <div className="text-center py-2 mt-3">
-              <h4>No Data Found</h4>
+              <h4>No Assets Found</h4>
             </div>
           ) : (
             <>
@@ -253,21 +247,27 @@ const ActivesTable = ({ data, loading }) => {
                               className="rounded-circle avatar-xs me-2"
                               onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.style.display = 'none';
+                                if (
+                                  !e.target.parentNode.querySelector(
+                                    '.img-assets-placeholder',
+                                  )
+                                ) {
+                                  e.target.style.display = 'none';
 
-                                const textNode = document.createElement('div');
-                                textNode.textContent = asset.name
-                                  ?.substring(0, 3)
-                                  .toUpperCase();
-                                textNode.className =
-                                  'img-assets-placeholder avatar-xs me-2';
+                                  const textNode =
+                                    document.createElement('div');
+                                  textNode.textContent = asset.name
+                                    ?.substring(0, 3)
+                                    .toUpperCase();
+                                  textNode.className =
+                                    'img-assets-placeholder avatar-xs me-2';
 
-                                const container = e.target.parentNode;
-
-                                container.insertBefore(
-                                  textNode,
-                                  container.firstChild,
-                                );
+                                  const container = e.target.parentNode;
+                                  container.insertBefore(
+                                    textNode,
+                                    container.firstChild,
+                                  );
+                                }
                               }}
                             />
 
@@ -296,8 +296,12 @@ const ActivesTable = ({ data, loading }) => {
                                   className={'me-1'}
                                   blockchainType={asset.blockchain}
                                 />
-                                {capitalizeFirstLetter(asset.blockchain)} ·
-                                Wallet
+                                {asset.blockchain === 'bnb'
+                                  ? 'BNB Chain'
+                                  : capitalizeFirstLetter(
+                                      asset.blockchain,
+                                    )}{' '}
+                                · Wallet
                               </div>
                             </div>
                           </div>

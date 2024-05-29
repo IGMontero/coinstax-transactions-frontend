@@ -52,6 +52,7 @@ const DashboardUserAddresses = () => {
         getUserAddresses({
           page: currentPage,
           address: search,
+          networkType,
         }),
       );
       const responseData = response.payload.data || response.payload;
@@ -81,7 +82,7 @@ const DashboardUserAddresses = () => {
 
   useEffect(() => {
     fetchUserAddresses();
-  }, [triggerSearch, currentPage]);
+  }, [triggerSearch, currentPage, networkType]);
 
   const handleSearch = () => {
     setTriggerSearch(true);

@@ -1,10 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  getTokenFromCookies,
+  saveTokenInCookies,
+} from '../../helpers/cookies_helper';
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const authMe = createAsyncThunk(
   'auth2/authMe',
   async (_, { getState, rejectWithValue }) => {
-    const token = localStorage.getItem('token');
+    const token = getTokenFromCookies();
 
     if (!token) {
       return rejectWithValue('No token found');
@@ -48,7 +52,7 @@ export const login = createAsyncThunk(
       const data = await response.json();
 
       if (data.token) {
-        localStorage.setItem('token', data.token);
+        saveTokenInCookies(data.token);
         dispatch(authMe());
       }
 
