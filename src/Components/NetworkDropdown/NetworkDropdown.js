@@ -2,6 +2,7 @@ import React from 'react';
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
 import pol from '../../assets/images/svg/crypto-icons/polygon.webp';
 import bnb from '../../assets/images/svg/crypto-icons/binanceLogo.png';
+import optimism from '../../assets/images/svg/crypto-icons/optimism-seeklogo.png';
 import {
   selectNetworkType,
   setNetworkType,
@@ -60,6 +61,14 @@ const NetworkDropdown = () => {
       width: 20,
       height: 20,
     },
+    {
+      key: 'optimism',
+      label: 'Optimism',
+      icon: optimism,
+      iconAlt: 'optimism',
+      width: 19,
+      height: 19,
+    },
   ];
 
   const handleChangeNetwork = (newType) => {
@@ -99,9 +108,11 @@ const NetworkDropdown = () => {
             <span className="ms-2 d-flex align-items-center py-0">
               {renderNetworkIcon(networks.find((n) => n.key === networkType))}
               <span className="fs-6 py-0">
-                {networkType === 'all'
-                  ? 'All Networks'
-                  : capitalizeFirstLetter(networkType)}
+                {networkType === 'bsc-mainnet'
+                  ? 'BNB Chain'
+                  : networkType === 'all'
+                    ? 'All Networks'
+                    : capitalizeFirstLetter(networkType)}
               </span>
             </span>
             <i className="mdi mdi-chevron-down  ms-2 fs-5"></i>

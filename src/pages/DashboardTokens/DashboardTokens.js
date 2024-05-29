@@ -6,6 +6,7 @@ import { fetchCoingeckoId } from '../../slices/tokens/thunk';
 import PerformanceChart from '../DashboardInfo/components/PerformanceChart';
 import About from './components/About';
 import Stats from './components/Stats';
+import Explorers from './components/Explorers';
 
 const DashboardTokens = () => {
   const navigate = useNavigate();
@@ -27,8 +28,6 @@ const DashboardTokens = () => {
       const response = await dispatch(fetchCoingeckoId({ coingeckoId: token }));
 
       const res = response.payload;
-
-      console.log(res, 'res');
 
       if (res) {
         setData(res);
@@ -128,13 +127,17 @@ const DashboardTokens = () => {
             </Col>
             {/* <Col className="col-12 my-5">
               <Tags />
-            </Col>
+            </Col>*/}
             <Col className="col-12 my-5">
-              <Explorers />
+              {data?.platforms ? (
+                <Explorers platforms={data?.platforms} />
+              ) : (
+                <Spinner style={{ width: '4rem', height: '4rem' }} />
+              )}
             </Col>
-            <Col className="col-12 my-5">
+            {/* <Col className="col-12 my-5">
               <History />
-            </Col> */}
+            </Col>  */}
           </>
         )}
       </div>

@@ -1,12 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { getTokenFromCookies } from '../../helpers/cookies_helper';
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const getUserAddresses = createAsyncThunk(
   'userAddresses/getUserAddresses',
-  async ({ page, address }, { rejectWithValue }) => {
-    const token = localStorage.getItem('token');
+  async ({ page, address, networkType }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
-      let url = `${API_BASE}/admin/addresses`;
+      let url = `${API_BASE}/admin/addresses/${networkType}`;
       if (address) {
         url += `/${address}`;
       }
@@ -32,7 +33,7 @@ export const getUserAddresses = createAsyncThunk(
 export const refreshAllTransactions = createAsyncThunk(
   'userAddresses/refreshAllTransactions',
   async ({ networkType, address }, { rejectWithValue }) => {
-    const token = localStorage.getItem('token');
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/admin/addresses/${networkType}/${address}/refresh`,
@@ -59,7 +60,7 @@ export const refreshAllTransactions = createAsyncThunk(
 export const deleteUsersAddress = createAsyncThunk(
   'userAddresses/deleteUsersAddress',
   async ({ networkType, address }, { rejectWithValue }) => {
-    const token = localStorage.getItem('token');
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/admin/addresses/${networkType}/${address}`,

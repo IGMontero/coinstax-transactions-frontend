@@ -1,7 +1,8 @@
 import React from 'react';
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
 import polygon from '../../assets/images/svg/crypto-icons/polygon.webp';
-import bnb from '../../assets/images/svg/crypto-icons/binanceLogo.png';
+import bnb from '../../assets/images/svg/crypto-icons/bnb.svg';
+import optimism from '../../assets/images/svg/crypto-icons/optimism-seeklogo.png';
 import { capitalizeFirstLetter } from '../../utils/utils';
 
 const BlockchainImage = ({
@@ -14,7 +15,8 @@ const BlockchainImage = ({
   const images = {
     ethereum: eth,
     polygon: polygon,
-    'bsc-mainnet': bnb,
+    bnb: bnb,
+    optimism: optimism,
   };
 
   const imageSrc = images[blockchainType.toLowerCase()];
