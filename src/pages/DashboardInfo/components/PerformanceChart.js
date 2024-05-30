@@ -21,13 +21,7 @@ import _ from 'lodash';
 import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 import { selectNetworkType } from '../../../slices/networkType/reducer';
 
-const PerformanceChart = ({
-  address,
-  setIsUnsupported,
-  isUnsupported,
-  loading,
-  setLoading,
-}) => {
+const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
   const { token } = useParams();
   const chartContainerRef = useRef(null);
@@ -35,6 +29,10 @@ const PerformanceChart = ({
   const fetchControllerRef = useRef(new AbortController());
 
   const networkType = useSelector(selectNetworkType);
+
+  const [loadingChart, setLoadingChart] = useState({});
+
+  const loading = Object.values(loadingChart).some((l) => l);
 
   const [activeFilter, setActiveFilter] = useState('one_week');
   const [isHovering, setIsHovering] = useState(false);
@@ -187,12 +185,17 @@ const PerformanceChart = ({
   // #region Api Calls
 
   const fetchAndSetData = (days, signal) => {
-    setLoading(true);
+    const fetchId = Date.now();
+
+    console.log(loadingChart);
     if (address) {
       const params = days
         ? { address, days, networkType, signal }
         : { address, networkType, signal };
-
+      setLoadingChart((prev) => ({
+        ...prev,
+        [fetchId]: true,
+      }));
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
@@ -274,19 +277,29 @@ const PerformanceChart = ({
             },
           }));
 
-          setLoading(false);
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         })
         .catch((error) => {
           console.error('Error fetching performance data:', error);
-          setLoading(false);
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         });
     }
   };
 
   const fetchAndSetDataForToken = (days, signal) => {
-    setLoading(true);
+    const fetchId = Date.now();
     if (address) {
       const params = days ? { address, days, signal } : { address, signal };
+      setLoadingChart((prev) => ({
+        ...prev,
+        [fetchId]: true,
+      }));
       dispatch(fetchPerformanceToken(params))
         .unwrap()
         .then((response) => {
@@ -356,11 +369,17 @@ const PerformanceChart = ({
               },
             }));
           }
-          setLoading(false);
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         })
         .catch((error) => {
           console.error('Error fetching performance data:', error);
-          setLoading(false);
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         });
     }
   };
