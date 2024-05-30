@@ -35,7 +35,6 @@ const DashboardInfo = () => {
   const [historyData, setHistoryData] = useState([]);
 
   const [assetsData, setAssetsData] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   // const [loadingAssets, setLoadingAssets] = useState(false);
 
@@ -171,38 +170,29 @@ const DashboardInfo = () => {
 
         <>
           {/* <AddressWithDropdown /> */}
-          {loading ? (
-            <div
-              className="d-flex d-none justify-content-start align-items-center"
-              style={{ height: '13vh' }}
+
+          <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
+            <Col
+              xxl={9}
+              lg={9}
+              md={9}
+              sm={9}
+              xs={9}
+              className="d-flex flex-column"
+              order="1"
             >
-              <Spinner style={{ width: '2rem', height: '2rem' }} />
-            </div>
-          ) : (
-            <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
-              <Col
-                xxl={9}
-                lg={9}
-                md={9}
-                sm={9}
-                xs={9}
-                className="d-flex flex-column"
-                order="1"
-              >
-                <div className="d-flex flex-row mt-3">
-                  {isUnsupported && (
-                    <div className="mt-5  ">
-                      <h1 className="fw-semibold text-danger">
-                        Unsupported Address
-                      </h1>
-                      <h5 className="text-primary">
-                        Contact our support team{' '}
-                      </h5>
-                    </div>
-                  )}
-                </div>
-              </Col>
-              {/* <Col
+              <div className="d-flex flex-row mt-3">
+                {isUnsupported && (
+                  <div className="mt-5  ">
+                    <h1 className="fw-semibold text-danger">
+                      Unsupported Address
+                    </h1>
+                    <h5 className="text-primary">Contact our support team </h5>
+                  </div>
+                )}
+              </div>
+            </Col>
+            {/* <Col
                 xxl={3}
                 lg={3}
                 md={3}
@@ -227,8 +217,8 @@ const DashboardInfo = () => {
                       Add wallet
                     </Button>
               </Col> */}
-            </Row>
-          )}
+          </Row>
+
           <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
             {' '}
             {!isUnsupported ? (
@@ -244,13 +234,11 @@ const DashboardInfo = () => {
                 <div className="d-flex">
                   <div className="flex-grow-1">
                     <PerformanceChart
-                      loading={loading}
-                      setLoading={setLoading}
                       setIsUnsupported={setIsUnsupported}
                       address={addressForSearch}
                     />
 
-                    <Col className={`${loading ? '' : ''}`} xxl={12}>
+                    <Col xxl={12}>
                       <ActivesTable loading={loadingAssets} data={assetsData} />
                     </Col>
                     <Col xxl={12} className="mt-3 d-flex flex-column">
