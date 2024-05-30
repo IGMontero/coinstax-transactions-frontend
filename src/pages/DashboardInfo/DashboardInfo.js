@@ -1,30 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Col,
-  Row,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-  TabPane,
-  TabContent,
-  Spinner,
-  Container,
-} from 'reactstrap';
-import PerformanceChart from './components/PerformanceChart';
-import ActivesTable from './components/ActivesTable';
+import { Button, Col, Row, Spinner } from 'reactstrap';
 import Nfts from '../DashboardNFT/Nfts';
 import HistorialTable from '../DashboardTransactions/HistorialTable';
+import ActivesTable from './components/ActivesTable';
+import PerformanceChart from './components/PerformanceChart';
 
-import { fetchAssets } from '../../slices/transactions/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { capitalizeFirstLetter } from '../../utils/utils';
 import QrModal from '../../Components/Modals/QrModal';
 import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
 import { setAddressName } from '../../slices/addressName/reducer';
 import { selectNetworkType } from '../../slices/networkType/reducer';
+import { fetchAssets } from '../../slices/transactions/thunk';
+import { capitalizeFirstLetter } from '../../utils/utils';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -47,11 +35,16 @@ const DashboardInfo = () => {
   const [historyData, setHistoryData] = useState([]);
 
   const [assetsData, setAssetsData] = useState([]);
-  const [loadingAssets, setLoadingAssets] = useState(false);
+  // const [loadingAssets, setLoadingAssets] = useState(false);
 
   const [loading, setLoading] = useState(false);
 
   const [showQrModal, setShowQrModal] = useState(false);
+
+  const [assetsLoaders, setAssetsLoaders] = useState({});
+  const loadingAssets = Object.values(assetsLoaders).some((loader) => loader);
+
+  console.log('Assets loaders:', assetsLoaders);
 
   function usePrevious(value) {
     const ref = useRef();
@@ -80,17 +73,30 @@ const DashboardInfo = () => {
   };
 
   const fetchDataAssets = () => {
-    setLoadingAssets(true);
+    // setLoadingAssets(true);
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
+
+    const fetchId = Date.now();
+
+    // Start loading for this fetch
+    setAssetsLoaders((prev) => ({
+      ...prev,
+      [fetchId]: true,
+    }));
 
     dispatch(fetchAssets({ address, networkType, signal }))
       .unwrap()
       .then((response) => {
         if (response.unsupported == true) {
           setIsUnsupported(true);
-          setLoadingAssets(false);
+          // setLoadingAssets(false);
+          // stop loading
+          setAssetsLoaders((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         } else {
           setIsUnsupported(false);
           handleSaveInCookiesAndGlobalState(
@@ -100,14 +106,31 @@ const DashboardInfo = () => {
           );
         }
         setAssetsData(response);
-        setLoadingAssets(false);
+        // setLoadingAssets(false);
+        // stop loading
+        setAssetsLoaders((prev) => ({
+          ...prev,
+          [fetchId]: false,
+        }));
       })
       .catch((error) => {
         if (error.name === 'AbortError') {
           console.log('Fetch aborted');
+          // setLoadingAssets(false);
+
+          // stop loading
+          setAssetsLoaders((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         } else {
           console.error('Error fetching performance data:', error);
-          setLoadingAssets(false);
+          // setLoadingAssets(false);
+          // stop loading
+          setAssetsLoaders((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         }
       });
   };
