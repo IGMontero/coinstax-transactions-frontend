@@ -70,8 +70,6 @@ const ActivesTable = ({ data, loading }) => {
     isDashboardPage = false;
   }
 
-  console.log(loading);
-
   const filteredItems = data.items
     ? data?.items?.filter(
         (asset) =>

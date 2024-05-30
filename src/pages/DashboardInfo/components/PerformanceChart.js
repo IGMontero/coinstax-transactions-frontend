@@ -547,8 +547,8 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                     }}
                   >
                     <Spinner
-                      style={{ width: '3rem', height: '3rem' }}
-                      color="primary"
+                      style={{ width: '4rem', height: '4rem' }}
+                      className=""
                     />
                   </div>
                 ) : (
