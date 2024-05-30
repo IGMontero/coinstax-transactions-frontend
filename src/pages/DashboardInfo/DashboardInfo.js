@@ -157,8 +157,7 @@ const DashboardInfo = () => {
     }
   }, [type]);
 
-  document.title = `${type ? capitalizeFirstLetter(type) : 'Dashboard'} ${addressTitle ? '- ' + addressTitle : ''}`;
-
+  document.title = ` Dashboard ${address} | Chain Glance`;
   return (
     <React.Fragment>
       <div className="page-content">

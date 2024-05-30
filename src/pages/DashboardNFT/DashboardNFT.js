@@ -195,7 +195,7 @@ const DashboardNFT = () => {
     );
   };
 
-  document.title = `${name ? name : 'NFTs'} - ${collectionName || ''}`;
+  document.title = `${name || 'NFTs | Chain Glance'}  ${'-' + collectionName || ''}`;
 
   return (
     <React.Fragment>

@@ -328,7 +328,13 @@ const Nfts = ({ address, isUnsupported }) => {
       </>
     );
   }
+  const isNftsPage = location.pathname.includes('/nfts');
 
+  if (isNftsPage) {
+    document.title = 'NFTs | Chain Glance';
+  } else {
+    return;
+  }
   return (
     <React.Fragment>
       {renderTitle()}
