@@ -7,10 +7,13 @@ export const getUserAddresses = createAsyncThunk(
   async ({ page, address, networkType }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      let url = `${API_BASE}/admin/addresses/${networkType}`;
+      let url;
       if (address) {
-        url += `/${address}`;
+        url = `${API_BASE}/admin/addresses/address/${networkType}/${address}`;
+      } else {
+        url = `${API_BASE}/admin/addresses/${networkType}`;
       }
+
       url += `?page=${page}`;
       const response = await fetch(url, {
         method: 'GET',
