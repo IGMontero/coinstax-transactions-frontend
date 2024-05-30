@@ -110,16 +110,6 @@ const HistorialTable = ({ data, setData }) => {
     setHasPreview(hasAnyIntervalRunning);
   }, [refreshPreviewIntervals]);
 
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     setDebouncedSearchTerm(searchTerm);
-  //   }, 500);
-
-  //   return () => {
-  //     clearTimeout(timeout);
-  //   };
-  // }, [searchTerm]);
-
   useEffect(() => {
     if (Array.isArray(data)) {
       const hasPreview = data.some(
@@ -139,7 +129,7 @@ const HistorialTable = ({ data, setData }) => {
     return () => {
       setHasPreview(false);
     };
-  }, [data, networkType]);
+  }, [data]);
 
   // #region FETCH DATA
   const fetchData = async () => {
@@ -160,6 +150,7 @@ const HistorialTable = ({ data, setData }) => {
         setShowDownloadMessage(true);
       }, 3000);
 
+      console.log('currentPage fetch data', currentPage);
       const response = await dispatch(
         fetchHistory({
           address,
@@ -169,7 +160,7 @@ const HistorialTable = ({ data, setData }) => {
             includeSpam: includeSpam,
           },
           assetsFilters: selectAsset,
-          page: currentPage,
+          page: 0,
           networkType,
         }),
       ).unwrap();
@@ -302,29 +293,7 @@ const HistorialTable = ({ data, setData }) => {
     includeSpam,
     selectedAssets,
     refreshPreviewIntervals,
-    networkType,
   ]);
-
-  // useEffect(() => {
-  //   let interval;
-  //   if (hasPreview) {
-  //     interval = setInterval(async () => {
-  //       await updateTransactionsPreview({
-  //         address,
-  //         debouncedSearchTerm,
-  //         selectedFilters,
-  //         includeSpam,
-  //         selectedAssets,
-  //         currentPage,
-  //         setData,
-  //         data,
-  //         dispatch,
-  //         pagesChecked: pagesCheckedRef.current,
-  //       });
-  //     }, 5000);
-  //   }
-  //   return () => clearInterval(interval);
-  // }, [hasPreview, data]);
 
   useEffect(() => {
     fetchData();
@@ -333,13 +302,13 @@ const HistorialTable = ({ data, setData }) => {
     setShowDownloadMessage('');
     setCurrentPage(0);
   }, [
+    networkType,
     address,
     dispatch,
     selectedAssets,
     selectedFilters,
     includeSpam,
     debouncedSearchTerm,
-    networkType,
   ]);
 
   // #region GROUPS
@@ -414,7 +383,6 @@ const HistorialTable = ({ data, setData }) => {
       if (trasactions.length === 0 && !isProcessing) {
         setHasMoreData(false);
       } else {
-        // setData((prevData) => [...prevData, ...response]);
         setData((prevData) => [...prevData, ...trasactions]);
         setCurrentPage(nextPage);
       }
@@ -464,6 +432,7 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   const handleTransactionFilterChange = async (filter) => {
+    // const fecthId = Date.now()
     let updatedFilters = [...selectedFilters];
     if (selectedFilters.includes(filter)) {
       updatedFilters = updatedFilters.filter((f) => f !== filter);
@@ -472,7 +441,7 @@ const HistorialTable = ({ data, setData }) => {
     }
     setSelectedFilters(updatedFilters);
     setCurrentPage(0);
-    setLoading(true);
+
     setHasAppliedFilters(true);
   };
 
@@ -566,8 +535,13 @@ const HistorialTable = ({ data, setData }) => {
     const updatedFilters = selectedFilters.filter((f) => f !== filterName);
     setSelectedFilters(updatedFilters);
 
-    setLoading(true);
+    const fecthId = Date.now();
+
     try {
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: true,
+      }));
       const response = await dispatch(
         fetchHistory({
           address,
@@ -579,7 +553,10 @@ const HistorialTable = ({ data, setData }) => {
     } catch (error) {
       console.error('Error applying filters:', error);
     } finally {
-      setLoading(false);
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
     }
   };
 
@@ -594,11 +571,11 @@ const HistorialTable = ({ data, setData }) => {
     setHasAppliedFilters(false);
   };
 
-  const handleResetFilters = () => {
-    setSelectedFilters([]);
-    setSelectedAssets('All Assets');
-    setLoading(true);
-  };
+  // const handleResetFilters = () => {
+  //   setSelectedFilters([]);
+  //   setSelectedAssets('All Assets');
+  //   setLoading(true);
+  // };
 
   const handleShowSpamTransactions = (e) => {
     const checked = e.target.checked;
