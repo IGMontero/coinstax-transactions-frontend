@@ -35,16 +35,14 @@ const DashboardInfo = () => {
   const [historyData, setHistoryData] = useState([]);
 
   const [assetsData, setAssetsData] = useState([]);
-  // const [loadingAssets, setLoadingAssets] = useState(false);
-
   const [loading, setLoading] = useState(false);
+
+  // const [loadingAssets, setLoadingAssets] = useState(false);
 
   const [showQrModal, setShowQrModal] = useState(false);
 
   const [assetsLoaders, setAssetsLoaders] = useState({});
   const loadingAssets = Object.values(assetsLoaders).some((loader) => loader);
-
-  console.log('Assets loaders:', assetsLoaders);
 
   function usePrevious(value) {
     const ref = useRef();
