@@ -93,7 +93,7 @@ const Nfts = ({ address, isUnsupported }) => {
       .unwrap()
       .then((response) => {
         setData(response);
-        setUpdatedAt(response.updatedAt);
+        setUpdatedAt(response?.updatedAt);
         setLoading(false);
         setLoadingIncludeSpam(false);
       })
