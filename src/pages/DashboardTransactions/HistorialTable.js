@@ -902,7 +902,7 @@ const HistorialTable = ({ data, setData }) => {
     );
   }
 
-  if (errorData) {
+  if (errorData && data?.length === 0) {
     return (
       <>
         {isDashboardPage ? null : <AddressWithDropdown />}
