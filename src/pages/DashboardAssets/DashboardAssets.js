@@ -67,6 +67,7 @@ const DashboardAssets = () => {
     };
   }, [networkType, address]);
 
+  document.title = 'Assets | Chain Glance';
   return (
     <div className="page-content ">
       <ActivesTable loading={loadingAssets} data={assetsData} />
