@@ -60,7 +60,12 @@ const Nfts = ({ address, isUnsupported }) => {
   }
   const [itemsToShow, setItemsToShow] = useState(20);
 
-  const [loading, setLoading] = React.useState(false);
+  // const [loadingInclue, setLoading] = React.useState(false);
+
+  const [nftsLoader, setNftsLoader] = useState({});
+
+  const loading = Object.values(nftsLoader).some((loader) => loader);
+
   const [loadingIncludeSpam, setLoadingIncludeSpam] = useState(false);
   const [includeSpam, setIncludeSpam] = useState(false);
 
@@ -82,10 +87,19 @@ const Nfts = ({ address, isUnsupported }) => {
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
+
+    const fetchId = Date.now();
     if (loadingIncludeSpam) {
-      setLoading(false);
+      // setLoading(false);
+      setNftsLoader((prev) => ({
+        ...prev,
+        [fetchId]: true,
+      }));
     } else {
-      setLoading(true);
+      setNftsLoader((prev) => ({
+        ...prev,
+        [fetchId]: true,
+      }));
     }
     dispatch(
       fetchNFTS({ address: address, spam: includeSpam, networkType, signal }),
@@ -94,12 +108,18 @@ const Nfts = ({ address, isUnsupported }) => {
       .then((response) => {
         setData(response);
         setUpdatedAt(response?.updatedAt);
-        setLoading(false);
+        setNftsLoader((prev) => ({
+          ...prev,
+          [fetchId]: false,
+        }));
         setLoadingIncludeSpam(false);
       })
       .catch((error) => {
         console.log('Error fetching NFTs:', error);
-        setLoading(false);
+        setNftsLoader((prev) => ({
+          ...prev,
+          [fetchId]: false,
+        }));
         setLoadingIncludeSpam(false);
       });
   };
@@ -308,8 +328,6 @@ const Nfts = ({ address, isUnsupported }) => {
       </>
     );
   }
-
-  console.log('Loading: ', loading);
 
   return (
     <React.Fragment>

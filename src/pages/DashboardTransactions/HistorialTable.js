@@ -63,7 +63,7 @@ const HistorialTable = ({ data, setData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [unsupportedAddress, setUnsupportedAddress] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [showDownloadMessage, setShowDownloadMessage] = useState(false);
   const [showDownloadMessageInButton, setShowDownloadMessageInButton] =
     useState(false);
@@ -76,6 +76,9 @@ const HistorialTable = ({ data, setData }) => {
   const [loadingDownload, setLoadingDownload] = useState(false);
 
   const [refreshPreviewIntervals, setRefreshPreviewIntervals] = useState({});
+
+  const [loadingTransacions, setLoadingTransactions] = useState({});
+  const loading = Object.values(loadingTransacions).some((loading) => loading);
 
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
@@ -142,10 +145,16 @@ const HistorialTable = ({ data, setData }) => {
   const fetchData = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
+
+    const fecthId = Date.now();
     try {
       setIsInitialLoad(true);
 
-      setLoading(true);
+      // start loader for this fetch
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: true,
+      }));
 
       timerId = setTimeout(() => {
         setShowDownloadMessage(true);
@@ -204,7 +213,11 @@ const HistorialTable = ({ data, setData }) => {
       setErrorData(error);
       console.log(error);
     } finally {
-      setLoading(false);
+      // Stop loader
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
       setIsInitialLoad(false);
       setShowDownloadMessage(false);
     }
@@ -353,8 +366,14 @@ const HistorialTable = ({ data, setData }) => {
   const getMoreTransactions = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
+
+    const fecthId = Date.now();
     try {
-      setLoading(true);
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: true,
+      }));
+
       const nextPage = currentPage + 1;
 
       timerId = setTimeout(() => {
@@ -413,7 +432,11 @@ const HistorialTable = ({ data, setData }) => {
     } catch (error) {
       console.error('Error fetching more transactions:', error);
     } finally {
-      setLoading(false);
+      // stop loader
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
       setShowDownloadMessageInButton(false);
     }
   };
@@ -642,7 +665,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -660,8 +683,9 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
