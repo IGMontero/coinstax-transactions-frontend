@@ -249,14 +249,14 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
               callback: function (value) {
                 if (allItemsAreIntegers) {
                   if (value === minValue || value === maxValue) {
-                    return parseValuesToLocale(value, CurrencyUSD);
+                    return parseValuesToLocale(value, CurrencyUSD, true);
                   }
                 } else {
                   if (
                     Math.abs(value - minValue) < tolerance ||
                     Math.abs(value - maxValue) < tolerance
                   ) {
-                    return parseValuesToLocale(value, CurrencyUSD);
+                    return parseValuesToLocale(value, CurrencyUSD, true);
                   }
                 }
                 return '';
@@ -359,7 +359,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                           Math.abs(value - minValue) < tolerance ||
                           Math.abs(value - maxValue) < tolerance
                         ) {
-                          return parseValuesToLocale(value, CurrencyUSD);
+                          return parseValuesToLocale(value, CurrencyUSD, true);
                         }
                         return '';
                       },
