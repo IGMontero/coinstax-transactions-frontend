@@ -3,6 +3,9 @@ import eth from '../../assets/images/svg/crypto-icons/eth.svg';
 import polygon from '../../assets/images/svg/crypto-icons/polygon.webp';
 import bnb from '../../assets/images/svg/crypto-icons/bnb.svg';
 import optimism from '../../assets/images/svg/crypto-icons/optimism-seeklogo.png';
+import btcMainnet from '../../assets/images/svg/crypto-icons/btc-mainnet.svg';
+
+import baseMiannet from '../../assets/images/svg/crypto-icons/base-mainnet.svg';
 import { capitalizeFirstLetter } from '../../utils/utils';
 
 const BlockchainImage = ({
@@ -17,6 +20,8 @@ const BlockchainImage = ({
     polygon: polygon,
     bnb: bnb,
     optimism: optimism,
+    btc: btcMainnet,
+    base: baseMiannet,
   };
 
   const imageSrc = images[blockchainType.toLowerCase()];

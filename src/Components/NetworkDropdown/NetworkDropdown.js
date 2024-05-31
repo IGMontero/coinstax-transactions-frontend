@@ -2,7 +2,9 @@ import React from 'react';
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
 import pol from '../../assets/images/svg/crypto-icons/polygon.webp';
 import bnb from '../../assets/images/svg/crypto-icons/binanceLogo.png';
+import btcMainnet from '../../assets/images/svg/crypto-icons/btc-mainnet.svg';
 import optimism from '../../assets/images/svg/crypto-icons/optimism-seeklogo.png';
+import baseMainnet from '../../assets/images/svg/crypto-icons/base-mainnet.svg';
 import {
   selectNetworkType,
   setNetworkType,
@@ -68,6 +70,22 @@ const NetworkDropdown = () => {
       iconAlt: 'optimism',
       width: 19,
       height: 19,
+    },
+    {
+      key: 'btc-mainnet',
+      label: 'BTC Chain',
+      icon: btcMainnet,
+      iconAlt: 'btc-mainnet',
+      width: 20,
+      height: 20,
+    },
+    {
+      key: 'base-mainnet',
+      label: 'Base Chain',
+      icon: baseMainnet,
+      iconAlt: 'base-mainnet',
+      width: 20,
+      height: 20,
     },
   ];
 

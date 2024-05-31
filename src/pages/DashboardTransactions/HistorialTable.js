@@ -293,6 +293,7 @@ const HistorialTable = ({ data, setData }) => {
     includeSpam,
     selectedAssets,
     refreshPreviewIntervals,
+    networkType,
   ]);
 
   useEffect(() => {
