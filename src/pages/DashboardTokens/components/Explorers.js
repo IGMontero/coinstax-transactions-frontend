@@ -80,7 +80,7 @@ const Explorers = ({ platforms }) => {
     {
       name: 'Open Network',
       image:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/The_open_network_logo.svg/640px-The_open_network_logo.svg.png',
+        'https://seeklogo.com/images/T/telegram-open-network-logo-FB68300089-seeklogo.com.png',
       key: 'the-open-network',
     },
     {
