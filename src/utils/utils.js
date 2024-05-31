@@ -112,8 +112,11 @@ export const formatPercentageChange = (percentage) => {
     return '0.00';
   }
 
-  // Manejo de valores extremadamente pequeños y grandes usando notación exponencial
-  if (Math.abs(numericPercentage) < 1e-6 || Math.abs(numericPercentage) > 1e6) {
+  if (Math.abs(numericPercentage) < 1e-6) {
+    return '0.00';
+  }
+
+  if (Math.abs(numericPercentage) > 1e6) {
     return numericPercentage.toExponential(2);
   }
 
