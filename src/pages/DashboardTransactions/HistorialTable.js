@@ -461,7 +461,7 @@ const HistorialTable = ({ data, setData }) => {
       });
       const response = await dispatch(
         downloadTransactions({
-          blockchain: 'eth-mainnet',
+          blockchain: networkType,
           address: address,
           query: debouncedSearchTerm,
           filters: {
@@ -492,21 +492,11 @@ const HistorialTable = ({ data, setData }) => {
         setTimeout(() => {
           setLoadingDownload(false);
         }, 5000);
-      } else {
-        // Swal.fire({
-        //   title: 'Downloading',
-        //   html: 'Your file is being prepared for download.',
-        //   timerProgressBar: true,
-        //   didOpen: () => {
-        //     Swal.showLoading();
-        //   },
-        // });
-        console.log('Will download file');
-
-        const url = window.URL.createObjectURL(new Blob([response]));
+      } else if (response.data && response.data.size > 0) {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `transactions-${address}.csv`);
+        link.setAttribute('download', `txs_${networkType}_${address}.csv`);
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link);
@@ -515,6 +505,13 @@ const HistorialTable = ({ data, setData }) => {
           Swal.close();
           setLoadingDownload(false);
         }, 500);
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'No Data',
+          text: 'No transactions to download.',
+        });
+        setLoadingDownload(false);
       }
     } catch (error) {
       console.error(error);
