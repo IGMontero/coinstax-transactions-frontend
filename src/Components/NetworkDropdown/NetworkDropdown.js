@@ -71,14 +71,14 @@ const NetworkDropdown = () => {
       width: 19,
       height: 19,
     },
-    {
-      key: 'btc-mainnet',
-      label: 'BTC Chain',
-      icon: btcMainnet,
-      iconAlt: 'btc-mainnet',
-      width: 20,
-      height: 20,
-    },
+    // {
+    //   key: 'btc-mainnet',
+    //   label: 'BTC Chain',
+    //   icon: btcMainnet,
+    //   iconAlt: 'btc-mainnet',
+    //   width: 20,
+    //   height: 20,
+    // },
     {
       key: 'base-mainnet',
       label: 'Base Chain',
