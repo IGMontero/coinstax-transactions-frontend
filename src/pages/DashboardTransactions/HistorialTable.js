@@ -468,7 +468,7 @@ const HistorialTable = ({ data, setData }) => {
       });
       const response = await dispatch(
         downloadTransactions({
-          blockchain: 'eth-mainnet',
+          blockchain: networkType,
           address: address,
           query: debouncedSearchTerm,
           filters: {
