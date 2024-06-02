@@ -191,11 +191,9 @@ const HistorialTable = ({ data, setData }) => {
         (transaction) => transaction.preview === true,
       );
 
-      console.log('Has preview:', hasPreview);
       const isIntervalRunning = refreshPreviewIntervals[currentPage];
 
       if (hasPreview && !isIntervalRunning) {
-        console.log('Starting interval for page', currentPage);
         startRefreshPreviewPageInterval(currentPage);
       }
 
@@ -215,9 +213,9 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   const startRefreshPreviewPageInterval = (pageIndex) => {
-    if (!isUserInTransactionsHistoryPage) {
-      return;
-    }
+    // if (!isUserInTransactionsHistoryPage) {
+    //   return;
+    // }
 
     const interval = setInterval(async () => {
       console.log('Running interval for page', pageIndex);
@@ -247,11 +245,19 @@ const HistorialTable = ({ data, setData }) => {
         pagesChecked: pagesCheckedRef.current,
         onEnd: () => {
           clearInterval(interval);
+          setRefreshPreviewIntervals((prevIntervals) => ({
+            ...prevIntervals,
+            [pageIndex]: null,
+          }));
           console.log('Clearing interval for page', pageIndex);
         },
         onError: (err) => {
           console.error('Error updating preview:', err);
           clearInterval(interval);
+          setRefreshPreviewIntervals((prevIntervals) => ({
+            ...prevIntervals,
+            [pageIndex]: null,
+          }));
           console.log(
             'Clearing interval for page because of an error',
             pageIndex,
@@ -280,19 +286,25 @@ const HistorialTable = ({ data, setData }) => {
       Object.values(refreshPreviewIntervals).forEach((interval) => {
         clearInterval(interval);
       });
+
+      setRefreshPreviewIntervals({});
     }
 
     return () => {
       Object.values(refreshPreviewIntervals).forEach((interval) => {
         clearInterval(interval);
+
+        console.log('Clearing interval');
       });
+
+      setRefreshPreviewIntervals({});
     };
   }, [
     // If any filter changes, clear all intervals
     selectedFilters,
     includeSpam,
     selectedAssets,
-    refreshPreviewIntervals,
+    // refreshPreviewIntervals,
     networkType,
   ]);
 
@@ -472,7 +484,8 @@ const HistorialTable = ({ data, setData }) => {
         }),
       ).unwrap();
 
-      console.log(response);
+      console.log(response, response.data, response.size);
+      const isResponseBlob = response instanceof Blob;
 
       if (response.error && response.error.code !== 'PROCESSING') {
         Swal.fire({
@@ -492,8 +505,8 @@ const HistorialTable = ({ data, setData }) => {
         setTimeout(() => {
           setLoadingDownload(false);
         }, 5000);
-      } else if (response.data && response.data.size > 0) {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
+      } else if ((response.data && response.data.size > 0) || isResponseBlob) {
+        const url = window.URL.createObjectURL(response);
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', `txs_${networkType}_${address}.csv`);
@@ -640,7 +653,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -658,9 +671,8 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
