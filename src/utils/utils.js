@@ -112,8 +112,11 @@ export const formatPercentageChange = (percentage) => {
     return '0.00';
   }
 
-  // Manejo de valores extremadamente pequeños y grandes usando notación exponencial
-  if (Math.abs(numericPercentage) < 1e-6 || Math.abs(numericPercentage) > 1e6) {
+  if (Math.abs(numericPercentage) < 1e-6) {
+    return '0.00';
+  }
+
+  if (Math.abs(numericPercentage) > 1e6) {
     return numericPercentage.toExponential(2);
   }
 
@@ -146,7 +149,7 @@ export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
 
-export const parseValuesToLocale = (value, currency) => {
+export const parseValuesToLocale = (value, currency, valueForChart) => {
   // Get the location from the browser
   const localUbication = navigator.language || 'en-US';
 
@@ -155,7 +158,9 @@ export const parseValuesToLocale = (value, currency) => {
   }
 
   const isValueHuge = value > 1e20;
-  const isValueSmall = Math.abs(value) < 0.01;
+  const isValueSmall = valueForChart
+    ? Math.abs(value) < 1
+    : Math.abs(value) < 0.01;
 
   const findSignificantDigits = (val) => {
     // Early return if value is 0
@@ -177,14 +182,18 @@ export const parseValuesToLocale = (value, currency) => {
         currency: currency,
         minimumFractionDigits: 2,
         maximumFractionDigits: isValueSmall
-          ? findSignificantDigits(value) + 2
+          ? valueForChart
+            ? Math.min(findSignificantDigits(value) + 4, 5)
+            : findSignificantDigits(value) + 2
           : 3,
       };
     } else {
       options = {
         minimumFractionDigits: 2,
         maximumFractionDigits: isValueSmall
-          ? findSignificantDigits(value) + 2
+          ? valueForChart
+            ? Math.min(findSignificantDigits(value) + 4, 5)
+            : findSignificantDigits(value) + 2
           : 3,
       };
     }

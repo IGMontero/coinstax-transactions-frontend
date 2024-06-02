@@ -68,7 +68,7 @@ const Index = () => {
       >
         <img
           src={appLogo}
-          alt="Coinstax-logo"
+          alt="ChainGlance-logo"
           border="0"
           style={{ width: '50vw', maxWidth: '320px' }}
         />

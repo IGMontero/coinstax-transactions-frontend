@@ -63,7 +63,7 @@ const HistorialTable = ({ data, setData }) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [unsupportedAddress, setUnsupportedAddress] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [showDownloadMessage, setShowDownloadMessage] = useState(false);
   const [showDownloadMessageInButton, setShowDownloadMessageInButton] =
     useState(false);
@@ -76,6 +76,9 @@ const HistorialTable = ({ data, setData }) => {
   const [loadingDownload, setLoadingDownload] = useState(false);
 
   const [refreshPreviewIntervals, setRefreshPreviewIntervals] = useState({});
+
+  const [loadingTransacions, setLoadingTransactions] = useState({});
+  const loading = Object.values(loadingTransacions).some((loading) => loading);
 
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
@@ -107,16 +110,6 @@ const HistorialTable = ({ data, setData }) => {
     setHasPreview(hasAnyIntervalRunning);
   }, [refreshPreviewIntervals]);
 
-  // useEffect(() => {
-  //   const timeout = setTimeout(() => {
-  //     setDebouncedSearchTerm(searchTerm);
-  //   }, 500);
-
-  //   return () => {
-  //     clearTimeout(timeout);
-  //   };
-  // }, [searchTerm]);
-
   useEffect(() => {
     if (Array.isArray(data)) {
       const hasPreview = data.some(
@@ -136,21 +129,28 @@ const HistorialTable = ({ data, setData }) => {
     return () => {
       setHasPreview(false);
     };
-  }, [data, networkType]);
+  }, [data]);
 
   // #region FETCH DATA
   const fetchData = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
+
+    const fecthId = Date.now();
     try {
       setIsInitialLoad(true);
 
-      setLoading(true);
+      // start loader for this fetch
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: true,
+      }));
 
       timerId = setTimeout(() => {
         setShowDownloadMessage(true);
       }, 3000);
 
+      console.log('currentPage fetch data', currentPage);
       const response = await dispatch(
         fetchHistory({
           address,
@@ -160,7 +160,7 @@ const HistorialTable = ({ data, setData }) => {
             includeSpam: includeSpam,
           },
           assetsFilters: selectAsset,
-          page: currentPage,
+          page: 0,
           networkType,
         }),
       ).unwrap();
@@ -204,7 +204,11 @@ const HistorialTable = ({ data, setData }) => {
       setErrorData(error);
       console.log(error);
     } finally {
-      setLoading(false);
+      // Stop loader
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
       setIsInitialLoad(false);
       setShowDownloadMessage(false);
     }
@@ -292,27 +296,6 @@ const HistorialTable = ({ data, setData }) => {
     networkType,
   ]);
 
-  // useEffect(() => {
-  //   let interval;
-  //   if (hasPreview) {
-  //     interval = setInterval(async () => {
-  //       await updateTransactionsPreview({
-  //         address,
-  //         debouncedSearchTerm,
-  //         selectedFilters,
-  //         includeSpam,
-  //         selectedAssets,
-  //         currentPage,
-  //         setData,
-  //         data,
-  //         dispatch,
-  //         pagesChecked: pagesCheckedRef.current,
-  //       });
-  //     }, 5000);
-  //   }
-  //   return () => clearInterval(interval);
-  // }, [hasPreview, data]);
-
   useEffect(() => {
     fetchData();
     setErrorData(null);
@@ -320,13 +303,13 @@ const HistorialTable = ({ data, setData }) => {
     setShowDownloadMessage('');
     setCurrentPage(0);
   }, [
+    networkType,
     address,
     dispatch,
     selectedAssets,
     selectedFilters,
     includeSpam,
     debouncedSearchTerm,
-    networkType,
   ]);
 
   // #region GROUPS
@@ -353,8 +336,14 @@ const HistorialTable = ({ data, setData }) => {
   const getMoreTransactions = async () => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
+
+    const fecthId = Date.now();
     try {
-      setLoading(true);
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: true,
+      }));
+
       const nextPage = currentPage + 1;
 
       timerId = setTimeout(() => {
@@ -395,7 +384,6 @@ const HistorialTable = ({ data, setData }) => {
       if (trasactions.length === 0 && !isProcessing) {
         setHasMoreData(false);
       } else {
-        // setData((prevData) => [...prevData, ...response]);
         setData((prevData) => [...prevData, ...trasactions]);
         setCurrentPage(nextPage);
       }
@@ -413,7 +401,11 @@ const HistorialTable = ({ data, setData }) => {
     } catch (error) {
       console.error('Error fetching more transactions:', error);
     } finally {
-      setLoading(false);
+      // stop loader
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
       setShowDownloadMessageInButton(false);
     }
   };
@@ -441,6 +433,7 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   const handleTransactionFilterChange = async (filter) => {
+    // const fecthId = Date.now()
     let updatedFilters = [...selectedFilters];
     if (selectedFilters.includes(filter)) {
       updatedFilters = updatedFilters.filter((f) => f !== filter);
@@ -449,7 +442,7 @@ const HistorialTable = ({ data, setData }) => {
     }
     setSelectedFilters(updatedFilters);
     setCurrentPage(0);
-    setLoading(true);
+
     setHasAppliedFilters(true);
   };
 
@@ -499,21 +492,11 @@ const HistorialTable = ({ data, setData }) => {
         setTimeout(() => {
           setLoadingDownload(false);
         }, 5000);
-      } else {
-        // Swal.fire({
-        //   title: 'Downloading',
-        //   html: 'Your file is being prepared for download.',
-        //   timerProgressBar: true,
-        //   didOpen: () => {
-        //     Swal.showLoading();
-        //   },
-        // });
-        console.log('Will download file');
-
-        const url = window.URL.createObjectURL(new Blob([response]));
+      } else if (response.data && response.data.size > 0) {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `transactions-${address}.csv`);
+        link.setAttribute('download', `txs_${networkType}_${address}.csv`);
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link);
@@ -522,6 +505,13 @@ const HistorialTable = ({ data, setData }) => {
           Swal.close();
           setLoadingDownload(false);
         }, 500);
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'No Data',
+          text: 'No transactions to download.',
+        });
+        setLoadingDownload(false);
       }
     } catch (error) {
       console.error(error);
@@ -543,8 +533,13 @@ const HistorialTable = ({ data, setData }) => {
     const updatedFilters = selectedFilters.filter((f) => f !== filterName);
     setSelectedFilters(updatedFilters);
 
-    setLoading(true);
+    const fecthId = Date.now();
+
     try {
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: true,
+      }));
       const response = await dispatch(
         fetchHistory({
           address,
@@ -556,7 +551,10 @@ const HistorialTable = ({ data, setData }) => {
     } catch (error) {
       console.error('Error applying filters:', error);
     } finally {
-      setLoading(false);
+      setLoadingTransactions((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
     }
   };
 
@@ -571,11 +569,11 @@ const HistorialTable = ({ data, setData }) => {
     setHasAppliedFilters(false);
   };
 
-  const handleResetFilters = () => {
-    setSelectedFilters([]);
-    setSelectedAssets('All Assets');
-    setLoading(true);
-  };
+  // const handleResetFilters = () => {
+  //   setSelectedFilters([]);
+  //   setSelectedAssets('All Assets');
+  //   setLoading(true);
+  // };
 
   const handleShowSpamTransactions = (e) => {
     const checked = e.target.checked;
@@ -642,7 +640,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -660,8 +658,9 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -901,7 +900,7 @@ const HistorialTable = ({ data, setData }) => {
     );
   }
 
-  if (errorData) {
+  if (errorData && data?.length === 0) {
     return (
       <>
         {isDashboardPage ? null : <AddressWithDropdown />}

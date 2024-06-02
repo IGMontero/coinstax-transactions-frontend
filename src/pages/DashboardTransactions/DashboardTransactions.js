@@ -7,6 +7,8 @@ const DashboardTransactions = () => {
   const { address } = useParams();
   const [historyData, setHistoryData] = React.useState([]);
 
+  document.title = 'Transactions | Chain Glance';
+
   return (
     <div className="page-content">
       <HistorialTable
