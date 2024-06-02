@@ -138,7 +138,7 @@ const DashboardBlockchainContracts = () => {
     e.stopPropagation();
   };
 
-  document.title = 'Blockchain Contracts';
+  document.title = 'Blockchain Contracts | Chain Glance';
 
   return (
     <React.Fragment>
