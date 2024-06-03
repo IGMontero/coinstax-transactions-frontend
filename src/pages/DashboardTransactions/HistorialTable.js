@@ -815,9 +815,9 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
       >
         <div>
           {isDashboardPage ? (
-            <h4> No Transactions found </h4>
+            <h4> No Transactions Found </h4>
           ) : (
-            <h1>No results found </h1>
+            <h1>No results Found </h1>
           )}
         </div>
       </Col>
@@ -998,7 +998,7 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
       {Object.keys(groupedTransactions).length > 0 && (
         <Col
           lg={12}
-          className="position-relative fade-in"
+          className="position-relative "
           style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
