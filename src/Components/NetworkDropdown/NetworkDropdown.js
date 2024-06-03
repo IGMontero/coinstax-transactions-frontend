@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
 import pol from '../../assets/images/svg/crypto-icons/polygon.webp';
 import bnb from '../../assets/images/svg/crypto-icons/binanceLogo.png';
@@ -17,10 +17,15 @@ import {
   UncontrolledDropdown,
 } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { getAddressesInfo } from '../../slices/addresses/thunk';
+import { useParams } from 'react-router-dom';
 
 const NetworkDropdown = () => {
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
+  const { address } = useParams();
+
+  console.log(address);
 
   const networks = [
     {
@@ -79,6 +84,21 @@ const NetworkDropdown = () => {
       height: 20,
     },
   ];
+
+  const fetchAddressInfo = useCallback(async () => {
+    try {
+      const response = await dispatch(getAddressesInfo({ address }));
+      console.log(response);
+    } catch (error) {
+      console.error('Error fetching address data:', error);
+    }
+  }, [address, dispatch]);
+
+  useEffect(() => {
+    if (address) {
+      fetchAddressInfo();
+    }
+  }, [networkType, address, fetchAddressInfo]);
 
   const handleChangeNetwork = (newType) => {
     dispatch(setNetworkType(newType));

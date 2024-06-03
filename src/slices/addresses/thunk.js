@@ -22,3 +22,25 @@ export const getAddressesSuggestions = createAsyncThunk(
     }
   },
 );
+
+export const getAddressesInfo = createAsyncThunk(
+  'addresses/getAddressesInfo',
+  async ({ address }, { rejectWithValue }) => {
+    try {
+      let url = `${API_BASE}/addresses/${address}/summary`;
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
