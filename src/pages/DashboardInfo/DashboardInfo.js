@@ -217,7 +217,7 @@ const DashboardInfo = () => {
               </Col> */}
           </Row>
 
-          <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
+          <Row className="d-flex justify-content-center align-items-center mb-3 mt-3">
             {' '}
             {!isUnsupported ? (
               <Col className="col-12 ">

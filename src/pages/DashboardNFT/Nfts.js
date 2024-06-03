@@ -320,7 +320,7 @@ const Nfts = ({ address, isDashboardPage }) => {
   return (
     <React.Fragment>
       {renderTitle()}
-      <>
+      <div className="fade-in">
         {items && items.length > 0 && !isDashboardPage ? (
           <Col xxl={12} className="d-flex align-items-center">
             <div className="d-flex flex-column">
@@ -388,7 +388,7 @@ const Nfts = ({ address, isDashboardPage }) => {
               )}
           </Col>
         </Col>
-      </>
+      </div>
     </React.Fragment>
   );
 };

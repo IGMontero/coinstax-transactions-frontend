@@ -87,9 +87,10 @@ const ActivesTable = ({ data, loading }) => {
         </div>
       )}
       <div
-      // className={
-      //   Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
-      // }
+        className="fade-in"
+        // className={
+        //   Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
+        // }
       >
         <div className="flex-grow-1 d-flex justify-content-between">
           <h2 className={`${!isDashboardPage ? 'd-none' : 'ms-1 mb-3'}`}>
@@ -189,7 +190,7 @@ const ActivesTable = ({ data, loading }) => {
               <h4>No Assets Found</h4>
             </div>
           ) : (
-            <>
+            <div>
               {viewMode === 'byPlatform' && (
                 <div className="d-flex flex-row align-items-center">
                   <h4>
@@ -226,7 +227,7 @@ const ActivesTable = ({ data, loading }) => {
                     </tr>
                   </tbody>
                 ) : filteredItems.length === 0 ? (
-                  <tbody>
+                  <tbody className="fade-in">
                     <tr>
                       <td colSpan="4" className="text-center pb-2 pt-5">
                         <h4>No Assets Yet</h4>
@@ -236,7 +237,7 @@ const ActivesTable = ({ data, loading }) => {
                 ) : (
                   <tbody>
                     {filteredItems.map((asset, index) => (
-                      <tr key={index}>
+                      <tr key={index} className="fade-in">
                         <td>
                           <div className="d-flex align-items-center fw-high">
                             <img
@@ -269,7 +270,7 @@ const ActivesTable = ({ data, loading }) => {
                               }}
                             />
 
-                            <div className="d-flex flex-column">
+                            <div className="d-flex flex-column ">
                               <div className="d-flex flex-row align-items-center">
                                 {asset.name}{' '}
                                 {viewMode === 'perPosition' && (
@@ -364,7 +365,7 @@ const ActivesTable = ({ data, loading }) => {
                   </tbody>
                 )}
               </table>
-            </>
+            </div>
           )}
         </div>
       </div>
