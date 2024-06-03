@@ -882,7 +882,7 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   // #region RENDER CONDITIONALS
-  if (!loading && !isInitialLoad) {
+  if (loading && isInitialLoad) {
     return (
       <>
         {renderHeader()}
