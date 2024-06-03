@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getAddressesSuggestions } from './thunk';
+import { getAddressesSuggestions, getAddressesInfo } from './thunk';
 
 const initialState = {
   suggestions: [],
@@ -21,6 +21,17 @@ const addressesSlice = createSlice({
       state.error = null;
     },
     [getAddressesSuggestions.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    [getAddressesInfo.pending]: (state) => {
+      state.loading = true;
+    },
+    [getAddressesInfo.fulfilled]: (state, action) => {
+      state.loading = false;
+      state.error = null;
+    },
+    [getAddressesInfo.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },

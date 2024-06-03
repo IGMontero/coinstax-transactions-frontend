@@ -12,7 +12,6 @@ import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper'
 import { setAddressName } from '../../slices/addressName/reducer';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import { fetchAssets } from '../../slices/transactions/thunk';
-import { capitalizeFirstLetter } from '../../utils/utils';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -252,7 +251,7 @@ const DashboardInfo = () => {
                       </div>
                       <div className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden">
                         <Nfts
-                          isUnsupported={isUnsupported}
+                          isDashboardPage={false}
                           address={addressForSearch}
                         />
                       </div>
