@@ -271,6 +271,7 @@ const DashboardInfo = () => {
                       </div>
                       <div className="border border-2 rounded p-3 ">
                         <HistorialTable
+                          isDashboardPage={true}
                           data={historyData}
                           setData={setHistoryData}
                           activeTab={customActiveTab}

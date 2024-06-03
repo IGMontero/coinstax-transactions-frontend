@@ -26,11 +26,10 @@ import { capitalizeFirstLetter, FILTER_NAMES } from '../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
-import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
 
-const HistorialTable = ({ data, setData }) => {
+const HistorialTable = ({ data, setData, isDashboardPage }) => {
   // #region HOOKS
   const inputRef = useRef(null);
   const pagesCheckedRef = useRef(new Set());
@@ -41,16 +40,7 @@ const HistorialTable = ({ data, setData }) => {
   const networkType = useSelector(selectNetworkType);
 
   const currentUser = user;
-  let isDashboardPage;
-  const pathSegments = location.pathname.split('/').filter(Boolean);
 
-  const isUserInTransactionsHistoryPage = pathSegments.includes('history');
-
-  if (pathSegments.length === 2) {
-    isDashboardPage = true;
-  } else if (pathSegments.length > 2) {
-    isDashboardPage = false;
-  }
   // #region STATES
   const [hasPreview, setHasPreview] = useState(false);
   const [errorData, setErrorData] = useState(null);
@@ -654,7 +644,7 @@ const HistorialTable = ({ data, setData }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -672,8 +662,9 @@ const HistorialTable = ({ data, setData }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -808,7 +799,6 @@ const HistorialTable = ({ data, setData }) => {
       <>
         {isDashboardPage ? null : (
           <>
-            <AddressWithDropdown />
             <h1 className={`ms-1 mt-0 mt-4 mb-4`}>Transactions</h1>{' '}
           </>
         )}{' '}
@@ -919,7 +909,6 @@ const HistorialTable = ({ data, setData }) => {
   if (errorData && data?.length === 0) {
     return (
       <>
-        {isDashboardPage ? null : <AddressWithDropdown />}
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
