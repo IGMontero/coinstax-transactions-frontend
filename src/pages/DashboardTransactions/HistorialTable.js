@@ -623,7 +623,7 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1 d-flex align-items-center
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'}
               ${showTransactionFilterMenu ? 'active' : ''} `}
               role="button"
             >
@@ -662,7 +662,7 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted border'} ${
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
                 showAssetsMenu ? 'active' : ''
               }`}
               role="button"
@@ -963,7 +963,7 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
             </span>
           )}
         </Col>
-        <Row>
+        <Row className="">
           <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
             <div className="d-flex justify-content-start">
               <Input
