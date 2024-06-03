@@ -5,7 +5,7 @@ import bnb from '../../assets/images/svg/crypto-icons/bnb.svg';
 import optimism from '../../assets/images/svg/crypto-icons/optimism-seeklogo.png';
 import btcMainnet from '../../assets/images/svg/crypto-icons/btc-mainnet.svg';
 
-import baseMiannet from '../../assets/images/svg/crypto-icons/base-mainnet.svg';
+import baseMiannet from '../../assets/images/svg/crypto-icons/base-mainnet.png';
 import { capitalizeFirstLetter } from '../../utils/utils';
 
 const BlockchainImage = ({
