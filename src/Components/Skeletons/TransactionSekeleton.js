@@ -17,13 +17,14 @@ const TransactionSkeleton = (props) => {
     <ContentLoader
       height={1200}
       marginTop={10}
-      width="100%"
       backgroundColor={darkMode ? '#333' : '#e0e0e0'}
       foregroundColor={darkMode ? '#555' : '#cfcfcf'}
       // gradientRatio={0.5}
       // speed={2}
       style={{
         animation: 'fadeInOut 1s ease-in-out infinite',
+        maxWidth: '99vw',
+        width: '100%',
       }}
       {...props}
     >
