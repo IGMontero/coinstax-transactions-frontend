@@ -11,7 +11,9 @@ const DashboardTransactions = () => {
 
   return (
     <div className="page-content">
+      <AddressWithDropdown />
       <HistorialTable
+        isDashboardPage={false}
         data={historyData}
         setData={setHistoryData}
         address={address}
