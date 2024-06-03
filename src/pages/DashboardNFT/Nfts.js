@@ -60,20 +60,18 @@ const Nfts = ({ address, isUnsupported }) => {
   }
   const [itemsToShow, setItemsToShow] = useState(20);
 
-  // const [loadingInclue, setLoading] = React.useState(false);
-
   const [nftsLoader, setNftsLoader] = useState({});
+  const [includeSpamLoader, setIncludeSpamLoader] = useState({});
 
   const loading = Object.values(nftsLoader).some((loader) => loader);
+  const loadingIncludeSpam = Object.values(includeSpamLoader).some(
+    (loader) => loader,
+  );
 
-  const [loadingIncludeSpam, setLoadingIncludeSpam] = useState(false);
   const [includeSpam, setIncludeSpam] = useState(false);
-
   const navigate = useNavigate();
   const [data, setData] = React.useState([]);
-
   const [currencySymbol, setCurrencySymbol] = useState('ETH');
-
   const [updatedAt, setUpdatedAt] = useState();
 
   const showFiatValues = currencySymbol === '$';
@@ -89,15 +87,15 @@ const Nfts = ({ address, isUnsupported }) => {
     const signal = fetchControllerRef.current.signal;
 
     const fetchId = Date.now();
+
     if (loadingIncludeSpam) {
-      // setLoading(false);
-      setNftsLoader((prev) => ({
-        ...prev,
+      setIncludeSpamLoader((prevLoader) => ({
+        ...prevLoader,
         [fetchId]: true,
       }));
     } else {
-      setNftsLoader((prev) => ({
-        ...prev,
+      setNftsLoader((prevLoader) => ({
+        ...prevLoader,
         [fetchId]: true,
       }));
     }
@@ -108,19 +106,25 @@ const Nfts = ({ address, isUnsupported }) => {
       .then((response) => {
         setData(response);
         setUpdatedAt(response?.updatedAt);
-        setNftsLoader((prev) => ({
-          ...prev,
+        setNftsLoader((prevLoader) => ({
+          ...prevLoader,
           [fetchId]: false,
         }));
-        setLoadingIncludeSpam(false);
+        setIncludeSpamLoader((prevLoader) => ({
+          ...prevLoader,
+          [fetchId]: false,
+        }));
       })
       .catch((error) => {
         console.log('Error fetching NFTs:', error);
-        setNftsLoader((prev) => ({
-          ...prev,
+        setNftsLoader((prevLoader) => ({
+          ...prevLoader,
           [fetchId]: false,
         }));
-        setLoadingIncludeSpam(false);
+        setIncludeSpamLoader((prevLoader) => ({
+          ...prevLoader,
+          [fetchId]: false,
+        }));
       });
   };
 
@@ -141,7 +145,12 @@ const Nfts = ({ address, isUnsupported }) => {
 
   const handleShowSpam = () => {
     setIncludeSpam(!includeSpam);
-    setLoadingIncludeSpam(true);
+    const fetchId = Date.now();
+
+    setIncludeSpamLoader((prevLoader) => ({
+      ...prevLoader,
+      [fetchId]: false,
+    }));
   };
 
   const handleShowMoreItems = () => {
@@ -281,6 +290,20 @@ const Nfts = ({ address, isUnsupported }) => {
     );
   };
 
+  if (loading || loadingIncludeSpam) {
+    return (
+      <>
+        {isDashboardPage ? null : <AddressWithDropdown />}
+        <div
+          className="d-flex justify-content-center align-items-center h-50vh"
+          style={{ height: !isDashboardPage ? '50vh' : '40vh' }}
+        >
+          <Spinner style={{ width: '4rem', height: '4rem' }} />
+        </div>
+      </>
+    );
+  }
+
   // if no NFTs found
   if (data && data.length === 0 && !loading) {
     return (
@@ -304,134 +327,78 @@ const Nfts = ({ address, isUnsupported }) => {
     );
   }
 
-  // if no NFTs found
-  if (items && items.length === 0 && !loading) {
-    return (
-      <>
-        {renderTitle()}
-        <Row>
-          <Col
-            className="d-flex text-center col-12   justify-content-center align-items-center"
-            style={{
-              display: 'flex',
-              height: isDashboardPage ? '10vh' : '40vh',
-              width: '100%',
-            }}
-          >
-            {isDashboardPage ? (
-              <h4 className="text-center ">No NFTs Found</h4>
-            ) : (
-              <h1 className="text-center ">No NFTs Found</h1>
-            )}
-          </Col>
-        </Row>
-      </>
-    );
-  }
-  const isNftsPage = location.pathname.includes('/nfts');
-
-  if (isNftsPage) {
-    document.title = 'NFTs | Chain Glance';
-  } else {
-    return;
-  }
   return (
     <React.Fragment>
       {renderTitle()}
-      {loading ? (
-        <div
-          className="d-flex justify-content-center align-items-center h-50vh"
-          style={{ height: !isDashboardPage ? '50vh' : '40vh' }}
-        >
-          <Spinner style={{ width: '4rem', height: '4rem' }} />
-        </div>
-      ) : (
-        <>
-          {items && items.length > 0 && !isDashboardPage ? (
-            <Col xxl={12} className="d-flex align-items-center">
-              <div className="d-flex flex-column">
-                <h6>
-                  As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}
-                </h6>
-                <span className="text-dark">Total value by floor price</span>
-                <h1>
-                  {parseValuesToLocale(data.totalNativeValue, CurrencyUSD)}
-                </h1>
-                <div className="d-flex">
-                  <Input
-                    id="customCheck1"
-                    type="checkbox"
-                    className="form-check-input cursor-pointer me-2"
-                    onChange={handleShowSpam}
-                    checked={includeSpam}
-                  />
-                  <label className="form-check-label" htmlFor="customCheck1">
-                    Include Spam NFTs
-                  </label>
-                </div>
-              </div>
-              <div className="ms-auto">
-                <Button
-                  style={{
-                    padding: '5px',
-                    minWidth: '0px',
-                    height: '32px',
-                    width: '32px',
-                  }}
-                  color="transparent"
-                  className="btn btn-sm rounded text-dark border border-1 me-2"
-                  onClick={handleChangeSymbol}
-                >
-                  {currencySymbol === 'ETH' ? ethIcon : '$'}
-                </Button>
-              </div>
-            </Col>
-          ) : null}
-
-          {/* {renderDropdown()} */}
-
-          <Col className={`mt-4 col-12 d-flex justify-content-center`}>
-            {loadingIncludeSpam ? (
-              <div
-                className="d-flex justify-content-center align-items-center"
-                style={{ height: '50vh' }}
-              >
-                <Spinner style={{ width: '4rem', height: '4rem' }} />
-              </div>
-            ) : (
-              <Col>
-                <NftsCards
-                  isDashboardPage={isDashboardPage}
-                  item={items}
-                  loading={loading}
-                  onVisitNft={handleVisitNFT}
-                  showFiatValues={showFiatValues}
+      <>
+        {items && items.length > 0 && !isDashboardPage ? (
+          <Col xxl={12} className="d-flex align-items-center">
+            <div className="d-flex flex-column">
+              <h6>
+                As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}
+              </h6>
+              <span className="text-dark">Total value by floor price</span>
+              <h1>{parseValuesToLocale(data.totalNativeValue, CurrencyUSD)}</h1>
+              <div className="d-flex">
+                <Input
+                  id="customCheck1"
+                  type="checkbox"
+                  className="form-check-input cursor-pointer me-2"
+                  onChange={handleShowSpam}
+                  checked={includeSpam}
                 />
-                {!isDashboardPage &&
-                  data?.items &&
-                  data.items?.length > itemsToShow && (
-                    <div className="d-flex justify-content-center">
-                      <Button
-                        className="mt-3 d-flex justify-content-center align-items-center "
-                        color="soft-light"
-                        style={{
-                          borderRadius: '10px',
-                          border: '.5px solid grey',
-                        }}
-                        onClick={handleShowMoreItems}
-                      >
-                        <h6 className="text-dark fw-semibold my-2">
-                          More Items
-                        </h6>
-                      </Button>
-                    </div>
-                  )}
-              </Col>
-            )}
+                <label className="form-check-label" htmlFor="customCheck1">
+                  Include Spam NFTs
+                </label>
+              </div>
+            </div>
+            <div className="ms-auto">
+              <Button
+                style={{
+                  padding: '5px',
+                  minWidth: '0px',
+                  height: '32px',
+                  width: '32px',
+                }}
+                color="transparent"
+                className="btn btn-sm rounded text-dark border border-1 me-2"
+                onClick={handleChangeSymbol}
+              >
+                {currencySymbol === 'ETH' ? ethIcon : '$'}
+              </Button>
+            </div>
           </Col>
-          {/* No NFTs found */}
-        </>
-      )}
+        ) : null}
+
+        <Col className={`mt-4 col-12 d-flex justify-content-center`}>
+          <Col>
+            <NftsCards
+              isDashboardPage={isDashboardPage}
+              item={items}
+              loading={loading}
+              onVisitNft={handleVisitNFT}
+              showFiatValues={showFiatValues}
+            />
+            {!isDashboardPage &&
+              data?.items &&
+              data.items?.length > itemsToShow && (
+                <div className="d-flex justify-content-center">
+                  <Button
+                    className="mt-3 d-flex justify-content-center align-items-center "
+                    color="soft-light"
+                    style={{
+                      borderRadius: '10px',
+                      border: '.5px solid grey',
+                    }}
+                    onClick={handleShowMoreItems}
+                  >
+                    <h6 className="text-dark fw-semibold my-2">More Items</h6>
+                  </Button>
+                </div>
+              )}
+          </Col>
+        </Col>
+      </>
     </React.Fragment>
   );
 };

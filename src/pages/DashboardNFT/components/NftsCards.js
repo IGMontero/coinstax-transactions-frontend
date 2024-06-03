@@ -37,7 +37,6 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
           const shouldShowUnsupported =
             !nft.logo || imageErrors[nft.contractAddress + nft.tokenId];
 
-
           return (
             <div
               key={index}

@@ -126,7 +126,7 @@ const InformationLedger = ({
         <div className="me-3">
           <button
             className="btn btn-light p-0  border-0 "
-            onClick={(e) => handleCopy(e, txHash, collapseId)}
+            onClick={(e) => handleCopy(e, transaction.txHash, collapseId)}
           >
             {copiedIndex === collapseId ? (
               <i className="ri-check-line mx-2 fs-4 text-dark"></i>
