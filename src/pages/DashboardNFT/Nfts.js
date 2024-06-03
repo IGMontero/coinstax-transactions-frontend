@@ -295,7 +295,11 @@ const Nfts = ({ address, isDashboardPage }) => {
   }
 
   // if no NFTs found
-  if (data && data.nfts?.length === 0 && !loading) {
+  if (
+    data &&
+    (data?.nfts?.lenght === 0 || data?.items?.length === 0) &&
+    !loading
+  ) {
     return (
       <>
         {renderTitle()}
@@ -320,7 +324,7 @@ const Nfts = ({ address, isDashboardPage }) => {
   return (
     <React.Fragment>
       {renderTitle()}
-      <div className="fade-in">
+      <div className="">
         {items && items.length > 0 && !isDashboardPage ? (
           <Col xxl={12} className="d-flex align-items-center">
             <div className="d-flex flex-column">

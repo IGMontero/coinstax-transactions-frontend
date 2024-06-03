@@ -87,10 +87,10 @@ const ActivesTable = ({ data, loading }) => {
         </div>
       )}
       <div
-        className="fade-in"
-        // className={
-        //   Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
-        // }
+      // className="fade-in"
+      // className={
+      //   Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
+      // }
       >
         <div className="flex-grow-1 d-flex justify-content-between">
           <h2 className={`${!isDashboardPage ? 'd-none' : 'ms-1 mb-3'}`}>
@@ -227,7 +227,7 @@ const ActivesTable = ({ data, loading }) => {
                     </tr>
                   </tbody>
                 ) : filteredItems.length === 0 ? (
-                  <tbody className="fade-in">
+                  <tbody className="">
                     <tr>
                       <td colSpan="4" className="text-center pb-2 pt-5">
                         <h4>No Assets Yet</h4>
@@ -237,7 +237,7 @@ const ActivesTable = ({ data, loading }) => {
                 ) : (
                   <tbody>
                     {filteredItems.map((asset, index) => (
-                      <tr key={index} className="fade-in">
+                      <tr key={index} className="">
                         <td>
                           <div className="d-flex align-items-center fw-high">
                             <img

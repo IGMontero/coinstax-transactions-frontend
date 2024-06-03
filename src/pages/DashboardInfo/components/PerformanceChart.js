@@ -553,7 +553,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                   </div>
                 ) : (
                   <>
-                    <div className="d-flex flex-column align-items-start fade-in">
+                    <div className="d-flex flex-column align-items-start ">
                       <h1 className="d-flex align-items-center">{title}</h1>
                       <h5
                         className={`mb-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
