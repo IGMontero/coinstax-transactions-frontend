@@ -4,7 +4,7 @@ import pol from '../../assets/images/svg/crypto-icons/polygon.webp';
 import bnb from '../../assets/images/svg/crypto-icons/binanceLogo.png';
 import btcMainnet from '../../assets/images/svg/crypto-icons/btc-mainnet.svg';
 import optimism from '../../assets/images/svg/crypto-icons/optimism-seeklogo.png';
-import baseMainnet from '../../assets/images/svg/crypto-icons/base-mainnet.svg';
+import baseMainnet from '../../assets/images/svg/crypto-icons/base-mainnet.png';
 import {
   selectNetworkType,
   setNetworkType,
@@ -17,7 +17,6 @@ import {
   UncontrolledDropdown,
 } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { capitalizeFirstLetter } from '../../utils/utils';
 
 const NetworkDropdown = () => {
   const dispatch = useDispatch();
@@ -71,17 +70,9 @@ const NetworkDropdown = () => {
       width: 19,
       height: 19,
     },
-    // {
-    //   key: 'btc-mainnet',
-    //   label: 'BTC Chain',
-    //   icon: btcMainnet,
-    //   iconAlt: 'btc-mainnet',
-    //   width: 20,
-    //   height: 20,
-    // },
     {
       key: 'base-mainnet',
-      label: 'Base Chain',
+      label: 'Base',
       icon: baseMainnet,
       iconAlt: 'base-mainnet',
       width: 20,
@@ -114,6 +105,8 @@ const NetworkDropdown = () => {
     );
   };
 
+  const selectedNetwork = networks.find((n) => n.key === networkType);
+
   return (
     <Col xxl={6} className="d-flex justify-content-end align-items-center">
       <div className="d-flex justify-content-end align-items-center">
@@ -124,22 +117,15 @@ const NetworkDropdown = () => {
             role="button"
           >
             <span className="ms-2 d-flex align-items-center py-0">
-              {renderNetworkIcon(networks.find((n) => n.key === networkType))}
-              <span className="fs-6 py-0">
-                {networkType === 'bsc-mainnet'
-                  ? 'BNB Chain'
-                  : networkType === 'all'
-                    ? 'All Networks'
-                    : capitalizeFirstLetter(networkType)}
-              </span>
+              {renderNetworkIcon(selectedNetwork)}
+              <span className="fs-6 py-0">{selectedNetwork.label}</span>
             </span>
             <i className="mdi mdi-chevron-down  ms-2 fs-5"></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-end mt-2 ">
             {networks.map((network) => (
-              <>
+              <React.Fragment key={network.key}>
                 <DropdownItem
-                  key={network.key}
                   className="d-flex align-items-center mt-0 py-2"
                   onClick={() => handleChangeNetwork(network.key)}
                 >
@@ -151,7 +137,7 @@ const NetworkDropdown = () => {
                 {network.withDivider ? (
                   <DropdownItem divider className="my-0 py-0" />
                 ) : null}
-              </>
+              </React.Fragment>
             ))}
           </DropdownMenu>
         </UncontrolledDropdown>

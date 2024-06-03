@@ -304,8 +304,10 @@ const Nfts = ({ address, isUnsupported }) => {
     );
   }
 
+  console.log(data);
+
   // if no NFTs found
-  if (data && data.length === 0 && !loading) {
+  if (data && data.nfts?.length === 0 && !loading) {
     return (
       <>
         {renderTitle()}
