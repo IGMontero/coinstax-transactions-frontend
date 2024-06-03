@@ -14,11 +14,14 @@ const AssetsSkeleton = (props) => {
     <ContentLoader
       viewBox="0 0 1000 400"
       height={400}
-      width={1000}
+      // width={1000}
+
       backgroundColor={darkMode ? '#333' : '#e0e0e0'}
       foregroundColor={darkMode ? '#555' : '#cfcfcf'}
       style={{
         animation: 'fadeInOut 1s ease-in-out infinite',
+        maxWidth: 1000,
+        width: '100%',
       }}
       {...props}
     >

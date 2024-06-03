@@ -12,7 +12,7 @@ const GraphBtnsSkeleton = (props) => {
   return (
     <ContentLoader
       speed={2}
-      width="75vw"
+      width="auto"
       height="100px"
       viewBox="0 0 1163 520"
       backgroundColor={darkMode ? '#333' : '#e0e0e0'}

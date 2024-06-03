@@ -12,7 +12,6 @@ const GraphSkeleton = (props) => {
   return (
     <ContentLoader
       speed={2}
-      width="75vw"
       height="50vh"
       viewBox="0 0 1163 520"
       backgroundColor={darkMode ? '#333' : '#e0e0e0'}
@@ -20,6 +19,8 @@ const GraphSkeleton = (props) => {
       foregroundColor={darkMode ? '#555' : '#cfcfcf'}
       style={{
         animation: 'fadeInOut 1s ease-in-out infinite',
+        maxWidth: '99vw',
+        width: '100%',
       }}
       {...props}
     >
