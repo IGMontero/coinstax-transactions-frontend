@@ -59,10 +59,10 @@ export const editBlockChainContract = createAsyncThunk(
 
 export const updateTrustedState = createAsyncThunk(
   'blockchainContracts/updateTrustedState',
-  async ({ networkType, address, trustedState }, { rejectWithValue }) => {
+  async ({ blockchain, address, trustedState }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      let url = `${API_BASE}/admin/contracts/${networkType}/${address}/trusted-state`;
+      let url = `${API_BASE}/admin/contracts/${blockchain}/${address}/trusted-state`;
       const response = await fetch(url, {
         method: 'PUT',
         headers: {

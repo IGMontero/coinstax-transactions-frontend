@@ -303,7 +303,7 @@ const BlockChainContractTable = ({
       setUpdatingContractId(contract.Id);
       const actionResult = await dispatch(
         updateTrustedState({
-          networkType,
+          blockchain: contract.Blockchain,
           address: contract.Address,
           trustedState: state,
         }),

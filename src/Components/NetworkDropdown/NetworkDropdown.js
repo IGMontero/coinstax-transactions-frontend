@@ -25,8 +25,6 @@ const NetworkDropdown = () => {
   const networkType = useSelector(selectNetworkType);
   const { address } = useParams();
 
-  console.log(address);
-
   const networks = [
     {
       key: 'all',
@@ -85,20 +83,19 @@ const NetworkDropdown = () => {
     },
   ];
 
-  const fetchAddressInfo = useCallback(async () => {
+  const fetchAddressInfo = async () => {
     try {
       const response = await dispatch(getAddressesInfo({ address }));
-      console.log(response);
     } catch (error) {
       console.error('Error fetching address data:', error);
     }
-  }, [address, dispatch]);
+  };
 
   useEffect(() => {
     if (address) {
       fetchAddressInfo();
     }
-  }, [networkType, address, fetchAddressInfo]);
+  }, [address, networkType]);
 
   const handleChangeNetwork = (newType) => {
     dispatch(setNetworkType(newType));
