@@ -44,20 +44,12 @@ const ethIcon = (
   </svg>
 );
 
-const Nfts = ({ address, isUnsupported }) => {
+const Nfts = ({ address, isDashboardPage }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
   const fetchControllerRef = useRef(new AbortController());
 
-  let isDashboardPage;
-  const pathSegments = location.pathname.split('/').filter(Boolean);
-
-  if (pathSegments.length === 2) {
-    isDashboardPage = true;
-  } else if (pathSegments.length > 2) {
-    isDashboardPage = false;
-  }
   const [itemsToShow, setItemsToShow] = useState(20);
 
   const [nftsLoader, setNftsLoader] = useState({});
@@ -282,7 +274,6 @@ const Nfts = ({ address, isUnsupported }) => {
       <>
         {isDashboardPage ? null : (
           <>
-            <AddressWithDropdown />
             <h1 className={`ms-1 mt-0 mt-4 mb-4`}>NFTs</h1>{' '}
           </>
         )}{' '}
@@ -293,7 +284,6 @@ const Nfts = ({ address, isUnsupported }) => {
   if (loading || loadingIncludeSpam) {
     return (
       <>
-        {isDashboardPage ? null : <AddressWithDropdown />}
         <div
           className="d-flex justify-content-center align-items-center h-50vh"
           style={{ height: !isDashboardPage ? '50vh' : '40vh' }}
@@ -303,8 +293,6 @@ const Nfts = ({ address, isUnsupported }) => {
       </>
     );
   }
-
-  console.log(data);
 
   // if no NFTs found
   if (data && data.nfts?.length === 0 && !loading) {
