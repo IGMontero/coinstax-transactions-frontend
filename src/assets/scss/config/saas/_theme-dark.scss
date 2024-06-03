@@ -576,8 +576,6 @@
  margin-left: 0;
 }
 
-
-
 @media (min-width: 768px) and (max-width: 1040px) {
   .header-container {
       margin-left: 235px;
@@ -590,7 +588,7 @@
   }
 }
 
-
+// Animations 
 .fade-in {
   animation: fadeIn 0.8s ease-in-out;
 }
@@ -601,5 +599,90 @@
   }
   100% {
     opacity: 1;
+  }
+}
+
+@keyframes fadeInOut {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.fade-in-out {
+  animation: fadeInOut 0.8s ease-in-out;
+}
+
+.transaction-skeleton {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  animation: fadeInOut 1s ease-in-out infinite;
+}
+
+.transaction-skeleton circle {
+  cx: 3%;
+  r: 2%;
+}
+
+.transaction-skeleton rect {
+  height: 1.5%;
+}
+
+.transaction-skeleton .circle-1 {
+  cx: 3%;
+}
+
+.transaction-skeleton .rect-1 {
+  x: 7%;
+  width: 10%;
+}
+
+.transaction-skeleton .rect-2 {
+  x: 7%;
+  width: 10%;
+}
+
+.transaction-skeleton .circle-2 {
+  cx: 32%;
+}
+
+.transaction-skeleton .rect-3 {
+  x: 35%;
+  width: 15%;
+}
+
+.transaction-skeleton .rect-4 {
+  x: 35%;
+  width: 12%;
+}
+
+.transaction-skeleton .rect-5 {
+  x: 85%;
+  width: 10%;
+}
+
+.transaction-skeleton .rect-6 {
+  x: 85%;
+  width: 10%;
+}
+
+.transaction-skeleton .line {
+  x: 1%;
+  width: 98%;
+  height: 0.2%;
+}
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .transaction-skeleton circle {
+    r: 3%;
+  }
+
+  .transaction-skeleton rect {
+    height: 2%;
   }
 }
