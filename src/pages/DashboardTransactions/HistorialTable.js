@@ -998,7 +998,7 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
       {Object.keys(groupedTransactions).length > 0 && (
         <Col
           lg={12}
-          className="position-relative"
+          className="position-relative fade-in"
           style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
