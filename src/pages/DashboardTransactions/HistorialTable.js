@@ -28,6 +28,7 @@ import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 import { selectNetworkType } from '../../slices/networkType/reducer';
+import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
 
 const HistorialTable = ({ data, setData }) => {
   // #region HOOKS
@@ -823,7 +824,7 @@ const HistorialTable = ({ data, setData }) => {
 
   const renderInfoTransactions = () => {
     return (
-      <Row className="col-12">
+      <Row className="col-12 ">
         <div className="d-flex justify-content-between w-100">
           <div>Total transactions: {totalTransactions}</div>
           <div>
@@ -881,11 +882,11 @@ const HistorialTable = ({ data, setData }) => {
   };
 
   // #region RENDER CONDITIONALS
-  if (loading && isInitialLoad) {
+  if (!loading && !isInitialLoad) {
     return (
       <>
         {renderHeader()}
-        <div
+        {/* <div
           className="d-flex justify-content-center align-items-center"
           style={{ height: '50vh' }}
         >
@@ -895,6 +896,9 @@ const HistorialTable = ({ data, setData }) => {
               <h3>Downloading Transactions</h3>
             </div>
           )}
+        </div> */}
+        <div className="d-flex pt-4  justify-content-center align-items-center">
+          <TransactionSkeleton />
         </div>
       </>
     );
@@ -988,7 +992,7 @@ const HistorialTable = ({ data, setData }) => {
         </Row>
       </div>
 
-      {!loading && !isInitialLoad && renderInfoTransactions()}
+      {!isInitialLoad && renderInfoTransactions()}
 
       {Object.keys(groupedTransactions).length > 0 && (
         <Col
