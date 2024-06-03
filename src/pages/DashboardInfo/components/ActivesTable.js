@@ -17,6 +17,7 @@ import {
 import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
 import { getAppOptions, setAppOptions } from '../../../helpers/cookies_helper';
+import AssetsSkeleton from '../../../Components/Skeletons/AssetsSkeleton';
 
 const ActivesTable = ({ data, loading }) => {
   const appOptions = getAppOptions();
@@ -216,16 +217,13 @@ const ActivesTable = ({ data, loading }) => {
                   )}
                 </thead>
                 {loading ? (
-                  <tbody>
-                    <tr>
-                      <td colSpan="4" className="text-center">
-                        <Spinner
-                          style={{ width: '4rem', height: '4rem' }}
-                          className="mt-5"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
+                  <tr>
+                    <td colSpan="12" className="text-center">
+                      <tbody>
+                        <AssetsSkeleton />
+                      </tbody>
+                    </td>
+                  </tr>
                 ) : filteredItems.length === 0 ? (
                   <tbody className="">
                     <tr>
