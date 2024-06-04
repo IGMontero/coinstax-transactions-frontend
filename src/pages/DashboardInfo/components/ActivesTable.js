@@ -6,9 +6,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Spinner,
 } from 'reactstrap';
-import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import {
   CurrencyUSD,
   capitalizeFirstLetter,
@@ -18,9 +16,12 @@ import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown
 import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
 import { getAppOptions, setAppOptions } from '../../../helpers/cookies_helper';
 import AssetsSkeleton from '../../../Components/Skeletons/AssetsSkeleton';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const ActivesTable = ({ data, loading }) => {
+const ActivesTable = ({ data, loading, isDashboardPage }) => {
   const appOptions = getAppOptions();
+  const navigate = useNavigate();
+  const { address } = useParams();
   const [viewMode, setViewMode] = useState('byPlatform');
   const [showMenu, setShowMenu] = useState(false);
   const [hideSmallBalances, setHideSmallBalances] = useState(
@@ -62,14 +63,94 @@ const ActivesTable = ({ data, loading }) => {
     setShowMenu(!showMenu);
   };
 
-  let isDashboardPage;
-  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const renderFilterButtons = () => {
+    return (
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <Button
+          className={`btn btn-sm btn-soft-primary rounded ${
+            viewMode === 'byPlatform' ? 'active' : ''
+          }`}
+          onClick={() => handleViewModeChange('byPlatform')}
+        >
+          By Platform
+        </Button>
+        <Button
+          className={`mx-2 btn btn-sm btn-soft-primary rounded ${
+            viewMode === 'perPosition' ? 'active' : ''
+          }`}
+          onClick={() => handleViewModeChange('perPosition')}
+        >
+          Per Position
+        </Button>
 
-  if (pathSegments.length === 2) {
-    isDashboardPage = true;
-  } else if (pathSegments.length > 2) {
-    isDashboardPage = false;
-  }
+        <Dropdown
+          isOpen={showMenu}
+          toggle={(e) => {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'LABEL') {
+              handleShowMenu();
+            }
+          }}
+          className="card-header-dropdown"
+        >
+          <DropdownToggle tag="a" className="text-reset" role="button">
+            <i className="ri-arrow-down-s-line p-1 py-0 btn btn-soft-primary rounded"></i>
+          </DropdownToggle>
+          <DropdownMenu className="dropdown-menu-start mt-2">
+            <DropdownItem
+              toggle={false}
+              onClick={(e) => handleHideSmallBalancesChange(e)}
+              className="d-flex justify-content-start align-items-center"
+            >
+              <input
+                className="form-check-input me-2 my-0"
+                type="checkbox"
+                id="hideBalances"
+                onChange={(e) =>
+                  handleHideSmallBalancesChange(e.stopPropagation())
+                }
+                checked={hideSmallBalances}
+              />
+              <label
+                className="form-check-label"
+                htmlFor="hideBalances"
+                onClick={(e) =>
+                  handleHideSmallBalancesChange(e.preventDefault())
+                }
+                style={{ cursor: 'pointer' }}
+              >
+                Hide small balances
+              </label>
+            </DropdownItem>
+            <DropdownItem
+              toggle={false}
+              onClick={(e) => handleHideZeroBalancesChange(e)}
+              className="d-flex justify-content-start align-items-center"
+            >
+              <input
+                className="form-check-input me-2 my-0"
+                type="checkbox"
+                id="hideZeroBalances"
+                onChange={(e) =>
+                  handleHideZeroBalancesChange(e.stopPropagation())
+                }
+                checked={hideZeroBalances}
+              />
+              <label
+                className="form-check-label"
+                htmlFor="hideZeroBalances"
+                style={{ cursor: 'pointer', margin: 0 }}
+                onClick={(e) =>
+                  handleHideZeroBalancesChange(e.preventDefault())
+                }
+              >
+                Hide zero balances
+              </label>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+    );
+  };
 
   const filteredItems = data.items
     ? data?.items?.filter(
@@ -79,6 +160,10 @@ const ActivesTable = ({ data, loading }) => {
       )
     : [];
 
+  const displayItems = isDashboardPage
+    ? filteredItems.slice(0, 10)
+    : filteredItems;
+
   return (
     <React.Fragment>
       {isDashboardPage ? null : (
@@ -87,103 +172,21 @@ const ActivesTable = ({ data, loading }) => {
           <h1 className={` ms-1  mb-4 mt-4 `}>Assets</h1>
         </div>
       )}
-      <div
-      // className="fade-in"
-      // className={
-      //   Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
-      // }
-      >
-        <div className="flex-grow-1 d-flex justify-content-between">
+      <div>
+        <div className="flex-grow-1 d-flex justify-content-between align-items-center">
           <h2 className={`${!isDashboardPage ? 'd-none' : 'ms-1 mb-3'}`}>
             Assets
           </h2>
-          <div className="d-flex justify-content-between align-items-center mb-3">
+          {isDashboardPage ? (
             <Button
-              className={`btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'byPlatform' ? 'active' : ''
-              }`}
-              onClick={() => handleViewModeChange('byPlatform')}
+              onClick={() => navigate(`/address/${address}/assets`)}
+              className="btn btn-sm btn-soft-primary rounded"
             >
-              By Platform
+              <span className="p-1">See more Assets</span>
             </Button>
-            <Button
-              className={`mx-2 btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'perPosition' ? 'active' : ''
-              }`}
-              onClick={() => handleViewModeChange('perPosition')}
-            >
-              Per Position
-            </Button>
-
-            <Dropdown
-              isOpen={showMenu}
-              toggle={(e) => {
-                if (
-                  e.target.tagName !== 'INPUT' &&
-                  e.target.tagName !== 'LABEL'
-                ) {
-                  handleShowMenu();
-                }
-              }}
-              className="card-header-dropdown"
-            >
-              <DropdownToggle tag="a" className="text-reset" role="button">
-                <i className="ri-arrow-down-s-line p-1 py-0 btn btn-soft-primary rounded"></i>
-              </DropdownToggle>
-              <DropdownMenu className="dropdown-menu-start mt-2">
-                <DropdownItem
-                  toggle={false}
-                  onClick={(e) => handleHideSmallBalancesChange(e)}
-                  className="d-flex justify-content-start align-items-center"
-                >
-                  <input
-                    className="form-check-input me-2 my-0"
-                    type="checkbox"
-                    id="hideBalances"
-                    onChange={(e) =>
-                      handleHideSmallBalancesChange(e.stopPropagation())
-                    }
-                    checked={hideSmallBalances}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="hideBalances"
-                    onClick={(e) =>
-                      handleHideSmallBalancesChange(e.preventDefault())
-                    }
-                    style={{ cursor: 'pointer' }}
-                  >
-                    Hide small balances
-                  </label>
-                </DropdownItem>
-                <DropdownItem
-                  toggle={false}
-                  onClick={(e) => handleHideZeroBalancesChange(e)}
-                  className="d-flex justify-content-start align-items-center"
-                >
-                  <input
-                    className="form-check-input me-2 my-0"
-                    type="checkbox"
-                    id="hideZeroBalances"
-                    onChange={(e) =>
-                      handleHideZeroBalancesChange(e.stopPropagation())
-                    }
-                    checked={hideZeroBalances}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="hideZeroBalances"
-                    style={{ cursor: 'pointer', margin: 0 }}
-                    onClick={(e) =>
-                      handleHideZeroBalancesChange(e.preventDefault())
-                    }
-                  >
-                    Hide zero balances
-                  </label>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
+          ) : (
+            renderFilterButtons()
+          )}
         </div>
         <div className="border border-2 rounded p-3">
           {!loading && (!data || !data.items || data.items?.length === 0) ? (
@@ -207,14 +210,12 @@ const ActivesTable = ({ data, loading }) => {
 
               <table className="table table-borderless">
                 <thead>
-                  {filteredItems.length === 0 ? null : (
-                    <tr className="text-muted">
-                      <th scope="col">ASSETS</th>
-                      <th scope="col">PRICE</th>
-                      <th scope="col">BALANCE</th>
-                      <th scope="col">VALUE</th>
-                    </tr>
-                  )}
+                  <tr className="text-muted">
+                    <th scope="col">ASSETS</th>
+                    <th scope="col">PRICE</th>
+                    <th scope="col">BALANCE</th>
+                    <th scope="col">VALUE</th>
+                  </tr>
                 </thead>
                 {loading ? (
                   <tr>
@@ -224,7 +225,7 @@ const ActivesTable = ({ data, loading }) => {
                       </tbody>
                     </td>
                   </tr>
-                ) : filteredItems.length === 0 ? (
+                ) : displayItems.length === 0 ? (
                   <tbody className="">
                     <tr>
                       <td colSpan="4" className="text-center pb-2 pt-5">
@@ -234,7 +235,7 @@ const ActivesTable = ({ data, loading }) => {
                   </tbody>
                 ) : (
                   <tbody>
-                    {filteredItems.map((asset, index) => (
+                    {displayItems.map((asset, index) => (
                       <tr key={index} className="">
                         <td>
                           <div className="d-flex align-items-center fw-high">

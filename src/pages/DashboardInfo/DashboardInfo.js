@@ -237,7 +237,11 @@ const DashboardInfo = () => {
                     />
 
                     <Col xxl={12}>
-                      <ActivesTable loading={loadingAssets} data={assetsData} />
+                      <ActivesTable
+                        isDashboardPage={true}
+                        loading={loadingAssets}
+                        data={assetsData}
+                      />
                     </Col>
                     <Col xxl={12} className="mt-3 d-flex flex-column">
                       <div className="d-flex justify-content-between align-items-center mb-2">
