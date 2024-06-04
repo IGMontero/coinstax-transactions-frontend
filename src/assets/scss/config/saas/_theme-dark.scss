@@ -616,65 +616,7 @@
   animation: fadeInOut 0.8s ease-in-out;
 }
 
-.transaction-skeleton {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  animation: fadeInOut 1s ease-in-out infinite;
-}
 
-.transaction-skeleton circle {
-  cx: 3%;
-  r: 2%;
-}
-
-.transaction-skeleton rect {
-  height: 1.5%;
-}
-
-.transaction-skeleton .circle-1 {
-  cx: 3%;
-}
-
-.transaction-skeleton .rect-1 {
-  x: 7%;
-  width: 10%;
-}
-
-.transaction-skeleton .rect-2 {
-  x: 7%;
-  width: 10%;
-}
-
-.transaction-skeleton .circle-2 {
-  cx: 32%;
-}
-
-.transaction-skeleton .rect-3 {
-  x: 35%;
-  width: 15%;
-}
-
-.transaction-skeleton .rect-4 {
-  x: 35%;
-  width: 12%;
-}
-
-.transaction-skeleton .rect-5 {
-  x: 85%;
-  width: 10%;
-}
-
-.transaction-skeleton .rect-6 {
-  x: 85%;
-  width: 10%;
-}
-
-.transaction-skeleton .line {
-  x: 1%;
-  width: 98%;
-  height: 0.2%;
-}
 
 /* Media queries for responsive design */
 @media (max-width: 768px) {
@@ -684,5 +626,39 @@
 
   .transaction-skeleton rect {
     height: 2%;
+  }
+}
+
+
+
+
+.loading2 svg polyline {
+  fill: none;
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+
+.loading2 svg polyline#back {
+  fill: none;
+  stroke: gray;
+}
+
+.loading2 svg polyline#front {
+  fill: none;
+  // stroke: #064796;
+  stroke-dasharray: 96, 288;
+  stroke-dashoffset: 3s84;
+  animation: dash_682 1.4s linear infinite;
+}
+
+@keyframes dash_682 {
+  72.5% {
+    opacity: 0;
+  }
+
+  to {
+    stroke-dashoffset: 0;
   }
 }

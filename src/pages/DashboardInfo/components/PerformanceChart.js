@@ -22,6 +22,7 @@ import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown
 import { selectNetworkType } from '../../../slices/networkType/reducer';
 import GraphSkeleton from '../../../Components/Skeletons/GraphSkeleton';
 import GraphBtnsSkeleton from '../../../Components/Skeletons/GraphBtnsSkeleton';
+import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
@@ -553,7 +554,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                       style={{ width: '4rem', height: '4rem' }}
                       className=""
                     /> */}
-                    <GraphSkeleton />
+                    <ChartSkeleton />
                   </div>
                 ) : (
                   <>
