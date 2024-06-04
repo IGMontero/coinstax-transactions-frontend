@@ -23,6 +23,7 @@ import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import NftsCards from './components/NftsCards';
+import NftsSkeleton from '../../Components/Skeletons/NftsSkeleton';
 
 const ethIcon = (
   <svg
@@ -284,11 +285,9 @@ const Nfts = ({ address, isDashboardPage }) => {
   if (loading || loadingIncludeSpam) {
     return (
       <>
-        <div
-          className="d-flex justify-content-center align-items-center h-50vh"
-          style={{ height: !isDashboardPage ? '50vh' : '40vh' }}
-        >
-          <Spinner style={{ width: '4rem', height: '4rem' }} />
+        {renderTitle()}
+        <div className="d-flex justify-content-center align-items-center mt-4">
+          <NftsSkeleton isDashboardPage={isDashboardPage} />
         </div>
       </>
     );
@@ -317,11 +316,10 @@ const Nfts = ({ address, isDashboardPage }) => {
     );
   }
 
-  console.log(data);
-
   return (
     <React.Fragment>
       {renderTitle()}
+
       <div className="">
         {items && items.length > 0 && !isDashboardPage ? (
           <Col xxl={12} className="d-flex align-items-center">
