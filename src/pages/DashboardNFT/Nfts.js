@@ -149,7 +149,7 @@ const Nfts = ({ address, isDashboardPage }) => {
     setItemsToShow(itemsToShow + 20);
   };
 
-  let items = data?.items || [];
+  let items = data?.items || data?.nfts || [];
   if (isDashboardPage) {
     items = items.slice(0, 5);
   } else {
@@ -295,11 +295,7 @@ const Nfts = ({ address, isDashboardPage }) => {
   }
 
   // if no NFTs found
-  if (
-    data &&
-    (data?.nfts?.lenght === 0 || data?.items?.length === 0) &&
-    !loading
-  ) {
+  if (items && items?.length === 0 && !loading) {
     return (
       <>
         {renderTitle()}
@@ -320,6 +316,8 @@ const Nfts = ({ address, isDashboardPage }) => {
       </>
     );
   }
+
+  console.log(data);
 
   return (
     <React.Fragment>

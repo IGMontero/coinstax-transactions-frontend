@@ -70,7 +70,11 @@ const DashboardAssets = () => {
   document.title = 'Assets | Chain Glance';
   return (
     <div className="page-content ">
-      <ActivesTable loading={loadingAssets} data={assetsData} />
+      <ActivesTable
+        isDashboardPage={false}
+        loading={loadingAssets}
+        data={assetsData}
+      />
     </div>
   );
 };
