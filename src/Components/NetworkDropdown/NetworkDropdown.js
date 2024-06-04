@@ -25,6 +25,8 @@ const NetworkDropdown = () => {
   const networkType = useSelector(selectNetworkType);
   const { address } = useParams();
 
+  const [filteredNetworks, setFilteredNetworks] = React.useState();
+
   const networks = [
     {
       key: 'all',
@@ -44,6 +46,7 @@ const NetworkDropdown = () => {
     {
       key: 'ethereum',
       label: 'Ethereum',
+      blockchain: 'ethereum',
       icon: eth,
       iconAlt: 'eth',
       width: 20,
@@ -52,6 +55,7 @@ const NetworkDropdown = () => {
     {
       key: 'polygon',
       label: 'Polygon',
+      blockchain: 'polygon',
       icon: pol,
       iconAlt: 'polygon',
       width: 20,
@@ -59,6 +63,7 @@ const NetworkDropdown = () => {
     },
     {
       key: 'bsc-mainnet',
+      blockchain: 'bnb',
       label: 'BNB Chain',
       icon: bnb,
       iconAlt: 'bnb',
@@ -68,6 +73,7 @@ const NetworkDropdown = () => {
     {
       key: 'optimism',
       label: 'Optimism',
+      blockchain: 'optimism',
       icon: optimism,
       iconAlt: 'optimism',
       width: 19,
@@ -77,6 +83,7 @@ const NetworkDropdown = () => {
       key: 'base-mainnet',
       label: 'Base',
       icon: baseMainnet,
+      blockchain: 'base',
       iconAlt: 'base-mainnet',
       width: 20,
       height: 20,
@@ -86,6 +93,17 @@ const NetworkDropdown = () => {
   const fetchAddressInfo = async () => {
     try {
       const response = await dispatch(getAddressesInfo({ address }));
+      const res = response.payload;
+      const availableNetworks = Object.keys(res.blockchains);
+      const filtered = networks.filter(
+        (network) =>
+          network.key !== 'all' &&
+          availableNetworks.includes(network.blockchain),
+      );
+      const newNetworkType =
+        filtered.find((n) => n.key === networkType)?.key || 'all';
+      setFilteredNetworks([...networks.slice(0, 1), ...filtered]);
+      dispatch(setNetworkType(newNetworkType));
     } catch (error) {
       console.error('Error fetching address data:', error);
     }
@@ -140,7 +158,7 @@ const NetworkDropdown = () => {
             <i className="mdi mdi-chevron-down  ms-2 fs-5"></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-end mt-2 ">
-            {networks.map((network) => (
+            {filteredNetworks?.map((network) => (
               <React.Fragment key={network.key}>
                 <DropdownItem
                   className="d-flex align-items-center mt-0 py-2"
