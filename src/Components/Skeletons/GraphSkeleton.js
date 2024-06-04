@@ -12,7 +12,7 @@ const GraphSkeleton = (props) => {
   return (
     <ContentLoader
       speed={2}
-      height="50vh"
+      // height="50vh"
       viewBox="0 0 1163 520"
       backgroundColor={darkMode ? '#333' : '#e0e0e0'}
       color={darkMode ? '#555' : '#cfcfcf'}
