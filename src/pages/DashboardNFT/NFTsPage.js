@@ -7,8 +7,7 @@ import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 const NFTsPage = () => {
   const { address } = useParams();
   return (
-    <div className="page-content">
-      <AddressWithDropdown />
+    <div>
       <Nfts address={address} isDashboardPage={false} />
     </div>
   );

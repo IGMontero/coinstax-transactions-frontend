@@ -159,7 +159,7 @@ const DashboardInfo = () => {
   document.title = ` Dashboard ${address} | Chain Glance`;
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div>
         <QrModal
           showQrModal={showQrModal}
           toggleQrModal={toggleQrModal}
@@ -167,8 +167,6 @@ const DashboardInfo = () => {
         />
 
         <>
-          {/* <AddressWithDropdown /> */}
-
           <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
             <Col
               xxl={9}

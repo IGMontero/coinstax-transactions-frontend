@@ -168,7 +168,6 @@ const ActivesTable = ({ data, loading, isDashboardPage }) => {
     <React.Fragment>
       {isDashboardPage ? null : (
         <div className="mt-0">
-          <AddressWithDropdown />
           <h1 className={` ms-1  mb-4 mt-4 `}>Assets</h1>
         </div>
       )}
