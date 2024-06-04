@@ -316,6 +316,8 @@ const Nfts = ({ address, isDashboardPage }) => {
     );
   }
 
+  document.title = 'NFTs | Chain Glance';
+
   return (
     <React.Fragment>
       {renderTitle()}

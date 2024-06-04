@@ -279,7 +279,7 @@ const DashboardUserAddresses = () => {
   document.title = 'User Addresses | Chain Glance';
 
   return (
-    <div className="page-content mt-5" style={{ minHeight: '100vh' }}>
+    <div className=" mt-5" style={{ minHeight: '100vh' }}>
       <div className="d-flex justify-content-end">
         <NetworkDropdown />
       </div>

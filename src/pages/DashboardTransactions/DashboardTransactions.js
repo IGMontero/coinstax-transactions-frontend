@@ -10,8 +10,7 @@ const DashboardTransactions = () => {
   document.title = 'Transactions | Chain Glance';
 
   return (
-    <div className="page-content">
-      <AddressWithDropdown />
+    <div>
       <HistorialTable
         isDashboardPage={false}
         data={historyData}

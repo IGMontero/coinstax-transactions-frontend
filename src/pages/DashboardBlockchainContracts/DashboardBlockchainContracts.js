@@ -149,7 +149,7 @@ const DashboardBlockchainContracts = () => {
         setOpen={handleOpenModalEdit}
         transactionToEdit={selectedContract}
       />
-      <div className="page-content mt-5">
+      <div className="mt-5">
         <div className="d-flex justify-content-end">
           <NetworkDropdown />
         </div>

@@ -69,7 +69,7 @@ const DashboardAssets = () => {
 
   document.title = 'Assets | Chain Glance';
   return (
-    <div className="page-content ">
+    <div>
       <ActivesTable
         isDashboardPage={false}
         loading={loadingAssets}

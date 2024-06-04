@@ -24,12 +24,13 @@ import {
 
 //redux
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
 import { layoutModeTypes } from '../Components/constants/layout';
 import { setCurrentThemeCookie } from '../helpers/cookies_helper';
 
 const Layout = (props) => {
+  const { token } = useParams();
   const [headerClass, setHeaderClass] = useState('');
   const dispatch = useDispatch();
   const {
@@ -144,6 +145,16 @@ const Layout = (props) => {
     location.pathname.includes('/login') ||
     location.pathname.includes('/register');
 
+  const pagesNotToDisplayAddress = [
+    '/login',
+    '/register',
+    '/forgot-password',
+    '/reset-password',
+    '/404',
+    '/blockchain-contracts',
+    '/user-addresses',
+  ];
+
   return (
     <React.Fragment>
       <div id="layout-wrapper">
@@ -158,7 +169,11 @@ const Layout = (props) => {
           </>
         )}
         <div className="main-content" style={{ height: '100vh' }}>
-          {props.children}
+          <div className="page-content">
+            {!pagesNotToDisplayAddress.includes(location.pathname) &&
+              !token && <AddressWithDropdown />}
+            {props.children}
+          </div>
           <Footer />
         </div>
       </div>

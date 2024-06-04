@@ -525,9 +525,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
       <Col xxl={12} className="mb-4">
         <div className="d-flex justify-content-start">
           <Col className="col-12" style={{ marginTop: '-2rem' }}>
-            <div className={loading ? (token ? ' mt-0 mb-4' : '') : ''}>
-              {!token && <AddressWithDropdown />}
-            </div>
+            <div className={loading ? (token ? ' mt-0 mb-4' : '') : ''}></div>
             <div className="border border-2 p-2 mt-4 rounded">
               <div
                 className="chart-container position-relative"

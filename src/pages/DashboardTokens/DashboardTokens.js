@@ -60,7 +60,7 @@ const DashboardTokens = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content ">
+      <div className="">
         {loading ? (
           <div className="d-flex mt-5 justify-content-center align-items-center h-100vh">
             <Spinner style={{ width: '4rem', height: '4rem' }} />
