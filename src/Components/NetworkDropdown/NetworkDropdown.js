@@ -9,6 +9,7 @@ import {
   selectNetworkType,
   setNetworkType,
 } from '../../slices/networkType/reducer';
+import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 import {
   Col,
   DropdownItem,
@@ -34,7 +35,7 @@ const NetworkDropdown = () => {
       icon: (
         <i
           style={{
-            fontSize: '16px',
+            fontSize: '30px',
             paddingRight: '8px',
             marginLeft: '-4px',
           }}
@@ -49,8 +50,8 @@ const NetworkDropdown = () => {
       blockchain: 'ethereum',
       icon: eth,
       iconAlt: 'eth',
-      width: 20,
-      height: 20,
+      width: 30,
+      height: 30,
     },
     {
       key: 'polygon',
@@ -58,8 +59,8 @@ const NetworkDropdown = () => {
       blockchain: 'polygon',
       icon: pol,
       iconAlt: 'polygon',
-      width: 20,
-      height: 20,
+      width: 30,
+      height: 30,
     },
     {
       key: 'bsc-mainnet',
@@ -67,8 +68,8 @@ const NetworkDropdown = () => {
       label: 'BNB Chain',
       icon: bnb,
       iconAlt: 'bnb',
-      width: 20,
-      height: 20,
+      width: 30,
+      height: 30,
     },
     {
       key: 'optimism',
@@ -76,8 +77,8 @@ const NetworkDropdown = () => {
       blockchain: 'optimism',
       icon: optimism,
       iconAlt: 'optimism',
-      width: 19,
-      height: 19,
+      width: 29,
+      height: 29,
     },
     {
       key: 'base-mainnet',
@@ -85,8 +86,8 @@ const NetworkDropdown = () => {
       icon: baseMainnet,
       blockchain: 'base',
       iconAlt: 'base-mainnet',
-      width: 20,
-      height: 20,
+      width: 30,
+      height: 30,
     },
   ];
 
@@ -95,11 +96,18 @@ const NetworkDropdown = () => {
       const response = await dispatch(getAddressesInfo({ address }));
       const res = response.payload;
       const availableNetworks = Object.keys(res.blockchains);
-      const filtered = networks.filter(
-        (network) =>
-          network.key !== 'all' &&
-          availableNetworks.includes(network.blockchain),
-      );
+      const filtered = networks
+        .filter(
+          (network) =>
+            network.key !== 'all' &&
+            availableNetworks.includes(network.blockchain),
+        )
+        .map((network) => ({
+          ...network,
+          totalValue: res.blockchains[network.blockchain].totalValue,
+          nftsValue: res.blockchains[network.blockchain].nftsValue,
+        }));
+
       const newNetworkType =
         filtered.find((n) => n.key === networkType)?.key || 'all';
       setFilteredNetworks([...networks.slice(0, 1), ...filtered]);
@@ -167,6 +175,56 @@ const NetworkDropdown = () => {
                   {renderNetworkIcon(network)}
                   <div className="d-flex flex-column">
                     <span className="fw-normal">{network.label}</span>
+                    {network.totalValue !== undefined &&
+                      network.nftsValue !== undefined && (
+                        <div className="d-flex flex-row  align-items-center">
+                          <svg
+                            width="16"
+                            height="16"
+                            className="me-1"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-label="Tokens on chain"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              clip-rule="evenodd"
+                              d="M12.698 8.224a5.753 5.753 0 00-4.922-4.922 3.5 3.5 0 114.922 4.922zM7 5a4 4 0 100 8 4 4 0 000-8z"
+                              fill="#81848E"
+                            ></path>
+                          </svg>
+                          <small>
+                            {parseValuesToLocale(
+                              network.totalValue.toFixed(2),
+                              CurrencyUSD,
+                            )}
+                          </small>
+                          <svg
+                            width="14"
+                            className="ms-2 me-1"
+                            height="14"
+                            viewBox="0 0 16 16"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            aria-label="NFTs on chain"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              clip-rule="evenodd"
+                              d="M8 2a6 6 0 000 12 1.262 1.262 0 00.937-2.11.63.63 0 01.471-1.047h1.118A3.475 3.475 0 0014 7.367C14 4.368 11.277 2 8 2zM4.605 8.632c-.568 0-1.026-.424-1.026-.948s.458-.947 1.026-.947c.568 0 1.027.423 1.027.947s-.459.948-1.027.948zm1.369-2.527c-.568 0-1.027-.423-1.027-.947s.459-.947 1.027-.947c.568 0 1.026.423 1.026.947s-.458.947-1.026.947zm2.737-.631c-.568 0-1.027-.423-1.027-.948 0-.524.459-.947 1.027-.947.567 0 1.026.423 1.026.947 0 .525-.459.948-1.026.948zm2.052 1.894c-.568 0-1.026-.423-1.026-.947s.458-.947 1.026-.947c.568 0 1.027.423 1.027.947s-.459.947-1.027.947z"
+                              fill="currentColor"
+                            ></path>
+                          </svg>
+
+                          <small>
+                            {parseValuesToLocale(
+                              network.nftsValue.toFixed(2),
+                              CurrencyUSD,
+                            )}
+                          </small>
+                        </div>
+                      )}
                   </div>
                 </DropdownItem>
                 {network.withDivider ? (
