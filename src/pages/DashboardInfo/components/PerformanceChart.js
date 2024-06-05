@@ -18,10 +18,7 @@ import { Chart } from 'chart.js';
 import { useParams } from 'react-router-dom';
 import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
 import _ from 'lodash';
-import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 import { selectNetworkType } from '../../../slices/networkType/reducer';
-import GraphSkeleton from '../../../Components/Skeletons/GraphSkeleton';
-import GraphBtnsSkeleton from '../../../Components/Skeletons/GraphBtnsSkeleton';
 import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
@@ -189,19 +186,22 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
   const fetchAndSetData = (days, signal) => {
     const fetchId = Date.now();
+    let timer;
 
-    console.log(loadingChart);
     if (address) {
       const params = days
         ? { address, days, networkType, signal }
         : { address, networkType, signal };
-      setLoadingChart((prev) => ({
-        ...prev,
-        [fetchId]: true,
-      }));
+      timer = setTimeout(() => {
+        setLoadingChart((prev) => ({
+          ...prev,
+          [fetchId]: true,
+        }));
+      }, 300);
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
+          clearTimeout(timer);
           const newLabels = response.total.map(
             (item) => new Date(item.calendarDate),
           );
@@ -286,6 +286,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
           }));
         })
         .catch((error) => {
+          clearTimeout(timer);
           console.error('Error fetching performance data:', error);
           setLoadingChart((prev) => ({
             ...prev,
@@ -297,15 +298,20 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
   const fetchAndSetDataForToken = (days, signal) => {
     const fetchId = Date.now();
+    let timer;
     if (address) {
       const params = days ? { address, days, signal } : { address, signal };
-      setLoadingChart((prev) => ({
-        ...prev,
-        [fetchId]: true,
-      }));
+
+      timer = setTimeout(() => {
+        setLoadingChart((prev) => ({
+          ...prev,
+          [fetchId]: true,
+        }));
+      }, 300);
       dispatch(fetchPerformanceToken(params))
         .unwrap()
         .then((response) => {
+          clearTimeout(timer);
           if (response.unsupported) {
             setIsUnsupported(true);
           } else {
@@ -378,6 +384,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
           }));
         })
         .catch((error) => {
+          clearTimeout(timer);
           console.error('Error fetching performance data:', error);
           setLoadingChart((prev) => ({
             ...prev,

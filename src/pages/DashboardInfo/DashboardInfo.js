@@ -251,7 +251,7 @@ const DashboardInfo = () => {
                           <span className="p-1">See more NFTs</span>
                         </Button>
                       </div>
-                      <div className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden">
+                      <div className="border border-2 rounded px-5  py-0 w-100 d-flex justify-content-start overflow-hidden">
                         <Nfts
                           isDashboardPage={true}
                           address={addressForSearch}
