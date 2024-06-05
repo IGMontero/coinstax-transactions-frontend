@@ -376,7 +376,7 @@ const Nfts = ({ address, isDashboardPage }) => {
               data.items?.length > itemsToShow && (
                 <div className="d-flex justify-content-center">
                   <Button
-                    className="mt-3 d-flex justify-content-center align-items-center "
+                    className="mt-3 d-flex btn-hover-light  justify-content-center align-items-center "
                     color="soft-light"
                     style={{
                       borderRadius: '10px',
@@ -384,7 +384,7 @@ const Nfts = ({ address, isDashboardPage }) => {
                     }}
                     onClick={handleShowMoreItems}
                   >
-                    <h6 className="text-dark fw-semibold my-2">More Items</h6>
+                    <h6 className="text-dark  fw-semibold my-2">More Items</h6>
                   </Button>
                 </div>
               )}
