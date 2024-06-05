@@ -149,12 +149,36 @@ export const capitalizeFirstLetter = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
 
-export const parseValuesToLocale = (value, currency, valueForChart) => {
+export const parseValuesToLocale = (
+  value,
+  currency,
+  valueForChart,
+  networkValue,
+) => {
   // Get the location from the browser
   const localUbication = navigator.language || 'en-US';
 
   if (value === undefined || value === null) {
     return '';
+  }
+
+  if (networkValue) {
+    const suffixes = { B: 1e9, M: 1e6, K: 1e3 };
+    let suffixKey = Object.keys(suffixes).find((key) => value >= suffixes[key]);
+    if (suffixKey) {
+      let scaledValue = value / suffixes[suffixKey];
+      let formattedValue = new Intl.NumberFormat(localUbication, {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: 1,
+        maximumFractionDigits: 1,
+      }).format(scaledValue);
+
+      let currencySymbol = formattedValue.match(/[^\d.,\s]/g).join('');
+      formattedValue = formattedValue.replace(currencySymbol, '').trim();
+
+      return `${currencySymbol}${formattedValue} ${suffixKey}`;
+    }
   }
 
   const isValueHuge = value > 1e20;
