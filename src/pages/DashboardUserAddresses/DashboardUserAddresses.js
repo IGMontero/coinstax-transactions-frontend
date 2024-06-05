@@ -17,6 +17,7 @@ import {
   getUserAddresses,
   refreshAllTransactions,
   deleteUsersAddress,
+  deleteHistoricalBalance,
 } from '../../slices/userAddresses/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
@@ -238,6 +239,57 @@ const DashboardUserAddresses = () => {
     }
   };
 
+  const handleDeleteHistoricalBalance = async (item) => {
+    const result = await Swal.fire({
+      title: `Are you sure you want to delete historical balance for address ${item.Address}?`,
+      // text: `You won't be able to revert this!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete historical balance',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const actionResult = await dispatch(
+          deleteHistoricalBalance({
+            networkType: item.Blockchain,
+            address: item.Address,
+          }),
+        );
+
+        const errorMessage = 'Error to delete historical balance';
+
+        const wasSuccessful = await handleActionResult(
+          deleteHistoricalBalance,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            Swal.fire(
+              'Deleted!',
+              'Historical balance has been deleted.',
+              'success',
+            );
+          },
+        );
+
+        if (!wasSuccessful) {
+          setLoading(false);
+          return;
+        }
+
+        setLoading(false);
+      } catch (error) {
+        setLoading(true);
+        console.log('Error deleting historical balance', error);
+        Swal.fire('Error', error.toString(), 'error');
+        setLoading(false);
+      }
+    }
+  };
+
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
     copyToClipboard(text);
@@ -269,6 +321,12 @@ const DashboardUserAddresses = () => {
               onClick={() => handleDeleteUserAddress(item)}
             >
               Delete All Transactions
+            </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleDeleteHistoricalBalance(item)}
+            >
+              Delete Historical Balance
             </DropdownItem>
           </DropdownMenu>,
           portalRoot,
