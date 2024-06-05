@@ -30,7 +30,7 @@ import { layoutModeTypes } from '../Components/constants/layout';
 import { setCurrentThemeCookie } from '../helpers/cookies_helper';
 
 const Layout = (props) => {
-  const { token } = useParams();
+  const { token, contractAddress } = useParams();
   const [headerClass, setHeaderClass] = useState('');
   const dispatch = useDispatch();
   const {
@@ -171,7 +171,8 @@ const Layout = (props) => {
         <div className="main-content" style={{ height: '100vh' }}>
           <div className="page-content">
             {!pagesNotToDisplayAddress.includes(location.pathname) &&
-              !token && <AddressWithDropdown />}
+              !token &&
+              !contractAddress && <AddressWithDropdown />}
             {props.children}
           </div>
           <Footer />
