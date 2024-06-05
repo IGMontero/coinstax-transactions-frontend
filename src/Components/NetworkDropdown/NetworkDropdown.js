@@ -1,8 +1,7 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import eth from '../../assets/images/svg/crypto-icons/eth.svg';
 import pol from '../../assets/images/svg/crypto-icons/polygon.webp';
 import bnb from '../../assets/images/svg/crypto-icons/binanceLogo.png';
-import btcMainnet from '../../assets/images/svg/crypto-icons/btc-mainnet.svg';
 import optimism from '../../assets/images/svg/crypto-icons/optimism-seeklogo.png';
 import baseMainnet from '../../assets/images/svg/crypto-icons/base-mainnet.png';
 import {
@@ -38,10 +37,13 @@ const NetworkDropdown = () => {
             fontSize: '30px',
             paddingRight: '8px',
             marginLeft: '-4px',
+            marginTop: '-5px',
+            marginBottom: '-5px',
           }}
-          className="ri-function-line "
+          className="ri-function-line text-primary"
         ></i>
       ),
+
       withDivider: true,
     },
     {
@@ -68,8 +70,8 @@ const NetworkDropdown = () => {
       label: 'BNB Chain',
       icon: bnb,
       iconAlt: 'bnb',
-      width: 30,
-      height: 30,
+      width: 29,
+      height: 29,
     },
     {
       key: 'optimism',
@@ -156,14 +158,23 @@ const NetworkDropdown = () => {
         <UncontrolledDropdown className="card-header-dropdown ">
           <DropdownToggle
             tag="a"
-            className="btn btn-sm p-1 btn-soft-primary  border rounded d-flex align-items-center"
+            className="btn btn-sm  btn-hover-light p-1 ps-3 d-flex justify-content-center align-items-center border rounded"
             role="button"
+            color="soft-primary"
+            style={{
+              maxHeight: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              border: '0.5px solid grey',
+            }}
           >
-            <span className="ms-2 d-flex align-items-center py-0">
+            <span className=" d-flex  align-items-center py-0">
               {renderNetworkIcon(selectedNetwork)}
-              <span className="fs-6 py-0">{selectedNetwork.label}</span>
+              <span className="fs-6 text-dark  py-0">
+                {selectedNetwork.label}
+              </span>
             </span>
-            <i className="mdi mdi-chevron-down  ms-2 fs-5"></i>
+            <i className="mdi  mdi-chevron-down text-dark  ms-2 fs-5"></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-end mt-2 ">
             {filteredNetworks?.map((network) => (
