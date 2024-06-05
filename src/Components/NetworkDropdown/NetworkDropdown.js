@@ -18,14 +18,17 @@ import {
 } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { getAddressesInfo } from '../../slices/addresses/thunk';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 const NetworkDropdown = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const networkType = useSelector(selectNetworkType);
   const { address } = useParams();
 
-  const [filteredNetworks, setFilteredNetworks] = React.useState();
+  const isAdminPages =
+    location.pathname.includes('blockchain-contracts') ||
+    location.pathname.includes('user-addresses');
 
   const networks = [
     {
@@ -93,27 +96,35 @@ const NetworkDropdown = () => {
     },
   ];
 
+  const [filteredNetworks, setFilteredNetworks] = React.useState(networks);
+
   const fetchAddressInfo = async () => {
     try {
       const response = await dispatch(getAddressesInfo({ address }));
       const res = response.payload;
       const availableNetworks = Object.keys(res.blockchains);
-      const filtered = networks
-        .filter(
-          (network) =>
-            network.key !== 'all' &&
-            availableNetworks.includes(network.blockchain),
-        )
-        .map((network) => ({
-          ...network,
-          totalValue: res.blockchains[network.blockchain].totalValue,
-          nftsValue: res.blockchains[network.blockchain].nftsValue,
-        }));
 
-      const newNetworkType =
-        filtered.find((n) => n.key === networkType)?.key || 'all';
-      setFilteredNetworks([...networks.slice(0, 1), ...filtered]);
-      dispatch(setNetworkType(newNetworkType));
+      let filtered;
+      if (isAdminPages) {
+        filtered = networks;
+      } else {
+        filtered = networks
+          .filter(
+            (network) =>
+              network.key !== 'all' &&
+              availableNetworks.includes(network.blockchain),
+          )
+          .map((network) => ({
+            ...network,
+            totalValue: res.blockchains[network.blockchain]?.totalValue,
+            nftsValue: res.blockchains[network.blockchain]?.nftsValue,
+          }));
+        const newNetworkType =
+          filtered.find((n) => n.key === networkType)?.key || 'all';
+        setFilteredNetworks([...networks.slice(0, 1), ...filtered]);
+
+        dispatch(setNetworkType(newNetworkType));
+      }
     } catch (error) {
       console.error('Error fetching address data:', error);
     }
@@ -123,7 +134,7 @@ const NetworkDropdown = () => {
     if (address) {
       fetchAddressInfo();
     }
-  }, [address, networkType]);
+  }, [address]);
 
   const handleChangeNetwork = (newType) => {
     dispatch(setNetworkType(newType));
