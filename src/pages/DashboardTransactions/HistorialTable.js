@@ -785,7 +785,7 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
             xs={12}
             className="d-flex  py-3 justify-content-end"
           >
-            <Button className="btn btn-sm" color="primary" size="sm">
+            <Button className="btn  btn-sm" color="primary" size="sm">
               Download CSV
             </Button>
           </Col>
@@ -980,12 +980,18 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
             </div>
             {currentUser && (
               <Button
+                className="d-flex btn-hover-light  justify-content-center align-items-center "
+                color="soft-light"
+                style={{
+                  borderRadius: '10px',
+                  border: '.5px solid grey',
+                }}
                 onClick={handleDownloadTransactions}
-                className="btn btn-sm"
-                color="primary"
                 size="sm"
                 disabled={isInitialLoad}
               >
+                {' '}
+                <i className="ri-file-download-line fs-5 me-2 "></i>
                 Download CSV
               </Button>
             )}
