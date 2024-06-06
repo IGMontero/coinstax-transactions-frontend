@@ -513,6 +513,64 @@
   min-width: 100%;
 }
 
+// Address with dropdown 
+.text-custom-address-dropdown {
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 600px;
+}
+
+
+@media (max-width: 1300px) {
+  .text-custom-address-dropdown {
+    // font-size: 14px;
+    margin-left: 0px;
+    max-width:400px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .text-custom-address-dropdown {
+    // font-size: 14px;
+    margin-left: 0px;
+    max-width: 400px;
+  }
+}
+
+
+@media (max-width: 992px) {
+  .text-custom-address-dropdown {
+    // font-size: 13px;
+    margin-left: 0px;
+    max-width: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .text-custom-address-dropdown{
+    // font-size: 13px;
+    margin-left: 0px;
+    max-width: 230px;
+  }
+}
+
+@media (max-width: 576px) {
+  .text-custom-address-dropdown {
+    // font-size: 12px;
+    margin-left: 0px;
+    max-width: 210px;
+  }
+}
+
+@media (max-width: 480px) {
+  .text-custom-address-dropdown{
+    // font-size: 10px;
+    margin-left: 0px;
+    max-width: 190px;
+  }
+}
 
 // text for menu suggestions in search bar 
 .text-custom-menu-suggestions {
@@ -520,19 +578,20 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 300px;
 }
 
 @media (max-width: 1300px) {
   .text-custom-menu-suggestions {
-    font-size: 14px;
+    // font-size: 14px;
     margin-left: 0px;
-    max-width: 200px;
+    max-width:250px;
   }
 }
 
 @media (max-width: 1200px) {
   .text-custom-menu-suggestions {
-    font-size: 14px;
+    // font-size: 14px;
     margin-left: 0px;
     max-width: 250px;
   }
@@ -540,35 +599,36 @@
 
 @media (max-width: 992px) {
   .text-custom-menu-suggestions {
-    font-size: 13px;
+    // font-size: 13px;
     margin-left: 0px;
-    max-width: 220px;
+    max-width: 200px;
   }
 }
 
 @media (max-width: 768px) {
   .text-custom-menu-suggestions {
-    font-size: 13px;
+    // font-size: 13px;
     margin-left: 0px;
-    max-width: 280px;
+    max-width: 170px;
   }
 }
 
 @media (max-width: 576px) {
   .text-custom-menu-suggestions {
-    font-size: 12px;
+    // font-size: 12px;
     margin-left: 0px;
-    max-width: 220px;
+    max-width: 160px;
   }
 }
 
 @media (max-width: 480px) {
   .text-custom-menu-suggestions {
-    font-size: 10px;
+    // font-size: 10px;
     margin-left: 0px;
-    max-width: 150px;
+    max-width: 130px;
   }
 }
+
 
 
 // Header 

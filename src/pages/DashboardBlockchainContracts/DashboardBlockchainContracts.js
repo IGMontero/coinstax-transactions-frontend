@@ -149,50 +149,49 @@ const DashboardBlockchainContracts = () => {
         setOpen={handleOpenModalEdit}
         transactionToEdit={selectedContract}
       />
-      <div className="mt-5">
-        <div className="d-flex justify-content-end">
-          <NetworkDropdown />
-        </div>
-        <h3>Blockchain Contracts</h3>
-        <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
-          <Input
-            type="text"
-            placeholder="Search By Address"
-            className="form-control"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button
-            className="mx-2"
-            disabled={loading || !search}
-            color="primary"
-            onClick={handleSearch}
-          >
-            Search
-          </Button>
-          <Button disabled={!search} color="danger" onClick={handleClearSearch}>
-            Clear
-          </Button>
-        </div>
 
-        <BlockChainContractTable
-          onOpenModalEdit={handleOpenModalEdit}
-          loading={loading}
-          errorMessageEdit={errorMessageEdit}
-          setLoading={setLoading}
-          contracts={contracts}
-          setContracts={setContracts}
-          setCurrentPage={setCurrentPage}
-          onRefresh={getBlockchainContracts}
-          pagination={{
-            handleChangePage,
-            currentPage,
-            pageSize,
-            total,
-            hasMore,
-          }}
-        />
+      <div className="d-flex my-5 justify-content-end">
+        <NetworkDropdown />
       </div>
+      <h3 className="">Blockchain Contracts</h3>
+      <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
+        <Input
+          type="text"
+          placeholder="Search By Address"
+          className="form-control"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Button
+          className="mx-2"
+          disabled={loading || !search}
+          color="primary"
+          onClick={handleSearch}
+        >
+          Search
+        </Button>
+        <Button disabled={!search} color="danger" onClick={handleClearSearch}>
+          Clear
+        </Button>
+      </div>
+
+      <BlockChainContractTable
+        onOpenModalEdit={handleOpenModalEdit}
+        loading={loading}
+        errorMessageEdit={errorMessageEdit}
+        setLoading={setLoading}
+        contracts={contracts}
+        setContracts={setContracts}
+        setCurrentPage={setCurrentPage}
+        onRefresh={getBlockchainContracts}
+        pagination={{
+          handleChangePage,
+          currentPage,
+          pageSize,
+          total,
+          hasMore,
+        }}
+      />
     </React.Fragment>
   );
 };

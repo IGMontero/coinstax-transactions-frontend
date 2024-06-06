@@ -97,7 +97,9 @@ const AddressWithDropdown = () => {
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
-        <h4 className="mb-0 ms-3">{formattedAddressLabel}</h4>
+        <h4 className="mb-0 ms-3  text-custom-address-dropdown ">
+          {formattedAddressLabel}
+        </h4>
         <UncontrolledDropdown className="card-header-dropdown">
           <DropdownToggle tag="a" className="text-reset" role="button">
             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
@@ -148,7 +150,7 @@ const AddressWithDropdown = () => {
       />
       <div className="mt-5">
         <Col className="col-12 d-flex justify-content-between align-items-center">
-          <Col className="col-8 d-flex justify-content-start align-items-center">
+          <Col className="col-8 d-flex justify-content-start align-items-center ">
             {renderAddressWithDropdown()}
           </Col>
           <Col className="col-4 d-flex justify-content-end align-items-end ">

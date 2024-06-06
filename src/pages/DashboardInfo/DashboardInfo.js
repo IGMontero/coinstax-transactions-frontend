@@ -184,7 +184,7 @@ const DashboardInfo = () => {
           addressTitle={addressTitle}
         />
 
-        <>
+        <div className="d-flex flex-column">
           <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
             <Col
               xxl={9}
@@ -245,8 +245,8 @@ const DashboardInfo = () => {
                   }}
                 ></div>
 
-                <div className="d-flex">
-                  <div className="flex-grow-1">
+                <div className="d-flex flex-column">
+                  <div className="">
                     <PerformanceChart
                       setIsUnsupported={setIsUnsupported}
                       address={addressForSearch}
@@ -261,8 +261,8 @@ const DashboardInfo = () => {
                           isDashboardPage={true}
                           loading={loadingAssets}
                           data={assetsData}
+                          buttonSeeMore={renderButtonSeeMore}
                         />
-                        {renderButtonSeeMore('assets', 'Assets')}
                       </div>
                     </Col>
                     <Col xxl={12} className="mt-3 d-flex flex-column">
@@ -274,9 +274,9 @@ const DashboardInfo = () => {
                           <Nfts
                             isDashboardPage={true}
                             address={addressForSearch}
+                            buttonSeeMore={renderButtonSeeMore}
                           />
                         </div>
-                        {renderButtonSeeMore('nfts', 'NFTs')}
                       </div>
                     </Col>
 
@@ -291,8 +291,8 @@ const DashboardInfo = () => {
                           setData={setHistoryData}
                           activeTab={customActiveTab}
                           address={addressForSearch}
+                          buttonSeeMore={renderButtonSeeMore}
                         />
-                        {renderButtonSeeMore('history', 'Activity')}
                       </div>
                     </Col>
                   </div>
@@ -302,7 +302,7 @@ const DashboardInfo = () => {
               <div style={{ minHeight: '100vh' }}></div>
             )}
           </Row>
-        </>
+        </div>
       </div>
     </React.Fragment>
   );
