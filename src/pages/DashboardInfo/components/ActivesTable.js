@@ -12,16 +12,13 @@ import {
   capitalizeFirstLetter,
   parseValuesToLocale,
 } from '../../../utils/utils';
-import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
 import { getAppOptions, setAppOptions } from '../../../helpers/cookies_helper';
 import AssetsSkeleton from '../../../Components/Skeletons/AssetsSkeleton';
-import { useNavigate, useParams } from 'react-router-dom';
 
 const ActivesTable = ({ data, loading, isDashboardPage }) => {
   const appOptions = getAppOptions();
-  const navigate = useNavigate();
-  const { address } = useParams();
+
   const [viewMode, setViewMode] = useState('byPlatform');
   const [showMenu, setShowMenu] = useState(false);
   const [hideSmallBalances, setHideSmallBalances] = useState(
@@ -172,9 +169,6 @@ const ActivesTable = ({ data, loading, isDashboardPage }) => {
         </div>
       )}
       <div>
-        <div className="flex-grow-1 d-flex justify-content-between align-items-center">
-          {isDashboardPage ? null : renderFilterButtons()}
-        </div>
         <div
           className={`${!isDashboardPage ? 'border rounded border-2 p-3' : ''}`}
         >
@@ -185,7 +179,7 @@ const ActivesTable = ({ data, loading, isDashboardPage }) => {
           ) : (
             <div>
               {viewMode === 'byPlatform' && (
-                <div className="d-flex flex-row align-items-center">
+                <div className="d-flex flex-row align-items-center justify-content-between ">
                   <h4>
                     <b> Wallet </b>
                     {data?.total && isNaN(data?.total)
@@ -194,6 +188,9 @@ const ActivesTable = ({ data, loading, isDashboardPage }) => {
                         : `$${formatBalance(data.total)} US`
                       : null}
                   </h4>
+                  <div className="flex-grow-1 d-flex justify-content-end align-items-center">
+                    {renderFilterButtons()}
+                  </div>
                 </div>
               )}
 
