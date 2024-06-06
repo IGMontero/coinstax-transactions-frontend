@@ -179,7 +179,12 @@ const NetworkDropdown = () => {
               border: '0.5px solid grey',
             }}
           >
-            <span className=" d-flex  align-items-center py-0">
+            <span
+              className=" d-flex  align-items-center py-0"
+              style={{
+                whiteSpace: 'nowrap',
+              }}
+            >
               {renderNetworkIcon(selectedNetwork)}
               <span className="fs-6 text-dark  py-0">
                 {selectedNetwork.label}

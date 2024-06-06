@@ -29,7 +29,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
 
-const HistorialTable = ({ data, setData, isDashboardPage }) => {
+const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   // #region HOOKS
   const inputRef = useRef(null);
   const pagesCheckedRef = useRef(new Set());
@@ -815,9 +815,12 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
       >
         <div>
           {isDashboardPage ? (
-            <h4> No Transactions Found </h4>
+            <>
+              <h4>No Transactions Found</h4>
+              {totalTransactions > 0 && buttonSeeMore('history', 'Activity')}
+            </>
           ) : (
-            <h1>No results Found </h1>
+            <h1>No Results Found</h1>
           )}
         </div>
       </Col>
@@ -946,6 +949,8 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
     return renderHeader();
   }
 
+  console.log(totalTransactions);
+
   // #region RENDER
   return (
     <React.Fragment>
@@ -1017,6 +1022,9 @@ const HistorialTable = ({ data, setData, isDashboardPage }) => {
             />
           ))}
           {!isDashboardPage && hasMoreData && renderGetMoreButton()}
+          {isDashboardPage &&
+            totalTransactions > 0 &&
+            buttonSeeMore('history', 'Activity')}
         </Col>
       )}
     </React.Fragment>

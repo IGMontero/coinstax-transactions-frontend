@@ -45,7 +45,7 @@ const ethIcon = (
   </svg>
 );
 
-const Nfts = ({ address, isDashboardPage }) => {
+const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   const location = useLocation();
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
@@ -388,6 +388,8 @@ const Nfts = ({ address, isDashboardPage }) => {
                   </Button>
                 </div>
               )}
+
+            {isDashboardPage && items?.length && buttonSeeMore('nfts', 'NFTs')}
           </Col>
         </Col>
       </div>
