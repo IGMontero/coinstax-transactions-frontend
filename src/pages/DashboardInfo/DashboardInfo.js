@@ -156,6 +156,24 @@ const DashboardInfo = () => {
     }
   }, [type]);
 
+  const renderButtonSeeMore = (type, typeName) => {
+    return (
+      <div className="d-flex align-items-center justify-content-center">
+        <Button
+          className="mt-3 d-flex btn-hover-light  justify-content-center align-items-center "
+          color="soft-light"
+          style={{
+            borderRadius: '10px',
+            border: '.5px solid grey',
+          }}
+          onClick={() => navigate(`/address/${address}/${type}`)}
+        >
+          <h6 className="text-dark  fw-semibold my-2">See more {typeName}</h6>
+        </Button>
+      </div>
+    );
+  };
+
   document.title = ` Dashboard ${address} | Chain Glance`;
   return (
     <React.Fragment>
@@ -235,41 +253,36 @@ const DashboardInfo = () => {
                     />
 
                     <Col xxl={12}>
-                      <ActivesTable
-                        isDashboardPage={true}
-                        loading={loadingAssets}
-                        data={assetsData}
-                      />
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h2 className="ms-1 mt-2">Assets</h2>
+                      </div>
+                      <div className="border border-2 rounded p-3 ">
+                        <ActivesTable
+                          isDashboardPage={true}
+                          loading={loadingAssets}
+                          data={assetsData}
+                        />
+                        {renderButtonSeeMore('assets', 'Assets')}
+                      </div>
                     </Col>
                     <Col xxl={12} className="mt-3 d-flex flex-column">
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">NFTs</h2>
-                        <Button
-                          onClick={() => navigate(`/address/${address}/nfts`)}
-                          className="btn btn-sm btn-soft-primary rounded"
-                        >
-                          <span className="p-1">See more NFTs</span>
-                        </Button>
                       </div>
-                      <div className="border border-2 rounded px-5  py-0 w-100 d-flex justify-content-start overflow-hidden">
-                        <Nfts
-                          isDashboardPage={true}
-                          address={addressForSearch}
-                        />
+                      <div className="border border-2 rounded px-5  pt-0 pb-3">
+                        <div className=" w-100 d-flex justify-content-start overflow-hidden">
+                          <Nfts
+                            isDashboardPage={true}
+                            address={addressForSearch}
+                          />
+                        </div>
+                        {renderButtonSeeMore('nfts', 'NFTs')}
                       </div>
                     </Col>
 
                     <Col xxl={12} className="mt-3">
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">Transactions</h2>
-                        <Button
-                          onClick={() =>
-                            navigate(`/address/${address}/history`)
-                          }
-                          className="btn btn-sm btn-soft-primary rounded"
-                        >
-                          <span className="p-1">See more activity</span>
-                        </Button>
                       </div>
                       <div className="border border-2 rounded p-3 ">
                         <HistorialTable
@@ -279,6 +292,7 @@ const DashboardInfo = () => {
                           activeTab={customActiveTab}
                           address={addressForSearch}
                         />
+                        {renderButtonSeeMore('history', 'Activity')}
                       </div>
                     </Col>
                   </div>
