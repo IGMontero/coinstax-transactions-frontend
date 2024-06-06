@@ -148,8 +148,10 @@ const AddressWithDropdown = () => {
       />
       <div className="mt-5">
         <Col className="col-12 d-flex justify-content-between align-items-center">
-          <Col>{renderAddressWithDropdown()}</Col>
-          <Col className="d-flex justify-content-end align-items-center">
+          <Col className="col-8 d-flex justify-content-start align-items-center">
+            {renderAddressWithDropdown()}
+          </Col>
+          <Col className="col-4 d-flex justify-content-end align-items-end ">
             <NetworkDropdown />
           </Col>
         </Col>

@@ -12,12 +12,7 @@ import { editBlockChainContract } from '../../../../../slices/blockchainContract
 import { useDispatch, useSelector } from 'react-redux';
 import { handleActionResult } from '../../../../../utils/useHandleAction';
 
-const ContractInfoColumn = ({
-  transaction,
-  index,
-  onRefresh,
-  setTransactions,
-}) => {
+const ContractInfoColumn = ({ transaction, setTransactions }) => {
   const dispatch = useDispatch();
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
@@ -91,18 +86,6 @@ const ContractInfoColumn = ({
 
   const handleClick = (e, transaction, targetId) => {
     e.stopPropagation();
-    // if (
-    //   transaction.blockchainAction === blockchainActions.RECEIVE ||
-    //   transaction.blockchainAction === blockchainActions.SEND
-    // ) {
-    //   return;
-    // }
-
-    console.log(
-      'handleClick -> blockchainContractAddress',
-      blockchainContractAddress,
-    );
-
     handleCopyToClipboard(e, blockchainContractAddress, targetId);
   };
 
