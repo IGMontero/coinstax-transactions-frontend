@@ -75,10 +75,11 @@ const RenderTransactions = ({
         return (
           <div key={transaction.txHash} className="align-items-center">
             <div
-              className={` border-bottom bg-transparent px-0 ${openCollapse.has(collapseId)
-                ? 'border border-primary rounded px-2 mb-2'
-                : 'bg-light'
-                }`}
+              className={` border-bottom bg-transparent px-0 ${
+                openCollapse.has(collapseId)
+                  ? 'border border-primary rounded px-2 mb-2'
+                  : 'bg-light'
+              }`}
               style={{
                 transition: `all 0.3s ease-in-out`,
               }}
@@ -108,18 +109,19 @@ const RenderTransactions = ({
                   md={sentTxSummary ? 3 : 0}
                   sm={6}
                   xs={6}
-                  className={`mb-lg-0 mb-3 ${sentTxSummary ? 'd-flex justify-content-start ' : 'd-none'
-                    }`}
+                  className={`mb-lg-0 mb-3 ps-1  p-0 ${
+                    sentTxSummary ? 'd-flex justify-content-start' : 'd-none'
+                  }`}
                 >
                   <SentColumn transaction={transaction} />
                 </Col>
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
                   lg={sentTxSummary ? 3 : 6}
-                  md={sentTxSummary ? 3 : 6}
+                  md={sentTxSummary ? 4 : 6}
                   sm={sentTxSummary ? 6 : 12}
                   xs={sentTxSummary ? 6 : 12}
-                  className={`d-flex justify-content-start d-flex  mb-lg-0 mb-3`}
+                  className={`d-flex justify-content-start ${sentTxSummary ? '' : 'ps-1'} d-flex  mb-lg-0 mb-3`}
                 >
                   {isApproval ? (
                     <ApprovalColumn transaction={transaction} />
@@ -134,18 +136,16 @@ const RenderTransactions = ({
                 <Col
                   lg={2}
                   md={3}
-                  sm={3}
-                  xs={3}
+                  sm={12}
+                  xs={12}
                   className="d-flex justify-content-end  align-items-center  pb-lg-0 pb-3"
                 >
                   {transaction.blockchainAction === blockchainActions.BURN ||
-                    transaction.blockchainAction === blockchainActions.MINT ||
-                    transaction.blockchainAction ===
+                  transaction.blockchainAction === blockchainActions.MINT ||
+                  transaction.blockchainAction ===
                     blockchainActions.OTHER ? null : (
                     <ContractInfoColumn
                       transaction={transaction}
-                      index={index}
-                      onRefresh={onRefresh}
                       setTransactions={setTransactions}
                     />
                   )}
@@ -154,8 +154,9 @@ const RenderTransactions = ({
               <Collapse isOpen={openCollapse.has(collapseId)}>
                 <CardBody
                   onClick={() => toggleCollapse(collapseId)}
-                  className={`cursor-pointer ${openCollapse === index ? 'border-info' : ''
-                    }`}
+                  className={`cursor-pointer ${
+                    openCollapse === index ? 'border-info' : ''
+                  }`}
                 >
                   {/* CODE FOR LIST */}
                   {hasList && <ListTransactions transaction={transaction} />}
