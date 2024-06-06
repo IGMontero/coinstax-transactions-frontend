@@ -173,21 +173,9 @@ const ActivesTable = ({ data, loading, isDashboardPage }) => {
       )}
       <div>
         <div className="flex-grow-1 d-flex justify-content-between align-items-center">
-          <h2 className={`${!isDashboardPage ? 'd-none' : 'ms-1 mb-3'}`}>
-            Assets
-          </h2>
-          {isDashboardPage ? (
-            <Button
-              onClick={() => navigate(`/address/${address}/assets`)}
-              className="btn btn-sm btn-soft-primary rounded"
-            >
-              <span className="p-1">See more Assets</span>
-            </Button>
-          ) : (
-            renderFilterButtons()
-          )}
+          {isDashboardPage ? null : renderFilterButtons()}
         </div>
-        <div className="border border-2 rounded p-3">
+        <div className="">
           {!loading && (!data || !data.items || data.items?.length === 0) ? (
             <div className="text-center py-2 mt-3">
               <h4>No Assets Found</h4>
