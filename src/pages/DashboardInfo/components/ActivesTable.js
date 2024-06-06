@@ -175,7 +175,9 @@ const ActivesTable = ({ data, loading, isDashboardPage }) => {
         <div className="flex-grow-1 d-flex justify-content-between align-items-center">
           {isDashboardPage ? null : renderFilterButtons()}
         </div>
-        <div className="">
+        <div
+          className={`${!isDashboardPage ? 'border rounded border-2 p-3' : ''}`}
+        >
           {!loading && (!data || !data.items || data.items?.length === 0) ? (
             <div className="text-center py-2 mt-3">
               <h4>No Assets Found</h4>
