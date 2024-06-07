@@ -258,9 +258,7 @@ const CustomOptions = (props) => {
                 <div className="d-flex flex-column">
                   <div className="d-flex align-items-center">
                     {!props.data.label ? (
-                      <span className="text-custom-menu-suggestions">
-                        {displayLabel}
-                      </span>
+                      displayLabel
                     ) : (
                       <span className="text-custom-menu-suggestions">
                         {displayLabel}
