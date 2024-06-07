@@ -184,7 +184,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
   // #region Api Calls
 
-  const fetchAndSetData = (days, signal) => {
+  const fetchAndSetData = (days, signal, applyDelay) => {
     const fetchId = Date.now();
     let timer;
 
@@ -192,12 +192,19 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
       const params = days
         ? { address, days, networkType, signal }
         : { address, networkType, signal };
-      timer = setTimeout(() => {
+      if (applyDelay) {
+        timer = setTimeout(() => {
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: true,
+          }));
+        }, 300);
+      } else {
         setLoadingChart((prev) => ({
           ...prev,
           [fetchId]: true,
         }));
-      }, 300);
+      }
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
@@ -296,18 +303,25 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
     }
   };
 
-  const fetchAndSetDataForToken = (days, signal) => {
+  const fetchAndSetDataForToken = (days, signal, applyDelay) => {
     const fetchId = Date.now();
     let timer;
     if (address) {
       const params = days ? { address, days, signal } : { address, signal };
 
-      timer = setTimeout(() => {
+      if (applyDelay) {
+        timer = setTimeout(() => {
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: true,
+          }));
+        }, 300);
+      } else {
         setLoadingChart((prev) => ({
           ...prev,
           [fetchId]: true,
         }));
-      }, 300);
+      }
       dispatch(fetchPerformanceToken(params))
         .unwrap()
         .then((response) => {
@@ -433,9 +447,9 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
     if (token) {
-      fetchAndSetDataForToken(days, signal);
+      fetchAndSetDataForToken(days, signal, true);
     } else {
-      fetchAndSetData(days, signal);
+      fetchAndSetData(days, signal, true);
     }
     setActiveFilter(filterId);
   };
