@@ -181,7 +181,7 @@ const ContractInfoColumn = ({ transaction, setTransactions }) => {
         onEdit={handleEditBlockChainContract}
         setOpen={setOpenModalEdit}
       />
-      <div className="d-flex flex-column w-100 me-n5">
+      <div className="d-flex flex-column w-100 me-0  me-lg-n5 me-xl-n5">
         <p style={{ fontSize: '12px', marginBottom: '4px' }} className=" mb-1">
           {contractLabel}
         </p>
