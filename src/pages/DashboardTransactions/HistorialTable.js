@@ -33,6 +33,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   // #region HOOKS
   const inputRef = useRef(null);
   const pagesCheckedRef = useRef(new Set());
+  const fetchControllerRef = useRef(new AbortController());
   const { address } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
@@ -123,7 +124,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   }, [data]);
 
   // #region FETCH DATA
-  const fetchData = async () => {
+  const fetchData = async (signal) => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
 
@@ -153,6 +154,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           assetsFilters: selectAsset,
           page: 0,
           networkType,
+          signal,
         }),
       ).unwrap();
 
@@ -207,6 +209,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     // if (!isUserInTransactionsHistoryPage) {
     //   return;
     // }
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
 
     const interval = setInterval(async () => {
       console.log('Running interval for page', pageIndex);
@@ -232,6 +237,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         setData,
         networkType,
         data,
+        signal,
         dispatch,
         pagesChecked: pagesCheckedRef.current,
         onEnd: () => {
@@ -300,11 +306,14 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   ]);
 
   useEffect(() => {
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
     fetchData();
     setErrorData(null);
     setHasMoreData(true);
     setShowDownloadMessage('');
     setCurrentPage(0);
+    return () => fetchControllerRef.current.abort();
   }, [
     networkType,
     address,
@@ -337,6 +346,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const groupedTransactions = data ? groupTxsByDate(data) : {};
 
   const getMoreTransactions = async () => {
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
 
@@ -364,6 +376,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           assetsFilters: selectAsset,
           page: nextPage,
           networkType,
+          signal,
         }),
       ).unwrap();
 
@@ -948,8 +961,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   if (data && data.length === 0) {
     return renderHeader();
   }
-
-  console.log(totalTransactions);
 
   // #region RENDER
   return (

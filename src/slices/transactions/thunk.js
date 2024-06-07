@@ -140,7 +140,11 @@ export const fetchHistory = createAsyncThunk(
       const data = await response.json();
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted');
+      } else {
+        return rejectWithValue(error.message);
+      }
     }
   },
 );
