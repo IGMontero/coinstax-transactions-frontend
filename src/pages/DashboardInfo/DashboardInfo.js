@@ -185,60 +185,26 @@ const DashboardInfo = () => {
         />
 
         <div className="d-flex flex-column">
-          <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
-            <Col
-              xxl={9}
-              lg={9}
-              md={9}
-              sm={9}
-              xs={9}
-              className="d-flex flex-column"
-              order="1"
-            >
+          <Row className="d-flex justify-content-center align-items-center border-2">
+            <Col xs={12} className="d-flex flex-column">
               <div className="d-flex flex-row mt-3">
                 {isUnsupported && (
-                  <div className="mt-5  ">
+                  <div className="mt-5">
                     <h1 className="fw-semibold text-danger">
                       Unsupported Address
                     </h1>
-                    <h5 className="text-primary">Contact our support team </h5>
+                    <h5 className="text-primary">Contact our support team</h5>
                   </div>
                 )}
               </div>
             </Col>
-            {/* <Col
-                xxl={3}
-                lg={3}
-                md={3}
-                sm={12}
-                xs={12}
-                className="d-flex justify-content-center mb-3"
-                order={{
-                  sm: 'last',
-                  xs: 'last',
-                  md: '2',
-                  lg: '2',
-                  xxl: '2',
-                }}
-              >
-                <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
-                      <i className="ri-share-forward-fill text-dark fs-4 p-1"></i>
-                    </Button>
-                    <Button className="rounded-circle bg-transparent border-1 mx-3 border-dark btn btn-sm">
-                      <i className="ri-send-plane-fill text-dark fs-4 p-1"></i>
-                    </Button>
-                    <Button color="primary" className="btn btn-sm">
-                      Add wallet
-                    </Button>
-              </Col> */}
           </Row>
 
           <Row className="d-flex justify-content-center align-items-center mb-3 mt-3">
-            {' '}
             {!isUnsupported ? (
-              <Col className="col-12 ">
+              <Col xs={12}>
                 <div
-                  className=" w-100 top-0 d-flex justify-content-between position-sticky align-items-center  "
+                  className="w-100 d-flex justify-content-between position-sticky align-items-center"
                   style={{
                     zIndex: 5,
                     backgroundColor: '#16161a',
@@ -246,56 +212,52 @@ const DashboardInfo = () => {
                 ></div>
 
                 <div className="d-flex flex-column">
-                  <div className="">
-                    <PerformanceChart
-                      setIsUnsupported={setIsUnsupported}
-                      address={addressForSearch}
-                    />
+                  <PerformanceChart
+                    setIsUnsupported={setIsUnsupported}
+                    address={addressForSearch}
+                  />
 
-                    <Col xxl={12}>
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <h2 className="ms-1 mt-2">Assets</h2>
-                      </div>
-                      <div className="border border-2 rounded p-3 ">
-                        <ActivesTable
-                          isDashboardPage={true}
-                          loading={loadingAssets}
-                          data={assetsData}
-                          buttonSeeMore={renderButtonSeeMore}
-                        />
-                      </div>
-                    </Col>
-                    <Col xxl={12} className="mt-3 d-flex flex-column">
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <h2 className="ms-1 mt-2">NFTs</h2>
-                      </div>
-                      <div className="border border-2 rounded px-5  pt-0 pb-3">
-                        <div className=" w-100 d-flex justify-content-start overflow-hidden">
-                          <Nfts
-                            isDashboardPage={true}
-                            address={addressForSearch}
-                            buttonSeeMore={renderButtonSeeMore}
-                          />
-                        </div>
-                      </div>
-                    </Col>
+                  <Col xs={12}>
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h2 className="ms-1 mt-2">Assets</h2>
+                    </div>
+                    <div className="border border-2 rounded p-3">
+                      <ActivesTable
+                        isDashboardPage={true}
+                        loading={loadingAssets}
+                        data={assetsData}
+                        buttonSeeMore={renderButtonSeeMore}
+                      />
+                    </div>
+                  </Col>
+                  <Col xs={12} className="mt-3">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h2 className="ms-1 mt-2">NFTs</h2>
+                    </div>
+                    <div className="border border-2 rounded p-3">
+                      <Nfts
+                        isDashboardPage={true}
+                        address={addressForSearch}
+                        buttonSeeMore={renderButtonSeeMore}
+                      />
+                    </div>
+                  </Col>
 
-                    <Col xxl={12} className="mt-3">
-                      <div className="d-flex justify-content-between align-items-center mb-2">
-                        <h2 className="ms-1 mt-2">Transactions</h2>
-                      </div>
-                      <div className="border border-2 rounded p-3 ">
-                        <HistorialTable
-                          isDashboardPage={true}
-                          data={historyData}
-                          setData={setHistoryData}
-                          activeTab={customActiveTab}
-                          address={addressForSearch}
-                          buttonSeeMore={renderButtonSeeMore}
-                        />
-                      </div>
-                    </Col>
-                  </div>
+                  <Col xs={12} className="mt-3">
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h2 className="ms-1 mt-2">Transactions</h2>
+                    </div>
+                    <div className="border border-2 rounded p-3">
+                      <HistorialTable
+                        isDashboardPage={true}
+                        data={historyData}
+                        setData={setHistoryData}
+                        activeTab={customActiveTab}
+                        address={addressForSearch}
+                        buttonSeeMore={renderButtonSeeMore}
+                      />
+                    </div>
+                  </Col>
                 </div>
               </Col>
             ) : (
