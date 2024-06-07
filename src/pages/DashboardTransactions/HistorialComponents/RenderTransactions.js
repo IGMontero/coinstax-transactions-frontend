@@ -107,8 +107,8 @@ const RenderTransactions = ({
                 <Col
                   lg={sentTxSummary ? 3 : 0}
                   md={sentTxSummary ? 3 : 0}
-                  sm={6}
-                  xs={6}
+                  sm={sentTxSummary ? 6 : 0}
+                  xs={sentTxSummary ? 6 : 0}
                   className={`mb-lg-0 mb-3 ps-1  p-0 ${
                     sentTxSummary ? 'd-flex justify-content-start' : 'd-none'
                   }`}
@@ -118,7 +118,7 @@ const RenderTransactions = ({
                 {/* POSITIVE LEDGERS || RECEIVED TXSUMMARY  */}
                 <Col
                   lg={sentTxSummary ? 3 : 6}
-                  md={sentTxSummary ? 4 : 6}
+                  md={sentTxSummary ? 6 : 6}
                   sm={sentTxSummary ? 6 : 12}
                   xs={sentTxSummary ? 6 : 12}
                   className={`d-flex justify-content-start ${sentTxSummary ? '' : 'ps-1'} d-flex  mb-lg-0 mb-3`}
@@ -135,7 +135,7 @@ const RenderTransactions = ({
                 </Col>
                 <Col
                   lg={2}
-                  md={3}
+                  md={12}
                   sm={12}
                   xs={12}
                   className="d-flex justify-content-end  align-items-center  pb-lg-0 pb-3"

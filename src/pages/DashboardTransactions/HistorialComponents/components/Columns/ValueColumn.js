@@ -8,7 +8,7 @@ const ValueColumn = ({ transaction }) => {
   );
 
   return (
-    <div>
+    <div className="">
       <p
         style={{ fontSize: '12px', marginBottom: '4px' }}
         className="text-start  mb-0"
