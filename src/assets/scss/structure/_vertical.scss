@@ -37,7 +37,6 @@
 
 .page-content {
     padding-top: 50px;
-    padding-bottom: 50px;
     padding-left: 50px;
     padding-right: 50px;
     min-height: 100%;
@@ -47,8 +46,7 @@
     max-width: 1250px;
 
     @media screen and (max-width: 473px) {
-        // padding-left:  13px;
-        // padding: 10 5px 5px 5px;
+    overflow-x: hidden;
         padding-left: 10px;
         padding-right: 10px;
     }
