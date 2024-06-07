@@ -301,19 +301,12 @@ export const updateTransactionsPreview = async ({
   dispatch,
   networkType,
   onEnd,
+  signal,
   onError,
 }) => {
   // Pges checked
   try {
     const updatePage = async (page) => {
-      // if (pagesChecked.has(page)) {
-      //   if (page < currentPage) {
-      //     // Continue with the next page
-      //     return updatePage(page + 1);
-      //   }
-      //   // Stop if the currentPage has been reached and all transactions are not in preview mode
-      //   return;
-      // }
       try {
         const response = await dispatch(
           fetchHistory({
@@ -326,6 +319,7 @@ export const updateTransactionsPreview = async ({
             assetsFilters: getSelectedAssetFilters(selectedAssets),
             page: page,
             networkType,
+            signal,
           }),
         ).unwrap();
 
@@ -342,25 +336,7 @@ export const updateTransactionsPreview = async ({
         // If all transactions are not in preview mode, add the page to the set of checked pages
         if (allNotInPreview) {
           // Add the page to the set of checked pages
-          // pagesChecked.add(page);
 
-          // if (page < currentPage) {
-          //   await updatePage(page + 1);
-          // }
-          // // Stop if the currentPage has been reached and all transactions are not in preview mode
-          // // Update one tx to trigger the re-render
-          // const newData = [...parsed];
-
-          // // return setData((currentData) => newData);
-          // // return setData && setData(newData);
-          // return setData((currentData) => {
-          //   return currentData.map((transaction) => {
-          //     const updatedTransaction = newData.find(
-          //       (t) => t.txHash === transaction.txHash,
-          //     );
-          //     return updatedTransaction || transaction;
-          //   });
-          // });
           if (onEnd) {
             onEnd();
           }
@@ -384,15 +360,6 @@ export const updateTransactionsPreview = async ({
     };
     // Clear the checked pages if the address has changed
     await updatePage(currentPage);
-    // if (address !== pagesChecked.address) {
-    //   pagesChecked.clear();
-    //   pagesChecked.address = address;
-    //   await updatePage(0);
-    // } else {
-    //   if (!pagesChecked.has(currentPage)) {
-    //     await updatePage(currentPage);
-    //   }
-    // }
   } catch (error) {
     console.log(error);
   }
