@@ -119,9 +119,17 @@ const NetworkDropdown = () => {
             totalValue: res.blockchains[network.blockchain]?.totalValue,
             nftsValue: res.blockchains[network.blockchain]?.nftsValue,
           }));
+
+        if (res.blockchains.all) {
+          const allNetwork = networks.find((n) => n.key === 'all');
+          allNetwork.totalValue = res.blockchains.all.totalValue;
+          allNetwork.nftsValue = res.blockchains.all.nftsValue;
+          filtered.unshift(allNetwork);
+        }
+
         const newNetworkType =
           filtered.find((n) => n.key === networkType)?.key || 'all';
-        setFilteredNetworks([...networks.slice(0, 1), ...filtered]);
+        setFilteredNetworks(filtered);
 
         dispatch(setNetworkType(newNetworkType));
       }
@@ -144,10 +152,7 @@ const NetworkDropdown = () => {
     return (
       <>
         {network.key === 'all' ? (
-          <>
-            {network.icon}
-            <DropdownItem divider />
-          </>
+          <>{network.icon}</>
         ) : (
           <img
             src={network.icon}
@@ -196,72 +201,93 @@ const NetworkDropdown = () => {
             {filteredNetworks?.map((network) => (
               <React.Fragment key={network.key}>
                 <DropdownItem
-                  className="d-flex align-items-center mt-0 py-2"
+                  key={network.key}
                   onClick={() => handleChangeNetwork(network.key)}
+                  className="d-flex align-items-center mt-0 py-2"
                 >
                   {renderNetworkIcon(network)}
-                  <div className="d-flex flex-column">
-                    <span className="fw-normal">{network.label}</span>
-                    {network.totalValue !== undefined &&
-                      network.nftsValue !== undefined && (
-                        <div className="d-flex flex-row  align-items-center">
-                          <svg
-                            width="16"
-                            height="16"
-                            className="me-1"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                            aria-label="Tokens on chain"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M12.698 8.224a5.753 5.753 0 00-4.922-4.922 3.5 3.5 0 114.922 4.922zM7 5a4 4 0 100 8 4 4 0 000-8z"
-                              fill="#81848E"
-                            ></path>
-                          </svg>
-                          <small>
-                            {parseValuesToLocale(
-                              network.totalValue,
-                              CurrencyUSD,
-                              false,
-                              network.totalValue,
-                            )}
-                          </small>
-                          {network.nftsValue === 0 ? (
-                            ''
-                          ) : (
-                            <>
-                              <svg
-                                width="14"
-                                className="ms-2 me-1"
-                                height="14"
-                                viewBox="0 0 16 16"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                aria-label="NFTs on chain"
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  d="M8 2a6 6 0 000 12 1.262 1.262 0 00.937-2.11.63.63 0 01.471-1.047h1.118A3.475 3.475 0 0014 7.367C14 4.368 11.277 2 8 2zM4.605 8.632c-.568 0-1.026-.424-1.026-.948s.458-.947 1.026-.947c.568 0 1.027.423 1.027.947s-.459.948-1.027.948zm1.369-2.527c-.568 0-1.027-.423-1.027-.947s.459-.947 1.027-.947c.568 0 1.026.423 1.026.947s-.458.947-1.026.947zm2.737-.631c-.568 0-1.027-.423-1.027-.948 0-.524.459-.947 1.027-.947.567 0 1.026.423 1.026.947 0 .525-.459.948-1.026.948zm2.052 1.894c-.568 0-1.026-.423-1.026-.947s.458-.947 1.026-.947c.568 0 1.027.423 1.027.947s-.459.947-1.027.947z"
-                                  fill="currentColor"
-                                ></path>
-                              </svg>
+                  <div className="d-flex align-items-center flex-row">
+                    <div className="d-flex flex-column">
+                      <div className="d-flex align-items-center">
+                        <span className="fw-normal">{network.label}</span>
+                      </div>
+                      {network.totalValue !== undefined &&
+                        network.nftsValue !== undefined && (
+                          <div className="d-flex flex-row align-items-center">
+                            <svg
+                              width="16"
+                              height="16"
+                              className="me-1"
+                              viewBox="0 0 16 16"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                              aria-label="Tokens on chain"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M12.698 8.224a5.753 5.753 0 00-4.922-4.922 3.5 3.5 0 114.922 4.922zM7 5a4 4 0 100 8 4 4 0 000-8z"
+                                fill="#81848E"
+                              ></path>
+                            </svg>
+                            <small>
+                              {parseValuesToLocale(
+                                network.totalValue,
+                                CurrencyUSD,
+                                false,
+                                network.totalValue,
+                              )}
+                            </small>
+                            {network.nftsValue === 0 ? (
+                              ''
+                            ) : (
+                              <>
+                                <svg
+                                  width="14"
+                                  className="ms-2 me-1"
+                                  height="14"
+                                  viewBox="0 0 16 16"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  aria-label="NFTs on chain"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    clip-rule="evenodd"
+                                    d="M8 2a6 6 0 000 12 1.262 1.262 0 00.937-2.11.63.63 0 01.471-1.047h1.118A3.475 3.475 0 0014 7.367C14 4.368 11.277 2 8 2zM4.605 8.632c-.568 0-1.026-.424-1.026-.948s.458-.947 1.026-.947c.568 0 1.027.423 1.027.947s-.459.948-1.027.948zm1.369-2.527c-.568 0-1.027-.423-1.027-.947s.459-.947 1.027-.947c.568 0 1.026.423 1.026.947s-.458.947-1.026.947zm2.737-.631c-.568 0-1.027-.423-1.027-.948 0-.524.459-.947 1.027-.947.567 0 1.026.423 1.026.947 0 .525-.459.948-1.026.948zm2.052 1.894c-.568 0-1.026-.423-1.026-.947s.458-.947 1.026-.947c.568 0 1.027.423 1.027.947s-.459.947-1.027.947z"
+                                    fill="currentColor"
+                                  ></path>
+                                </svg>
 
-                              <small>
-                                {parseValuesToLocale(
-                                  network.nftsValue.toFixed(2),
-                                  CurrencyUSD,
-                                )}
-                              </small>
-                            </>
-                          )}
-                        </div>
-                      )}
+                                <small>
+                                  {parseValuesToLocale(
+                                    network.nftsValue.toFixed(2),
+                                    CurrencyUSD,
+                                  )}
+                                </small>
+                              </>
+                            )}
+                          </div>
+                        )}
+                    </div>
+                    {network.key === networkType && (
+                      <svg
+                        width="25"
+                        height="24"
+                        viewBox="0 0 25 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="text-primary ms-2"
+                      >
+                        <path
+                          d="M9.5 16.2L6 12.7a.984.984 0 00-1.4 0 .984.984 0 000 1.4l4.19 4.19c.39.39 1.02.39 1.41 0L20.8 7.7a.984.984 0 000-1.4.984.984 0 00-1.4 0l-9.9 9.9z"
+                          fill="currentColor"
+                        ></path>
+                      </svg>
+                    )}
                   </div>
                 </DropdownItem>
+
                 {network.withDivider ? (
                   <DropdownItem divider className="my-0 py-0" />
                 ) : null}
