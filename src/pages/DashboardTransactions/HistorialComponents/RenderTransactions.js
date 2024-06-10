@@ -106,11 +106,13 @@ const RenderTransactions = ({
                 {/* NEGATIVE LEDGERS  || SENT TXSUMMARY */}
                 <Col
                   lg={sentTxSummary ? 3 : 0}
-                  md={sentTxSummary ? 3 : 0}
+                  md={sentTxSummary ? 6 : 0}
                   sm={sentTxSummary ? 6 : 0}
                   xs={sentTxSummary ? 6 : 0}
-                  className={`mb-lg-0 mb-3 ps-1  p-0 ${
-                    sentTxSummary ? 'd-flex justify-content-start' : 'd-none'
+                  className={`mb-lg-0 mb-3  p-0 ${
+                    sentTxSummary
+                      ? 'd-flex justify-content-start ps-1 '
+                      : 'd-none'
                   }`}
                 >
                   <SentColumn transaction={transaction} />
