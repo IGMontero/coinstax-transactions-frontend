@@ -19,7 +19,7 @@ const BlockChainActionColumn = ({ transaction }) => {
   return (
     <>
       <Col
-        className={`d-flex ${
+        className={`d-flex justify-content-start ${
           transaction.successful && !transaction.successful
             ? 'col-12'
             : 'col-lg-6 col-xl-6   col-8 '
@@ -27,7 +27,7 @@ const BlockChainActionColumn = ({ transaction }) => {
       >
         {transaction.blockchainAction && (
           <span
-            className={`rounded-circle position-relative align-items-center border me-3 d-flex justify-content-center border-${
+            className={`rounded-circle position-relative  align-items-center border me-3 d-flex justify-content-center border-${
               getActionMapping(transaction.blockchainAction).color
             } text-${getActionMapping(transaction.blockchainAction).color}`}
             style={{
