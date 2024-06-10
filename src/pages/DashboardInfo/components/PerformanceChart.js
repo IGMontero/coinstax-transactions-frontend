@@ -473,8 +473,14 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   useEffect(() => {
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
 
-    handleFilterForDays(7, 'one_week');
+    if (token) {
+      fetchAndSetDataForToken(7, signal, false);
+    } else {
+      fetchAndSetData(7, signal, false);
+    }
+    setActiveFilter('one_week');
     return () => {
       fetchControllerRef.current.abort();
     };
