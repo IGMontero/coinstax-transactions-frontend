@@ -173,7 +173,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
         className="mb-4 d-flex align-items-center justify-content-center"
       >
         <div
-          className="header-container" // Usamos la clase aquí
+          className="header-container"
           style={{
             width: '100%',
             maxWidth: '1250px',
@@ -201,7 +201,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 <button
                   onClick={toogleMenuBtn}
                   type="button"
-                  className="btn ms-n2 btn-sfs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
+                  className="btn ms-n3 btn-sfs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
                   id="topnav-hamburger-icon"
                 >
                   <span className="hamburger-icon text-dark">
