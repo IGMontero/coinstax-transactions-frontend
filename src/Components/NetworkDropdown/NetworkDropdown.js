@@ -1,9 +1,5 @@
 import React, { useEffect } from 'react';
-import eth from '../../assets/images/svg/crypto-icons/eth.svg';
-import pol from '../../assets/images/svg/crypto-icons/polygon.webp';
-import bnb from '../../assets/images/svg/crypto-icons/binanceLogo.png';
-import optimism from '../../assets/images/svg/crypto-icons/optimism-seeklogo.png';
-import baseMainnet from '../../assets/images/svg/crypto-icons/base-mainnet.png';
+
 import {
   selectNetworkType,
   setNetworkType,
@@ -17,132 +13,11 @@ import {
   UncontrolledDropdown,
 } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAddressesInfo } from '../../slices/addresses/thunk';
-import { useLocation, useParams } from 'react-router-dom';
+import { networks } from '../../common/constants';
 
-const NetworkDropdown = () => {
+const NetworkDropdown = ({ filteredNetworks }) => {
   const dispatch = useDispatch();
-  const location = useLocation();
   const networkType = useSelector(selectNetworkType);
-  const { address } = useParams();
-
-  const isAdminPages =
-    location.pathname.includes('blockchain-contracts') ||
-    location.pathname.includes('user-addresses');
-
-  const networks = [
-    {
-      key: 'all',
-      label: 'All Networks',
-      icon: (
-        <i
-          style={{
-            fontSize: '30px',
-            paddingRight: '8px',
-            marginLeft: '-4px',
-            marginTop: '-5px',
-            marginBottom: '-5px',
-          }}
-          className="ri-function-line text-primary"
-        ></i>
-      ),
-
-      withDivider: true,
-    },
-    {
-      key: 'ethereum',
-      label: 'Ethereum',
-      blockchain: 'ethereum',
-      icon: eth,
-      iconAlt: 'eth',
-      width: 30,
-      height: 30,
-    },
-    {
-      key: 'polygon',
-      label: 'Polygon',
-      blockchain: 'polygon',
-      icon: pol,
-      iconAlt: 'polygon',
-      width: 30,
-      height: 30,
-    },
-    {
-      key: 'bsc-mainnet',
-      blockchain: 'bnb',
-      label: 'BNB Chain',
-      icon: bnb,
-      iconAlt: 'bnb',
-      width: 29,
-      height: 29,
-    },
-    {
-      key: 'optimism',
-      label: 'Optimism',
-      blockchain: 'optimism',
-      icon: optimism,
-      iconAlt: 'optimism',
-      width: 29,
-      height: 29,
-    },
-    {
-      key: 'base-mainnet',
-      label: 'Base',
-      icon: baseMainnet,
-      blockchain: 'base',
-      iconAlt: 'base-mainnet',
-      width: 30,
-      height: 30,
-    },
-  ];
-
-  const [filteredNetworks, setFilteredNetworks] = React.useState(networks);
-
-  const fetchAddressInfo = async () => {
-    try {
-      const response = await dispatch(getAddressesInfo({ address }));
-      const res = response.payload;
-      const availableNetworks = Object.keys(res.blockchains);
-
-      let filtered;
-      if (isAdminPages) {
-        filtered = networks;
-      } else {
-        filtered = networks
-          .filter(
-            (network) =>
-              network.key !== 'all' &&
-              availableNetworks.includes(network.blockchain),
-          )
-          .map((network) => ({
-            ...network,
-            totalValue: res.blockchains[network.blockchain]?.totalValue,
-            nftsValue: res.blockchains[network.blockchain]?.nftsValue,
-          }));
-
-        if (res.blockchains.all) {
-          const allNetwork = networks.find((n) => n.key === 'all');
-          allNetwork.totalValue = res.blockchains.all.totalValue;
-          allNetwork.nftsValue = res.blockchains.all.nftsValue;
-          filtered.unshift(allNetwork);
-        }
-
-        const newNetworkType =
-          filtered.find((n) => n.key === networkType)?.key || 'all';
-        setFilteredNetworks(filtered);
-
-        dispatch(setNetworkType(newNetworkType));
-      }
-    } catch (error) {
-      console.error('Error fetching address data:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (address) {
-      fetchAddressInfo();
-    }
-  }, [address]);
 
   const handleChangeNetwork = (newType) => {
     dispatch(setNetworkType(newType));
@@ -228,28 +103,29 @@ const NetworkDropdown = () => {
         <UncontrolledDropdown className="card-header-dropdown ">
           <DropdownToggle
             tag="a"
-            className="btn btn-sm  btn-hover-light p-1 ps-3 d-flex justify-content-center align-items-center border rounded"
+            className="btn btn-sm  btn-hover-light p-1 ps-3 d-flex justify-content-between align-items-center border rounded"
             role="button"
             color="soft-primary"
             style={{
               maxHeight: '40px',
               height: '40px',
+              width: '170px',
+              maxWidth: '170px',
+              minWidth: '170px',
               borderRadius: '10px',
               border: '0.5px solid grey',
             }}
           >
-            <span
-              className=" d-flex  align-items-center py-0"
-              style={{
-                whiteSpace: 'nowrap',
-              }}
-            >
+            <span className="d-flex align-items-center py-0">
               {renderNetworkIcon(selectedNetwork)}
-              <span className="fs-6 text-dark  py-0">
+              <span
+                className="fs-6 text-dark py-0"
+                style={{ maxWidth: '140px' }}
+              >
                 {selectedNetwork.label}
               </span>
             </span>
-            <i className="mdi  mdi-chevron-down text-dark  ms-2 fs-5"></i>
+            <i className="mdi mdi-chevron-down text-dark ms-2 fs-5"></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-end mt-2 ">
             {filteredNetworks?.map((network) => {

@@ -17,7 +17,13 @@ import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage
 import { getAppOptions, setAppOptions } from '../../../helpers/cookies_helper';
 import AssetsSkeleton from '../../../Components/Skeletons/AssetsSkeleton';
 
-const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
+const ActivesTable = ({
+  data,
+  loading,
+  isDashboardPage,
+  buttonSeeMore,
+  loadingAddressesInfo,
+}) => {
   const appOptions = getAppOptions();
 
   const [viewMode, setViewMode] = useState('byPlatform');
@@ -206,7 +212,7 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
                           <th scope="col">VALUE</th>
                         </tr>
                       </thead>
-                      {loading ? (
+                      {loadingAddressesInfo || loading ? (
                         <tr>
                           <td colSpan="12" className="text-center">
                             <tbody>

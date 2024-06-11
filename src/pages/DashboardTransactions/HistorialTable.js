@@ -28,15 +28,18 @@ import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
+import { selectLoadingAddressesInfo } from '../../slices/addresses/reducer';
 
 const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   // #region HOOKS
   const inputRef = useRef(null);
   const pagesCheckedRef = useRef(new Set());
   const fetchControllerRef = useRef(new AbortController());
+
   const { address } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
+  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
   const { user } = useSelector((state) => state.auth);
   const networkType = useSelector(selectNetworkType);
 
@@ -306,6 +309,10 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   ]);
 
   useEffect(() => {
+    if (loadingAddressesInfo) {
+      return;
+    }
+
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     fetchData();
@@ -316,12 +323,13 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     return () => fetchControllerRef.current.abort();
   }, [
     networkType,
-    address,
-    dispatch,
+    // address,
+    // dispatch,
     selectedAssets,
     selectedFilters,
     includeSpam,
     debouncedSearchTerm,
+    loadingAddressesInfo,
   ]);
 
   // #region GROUPS
@@ -900,7 +908,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   };
 
   // #region RENDER CONDITIONALS
-  if (loading && isInitialLoad) {
+  if (loadingAddressesInfo || (loading && isInitialLoad)) {
     return (
       <>
         {renderHeader()}

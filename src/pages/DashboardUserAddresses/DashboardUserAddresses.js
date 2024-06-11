@@ -338,7 +338,7 @@ const DashboardUserAddresses = () => {
 
   return (
     <div className=" mt-5" style={{ minHeight: '100vh' }}>
-      <div className="d-flex justify-content-end">
+      <div className="d-flex my-5 justify-content-end">
         <NetworkDropdown />
       </div>
       <h3>User Addresses</h3>
