@@ -12,11 +12,13 @@ import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper'
 import { setAddressName } from '../../slices/addressName/reducer';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import { fetchAssets } from '../../slices/transactions/thunk';
+import { selectLoadingAddressesInfo } from '../../slices/addresses/reducer';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
   const fetchControllerRef = useRef(new AbortController());
   const { fetchData } = useSelector((state) => state.fetchData);
   const networkType = useSelector(selectNetworkType);
@@ -132,13 +134,23 @@ const DashboardInfo = () => {
   };
 
   useEffect(() => {
+    if (loadingAddressesInfo) {
+      return;
+    }
     if (addressForSearch) {
       fetchDataAssets();
     }
     return () => {
       fetchControllerRef.current.abort();
     };
-  }, [addressForSearch, type, dispatch, isUnsupported, networkType]);
+  }, [
+    addressForSearch,
+    type,
+    dispatch,
+    isUnsupported,
+    networkType,
+    loadingAddressesInfo,
+  ]);
 
   useEffect(() => {
     if (address) {
@@ -232,6 +244,7 @@ const DashboardInfo = () => {
                       </div>
                       <div className="border border-2 rounded p-3 ">
                         <ActivesTable
+                          loadingAddressesInfo={loadingAddressesInfo}
                           isDashboardPage={true}
                           loading={loadingAssets}
                           data={assetsData}

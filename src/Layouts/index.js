@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import withRouter from '../Components/Common/withRouter';
+import { networks } from '../common/constants';
 
 //import Components
 import Header from './Header';
@@ -28,11 +29,24 @@ import { useLocation, useParams } from 'react-router-dom';
 import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
 import { layoutModeTypes } from '../Components/constants/layout';
 import { setCurrentThemeCookie } from '../helpers/cookies_helper';
+import { getAddressesInfo } from '../slices/addresses/thunk';
+import {
+  selectNetworkType,
+  setNetworkType,
+} from '../slices/networkType/reducer';
+import {
+  selectLoadingAddressesInfo,
+  setLoadingAddressesInfo,
+} from '../slices/addresses/reducer';
 
 const Layout = (props) => {
-  const { token, contractAddress } = useParams();
-  const [headerClass, setHeaderClass] = useState('');
+  const { token, contractAddress, address } = useParams();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const networkType = useSelector(selectNetworkType);
+  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
+  const [loading, setLoading] = useState(false);
+  const [headerClass, setHeaderClass] = useState('');
   const {
     layoutType,
     leftSidebarType,
@@ -139,11 +153,14 @@ const Layout = (props) => {
     }
   }, [sidebarVisibilitytype, layoutType]);
 
-  const location = useLocation();
-
+  // #region Address Info & networks
   const isAuthPage =
     location.pathname.includes('/login') ||
     location.pathname.includes('/register');
+
+  const isAdminPages =
+    location.pathname.includes('blockchain-contracts') ||
+    location.pathname.includes('user-addresses');
 
   const pagesNotToDisplayAddress = [
     '/login',
@@ -154,6 +171,57 @@ const Layout = (props) => {
     '/blockchain-contracts',
     '/user-addresses',
   ];
+
+  const [filteredNetworks, setFilteredNetworks] = React.useState(networks);
+
+  const fetchAddressInfo = async () => {
+    try {
+      dispatch(setLoadingAddressesInfo(true));
+      const response = await dispatch(getAddressesInfo({ address }));
+      const res = response.payload;
+      const availableNetworks = Object.keys(res.blockchains);
+
+      let filtered;
+      if (isAdminPages) {
+        filtered = networks;
+      } else {
+        filtered = networks
+          .filter(
+            (network) =>
+              network.key !== 'all' &&
+              availableNetworks.includes(network.blockchain),
+          )
+          .map((network) => ({
+            ...network,
+            totalValue: res.blockchains[network.blockchain]?.totalValue,
+            nftsValue: res.blockchains[network.blockchain]?.nftsValue,
+          }));
+
+        if (res.blockchains.all) {
+          const allNetwork = networks.find((n) => n.key === 'all');
+          allNetwork.totalValue = res.blockchains.all.totalValue;
+          allNetwork.nftsValue = res.blockchains.all.nftsValue;
+          filtered.unshift(allNetwork);
+        }
+
+        const newNetworkType =
+          filtered.find((n) => n.key === networkType)?.key || 'all';
+        setFilteredNetworks(filtered);
+
+        dispatch(setNetworkType(newNetworkType));
+      }
+      dispatch(setLoadingAddressesInfo(false));
+    } catch (error) {
+      console.error('Error fetching address data:', error);
+      dispatch(setLoadingAddressesInfo(false));
+    }
+  };
+
+  useEffect(() => {
+    if (address) {
+      fetchAddressInfo();
+    }
+  }, [address]);
 
   return (
     <React.Fragment>
@@ -172,7 +240,10 @@ const Layout = (props) => {
           <div className="page-content">
             {!pagesNotToDisplayAddress.includes(location.pathname) &&
               !token &&
-              !contractAddress && <AddressWithDropdown />}
+              !contractAddress && (
+                <AddressWithDropdown filteredNetworks={filteredNetworks} />
+              )}
+
             {props.children}
           </div>
           <Footer />

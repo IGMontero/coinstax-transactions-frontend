@@ -20,20 +20,26 @@ import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsC
 import _ from 'lodash';
 import { selectNetworkType } from '../../../slices/networkType/reducer';
 import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
+import { selectLoadingAddressesInfo } from '../../../slices/addresses/reducer';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
   const { token } = useParams();
+  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const fetchControllerRef = useRef(new AbortController());
+
+  const [isInitialLoad, setIsInitialLoad] = useState(
+    loadingAddressesInfo ? false : true,
+  );
 
   const networkType = useSelector(selectNetworkType);
 
   const [loadingChart, setLoadingChart] = useState({});
 
-  const loading = Object.values(loadingChart).some((l) => l);
-
+  const loading = isInitialLoad || Object.values(loadingChart).some((l) => l);
+  // const loading = true;
   const [activeFilter, setActiveFilter] = useState('one_week');
   const [isHovering, setIsHovering] = useState(false);
   const [cursorStyle, setCursorStyle] = useState('default');
@@ -299,6 +305,9 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
             ...prev,
             [fetchId]: false,
           }));
+        })
+        .finally(() => {
+          setIsInitialLoad(false);
         });
     }
   };
@@ -471,6 +480,11 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
   // #region UseEffects
   useEffect(() => {
+    if (loadingAddressesInfo) {
+      setIsInitialLoad(true);
+      return;
+    }
+
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
@@ -481,10 +495,11 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
       fetchAndSetData(7, signal, false);
     }
     setActiveFilter('one_week');
+
     return () => {
       fetchControllerRef.current.abort();
     };
-  }, [token, networkType, address]);
+  }, [token, networkType, address, loadingAddressesInfo]);
 
   useEffect(() => {
     if (!isHovering && chartData.datasets[0].data.length > 0) {
@@ -562,7 +577,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                   width: '99%',
                 }}
               >
-                {loading ? (
+                {loadingAddressesInfo || loading ? (
                   <div
                     className="position-absolute d-flex justify-content-center align-items-center"
                     style={{

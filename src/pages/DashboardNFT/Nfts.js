@@ -3,10 +3,6 @@ import {
   Col,
   Row,
   Button,
-  Card,
-  CardHeader,
-  CardBody,
-  Spinner,
   Input,
   UncontrolledDropdown,
   DropdownToggle,
@@ -17,13 +13,13 @@ import {
 } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNFTS } from '../../slices/transactions/thunk';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
-import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import NftsCards from './components/NftsCards';
 import NftsSkeleton from '../../Components/Skeletons/NftsSkeleton';
+import { selectLoadingAddressesInfo } from '../../slices/addresses/reducer';
 
 const ethIcon = (
   <svg
@@ -46,10 +42,10 @@ const ethIcon = (
 );
 
 const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
-  const location = useLocation();
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
   const fetchControllerRef = useRef(new AbortController());
+  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
 
   const [itemsToShow, setItemsToShow] = useState(20);
 
@@ -122,13 +118,16 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   useEffect(() => {
+    if (loadingAddressesInfo) {
+      return;
+    }
     if (address) {
       fetchDataNFTS();
     }
     return () => {
       fetchControllerRef.current.abort();
     };
-  }, [address, dispatch, includeSpam, networkType]);
+  }, [address, dispatch, includeSpam, networkType, loadingAddressesInfo]);
 
   const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     navigate(
@@ -282,7 +281,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
     );
   };
 
-  if (loading || loadingIncludeSpam) {
+  if (loadingAddressesInfo || loading || loadingIncludeSpam) {
     return (
       <>
         {renderTitle()}
@@ -294,7 +293,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   }
 
   // if no NFTs found
-  if (items && items?.length === 0 && !loading) {
+  if (items && items?.length === 0 && !loading && !loadingAddressesInfo) {
     return (
       <>
         {renderTitle()}
@@ -367,7 +366,6 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
             <NftsCards
               isDashboardPage={isDashboardPage}
               item={items}
-              loading={loading}
               onVisitNft={handleVisitNFT}
               showFiatValues={showFiatValues}
             />
