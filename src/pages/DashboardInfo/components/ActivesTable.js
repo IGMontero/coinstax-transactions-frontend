@@ -179,21 +179,21 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
             </div>
           ) : (
             <div>
-              {viewMode === 'byPlatform' && (
-                <div className="d-flex flex-row align-items-center justify-content-between ">
-                  <h4>
-                    <b> Wallet </b>
-                    {data?.total && isNaN(data?.total)
-                      ? loading
-                        ? null
-                        : `$${formatBalance(data.total)} US`
-                      : null}
-                  </h4>
-                  <div className="flex-grow-1 d-flex justify-content-end align-items-center">
-                    {renderFilterButtons()}
-                  </div>
+              <div className="d-flex flex-row align-items-center justify-content-between ">
+                {/* {viewMode === 'byPlatform' && ( */}
+                <h4>
+                  <b> Wallet </b>
+                  {data?.total && isNaN(data?.total)
+                    ? loading
+                      ? null
+                      : `$${formatBalance(data.total)} US`
+                    : null}
+                </h4>
+                {/* )} */}
+                <div className="flex-grow-1 d-flex justify-content-end align-items-center">
+                  {renderFilterButtons()}
                 </div>
-              )}
+              </div>
               <div className="table-container ">
                 <div className="live-preview">
                   <div className="table-responsive ">
