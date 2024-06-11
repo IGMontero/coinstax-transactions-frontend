@@ -34,18 +34,15 @@ import {
   selectNetworkType,
   setNetworkType,
 } from '../slices/networkType/reducer';
-import {
-  selectLoadingAddressesInfo,
-  setLoadingAddressesInfo,
-} from '../slices/addresses/reducer';
+import { setLoadingAddressesInfo } from '../slices/addresses/reducer';
 
 const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
   const location = useLocation();
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
-  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
-  const [loading, setLoading] = useState(false);
+
+  const [isOnlyAllNetwork, setIsOnlyAllNetwork] = useState(false);
   const [headerClass, setHeaderClass] = useState('');
   const {
     layoutType,
@@ -208,6 +205,10 @@ const Layout = (props) => {
           filtered.find((n) => n.key === networkType)?.key || 'all';
         setFilteredNetworks(filtered);
 
+        setIsOnlyAllNetwork(
+          availableNetworks.length === 1 && availableNetworks[0] === 'all',
+        );
+
         dispatch(setNetworkType(newNetworkType));
       }
       dispatch(setLoadingAddressesInfo(false));
@@ -241,7 +242,10 @@ const Layout = (props) => {
             {!pagesNotToDisplayAddress.includes(location.pathname) &&
               !token &&
               !contractAddress && (
-                <AddressWithDropdown filteredNetworks={filteredNetworks} />
+                <AddressWithDropdown
+                  isOnlyAllNetwork={isOnlyAllNetwork}
+                  filteredNetworks={filteredNetworks}
+                />
               )}
 
             {props.children}
