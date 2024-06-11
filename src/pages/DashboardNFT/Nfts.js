@@ -322,7 +322,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
     <React.Fragment>
       {renderTitle()}
 
-      <div className="">
+      <div className="w-100">
         {items && items.length > 0 && !isDashboardPage ? (
           <Col xxl={12} className="d-flex align-items-center">
             <div className="d-flex flex-column">
