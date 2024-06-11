@@ -42,7 +42,7 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
             <div
               key={index}
               className="d-flex justify-content-center"
-              style={{ maxWidth: '100%' }}
+              style={{ maxWidth: '186px' }}
             >
               <Card
                 onClick={() =>

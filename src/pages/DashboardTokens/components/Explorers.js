@@ -170,7 +170,7 @@ const Explorers = ({ platforms }) => {
           const explorer = explorerData.find(
             ({ key: explorerKey }) => explorerKey === key,
           );
-          if (!explorer) return null;
+          if (!explorer || !explorer.base_url) return null;
 
           return (
             <Link
