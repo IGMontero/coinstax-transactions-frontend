@@ -19,7 +19,10 @@ import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import NftsCards from './components/NftsCards';
 import NftsSkeleton from '../../Components/Skeletons/NftsSkeleton';
-import { selectLoadingAddressesInfo } from '../../slices/addresses/reducer';
+import {
+  selectIsFirstLoad,
+  selectLoadingAddressesInfo,
+} from '../../slices/addresses/reducer';
 
 const ethIcon = (
   <svg
@@ -46,6 +49,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   const networkType = useSelector(selectNetworkType);
   const fetchControllerRef = useRef(new AbortController());
   const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
+  const isFirstLoad = useSelector(selectIsFirstLoad);
 
   const [itemsToShow, setItemsToShow] = useState(20);
 
@@ -118,7 +122,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   useEffect(() => {
-    if (loadingAddressesInfo) {
+    if (isFirstLoad || loadingAddressesInfo) {
       return;
     }
     if (address) {
@@ -127,7 +131,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
     return () => {
       fetchControllerRef.current.abort();
     };
-  }, [address, dispatch, includeSpam, networkType, loadingAddressesInfo]);
+  }, [address, dispatch, includeSpam, networkType, isFirstLoad]);
 
   const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     navigate(
@@ -281,7 +285,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
     );
   };
 
-  if (loadingAddressesInfo || loading || loadingIncludeSpam) {
+  if (isFirstLoad || loading || loadingIncludeSpam) {
     return (
       <>
         {renderTitle()}
@@ -293,7 +297,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   }
 
   // if no NFTs found
-  if (items && items?.length === 0 && !loading && !loadingAddressesInfo) {
+  if (items && items?.length === 0 && !loading && !isFirstLoad) {
     return (
       <>
         {renderTitle()}

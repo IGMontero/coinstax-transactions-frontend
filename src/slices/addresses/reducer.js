@@ -1,4 +1,3 @@
-// addressesSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 import { getAddressesSuggestions, getAddressesInfo } from './thunk';
 
@@ -7,6 +6,7 @@ const initialState = {
   loading: false,
   error: null,
   loadingAddressesInfo: false,
+  isFirstLoad: true,
 };
 
 const addressesSlice = createSlice({
@@ -15,6 +15,9 @@ const addressesSlice = createSlice({
   reducers: {
     setLoadingAddressesInfo: (state, action) => {
       state.loadingAddressesInfo = action.payload;
+    },
+    setIsFirstLoad: (state, action) => {
+      state.isFirstLoad = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -32,7 +35,10 @@ const addressesSlice = createSlice({
         state.error = action.payload;
       })
       .addCase(getAddressesInfo.pending, (state) => {
-        state.loadingAddressesInfo = true;
+        if (state.isFirstLoad) {
+          state.loadingAddressesInfo = true;
+          // state.isFirstLoad = true;
+        }
       })
       .addCase(getAddressesInfo.fulfilled, (state, action) => {
         state.loadingAddressesInfo = false;
@@ -45,9 +51,11 @@ const addressesSlice = createSlice({
   },
 });
 
-export const { setLoadingAddressesInfo } = addressesSlice.actions;
+export const { setLoadingAddressesInfo, setIsFirstLoad } =
+  addressesSlice.actions;
 
 export const selectLoadingAddressesInfo = (state) =>
   state.addresses.loadingAddressesInfo;
+export const selectIsFirstLoad = (state) => state.addresses.isFirstLoad;
 
 export default addressesSlice.reducer;
