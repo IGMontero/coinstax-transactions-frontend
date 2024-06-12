@@ -19,10 +19,7 @@ import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import NftsCards from './components/NftsCards';
 import NftsSkeleton from '../../Components/Skeletons/NftsSkeleton';
-import {
-  selectIsFirstLoad,
-  selectLoadingAddressesInfo,
-} from '../../slices/addresses/reducer';
+import { selectIsFirstLoad } from '../../slices/addresses/reducer';
 
 const ethIcon = (
   <svg
@@ -48,7 +45,6 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
   const fetchControllerRef = useRef(new AbortController());
-  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
   const isFirstLoad = useSelector(selectIsFirstLoad);
 
   const [itemsToShow, setItemsToShow] = useState(20);
@@ -122,15 +118,16 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   useEffect(() => {
-    if (isFirstLoad || loadingAddressesInfo) {
+    if (isFirstLoad) {
       return;
+    } else {
+      if (address) {
+        fetchDataNFTS();
+      }
+      return () => {
+        fetchControllerRef.current.abort();
+      };
     }
-    if (address) {
-      fetchDataNFTS();
-    }
-    return () => {
-      fetchControllerRef.current.abort();
-    };
   }, [address, dispatch, includeSpam, networkType, isFirstLoad]);
 
   const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
