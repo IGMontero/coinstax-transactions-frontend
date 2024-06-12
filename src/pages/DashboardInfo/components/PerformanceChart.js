@@ -20,16 +20,12 @@ import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsC
 import _ from 'lodash';
 import { selectNetworkType } from '../../../slices/networkType/reducer';
 import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
-import {
-  selectIsFirstLoad,
-  selectLoadingAddressesInfo,
-} from '../../../slices/addresses/reducer';
+import { selectIsFirstLoad } from '../../../slices/addresses/reducer';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
   const { token } = useParams();
   const isFirstLoad = useSelector(selectIsFirstLoad);
-  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const fetchControllerRef = useRef(new AbortController());
@@ -39,7 +35,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   console.log('STATE', state);
 
   const [isInitialLoad, setIsInitialLoad] = useState(
-    loadingAddressesInfo ? false : true,
+    isFirstLoad ? false : true,
   );
 
   const networkType = useSelector(selectNetworkType);
@@ -488,25 +484,25 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
   // #region UseEffects
   useEffect(() => {
-    if (isFirstLoad || loadingAddressesInfo) {
+    if (isFirstLoad) {
       return;
-    }
-
-    fetchControllerRef.current.abort();
-    fetchControllerRef.current = new AbortController();
-    const signal = fetchControllerRef.current.signal;
-
-    if (token) {
-      fetchAndSetDataForToken(7, signal, false);
     } else {
-      fetchAndSetData(7, signal, false);
-    }
-    setActiveFilter('one_week');
-
-    return () => {
       fetchControllerRef.current.abort();
-    };
-  }, [token, networkType, address, isFirstLoad, loadingAddressesInfo]);
+      fetchControllerRef.current = new AbortController();
+      const signal = fetchControllerRef.current.signal;
+
+      if (token) {
+        fetchAndSetDataForToken(7, signal, false);
+      } else {
+        fetchAndSetData(7, signal, false);
+      }
+      setActiveFilter('one_week');
+
+      return () => {
+        fetchControllerRef.current.abort();
+      };
+    }
+  }, [token, networkType, address, isFirstLoad]);
 
   useEffect(() => {
     if (!isHovering && chartData.datasets[0].data.length > 0) {

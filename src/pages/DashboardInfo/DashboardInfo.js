@@ -12,16 +12,12 @@ import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper'
 import { setAddressName } from '../../slices/addressName/reducer';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import { fetchAssets } from '../../slices/transactions/thunk';
-import {
-  selectIsFirstLoad,
-  selectLoadingAddressesInfo,
-} from '../../slices/addresses/reducer';
+import { selectIsFirstLoad } from '../../slices/addresses/reducer';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
   const isFirstLoad = useSelector(selectIsFirstLoad);
   const fetchControllerRef = useRef(new AbortController());
   const { fetchData } = useSelector((state) => state.fetchData);
@@ -138,7 +134,7 @@ const DashboardInfo = () => {
   };
 
   useEffect(() => {
-    if (isFirstLoad || loadingAddressesInfo) {
+    if (isFirstLoad) {
       return;
     }
     if (addressForSearch) {

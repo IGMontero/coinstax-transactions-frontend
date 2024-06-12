@@ -28,10 +28,7 @@ import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
-import {
-  selectIsFirstLoad,
-  selectLoadingAddressesInfo,
-} from '../../slices/addresses/reducer';
+import { selectIsFirstLoad } from '../../slices/addresses/reducer';
 
 const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   // #region HOOKS
@@ -42,7 +39,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
-  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
   const isFirstLoad = useSelector(selectIsFirstLoad);
   const { user } = useSelector((state) => state.auth);
   const networkType = useSelector(selectNetworkType);
@@ -313,18 +309,18 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   ]);
 
   useEffect(() => {
-    if (loadingAddressesInfo || isFirstLoad) {
+    if (isFirstLoad) {
       return;
+    } else {
+      fetchControllerRef.current.abort();
+      fetchControllerRef.current = new AbortController();
+      fetchData();
+      setErrorData(null);
+      setHasMoreData(true);
+      setShowDownloadMessage('');
+      setCurrentPage(0);
+      return () => fetchControllerRef.current.abort();
     }
-
-    fetchControllerRef.current.abort();
-    fetchControllerRef.current = new AbortController();
-    fetchData();
-    setErrorData(null);
-    setHasMoreData(true);
-    setShowDownloadMessage('');
-    setCurrentPage(0);
-    return () => fetchControllerRef.current.abort();
   }, [
     networkType,
     // address,
@@ -334,7 +330,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     includeSpam,
     debouncedSearchTerm,
     isFirstLoad,
-    loadingAddressesInfo,
   ]);
 
   // #region GROUPS

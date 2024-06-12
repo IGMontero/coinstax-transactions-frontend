@@ -37,7 +37,6 @@ const addressesSlice = createSlice({
       .addCase(getAddressesInfo.pending, (state) => {
         if (state.isFirstLoad) {
           state.loadingAddressesInfo = true;
-          // state.isFirstLoad = true;
         }
       })
       .addCase(getAddressesInfo.fulfilled, (state, action) => {

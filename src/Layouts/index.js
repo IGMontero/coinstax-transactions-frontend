@@ -174,16 +174,17 @@ const Layout = (props) => {
     '/user-addresses',
   ];
 
-  const [filteredNetworks, setFilteredNetworks] = React.useState(networks);
-
   const fetchControllerRef = useRef(new AbortController());
-
   const isFirstLoad = useSelector(selectIsFirstLoad);
-  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
-
   const fetchInterval = useRef(null);
 
-  console.log('First fetch ', isFirstLoad);
+  const [filteredNetworks, setFilteredNetworks] = React.useState(networks);
+
+  useEffect(() => {
+    if (address) {
+      dispatch(setIsFirstLoad(true));
+    }
+  }, [address, dispatch]);
 
   const fetchAddressInfo = async () => {
     fetchControllerRef.current.abort();
@@ -191,12 +192,13 @@ const Layout = (props) => {
     const signal = fetchControllerRef.current.signal;
 
     try {
-      if (isFirstLoad) {
-        dispatch(setLoadingAddressesInfo(true));
-      }
-
       const response = await dispatch(getAddressesInfo({ address, signal }));
       const res = response.payload;
+
+      if (!res || !res.blockchains) {
+        throw new Error('Invalid response structure');
+      }
+
       const availableNetworks = Object.keys(res.blockchains);
 
       let filtered;
@@ -243,27 +245,30 @@ const Layout = (props) => {
       }
       dispatch(setLoadingAddressesInfo(false));
     } catch (error) {
-      console.error('Error fetching address data:', error);
+      console.log('Error fetching address data:', error);
       dispatch(setLoadingAddressesInfo(false));
     }
   };
 
   useEffect(() => {
-    if (address) {
-      const loadAddressInfo = async () => {
-        await fetchAddressInfo();
-        if (!isFirstLoad && !loadingAddressesInfo && !fetchInterval.current) {
-          fetchInterval.current = setInterval(fetchAddressInfo, 2000);
-        }
-      };
-      loadAddressInfo();
-    }
+    if (!address) return;
+
+    const loadAddressInfo = async () => {
+      await fetchAddressInfo();
+      if (!isFirstLoad && !fetchInterval.current) {
+        fetchInterval.current = setInterval(fetchAddressInfo, 2000);
+      }
+    };
+
+    loadAddressInfo();
 
     return () => {
       clearInterval(fetchInterval.current);
       fetchControllerRef.current.abort();
     };
-  }, [address]);
+  }, [address, isFirstLoad]);
+
+  console.log(isFirstLoad, 'fist load');
 
   return (
     <React.Fragment>
