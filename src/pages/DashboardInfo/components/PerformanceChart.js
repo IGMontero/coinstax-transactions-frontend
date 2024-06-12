@@ -20,15 +20,23 @@ import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsC
 import _ from 'lodash';
 import { selectNetworkType } from '../../../slices/networkType/reducer';
 import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
-import { selectLoadingAddressesInfo } from '../../../slices/addresses/reducer';
+import {
+  selectIsFirstLoad,
+  selectLoadingAddressesInfo,
+} from '../../../slices/addresses/reducer';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
   const { token } = useParams();
+  const isFirstLoad = useSelector(selectIsFirstLoad);
   const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const fetchControllerRef = useRef(new AbortController());
+
+  const state = useSelector((state) => state);
+
+  console.log('STATE', state);
 
   const [isInitialLoad, setIsInitialLoad] = useState(
     loadingAddressesInfo ? false : true,
@@ -480,8 +488,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
   // #region UseEffects
   useEffect(() => {
-    if (loadingAddressesInfo) {
-      setIsInitialLoad(true);
+    if (isFirstLoad || loadingAddressesInfo) {
       return;
     }
 
@@ -499,7 +506,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
     return () => {
       fetchControllerRef.current.abort();
     };
-  }, [token, networkType, address, loadingAddressesInfo]);
+  }, [token, networkType, address, isFirstLoad, loadingAddressesInfo]);
 
   useEffect(() => {
     if (!isHovering && chartData.datasets[0].data.length > 0) {
@@ -577,7 +584,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                   width: '99%',
                 }}
               >
-                {loadingAddressesInfo || loading ? (
+                {isFirstLoad || loading ? (
                   <div
                     className="position-absolute d-flex justify-content-center align-items-center"
                     style={{

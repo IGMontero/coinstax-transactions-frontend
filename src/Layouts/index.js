@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import withRouter from '../Components/Common/withRouter';
 import { networks } from '../common/constants';
@@ -34,7 +34,12 @@ import {
   selectNetworkType,
   setNetworkType,
 } from '../slices/networkType/reducer';
-import { setLoadingAddressesInfo } from '../slices/addresses/reducer';
+import {
+  selectIsFirstLoad,
+  selectLoadingAddressesInfo,
+  setIsFirstLoad,
+  setLoadingAddressesInfo,
+} from '../slices/addresses/reducer';
 
 const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
@@ -171,10 +176,26 @@ const Layout = (props) => {
 
   const [filteredNetworks, setFilteredNetworks] = React.useState(networks);
 
+  const fetchControllerRef = useRef(new AbortController());
+
+  const isFirstLoad = useSelector(selectIsFirstLoad);
+  const loadingAddressesInfo = useSelector(selectLoadingAddressesInfo);
+
+  const fetchInterval = useRef(null);
+
+  console.log('First fetch ', isFirstLoad);
+
   const fetchAddressInfo = async () => {
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
+
     try {
-      dispatch(setLoadingAddressesInfo(true));
-      const response = await dispatch(getAddressesInfo({ address }));
+      if (isFirstLoad) {
+        dispatch(setLoadingAddressesInfo(true));
+      }
+
+      const response = await dispatch(getAddressesInfo({ address, signal }));
       const res = response.payload;
       const availableNetworks = Object.keys(res.blockchains);
 
@@ -211,6 +232,15 @@ const Layout = (props) => {
 
         dispatch(setNetworkType(newNetworkType));
       }
+
+      if (res.complete) {
+        clearInterval(fetchInterval.current);
+        fetchInterval.current = null;
+      }
+
+      if (isFirstLoad) {
+        dispatch(setIsFirstLoad(false));
+      }
       dispatch(setLoadingAddressesInfo(false));
     } catch (error) {
       console.error('Error fetching address data:', error);
@@ -220,8 +250,19 @@ const Layout = (props) => {
 
   useEffect(() => {
     if (address) {
-      fetchAddressInfo();
+      const loadAddressInfo = async () => {
+        await fetchAddressInfo();
+        if (!isFirstLoad && !loadingAddressesInfo && !fetchInterval.current) {
+          fetchInterval.current = setInterval(fetchAddressInfo, 2000);
+        }
+      };
+      loadAddressInfo();
     }
+
+    return () => {
+      clearInterval(fetchInterval.current);
+      fetchControllerRef.current.abort();
+    };
   }, [address]);
 
   return (
