@@ -75,6 +75,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [loadingTransacions, setLoadingTransactions] = useState({});
   const loading = Object.values(loadingTransacions).some((loading) => loading);
 
+  const abortControllersByBlockchain = useRef({});
+
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
   useEffect(() => {
@@ -127,11 +129,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   }, [data]);
 
   // #region FETCH DATA
-  const fetchData = async (signal) => {
+  const fetchData = async ({ abortSignal }) => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
 
     const fecthId = Date.now();
+
     try {
       setIsInitialLoad(true);
 
@@ -157,11 +160,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           assetsFilters: selectAsset,
           page: 0,
           networkType,
-          signal,
+          signal: abortSignal,
         }),
       ).unwrap();
 
       clearTimeout(timerId);
+
       const { parsed, unsupported, isProcessing, transactionsCount } = response;
 
       if (unsupported) {
@@ -212,23 +216,25 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     // if (!isUserInTransactionsHistoryPage) {
     //   return;
     // }
-    fetchControllerRef.current.abort();
-    fetchControllerRef.current = new AbortController();
-    const signal = fetchControllerRef.current.signal;
+    // fetchControllerRef.current.abort();
+    // fetchControllerRef.current = new AbortController();
+    // const signal = fetchControllerRef.current.signal;
+
+    const signal = abortControllersByBlockchain.current[networkType].signal;
 
     const interval = setInterval(async () => {
       console.log('Running interval for page', pageIndex);
 
       // Check if user is in this page still
 
-      const isUserInTransactionsHistoryPage =
-        location.pathname.includes('history');
+      // const isUserInTransactionsHistoryPage =
+      //   location.pathname.includes('history');
 
-      if (!isUserInTransactionsHistoryPage) {
-        clearInterval(interval);
-        console.log('Clearing interval for page', pageIndex);
-        return;
-      }
+      // if (!isUserInTransactionsHistoryPage) {
+      //   clearInterval(interval);
+      //   console.log('Clearing interval for page', pageIndex);
+      //   return;
+      // }
 
       await updateTransactionsPreview({
         address,
@@ -261,6 +267,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           console.log(
             'Clearing interval for page because of an error',
             pageIndex,
+            err,
           );
         },
       });
@@ -308,29 +315,46 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     networkType,
   ]);
 
-  useEffect(() => {
-    if (isFirstLoad) {
-      return;
-    } else {
-      fetchControllerRef.current.abort();
-      fetchControllerRef.current = new AbortController();
-      fetchData();
+  useEffect(
+    () => {
+      // For all blockchains but not for the current one, abort the current fetch
+      Object.keys(abortControllersByBlockchain.current).forEach(
+        (blockchain) => {
+          if (blockchain !== networkType) {
+            console.log('Aborting fetch for blockchain:', blockchain);
+            abortControllersByBlockchain.current[blockchain].abort();
+          }
+        },
+      );
+      // Signal by blockchain
+      abortControllersByBlockchain.current[networkType] = new AbortController();
+
+      const blockchainAbortSignal =
+        abortControllersByBlockchain.current[networkType].signal;
+
+      console.log('Reset should happen now.:', selectedFilters);
+
+      fetchData({
+        abortSignal: blockchainAbortSignal,
+      });
       setErrorData(null);
       setHasMoreData(true);
       setShowDownloadMessage('');
       setCurrentPage(0);
-      return () => fetchControllerRef.current.abort();
-    }
-  }, [
-    networkType,
-    // address,
-    // dispatch,
-    selectedAssets,
-    selectedFilters,
-    includeSpam,
-    debouncedSearchTerm,
-    isFirstLoad,
-  ]);
+      return () => {
+        // if (fetchControllerRef.current) fetchControllerRef.current.abort();
+      };
+    },
+    // eslint-disable-next-line
+    [
+      networkType,
+      address,
+      selectedAssets,
+      selectedFilters,
+      includeSpam,
+      debouncedSearchTerm,
+    ],
+  );
 
   // #region GROUPS
   const groupTxsByDate = (transactions) => {
@@ -354,9 +378,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const groupedTransactions = data ? groupTxsByDate(data) : {};
 
   const getMoreTransactions = async () => {
-    fetchControllerRef.current.abort();
-    fetchControllerRef.current = new AbortController();
-    const signal = fetchControllerRef.current.signal;
+    // fetchControllerRef.current.abort();
+    // fetchControllerRef.current = new AbortController();
+    const signal = abortControllersByBlockchain.current[networkType].signal;
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
 
@@ -388,8 +412,10 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         }),
       ).unwrap();
 
+      console.log('Fetching more transactions:', response);
+
       clearTimeout(timerId);
-      const { parsed, unsupported, isProcessing } = response;
+      const { parsed, unsupported, isProcessing } = response || {};
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -665,7 +691,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -683,9 +709,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -908,7 +933,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   };
 
   // #region RENDER CONDITIONALS
-  if (isFirstLoad || (loading && isInitialLoad)) {
+  if (loading && (isInitialLoad || data.length === 0)) {
     return (
       <>
         {renderHeader()}
@@ -936,7 +961,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-          style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1029,7 +1054,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-          style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions
