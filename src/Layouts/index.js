@@ -34,12 +34,7 @@ import {
   selectNetworkType,
   setNetworkType,
 } from '../slices/networkType/reducer';
-import {
-  selectIsFirstLoad,
-  selectLoadingAddressesInfo,
-  setIsFirstLoad,
-  setLoadingAddressesInfo,
-} from '../slices/addresses/reducer';
+import { selectIsFirstLoad, setIsFirstLoad } from '../slices/addresses/reducer';
 
 const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
@@ -173,18 +168,12 @@ const Layout = (props) => {
     '/blockchain-contracts',
     '/user-addresses',
   ];
-
   const fetchControllerRef = useRef(new AbortController());
-  const isFirstLoad = useSelector(selectIsFirstLoad);
   const fetchInterval = useRef(null);
+  const [filteredNetworks, setFilteredNetworks] = useState(networks);
+  const [loading, setLoading] = useState(true);
 
-  const [filteredNetworks, setFilteredNetworks] = React.useState(networks);
-
-  useEffect(() => {
-    if (address) {
-      dispatch(setIsFirstLoad(true));
-    }
-  }, [address, dispatch]);
+  const [isInInterval, setIsInInterval] = useState(false);
 
   const fetchAddressInfo = async () => {
     fetchControllerRef.current.abort();
@@ -192,15 +181,30 @@ const Layout = (props) => {
     const signal = fetchControllerRef.current.signal;
 
     try {
+      if (!isInInterval) {
+        setLoading(true);
+      } else {
+        setLoading(false);
+      }
       const response = await dispatch(getAddressesInfo({ address, signal }));
       const res = response.payload;
+      if (res) {
+        if (res.complete) {
+          clearInterval(fetchInterval.current);
+          fetchInterval.current = null;
+          setIsInInterval(false);
+          setLoading(false);
+        } else if (!fetchInterval.current) {
+          setIsInInterval(true);
+          fetchInterval.current = setInterval(fetchAddressInfo, 5000);
+        }
+      }
 
       if (!res || !res.blockchains) {
         throw new Error('Invalid response structure');
       }
 
       const availableNetworks = Object.keys(res.blockchains);
-
       let filtered;
       if (isAdminPages) {
         filtered = networks;
@@ -234,19 +238,8 @@ const Layout = (props) => {
 
         dispatch(setNetworkType(newNetworkType));
       }
-
-      if (res.complete) {
-        clearInterval(fetchInterval.current);
-        fetchInterval.current = null;
-      }
-
-      if (isFirstLoad) {
-        dispatch(setIsFirstLoad(false));
-      }
-      dispatch(setLoadingAddressesInfo(false));
     } catch (error) {
-      console.log('Error fetching address data:', error);
-      dispatch(setLoadingAddressesInfo(false));
+      setLoading(false);
     }
   };
 
@@ -255,9 +248,6 @@ const Layout = (props) => {
 
     const loadAddressInfo = async () => {
       await fetchAddressInfo();
-      if (!isFirstLoad && !fetchInterval.current) {
-        fetchInterval.current = setInterval(fetchAddressInfo, 2000);
-      }
     };
 
     loadAddressInfo();
@@ -266,9 +256,7 @@ const Layout = (props) => {
       clearInterval(fetchInterval.current);
       fetchControllerRef.current.abort();
     };
-  }, [address, isFirstLoad]);
-
-  console.log(isFirstLoad, 'fist load');
+  }, [address]);
 
   return (
     <React.Fragment>
@@ -294,7 +282,7 @@ const Layout = (props) => {
                 />
               )}
 
-            {props.children}
+            {loading && !isInInterval ? null : props.children}
           </div>
           <Footer />
         </div>

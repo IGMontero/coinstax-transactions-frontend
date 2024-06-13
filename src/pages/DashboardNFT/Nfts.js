@@ -19,7 +19,6 @@ import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import NftsCards from './components/NftsCards';
 import NftsSkeleton from '../../Components/Skeletons/NftsSkeleton';
-import { selectIsFirstLoad } from '../../slices/addresses/reducer';
 
 const ethIcon = (
   <svg
@@ -45,7 +44,6 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
   const fetchControllerRef = useRef(new AbortController());
-  const isFirstLoad = useSelector(selectIsFirstLoad);
 
   const [itemsToShow, setItemsToShow] = useState(20);
 
@@ -118,17 +116,13 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   useEffect(() => {
-    if (isFirstLoad) {
-      return;
-    } else {
-      if (address) {
-        fetchDataNFTS();
-      }
-      return () => {
-        fetchControllerRef.current.abort();
-      };
+    if (address) {
+      fetchDataNFTS();
     }
-  }, [address, dispatch, includeSpam, networkType, isFirstLoad]);
+    return () => {
+      fetchControllerRef.current.abort();
+    };
+  }, [address, dispatch, includeSpam, networkType]);
 
   const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     navigate(
@@ -282,7 +276,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
     );
   };
 
-  if (isFirstLoad || loading || loadingIncludeSpam) {
+  if (loading || loadingIncludeSpam) {
     return (
       <>
         {renderTitle()}
@@ -294,7 +288,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   }
 
   // if no NFTs found
-  if (items && items?.length === 0 && !loading && !isFirstLoad) {
+  if (items && items?.length === 0 && !loading) {
     return (
       <>
         {renderTitle()}
