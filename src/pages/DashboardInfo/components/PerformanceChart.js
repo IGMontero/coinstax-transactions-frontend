@@ -20,23 +20,15 @@ import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsC
 import _ from 'lodash';
 import { selectNetworkType } from '../../../slices/networkType/reducer';
 import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
-import { selectIsFirstLoad } from '../../../slices/addresses/reducer';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
   const { token } = useParams();
-  const isFirstLoad = useSelector(selectIsFirstLoad);
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const fetchControllerRef = useRef(new AbortController());
 
-  const state = useSelector((state) => state);
-
-  console.log('STATE', state);
-
-  const [isInitialLoad, setIsInitialLoad] = useState(
-    isFirstLoad ? false : true,
-  );
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const networkType = useSelector(selectNetworkType);
 
@@ -484,25 +476,21 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
   // #region UseEffects
   useEffect(() => {
-    if (isFirstLoad) {
-      return;
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
+
+    if (token) {
+      fetchAndSetDataForToken(7, signal, false);
     } else {
-      fetchControllerRef.current.abort();
-      fetchControllerRef.current = new AbortController();
-      const signal = fetchControllerRef.current.signal;
-
-      if (token) {
-        fetchAndSetDataForToken(7, signal, false);
-      } else {
-        fetchAndSetData(7, signal, false);
-      }
-      setActiveFilter('one_week');
-
-      return () => {
-        fetchControllerRef.current.abort();
-      };
+      fetchAndSetData(7, signal, false);
     }
-  }, [token, networkType, address, isFirstLoad]);
+    setActiveFilter('one_week');
+
+    return () => {
+      fetchControllerRef.current.abort();
+    };
+  }, [token, networkType, address]);
 
   useEffect(() => {
     if (!isHovering && chartData.datasets[0].data.length > 0) {
@@ -580,7 +568,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                   width: '99%',
                 }}
               >
-                {isFirstLoad || loading ? (
+                {loading ? (
                   <div
                     className="position-absolute d-flex justify-content-center align-items-center"
                     style={{

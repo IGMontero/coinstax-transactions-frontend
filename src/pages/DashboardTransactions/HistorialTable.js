@@ -28,7 +28,6 @@ import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
-import { selectIsFirstLoad } from '../../slices/addresses/reducer';
 
 const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   // #region HOOKS
@@ -38,8 +37,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
   const { address } = useParams();
   const dispatch = useDispatch();
-  const location = useLocation();
-  const isFirstLoad = useSelector(selectIsFirstLoad);
   const { user } = useSelector((state) => state.auth);
   const networkType = useSelector(selectNetworkType);
 
@@ -348,7 +345,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     // eslint-disable-next-line
     [
       networkType,
-      address,
+      // address,
       selectedAssets,
       selectedFilters,
       includeSpam,
@@ -691,7 +688,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -709,8 +706,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -961,7 +959,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-        // style={{ minHeight: '50vh' }}
+          // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1054,7 +1052,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-        // style={{ minHeight: '50vh' }}
+          // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions
