@@ -12,6 +12,7 @@ import {
   copyToClipboard,
   parseValuesToLocale,
 } from '../../../../../utils/utils';
+import { composeTransactionNftUrl } from '../../utils/transactionUtils';
 
 const SentColumn = ({ transaction }) => {
   const navigate = useNavigate();
@@ -129,8 +130,8 @@ const SentColumn = ({ transaction }) => {
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {!isNft &&
-                    negativeLedgers?.value !== 0 &&
-                    !hasAssetsCount ? (
+                      negativeLedgers?.value !== 0 &&
+                      !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
                         id={`amount-left-${transaction?.txHash}`}
@@ -152,7 +153,11 @@ const SentColumn = ({ transaction }) => {
                           e.stopPropagation();
                           if (nftContractAddress && nftTokenId) {
                             navigate(
-                              `/contract/${nftContractAddress}?blockchain=${transaction.blockchain}&tokenId=${nftTokenId}`,
+                              composeTransactionNftUrl({
+                                contractAddress: nftContractAddress,
+                                blockchain: transaction.blockchain,
+                                tokenId: nftTokenId,
+                              }),
                             );
                           }
                         }}
@@ -165,10 +170,10 @@ const SentColumn = ({ transaction }) => {
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                    negativeLedgers?.value !== 0 &&
-                    document.getElementById(
-                      `amount-left-${transaction.txHash}`,
-                    ) ? (
+                      negativeLedgers?.value !== 0 &&
+                      document.getElementById(
+                        `amount-left-${transaction.txHash}`,
+                      ) ? (
                       <UncontrolledTooltip
                         placement="bottom"
                         target={`amount-left-${transaction.txHash}`}
@@ -213,9 +218,9 @@ const SentColumn = ({ transaction }) => {
                 {negativeLedgers?.nativeAmount === 0
                   ? ''
                   : parseValuesToLocale(
-                      negativeLedgers?.nativeAmount,
-                      CurrencyUSD,
-                    )}
+                    negativeLedgers?.nativeAmount,
+                    CurrencyUSD,
+                  )}
               </p>
             </div>
           </>

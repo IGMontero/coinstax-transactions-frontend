@@ -323,7 +323,8 @@ export const updateTransactionsPreview = async ({
           }),
         ).unwrap();
 
-        const { parsed } = response;
+        const parsed = response?.parsed;
+
         if (!parsed || parsed.length === 0) {
           return;
         }
