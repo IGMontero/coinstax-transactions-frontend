@@ -241,11 +241,11 @@ const DashboardUserAddresses = () => {
 
   const handleDeleteHistoricalBalance = async (item) => {
     const result = await Swal.fire({
-      title: `Are you sure you want to delete historical balance for address ${item.Address}?`,
+      title: `Are you sure you want to delete historical balances for address ${item.Address}?`,
       // text: `You won't be able to revert this!`,
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Delete historical balance',
+      confirmButtonText: 'Delete historical balances',
       cancelButtonText: 'Cancel',
     });
 
@@ -259,7 +259,8 @@ const DashboardUserAddresses = () => {
           }),
         );
 
-        const errorMessage = 'Error to delete historical balance';
+        const errorMessage =
+          'There was an error deleting the historical balances';
 
         const wasSuccessful = await handleActionResult(
           deleteHistoricalBalance,
@@ -269,7 +270,7 @@ const DashboardUserAddresses = () => {
           () => {
             Swal.fire(
               'Deleted!',
-              'Historical balance has been deleted.',
+              'Historical balances have been deleted.',
               'success',
             );
           },
@@ -303,34 +304,34 @@ const DashboardUserAddresses = () => {
     const portalRoot = document.getElementById('portal-root');
     return portalRoot
       ? ReactDOM.createPortal(
-          <DropdownMenu>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleRefreshAllTransactions(item)}
-            >
-              Refresh All Transactions
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleSetAllAsDirty(item)}
-            >
-              Set All Tx as Dirty
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleDeleteUserAddress(item)}
-            >
-              Delete All Transactions
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleDeleteHistoricalBalance(item)}
-            >
-              Delete Historical Balance
-            </DropdownItem>
-          </DropdownMenu>,
-          portalRoot,
-        )
+        <DropdownMenu>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleRefreshAllTransactions(item)}
+          >
+            Refresh All Transactions
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleSetAllAsDirty(item)}
+          >
+            Set All Tx as Dirty
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleDeleteUserAddress(item)}
+          >
+            Delete All Transactions
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleDeleteHistoricalBalance(item)}
+          >
+            Delete Historical Balances
+          </DropdownItem>
+        </DropdownMenu>,
+        portalRoot,
+      )
       : null;
   };
 
