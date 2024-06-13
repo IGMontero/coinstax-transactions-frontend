@@ -206,7 +206,7 @@ const DashboardUserAddresses = () => {
           }),
         );
 
-        const errorMessage = 'Error to delete user address';
+        const errorMessage = 'Error deleting user address transactions';
         const updateUserAddresses = actionResult;
         const wasSuccessful = await handleActionResult(
           deleteUsersAddress,
@@ -220,7 +220,60 @@ const DashboardUserAddresses = () => {
                 u.Id === updateUserAddresses.Id ? updateUserAddresses : u,
               ),
             );
-            Swal.fire('Deleted!', 'Transaction has been deleted.', 'success');
+            Swal.fire('Deleted!', 'Transactions have been deleted.', 'success');
+          },
+          fetchUserAddresses(),
+        );
+
+        if (!wasSuccessful) {
+          setLoading(false);
+          return;
+        }
+        setLoading(false);
+      } catch (error) {
+        setLoading(true);
+        console.error('Error deleting user address', error);
+        Swal.fire('Error', error.toString(), 'error');
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleDeleteAllUserAddressTransactions = async (item) => {
+    const result = await Swal.fire({
+      title: `Are you sure you want to delete all transactions for address ${item.Address}?`,
+      // text: `You won't be able to revert this!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete all transactions',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const actionResult = await dispatch(
+          deleteUsersAddress({
+            networkType: 'all',
+            address: item.Address,
+          }),
+        );
+
+        const errorMessage = 'Error deleting user address transactions';
+        const updateUserAddresses = actionResult;
+        const wasSuccessful = await handleActionResult(
+          deleteUsersAddress,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            // set user addresses
+            setUserAddresses(
+              userAddresses.map((u) =>
+                u.Id === updateUserAddresses.Id ? updateUserAddresses : u,
+              ),
+            );
+            Swal.fire('Deleted!', 'Transactions have been deleted.', 'success');
           },
           fetchUserAddresses(),
         );
@@ -321,7 +374,13 @@ const DashboardUserAddresses = () => {
             className="d-flex align-items-center"
             onClick={() => handleDeleteUserAddress(item)}
           >
-            Delete All Transactions
+            Delete Transactions for {item.Blockchain}
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleDeleteAllUserAddressTransactions(item)}
+          >
+            Delete Transactions for All Blockchains
           </DropdownItem>
           <DropdownItem
             className="d-flex align-items-center"

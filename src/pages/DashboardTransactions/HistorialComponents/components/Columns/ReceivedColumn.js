@@ -12,6 +12,7 @@ import {
 } from '../../../../../utils/utils';
 
 import { useNavigate } from 'react-router-dom';
+import { composeTransactionNftUrl } from '../../utils/transactionUtils';
 
 const ReceivedColumn = ({ transaction, negativeLedgers }) => {
   const positiveLedgers = transaction.txSummary.received;
@@ -19,6 +20,8 @@ const ReceivedColumn = ({ transaction, negativeLedgers }) => {
 
   const receivedInfo = transaction?.txSummary?.received;
   const nftInfo = receivedInfo?.nftInfo;
+
+  console.log('receivedInfo', receivedInfo);
 
   const nftTokenId = nftInfo?.tokenId;
   const nftContractAddress = nftInfo?.contractAddress;
@@ -171,7 +174,11 @@ const ReceivedColumn = ({ transaction, negativeLedgers }) => {
                           e.stopPropagation();
                           if (nftContractAddress && nftTokenId) {
                             navigate(
-                              `/contract/${nftContractAddress}?blockchain${transaction.blockchain}&tokenId=${nftTokenId}`,
+                              composeTransactionNftUrl({
+                                contractAddress: nftContractAddress,
+                                blockchain: transaction.blockchain,
+                                tokenId: nftTokenId,
+                              }),
                             );
                           }
                         } else {
@@ -186,8 +193,8 @@ const ReceivedColumn = ({ transaction, negativeLedgers }) => {
                         : `${positiveLedgers?.displayName}`}
                     </span>
                     {positiveLedgers?.value &&
-                    !isNft &&
-                    !positiveLedgers.marketplaceName ? (
+                      !isNft &&
+                      !positiveLedgers.marketplaceName ? (
                       <UncontrolledTooltip
                         placement="bottom"
                         target={`amount-${transaction.txHash}`}
@@ -199,8 +206,8 @@ const ReceivedColumn = ({ transaction, negativeLedgers }) => {
                   </span>
 
                   {positiveLedgers &&
-                  !positiveLedgers.hideNativeAmount &&
-                  positiveLedgers.nativeAmount ? (
+                    !positiveLedgers.hideNativeAmount &&
+                    positiveLedgers.nativeAmount ? (
                     <p className="text-start d-flex align-items-center my-0 text-muted">
                       {parseValuesToLocale(
                         positiveLedgers?.nativeAmount,
@@ -210,8 +217,8 @@ const ReceivedColumn = ({ transaction, negativeLedgers }) => {
                   ) : (
                     <>
                       {transaction &&
-                      transaction.txHash &&
-                      !positiveLedgers.hideNativeAmount
+                        transaction.txHash &&
+                        !positiveLedgers.hideNativeAmount
                         ? null
                         : null}
                     </>
@@ -241,9 +248,9 @@ const ReceivedColumn = ({ transaction, negativeLedgers }) => {
                   {positiveLedgers?.nativeAmount === 0
                     ? ''
                     : parseValuesToLocale(
-                        positiveLedgers?.nativeAmount,
-                        CurrencyUSD,
-                      )}
+                      positiveLedgers?.nativeAmount,
+                      CurrencyUSD,
+                    )}
                 </p>
               </div>
             </div>

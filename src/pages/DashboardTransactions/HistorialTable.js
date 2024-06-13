@@ -224,14 +224,14 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       // Check if user is in this page still
 
-      const isUserInTransactionsHistoryPage =
-        location.pathname.includes('history');
+      // const isUserInTransactionsHistoryPage =
+      //   location.pathname.includes('history');
 
-      if (!isUserInTransactionsHistoryPage) {
-        clearInterval(interval);
-        console.log('Clearing interval for page', pageIndex);
-        return;
-      }
+      // if (!isUserInTransactionsHistoryPage) {
+      //   clearInterval(interval);
+      //   console.log('Clearing interval for page', pageIndex);
+      //   return;
+      // }
 
       await updateTransactionsPreview({
         address,
@@ -958,7 +958,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-          style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1051,7 +1051,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-          style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions
