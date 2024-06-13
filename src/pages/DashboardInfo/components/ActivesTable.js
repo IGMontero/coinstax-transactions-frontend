@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Badge,
   Button,
   Dropdown,
   DropdownItem,
@@ -8,14 +7,10 @@ import {
   DropdownToggle,
   Table,
 } from 'reactstrap';
-import {
-  CurrencyUSD,
-  capitalizeFirstLetter,
-  parseValuesToLocale,
-} from '../../../utils/utils';
-import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
+
 import { getAppOptions, setAppOptions } from '../../../helpers/cookies_helper';
 import AssetsSkeleton from '../../../Components/Skeletons/AssetsSkeleton';
+import AssetsTable from '../../DashboardAssets/components/AssestTable';
 
 const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
   const appOptions = getAppOptions();
@@ -194,38 +189,88 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
                   {renderFilterButtons()}
                 </div>
               </div>
-              <div className="table-container ">
+              <div
+                style={{
+                  overflow: 'hidden',
+                }}
+              >
+                {loading ? (
+                  <>
+                    {/* <thead>
+                      <tr>
+                        <th>ASSETS</th>
+                        <th>PRICE</th>
+                        <th>BALANCE</th>
+                        <th>VALUE</th>
+                      </tr>
+                    </thead> */}
+                    <AssetsSkeleton />
+                  </>
+                ) : (
+                  <AssetsTable
+                    loading={loading}
+                    displayItems={displayItems}
+                    data={data}
+                    isDashboardPage={isDashboardPage}
+                    buttonSeeMore={buttonSeeMore}
+                  />
+                )}
+              </div>
+              {/* <div className="table-container">
                 <div className="live-preview">
-                  <div className="table-responsive ">
-                    <Table className="table  table-borderless table-centered align-middle table-nowrap mb-0">
+                  <div
+                    // style={{
+                    //   overflowX: 'hidden',
+                    // }}
+                    className="table-responsive"
+                  >
+                    <Table className="table table-borderless table-centered align-middle table-nowrap mb-0">
                       <thead>
                         <tr className="text-muted">
-                          <th scope="col">ASSETS</th>
-                          <th scope="col">PRICE</th>
-                          <th scope="col">BALANCE</th>
-                          <th scope="col">VALUE</th>
+                          <th
+                            scope="col"
+                            // style={{ width: '40%' }}
+                          >
+                            ASSETS
+                          </th>
+                          <th
+                            className="hide-on-small"
+                            // style={{ width: '20%' }}
+                            scope="col"
+                          >
+                            PRICE
+                          </th>
+                          <th
+                            className="hide-on-small"
+                            scope="col"
+                            // style={{ width: '20%' }}
+                          >
+                            BALANCE
+                          </th>
+                          <th
+                            scope="col"
+                            // style={{ width: '20%' }}
+                          >
+                            VALUE
+                          </th>
                         </tr>
                       </thead>
-                      {loading ? (
-                        <tr>
-                          <td colSpan="12" className="text-center">
-                            <tbody>
+                      <tbody>
+                        {!loading ? (
+                          <tr>
+                            <td colSpan="4" className="text-center">
                               <AssetsSkeleton />
-                            </tbody>
-                          </td>
-                        </tr>
-                      ) : displayItems.length === 0 ? (
-                        <tbody className="">
+                            </td>
+                          </tr>
+                        ) : displayItems.length === 0 ? (
                           <tr>
                             <td colSpan="4" className="text-center pb-2 pt-5">
                               <h4>No Assets Yet</h4>
                             </td>
                           </tr>
-                        </tbody>
-                      ) : (
-                        <tbody>
-                          {displayItems.map((asset, index) => (
-                            <tr key={index} className="">
+                        ) : (
+                          displayItems.map((asset, index) => (
+                            <tr key={index}>
                               <td>
                                 <div className="d-flex align-items-center fw-high">
                                   <img
@@ -258,7 +303,7 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
                                     }}
                                   />
 
-                                  <div className="d-flex flex-column ">
+                                  <div className="d-flex flex-column">
                                     <div className="d-flex flex-row align-items-center">
                                       {asset.name}{' '}
                                       {viewMode === 'perPosition' && (
@@ -293,7 +338,7 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
                                   </div>
                                 </div>
                               </td>
-                              <td>
+                              <td className="hide-on-small">
                                 {asset.price
                                   ? parseValuesToLocale(
                                       asset.price,
@@ -301,7 +346,7 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
                                     )
                                   : '$0.00'}
                               </td>
-                              <td>
+                              <td className="hide-on-small">
                                 {asset.balance ? (
                                   <span>
                                     {parseValuesToLocale(asset.balance, '') +
@@ -357,16 +402,16 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
                                 </div>
                               </td>
                             </tr>
-                          ))}
-                        </tbody>
-                      )}
+                          ))
+                        )}
+                      </tbody>
                     </Table>
                   </div>
                 </div>
                 {isDashboardPage &&
                   data?.items?.length > 0 &&
                   buttonSeeMore('assets', 'Assets')}
-              </div>
+              </div> */}
             </div>
           )}
         </div>

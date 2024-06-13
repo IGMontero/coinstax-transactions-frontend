@@ -734,3 +734,41 @@
 .btn-hover-light:hover {
   background-color: #6c6c6c45;
 }
+
+// Table Assets 
+@media (max-width: 800px) {
+  .hide-on-small {
+    display: none;
+  }
+  .table th:not(.hide-on-small),
+  .table td:not(.hide-on-small) {
+    width: 50% !important; 
+   
+  }
+
+}
+
+
+
+[data-layout-mode='dark'] { 
+  .rdt_TableRow {
+    border-bottom: 1.5px solid  #333 !important;
+  }
+}
+
+[data-layout-mode='light'] { 
+  .rdt_TableRow {
+    border-bottom: 1.5px solid  #e8e6e6 !important;
+  }
+}
+
+// header table border 
+
+[data-layout-mode='dark'] .rdt_TableHeadRow {
+  border-bottom: 1.5px solid #333 !important;
+}
+
+[data-layout-mode='light'] .rdt_TableHeadRow {
+  border-bottom: 1.5px solid #e8e6e6 !important;
+}
+
