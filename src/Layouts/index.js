@@ -168,11 +168,11 @@ const Layout = (props) => {
     '/blockchain-contracts',
     '/user-addresses',
   ];
+
   const fetchControllerRef = useRef(new AbortController());
   const fetchInterval = useRef(null);
   const [filteredNetworks, setFilteredNetworks] = useState(networks);
   const [loading, setLoading] = useState(true);
-
   const [isInInterval, setIsInInterval] = useState(false);
 
   const fetchAddressInfo = async () => {
@@ -181,13 +181,10 @@ const Layout = (props) => {
     const signal = fetchControllerRef.current.signal;
 
     try {
-      if (!isInInterval) {
-        setLoading(true);
-      } else {
-        setLoading(false);
-      }
+      setLoading(true);
       const response = await dispatch(getAddressesInfo({ address, signal }));
       const res = response.payload;
+
       if (res) {
         if (res.complete) {
           clearInterval(fetchInterval.current);
@@ -198,47 +195,54 @@ const Layout = (props) => {
           setIsInInterval(true);
           fetchInterval.current = setInterval(fetchAddressInfo, 5000);
         }
-      }
 
-      if (!res || !res.blockchains) {
-        throw new Error('Invalid response structure');
-      }
-
-      const availableNetworks = Object.keys(res.blockchains);
-      let filtered;
-      if (isAdminPages) {
-        filtered = networks;
-      } else {
-        filtered = networks
-          .filter(
-            (network) =>
-              network.key !== 'all' &&
-              availableNetworks.includes(network.blockchain),
-          )
-          .map((network) => ({
-            ...network,
-            totalValue: res.blockchains[network.blockchain]?.totalValue,
-            nftsValue: res.blockchains[network.blockchain]?.nftsValue,
-          }));
-
-        if (res.blockchains.all) {
-          const allNetwork = networks.find((n) => n.key === 'all');
-          allNetwork.totalValue = res.blockchains.all.totalValue;
-          allNetwork.nftsValue = res.blockchains.all.nftsValue;
-          filtered.unshift(allNetwork);
+        if (!res.blockchains) {
+          throw new Error('Invalid response structure');
         }
 
-        const newNetworkType =
-          filtered.find((n) => n.key === networkType)?.key || 'all';
-        setFilteredNetworks(filtered);
+        const availableNetworks = Object.keys(res.blockchains);
+        let filtered;
+        if (isAdminPages) {
+          filtered = networks;
+        } else {
+          filtered = networks
+            .filter(
+              (network) =>
+                network.key !== 'all' &&
+                availableNetworks.includes(network.blockchain),
+            )
+            .map((network) => ({
+              ...network,
+              totalValue: res.blockchains[network.blockchain]?.totalValue,
+              nftsValue: res.blockchains[network.blockchain]?.nftsValue,
+            }));
 
-        setIsOnlyAllNetwork(
-          availableNetworks.length === 1 && availableNetworks[0] === 'all',
-        );
+          if (res.blockchains.all) {
+            const allNetwork = networks.find((n) => n.key === 'all');
+            allNetwork.totalValue = res.blockchains.all.totalValue;
+            allNetwork.nftsValue = res.blockchains.all.nftsValue;
+            filtered.unshift(allNetwork);
+          }
 
-        dispatch(setNetworkType(newNetworkType));
+          const newNetworkType =
+            filtered.find((n) => n.key === networkType)?.key || 'all';
+          setFilteredNetworks(filtered);
+
+          setIsOnlyAllNetwork(
+            availableNetworks.length === 1 && availableNetworks[0] === 'all',
+          );
+
+          dispatch(setNetworkType(newNetworkType));
+        }
+      } else {
+        throw new Error('Response is false');
       }
     } catch (error) {
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+        fetchInterval.current = null;
+        setIsInInterval(false);
+      }
       setLoading(false);
     }
   };
@@ -247,13 +251,21 @@ const Layout = (props) => {
     if (!address) return;
 
     const loadAddressInfo = async () => {
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+        fetchInterval.current = null;
+      }
+      setIsInInterval(false);
       await fetchAddressInfo();
     };
 
     loadAddressInfo();
 
     return () => {
-      clearInterval(fetchInterval.current);
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+        fetchInterval.current = null;
+      }
       fetchControllerRef.current.abort();
     };
   }, [address]);
