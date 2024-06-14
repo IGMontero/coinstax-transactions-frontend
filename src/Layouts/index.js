@@ -179,6 +179,8 @@ const Layout = (props) => {
 
   const [isUnsupported, setIsUnsupported] = useState(false);
 
+  const [incompleteBlockchains, setIncompleteBlockchains] = useState([]);
+
   const fetchAddressInfo = async () => {
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
@@ -190,6 +192,15 @@ const Layout = (props) => {
       const res = response.payload;
 
       if (res) {
+        if (res.blockchains) {
+          const incomplete = Object.entries(res?.blockchains)
+            .filter(([, blockchain]) => blockchain.complete === false)
+            .map(([key]) => key);
+          setIncompleteBlockchains(incomplete);
+        } else {
+          setIncompleteBlockchains([]);
+        }
+
         if (res.complete) {
           clearInterval(fetchInterval.current);
           fetchInterval.current = null;
@@ -197,7 +208,7 @@ const Layout = (props) => {
           setLoading(false);
         } else if (!fetchInterval.current) {
           setIsInInterval(true);
-          fetchInterval.current = setInterval(fetchAddressInfo, 2000);
+          fetchInterval.current = setInterval(fetchAddressInfo, 5000);
         }
         if (res.unsupported) {
           setIsUnsupported(true);
@@ -243,11 +254,16 @@ const Layout = (props) => {
           dispatch(setNetworkType(newNetworkType));
         }
         setIsSuccessfullRequest(true);
-      } else {
-        throw new Error('Response is false');
       }
     } catch (error) {
-      setIsSuccessfullRequest(false);
+      if (error.name === 'AbortError') {
+        setIsSuccessfullRequest(true);
+      } else {
+        console.error('Error fetching address info: ', error);
+        setIsSuccessfullRequest(false);
+      }
+
+      console.log(error);
       if (fetchInterval.current) {
         clearInterval(fetchInterval.current);
         fetchInterval.current = null;
@@ -284,6 +300,8 @@ const Layout = (props) => {
     }
   }, [token, address]);
 
+  console.log(loading);
+
   return (
     <React.Fragment>
       <div id="layout-wrapper">
@@ -305,13 +323,15 @@ const Layout = (props) => {
                 <AddressWithDropdown
                   isOnlyAllNetwork={isOnlyAllNetwork}
                   filteredNetworks={filteredNetworks}
+                  incompleteBlockchains={incompleteBlockchains}
+                  loading={loading && !isInInterval}
                 />
               )}
+            {token && props.children}
+
             {isUnsupported ? (
               <UnsupportedPage />
-            ) : loading &&
-              !isInInterval &&
-              !token ? null : isSuccessfullRequest || token ? (
+            ) : loading && !isInInterval ? null : isSuccessfullRequest ? (
               props.children
             ) : null}
           </div>

@@ -15,7 +15,11 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { networks } from '../../common/constants';
 
-const NetworkDropdown = ({ filteredNetworks }) => {
+const NetworkDropdown = ({
+  filteredNetworks,
+  incompleteBlockchains,
+  loading,
+}) => {
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
 
@@ -103,9 +107,10 @@ const NetworkDropdown = ({ filteredNetworks }) => {
         <UncontrolledDropdown className="card-header-dropdown ">
           <DropdownToggle
             tag="a"
-            className="btn btn-sm  btn-hover-light p-1 ps-3 d-flex justify-content-between align-items-center border rounded"
+            className={`btn btn-sm  ${loading ? 'btn-light' : 'btn-hover-light'} p-1 ps-3 d-flex justify-content-between align-items-center border rounded`}
             role="button"
             color="soft-primary"
+            disabled={loading}
             style={{
               maxHeight: '40px',
               height: '40px',
@@ -114,18 +119,21 @@ const NetworkDropdown = ({ filteredNetworks }) => {
               minWidth: '170px',
               borderRadius: '10px',
               border: '0.5px solid grey',
+              cursor: `${loading ? 'default' : 'pointer'}`,
             }}
           >
             <span className="d-flex align-items-center py-0">
               {renderNetworkIcon(selectedNetwork)}
               <span
-                className="fs-6 text-dark py-0"
+                className={`fs-6 ${loading ? 'text-muted' : 'text-dark'} py-0`}
                 style={{ maxWidth: '140px' }}
               >
                 {selectedNetwork.label}
               </span>
             </span>
-            <i className="mdi mdi-chevron-down text-dark ms-2 fs-5"></i>
+            <i
+              className={`mdi mdi-chevron-down ${loading ? 'text-muted' : 'text-dark'} ms-2 fs-5`}
+            ></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-end mt-2 ">
             {filteredNetworks?.map((network) => {
@@ -133,6 +141,10 @@ const NetworkDropdown = ({ filteredNetworks }) => {
                 network.totalValue !== undefined && network.totalValue !== null
                   ? network.totalValue
                   : 0;
+
+              const isIncomplete = incompleteBlockchains.includes(
+                network.blockchain,
+              );
 
               const displayNftsValue =
                 network.nftsValue || network.nftsValue === 0;
@@ -154,12 +166,14 @@ const NetworkDropdown = ({ filteredNetworks }) => {
                         <div className="d-flex flex-row align-items-center">
                           {TokenSVG}
                           <small>
-                            {parseValuesToLocale(
-                              displayValue,
-                              CurrencyUSD,
-                              false,
-                              displayValue,
-                            )}
+                            {isIncomplete
+                              ? '$ --'
+                              : parseValuesToLocale(
+                                  displayValue,
+                                  CurrencyUSD,
+                                  false,
+                                  displayValue,
+                                )}
                           </small>
                           {(network.nftsValue || network.nftsValue > 0) && (
                             <>

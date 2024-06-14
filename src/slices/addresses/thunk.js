@@ -41,6 +41,12 @@ export const getAddressesInfo = createAsyncThunk(
       const data = await response.json();
       return data;
     } catch (error) {
+      if (error.name === 'AbortError') {
+        return rejectWithValue({
+          name: 'AbortError',
+          message: 'Request was aborted',
+        });
+      }
       return rejectWithValue(error.message);
     }
   },
