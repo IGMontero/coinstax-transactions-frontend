@@ -213,6 +213,7 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
                     data={data}
                     isDashboardPage={isDashboardPage}
                     buttonSeeMore={buttonSeeMore}
+                    viewMode={viewMode}
                   />
                 )}
               </div>

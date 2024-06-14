@@ -17,6 +17,7 @@ const AssetsTable = ({
   isDashboardPage,
   data,
   buttonSeeMore,
+  viewMode,
 }) => {
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -33,6 +34,7 @@ const AssetsTable = ({
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
   const columns = [
     {
       name: 'ASSETS',
@@ -61,13 +63,13 @@ const AssetsTable = ({
           <div className="d-flex flex-column">
             <div className="d-flex flex-row align-items-center">
               {row.name}{' '}
-              {row.viewMode === 'perPosition' && (
+              {viewMode === 'perPosition' && (
                 <Badge
-                  color="soft-dark"
+                  color="soft-light"
                   style={{ fontWeight: 'inherit' }}
                   className="mx-2 p-1 fs-7"
                 >
-                  <span className="">
+                  <span className="text-dark">
                     {row.percentage < 1 ? '<0.01' : row.percentage}
                     {'%'}
                   </span>
@@ -137,11 +139,30 @@ const AssetsTable = ({
         <div
           //   kind="label/reg"
           //   color="var(--neutral-700)"
-          className=""
+          className="d-flex flex-column align-items-start"
         >
-          {row.value
-            ? parseValuesToLocale(row.value, CurrencyUSD)
-            : parseValuesToLocale(0, CurrencyUSD)}
+          <span>
+            {row.value
+              ? parseValuesToLocale(row.value, CurrencyUSD)
+              : parseValuesToLocale(0, CurrencyUSD)}
+          </span>
+          <small
+            className={`${
+              row.prettyDeltaValuePercent === '0.00%'
+                ? 'text-primary'
+                : row.prettyDeltaValuePercent[0] === '-'
+                  ? 'text-danger'
+                  : 'text-success'
+            }`}
+          >
+            {row.prettyDeltaValuePercent === '0.00%'
+              ? parseValuesToLocale(row.deltaValuePercent, '')
+              : (row.prettyDeltaValuePercent[0] === '-' ? '' : '+') +
+                parseValuesToLocale(row.deltaValuePercent, '')}
+            {row.deltaValue
+              ? ' (' + parseValuesToLocale(row.deltaValue, CurrencyUSD) + ')'
+              : null}
+          </small>
         </div>
       ),
     },
