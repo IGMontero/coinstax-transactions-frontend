@@ -80,7 +80,7 @@ const AssetsTable = ({
                 </Badge>
               )}
             </div>
-            <div className="d-flex align-items-center text-muted">
+            <div className="d-flex align-items-center mt-1 text-muted">
               <BlockchainImage
                 width={15}
                 height={15}

@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import ContentLoader from 'react-content-loader';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../constants/layout';
 
-const AssetsSkeleton = (props) => {
+const AssetsSkeleton = () => {
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
 
-  const darkMode = layoutModeType === layoutModeTypes['DARKMODE'];
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 800);
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 955);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 800);
+      setIsSmallScreen(window.innerWidth < 955);
     };
 
     window.addEventListener('resize', handleResize);
@@ -21,68 +22,104 @@ const AssetsSkeleton = (props) => {
   }, []);
 
   return (
-    <ContentLoader
-      viewBox="0 0 1000 400"
-      height={400}
-      width={isSmallScreen ? 1000 : 1050}
-      backgroundColor={darkMode ? '#333' : '#e0e0e0'}
-      foregroundColor={darkMode ? '#555' : '#cfcfcf'}
-      style={{
-        animation: 'fadeInOut 1s ease-in-out infinite',
-        // maxWidth: '100%',
-      }}
-      {...props}
+    <SkeletonTheme
+      baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+      highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
     >
-      {Array.from({ length: 5 }).map((_, index) => {
-        const y = 30 + index * 75;
-        return (
-          <React.Fragment key={index}>
-            <circle cx="18" cy={y} r="18" />
-            <rect x="55" y={y - 12} rx="5" ry="5" width="90" height="10" />
-            <circle cx="65" cy={y + 10} r="8" />
-            <rect x="77" y={y + 5} rx="5" ry="5" width="110" height="10" />
+      <div
+        style={{
+          width: '100%',
+          maxWidth: '1050px',
+          margin: 'auto',
+          padding: '0px',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            paddingBottom: '10px',
+            marginTop: '20px',
+            borderBottom: `1px solid ${isDarkMode ? '#444' : '#ccc'}`,
+          }}
+        >
+          <Skeleton width={100} height={20} />
+          {!isSmallScreen && (
+            <>
+              <Skeleton width={60} height={20} />
+              <Skeleton width={60} height={20} />
+            </>
+          )}
+          <Skeleton width={60} height={20} />
+        </div>
+        {Array.from({ length: 5 }).map((_, index) => (
+          <div
+            key={index}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              padding: '20px 0',
+              borderBottom: `1px solid ${isDarkMode ? '#444' : '#ccc'}`,
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center' }}>
+              <Skeleton circle width={35} height={35} />
+              <div style={{ marginLeft: '20px' }}>
+                <Skeleton width={90} height={10} />
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginTop: '2px',
+                  }}
+                >
+                  <Skeleton circle width={16} height={16} />
+                  <Skeleton
+                    width={100}
+                    height={10}
+                    style={{ marginLeft: '5px', marginTop: '5px' }}
+                  />
+                </div>
+              </div>
+            </div>
             {!isSmallScreen && (
               <>
-                <rect x="400" y={y - 12} rx="5" ry="5" width="80" height="10" />
-                <rect
-                  x="600"
-                  y={y - 12}
-                  rx="5"
-                  ry="5"
-                  width="100"
-                  height="10"
+                <Skeleton
+                  width={100}
+                  height={10}
+                  style={{ marginLeft: '10px' }}
+                />
+                <Skeleton
+                  width={100}
+                  height={10}
+                  style={{ marginLeft: '50px' }}
                 />
               </>
             )}
             {isSmallScreen ? (
-              <>
-                <rect
-                  x="400"
-                  y={y - 12}
-                  rx="5"
-                  ry="5"
-                  width="100"
-                  height="10"
+              <div>
+                <Skeleton width={100} height={10} />
+                <Skeleton
+                  width={100}
+                  height={10}
+                  style={{ marginTop: '5px' }}
                 />
-                <rect x="400" y={y + 5} rx="5" ry="5" width="100" height="10" />
-              </>
+              </div>
             ) : (
-              <>
-                <rect
-                  x="850"
-                  y={y - 12}
-                  rx="5"
-                  ry="5"
-                  width="100"
-                  height="10"
+              <div>
+                <Skeleton width={100} height={10} />
+                <Skeleton
+                  width={100}
+                  height={10}
+                  style={{ marginTop: '5px' }}
                 />
-                <rect x="850" y={y + 5} rx="5" ry="5" width="100" height="10" />
-              </>
+              </div>
             )}
-          </React.Fragment>
-        );
-      })}
-    </ContentLoader>
+          </div>
+        ))}
+      </div>
+    </SkeletonTheme>
   );
 };
 
