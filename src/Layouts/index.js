@@ -34,7 +34,7 @@ import {
   selectNetworkType,
   setNetworkType,
 } from '../slices/networkType/reducer';
-import { selectIsFirstLoad, setIsFirstLoad } from '../slices/addresses/reducer';
+import { setAddressSummary } from '../slices/addresses/reducer';
 import UnsupportedPage from '../Components/UnsupportedPage/UnsupportedPage';
 
 const Layout = (props) => {
@@ -254,6 +254,7 @@ const Layout = (props) => {
           dispatch(setNetworkType(newNetworkType));
         }
         setIsSuccessfullRequest(true);
+        dispatch(setAddressSummary(res.blockchains));
       }
     } catch (error) {
       if (error.name === 'AbortError') {
