@@ -244,7 +244,7 @@ const DashboardInfo = () => {
                         <h2 className="ms-1 mt-2">NFTs</h2>
                       </div>
                       <div className="border border-2 rounded px-5  pt-0 pb-3">
-                        <div className=" w-100 d-flex justify-content-start overflow-hidden">
+                        <div className="">
                           <Nfts
                             isDashboardPage={true}
                             address={addressForSearch}
