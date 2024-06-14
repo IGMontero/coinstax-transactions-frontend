@@ -204,6 +204,7 @@ const Layout = (props) => {
         }
 
         if (!res.blockchains) {
+          setIsInInterval(false);
           throw new Error('Invalid response structure');
         }
 
@@ -257,28 +258,31 @@ const Layout = (props) => {
   };
 
   useEffect(() => {
-    if (!address) return;
-
-    const loadAddressInfo = async () => {
-      if (fetchInterval.current) {
-        clearInterval(fetchInterval.current);
-        fetchInterval.current = null;
-      }
-      setIsInInterval(false);
+    if (token) {
       setIsUnsupported(false);
-      await fetchAddressInfo();
-    };
+    }
+    if (address) {
+      const loadAddressInfo = async () => {
+        if (fetchInterval.current) {
+          clearInterval(fetchInterval.current);
+          fetchInterval.current = null;
+        }
+        setIsInInterval(false);
+        setIsUnsupported(false);
+        await fetchAddressInfo();
+      };
 
-    loadAddressInfo();
+      loadAddressInfo();
 
-    return () => {
-      if (fetchInterval.current) {
-        clearInterval(fetchInterval.current);
-        fetchInterval.current = null;
-      }
-      fetchControllerRef.current.abort();
-    };
-  }, [address]);
+      return () => {
+        if (fetchInterval.current) {
+          clearInterval(fetchInterval.current);
+          fetchInterval.current = null;
+        }
+        fetchControllerRef.current.abort();
+      };
+    }
+  }, [token, address]);
 
   return (
     <React.Fragment>
@@ -305,7 +309,9 @@ const Layout = (props) => {
               )}
             {isUnsupported ? (
               <UnsupportedPage />
-            ) : loading && !isInInterval ? null : isSuccessfullRequest ? (
+            ) : loading &&
+              !isInInterval &&
+              !token ? null : isSuccessfullRequest || token ? (
               props.children
             ) : null}
           </div>

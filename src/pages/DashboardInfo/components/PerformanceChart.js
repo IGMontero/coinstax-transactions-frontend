@@ -34,7 +34,8 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
   const [loadingChart, setLoadingChart] = useState({});
 
-  const loading = isInitialLoad || Object.values(loadingChart).some((l) => l);
+  const loading =
+    (isInitialLoad && !token) || Object.values(loadingChart).some((l) => l);
   // const loading = true;
   const [activeFilter, setActiveFilter] = useState('one_week');
   const [isHovering, setIsHovering] = useState(false);
@@ -331,72 +332,70 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
         .unwrap()
         .then((response) => {
           clearTimeout(timer);
-          if (response.unsupported) {
-            setIsUnsupported(true);
-          } else {
-            const uniqueDates = new Set();
-            const newLabels = [];
-            const newData = [];
 
-            response.prices.forEach((item) => {
-              const date = new Date(item[0]);
-              // const dateString = date.toISOString();
-              // .split('T')[0];
+          const uniqueDates = new Set();
+          const newLabels = [];
+          const newData = [];
 
-              // if (!uniqueDates.has(dateString)) {
-              //   uniqueDates.add(dateString);
-              //   newLabels.push(dateString); // Push dateString if you want labels as YYYY-MM-DD or date for Date objects
-              //   newData.push(item[1]);
-              // }
+          response.prices.forEach((item) => {
+            const date = new Date(item[0]);
+            // const dateString = date.toISOString();
+            // .split('T')[0];
 
-              // Add all
+            // if (!uniqueDates.has(dateString)) {
+            //   uniqueDates.add(dateString);
+            //   newLabels.push(dateString); // Push dateString if you want labels as YYYY-MM-DD or date for Date objects
+            //   newData.push(item[1]);
+            // }
 
-              newLabels.push(date);
-              newData.push(item[1]);
-            });
+            // Add all
 
-            const { minValue, maxValue } = getMaxMinValues(newData);
-            const minTick = minValue;
-            const maxTick = maxValue;
+            newLabels.push(date);
+            newData.push(item[1]);
+          });
 
-            setChartData({
-              labels: newLabels,
-              datasets: [{ ...chartData.datasets[0], data: newData }],
-            });
+          const { minValue, maxValue } = getMaxMinValues(newData);
+          const minTick = minValue;
+          const maxTick = maxValue;
 
-            const range = maxValue - minValue;
-            const numTicks = 2;
-            const tolerance = 0.001;
+          setChartData({
+            labels: newLabels,
+            datasets: [{ ...chartData.datasets[0], data: newData }],
+          });
 
-            const stepSize = range / (numTicks - 1);
+          const range = maxValue - minValue;
+          const numTicks = 2;
+          const tolerance = 0.001;
 
-            setChartOptions((prevOptions) => ({
-              ...prevOptions,
-              scales: {
-                ...prevOptions.scales,
-                yAxes: [
-                  {
-                    ...prevOptions.scales.yAxes[0],
-                    ticks: {
-                      ...prevOptions.scales.yAxes[0].ticks,
-                      min: minTick,
-                      max: maxTick,
-                      maxTicksLimit: 2,
-                      callback: function (value) {
-                        if (
-                          Math.abs(value - minValue) < tolerance ||
-                          Math.abs(value - maxValue) < tolerance
-                        ) {
-                          return parseValuesToLocale(value, CurrencyUSD, true);
-                        }
-                        return '';
-                      },
+          const stepSize = range / (numTicks - 1);
+
+          setChartOptions((prevOptions) => ({
+            ...prevOptions,
+            scales: {
+              ...prevOptions.scales,
+              yAxes: [
+                {
+                  ...prevOptions.scales.yAxes[0],
+                  ticks: {
+                    ...prevOptions.scales.yAxes[0].ticks,
+                    min: minTick,
+                    max: maxTick,
+                    maxTicksLimit: 2,
+                    callback: function (value) {
+                      if (
+                        Math.abs(value - minValue) < tolerance ||
+                        Math.abs(value - maxValue) < tolerance
+                      ) {
+                        return parseValuesToLocale(value, CurrencyUSD, true);
+                      }
+                      return '';
                     },
                   },
-                ],
-              },
-            }));
-          }
+                },
+              ],
+            },
+          }));
+
           setLoadingChart((prev) => ({
             ...prev,
             [fetchId]: false,
