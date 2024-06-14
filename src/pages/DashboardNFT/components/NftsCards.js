@@ -18,7 +18,6 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
         gridTemplateColumns: 'repeat(auto-fill, minmax(186px, 1fr))',
         gap: '30px',
         justifyContent: 'center',
-        // maxWidth: '186px',
       }}
     >
       {item &&

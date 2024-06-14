@@ -276,17 +276,6 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
     );
   };
 
-  if (loading || loadingIncludeSpam) {
-    return (
-      <>
-        {renderTitle()}
-        <div className="d-flex justify-content-center align-items-center mt-4">
-          <NftsSkeleton isDashboardPage={isDashboardPage} />
-        </div>
-      </>
-    );
-  }
-
   // if no NFTs found
   if (items && items?.length === 0 && !loading) {
     return (
@@ -315,77 +304,87 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   return (
     <React.Fragment>
       {renderTitle()}
-
-      <div className="w-100">
-        {items && items.length > 0 && !isDashboardPage ? (
-          <Col xxl={12} className="d-flex align-items-center">
-            <div className="d-flex flex-column">
-              <h6>
-                As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}
-              </h6>
-              <span className="text-dark">Total value by floor price</span>
-              <h1>{parseValuesToLocale(data.totalNativeValue, CurrencyUSD)}</h1>
-              <div className="d-flex">
-                <Input
-                  id="customCheck1"
-                  type="checkbox"
-                  className="form-check-input cursor-pointer me-2"
-                  onChange={handleShowSpam}
-                  checked={includeSpam}
-                />
-                <label className="form-check-label" htmlFor="customCheck1">
-                  Include Spam NFTs
-                </label>
-              </div>
-            </div>
-            <div className="ms-auto">
-              <Button
-                style={{
-                  padding: '5px',
-                  minWidth: '0px',
-                  height: '32px',
-                  width: '32px',
-                }}
-                color="transparent"
-                className="btn btn-sm rounded text-dark border border-1 me-2"
-                onClick={handleChangeSymbol}
-              >
-                {currencySymbol === 'ETH' ? ethIcon : '$'}
-              </Button>
-            </div>
-          </Col>
-        ) : null}
-
-        <Col className={`mt-4 col-12 d-flex justify-content-center`}>
-          <Col>
-            <NftsCards
-              isDashboardPage={isDashboardPage}
-              item={items}
-              onVisitNft={handleVisitNFT}
-              showFiatValues={showFiatValues}
-            />
-            {!isDashboardPage &&
-              data?.items &&
-              data.items?.length > itemsToShow && (
-                <div className="d-flex justify-content-center">
-                  <Button
-                    className="mt-3 d-flex btn-hover-light  justify-content-center align-items-center "
-                    color="soft-light"
-                    style={{
-                      borderRadius: '10px',
-                      border: '.5px solid grey',
-                    }}
-                    onClick={handleShowMoreItems}
-                  >
-                    <h6 className="text-dark  fw-semibold my-2">More Items</h6>
-                  </Button>
+      {loading && !loadingIncludeSpam ? (
+        <NftsSkeleton isDashboardPage={isDashboardPage} />
+      ) : (
+        <div className="w-100">
+          {items && items.length > 0 && !isDashboardPage ? (
+            <Col xxl={12} className="d-flex align-items-center">
+              <div className="d-flex flex-column">
+                <h6>
+                  As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}
+                </h6>
+                <span className="text-dark">Total value by floor price</span>
+                <h1>
+                  {parseValuesToLocale(data.totalNativeValue, CurrencyUSD)}
+                </h1>
+                <div className="d-flex">
+                  <Input
+                    id="customCheck1"
+                    type="checkbox"
+                    className="form-check-input cursor-pointer me-2"
+                    onChange={handleShowSpam}
+                    checked={includeSpam}
+                  />
+                  <label className="form-check-label" htmlFor="customCheck1">
+                    Include Spam NFTs
+                  </label>
                 </div>
-              )}
+              </div>
+              <div className="ms-auto">
+                <Button
+                  style={{
+                    padding: '5px',
+                    minWidth: '0px',
+                    height: '32px',
+                    width: '32px',
+                  }}
+                  color="transparent"
+                  className="btn btn-sm rounded text-dark border border-1 me-2"
+                  onClick={handleChangeSymbol}
+                >
+                  {currencySymbol === 'ETH' ? ethIcon : '$'}
+                </Button>
+              </div>
+            </Col>
+          ) : null}
 
-            {isDashboardPage && items?.length && buttonSeeMore('nfts', 'NFTs')}
+          <Col className={`mt-4 col-12 d-flex justify-content-center`}>
+            <Col>
+              <>
+                <NftsCards
+                  isDashboardPage={isDashboardPage}
+                  item={items}
+                  onVisitNft={handleVisitNFT}
+                  showFiatValues={showFiatValues}
+                />
+                {!isDashboardPage &&
+                  data?.items &&
+                  data.items?.length > itemsToShow && (
+                    <div className="d-flex justify-content-center">
+                      <Button
+                        className="mt-3 d-flex btn-hover-light justify-content-center align-items-center"
+                        color="soft-light"
+                        style={{
+                          borderRadius: '10px',
+                          border: '.5px solid grey',
+                        }}
+                        onClick={handleShowMoreItems}
+                      >
+                        <h6 className="text-dark fw-semibold my-2">
+                          More Items
+                        </h6>
+                      </Button>
+                    </div>
+                  )}
+                {isDashboardPage &&
+                  items?.length &&
+                  buttonSeeMore('nfts', 'NFTs')}
+              </>
+            </Col>
           </Col>
-        </Col>
-      </div>
+        </div>
+      )}
     </React.Fragment>
   );
 };
