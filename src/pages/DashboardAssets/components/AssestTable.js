@@ -8,7 +8,6 @@ import {
   capitalizeFirstLetter,
   parseValuesToLocale,
 } from '../../../utils/utils';
-import AssetsSkeleton from '../../../Components/Skeletons/AssetsSkeleton';
 import { useSelector } from 'react-redux';
 
 const AssetsTable = ({
@@ -24,11 +23,11 @@ const AssetsTable = ({
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
-  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 820);
+  const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 955);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsSmallScreen(window.innerWidth < 820);
+      setIsSmallScreen(window.innerWidth < 955);
     };
 
     window.addEventListener('resize', handleResize);
@@ -136,11 +135,7 @@ const AssetsTable = ({
           : parseValuesToLocale(0, CurrencyUSD),
       sortable: false,
       cell: (row) => (
-        <div
-          //   kind="label/reg"
-          //   color="var(--neutral-700)"
-          className="d-flex flex-column align-items-start"
-        >
+        <div className="value-cell flex-column d-flex">
           <span>
             {row.value
               ? parseValuesToLocale(row.value, CurrencyUSD)
@@ -165,6 +160,7 @@ const AssetsTable = ({
           </small>
         </div>
       ),
+      grow: 1,
     },
   ];
 
@@ -175,17 +171,14 @@ const AssetsTable = ({
           columns={columns}
           data={loading ? [] : displayItems}
           progressPending={loading}
-          //   progressComponent={<AssetsSkeleton />}
           noDataComponent={<h4>No Assets Yet</h4>}
           noHeader
           responsive
-          //   striped
           customStyles={{
             rows: {
               style: {
                 border: 'none',
                 minHeight: '82px',
-                // border: '1px solid #6c757d',
               },
             },
             headCells: {
@@ -194,7 +187,6 @@ const AssetsTable = ({
                 paddingRight: '8px',
                 backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
                 color: `${isDarkMode ? '#fff' : ''}`,
-                // borderBottom: '2px solid #6c757d',
               },
             },
             cells: {

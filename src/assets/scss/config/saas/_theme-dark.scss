@@ -772,3 +772,26 @@
   border-bottom: 1.5px solid #e8e6e6 !important;
 }
 
+@media (max-width: 955px) {
+  .blGEez {
+    display: flex !important;
+  }
+  .sc-jlZhew.blGEez.rdt_TableCol_Sortable[data-column-id="4"] {
+    display: flex !important;
+    justify-content: end !important;
+  }
+  .value-cell {
+    align-items: flex-end !important;
+    justify-content: flex-end !important;
+    text-align: end !important;
+    width: 100% !important;      
+    
+     
+    
+  }
+  
+}
+
+
+
+
