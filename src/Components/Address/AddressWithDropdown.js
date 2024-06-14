@@ -15,7 +15,12 @@ import { setAddressName } from '../../slices/addressName/reducer';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
 
-const AddressWithDropdown = ({ filteredNetworks, isOnlyAllNetwork }) => {
+const AddressWithDropdown = ({
+  filteredNetworks,
+  isOnlyAllNetwork,
+  incompleteBlockchains,
+  loading,
+}) => {
   const { address } = useParams();
   const dispatch = useDispatch();
 
@@ -155,7 +160,11 @@ const AddressWithDropdown = ({ filteredNetworks, isOnlyAllNetwork }) => {
           </Col>
           <Col className="col-4 d-flex justify-content-end align-items-end ">
             {!isOnlyAllNetwork && (
-              <NetworkDropdown filteredNetworks={filteredNetworks} />
+              <NetworkDropdown
+                filteredNetworks={filteredNetworks}
+                incompleteBlockchains={incompleteBlockchains}
+                loading={loading}
+              />
             )}
           </Col>
         </Col>
