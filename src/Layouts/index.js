@@ -35,6 +35,7 @@ import {
   setNetworkType,
 } from '../slices/networkType/reducer';
 import { selectIsFirstLoad, setIsFirstLoad } from '../slices/addresses/reducer';
+import UnsupportedPage from '../Components/UnsupportedPage/UnsupportedPage';
 
 const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
@@ -174,6 +175,9 @@ const Layout = (props) => {
   const [filteredNetworks, setFilteredNetworks] = useState(networks);
   const [loading, setLoading] = useState(true);
   const [isInInterval, setIsInInterval] = useState(false);
+  const [isSuccessfullRequest, setIsSuccessfullRequest] = useState(false);
+
+  const [isUnsupported, setIsUnsupported] = useState(false);
 
   const fetchAddressInfo = async () => {
     fetchControllerRef.current.abort();
@@ -193,7 +197,10 @@ const Layout = (props) => {
           setLoading(false);
         } else if (!fetchInterval.current) {
           setIsInInterval(true);
-          fetchInterval.current = setInterval(fetchAddressInfo, 5000);
+          fetchInterval.current = setInterval(fetchAddressInfo, 2000);
+        }
+        if (res.unsupported) {
+          setIsUnsupported(true);
         }
 
         if (!res.blockchains) {
@@ -234,10 +241,12 @@ const Layout = (props) => {
 
           dispatch(setNetworkType(newNetworkType));
         }
+        setIsSuccessfullRequest(true);
       } else {
         throw new Error('Response is false');
       }
     } catch (error) {
+      setIsSuccessfullRequest(false);
       if (fetchInterval.current) {
         clearInterval(fetchInterval.current);
         fetchInterval.current = null;
@@ -256,6 +265,7 @@ const Layout = (props) => {
         fetchInterval.current = null;
       }
       setIsInInterval(false);
+      setIsUnsupported(false);
       await fetchAddressInfo();
     };
 
@@ -293,8 +303,11 @@ const Layout = (props) => {
                   filteredNetworks={filteredNetworks}
                 />
               )}
-
-            {loading && !isInInterval ? null : props.children}
+            {isUnsupported ? (
+              <UnsupportedPage />
+            ) : loading && !isInInterval ? null : isSuccessfullRequest ? (
+              props.children
+            ) : null}
           </div>
           <Footer />
         </div>
