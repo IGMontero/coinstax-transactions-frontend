@@ -17,7 +17,11 @@ const NftsSkeleton = (props) => {
       baseColor={darkMode ? '#333' : '#e0e0e0'}
       highlightColor={darkMode ? '#555' : '#cfcfcf'}
     >
-      <div style={{ padding: `${props.isDashboardPage ? '15px' : '0px'}` }}>
+      <div
+        style={{
+          padding: `${props.isDashboardPage ? '15px' : '0px'}`,
+        }}
+      >
         {!props.isDashboardPage ? (
           <div style={{ marginBottom: '20px' }}>
             <Skeleton width={200} height="15px" />
@@ -41,11 +45,12 @@ const NftsSkeleton = (props) => {
               style={{
                 maxWidth: '186px',
                 width: '100%',
-                height: '280px',
+                height: '310px',
                 borderRadius: '10px',
                 background: darkMode ? '#333' : '#e0e0e0',
                 padding: '10px',
                 boxSizing: 'border-box',
+                marginTop: '5px',
               }}
             >
               <Skeleton
