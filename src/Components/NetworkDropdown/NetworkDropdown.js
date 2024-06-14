@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Skeleton from 'react-loading-skeleton';
 
 import {
   selectNetworkType,
@@ -14,6 +15,7 @@ import {
 } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { networks } from '../../common/constants';
+import { layoutModeTypes } from '../constants/layout';
 
 const NetworkDropdown = ({
   filteredNetworks,
@@ -22,6 +24,10 @@ const NetworkDropdown = ({
 }) => {
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const handleChangeNetwork = (newType) => {
     dispatch(setNetworkType(newType));
@@ -166,14 +172,20 @@ const NetworkDropdown = ({
                         <div className="d-flex flex-row align-items-center">
                           {TokenSVG}
                           <small>
-                            {isIncomplete
-                              ? '$ --'
-                              : parseValuesToLocale(
-                                  displayValue,
-                                  CurrencyUSD,
-                                  false,
-                                  displayValue,
-                                )}
+                            {isIncomplete ? (
+                              <Skeleton
+                                width={30}
+                                baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+                                highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+                              />
+                            ) : (
+                              parseValuesToLocale(
+                                displayValue,
+                                CurrencyUSD,
+                                false,
+                                displayValue,
+                              )
+                            )}
                           </small>
                           {(network.nftsValue || network.nftsValue > 0) && (
                             <>
