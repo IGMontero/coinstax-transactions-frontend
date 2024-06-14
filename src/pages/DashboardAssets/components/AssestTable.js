@@ -9,6 +9,7 @@ import {
   parseValuesToLocale,
 } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
+import { addressSummary } from '../../../slices/addresses/reducer';
 
 const AssetsTable = ({
   loading,
@@ -18,6 +19,10 @@ const AssetsTable = ({
   buttonSeeMore,
   viewMode,
 }) => {
+  // Values from Redux for the blockchains
+  const addressInfo = useSelector(addressSummary);
+  console.log('addressInfo', addressInfo);
+
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));

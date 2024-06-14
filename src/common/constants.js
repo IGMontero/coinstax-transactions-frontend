@@ -11,6 +11,7 @@ export const networks = [
   {
     key: 'all',
     label: 'All Networks',
+    blockchain: 'all',
     icon: (
       <i
         style={{
