@@ -174,7 +174,7 @@ const NetworkDropdown = ({
                           <small>
                             {isIncomplete ? (
                               <Skeleton
-                                width={30}
+                                width={50}
                                 baseColor={isDarkMode ? '#333' : '#f3f3f3'}
                                 highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
                               />

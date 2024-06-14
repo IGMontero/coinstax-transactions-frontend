@@ -245,13 +245,15 @@ const Layout = (props) => {
 
           const newNetworkType =
             filtered.find((n) => n.key === networkType)?.key || 'all';
+          if (newNetworkType !== networkType) {
+            dispatch(setNetworkType(newNetworkType));
+          }
+
           setFilteredNetworks(filtered);
 
           setIsOnlyAllNetwork(
             availableNetworks.length === 1 && availableNetworks[0] === 'all',
           );
-
-          dispatch(setNetworkType(newNetworkType));
         }
         setIsSuccessfullRequest(true);
         dispatch(setAddressSummary(res.blockchains));
@@ -300,8 +302,6 @@ const Layout = (props) => {
       };
     }
   }, [token, address]);
-
-  console.log(loading);
 
   return (
     <React.Fragment>
