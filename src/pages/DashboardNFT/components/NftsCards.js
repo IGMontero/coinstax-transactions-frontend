@@ -33,7 +33,8 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
             : hasNativeTokenFloorPrice;
           const floorPrice = showFiatValues
             ? parseValuesToLocale(floorPriceFiat, CurrencyUSD)
-            : parseValuesToLocale(floorPriceNativeToken) + ' ETH';
+            : parseValuesToLocale(floorPriceNativeToken) +
+            ` ${nft?.nativeSymbol || ''}`;
           const shouldShowUnsupported =
             !nft.logo || imageErrors[nft.contractAddress + nft.tokenId];
 
