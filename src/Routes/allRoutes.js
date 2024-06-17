@@ -23,7 +23,7 @@ import DashboardHome from '../pages/DashboardHome/DashboardHome';
 import DashboardTokens from '../pages/DashboardTokens/DashboardTokens';
 
 const authProtectedRoutes = [
-  { path: '/dashboard', component: <DashboardInfo /> },
+  { path: '/', component: <DashboardInfo /> },
   { path: '/address/:address', component: <DashboardInfo /> },
   { path: '/index', component: <DashboardEcommerce /> },
 

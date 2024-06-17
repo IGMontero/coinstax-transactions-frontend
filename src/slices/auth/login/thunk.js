@@ -42,14 +42,14 @@ export const loginUser = (user, history) => async (dispatch) => {
         if (finallogin.status === 'success') {
           dispatch(loginSuccess(data));
           dispatch(profileSuccess(data));
-          history('/dashboard');
+          history('/');
         } else {
           dispatch(apiError(finallogin));
         }
       } else {
         dispatch(loginSuccess(data));
         dispatch(profileSuccess(data));
-        history('/dashboard');
+        history('/');
       }
     }
   } catch (error) {
