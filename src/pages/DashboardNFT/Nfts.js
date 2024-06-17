@@ -58,14 +58,15 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   const [includeSpam, setIncludeSpam] = useState(false);
   const navigate = useNavigate();
   const [data, setData] = React.useState([]);
-  const [currencySymbol, setCurrencySymbol] = useState('ETH');
+  const [showFiatValues, setShowFiatValues] = useState(true);
   const [updatedAt, setUpdatedAt] = useState();
 
-  const showFiatValues = currencySymbol === '$';
-  const showNativeTokenValues = currencySymbol === 'ETH';
+  const totalFiatValue = parseValuesToLocale(data.totalValue, CurrencyUSD);
 
   const handleChangeSymbol = () => {
-    setCurrencySymbol((prevSymbol) => (prevSymbol === 'ETH' ? '$' : 'ETH'));
+    // setCurrencySymbol((prevSymbol) => (prevSymbol === 'ETH' ? '$' : 'ETH'));
+
+    setShowFiatValues((prev) => !prev);
   };
 
   const fetchDataNFTS = () => {
@@ -315,9 +316,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
                   As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}
                 </h6>
                 <span className="text-dark">Total value by floor price</span>
-                <h1>
-                  {parseValuesToLocale(data.totalNativeValue, CurrencyUSD)}
-                </h1>
+                <h1>{totalFiatValue}</h1>
                 <div className="d-flex">
                   <Input
                     id="customCheck1"
@@ -343,7 +342,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
                   className="btn btn-sm rounded text-dark border border-1 me-2"
                   onClick={handleChangeSymbol}
                 >
-                  {currencySymbol === 'ETH' ? ethIcon : '$'}
+                  {showFiatValues ? '$' : ethIcon}
                 </Button>
               </div>
             </Col>
