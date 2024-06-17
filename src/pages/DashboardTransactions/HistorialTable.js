@@ -1038,8 +1038,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                 disabled={isInitialLoad}
               >
                 {' '}
-                <i className="ri-file-download-line fs-5 me-2 "></i>
-                Download CSV
+                <i className="ri-file-download-line fs-5 me-2 text-dark"></i>
+                <span className="text-dark"> Download CSV</span>
               </Button>
             )}
           </div>
