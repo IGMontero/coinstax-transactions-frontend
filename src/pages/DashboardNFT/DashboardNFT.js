@@ -18,7 +18,6 @@ const DashboardNFT = () => {
 
   const [loading, setLoading] = useState('');
 
-  const [nft, setNft] = useState({});
   const [description, setDescription] = useState('');
   const [attributes, setAttributes] = useState([]);
   const [collectionLogo, setCollectionLogo] = useState('');
