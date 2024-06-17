@@ -32,7 +32,7 @@ const Index = () => {
 
   useEffect(() => {
     if (user && isLoginPage) {
-      navigate('/dashboard');
+      navigate('/');
     }
   }, [user, isLoginPage, navigate]);
 

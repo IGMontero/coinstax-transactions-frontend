@@ -17,6 +17,7 @@ const DashboardNFT = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState('');
+  const [nft, setNft] = useState({});
 
   const [description, setDescription] = useState('');
   const [attributes, setAttributes] = useState([]);
@@ -67,9 +68,10 @@ const DashboardNFT = () => {
         setDescription(res.description);
         setDetails([
           'Network',
-          `${blockchain === 'bnb'
-            ? 'BNB Chain'
-            : capitalizeFirstLetter(blockchain)
+          `${
+            blockchain === 'bnb'
+              ? 'BNB Chain'
+              : capitalizeFirstLetter(blockchain)
           }`,
         ]);
       }

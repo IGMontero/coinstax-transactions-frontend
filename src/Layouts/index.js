@@ -328,7 +328,8 @@ const Layout = (props) => {
                   loading={loading && !isInInterval}
                 />
               )}
-            {token && props.children}
+            {(token || pagesNotToDisplayAddress.includes(location.pathname)) &&
+              props.children}
 
             {isUnsupported ? (
               <UnsupportedPage />
