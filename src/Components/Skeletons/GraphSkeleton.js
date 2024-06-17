@@ -27,7 +27,6 @@ const GraphSkeleton = (props) => {
       <rect x="0" y="20" rx="5" ry="5" width="200" height="40" />
       <rect x="0" y="70" rx="5" ry="5" width="200" height="20" />
       {/* <rect x="0" y="0" rx="0" ry="0" width="200" height="200" fill="#f3f3f3" /> */}
-      {/* Líneas del gráfico */}
       <path
         d="M0,450 L150,200 L300,300 L450,250 L580,330 L750,200 L900,240 L1050,150 L1200,170 L1350,350 L1500,200 L1650,300 L1800,450"
         stroke="black"
