@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { Col, Row } from 'reactstrap';
 import {
+  CurrencyUSD,
   capitalizeFirstLetter,
   formatIdTransaction,
   parseValuesToLocale,
@@ -17,6 +18,7 @@ const DashboardNFT = () => {
 
   const [loading, setLoading] = useState('');
 
+  const [nft, setNft] = useState({});
   const [description, setDescription] = useState('');
   const [attributes, setAttributes] = useState([]);
   const [collectionLogo, setCollectionLogo] = useState('');
@@ -29,7 +31,6 @@ const DashboardNFT = () => {
 
   const [details, setDetails] = useState([]);
 
-  const [floorPriceNativeToken, setFloorPriceNativeToken] = useState(0);
   const [symbol, setSymbol] = useState('');
 
   const queryParams = new URLSearchParams(location.search);
@@ -55,21 +56,21 @@ const DashboardNFT = () => {
         }
         return;
       } else {
+        setNft(res);
         setCollectionLogo(res.collection.logo);
         setCollectionName(res.collection.name);
         setLogo(res.logo);
         setName(res.name);
         setOwnerAddress(res.ownerAddress);
-        setFloorPriceNativeToken(res.floorPriceNativeToken);
+        // setFloorPriceNativeToken(res.floorPriceNativeToken);
         setSymbol(res.symbol);
         setAttributes(res.metadata.attributes);
         setDescription(res.description);
         setDetails([
           'Network',
-          `${
-            blockchain === 'bnb'
-              ? 'BNB Chain'
-              : capitalizeFirstLetter(blockchain)
+          `${blockchain === 'bnb'
+            ? 'BNB Chain'
+            : capitalizeFirstLetter(blockchain)
           }`,
         ]);
       }
@@ -153,6 +154,18 @@ const DashboardNFT = () => {
   };
 
   const renderDescription = () => {
+    // return (
+    //   <div
+    //     // className="d-flex"
+    //     style={{
+    //       whiteSpace: 'pre-wrap',
+    //     }}
+    //     dangerouslySetInnerHTML={{
+    //       __html: description,
+    //     }}
+    //   ></div>
+    // );
+
     const segments = description.split('\n\n');
     const formattedDescription = segments.map((segment, index) => (
       <React.Fragment key={index}>
@@ -233,13 +246,21 @@ const DashboardNFT = () => {
             <div className="my-3">
               <h1>{name}</h1>
             </div>
-            {floorPriceNativeToken != 0 ? (
+            {nft?.floorPriceFiat != 0 ? (
               <>
                 <div className="my-3">
                   <p>Price by floor Price</p>
                 </div>
                 <div className="my-3">
-                  <h1>{parseValuesToLocale(floorPriceNativeToken, '')} ETH</h1>
+                  <h1>
+                    {parseValuesToLocale(nft?.floorPriceFiat, CurrencyUSD)}
+                  </h1>
+                  {nft?.floorPriceNativeToken != 0 ? (
+                    <p>
+                      {parseValuesToLocale(nft?.floorPriceNativeToken, '') +
+                        ` ${nft?.nftNativeSymbol || ''}`}
+                    </p>
+                  ) : null}
                 </div>
               </>
             ) : null}
@@ -273,7 +294,6 @@ const DashboardNFT = () => {
                 <div className="py-2">{renderDescription()}</div>
               </>
             ) : null}
-            {/* <div className="py-2">{renderAbout()}</div> */}
           </>
         )}
       </div>
