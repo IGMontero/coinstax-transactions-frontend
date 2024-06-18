@@ -148,8 +148,11 @@ const NetworkDropdown = ({
             }}
           >
             {filteredNetworks?.map((network) => {
+
+              if (!network) return null;
+
               const displayValue =
-                network.totalValue !== undefined && network.totalValue !== null
+                network?.totalValue !== undefined && network.totalValue !== null
                   ? network.totalValue
                   : 0;
 
