@@ -25,7 +25,7 @@ import {
 
 //redux
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
 import { layoutModeTypes } from '../Components/constants/layout';
 import { setCurrentThemeCookie } from '../helpers/cookies_helper';
@@ -41,6 +41,7 @@ const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
   const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const networkType = useSelector(selectNetworkType);
 
   const [isOnlyAllNetwork, setIsOnlyAllNetwork] = useState(false);
@@ -303,6 +304,24 @@ const Layout = (props) => {
     }
   }, [token, address]);
 
+  useEffect(() => {
+    if (
+      !address &&
+      !token &&
+      !contractAddress &&
+      !pagesNotToDisplayAddress.includes(location.pathname)
+    ) {
+      navigate('/');
+    }
+  }, [
+    address,
+    token,
+    contractAddress,
+    location.pathname,
+    navigate,
+    pagesNotToDisplayAddress,
+  ]);
+
   return (
     <React.Fragment>
       <div id="layout-wrapper">
@@ -328,7 +347,10 @@ const Layout = (props) => {
                   loading={loading && !isInInterval}
                 />
               )}
-            {token && props.children}
+            {(token ||
+              contractAddress ||
+              pagesNotToDisplayAddress.includes(location.pathname)) &&
+              props.children}
 
             {isUnsupported ? (
               <UnsupportedPage />
