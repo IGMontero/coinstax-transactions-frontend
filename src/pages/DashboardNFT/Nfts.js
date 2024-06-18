@@ -61,7 +61,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   const [showFiatValues, setShowFiatValues] = useState(true);
   const [updatedAt, setUpdatedAt] = useState();
 
-  const totalFiatValue = parseValuesToLocale(data.totalValue || 0, CurrencyUSD);
+  const totalFiatValue = parseValuesToLocale(data?.totalValue || 0, CurrencyUSD);
 
   const handleChangeSymbol = () => {
     // setCurrencySymbol((prevSymbol) => (prevSymbol === 'ETH' ? '$' : 'ETH'));
