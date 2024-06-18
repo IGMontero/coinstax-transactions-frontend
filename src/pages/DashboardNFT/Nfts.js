@@ -147,7 +147,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
 
   let items = data?.items || data?.nfts || [];
   if (isDashboardPage) {
-    items = items.slice(0, 5);
+    items = items.slice(0, 4);
   } else {
     items = items.slice(0, itemsToShow);
   }
