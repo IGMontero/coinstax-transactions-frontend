@@ -141,7 +141,12 @@ const NetworkDropdown = ({
               className={`mdi mdi-chevron-down ${loading ? 'text-muted' : 'text-dark'} ms-2 fs-5`}
             ></i>
           </DropdownToggle>
-          <DropdownMenu className="dropdown-menu-end mt-2 ">
+          <DropdownMenu
+            className="dropdown-menu-end mt-2"
+            style={{
+              width: '220px',
+            }}
+          >
             {filteredNetworks?.map((network) => {
               const displayValue =
                 network.totalValue !== undefined && network.totalValue !== null
@@ -163,7 +168,7 @@ const NetworkDropdown = ({
                     className="d-flex align-items-center mt-0 py-2"
                   >
                     {renderNetworkIcon(network)}
-                    <div className="d-flex align-items-center flex-row">
+                    <div className="d-flex align-items-center flex-row w-100">
                       <div className="d-flex flex-column">
                         <div className="d-flex align-items-center">
                           <span className="fw-normal">{network.label}</span>
@@ -200,7 +205,9 @@ const NetworkDropdown = ({
                           )}
                         </div>
                       </div>
-                      {network.key === networkType && CheckSVG}
+                      <div className="ms-auto">
+                        {network.key === networkType && CheckSVG}
+                      </div>
                     </div>
                   </DropdownItem>
 
