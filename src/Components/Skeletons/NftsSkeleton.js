@@ -43,7 +43,7 @@ const NftsSkeleton = (props) => {
             <div
               key={index}
               style={{
-                maxWidth: '186px',
+                // maxWidth: '186px',
                 width: '100%',
                 height: '310px',
                 borderRadius: '10px',
