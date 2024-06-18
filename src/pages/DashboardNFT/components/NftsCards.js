@@ -34,7 +34,7 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
           const floorPrice = showFiatValues
             ? parseValuesToLocale(floorPriceFiat, CurrencyUSD)
             : parseValuesToLocale(floorPriceNativeToken) +
-            ` ${nft?.nativeSymbol || ''}`;
+              ` ${nft?.nativeSymbol || ''}`;
           const shouldShowUnsupported =
             !nft.logo || imageErrors[nft.contractAddress + nft.tokenId];
 
@@ -42,7 +42,7 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
             <div
               key={index}
               className="d-flex justify-content-center"
-              style={{ maxWidth: '186px' }}
+              // style={{ maxWidth: '186px' }}
             >
               <Card
                 onClick={() =>
