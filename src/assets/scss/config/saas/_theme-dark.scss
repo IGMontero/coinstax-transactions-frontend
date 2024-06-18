@@ -552,7 +552,7 @@
   .text-custom-address-dropdown{
     // font-size: 13px;
     margin-left: 0px;
-    max-width: 230px;
+    max-width: 190px;
   }
 }
 
@@ -560,7 +560,7 @@
   .text-custom-address-dropdown {
     // font-size: 12px;
     margin-left: 0px;
-    max-width: 210px;
+    max-width: 130px;
   }
 }
 
@@ -568,7 +568,7 @@
   .text-custom-address-dropdown{
     // font-size: 10px;
     margin-left: 0px;
-    max-width: 190px;
+    max-width: 120px;
   }
 }
 
@@ -785,11 +785,18 @@
     justify-content: flex-end !important;
     text-align: end !important;
     width: 100% !important;      
-    
-     
-    
   }
-  
+}
+
+
+// Dropdown Networks 
+
+.dropdown-menu-end {
+  transform: translate3d(-50px, 40px, 0px) !important;
+}
+
+.dropdown-menu.show {
+  transform: translate3d(-50px, 40px, 0px) !important;
 }
 
 
