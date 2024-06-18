@@ -166,13 +166,12 @@ const AddressWithDropdown = ({
               </div>
             )}
             {!isOnlyAllNetwork && (
-              // <div className="ms-2">
               <NetworkDropdown
+                isAdminPage={false}
                 filteredNetworks={filteredNetworks}
                 incompleteBlockchains={incompleteBlockchains}
                 loading={loading}
               />
-              // </div>
             )}
           </Col>
         </Col>
