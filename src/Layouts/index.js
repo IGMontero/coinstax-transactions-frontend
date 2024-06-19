@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import withRouter from '../Components/Common/withRouter';
 import { networks } from '../common/constants';
@@ -161,15 +161,18 @@ const Layout = (props) => {
     location.pathname.includes('blockchain-contracts') ||
     location.pathname.includes('user-addresses');
 
-  const pagesNotToDisplayAddress = [
-    '/login',
-    '/register',
-    '/forgot-password',
-    '/reset-password',
-    '/404',
-    '/blockchain-contracts',
-    '/user-addresses',
-  ];
+  const pagesNotToDisplayAddress = useMemo(
+    () => [
+      '/login',
+      '/register',
+      '/forgot-password',
+      '/reset-password',
+      '/404',
+      '/blockchain-contracts',
+      '/user-addresses',
+    ],
+    [],
+  );
 
   const fetchControllerRef = useRef(new AbortController());
   const fetchInterval = useRef(null);

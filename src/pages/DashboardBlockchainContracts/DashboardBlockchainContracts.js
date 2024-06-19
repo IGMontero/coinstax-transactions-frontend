@@ -11,6 +11,8 @@ import EditBlockChainContract from '../DashboardTransactions/HistorialComponents
 import BlockChainContractTable from '../../Components/Tables/BlockChainContractTable';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import NetworkDropdown from '../../Components/NetworkDropdown/NetworkDropdown';
+import { networks } from '../../common/constants';
+import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
@@ -151,7 +153,13 @@ const DashboardBlockchainContracts = () => {
       />
 
       <div className="d-flex my-5 justify-content-end">
-        <NetworkDropdown />
+        <NetworkDropdown
+          isAdminPage={true}
+          filteredNetworks={networks}
+          isOnlyAllNetwork={false}
+          incompleteBlockchains={[]}
+          loading={false}
+        />
       </div>
       <h3 className="">Blockchain Contracts</h3>
       <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">

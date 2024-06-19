@@ -791,12 +791,12 @@
 
 // Dropdown Networks 
 
-.dropdown-menu-end {
-  transform: translate3d(-50px, 40px, 0px) !important;
+.dropdown-menu-end#network-dropdown-menu {
+  transform: translate3d(-0px, 40px, 0px) !important;
 }
 
-.dropdown-menu.show {
-  transform: translate3d(-50px, 40px, 0px) !important;
+.dropdown-menu.show#network-dropdown-menu {
+  transform: translate3d(-0px, 40px, 0px) !important;
 }
 
 
