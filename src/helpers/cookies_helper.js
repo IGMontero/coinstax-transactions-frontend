@@ -11,18 +11,32 @@ export const saveTokenInCookies = (token) => {
     expires: 365,
     domain: cookiesDomain,
   });
+
+  // Save also in lcal storage for now.
+  localStorage.setItem('accessToken', token);
 };
 
 export const getTokenFromCookies = () => {
-  return Cookies.get('token', {
+  const cookieToken = Cookies.get('token', {
     domain: cookiesDomain,
   });
+
+  if (cookieToken) {
+    return cookieToken;
+  }
+
+  // Fallback to local storage
+  return localStorage.getItem('accessToken');
+
 };
 
 export const removeTokenFromCookies = () => {
   Cookies.remove('token', {
     domain: cookiesDomain,
   });
+
+  // Remove also from local storage
+  localStorage.removeItem('accessToken');
 };
 
 // App options
@@ -49,10 +63,10 @@ export const getUserSavedAddresses = () => {
     domain: cookiesDomain,
   })
     ? JSON.parse(
-        Cookies.get('addresses', {
-          domain: cookiesDomain,
-        }),
-      )
+      Cookies.get('addresses', {
+        domain: cookiesDomain,
+      }),
+    )
     : [];
 };
 
