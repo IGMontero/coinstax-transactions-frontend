@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import Skeleton from 'react-loading-skeleton';
 
 import {
@@ -21,6 +21,7 @@ const NetworkDropdown = ({
   filteredNetworks,
   incompleteBlockchains,
   loading,
+  isAdminPage,
 }) => {
   const dispatch = useDispatch();
   const networkType = useSelector(selectNetworkType);
@@ -143,8 +144,9 @@ const NetworkDropdown = ({
           </DropdownToggle>
           <DropdownMenu
             className="dropdown-menu-end mt-2"
+            id="network-dropdown-menu"
             style={{
-              width: '220px',
+              width: '240px',
             }}
           >
             {filteredNetworks?.map((network) => {
@@ -156,9 +158,9 @@ const NetworkDropdown = ({
                   ? network.totalValue
                   : 0;
 
-              const isIncomplete = incompleteBlockchains.includes(
-                network.blockchain,
-              );
+              const isIncomplete = isAdminPage
+                ? false
+                : incompleteBlockchains.includes(network.blockchain);
 
               const displayNftsValue =
                 network.nftsValue || network.nftsValue === 0;
@@ -177,7 +179,9 @@ const NetworkDropdown = ({
                           <span className="fw-normal">{network.label}</span>
                         </div>
 
-                        <div className="d-flex flex-row align-items-center">
+                        <div
+                          className={`d-${isAdminPage ? 'none' : 'flex'} flex-row align-items-center`}
+                        >
                           {TokenSVG}
                           <small>
                             {isIncomplete ? (
