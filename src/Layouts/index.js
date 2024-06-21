@@ -350,16 +350,21 @@ const Layout = (props) => {
                   loading={loading && !isInInterval}
                 />
               )}
-            {(token ||
-              contractAddress ||
-              pagesNotToDisplayAddress.includes(location.pathname)) &&
-              props.children}
-
-            {isUnsupported ? (
-              <UnsupportedPage />
-            ) : loading && !isInInterval ? null : isSuccessfullRequest ? (
-              props.children
-            ) : null}
+            {(() => {
+              if (token || contractAddress || pagesNotToDisplayAddress.includes(location.pathname)) {
+                return props.children;
+              } else if (isUnsupported) {
+                return <UnsupportedPage />;
+              } else if (!loading || isInInterval) {
+                if (isSuccessfullRequest) {
+                  return props.children;
+                } else {
+                  return null;
+                }
+              } else {
+                return null;
+              }
+            })()}
           </div>
           <Footer />
         </div>
