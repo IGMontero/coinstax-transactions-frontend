@@ -67,7 +67,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [debouncedDisableGetMore, setDebouncedDisableGetMore] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
 
+  const [allTransactionsProcessed, setAllTransactionsProcessed] = useState(false);
+
   const [refreshPreviewIntervals, setRefreshPreviewIntervals] = useState({});
+
+  console.log(selectedFilters, hasMoreData, data)
 
   const [loadingTransacions, setLoadingTransactions] = useState({});
   const loading = Object.values(loadingTransacions).some((loading) => loading);
@@ -112,7 +116,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       console.log(
         'Preview txs:',
-        data.filter((tx) => tx.preview === true).length,
+        data?.filter((tx) => tx.preview === true).length,
       );
 
       setHasPreview(hasPreview);
@@ -163,7 +167,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       clearTimeout(timerId);
 
-      const { parsed, unsupported, isProcessing, transactionsCount } = response;
+      const { parsed, unsupported, isProcessing, transactionsCount, allTransactionsProcessed } = response;
+
+      // Save that all transactions are processed
+      setAllTransactionsProcessed(allTransactionsProcessed);
+
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -372,9 +380,18 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     }, {});
   };
 
-  const groupedTransactions = data ? groupTxsByDate(data) : {};
+  const filteredTransactions = data?.filter ? data?.filter((transaction) => {
+    if (selectedFilters.length === 0) {
+      return true;
+    }
+    return selectedFilters.includes(transaction.blockchainAction);
+  }) : [];
 
-  const getMoreTransactions = async () => {
+  const groupedTransactions = filteredTransactions ? groupTxsByDate(filteredTransactions) : {};
+
+  const getMoreTransactions = async (
+    page,
+  ) => {
     // fetchControllerRef.current.abort();
     // fetchControllerRef.current = new AbortController();
     const signal = abortControllersByBlockchain.current[networkType].signal;
@@ -388,7 +405,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         [fecthId]: true,
       }));
 
-      const nextPage = currentPage + 1;
+      const nextPage =
+        page ||
+        currentPage + 1;
+
+      console.log('Next page:', nextPage);
 
       timerId = setTimeout(() => {
         setShowDownloadMessageInButton(true);
@@ -411,8 +432,14 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       console.log('Fetching more transactions:', response);
 
+
       clearTimeout(timerId);
-      const { parsed, unsupported, isProcessing } = response || {};
+      const { parsed, unsupported, isProcessing, allTransactionsProcessed } = response || {};
+
+
+      // Save that all transactions are processed
+      setAllTransactionsProcessed(allTransactionsProcessed);
+
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -426,18 +453,37 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         setIsProcessing(false);
       }
 
-      const trasactions = parsed || [];
+      const transactions = parsed || [];
 
-      if (trasactions.length === 0 && !isProcessing) {
+      console.log('Transactions:', transactions);
+
+      if (transactions.length === 0 && !isProcessing) {
         setHasMoreData(false);
       } else {
-        setData((prevData) => [...prevData, ...trasactions]);
+        setData((prevData) => [...prevData, ...transactions]);
         setCurrentPage(nextPage);
       }
 
+      // Edge case: if there is a filter applied and no transactions with that filter are found,
+      // trigger a fetch for next page.
+
+      // if (selectedFilters?.length > 0) {
+      //   // If no transactions are found with the selected filters, trigger a fetch for the next page.
+      //   const hasTransactionsWithSelectedFilters = transactions.some(
+      //     (transaction) => selectedFilters.includes(transaction.blockchainAction),
+      //   );
+
+      //   if (!hasTransactionsWithSelectedFilters) {
+      //     // setShowDownloadMessageInButton(true);
+      //     setCurrentPage(page ? page + 1 : currentPage + 1);
+      //     console.log('No transactions found with selected filters, fetching next page');
+      //     return getMoreTransactions(nextPage);
+      //   }
+      // }
+
       // TODO: ADD INTERVAL TO REFRESH PREVIEW TRANSACTIONS
 
-      const hasPreview = trasactions.some(
+      const hasPreview = transactions.some(
         (transaction) => transaction.preview === true,
       );
 
@@ -688,7 +734,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -706,9 +752,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -747,7 +792,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         ) : (
           <Button
             disabled={loading || debouncedDisableGetMore || unsupportedAddress}
-            onClick={getMoreTransactions}
+            onClick={() => getMoreTransactions()}
             color="soft-light"
             style={{ borderRadius: '10px', border: '.5px solid grey' }}
           >
@@ -959,7 +1004,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-          // style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1048,11 +1093,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       {!isInitialLoad && renderInfoTransactions()}
 
-      {Object.keys(groupedTransactions).length > 0 && (
+      {data.length > 0 && (
         <Col
           lg={12}
           className="position-relative "
-          // style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions
@@ -1061,6 +1106,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               transactions={groupedTransactions[date]}
               onRefresh={fetchData}
               setTransactions={setData}
+              actionFilter={selectedFilters?.[0]}
             />
           ))}
           {!isDashboardPage && hasMoreData && renderGetMoreButton()}
