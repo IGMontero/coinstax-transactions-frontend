@@ -29,6 +29,8 @@ import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
 
+const internalPaginationPageSize = 10;
+
 const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   // #region HOOKS
   const inputRef = useRef(null);
@@ -66,12 +68,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [hasAppliedFilters, setHasAppliedFilters] = useState(false);
   const [debouncedDisableGetMore, setDebouncedDisableGetMore] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
+  const [currentEndIndex, setCurrentEndIndex] = useState(15);
 
   const [allTransactionsProcessed, setAllTransactionsProcessed] = useState(false);
 
   const [refreshPreviewIntervals, setRefreshPreviewIntervals] = useState({});
-
-  console.log(selectedFilters, hasMoreData, data)
 
   const [loadingTransacions, setLoadingTransactions] = useState({});
   const loading = Object.values(loadingTransacions).some((loading) => loading);
@@ -128,6 +129,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       setHasPreview(false);
     };
   }, [data]);
+
 
   // #region FETCH DATA
   const fetchData = async ({ abortSignal }) => {
@@ -191,6 +193,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       setData(transactions);
       setTotalTransactions(transactionsCount);
       setHasMoreData(transactions.length > 0 || isProcessing);
+      setCurrentEndIndex(internalPaginationPageSize);
 
       const hasPreview = transactions.some(
         (transaction) => transaction.preview === true,
@@ -217,68 +220,67 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     }
   };
 
-  const startRefreshPreviewPageInterval = (pageIndex) => {
-    // if (!isUserInTransactionsHistoryPage) {
-    //   return;
-    // }
-    // fetchControllerRef.current.abort();
-    // fetchControllerRef.current = new AbortController();
-    // const signal = fetchControllerRef.current.signal;
-
+  const startRefreshPreviewPageInterval = async (pageIndex) => {
     const signal = abortControllersByBlockchain.current[networkType].signal;
 
+    // Add a flag to track the request status
+    let isRequestInProgress = false;
+
     const interval = setInterval(async () => {
+
+      // Wait 5 seconds before making the next request
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+
       console.log('Running interval for page', pageIndex);
 
-      // Check if user is in this page still
+      // Check if a request is already in progress
+      if (isRequestInProgress) {
+        console.log('Previous request still in progress for page', pageIndex);
+        return;
+      }
 
-      // const isUserInTransactionsHistoryPage =
-      //   location.pathname.includes('history');
+      // Set the flag to indicate that a request is in progress
+      isRequestInProgress = true;
 
-      // if (!isUserInTransactionsHistoryPage) {
-      //   clearInterval(interval);
-      //   console.log('Clearing interval for page', pageIndex);
-      //   return;
-      // }
-
-      await updateTransactionsPreview({
-        address,
-        debouncedSearchTerm,
-        selectedFilters,
-        includeSpam,
-        selectedAssets,
-        currentPage: pageIndex,
-        setData,
-        networkType,
-        data,
-        signal,
-        dispatch,
-        pagesChecked: pagesCheckedRef.current,
-        onEnd: () => {
-          clearInterval(interval);
-          setRefreshPreviewIntervals((prevIntervals) => ({
-            ...prevIntervals,
-            [pageIndex]: null,
-          }));
-          console.log('Clearing interval for page', pageIndex);
-        },
-        onError: (err) => {
-          console.error('Error updating preview:', err);
-          clearInterval(interval);
-          setRefreshPreviewIntervals((prevIntervals) => ({
-            ...prevIntervals,
-            [pageIndex]: null,
-          }));
-          console.log(
-            'Clearing interval for page because of an error',
-            pageIndex,
-            err,
-          );
-        },
-      });
+      try {
+        await updateTransactionsPreview({
+          address,
+          debouncedSearchTerm,
+          selectedFilters,
+          includeSpam,
+          selectedAssets,
+          currentPage: pageIndex,
+          setData,
+          networkType,
+          data,
+          signal,
+          dispatch,
+          pagesChecked: pagesCheckedRef.current,
+          onEnd: () => {
+            clearInterval(interval);
+            setRefreshPreviewIntervals((prevIntervals) => ({
+              ...prevIntervals,
+              [pageIndex]: null,
+            }));
+            console.log('Clearing interval for page', pageIndex);
+          },
+          onError: (err) => {
+            console.error('Error updating preview:', err);
+            clearInterval(interval);
+            setRefreshPreviewIntervals((prevIntervals) => ({
+              ...prevIntervals,
+              [pageIndex]: null,
+            }));
+            console.log('Clearing interval for page because of an error', pageIndex, err);
+          },
+        });
+      } catch (error) {
+        console.error('Error during updateTransactionsPreview call:', error);
+      } finally {
+        // Reset the flag to indicate that the request has completed
+        isRequestInProgress = false;
+      }
     }, 5000);
-
-    // TODO: WHEN NO MORE TXS ARE PREVIEW, CLEAR INTERVAL.
 
     setRefreshPreviewIntervals((prevIntervals) => ({
       ...prevIntervals,
@@ -380,14 +382,53 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     }, {});
   };
 
-  const filteredTransactions = data?.filter ? data?.filter((transaction) => {
-    if (selectedFilters.length === 0) {
-      return true;
+  const getFilteredTransactions = (txs) => {
+    if (!txs || !Array.isArray(txs)) {
+      return [];
     }
-    return selectedFilters.includes(transaction.blockchainAction);
-  }) : [];
 
-  const groupedTransactions = filteredTransactions ? groupTxsByDate(filteredTransactions) : {};
+    let filteredTxs = txs;
+
+    if (selectedFilters.length > 0) {
+      filteredTxs = txs.filter((tx) => selectedFilters.includes(tx.blockchainAction));
+    }
+
+    if (selectedAssets !== 'All Assets') {
+      if (selectedAssets === 'Tokens') {
+        // Txs where isNft is false
+        filteredTxs = txs.filter((tx) => {
+          const hasNftLedger = tx.ledgers.some((ledger) => ledger.isNft);
+          const isNft = tx.isNft;
+          return !hasNftLedger && !isNft;
+        })
+      } else if (selectedAssets === 'NFTs') {
+        // Txs where isNft is true
+        filteredTxs = txs.filter((tx) => {
+          // Look for txs that have a nft ledger. i.e ledger where isNft is true
+          const hasNftLedger = tx.ledgers.some((ledger) => ledger.isNft);
+          const isNft = tx.isNft;
+          return hasNftLedger || isNft;
+        });
+      }
+    }
+
+    if (includeSpam === false) {
+      filteredTxs = filteredTxs.filter((tx) => !tx.isSpam);
+    }
+
+    return filteredTxs;
+  };
+
+
+
+  // const filteredTransactions = getFilteredTransactions(data)
+
+  // const groupedTransactions = filteredTransactions ? groupTxsByDate(filteredTransactions) : {};
+
+
+  const filteredTransactions = getFilteredTransactions(data);
+  const paginatedTransactions = filteredTransactions.slice(0, currentEndIndex);
+  const groupedTransactions = paginatedTransactions ? groupTxsByDate(paginatedTransactions) : {};
 
   const getMoreTransactions = async (
     page,
@@ -462,6 +503,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       } else {
         setData((prevData) => [...prevData, ...transactions]);
         setCurrentPage(nextPage);
+        setCurrentEndIndex((prevEndIndex) => prevEndIndex + internalPaginationPageSize); // Update internal pagination index
       }
 
       // Edge case: if there is a filter applied and no transactions with that filter are found,
@@ -503,6 +545,15 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     }
   };
 
+  // * For internal pagination
+  const loadMoreTransactions = () => {
+    if (currentEndIndex < filteredTransactions.length) {
+      setCurrentEndIndex((prevEndIndex) => prevEndIndex + 15);
+    } else {
+      getMoreTransactions();
+    }
+  };
+
   // #region HANDLERS
   const handleClearAllFilters = () => {
     setSelectedFilters([]);
@@ -519,6 +570,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const handleAssetChange = (asset) => {
     setCurrentPage(0);
     setSelectedAssets(asset);
+    setCurrentEndIndex(internalPaginationPageSize); // Reset internal pagination
   };
 
   const handleShowTransactionFilterMenu = (e) => {
@@ -535,6 +587,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     }
     setSelectedFilters(updatedFilters);
     setCurrentPage(0);
+    setCurrentEndIndex(internalPaginationPageSize); // Reset internal pagination
 
     setHasAppliedFilters(true);
   };
@@ -626,6 +679,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const handleDeselectFilter = async (filterName) => {
     const updatedFilters = selectedFilters.filter((f) => f !== filterName);
     setSelectedFilters(updatedFilters);
+    setCurrentEndIndex(internalPaginationPageSize); // Reset internal pagination
 
     const fecthId = Date.now();
 
@@ -656,11 +710,13 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     const value = e.target.value;
     setSearchTerm(value);
     setHasAppliedFilters(true);
+    setCurrentEndIndex(internalPaginationPageSize); // Reset internal pagination
   };
 
   const handleClearSearch = () => {
     setSearchTerm('');
     setHasAppliedFilters(false);
+    setCurrentEndIndex(internalPaginationPageSize); // Reset internal pagination
   };
 
   // const handleResetFilters = () => {
@@ -673,6 +729,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     const checked = e.target.checked;
     setIncludeSpam(checked);
     setCurrentPage(0);
+    setCurrentEndIndex(internalPaginationPageSize); // Reset internal pagination
   };
 
   // #region RENDER FUNCTIONS
@@ -790,9 +847,15 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         {unsupportedAddress ? (
           <h6 className="text-danger">Unsupported Address</h6>
         ) : (
+          // <Button
+          //   disabled={loading || debouncedDisableGetMore || unsupportedAddress}
+          //   onClick={() => getMoreTransactions()}
+          //   color="soft-light"
+          //   style={{ borderRadius: '10px', border: '.5px solid grey' }}
+          // >
           <Button
             disabled={loading || debouncedDisableGetMore || unsupportedAddress}
-            onClick={() => getMoreTransactions()}
+            onClick={loadMoreTransactions}
             color="soft-light"
             style={{ borderRadius: '10px', border: '.5px solid grey' }}
           >
