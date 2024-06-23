@@ -181,33 +181,7 @@ const DashboardNFT = () => {
     );
   };
 
-  const renderAbout = () => {
-    return (
-      <>
-        <hr />
-        <div className="my-1">
-          <h4 className="mb-4">About Bored Milady Maker</h4>
-          <p>
-            Bored Milady Maker is a collection of 6,911 generative pfpNFT's in a
-            neochibi aesthetic inspired by street style tribes that infected the
-            apes with Network Spirituality.
-          </p>
-          <div className="d-flex align-items-center">
-            <p className="cursor-pointer text-primary d-flex align-items-center m-0">
-              <span className=" text-hover-underline">Opensea</span>{' '}
-              <i className="ri-arrow-right-up-line  fs-4"></i>{' '}
-            </p>
-            <p className="cursor-pointer ms-4 text-primary d-flex align-items-center m-0">
-              <span className=" text-hover-underline">Etherscan</span>{' '}
-              <i className="ri-arrow-right-up-line  fs-4"></i>{' '}
-            </p>
-          </div>
-        </div>{' '}
-      </>
-    );
-  };
-
-  document.title = `${name || 'NFTs | Chain Glance'}  ${'-' + collectionName || ''}`;
+  document.title = `${name || 'NFTs'}  ${'- ' + collectionName || ''} | Chain Glance`;
 
   return (
     <React.Fragment>
