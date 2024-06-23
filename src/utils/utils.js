@@ -326,7 +326,11 @@ export const updateTransactionsPreview = async ({
         const parsed = response?.parsed;
 
         if (!parsed || parsed.length === 0) {
-          return;
+          // Finish the process if there are no transactions
+          if (onEnd) {
+            onEnd();
+          }
+          return
         }
 
         // Verify if all transactions are not in preview mode

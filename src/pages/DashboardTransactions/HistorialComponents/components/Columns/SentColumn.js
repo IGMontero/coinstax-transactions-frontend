@@ -66,7 +66,7 @@ const SentColumn = ({ transaction }) => {
         setHasError(true);
       }
     }
-  }, [transaction, negativeLedgers?.logo, isPreview]);
+  }, [negativeLedgers?.logo, isPreview]);
 
   const handleImageError = () => {
     // If there is an error and we are in preview, show placeholder
