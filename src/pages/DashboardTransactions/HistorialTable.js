@@ -14,6 +14,7 @@ import {
 } from 'reactstrap';
 import {
   formatDateToLocale,
+  formatTransactionNotFoundMessage,
   getSelectedAssetFilters,
   updateTransactionsPreview,
 } from '../../utils/utils';
@@ -864,12 +865,21 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               {totalTransactions > 0 && buttonSeeMore('history', 'Activity')}
             </>
           ) : (
-            <h1>No Results Found</h1>
+            <h1>
+              {selectedFilters
+                ? formatTransactionNotFoundMessage(
+                    selectedFilters.toString().toLowerCase().split(','),
+                    selectedAssets,
+                  )
+                : `No Transactions Found`}
+            </h1>
           )}
         </div>
       </Col>
     );
   };
+
+  console.log('Selected assets ', selectedAssets);
 
   const renderInfoTransactions = () => {
     return (
