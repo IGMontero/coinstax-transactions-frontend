@@ -148,6 +148,33 @@ export const capitalizeFirstLetter = (string) => {
 
   return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 };
+export const formatTransactionNotFoundMessage = (filters, selectedAssets) => {
+  if (!filters || filters.length === 0) {
+    return 'No Transactions Found';
+  }
+
+  let message = 'No ';
+  let assetType =
+    selectedAssets && selectedAssets !== 'All Assets'
+      ? ` ${selectedAssets}`
+      : '';
+
+  if (filters.length === 2) {
+    message += `${capitalizeFirstLetter(filters[0])} and ${capitalizeFirstLetter(filters[1])}${assetType} Transactions Found`;
+  } else if (filters.length > 2) {
+    const allButLast = filters
+      .slice(0, -1)
+      .map(capitalizeFirstLetter)
+      .join(', ');
+    const last = capitalizeFirstLetter(filters[filters.length - 1]);
+    message += `${allButLast}, and ${last}${assetType} Transactions Found`;
+  } else {
+    // When there is only one filter
+    message += `${capitalizeFirstLetter(filters[0])}${assetType} Transactions Found`;
+  }
+
+  return message;
+};
 
 export const parseValuesToLocale = (
   value,
