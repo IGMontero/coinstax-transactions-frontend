@@ -14,6 +14,7 @@ import {
 } from 'reactstrap';
 import {
   formatDateToLocale,
+  formatTransactionNotFoundMessage,
   getSelectedAssetFilters,
   updateTransactionsPreview,
 } from '../../utils/utils';
@@ -977,6 +978,14 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
             </>
           ) : (
             <h1>{finalMessage}</h1>
+            // <h1>
+            //   {selectedFilters
+            //     ? formatTransactionNotFoundMessage(
+            //         selectedFilters.toString().toLowerCase().split(','),
+            //         selectedAssets,
+            //       )
+            //     : `No Transactions Found`}
+            // </h1>
           )}
         </div>
       </Col>
