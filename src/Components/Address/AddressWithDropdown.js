@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Col,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Row,
+  Spinner,
   UncontrolledDropdown,
 } from 'reactstrap';
 import { useParams } from 'react-router-dom';
@@ -11,8 +14,14 @@ import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAddressName } from '../../slices/addressName/reducer';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
+import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
 
-const AddressWithDropdown = () => {
+const AddressWithDropdown = ({
+  filteredNetworks,
+  isOnlyAllNetwork,
+  incompleteBlockchains,
+  loading,
+}) => {
   const { address } = useParams();
   const dispatch = useDispatch();
 
@@ -89,13 +98,14 @@ const AddressWithDropdown = () => {
 
   const handleRenameAddress = (value, newName) => {
     dispatch(setAddressName({ value, label: newName || null }));
-    // Swal.fire('Updated!', 'Your wallet has been renamed.', 'success');
   };
 
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
-        <h4 className="mb-0 ms-3">{formattedAddressLabel}</h4>
+        <h4 className="mb-0 ms-3  text-custom-address-dropdown ">
+          {formattedAddressLabel}
+        </h4>
         <UncontrolledDropdown className="card-header-dropdown">
           <DropdownToggle tag="a" className="text-reset" role="button">
             <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
@@ -105,19 +115,19 @@ const AddressWithDropdown = () => {
               className="d-flex align-items-center"
               onClick={toggleQrModal}
             >
-              <i className="ri-qr-code-line fs-2 me-2"></i>
-              <span className="fw-semibold">Show QR code</span>
+              <i className="ri-qr-code-line fs-4 me-2"></i>
+              <span className="fw-normal">Show QR code</span>
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
               onClick={(e) => handleCopy(e, address)}
             >
               {isCopied ? (
-                <i className="ri-check-line fs-2 me-2"></i>
+                <i className="ri-check-line fs-4 me-2"></i>
               ) : (
-                <i className="ri-file-copy-line fs-2 me-2"></i>
+                <i className="ri-file-copy-line fs-4 me-2"></i>
               )}
-              <span className="fw-semibold">Copy Address</span>
+              <span className="fw-normal">Copy Address</span>
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
@@ -128,8 +138,8 @@ const AddressWithDropdown = () => {
                 })
               }
             >
-              <i className="ri-pencil-line fs-2 me-2"></i>
-              <span className="fw-semibold">Rename</span>
+              <i className="ri-pencil-line fs-4 me-2"></i>
+              <span className="fw-normal">Rename</span>
             </DropdownItem>
           </DropdownMenu>
         </UncontrolledDropdown>
@@ -144,7 +154,28 @@ const AddressWithDropdown = () => {
         toggleQrModal={toggleQrModal}
         addressTitle={address}
       />
-      <div className="mt-5">{renderAddressWithDropdown()}</div>
+      <div className="mt-5">
+        <Col className="col-12 d-flex justify-content-between align-items-center">
+          <Col className="col-8 d-flex justify-content-start align-items-center ">
+            {renderAddressWithDropdown()}
+          </Col>
+          <Col className="col-4 d-flex justify-content-end align-items-center ">
+            {loading && (
+              <div className="d-flex align-items-center me-2">
+                <Spinner size="md" color="primary" />
+              </div>
+            )}
+            {!isOnlyAllNetwork && (
+              <NetworkDropdown
+                isAdminPage={false}
+                filteredNetworks={filteredNetworks}
+                incompleteBlockchains={incompleteBlockchains}
+                loading={loading}
+              />
+            )}
+          </Col>
+        </Col>
+      </div>
     </div>
   );
 };

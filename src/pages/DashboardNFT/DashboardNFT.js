@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Button, Col, Row } from 'reactstrap';
-import { formatIdTransaction, parseValuesToLocale } from '../../utils/utils';
+import { Col, Row } from 'reactstrap';
+import {
+  CurrencyUSD,
+  capitalizeFirstLetter,
+  formatIdTransaction,
+  parseValuesToLocale,
+} from '../../utils/utils';
 import { getNftsByContractAddress } from '../../slices/transactions/thunk';
 import { useDispatch } from 'react-redux';
-import Swal from 'sweetalert2';
 
 const DashboardNFT = () => {
   const { contractAddress } = useParams();
@@ -13,7 +17,7 @@ const DashboardNFT = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState('');
-
+  const [nft, setNft] = useState({});
   const [description, setDescription] = useState('');
   const [attributes, setAttributes] = useState([]);
   const [collectionLogo, setCollectionLogo] = useState('');
@@ -26,18 +30,18 @@ const DashboardNFT = () => {
 
   const [details, setDetails] = useState([]);
 
-  const [floorPriceNativeToken, setFloorPriceNativeToken] = useState(0);
   const [symbol, setSymbol] = useState('');
 
   const queryParams = new URLSearchParams(location.search);
   const tokenId = queryParams.get('tokenId');
+  const blockchain = queryParams.get('blockchain');
 
   const fetchNftByContractAddress = async () => {
     try {
       setLoading(true);
       const response = await dispatch(
         getNftsByContractAddress({
-          blockchain: 'ethereum',
+          blockchain,
           contractAddress,
           tokenId,
         }),
@@ -51,16 +55,23 @@ const DashboardNFT = () => {
         }
         return;
       } else {
+        setNft(res);
         setCollectionLogo(res.collection.logo);
         setCollectionName(res.collection.name);
         setLogo(res.logo);
         setName(res.name);
         setOwnerAddress(res.ownerAddress);
-        setFloorPriceNativeToken(res.floorPriceNativeToken);
+        // setFloorPriceNativeToken(res.floorPriceNativeToken);
         setSymbol(res.symbol);
         setAttributes(res.metadata.attributes);
         setDescription(res.description);
-        setDetails(['Network', 'Ethereum']);
+        setDetails([
+          'Network',
+          `${blockchain === 'bnb'
+            ? 'BNB Chain'
+            : capitalizeFirstLetter(blockchain)
+          }`,
+        ]);
       }
       setLoading(false);
     } catch (error) {
@@ -83,15 +94,6 @@ const DashboardNFT = () => {
     return (
       <div className="card mt-4 p-2 rounded">
         <div className="d-flex align-items-center ">
-          {/* <img
-            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAAAXNSR0IArs4c6QAAA5NJREFUeF7t3SGuHUcUhOF5ODTAICAoezCNrGwh3NRrMPIKAkzDswkvxDAKyAbMIsWL+CyVjvw/XtPn1vmnenpu334v//398/8P/L16+yuok6oD//75iS7xEgDk31wcAPMWbAsIgK3/89EDYN6CbQEBsPV/PnoAzFuwLSAAtv7PRw+AeQu2BQTA1v/56AEwb8G2gADY+j8fPQDmLdgWEABb/+ejB8C8BdsCAmDr/3x0BuCP17/RfoAPP/xEJrz/8g/pr4vX/r0EwBahACgBiEBN0BKA7HdxCVACEEUlANm3F5cAJQBRWAKQfXtxCVACEIUlANm3F5cAJQBRWAKQfXtxCVACEIUlANm3F5cAJQBRWAKQfXvxPAF+fPOW9gMoge/++kxdWJ9PoBsyPv7+C31+BeglAMj/JwBwDi8BSgC6BZsCbEteUwDh9zQF9BBohzT1ENgqgDKoVcD4mLpWAa0C6A5uCmgKIICaApoCCKCWgWRfy8CnZWDLQLqHehXcq2ACqFfBvQomgFR8/j1Ax8UrAlu9Atj/C9j2j0cPALbw9gUC4Hb/uPoAYAtvXyAAbvePqw8AtvD2BQLgdv+4+gBgC29fIABu94+rDwC28PYFAuB2/7j6AGALb18gAG73j6sPALbw9gUC4Hb/uHoGQI+LX2/p0j2J2gHdlq0N1N8V8GnhAWBbsgIA9/WXALaptATAOaApYPzTrhKgBMB72OQlQAlABPUQ2EMgAdQyEM8nIPef52kKaAoghpoCmgIIoKaApgACqBdBZF/PAE/fBfRdAN1D+vv+3gT2JpAAVPH5ZeD6uHhtwPeuVwDnp4R97w3Uzx8A6uBxfQAcb6CWHwDq4HF9ABxvoJYfAOrgcX0AHG+glh8A6uBxfQAcb6CWHwDq4HF9ABxvoJYfAOrgcX0AHG+glh8A6uBxfQAcb6CWzwDo+QD6AVSvW9J0fN2Vq+OrnjeFagGqDwBzMADMv6cEQANVXgKYgyWA+VcCoH8sLwHMwhLA/CsB0D+WlwBmYQlg/pUA6B/LSwCzsAQw/0oA9I/lJYBZWAKYfyUA+sfyEsAsLAHMvxIA/WN5CWAWcgLohoT1CR9mn6vX/gWA95CuEADjY96oe99AHAABQBjpFNoUQPa7uAQoAYiiEoDs24tLgBKAKCwByL69uAQoAYjCEoDs24tLgBKAKCwByL69uAQoAYjCEoDs24tLgBKAKNQE+Arayrsu/JzeUgAAAABJRU5ErkJggg=="
-            alt="NFT"
-            style={{
-              borderRadius: '20%',
-              height: '30px',
-              width: 'auto',
-            }}
-          /> */}
           <h6 className="m-0 ms-3 py-2">
             Viewing {formatIdTransaction(ownerAddress, 4, 4)} balances
           </h6>
@@ -151,6 +153,18 @@ const DashboardNFT = () => {
   };
 
   const renderDescription = () => {
+    // return (
+    //   <div
+    //     // className="d-flex"
+    //     style={{
+    //       whiteSpace: 'pre-wrap',
+    //     }}
+    //     dangerouslySetInnerHTML={{
+    //       __html: description,
+    //     }}
+    //   ></div>
+    // );
+
     const segments = description.split('\n\n');
     const formattedDescription = segments.map((segment, index) => (
       <React.Fragment key={index}>
@@ -167,33 +181,7 @@ const DashboardNFT = () => {
     );
   };
 
-  const renderAbout = () => {
-    return (
-      <>
-        <hr />
-        <div className="my-1">
-          <h4 className="mb-4">About Bored Milady Maker</h4>
-          <p>
-            Bored Milady Maker is a collection of 6,911 generative pfpNFT's in a
-            neochibi aesthetic inspired by street style tribes that infected the
-            apes with Network Spirituality.
-          </p>
-          <div className="d-flex align-items-center">
-            <p className="cursor-pointer text-primary d-flex align-items-center m-0">
-              <span className=" text-hover-underline">Opensea</span>{' '}
-              <i className="ri-arrow-right-up-line  fs-4"></i>{' '}
-            </p>
-            <p className="cursor-pointer ms-4 text-primary d-flex align-items-center m-0">
-              <span className=" text-hover-underline">Etherscan</span>{' '}
-              <i className="ri-arrow-right-up-line  fs-4"></i>{' '}
-            </p>
-          </div>
-        </div>{' '}
-      </>
-    );
-  };
-
-  document.title = `${name ? name : 'NFTs'} - ${collectionName || ''}`;
+  document.title = `${name || 'NFTs'}  ${'- ' + collectionName || ''} | Chain Glance`;
 
   return (
     <React.Fragment>
@@ -231,13 +219,21 @@ const DashboardNFT = () => {
             <div className="my-3">
               <h1>{name}</h1>
             </div>
-            {floorPriceNativeToken != 0 ? (
+            {nft?.floorPriceFiat != 0 ? (
               <>
                 <div className="my-3">
                   <p>Price by floor Price</p>
                 </div>
                 <div className="my-3">
-                  <h1>{parseValuesToLocale(floorPriceNativeToken, '')} ETH</h1>
+                  <h1>
+                    {parseValuesToLocale(nft?.floorPriceFiat, CurrencyUSD)}
+                  </h1>
+                  {nft?.floorPriceNativeToken != 0 ? (
+                    <p>
+                      {parseValuesToLocale(nft?.floorPriceNativeToken, '') +
+                        ` ${nft?.nftNativeSymbol || ''}`}
+                    </p>
+                  ) : null}
                 </div>
               </>
             ) : null}
@@ -271,7 +267,6 @@ const DashboardNFT = () => {
                 <div className="py-2">{renderDescription()}</div>
               </>
             ) : null}
-            {/* <div className="py-2">{renderAbout()}</div> */}
           </>
         )}
       </div>

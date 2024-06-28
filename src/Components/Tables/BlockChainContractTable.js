@@ -27,7 +27,8 @@ import {
   setAllAsDirty,
 } from '../../slices/blockchainContracts/thunk';
 import Swal from 'sweetalert2';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 
 const BlockChainContractTable = ({
   contracts,
@@ -40,6 +41,8 @@ const BlockChainContractTable = ({
   errorMessageEdit,
 }) => {
   const dispatch = useDispatch();
+
+  const networkType = useSelector(selectNetworkType);
 
   const [loadingUpdateTrustedState, setLoadingUpdateTrustedState] =
     useState(false);
@@ -91,10 +94,10 @@ const BlockChainContractTable = ({
     setActiveEditId(null);
   };
 
-  const handleSetAllAsDirty = async (address) => {
+  const handleSetAllAsDirty = async (contract) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: `All transactions linked to address ${address} will be set as dirty.`,
+      text: `All transactions linked to address ${contract.Address} will be set as dirty.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Continue',
@@ -106,8 +109,8 @@ const BlockChainContractTable = ({
         const actionResult = await dispatch(
           setAllAsDirty({
             type: 'contracts',
-            blockchain: 'ethereum',
-            address,
+            networkType: contract.Blockchain,
+            address: contract.Address,
           }),
         );
 
@@ -121,7 +124,7 @@ const BlockChainContractTable = ({
           () => {
             Swal.fire(
               'Success',
-              `All transactions with address ${address} have been set as dirty.`,
+              `All transactions with address ${contract.Address} have been set as dirty.`,
               'success',
             );
 
@@ -143,7 +146,7 @@ const BlockChainContractTable = ({
     try {
       const actionResult = await dispatch(
         editBlockChainContract({
-          blockchain: 'ethereum',
+          networkType: contract.Blockchain,
           address: contract.Address,
           data: {
             IsERC20: !contract.IsERC20,
@@ -183,7 +186,7 @@ const BlockChainContractTable = ({
     try {
       const actionResult = await dispatch(
         editBlockChainContract({
-          blockchain: 'ethereum',
+          networkType: contract.Blockchain,
           address: contract.Address,
           data: {
             CoinGeckoId: newCoinGeckoId,
@@ -208,12 +211,12 @@ const BlockChainContractTable = ({
     }
   };
 
-  const handleSetAsDirty = async (address) => {
+  const handleSetAsDirty = async (contract) => {
     try {
       const actionResult = await dispatch(
         setBlockchainContractAsDirty({
-          blockchain: 'ethereum',
-          address,
+          networkType: contract.Blockchain,
+          address: contract.Address,
         }),
       );
 
@@ -226,7 +229,7 @@ const BlockChainContractTable = ({
         () => {
           Swal.fire(
             'Success',
-            `All transactions with address ${address} have been set as dirty.`,
+            `All transactions with address ${contract.Address} have been set as dirty.`,
             'success',
           );
 
@@ -258,7 +261,7 @@ const BlockChainContractTable = ({
         setLoading(true);
         const actionResult = await dispatch(
           deleteBlockchainContract({
-            blockchain: 'ethereum',
+            networkType: contract.Blockchain,
             address: contract.Address,
           }),
         );
@@ -300,7 +303,7 @@ const BlockChainContractTable = ({
       setUpdatingContractId(contract.Id);
       const actionResult = await dispatch(
         updateTrustedState({
-          blockchain: 'ethereum',
+          blockchain: contract.Blockchain,
           address: contract.Address,
           trustedState: state,
         }),
@@ -347,7 +350,7 @@ const BlockChainContractTable = ({
             <DropdownItem onClick={() => handleOpenModalEdit(contract)}>
               Edit
             </DropdownItem>
-            <DropdownItem onClick={() => handleSetAllAsDirty(contract.Address)}>
+            <DropdownItem onClick={() => handleSetAllAsDirty(contract)}>
               Set All Tx as Dirty
             </DropdownItem>
             <DropdownItem
@@ -355,7 +358,7 @@ const BlockChainContractTable = ({
             >
               Delete
             </DropdownItem>
-            <DropdownItem onClick={() => handleSetAsDirty(contract.Address)}>
+            <DropdownItem onClick={() => handleSetAsDirty(contract)}>
               Set as Dirty
             </DropdownItem>
           </DropdownMenu>,
@@ -681,7 +684,7 @@ const BlockChainContractTable = ({
             ))
           ) : (
             <tr>
-              <td colSpan="9" className="text-center">
+              <td colSpan="12" className="text-center">
                 <h4>No contracts found</h4>
               </td>
             </tr>

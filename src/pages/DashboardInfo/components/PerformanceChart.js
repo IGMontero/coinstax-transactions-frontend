@@ -3,7 +3,7 @@ import {
   fetchPerformance,
   fetchPerformanceToken,
 } from '../../../slices/transactions/thunk';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Col, Spinner } from 'reactstrap';
 import {
   CurrencyUSD,
@@ -12,25 +12,31 @@ import {
   parseValuesToLocale,
   calculatePercentageChange,
   filtersChart,
+  formatPercentageChange,
 } from '../../../utils/utils';
 import { Chart } from 'chart.js';
 import { useParams } from 'react-router-dom';
 import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
 import _ from 'lodash';
-import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
+import { selectNetworkType } from '../../../slices/networkType/reducer';
+import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
 
-const PerformanceChart = ({
-  address,
-  setIsUnsupported,
-  isUnsupported,
-  loading,
-  setLoading,
-}) => {
+const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
   const { token } = useParams();
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
+  const fetchControllerRef = useRef(new AbortController());
 
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  const networkType = useSelector(selectNetworkType);
+
+  const [loadingChart, setLoadingChart] = useState({});
+
+  const loading =
+    (isInitialLoad && !token) || Object.values(loadingChart).some((l) => l);
+  // const loading = true;
   const [activeFilter, setActiveFilter] = useState('one_week');
   const [isHovering, setIsHovering] = useState(false);
   const [cursorStyle, setCursorStyle] = useState('default');
@@ -40,7 +46,7 @@ const PerformanceChart = ({
     datasets: [
       {
         label: 'Performance',
-        data: [],
+        data: [0],
         fill: true,
         borderColor: '#0759BC',
         tension: 0.1,
@@ -113,7 +119,10 @@ const PerformanceChart = ({
               data.datasets[0].data,
             );
 
-            setSubtitle(percentageChange.toFixed(2));
+            const percentageChangeFormatted =
+              formatPercentageChange(percentageChange);
+
+            setSubtitle(percentageChangeFormatted);
             const date = new Date(data.labels[index]);
             setActiveDate(formatDateToLocale(date));
           }
@@ -178,20 +187,36 @@ const PerformanceChart = ({
 
   // #region Api Calls
 
-  const fetchAndSetData = (days) => {
-    setLoading(true);
+  const fetchAndSetData = (days, signal, applyDelay) => {
+    const fetchId = Date.now();
+    let timer;
+
     if (address) {
-      const params = days ? { address, days } : { address };
+      const params = days
+        ? { address, days, networkType, signal }
+        : { address, networkType, signal };
+      if (applyDelay) {
+        timer = setTimeout(() => {
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: true,
+          }));
+        }, 300);
+      } else {
+        setLoadingChart((prev) => ({
+          ...prev,
+          [fetchId]: true,
+        }));
+      }
       dispatch(fetchPerformance(params))
         .unwrap()
         .then((response) => {
+          clearTimeout(timer);
           const newLabels = response.total.map(
             (item) => new Date(item.calendarDate),
           );
           const newData = response.total.map((item) => {
-            // Min value is 0 for all points.
             const result = Math.max(0, item.value.quote);
-
             return result;
           });
           const { minValue, maxValue } = getMaxMinValues(newData);
@@ -205,45 +230,57 @@ const PerformanceChart = ({
           });
 
           const range = maxValue - minValue;
-          const numTicks = 2; // Adjust this value based on your preference
+          const numTicks = 2;
           const tolerance = range / 10;
           const allItemsAreIntegers = newData.every((item) =>
             Number.isInteger(item),
           );
-          // const stepSize = range / (numTicks - 1);
 
           let yAxesOptions;
 
-          // Only for 10000 days
-          yAxesOptions = {
-            min: minTick,
-            max: maxTick,
-            maxTicksLimit: 2,
-            // stepSize: stepSize,
-            autoSkip: true,
-            // stepSize: allItemsAreIntegers ? 1 : stepSize,
-            callback: function (value) {
-              if (allItemsAreIntegers) {
-                if (value === minValue || value === maxValue) {
-                  return parseValuesToLocale(value, CurrencyUSD);
+          if (newData.length === 0 || newData.every((val) => val === 0)) {
+            yAxesOptions = {
+              min: -1,
+              max: 1,
+              maxTicksLimit: 1,
+              autoSkip: false,
+              ticks: {
+                callback: function (value) {
+                  if (value === 0) {
+                    return parseValuesToLocale(value, CurrencyUSD);
+                  }
+                  return '';
+                },
+              },
+            };
+          } else {
+            yAxesOptions = {
+              min: minTick,
+              max: maxTick,
+              maxTicksLimit: 2,
+              autoSkip: true,
+              callback: function (value) {
+                if (allItemsAreIntegers) {
+                  if (value === minValue || value === maxValue) {
+                    return parseValuesToLocale(value, CurrencyUSD, true);
+                  }
+                } else {
+                  if (
+                    Math.abs(value - minValue) < tolerance ||
+                    Math.abs(value - maxValue) < tolerance
+                  ) {
+                    return parseValuesToLocale(value, CurrencyUSD, true);
+                  }
                 }
-              } else {
-                if (
-                  Math.abs(value - minValue) < tolerance ||
-                  Math.abs(value - maxValue) < tolerance
-                ) {
-                  return parseValuesToLocale(value, CurrencyUSD);
-                }
-              }
-              return ''; // Return empty string for other values
-            },
-          };
+                return '';
+              },
+            };
+          }
 
           setChartOptions((prevOptions) => ({
             ...prevOptions,
             scales: {
               ...prevOptions.scales,
-
               yAxes: [
                 {
                   ...prevOptions.scales.yAxes[0],
@@ -253,108 +290,133 @@ const PerformanceChart = ({
             },
           }));
 
-          setLoading(false);
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         })
         .catch((error) => {
+          clearTimeout(timer);
           console.error('Error fetching performance data:', error);
-          setLoading(false);
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
+        })
+        .finally(() => {
+          setIsInitialLoad(false);
         });
     }
   };
 
-  const fetchAndSetDataForToken = (days) => {
-    setLoading(true);
+  const fetchAndSetDataForToken = (days, signal, applyDelay) => {
+    const fetchId = Date.now();
+    let timer;
     if (address) {
-      const params = days ? { address, days } : { address };
+      const params = days ? { address, days, signal } : { address, signal };
+
+      if (applyDelay) {
+        timer = setTimeout(() => {
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: true,
+          }));
+        }, 300);
+      } else {
+        setLoadingChart((prev) => ({
+          ...prev,
+          [fetchId]: true,
+        }));
+      }
       dispatch(fetchPerformanceToken(params))
         .unwrap()
         .then((response) => {
-          if (response.unsupported) {
-            setIsUnsupported(true);
-          } else {
-            const uniqueDates = new Set();
-            const newLabels = [];
-            const newData = [];
+          clearTimeout(timer);
 
-            response.prices.forEach((item) => {
-              const date = new Date(item[0]);
-              // const dateString = date.toISOString();
-              // .split('T')[0];
+          const uniqueDates = new Set();
+          const newLabels = [];
+          const newData = [];
 
-              // if (!uniqueDates.has(dateString)) {
-              //   uniqueDates.add(dateString);
-              //   newLabels.push(dateString); // Push dateString if you want labels as YYYY-MM-DD or date for Date objects
-              //   newData.push(item[1]);
-              // }
+          response.prices.forEach((item) => {
+            const date = new Date(item[0]);
+            // const dateString = date.toISOString();
+            // .split('T')[0];
 
-              // Add all
-              newLabels.push(date);
-              newData.push(item[1]);
-            });
+            // if (!uniqueDates.has(dateString)) {
+            //   uniqueDates.add(dateString);
+            //   newLabels.push(dateString); // Push dateString if you want labels as YYYY-MM-DD or date for Date objects
+            //   newData.push(item[1]);
+            // }
 
-            const { minValue, maxValue } = getMaxMinValues(newData);
-            const minTick = minValue;
-            // - Math.abs(maxValue - minValue);
-            const maxTick = maxValue;
-            //  + Math.abs(maxValue - minValue);
+            // Add all
 
-            setChartData({
-              labels: newLabels, // Ensure the labels are Date objects if needed
-              datasets: [{ ...chartData.datasets[0], data: newData }],
-            });
+            newLabels.push(date);
+            newData.push(item[1]);
+          });
 
-            const range = maxValue - minValue;
-            const numTicks = 2; // Adjust this value based on your preference
-            const tolerance = 0.001; // Adjust as needed for your precision
+          const { minValue, maxValue } = getMaxMinValues(newData);
+          const minTick = minValue;
+          const maxTick = maxValue;
 
-            const stepSize = range / (numTicks - 1);
+          setChartData({
+            labels: newLabels,
+            datasets: [{ ...chartData.datasets[0], data: newData }],
+          });
 
-            setChartOptions((prevOptions) => ({
-              ...prevOptions,
-              scales: {
-                ...prevOptions.scales,
-                yAxes: [
-                  {
-                    ...prevOptions.scales.yAxes[0],
-                    ticks: {
-                      ...prevOptions.scales.yAxes[0].ticks,
-                      min: minTick,
-                      max: maxTick,
-                      maxTicksLimit: 2,
-                      // stepSize: stepSize,
-                      callback: function (value) {
-                        if (
-                          Math.abs(value - minValue) < tolerance ||
-                          Math.abs(value - maxValue) < tolerance
-                        ) {
-                          return parseValuesToLocale(value, CurrencyUSD);
-                        }
-                        return ''; // Return empty string for other values
-                      },
-                      // callback: (value, index, values) => {
-                      //   // Only display label for the highest value
-                      //   if (value === Math.max(...values)) {
-                      //     return `${value} (Highest)`;
-                      //   }
-                      //   return null;
-                      // },
+          const range = maxValue - minValue;
+          const numTicks = 2;
+          const tolerance = 0.001;
+
+          const stepSize = range / (numTicks - 1);
+
+          setChartOptions((prevOptions) => ({
+            ...prevOptions,
+            scales: {
+              ...prevOptions.scales,
+              yAxes: [
+                {
+                  ...prevOptions.scales.yAxes[0],
+                  ticks: {
+                    ...prevOptions.scales.yAxes[0].ticks,
+                    min: minTick,
+                    max: maxTick,
+                    maxTicksLimit: 2,
+                    callback: function (value) {
+                      if (
+                        Math.abs(value - minValue) < tolerance ||
+                        Math.abs(value - maxValue) < tolerance
+                      ) {
+                        return parseValuesToLocale(value, CurrencyUSD, true);
+                      }
+                      return '';
                     },
                   },
-                ],
-              },
-            }));
-          }
-          setLoading(false);
+                },
+              ],
+            },
+          }));
+
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         })
         .catch((error) => {
+          clearTimeout(timer);
           console.error('Error fetching performance data:', error);
-          setLoading(false);
+          setLoadingChart((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         });
     }
   };
 
   useEffect(() => {
     if (chartContainerRef.current) {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+      }
       const ctx = chartContainerRef.current.getContext('2d');
       chartInstanceRef.current = new Chart(ctx, {
         type: 'line',
@@ -381,14 +443,17 @@ const PerformanceChart = ({
         resizeObserver.disconnect();
       };
     }
-  }, [chartData, chartOptions, isUnsupported]);
+  }, [chartData, networkType, chartOptions, isUnsupported]);
 
   // #region Handlers
   const handleFilterForDays = (days, filterId) => {
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
     if (token) {
-      fetchAndSetDataForToken(days);
+      fetchAndSetDataForToken(days, signal, true);
     } else {
-      fetchAndSetData(days);
+      fetchAndSetData(days, signal, true);
     }
     setActiveFilter(filterId);
   };
@@ -396,24 +461,35 @@ const PerformanceChart = ({
   const updateValues = (index) => {
     const value = chartData.datasets[0].data[index];
     setTitle(parseValuesToLocale(value, CurrencyUSD));
+
     const percentageChange = calculatePercentageChange(
       index,
       chartData.datasets[0].data,
     );
 
-    setSubtitle(percentageChange.toFixed(2));
+    const percentageChangeFormatted = formatPercentageChange(percentageChange);
+
+    setSubtitle(percentageChangeFormatted);
     setActiveDate(formatDateToLocale(new Date(chartData.labels[index])));
   };
 
   // #region UseEffects
   useEffect(() => {
-    if (!token) {
-      fetchAndSetData();
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
+
+    if (token) {
+      fetchAndSetDataForToken(7, signal, false);
     } else {
-      fetchAndSetDataForToken(7);
+      fetchAndSetData(7, signal, false);
     }
-    handleFilterForDays(7, 'one_week');
-  }, [token, address]);
+    setActiveFilter('one_week');
+
+    return () => {
+      fetchControllerRef.current.abort();
+    };
+  }, [token, networkType, address]);
 
   useEffect(() => {
     if (!isHovering && chartData.datasets[0].data.length > 0) {
@@ -433,7 +509,7 @@ const PerformanceChart = ({
       }
       updateValues(closestIndex);
     }
-  }, [isHovering, chartData, showMessage]);
+  }, [isHovering, chartData, networkType, showMessage]);
 
   useEffect(() => {
     if (!token && chartData.datasets[0].data.length > 0) {
@@ -441,25 +517,29 @@ const PerformanceChart = ({
         chartData.datasets[0].data[chartData.datasets[0].data.length - 1];
       const firstValue = chartData.datasets[0].data[0];
       const percentageChange = ((lastValue - firstValue) / firstValue) * 100;
-      setSubtitle(percentageChange.toFixed(2));
+      const percentageChangeFormatted =
+        formatPercentageChange(percentageChange);
+      setSubtitle(percentageChangeFormatted);
       setDiferenceValue(lastValue - firstValue);
     }
-  }, [chartData, token]);
+  }, [chartData, networkType, token]);
 
   // #region Renders
   const renderFiltersButtons = () => {
     return (
-      <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-5 p-2">
-        {filtersChart.map((filter) => (
-          <FilterButtonsChart
-            key={filter.id}
-            {...filter}
-            loading={loading}
-            activeFilter={activeFilter}
-            handleFilterForDays={handleFilterForDays}
-          />
-        ))}
-      </div>
+      <>
+        <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-5 p-2">
+          {filtersChart.map((filter) => (
+            <FilterButtonsChart
+              key={filter.id}
+              {...filter}
+              loading={loading}
+              activeFilter={activeFilter}
+              handleFilterForDays={handleFilterForDays}
+            />
+          ))}
+        </div>
+      </>
     );
   };
 
@@ -477,9 +557,7 @@ const PerformanceChart = ({
       <Col xxl={12} className="mb-4">
         <div className="d-flex justify-content-start">
           <Col className="col-12" style={{ marginTop: '-2rem' }}>
-            <div className={loading ? 'pt-3' : ''}>
-              {!token && <AddressWithDropdown />}
-            </div>
+            <div className={loading ? (token ? ' mt-0 mb-4' : '') : ''}></div>
             <div className="border border-2 p-2 mt-4 rounded">
               <div
                 className="chart-container position-relative"
@@ -497,20 +575,19 @@ const PerformanceChart = ({
                       left: 0,
                       right: 0,
                       bottom: 0,
-                      // backgroundColor: 'rgba(0, 0, 0, 0.2)',
                       zIndex: 2,
-                      backdropFilter: 'blur(10px)',
                       height: '50vh',
                     }}
                   >
-                    <Spinner
-                      style={{ width: '3rem', height: '3rem' }}
-                      color="primary"
-                    />
+                    {/* <Spinner
+                      style={{ width: '4rem', height: '4rem' }}
+                      className=""
+                    /> */}
+                    <ChartSkeleton />
                   </div>
                 ) : (
                   <>
-                    <div className="d-flex flex-column align-items-start">
+                    <div className="d-flex flex-column align-items-start ">
                       <h1 className="d-flex align-items-center">{title}</h1>
                       <h5
                         className={`mb-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
@@ -523,18 +600,14 @@ const PerformanceChart = ({
                         )}
                       </h5>
                     </div>
-                    <span className="text-muted mb-3">
-                      {token && activeDate}
-                    </span>
+                    {token && (
+                      <span className="text-muted mb-3">{activeDate}</span>
+                    )}
                     <canvas ref={chartContainerRef} />
                   </>
                 )}
               </div>
-              <div
-                className={`mb-1 ${token && loading ? 'pt-3 mt-3 ' : 'pt-4 mt-4'}`}
-              >
-                {renderFiltersButtons()}
-              </div>{' '}
+              <div className={`mb-1 pt-4 mt-4`}>{renderFiltersButtons()}</div>{' '}
             </div>
           </Col>
         </div>

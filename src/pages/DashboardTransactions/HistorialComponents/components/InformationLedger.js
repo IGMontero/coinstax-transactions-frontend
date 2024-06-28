@@ -83,23 +83,36 @@ const InformationLedger = ({
     );
   };
 
-  const renderTransactionHash = (txHash) => {
+  const renderTransactionHash = (transaction) => {
+    const blockchainLinks = {
+      ethereum: 'https://etherscan.io/tx',
+      bnb: 'https://bscscan.com/tx',
+      polygon: 'https://polygonscan.com/tx',
+      optimism: 'https://optimistic.etherscan.io/tx',
+    };
+
+    const blockchain = transaction.blockchain;
+    const baseLink = blockchainLinks[blockchain];
+
     return (
       <div className="align-items-center d-flex">
         <div className="p-2 d-flex mx-2 flex-column">
           <strong>Transaction Hash:</strong>
           <div className="d-flex">
-            <span title={txHash} className=" d-flex align-items-center ">
-              {txHash ? (
+            <span
+              title={transaction.txHash}
+              className=" d-flex align-items-center "
+            >
+              {transaction.txHash ? (
                 <Link
-                  to={`https://etherscan.io/tx/${txHash}`}
+                  to={`${baseLink}/${transaction.txHash}`}
                   target="_blank"
                   onClick={(e) => e.stopPropagation()}
                   className="text-decoration-none text-muted  "
                 >
                   {' '}
                   <span className=" text-hover-dark  text-hover-underline">
-                    {formatIdTransaction(txHash, 4, 4)}
+                    {formatIdTransaction(transaction.txHash, 4, 4)}
                   </span>
                 </Link>
               ) : (
@@ -113,7 +126,7 @@ const InformationLedger = ({
         <div className="me-3">
           <button
             className="btn btn-light p-0  border-0 "
-            onClick={(e) => handleCopy(e, txHash, collapseId)}
+            onClick={(e) => handleCopy(e, transaction.txHash, collapseId)}
           >
             {copiedIndex === collapseId ? (
               <i className="ri-check-line mx-2 fs-4 text-dark"></i>
@@ -135,7 +148,7 @@ const InformationLedger = ({
 
           {renderFee(transaction.txSummary.fee)}
 
-          {renderTransactionHash(transaction.txHash)}
+          {renderTransactionHash(transaction)}
         </Col>
       </Row>
     </Col>

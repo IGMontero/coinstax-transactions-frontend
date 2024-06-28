@@ -6,6 +6,7 @@ import { fetchCoingeckoId } from '../../slices/tokens/thunk';
 import PerformanceChart from '../DashboardInfo/components/PerformanceChart';
 import About from './components/About';
 import Stats from './components/Stats';
+import Explorers from './components/Explorers';
 
 const DashboardTokens = () => {
   const navigate = useNavigate();
@@ -28,8 +29,6 @@ const DashboardTokens = () => {
 
       const res = response.payload;
 
-      console.log(res, 'res');
-
       if (res) {
         setData(res);
         setAddress(res.platforms?.ethereum);
@@ -50,7 +49,7 @@ const DashboardTokens = () => {
   }, [token]);
 
   useEffect(() => {
-    if (fetchData && fetchData.performance.unsupported) {
+    if (fetchData && fetchData.performance?.unsupported) {
       setIsUnsupported(true);
     } else {
       setIsUnsupported(false);
@@ -61,7 +60,7 @@ const DashboardTokens = () => {
 
   return (
     <React.Fragment>
-      <div className="page-content ">
+      <div className="">
         {loading ? (
           <div className="d-flex mt-5 justify-content-center align-items-center h-100vh">
             <Spinner style={{ width: '4rem', height: '4rem' }} />
@@ -128,13 +127,17 @@ const DashboardTokens = () => {
             </Col>
             {/* <Col className="col-12 my-5">
               <Tags />
-            </Col>
+            </Col>*/}
             <Col className="col-12 my-5">
-              <Explorers />
+              {data?.platforms ? (
+                <Explorers platforms={data?.platforms} />
+              ) : (
+                <Spinner style={{ width: '4rem', height: '4rem' }} />
+              )}
             </Col>
-            <Col className="col-12 my-5">
+            {/* <Col className="col-12 my-5">
               <History />
-            </Col> */}
+            </Col>  */}
           </>
         )}
       </div>

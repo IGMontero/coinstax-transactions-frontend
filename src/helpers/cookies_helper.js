@@ -5,16 +5,68 @@ const cookiesDomain = isDevelopment
   ? 'localhost'
   : `.${process.env.REACT_APP_ROOT_DOMAIN}`;
 
+// Token functions
+export const saveTokenInCookies = (token) => {
+  Cookies.set('token', token, {
+    expires: 365,
+    domain: cookiesDomain,
+  });
+
+  // Save also in lcal storage for now.
+  localStorage.setItem('accessToken', token);
+};
+
+export const getTokenFromCookies = () => {
+  const cookieToken = Cookies.get('token', {
+    domain: cookiesDomain,
+  });
+
+  if (cookieToken) {
+    return cookieToken;
+  }
+
+  // Fallback to local storage
+  return localStorage.getItem('accessToken');
+
+};
+
+export const removeTokenFromCookies = () => {
+  Cookies.remove('token', {
+    domain: cookiesDomain,
+  });
+
+  // Remove also from local storage
+  localStorage.removeItem('accessToken');
+};
+
+// App options
+export const getAppOptions = () => {
+  const defaultOptions = {
+    blockchain: 'ethereum',
+    hideSmallBalances: false,
+    hideZeroBalances: true,
+  };
+  const options = Cookies.get('appOptions');
+  return options ? JSON.parse(options) : defaultOptions;
+};
+
+export const setAppOptions = (options) => {
+  Cookies.set('appOptions', JSON.stringify(options), {
+    domain: cookiesDomain,
+    expires: 365,
+  });
+};
+
 export const getUserSavedAddresses = () => {
   // Get addresses cookie with domain set to the root domain
   return Cookies.get('addresses', {
     domain: cookiesDomain,
   })
     ? JSON.parse(
-        Cookies.get('addresses', {
-          domain: cookiesDomain,
-        }),
-      )
+      Cookies.get('addresses', {
+        domain: cookiesDomain,
+      }),
+    )
     : [];
 };
 

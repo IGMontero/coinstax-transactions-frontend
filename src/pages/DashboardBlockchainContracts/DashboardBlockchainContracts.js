@@ -9,6 +9,10 @@ import Swal from 'sweetalert2';
 import { handleActionResult } from '../../utils/useHandleAction';
 import EditBlockChainContract from '../DashboardTransactions/HistorialComponents/modals/EditBlockChainContract';
 import BlockChainContractTable from '../../Components/Tables/BlockChainContractTable';
+import { selectNetworkType } from '../../slices/networkType/reducer';
+import NetworkDropdown from '../../Components/NetworkDropdown/NetworkDropdown';
+import { networks } from '../../common/constants';
+import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
@@ -16,6 +20,7 @@ const DashboardBlockchainContracts = () => {
   const errorMessageEdit = useSelector(
     (state) => state.blockchainContracts.error,
   );
+  const networkType = useSelector(selectNetworkType);
 
   const [loading, setLoading] = useState(false);
   const [loadingUpdate, setLoadingUpdate] = useState(false);
@@ -42,7 +47,7 @@ const DashboardBlockchainContracts = () => {
       setLoading(true);
       const response = await dispatch(
         fetchBlockchainContracts({
-          blockchain: 'ethereum',
+          networkType,
           page: currentPage,
           address: search,
         }),
@@ -89,14 +94,14 @@ const DashboardBlockchainContracts = () => {
 
   useEffect(() => {
     getBlockchainContracts();
-  }, [currentPage]);
+  }, [currentPage, networkType]);
 
   const handleEditBlockChainContract = async (data) => {
     try {
       setLoadingUpdate(true);
       const actionResult = await dispatch(
         editBlockChainContract({
-          blockchain: 'ethereum',
+          networkType: selectedContract.Blockchain,
           address: selectedContract.Address,
           data,
         }),
@@ -135,7 +140,7 @@ const DashboardBlockchainContracts = () => {
     e.stopPropagation();
   };
 
-  document.title = 'Blockchain Contracts';
+  document.title = 'Blockchain Contracts | Chain Glance';
 
   return (
     <React.Fragment>
@@ -146,47 +151,55 @@ const DashboardBlockchainContracts = () => {
         setOpen={handleOpenModalEdit}
         transactionToEdit={selectedContract}
       />
-      <div className="page-content mt-5">
-        <h3>Blockchain Contracts</h3>
-        <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
-          <Input
-            type="text"
-            placeholder="Search By Address"
-            className="form-control"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          <Button
-            className="mx-2"
-            disabled={loading || !search}
-            color="primary"
-            onClick={handleSearch}
-          >
-            Search
-          </Button>
-          <Button disabled={!search} color="danger" onClick={handleClearSearch}>
-            Clear
-          </Button>
-        </div>
 
-        <BlockChainContractTable
-          onOpenModalEdit={handleOpenModalEdit}
-          loading={loading}
-          errorMessageEdit={errorMessageEdit}
-          setLoading={setLoading}
-          contracts={contracts}
-          setContracts={setContracts}
-          setCurrentPage={setCurrentPage}
-          onRefresh={getBlockchainContracts}
-          pagination={{
-            handleChangePage,
-            currentPage,
-            pageSize,
-            total,
-            hasMore,
-          }}
+      <div className="d-flex my-5 justify-content-end">
+        <NetworkDropdown
+          isAdminPage={true}
+          filteredNetworks={networks}
+          isOnlyAllNetwork={false}
+          incompleteBlockchains={[]}
+          loading={false}
         />
       </div>
+      <h3 className="">Blockchain Contracts</h3>
+      <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
+        <Input
+          type="text"
+          placeholder="Search By Address"
+          className="form-control"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <Button
+          className="mx-2"
+          disabled={loading || !search}
+          color="primary"
+          onClick={handleSearch}
+        >
+          Search
+        </Button>
+        <Button disabled={!search} color="danger" onClick={handleClearSearch}>
+          Clear
+        </Button>
+      </div>
+
+      <BlockChainContractTable
+        onOpenModalEdit={handleOpenModalEdit}
+        loading={loading}
+        errorMessageEdit={errorMessageEdit}
+        setLoading={setLoading}
+        contracts={contracts}
+        setContracts={setContracts}
+        setCurrentPage={setCurrentPage}
+        onRefresh={getBlockchainContracts}
+        pagination={{
+          handleChangePage,
+          currentPage,
+          pageSize,
+          total,
+          hasMore,
+        }}
+      />
     </React.Fragment>
   );
 };

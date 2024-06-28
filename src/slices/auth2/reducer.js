@@ -1,3 +1,4 @@
+import { removeTokenFromCookies } from '../../helpers/cookies_helper';
 import { login, authMe } from './thunk';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -15,7 +16,7 @@ const auth2Slice = createSlice({
     logout: (state) => {
       state.user = null;
       state.token = null;
-      localStorage.removeItem('token');
+      removeTokenFromCookies();
     },
   },
   extraReducers: (builder) => {
