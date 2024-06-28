@@ -5,7 +5,6 @@ import {
   copyToClipboard,
   formatIdTransaction,
 } from '../../../../../utils/utils';
-import { Link } from 'react-router-dom';
 import EditBlockChainContract from '../../modals/EditBlockChainContract';
 import Swal from 'sweetalert2';
 import { editBlockChainContract } from '../../../../../slices/blockchainContracts/thunk';
@@ -13,12 +12,7 @@ import { editBlockChainContract } from '../../../../../slices/blockchainContract
 import { useDispatch, useSelector } from 'react-redux';
 import { handleActionResult } from '../../../../../utils/useHandleAction';
 
-const ContractInfoColumn = ({
-  transaction,
-  index,
-  onRefresh,
-  setTransactions,
-}) => {
+const ContractInfoColumn = ({ transaction, setTransactions }) => {
   const dispatch = useDispatch();
   const [openModalEdit, setOpenModalEdit] = useState(false);
   const [transactionToEdit, setTransactionToEdit] = useState(null);
@@ -92,18 +86,6 @@ const ContractInfoColumn = ({
 
   const handleClick = (e, transaction, targetId) => {
     e.stopPropagation();
-    // if (
-    //   transaction.blockchainAction === blockchainActions.RECEIVE ||
-    //   transaction.blockchainAction === blockchainActions.SEND
-    // ) {
-    //   return;
-    // }
-
-    console.log(
-      'handleClick -> blockchainContractAddress',
-      blockchainContractAddress,
-    );
-
     handleCopyToClipboard(e, blockchainContractAddress, targetId);
   };
 
@@ -117,7 +99,7 @@ const ContractInfoColumn = ({
       }
       const actionResult = await dispatch(
         editBlockChainContract({
-          blockchain: 'ethereum',
+          networkType: transaction.blockchain,
           address: blockchainContractAddress,
           data,
         }),
@@ -199,7 +181,7 @@ const ContractInfoColumn = ({
         onEdit={handleEditBlockChainContract}
         setOpen={setOpenModalEdit}
       />
-      <div className="d-flex flex-column w-100 me-n5">
+      <div className="d-flex flex-column w-100 me-0  me-lg-n5 me-xl-n5">
         <p style={{ fontSize: '12px', marginBottom: '4px' }} className=" mb-1">
           {contractLabel}
         </p>

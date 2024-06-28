@@ -10395,6 +10395,11 @@ react-color@^2.19.3:
     reactcss "^1.2.0"
     tinycolor2 "^1.4.1"
 
+react-content-loader@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/react-content-loader/-/react-content-loader-7.0.0.tgz#785780d10ff40bb5f54ba220ed51e4ad76f13507"
+  integrity sha512-xaBwpO7eiJyEc4ndym+g6wcruV9W2y3DKqbw4U48QFBsv0IeAVZO+aCUb8GptlDLWM8n5zi2HcFSGlj5r+53Tg==
+
 react-countdown@^2.3.5:
   version "2.3.5"
   resolved "https://registry.yarnpkg.com/react-countdown/-/react-countdown-2.3.5.tgz#70c035b5cbc7e8fdb4ad91fe5f44afd7a7933a68"
@@ -10588,6 +10593,11 @@ react-lifecycles-compat@^3.0.0:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
+
+react-loading-skeleton@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/react-loading-skeleton/-/react-loading-skeleton-3.4.0.tgz#c71a3a17259d08e4064974aa0b07f150a09dfd57"
+  integrity sha512-1oJEBc9+wn7BbkQQk7YodlYEIjgeR+GrRjD+QXkVjwZN7LGIcAFHrx4NhT7UHGBxNY1+zax3c+Fo6XQM4R7CgA==
 
 react-masonry-component@^6.3.0:
   version "6.3.0"

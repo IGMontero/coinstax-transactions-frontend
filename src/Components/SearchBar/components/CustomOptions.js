@@ -21,12 +21,13 @@ import {
   removeAddressName,
   setAddressName,
 } from '../../../slices/addressName/reducer';
+import { useParams } from 'react-router-dom';
 
 const CustomOptions = (props) => {
   const dispatch = useDispatch();
+  const { address } = useParams();
   const addresses = useSelector((state) => state.addressName.addresses);
 
-  const [hasImgError, setHasImgError] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [displayLabel, setDisplayLabel] = useState('');
@@ -59,18 +60,21 @@ const CustomOptions = (props) => {
 
   useEffect(() => {
     const { label, value } = props.data;
+    let formattedLabel = label || value;
+
     if (isVerySmallScreen) {
-      setDisplayLabel(label || formatIdTransaction(value, 8, 6));
+      formattedLabel = label || formatIdTransaction(value, 8, 6);
     } else if (isMediumScreen) {
-      setDisplayLabel(label || formatIdTransaction(value, 12, 15));
-    } else if (isMoreSmallScreen) {
-      setDisplayLabel(label || formatIdTransaction(value, 15, 15));
+      formattedLabel = label || formatIdTransaction(value, 8, 12);
+    } else if (isSmallScreen) {
+      formattedLabel = label || formatIdTransaction(value, 8, 15);
     } else {
-      setDisplayLabel(label || value);
+      formattedLabel = label || formatIdTransaction(value, 15, 25);
     }
+
+    setDisplayLabel(formattedLabel);
   }, [
-    props.data.label,
-    props.data.value,
+    props.data,
     isSmallScreen,
     isMediumScreen,
     isMoreSmallScreen,
@@ -163,10 +167,6 @@ const CustomOptions = (props) => {
     // Swal.fire('Updated!', 'Your address has been renamed.', 'success');
   };
 
-  const handleError = () => {
-    setHasImgError(true);
-  };
-
   const DropdownMenuPortal = ({ children }) => {
     return ReactDOM.createPortal(
       children,
@@ -256,9 +256,18 @@ const CustomOptions = (props) => {
                   />
                 )}
                 <div className="d-flex flex-column">
-                  {/* <span span className="text-custom-menu-suggestions"> */}
-                  {displayLabel}
-                  {/* </span> */}
+                  <div className="d-flex align-items-center">
+                    {!props.data.label ? (
+                      displayLabel
+                    ) : (
+                      <span className="text-custom-menu-suggestions">
+                        {displayLabel}
+                      </span>
+                    )}
+                    {address === props.data.value && (
+                      <i className="ri-checkbox-blank-circle-fill fs-10 text-success ms-2"></i>
+                    )}{' '}
+                  </div>
                   {props.data.label && (
                     <span className="text-muted">
                       {formatIdTransaction(props.data.value, 6, 8)}

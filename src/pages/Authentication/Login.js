@@ -71,7 +71,7 @@ const Login = (props) => {
     },
   });
 
-  document.title = 'Basic SignIn | CoinsTax';
+  document.title = 'Login | Chain Glance';
   useEffect(() => {
     if (errorMsg) {
       setTimeout(() => {
@@ -107,7 +107,7 @@ const Login = (props) => {
                     <div className="text-center mt-2">
                       <h5 className="text-primary">Welcome Back !</h5>
                       <p className="text-muted">
-                        Sign in to continue to Coinstax.
+                        Sign in to continue to Chain Glance.
                       </p>
                     </div>
                     {errorMsg && errorMsg ? (

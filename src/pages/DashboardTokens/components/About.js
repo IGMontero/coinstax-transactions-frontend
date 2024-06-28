@@ -38,6 +38,11 @@ const About = ({ description, name, links }) => {
       <div>
         {links &&
           Object.keys(links).map((link, index) => {
+            const linkLabel =
+              link === 'blockchainSite'
+                ? 'Blockchain Site'
+                : capitalizeFirstLetter(link);
+
             return (
               <a
                 key={index}
@@ -47,7 +52,7 @@ const About = ({ description, name, links }) => {
                 className="text-primary text-decoration-none me-3"
               >
                 <span className="text-hover-underline fs-7 fw-semibold">
-                  {capitalizeFirstLetter(link)}
+                  {linkLabel}
                 </span>
                 <i className="mdi mdi-open-in-new"></i>
               </a>

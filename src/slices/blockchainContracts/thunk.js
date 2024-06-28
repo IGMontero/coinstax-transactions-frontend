@@ -1,12 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { getTokenFromCookies } from '../../helpers/cookies_helper';
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const fetchBlockchainContracts = createAsyncThunk(
   'blockchainContracts/fetchBlockchainContracts',
-  async ({ blockchain, page, address }, { rejectWithValue }) => {
-    const token = localStorage.getItem('token');
+  async ({ networkType, page, address }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
-      let url = `${API_BASE}/admin/contracts/${blockchain}`;
+      let url = `${API_BASE}/admin/contracts/${networkType}`;
       if (address) {
         url += `/${address}`;
       }
@@ -32,10 +33,10 @@ export const fetchBlockchainContracts = createAsyncThunk(
 
 export const editBlockChainContract = createAsyncThunk(
   'blockchainContracts/editBlockChainContract',
-  async ({ blockchain, address, data }, { rejectWithValue }) => {
-    const token = localStorage.getItem('token');
+  async ({ networkType, address, data }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
-      let url = `${API_BASE}/admin/contracts/${blockchain}/${address}`;
+      let url = `${API_BASE}/admin/contracts/${networkType}/${address}`;
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -59,7 +60,7 @@ export const editBlockChainContract = createAsyncThunk(
 export const updateTrustedState = createAsyncThunk(
   'blockchainContracts/updateTrustedState',
   async ({ blockchain, address, trustedState }, { rejectWithValue }) => {
-    const token = localStorage.getItem('token');
+    const token = getTokenFromCookies();
     try {
       let url = `${API_BASE}/admin/contracts/${blockchain}/${address}/trusted-state`;
       const response = await fetch(url, {
@@ -83,10 +84,10 @@ export const updateTrustedState = createAsyncThunk(
 
 export const setAllAsDirty = createAsyncThunk(
   'blockchainContracts/setAllAsDirty',
-  async ({ blockchain, address, type }, { rejectWithValue }) => {
+  async ({ networkType, address, type }, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      let url = `${API_BASE}/admin/${type}/${blockchain}/${address}/transactions/dirty`;
+      const token = getTokenFromCookies();
+      let url = `${API_BASE}/admin/${type}/${networkType}/${address}/transactions/dirty`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -106,10 +107,10 @@ export const setAllAsDirty = createAsyncThunk(
 
 export const setBlockchainContractAsDirty = createAsyncThunk(
   'blockchainContracts/setBlockchainContractAsDirty',
-  async ({ blockchain, address }, { rejectWithValue }) => {
+  async ({ networkType, address }, { rejectWithValue }) => {
     try {
-      const token = localStorage.getItem('token');
-      let url = `${API_BASE}/admin/contracts/${blockchain}/${address}/dirty`;
+      const token = getTokenFromCookies();
+      let url = `${API_BASE}/admin/contracts/${networkType}/${address}/dirty`;
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -129,10 +130,10 @@ export const setBlockchainContractAsDirty = createAsyncThunk(
 
 export const deleteBlockchainContract = createAsyncThunk(
   'blockchainContracts/deleteBlockchainContract',
-  async ({ blockchain, address }, { rejectWithValue }) => {
-    const token = localStorage.getItem('token');
+  async ({ address, networkType }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
-      let url = `${API_BASE}/admin/contracts/${blockchain}/${address}`;
+      let url = `${API_BASE}/admin/contracts/${networkType}/${address}`;
       const response = await fetch(url, {
         method: 'DELETE',
         headers: {

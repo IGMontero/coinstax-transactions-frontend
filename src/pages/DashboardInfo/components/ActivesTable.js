@@ -1,24 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Badge,
   Button,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Spinner,
+  Table,
 } from 'reactstrap';
-import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
-import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
-import AddressWithDropdown from '../../../Components/Address/AddressWithDropdown';
 
-const ActivesTable = ({ data, loading }) => {
+import { getAppOptions, setAppOptions } from '../../../helpers/cookies_helper';
+import AssetsSkeleton from '../../../Components/Skeletons/AssetsSkeleton';
+import AssetsTable from '../../DashboardAssets/components/AssestTable';
+
+const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
+  const appOptions = getAppOptions();
+
   const [viewMode, setViewMode] = useState('byPlatform');
-
   const [showMenu, setShowMenu] = useState(false);
-  const [hideSmallBalances, setHideSmallBalances] = useState(false);
+  const [hideSmallBalances, setHideSmallBalances] = useState(
+    appOptions.hideSmallBalances,
+  );
+  const [hideZeroBalances, setHideZeroBalances] = useState(
+    appOptions.hideZeroBalances,
+  );
 
-  const [hideZeroBalances, setHideZeroBalances] = useState(true);
+  useEffect(() => {
+    setAppOptions({ ...appOptions, hideSmallBalances, hideZeroBalances });
+  }, [hideSmallBalances, hideZeroBalances]);
 
   const formatBalance = (number) => {
     if (typeof number !== 'number' || isNaN(number)) {
@@ -29,24 +37,6 @@ const ActivesTable = ({ data, loading }) => {
       minimumFractionDigits: hasComma ? 4 : 0,
       maximumFractionDigits: 4,
     });
-    return formattedNumber;
-  };
-
-  const formatPriceAndValue = (number) => {
-    if (typeof number !== 'number' || isNaN(number)) {
-      return 'Invalid Number';
-    }
-
-    const hasComma = number > 999;
-    const hasDecimal = number % 1 !== 0;
-    const minimumFractionDigits = hasComma ? 2 : hasDecimal ? 2 : 0;
-
-    const formattedNumber = number.toLocaleString(undefined, {
-      minimumFractionDigits:
-        number === 0 && hasDecimal ? 6 : minimumFractionDigits,
-      maximumFractionDigits: 6,
-    });
-
     return formattedNumber;
   };
 
@@ -66,180 +56,219 @@ const ActivesTable = ({ data, loading }) => {
     setShowMenu(!showMenu);
   };
 
-  let isDashboardPage;
-  const pathSegments = location.pathname.split('/').filter(Boolean);
+  const renderFilterButtons = () => {
+    return (
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <Button
+          className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
+            }`}
+          onClick={() => handleViewModeChange('byPlatform')}
+        >
+          By Platform
+        </Button>
+        <Button
+          className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
+            }`}
+          onClick={() => handleViewModeChange('perPosition')}
+        >
+          Per Position
+        </Button>
 
-  if (pathSegments.length === 2) {
-    isDashboardPage = true;
-  } else if (pathSegments.length > 2) {
-    isDashboardPage = false;
-  }
+        <Dropdown
+          isOpen={showMenu}
+          toggle={(e) => {
+            if (e.target.tagName !== 'INPUT' && e.target.tagName !== 'LABEL') {
+              handleShowMenu();
+            }
+          }}
+          className="card-header-dropdown"
+        >
+          <DropdownToggle tag="a" className="text-reset" role="button">
+            <i className="ri-arrow-down-s-line p-1 py-0 btn btn-soft-primary rounded"></i>
+          </DropdownToggle>
+          <DropdownMenu className="dropdown-menu-start mt-2">
+            <DropdownItem
+              toggle={false}
+              onClick={(e) => handleHideSmallBalancesChange(e)}
+              className="d-flex justify-content-start align-items-center"
+            >
+              <input
+                className="form-check-input me-2 my-0"
+                type="checkbox"
+                id="hideBalances"
+                onChange={(e) =>
+                  handleHideSmallBalancesChange(e.stopPropagation())
+                }
+                checked={hideSmallBalances}
+              />
+              <label
+                className="form-check-label"
+                htmlFor="hideBalances"
+                onClick={(e) =>
+                  handleHideSmallBalancesChange(e.preventDefault())
+                }
+                style={{ cursor: 'pointer' }}
+              >
+                Hide small balances
+              </label>
+            </DropdownItem>
+            <DropdownItem
+              toggle={false}
+              onClick={(e) => handleHideZeroBalancesChange(e)}
+              className="d-flex justify-content-start align-items-center"
+            >
+              <input
+                className="form-check-input me-2 my-0"
+                type="checkbox"
+                id="hideZeroBalances"
+                onChange={(e) =>
+                  handleHideZeroBalancesChange(e.stopPropagation())
+                }
+                checked={hideZeroBalances}
+              />
+              <label
+                className="form-check-label"
+                htmlFor="hideZeroBalances"
+                style={{ cursor: 'pointer', margin: 0 }}
+                onClick={(e) =>
+                  handleHideZeroBalancesChange(e.preventDefault())
+                }
+              >
+                Hide zero balances
+              </label>
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
+      </div>
+    );
+  };
+
+  const filteredItems = data.items
+    ? data?.items?.filter(
+      (asset) =>
+        (!hideSmallBalances || asset.value >= 1) &&
+        (!hideZeroBalances || (asset.value !== 0 && asset.value !== null)),
+    )
+    : [];
+
+  const displayItems = isDashboardPage
+    ? filteredItems.slice(0, 10)
+    : filteredItems;
 
   return (
     <React.Fragment>
-      {' '}
       {isDashboardPage ? null : (
         <div className="mt-0">
-          <AddressWithDropdown />
           <h1 className={` ms-1  mb-4 mt-4 `}>Assets</h1>
         </div>
       )}
       <div
-        className={
-          Object.keys(data).length === 0 && !loading ? 'd-none' : 'mb-3'
-        }
+        className={`${!isDashboardPage ? 'border rounded border-2 p-3' : ''}`}
       >
-        <div className="flex-grow-1 d-flex justify-content-between">
-          <h2 className={`${!isDashboardPage ? 'd-none' : 'ms-1 mb-3'}`}>
-            Assets
-          </h2>
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <Button
-              className={`btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'byPlatform' ? 'active' : ''
-              }`}
-              onClick={() => handleViewModeChange('byPlatform')}
-            >
-              By Platform
-            </Button>
-            <Button
-              className={`mx-2 btn btn-sm btn-soft-primary rounded ${
-                viewMode === 'perPosition' ? 'active' : ''
-              }`}
-              onClick={() => handleViewModeChange('perPosition')}
-            >
-              Per Position
-            </Button>
-
-            <Dropdown
-              isOpen={showMenu}
-              toggle={(e) => {
-                if (
-                  e.target.tagName !== 'INPUT' &&
-                  e.target.tagName !== 'LABEL'
-                ) {
-                  handleShowMenu();
-                }
-              }}
-              className="card-header-dropdown"
-            >
-              <DropdownToggle tag="a" className="text-reset" role="button">
-                <i className="ri-arrow-down-s-line p-1 py-0 btn btn-soft-primary rounded"></i>
-              </DropdownToggle>
-              <DropdownMenu className="dropdown-menu-start mt-2">
-                <DropdownItem
-                  toggle={false}
-                  onClick={(e) => handleHideSmallBalancesChange(e)}
-                  className="d-flex justify-content-start align-items-center"
-                >
-                  <input
-                    className="form-check-input me-2 my-0"
-                    type="checkbox"
-                    id="hideBalances"
-                    onChange={(e) =>
-                      handleHideSmallBalancesChange(e.stopPropagation())
-                    }
-                    checked={hideSmallBalances}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="hideBalances"
-                    onClick={(e) =>
-                      handleHideSmallBalancesChange(e.preventDefault())
-                    }
-                    style={{ cursor: 'pointer' }}
-                  >
-                    Hide small balances
-                  </label>
-                </DropdownItem>
-                <DropdownItem
-                  toggle={false}
-                  onClick={(e) => handleHideZeroBalancesChange(e)}
-                  className="d-flex justify-content-start align-items-center"
-                >
-                  <input
-                    className="form-check-input me-2 my-0"
-                    type="checkbox"
-                    id="hideZeroBalances"
-                    onChange={(e) =>
-                      handleHideZeroBalancesChange(e.stopPropagation())
-                    }
-                    checked={hideZeroBalances}
-                  />
-                  <label
-                    className="form-check-label"
-                    htmlFor="hideZeroBalances"
-                    style={{ cursor: 'pointer', margin: 0 }}
-                    onClick={(e) =>
-                      handleHideZeroBalancesChange(e.preventDefault())
-                    }
-                  >
-                    Hide zero balances
-                  </label>
-                </DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-        </div>
-        <div className="border border-2 rounded p-3">
-          {(data.items && data.items.length === 0) || !data ? (
-            <div className="text-center py-2 mt-3 ">
-              <h4>No Assets Found</h4>
+        <div>
+          {!loading && (!data || !data.items || data.items?.length === 0) ? (
+            <div className="text-center py-2 mt-3">
+              <h4>No assets found</h4>
             </div>
           ) : (
-            <>
-              {viewMode === 'byPlatform' && (
-                <div className="d-flex flex-row align-items-center">
-                  <h4>
-                    <b> Wallet </b>
-                    {data?.total && isNaN(data?.total)
-                      ? loading
-                        ? null
-                        : `$${formatBalance(data.total)} US`
-                      : null}
-                  </h4>{' '}
-                  {/* <Badge
-                    color="soft-dark"
-                    className="mb-2 ms-2 p-1 fs-7"
-                    style={{ fontWeight: 'inherit' }}
-                  >
-                    <span className="text-dark">100%</span>
-                  </Badge> */}
+            <div>
+              <div className="d-flex flex-row align-items-center justify-content-between ">
+                {/* {viewMode === 'byPlatform' && ( */}
+                <h4>
+                  <b> Wallet </b>
+                  {data?.total && isNaN(data?.total)
+                    ? loading
+                      ? null
+                      : `$${formatBalance(data.total)} US`
+                    : null}
+                </h4>
+                {/* )} */}
+                <div className="flex-grow-1 d-flex justify-content-end align-items-center">
+                  {renderFilterButtons()}
                 </div>
-              )}
-
-              <table className="table table-borderless ">
-                <thead>
-                  <tr className="text-muted ">
-                    <th scope="col">ASSETS</th>
-                    <th scope="col">PRICE</th>
-                    <th scope="col">BALANCE</th>
-                    <th scope="col">VALUE</th>
-                  </tr>
-                </thead>
+              </div>
+              <div
+                style={{
+                  overflow: 'hidden',
+                }}
+              >
                 {loading ? (
-                  <tbody>
-                    <tr>
-                      <td colSpan="4" className="text-center">
-                        <Spinner
-                          style={{ width: '4rem', height: '4rem' }}
-                          className="mt-5"
-                        />
-                      </td>
-                    </tr>
-                  </tbody>
+                  <>
+                    {/* <thead>
+                      <tr>
+                        <th>ASSETS</th>
+                        <th>PRICE</th>
+                        <th>BALANCE</th>
+                        <th>VALUE</th>
+                      </tr>
+                    </thead> */}
+                    <AssetsSkeleton />
+                  </>
                 ) : (
-                  <tbody>
-                    {data.items &&
-                      data?.items
-                        .filter(
-                          (asset) =>
-                            (!hideSmallBalances || asset.value >= 1) &&
-                            (!hideZeroBalances ||
-                              (asset.value !== 0 && asset.value !== null)),
-                        )
-                        .map((asset, index) => {
-                          return (
+                  <AssetsTable
+                    loading={loading}
+                    displayItems={displayItems}
+                    data={data}
+                    isDashboardPage={isDashboardPage}
+                    buttonSeeMore={buttonSeeMore}
+                    viewMode={viewMode}
+                  />
+                )}
+              </div>
+              {/* <div className="table-container">
+                <div className="live-preview">
+                  <div
+                    // style={{
+                    //   overflowX: 'hidden',
+                    // }}
+                    className="table-responsive"
+                  >
+                    <Table className="table table-borderless table-centered align-middle table-nowrap mb-0">
+                      <thead>
+                        <tr className="text-muted">
+                          <th
+                            scope="col"
+                            // style={{ width: '40%' }}
+                          >
+                            ASSETS
+                          </th>
+                          <th
+                            className="hide-on-small"
+                            // style={{ width: '20%' }}
+                            scope="col"
+                          >
+                            PRICE
+                          </th>
+                          <th
+                            className="hide-on-small"
+                            scope="col"
+                            // style={{ width: '20%' }}
+                          >
+                            BALANCE
+                          </th>
+                          <th
+                            scope="col"
+                            // style={{ width: '20%' }}
+                          >
+                            VALUE
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {!loading ? (
+                          <tr>
+                            <td colSpan="4" className="text-center">
+                              <AssetsSkeleton />
+                            </td>
+                          </tr>
+                        ) : displayItems.length === 0 ? (
+                          <tr>
+                            <td colSpan="4" className="text-center pb-2 pt-5">
+                              <h4>No Assets Yet</h4>
+                            </td>
+                          </tr>
+                        ) : (
+                          displayItems.map((asset, index) => (
                             <tr key={index}>
                               <td>
                                 <div className="d-flex align-items-center fw-high">
@@ -249,22 +278,27 @@ const ActivesTable = ({ data, loading }) => {
                                     className="rounded-circle avatar-xs me-2"
                                     onError={(e) => {
                                       e.target.onerror = null;
-                                      e.target.style.display = 'none';
+                                      if (
+                                        !e.target.parentNode.querySelector(
+                                          '.img-assets-placeholder',
+                                        )
+                                      ) {
+                                        e.target.style.display = 'none';
 
-                                      const textNode =
-                                        document.createElement('div');
-                                      textNode.textContent = asset.name
-                                        ?.substring(0, 3)
-                                        .toUpperCase();
-                                      textNode.className =
-                                        'img-assets-placeholder avatar-xs me-2';
+                                        const textNode =
+                                          document.createElement('div');
+                                        textNode.textContent = asset.name
+                                          ?.substring(0, 3)
+                                          .toUpperCase();
+                                        textNode.className =
+                                          'img-assets-placeholder avatar-xs me-2';
 
-                                      const container = e.target.parentNode;
-
-                                      container.insertBefore(
-                                        textNode,
-                                        container.firstChild,
-                                      );
+                                        const container = e.target.parentNode;
+                                        container.insertBefore(
+                                          textNode,
+                                          container.firstChild,
+                                        );
+                                      }
                                     }}
                                   />
 
@@ -278,7 +312,6 @@ const ActivesTable = ({ data, loading }) => {
                                           className="mx-2 p-1 fs-7"
                                         >
                                           <span className="text-dark">
-                                            {' '}
                                             {asset.percentage < 1
                                               ? '<0.01'
                                               : asset.percentage}
@@ -288,18 +321,23 @@ const ActivesTable = ({ data, loading }) => {
                                       )}
                                     </div>
                                     <div className="d-flex align-items-center text-muted">
-                                      <img
-                                        src={eth}
+                                      <BlockchainImage
                                         width={15}
                                         height={15}
-                                        className="me-1 "
+                                        className={'me-1'}
+                                        blockchainType={asset.blockchain}
                                       />
-                                      Ethereum · Wallet
+                                      {asset.blockchain === 'bnb'
+                                        ? 'BNB Chain'
+                                        : capitalizeFirstLetter(
+                                            asset.blockchain,
+                                          )}{' '}
+                                      · Wallet
                                     </div>
                                   </div>
                                 </div>
                               </td>
-                              <td>
+                              <td className="hide-on-small">
                                 {asset.price
                                   ? parseValuesToLocale(
                                       asset.price,
@@ -307,7 +345,7 @@ const ActivesTable = ({ data, loading }) => {
                                     )
                                   : '$0.00'}
                               </td>
-                              <td>
+                              <td className="hide-on-small">
                                 {asset.balance ? (
                                   <span>
                                     {parseValuesToLocale(asset.balance, '') +
@@ -363,12 +401,17 @@ const ActivesTable = ({ data, loading }) => {
                                 </div>
                               </td>
                             </tr>
-                          );
-                        })}
-                  </tbody>
-                )}
-              </table>
-            </>
+                          ))
+                        )}
+                      </tbody>
+                    </Table>
+                  </div>
+                </div>
+                {isDashboardPage &&
+                  data?.items?.length > 0 &&
+                  buttonSeeMore('assets', 'Assets')}
+              </div> */}
+            </div>
           )}
         </div>
       </div>

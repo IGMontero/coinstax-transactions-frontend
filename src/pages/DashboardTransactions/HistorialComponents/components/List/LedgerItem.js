@@ -29,8 +29,8 @@ const LedgerItem = ({
     setHasError(false);
 
     if (isPreview) {
-      if (ledger?.txInfo.logo) {
-        setImageSrc(ledger?.txInfo.logo);
+      if (ledger?.txInfo?.logo) {
+        setImageSrc(ledger?.txInfo?.logo);
       } else {
         // Show placeholder if no logo in preview
         setImageSrc(null);
@@ -38,7 +38,7 @@ const LedgerItem = ({
       }
     } else {
       if (ledger?.txInfo?.logo) {
-        setImageSrc(ledger?.txInfo.logo);
+        setImageSrc(ledger?.txInfo?.logo);
       } else {
         // If no logo and not in preview, show error
         setImageSrc(null);
@@ -114,7 +114,7 @@ const LedgerItem = ({
                 e.stopPropagation();
                 if (addressLink && ledger.txInfo.tokenId) {
                   navigate(
-                    `/contract/${addressLink}/?tokenId=${ledger.txInfo.tokenId}`,
+                    `/contract/${addressLink}/?blockchain=${transaction.blockchain}&tokenId=${ledger.txInfo.tokenId}`,
                   );
                 }
               }}

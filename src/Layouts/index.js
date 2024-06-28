@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import withRouter from '../Components/Common/withRouter';
+import { networks } from '../common/constants';
 
 //import Components
 import Header from './Header';
@@ -24,14 +25,27 @@ import {
 
 //redux
 import { useSelector, useDispatch } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
 import { layoutModeTypes } from '../Components/constants/layout';
 import { setCurrentThemeCookie } from '../helpers/cookies_helper';
+import { getAddressesInfo } from '../slices/addresses/thunk';
+import {
+  selectNetworkType,
+  setNetworkType,
+} from '../slices/networkType/reducer';
+import { setAddressSummary } from '../slices/addresses/reducer';
+import UnsupportedPage from '../Components/UnsupportedPage/UnsupportedPage';
 
 const Layout = (props) => {
-  const [headerClass, setHeaderClass] = useState('');
+  const { token, contractAddress, address } = useParams();
+  const location = useLocation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const networkType = useSelector(selectNetworkType);
+
+  const [isOnlyAllNetwork, setIsOnlyAllNetwork] = useState(false);
+  const [headerClass, setHeaderClass] = useState('');
   const {
     layoutType,
     leftSidebarType,
@@ -138,11 +152,178 @@ const Layout = (props) => {
     }
   }, [sidebarVisibilitytype, layoutType]);
 
-  const location = useLocation();
-
+  // #region Address Info & networks
   const isAuthPage =
     location.pathname.includes('/login') ||
     location.pathname.includes('/register');
+
+  const isAdminPages =
+    location.pathname.includes('blockchain-contracts') ||
+    location.pathname.includes('user-addresses');
+
+  const pagesNotToDisplayAddress = useMemo(
+    () => [
+      '/login',
+      '/register',
+      '/forgot-password',
+      '/reset-password',
+      '/404',
+      '/blockchain-contracts',
+      '/user-addresses',
+    ],
+    [],
+  );
+
+  const fetchControllerRef = useRef(new AbortController());
+  const fetchInterval = useRef(null);
+  const [filteredNetworks, setFilteredNetworks] = useState(networks);
+  const [loading, setLoading] = useState(true);
+  const [isInInterval, setIsInInterval] = useState(false);
+  const [isSuccessfullRequest, setIsSuccessfullRequest] = useState(false);
+
+  const [isUnsupported, setIsUnsupported] = useState(false);
+
+  const [incompleteBlockchains, setIncompleteBlockchains] = useState([]);
+
+  const fetchAddressInfo = async () => {
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
+
+    try {
+      setLoading(true);
+      const response = await dispatch(getAddressesInfo({ address, signal }));
+      const res = response.payload;
+
+      if (res) {
+        if (res.blockchains) {
+          const incomplete = Object.entries(res?.blockchains)
+            .filter(([, blockchain]) => blockchain.complete === false)
+            .map(([key]) => key);
+          setIncompleteBlockchains(incomplete);
+        } else {
+          setIncompleteBlockchains([]);
+        }
+
+        if (res.complete) {
+          clearInterval(fetchInterval.current);
+          fetchInterval.current = null;
+          setIsInInterval(false);
+          setLoading(false);
+        } else if (!fetchInterval.current) {
+          setIsInInterval(true);
+          fetchInterval.current = setInterval(fetchAddressInfo, 5000);
+        }
+        if (res.unsupported) {
+          setIsUnsupported(true);
+        }
+
+        if (!res.blockchains) {
+          setIsInInterval(false);
+          throw new Error('Invalid response structure');
+        }
+
+        const availableNetworks = Object.keys(res.blockchains);
+        let filtered;
+        if (isAdminPages) {
+          filtered = networks;
+        } else {
+          filtered = networks
+            .filter(
+              (network) =>
+                network.key !== 'all' &&
+                availableNetworks.includes(network.blockchain),
+            )
+            .map((network) => ({
+              ...network,
+              totalValue: res.blockchains[network.blockchain]?.totalValue,
+              nftsValue: res.blockchains[network.blockchain]?.nftsValue,
+            }));
+
+          if (res.blockchains.all) {
+            const allNetwork = networks.find((n) => n.key === 'all');
+            allNetwork.totalValue = res.blockchains.all.totalValue;
+            allNetwork.nftsValue = res.blockchains.all.nftsValue;
+            filtered.unshift(allNetwork);
+          }
+
+          const newNetworkType =
+            filtered.find((n) => n.key === networkType)?.key || 'all';
+          if (newNetworkType !== networkType) {
+            dispatch(setNetworkType(newNetworkType));
+          }
+
+          setFilteredNetworks(filtered);
+
+          setIsOnlyAllNetwork(
+            availableNetworks.length === 1 && availableNetworks[0] === 'all',
+          );
+        }
+        setIsSuccessfullRequest(true);
+        dispatch(setAddressSummary(res.blockchains));
+      }
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        setIsSuccessfullRequest(true);
+      } else {
+        console.error('Error fetching address info: ', error);
+        setIsSuccessfullRequest(false);
+      }
+
+      console.log(error);
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+        fetchInterval.current = null;
+        setIsInInterval(false);
+      }
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      setIsUnsupported(false);
+    }
+    if (address) {
+      const loadAddressInfo = async () => {
+        if (fetchInterval.current) {
+          clearInterval(fetchInterval.current);
+          fetchInterval.current = null;
+        }
+        setIsInInterval(false);
+        setIsUnsupported(false);
+        await fetchAddressInfo();
+      };
+
+      loadAddressInfo();
+
+      return () => {
+        if (fetchInterval.current) {
+          clearInterval(fetchInterval.current);
+          fetchInterval.current = null;
+        }
+        fetchControllerRef.current.abort();
+      };
+    }
+  }, [token, address]);
+
+  useEffect(() => {
+    if (
+      !address &&
+      !token &&
+      !contractAddress &&
+      !pagesNotToDisplayAddress.includes(location.pathname)
+    ) {
+      navigate('/');
+    }
+  }, [
+    address,
+    token,
+    contractAddress,
+    location.pathname,
+    navigate,
+    pagesNotToDisplayAddress,
+  ]);
 
   return (
     <React.Fragment>
@@ -158,7 +339,33 @@ const Layout = (props) => {
           </>
         )}
         <div className="main-content" style={{ height: '100vh' }}>
-          {props.children}
+          <div className="page-content">
+            {!pagesNotToDisplayAddress.includes(location.pathname) &&
+              !token &&
+              !contractAddress && (
+                <AddressWithDropdown
+                  isOnlyAllNetwork={isOnlyAllNetwork}
+                  filteredNetworks={filteredNetworks}
+                  incompleteBlockchains={incompleteBlockchains}
+                  loading={loading && !isInInterval}
+                />
+              )}
+            {(() => {
+              if (token || contractAddress || pagesNotToDisplayAddress.includes(location.pathname)) {
+                return props.children;
+              } else if (isUnsupported) {
+                return <UnsupportedPage />;
+              } else if (!loading || isInInterval) {
+                if (isSuccessfullRequest) {
+                  return props.children;
+                } else {
+                  return null;
+                }
+              } else {
+                return null;
+              }
+            })()}
+          </div>
           <Footer />
         </div>
       </div>

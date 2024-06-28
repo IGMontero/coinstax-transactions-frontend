@@ -1,42 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Col,
-  Row,
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-  TabPane,
-  TabContent,
-  Spinner,
-  Container,
-} from 'reactstrap';
-import PerformanceChart from './components/PerformanceChart';
-import ActivesTable from './components/ActivesTable';
+import { Button, Col, Row, Spinner } from 'reactstrap';
 import Nfts from '../DashboardNFT/Nfts';
 import HistorialTable from '../DashboardTransactions/HistorialTable';
+import ActivesTable from './components/ActivesTable';
+import PerformanceChart from './components/PerformanceChart';
 
-import eth from '../../assets/images/svg/crypto-icons/eth.svg';
-import btc from '../../assets/images/svg/crypto-icons/btc.svg';
-import arb from '../../assets/images/svg/crypto-icons/ankr.svg';
-import pol from '../../assets/images/svg/crypto-icons/poly.svg';
-import gnosis from '../../assets/images/svg/crypto-icons/gno.svg';
-
-import { fetchAssets } from '../../slices/transactions/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { capitalizeFirstLetter } from '../../utils/utils';
 import QrModal from '../../Components/Modals/QrModal';
-import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
 import { setAddressName } from '../../slices/addressName/reducer';
+import { selectNetworkType } from '../../slices/networkType/reducer';
+import { fetchAssets } from '../../slices/transactions/thunk';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-
+  const fetchControllerRef = useRef(new AbortController());
+  const { fetchData } = useSelector((state) => state.fetchData);
+  const networkType = useSelector(selectNetworkType);
   const { address, type } = useParams();
   const previousAddress = usePrevious(address);
 
@@ -51,13 +34,13 @@ const DashboardInfo = () => {
   const [historyData, setHistoryData] = useState([]);
 
   const [assetsData, setAssetsData] = useState([]);
-  const [loadingAssets, setLoadingAssets] = useState(false);
 
-  const [loading, setLoading] = useState(false);
+  // const [loadingAssets, setLoadingAssets] = useState(false);
 
   const [showQrModal, setShowQrModal] = useState(false);
 
-  const { fetchData } = useSelector((state) => state.fetchData);
+  const [assetsLoaders, setAssetsLoaders] = useState({});
+  const loadingAssets = Object.values(assetsLoaders).some((loader) => loader);
 
   function usePrevious(value) {
     const ref = useRef();
@@ -68,12 +51,12 @@ const DashboardInfo = () => {
   }
 
   useEffect(() => {
-    if (fetchData && fetchData.performance?.unsupported) {
+    if (fetchData && fetchData?.performance?.unsupported) {
       setIsUnsupported(true);
     } else {
       setIsUnsupported(false);
     }
-  }, [fetchData]);
+  }, [fetchData, networkType]);
 
   useEffect(() => {
     if (address && previousAddress !== address && !type) {
@@ -81,19 +64,37 @@ const DashboardInfo = () => {
     }
   }, [address, previousAddress, navigate, type]);
 
+  console.log(address);
+
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
   };
 
   const fetchDataAssets = () => {
-    setLoadingAssets(true);
+    // setLoadingAssets(true);
+    fetchControllerRef.current.abort();
+    fetchControllerRef.current = new AbortController();
+    const signal = fetchControllerRef.current.signal;
 
-    dispatch(fetchAssets(addressForSearch))
+    const fetchId = Date.now();
+
+    // Start loading for this fetch
+    setAssetsLoaders((prev) => ({
+      ...prev,
+      [fetchId]: true,
+    }));
+
+    dispatch(fetchAssets({ address, networkType, signal }))
       .unwrap()
       .then((response) => {
         if (response.unsupported == true) {
           setIsUnsupported(true);
-          setLoadingAssets(false);
+          // setLoadingAssets(false);
+          // stop loading
+          setAssetsLoaders((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
         } else {
           setIsUnsupported(false);
           handleSaveInCookiesAndGlobalState(
@@ -103,11 +104,32 @@ const DashboardInfo = () => {
           );
         }
         setAssetsData(response);
-        setLoadingAssets(false);
+        // setLoadingAssets(false);
+        // stop loading
+        setAssetsLoaders((prev) => ({
+          ...prev,
+          [fetchId]: false,
+        }));
       })
       .catch((error) => {
-        console.error('Error fetching performance data:', error);
-        setLoadingAssets(false);
+        if (error.name === 'AbortError') {
+          console.log('Fetch aborted');
+          // setLoadingAssets(false);
+
+          // stop loading
+          setAssetsLoaders((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
+        } else {
+          console.error('Error fetching performance data:', error);
+          // setLoadingAssets(false);
+          // stop loading
+          setAssetsLoaders((prev) => ({
+            ...prev,
+            [fetchId]: false,
+          }));
+        }
       });
   };
 
@@ -115,7 +137,10 @@ const DashboardInfo = () => {
     if (addressForSearch) {
       fetchDataAssets();
     }
-  }, [addressForSearch, type, dispatch, isUnsupported]);
+    return () => {
+      fetchControllerRef.current.abort();
+    };
+  }, [addressForSearch, type, dispatch, isUnsupported, networkType]);
 
   useEffect(() => {
     if (address) {
@@ -123,7 +148,7 @@ const DashboardInfo = () => {
       setAddressForSearch(address);
       setAddressTitle(address);
     }
-  }, [address, location]);
+  }, [address, location, networkType]);
 
   useEffect(() => {
     if (type) {
@@ -133,267 +158,59 @@ const DashboardInfo = () => {
     }
   }, [type]);
 
-  const renderDropdownMenu = () => {
+  const renderButtonSeeMore = (type, typeName) => {
     return (
-      <Col xxl={6} className="d-flex justify-content-end align-items-center">
-        <div className="d-flex justify-content-end align-items-center">
-          <UncontrolledDropdown className="card-header-dropdown ">
-            <DropdownToggle
-              tag="a"
-              className="btn btn-sm p-1 btn-primary d-flex align-items-center"
-              role="button"
-            >
-              <span className="ms-2 d-flex align-items-center">
-                {' '}
-                <i className="ri-function-line text-white fs-4 me-2"></i>
-                All Networks
-              </span>
-              <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
-            </DropdownToggle>
-            <DropdownMenu className="dropdown-menu-end mt-2 ">
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <i className="ri-function-line text-primary fs-2 me-2"></i>
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold ">All Networks</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>$9k </small>{' '}
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>$12.7k </small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={eth}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">Ethereum</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>$8.6k </small>{' '}
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>$12.7k </small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={pol}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">Polygon</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>$434.44k </small>
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>$0.352901k </small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={btc}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">BNB Chain</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>$0.020028</small>
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small></small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={arb}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">Arbitrum</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>{'<'} $0.0001 </small>
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>{'<'} $0.0001</small>
-                  </div>
-                </div>
-              </DropdownItem>
-              <DropdownItem className="d-flex align-items-center">
-                {' '}
-                <img
-                  src={gnosis}
-                  alt="btc"
-                  className="ms-n1 me-2"
-                  width={30}
-                  height={30}
-                />
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold">Gnosis Chain</span>
-                  <div className="d-flex flex-row align-items-center">
-                    <small>{'<'} $0.0001 </small>
-                    <i className="ri-checkbox-blank-circle-fill text-muted fs-10 mx-2"></i>
-                    <small>{'<'} $0.0001</small>
-                  </div>
-                </div>
-              </DropdownItem>
-            </DropdownMenu>
-          </UncontrolledDropdown>
-        </div>
-      </Col>
+      <div className="d-flex align-items-center justify-content-center">
+        <Button
+          className="mt-3 d-flex btn-hover-light  justify-content-center align-items-center "
+          color="soft-light"
+          style={{
+            borderRadius: '10px',
+            border: '.5px solid grey',
+          }}
+          onClick={() => navigate(`/address/${address}/${type}`)}
+        >
+          <h6 className="text-dark  fw-semibold my-2">See more {typeName}</h6>
+        </Button>
+      </div>
     );
   };
 
-  document.title = `${type ? capitalizeFirstLetter(type) : 'Dashboard'} ${addressTitle ? '- ' + addressTitle : ''}`;
-
+  document.title = ` Dashboard ${address} | Chain Glance`;
   return (
     <React.Fragment>
-      <div className="page-content">
+      <div>
         <QrModal
           showQrModal={showQrModal}
           toggleQrModal={toggleQrModal}
           addressTitle={addressTitle}
         />
 
-        <>
-          {/* <AddressWithDropdown /> */}
-          {loading ? (
-            <div
-              className="d-flex d-none justify-content-start align-items-center"
-              style={{ height: '13vh' }}
+        <div className="d-flex flex-column">
+          <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
+            <Col
+              xxl={9}
+              lg={9}
+              md={9}
+              sm={9}
+              xs={9}
+              className="d-flex flex-column"
+              order="1"
             >
-              <Spinner style={{ width: '2rem', height: '2rem' }} />
-            </div>
-          ) : (
-            <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
-              <Col
-                xxl={9}
-                lg={9}
-                md={9}
-                sm={9}
-                xs={9}
-                className="d-flex flex-column"
-                order="1"
-              >
-                {/* <div className="d-flex flex-row">
-                    <h4>{formatIdTransaction(addressTitle, 6, 8)}</h4>
-                    <UncontrolledDropdown className="card-header-dropdown">
-                      <DropdownToggle
-                        tag="a"
-                        className="text-reset"
-                        role="button"
-                      >
-                        <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
-                      </DropdownToggle>
-                      <DropdownMenu className="dropdown-menu-end ms-3">
-                        <DropdownItem
-                          className="d-flex align-items-center"
-                          onClick={toggleQrModal}
-                        >
-                          {' '}
-                          <i className="ri-qr-code-line fs-2 me-2"></i>
-                          <span className="fw-semibold">Show QR code</span>
-                        </DropdownItem>
-                        <DropdownItem
-                          className="d-flex align-items-center"
-                          onClick={(e) => handleCopy(e, addressTitle)}
-                        >
-                          {isCopied ? (
-                            <i className="ri-check-line fs-2 me-2 "></i>
-                          ) : (
-                            <i className="ri-file-copy-line fs-2 me-2"></i>
-                          )}
-                          <span className="fw-semibold">Copy direction</span>
-                        </DropdownItem>
-                      </DropdownMenu>
-                    </UncontrolledDropdown>
-                  </div> */}
-                <div className="d-flex flex-row mt-3">
-                  {/* <h1 className="fw-semibold">{title}</h1> */}
-                  {isUnsupported && (
-                    <div className="mt-5  ">
-                      <h1 className="fw-semibold text-danger">
-                        Unsupported Address
-                      </h1>
-                      <h5 className="text-primary">
-                        Contact our support team{' '}
-                      </h5>
-                    </div>
-                  )}
-                  {/* <UncontrolledDropdown className="card-header-dropdown">
-                      <DropdownToggle
-                        tag="a"
-                        className="text-reset "
-                        role="button"
-                      >
-                        <i className="ri-more-fill ms-2 fs-5 btn btn-light px-1 py-0 ms-3"></i>
-                      </DropdownToggle>
-                      <DropdownMenu className="dropdown-menu-end ms-3">
-                        <DropdownItem className="d-flex align-items-center">
-                          <span className="fw-semibold">
-                            Include NFTs in Totals
-                            <input
-                              type="checkbox"
-                              className="form-check-input ms-2"
-                            />
-                          </span>
-                        </DropdownItem>
-                      </DropdownMenu>
-                    </UncontrolledDropdown> */}
-                </div>
-                {/* <h5
-                    className={`mt-0 text-${
-                      subtitle[0] == '+' ? 'success' : 'danger'
-                    }`}
-                  >
-                    {subtitle}
-                  </h5>{' '} */}
-              </Col>
-              {/* <Col
-                xxl={3}
-                lg={3}
-                md={3}
-                sm={12}
-                xs={12}
-                className="d-flex justify-content-center mb-3"
-                order={{
-                  sm: 'last',
-                  xs: 'last',
-                  md: '2',
-                  lg: '2',
-                  xxl: '2',
-                }}
-              >
-                <Button className="rounded-circle bg-transparent border-1 border-dark btn btn-sm">
-                      <i className="ri-share-forward-fill text-dark fs-4 p-1"></i>
-                    </Button>
-                    <Button className="rounded-circle bg-transparent border-1 mx-3 border-dark btn btn-sm">
-                      <i className="ri-send-plane-fill text-dark fs-4 p-1"></i>
-                    </Button>
-                    <Button color="primary" className="btn btn-sm">
-                      Add wallet
-                    </Button>
-              </Col> */}
-            </Row>
-          )}
-          <Row className="d-flex justify-content-center align-items-center mb-3 mt-3 ">
-            {' '}
+              <div className="d-flex flex-row mt-3">
+                {isUnsupported && (
+                  <div className="mt-5  ">
+                    <h1 className="fw-semibold text-danger">
+                      Unsupported Address
+                    </h1>
+                    <h5 className="text-primary">Contact our support team </h5>
+                  </div>
+                )}
+              </div>
+            </Col>
+          </Row>
+
+          <Row className="d-flex justify-content-center align-items-center mb-3 mt-3">
             {!isUnsupported ? (
               <Col className="col-12 ">
                 <div
@@ -402,117 +219,55 @@ const DashboardInfo = () => {
                     zIndex: 5,
                     backgroundColor: '#16161a',
                   }}
-                >
-                  {/* <Col xxl={6} className="">
-                      <Nav
-                        tabs
-                        className="  nav nav-tabs nav-tabs-custom nav-primary nav-justified mb-3"
-                      >
-                        <NavItem>
-                          <NavLink
-                            style={{
-                              cursor: 'pointer',
-                              paddingTop: '.7rem',
-                              paddingBottom: '.7rem',
-                              fontWeight: 'bold',
-                            }}
-                            className={classnames({
-                              active: customActiveTab === '1',
-                            })}
-                            onClick={() => {
-                              handleNavLinkClick('tokens', '1');
-                            }}
-                          >
-                            Tokens
-                          </NavLink>
-                        </NavItem>
-                        <NavItem>
-                          <NavLink
-                            style={{
-                              cursor: 'pointer',
-                              paddingTop: '.7rem',
-                              paddingBottom: '.7rem',
-                              fontWeight: 'bold',
-                            }}
-                            className={classnames({
-                              active: customActiveTab === '2',
-                            })}
-                            onClick={() => {
-                              handleNavLinkClick('nfts', '2');
-                            }}
-                          >
-                            NFTs
-                          </NavLink>
-                        </NavItem>
-                        <NavItem>
-                          <NavLink
-                            style={{
-                              cursor: 'pointer',
-                              paddingTop: '.7rem',
-                              paddingBottom: '.7rem',
-                              fontWeight: 'bold',
-                            }}
-                            className={classnames({
-                              active: customActiveTab === '3',
-                            })}
-                            onClick={() => {
-                              handleNavLinkClick('history', '3');
-                            }}
-                          >
-                            History
-                          </NavLink>
-                        </NavItem>
-                      </Nav>
-                    </Col> */}
+                ></div>
 
-                  {/* Dropdown Menu  here  renderDropdownMenu()*/}
-                </div>
-
-                <div className="d-flex">
-                  <div className="flex-grow-1">
+                <div className="d-flex flex-column">
+                  <div className="">
                     <PerformanceChart
-                      loading={loading}
-                      setLoading={setLoading}
                       setIsUnsupported={setIsUnsupported}
                       address={addressForSearch}
                     />
 
-                    <Col className={`${loading ? '' : ''}`} xxl={12}>
-                      <ActivesTable loading={loadingAssets} data={assetsData} />
+                    <Col xxl={12}>
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <h2 className="ms-1 mt-2">Assets</h2>
+                      </div>
+                      <div className="border border-2 rounded p-3 ">
+                        <ActivesTable
+                          isDashboardPage={true}
+                          loading={loadingAssets}
+                          data={assetsData}
+                          buttonSeeMore={renderButtonSeeMore}
+                        />
+                      </div>
                     </Col>
                     <Col xxl={12} className="mt-3 d-flex flex-column">
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">NFTs</h2>
-                        <Button
-                          onClick={() => navigate(`/address/${address}/nfts`)}
-                          className="btn btn-sm btn-soft-primary rounded"
-                        >
-                          <span className="p-1">See more NFTs</span>
-                        </Button>
                       </div>
-                      <div className="border border-2 rounded p-3 py-0 w-100 d-flex justify-content-center overflow-hidden">
-                        <Nfts address={addressForSearch} />
+                      <div className="border border-2 rounded px-5 p-3">
+                        <div className="">
+                          <Nfts
+                            isDashboardPage={true}
+                            address={addressForSearch}
+                            buttonSeeMore={renderButtonSeeMore}
+                          />
+                        </div>
                       </div>
                     </Col>
 
                     <Col xxl={12} className="mt-3">
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">Transactions</h2>
-                        <Button
-                          onClick={() =>
-                            navigate(`/address/${address}/history`)
-                          }
-                          className="btn btn-sm btn-soft-primary rounded"
-                        >
-                          <span className="p-1">See more activity</span>
-                        </Button>
                       </div>
                       <div className="border border-2 rounded p-3 ">
                         <HistorialTable
+                          isDashboardPage={true}
                           data={historyData}
                           setData={setHistoryData}
                           activeTab={customActiveTab}
                           address={addressForSearch}
+                          buttonSeeMore={renderButtonSeeMore}
                         />
                       </div>
                     </Col>
@@ -523,7 +278,7 @@ const DashboardInfo = () => {
               <div style={{ minHeight: '100vh' }}></div>
             )}
           </Row>
-        </>
+        </div>
       </div>
     </React.Fragment>
   );

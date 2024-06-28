@@ -17,6 +17,7 @@ import {
   getUserAddresses,
   refreshAllTransactions,
   deleteUsersAddress,
+  deleteHistoricalBalance,
 } from '../../slices/userAddresses/thunk';
 import { useDispatch, useSelector } from 'react-redux';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
@@ -24,6 +25,9 @@ import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
 import { setAllAsDirty } from '../../slices/blockchainContracts/thunk';
 import { handleActionResult } from '../../utils/useHandleAction';
+import NetworkDropdown from '../../Components/NetworkDropdown/NetworkDropdown';
+import { selectNetworkType } from '../../slices/networkType/reducer';
+import { networks } from '../../common/constants';
 
 const DashboardUserAddresses = () => {
   const dispatch = useDispatch();
@@ -37,6 +41,8 @@ const DashboardUserAddresses = () => {
   const [isCopied, setIsCopied] = useState(false);
   const [userAddresses, setUserAddresses] = useState([]);
 
+  const networkType = useSelector(selectNetworkType);
+
   const errorMessageEdit = useSelector(
     (state) => state.blockchainContracts.error,
   );
@@ -48,7 +54,7 @@ const DashboardUserAddresses = () => {
         getUserAddresses({
           page: currentPage,
           address: search,
-          blockchain: 'ethereum',
+          networkType,
         }),
       );
       const responseData = response.payload.data || response.payload;
@@ -78,7 +84,7 @@ const DashboardUserAddresses = () => {
 
   useEffect(() => {
     fetchUserAddresses();
-  }, [triggerSearch, currentPage]);
+  }, [triggerSearch, currentPage, networkType]);
 
   const handleSearch = () => {
     setTriggerSearch(true);
@@ -98,13 +104,13 @@ const DashboardUserAddresses = () => {
     setCurrentPage(page);
   };
 
-  const handleRefreshAllTransactions = async (address) => {
+  const handleRefreshAllTransactions = async (item) => {
     setLoading(true);
     try {
       const actionResult = await dispatch(
         refreshAllTransactions({
-          blockchain: 'ethereum',
-          address,
+          networkType: item.Blockchain,
+          address: item.Address,
         }),
       );
 
@@ -134,10 +140,10 @@ const DashboardUserAddresses = () => {
     }
   };
 
-  const handleSetAllAsDirty = async (address) => {
+  const handleSetAllAsDirty = async (item) => {
     const result = await Swal.fire({
       title: 'Are you sure?',
-      text: `All transactions linked to address ${address} will be set as dirty.`,
+      text: `All transactions linked to address ${item.Address} will be set as dirty.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Continue',
@@ -149,8 +155,8 @@ const DashboardUserAddresses = () => {
         const actionResult = await dispatch(
           setAllAsDirty({
             type: 'addresses',
-            blockchain: 'ethereum',
-            address: address,
+            networkType: item.Blockchain,
+            address: item.Address,
           }),
         );
 
@@ -164,7 +170,7 @@ const DashboardUserAddresses = () => {
           () => {
             Swal.fire(
               'Success',
-              `All transactions with address ${address} have been set as dirty.`,
+              `All transactions with address ${item.Address} have been set as dirty.`,
               'success',
             );
 
@@ -181,9 +187,9 @@ const DashboardUserAddresses = () => {
     }
   };
 
-  const handleDeleteUserAddress = async (address) => {
+  const handleDeleteUserAddress = async (item) => {
     const result = await Swal.fire({
-      title: `Are you sure you want to delete all transactions for address ${address}?`,
+      title: `Are you sure you want to delete all transactions for address ${item.Address}?`,
       // text: `You won't be able to revert this!`,
       icon: 'warning',
       showCancelButton: true,
@@ -196,12 +202,12 @@ const DashboardUserAddresses = () => {
         setLoading(true);
         const actionResult = await dispatch(
           deleteUsersAddress({
-            blockchain: 'ethereum',
-            address,
+            networkType: item.Blockchain,
+            address: item.Address,
           }),
         );
 
-        const errorMessage = 'Error to delete user address';
+        const errorMessage = 'Error deleting user address transactions';
         const updateUserAddresses = actionResult;
         const wasSuccessful = await handleActionResult(
           deleteUsersAddress,
@@ -215,7 +221,7 @@ const DashboardUserAddresses = () => {
                 u.Id === updateUserAddresses.Id ? updateUserAddresses : u,
               ),
             );
-            Swal.fire('Deleted!', 'Transaction has been deleted.', 'success');
+            Swal.fire('Deleted!', 'Transactions have been deleted.', 'success');
           },
           fetchUserAddresses(),
         );
@@ -234,6 +240,111 @@ const DashboardUserAddresses = () => {
     }
   };
 
+  const handleDeleteAllUserAddressTransactions = async (item) => {
+    const result = await Swal.fire({
+      title: `Are you sure you want to delete all transactions for address ${item.Address}?`,
+      // text: `You won't be able to revert this!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete all transactions',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const actionResult = await dispatch(
+          deleteUsersAddress({
+            networkType: 'all',
+            address: item.Address,
+          }),
+        );
+
+        const errorMessage = 'Error deleting user address transactions';
+        const updateUserAddresses = actionResult;
+        const wasSuccessful = await handleActionResult(
+          deleteUsersAddress,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            // set user addresses
+            setUserAddresses(
+              userAddresses.map((u) =>
+                u.Id === updateUserAddresses.Id ? updateUserAddresses : u,
+              ),
+            );
+            Swal.fire('Deleted!', 'Transactions have been deleted.', 'success');
+          },
+          fetchUserAddresses(),
+        );
+
+        if (!wasSuccessful) {
+          setLoading(false);
+          return;
+        }
+        setLoading(false);
+      } catch (error) {
+        setLoading(true);
+        console.error('Error deleting user address', error);
+        Swal.fire('Error', error.toString(), 'error');
+        setLoading(false);
+      }
+    }
+  };
+
+  const handleDeleteHistoricalBalance = async (item) => {
+    const result = await Swal.fire({
+      title: `Are you sure you want to delete historical balances for address ${item.Address}?`,
+      // text: `You won't be able to revert this!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete historical balances',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const actionResult = await dispatch(
+          deleteHistoricalBalance({
+            networkType: item.Blockchain,
+            address: item.Address,
+          }),
+        );
+
+        const errorMessage =
+          'There was an error deleting the historical balances';
+
+        const wasSuccessful = await handleActionResult(
+          deleteHistoricalBalance,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            Swal.fire(
+              'Deleted!',
+              'Historical balances have been deleted.',
+              'success',
+            );
+          },
+        );
+
+        if (!wasSuccessful) {
+          setLoading(false);
+          return;
+        }
+
+        setLoading(false);
+      } catch (error) {
+        setLoading(true);
+        console.log('Error deleting historical balance', error);
+        Swal.fire('Error', error.toString(), 'error');
+        setLoading(false);
+      }
+    }
+  };
+
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
     copyToClipboard(text);
@@ -243,28 +354,40 @@ const DashboardUserAddresses = () => {
     }, 2000);
   };
 
-  const renderDropdown = (address) => {
+  const renderDropdown = (item) => {
     const portalRoot = document.getElementById('portal-root');
     return portalRoot
       ? ReactDOM.createPortal(
           <DropdownMenu>
             <DropdownItem
               className="d-flex align-items-center"
-              onClick={() => handleRefreshAllTransactions(address.Address)}
+              onClick={() => handleRefreshAllTransactions(item)}
             >
               Refresh All Transactions
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
-              onClick={() => handleSetAllAsDirty(address.Address)}
+              onClick={() => handleSetAllAsDirty(item)}
             >
               Set All Tx as Dirty
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
-              onClick={() => handleDeleteUserAddress(address.Address)}
+              onClick={() => handleDeleteUserAddress(item)}
             >
-              Delete All Transactions
+              Delete Transactions for {item.Blockchain}
+            </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleDeleteAllUserAddressTransactions(item)}
+            >
+              Delete Transactions for All Blockchains
+            </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleDeleteHistoricalBalance(item)}
+            >
+              Delete Historical Balances
             </DropdownItem>
           </DropdownMenu>,
           portalRoot,
@@ -272,8 +395,19 @@ const DashboardUserAddresses = () => {
       : null;
   };
 
+  document.title = 'User Addresses | Chain Glance';
+
   return (
-    <div className="page-content mt-5" style={{ minHeight: '100vh' }}>
+    <div className=" mt-5" style={{ minHeight: '100vh' }}>
+      <div className="d-flex my-5 justify-content-end">
+        <NetworkDropdown
+          isAdminPage={true}
+          filteredNetworks={networks}
+          isOnlyAllNetwork={false}
+          incompleteBlockchains={[]}
+          loading={false}
+        />
+      </div>
       <h3>User Addresses</h3>
       <div className="mb-3 mt-2 d-flex justify-content-center align-items-center">
         <Input
@@ -332,22 +466,22 @@ const DashboardUserAddresses = () => {
             </div>
           )}
           {userAddresses && userAddresses.length > 0 ? (
-            userAddresses?.map((address) => (
-              <tr style={{ height: 60 }} key={address.Id}>
-                <td className="align-middle">{address.Id}</td>
-                <td className="align-middle">{address.Blockchain}</td>
+            userAddresses?.map((item) => (
+              <tr style={{ height: 60 }} key={item.Id}>
+                <td className="align-middle">{item.Id}</td>
+                <td className="align-middle">{item.Blockchain}</td>
                 <td className="align-middle">
                   <span
-                    id={`popoverAddress-${address.Id}-${address.Address}`}
+                    id={`popoverAddress-${item.Id}-${item.Address}`}
                     style={{ cursor: 'pointer' }}
-                    onClick={(e) => handleCopyValue(e, address.Address)}
+                    onClick={(e) => handleCopyValue(e, item.Address)}
                   >
-                    {formatIdTransaction(address.Address, 4, 4)}
+                    {formatIdTransaction(item.Address, 4, 4)}
                   </span>
                   <UncontrolledPopover
                     trigger="hover"
                     placement="right"
-                    target={`popoverAddress-${address.Id}-${address.Address}`}
+                    target={`popoverAddress-${item.Id}-${item.Address}`}
                   >
                     <PopoverBody
                       style={{
@@ -360,19 +494,19 @@ const DashboardUserAddresses = () => {
                           fontSize: '0.70rem',
                         }}
                       >
-                        {isCopied ? 'Copied' : address.Address}
+                        {isCopied ? 'Copied' : item.Address}
                       </span>
                     </PopoverBody>
                   </UncontrolledPopover>
                 </td>
                 <td className="align-middle">
-                  {address.IsProcessingTransactions ? 'Yes' : 'No'}
+                  {item.IsProcessingTransactions ? 'Yes' : 'No'}
                 </td>
                 <td className="align-middle">
-                  {address.LastTransactionsPageProcessed}
+                  {item.LastTransactionsPageProcessed}
                 </td>
                 <td className="align-middle">
-                  {address.AllTransactionsProcessed ? 'Yes' : 'No'}
+                  {item.AllTransactionsProcessed ? 'Yes' : 'No'}
                 </td>
                 <td className="align-middle ">
                   <ButtonGroup onClick={(e) => e.stopPropagation()}>
@@ -380,7 +514,7 @@ const DashboardUserAddresses = () => {
                       <DropdownToggle tag="a" className="nav-link">
                         <i className="ri-more-2-fill"></i>
                       </DropdownToggle>
-                      {renderDropdown(address)}
+                      {renderDropdown(item)}
                     </UncontrolledDropdown>
                   </ButtonGroup>
                 </td>
@@ -394,13 +528,13 @@ const DashboardUserAddresses = () => {
             </tr>
           )}
         </tbody>
-        {userAddresses.length && !loading && (
+        {userAddresses.length && !loading ? (
           <TablePagination
             onChangePage={handleChangePage}
             currentPage={currentPage}
             totalPages={Math.ceil(total / pageSize)}
           />
-        )}
+        ) : null}
       </Table>
       <div id="portal-root"></div>
     </div>
