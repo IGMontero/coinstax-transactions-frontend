@@ -60,17 +60,15 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
     return (
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Button
-          className={`btn btn-sm btn-soft-primary rounded ${
-            viewMode === 'byPlatform' ? 'active' : ''
-          }`}
+          className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
+            }`}
           onClick={() => handleViewModeChange('byPlatform')}
         >
           By Platform
         </Button>
         <Button
-          className={`mx-2 btn btn-sm btn-soft-primary rounded ${
-            viewMode === 'perPosition' ? 'active' : ''
-          }`}
+          className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
+            }`}
           onClick={() => handleViewModeChange('perPosition')}
         >
           Per Position
@@ -147,10 +145,10 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
 
   const filteredItems = data.items
     ? data?.items?.filter(
-        (asset) =>
-          (!hideSmallBalances || asset.value >= 1) &&
-          (!hideZeroBalances || (asset.value !== 0 && asset.value !== null)),
-      )
+      (asset) =>
+        (!hideSmallBalances || asset.value >= 1) &&
+        (!hideZeroBalances || (asset.value !== 0 && asset.value !== null)),
+    )
     : [];
 
   const displayItems = isDashboardPage
@@ -170,7 +168,7 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
         <div>
           {!loading && (!data || !data.items || data.items?.length === 0) ? (
             <div className="text-center py-2 mt-3">
-              <h4>No Assets Found</h4>
+              <h4>No assets found</h4>
             </div>
           ) : (
             <div>

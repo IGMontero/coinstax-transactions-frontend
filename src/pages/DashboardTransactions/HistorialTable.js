@@ -958,7 +958,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     );
   };
 
+
   const renderMessageNoResults = () => {
+    const hasFilters = selectedFilters.length > 0 || selectedAssets !== 'All Assets' || includeSpam || searchTerm;
+    const finalMessage = hasFilters ? 'No transactions found with the selected filters' : 'No transactions found';
+
     return (
       <Col
         lg={12}
@@ -968,11 +972,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <div>
           {isDashboardPage ? (
             <>
-              <h4>No Transactions Found</h4>
-              {totalTransactions > 0 && buttonSeeMore('history', 'Activity')}
+              <h4>{finalMessage}</h4>
+              {totalTransactions > 0 && buttonSeeMore('history', '')}
             </>
           ) : (
-            <h1>No Results Found</h1>
+            <h1>{finalMessage}</h1>
           )}
         </div>
       </Col>
