@@ -245,7 +245,7 @@ const DashboardInfo = () => {
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">NFTs</h2>
                       </div>
-                      <div className="border border-2 rounded px-5  pt-0 pb-3">
+                      <div className="border border-2 rounded px-5 p-3">
                         <div className="">
                           <Nfts
                             isDashboardPage={true}

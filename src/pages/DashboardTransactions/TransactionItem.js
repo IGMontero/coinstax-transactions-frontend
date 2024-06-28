@@ -30,7 +30,7 @@ const TransactionItem = ({ transaction, index,
                         return tx;
                     })
                 );
-            }, 1000 * 60 * 3);
+            }, 1000 * 60);
         }
     }, [transaction]);
 
