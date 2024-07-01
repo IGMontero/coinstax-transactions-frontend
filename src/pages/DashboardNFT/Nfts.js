@@ -50,6 +50,9 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   const [nftsLoader, setNftsLoader] = useState({});
   const [includeSpamLoader, setIncludeSpamLoader] = useState({});
 
+  const [hasMoreItems, setHasMoreItems] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+
   const loading = Object.values(nftsLoader).some((loader) => loader);
   const loadingIncludeSpam = Object.values(includeSpamLoader).some(
     (loader) => loader,
@@ -69,7 +72,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
     setShowFiatValues((prev) => !prev);
   };
 
-  const fetchDataNFTS = () => {
+  const fetchDataNFTS = (page) => {
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
@@ -88,11 +91,21 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
       }));
     }
     dispatch(
-      fetchNFTS({ address: address, spam: includeSpam, networkType, signal }),
+      fetchNFTS({
+        address: address,
+        spam: includeSpam,
+        page: page,
+        networkType,
+        signal,
+      }),
     )
       .unwrap()
       .then((response) => {
-        setData(response);
+        setData((prevData) => ({
+          ...response,
+          items: [...(prevData.items || []), ...(response.items || [])],
+        }));
+        setHasMoreItems(response.hasMore);
         setUpdatedAt(response?.updatedAt);
         setNftsLoader((prevLoader) => ({
           ...prevLoader,
@@ -118,12 +131,14 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
 
   useEffect(() => {
     if (address) {
-      fetchDataNFTS();
+      setCurrentPage(0);
+      setData([]);
+      fetchDataNFTS(0);
     }
     return () => {
       fetchControllerRef.current.abort();
     };
-  }, [address, dispatch, includeSpam, networkType]);
+  }, [address, includeSpam, networkType]);
 
   const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     navigate(
@@ -142,14 +157,14 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   const handleShowMoreItems = () => {
-    setItemsToShow(itemsToShow + 20);
+    const nextPage = currentPage + 1;
+    setCurrentPage(nextPage);
+    fetchDataNFTS(nextPage);
   };
 
   let items = data?.items || data?.nfts || [];
   if (isDashboardPage) {
     items = items.slice(0, 4);
-  } else {
-    items = items.slice(0, itemsToShow);
   }
 
   const renderDropdown = () => {
@@ -357,25 +372,21 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
                   onVisitNft={handleVisitNFT}
                   showFiatValues={showFiatValues}
                 />
-                {!isDashboardPage &&
-                  data?.items &&
-                  data.items?.length > itemsToShow && (
-                    <div className="d-flex justify-content-center">
-                      <Button
-                        className="mt-3 d-flex btn-hover-light justify-content-center align-items-center"
-                        color="soft-light"
-                        style={{
-                          borderRadius: '10px',
-                          border: '.5px solid grey',
-                        }}
-                        onClick={handleShowMoreItems}
-                      >
-                        <h6 className="text-dark fw-semibold my-2">
-                          More Items
-                        </h6>
-                      </Button>
-                    </div>
-                  )}
+                {!isDashboardPage && hasMoreItems && (
+                  <div className="d-flex justify-content-center">
+                    <Button
+                      className="mt-3 d-flex btn-hover-light justify-content-center align-items-center"
+                      color="soft-light"
+                      style={{
+                        borderRadius: '10px',
+                        border: '.5px solid grey',
+                      }}
+                      onClick={handleShowMoreItems}
+                    >
+                      <h6 className="text-dark fw-semibold my-2">More Items</h6>
+                    </Button>
+                  </div>
+                )}
                 {isDashboardPage &&
                   items?.length &&
                   buttonSeeMore('nfts', 'NFTs')}

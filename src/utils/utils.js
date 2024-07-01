@@ -1,10 +1,4 @@
-import moment from 'moment';
 import { fetchHistory } from '../slices/transactions/thunk';
-import {
-  getUserSavedAddresses,
-  setUserSavedAddresses,
-} from '../helpers/cookies_helper';
-import { setAddressName } from '../slices/addressName/reducer';
 
 // #region Constants
 export const filtersChart = [
@@ -160,17 +154,17 @@ export const formatTransactionNotFoundMessage = (filters, selectedAssets) => {
       : '';
 
   if (filters.length === 2) {
-    message += `${capitalizeFirstLetter(filters[0])} and ${capitalizeFirstLetter(filters[1])}${assetType} Transactions Found`;
+    message += `${filters[0]} and ${filters[1]}${assetType} Transactions Found`;
   } else if (filters.length > 2) {
     const allButLast = filters
       .slice(0, -1)
       .map(capitalizeFirstLetter)
       .join(', ');
-    const last = capitalizeFirstLetter(filters[filters.length - 1]);
+    const last = filters[filters.length - 1];
     message += `${allButLast}, and ${last}${assetType} Transactions Found`;
   } else {
     // When there is only one filter
-    message += `${capitalizeFirstLetter(filters[0])}${assetType} Transactions Found`;
+    message += `${filters[0]}${assetType} Transactions Found`;
   }
 
   return message;

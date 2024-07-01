@@ -4,11 +4,10 @@
 
 
 .auth-page-wrapper{
-    display: flex
-    ;
+    display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 90%;
+    // min-height: 90%;
     .auth-page-content{
         padding-bottom: $footer-height;
         position: relative;
@@ -37,7 +36,7 @@
 }
 
 .auth-one-bg{
-    background-image: url("../../images/auth-one-bg.jpg");
+    // background-image: url("../../images/auth-one-bg.jpg");
     background-position: center;
     background-size: cover;
 
