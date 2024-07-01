@@ -89,7 +89,9 @@ const SentColumn = ({ transaction }) => {
 
   return (
     <div className="d-flex align-items-center" style={{ overflow: 'hidden' }}>
-      <>
+      <h6
+        className={`fw-semibold my-0  d-flex align-items-center justify-content-start`}
+      >
         {!hasMoreThanOne ? (
           <>
             {!negativeLedgers ? (
@@ -130,8 +132,8 @@ const SentColumn = ({ transaction }) => {
                 <div className="d-flex flex-column text-center justify-content-end ms-2">
                   <span className="text-dark d-flex">
                     {!isNft &&
-                      negativeLedgers?.value !== 0 &&
-                      !hasAssetsCount ? (
+                    negativeLedgers?.value !== 0 &&
+                    !hasAssetsCount ? (
                       <span
                         onClick={handleCopyValue}
                         id={`amount-left-${transaction?.txHash}`}
@@ -170,10 +172,10 @@ const SentColumn = ({ transaction }) => {
                     )}
 
                     {negativeLedgers?.value !== -1 &&
-                      negativeLedgers?.value !== 0 &&
-                      document.getElementById(
-                        `amount-left-${transaction.txHash}`,
-                      ) ? (
+                    negativeLedgers?.value !== 0 &&
+                    document.getElementById(
+                      `amount-left-${transaction.txHash}`,
+                    ) ? (
                       <UncontrolledTooltip
                         placement="bottom"
                         target={`amount-left-${transaction.txHash}`}
@@ -218,14 +220,14 @@ const SentColumn = ({ transaction }) => {
                 {negativeLedgers?.nativeAmount === 0
                   ? ''
                   : parseValuesToLocale(
-                    negativeLedgers?.nativeAmount,
-                    CurrencyUSD,
-                  )}
+                      negativeLedgers?.nativeAmount,
+                      CurrencyUSD,
+                    )}
               </p>
             </div>
           </>
         )}
-      </>
+      </h6>
     </div>
   );
 };
