@@ -10,6 +10,7 @@ import {
   Label,
   Form,
   FormFeedback,
+  Button,
 } from 'reactstrap';
 
 // Formik Validation
@@ -30,6 +31,7 @@ import { Link, useNavigate } from 'react-router-dom';
 //import images
 import logoLight from '../../assets/images/logo-light.png';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
+import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 
 const Register = () => {
   const history = useNavigate();
@@ -41,17 +43,19 @@ const Register = () => {
 
     initialValues: {
       email: '',
-      first_name: '',
-      last_name: '',
+
+      full_name: '',
+
       // username: '',
       password: '',
       confirm_password: '',
+      account_type: '',
     },
     validationSchema: Yup.object({
       email: Yup.string().required('Please Enter Your Email'),
-      first_name: Yup.string().required('Please Enter Your First Name'),
-      last_name: Yup.string().required('Please Enter Your Last Name'),
+      full_name: Yup.string().required('Please Enter Your Full Name'),
       password: Yup.string().required('Please Enter Your Password'),
+      account_type: Yup.string().required('Please Select Your Account Type'),
       confirm_password: Yup.string().when('password', {
         is: (val) => (val && val.length > 0 ? true : false),
         then: Yup.string().oneOf(
@@ -89,32 +93,17 @@ const Register = () => {
   return (
     <React.Fragment>
       <ParticlesAuth>
-        <div className="auth-page-content">
+        <div className="auth-page-content mt-n3">
           <Container>
-            <Row>
-              <Col lg={12}>
-                <div className="text-center mt-sm-5 mb-4 text-white-50">
-                  <div>
-                    {/* <Link to="/" className="d-inline-block auth-logo">
-                                            <img src={logoLight} alt="" height="20" />
-                                        </Link> */}
-                  </div>
-                  <p className="mt-3 fs-15 fw-medium">
-                    Premium Admin & Dashboard Template
-                  </p>
-                </div>
-              </Col>
-            </Row>
-
             <Row className="justify-content-center">
               <Col md={8} lg={6} xl={5}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
-                    <div className="text-center mt-2">
-                      <h5 className="text-primary">Create New Account</h5>
-                      <p className="text-muted">
+                    <div className="text-center my-3">
+                      <h4 className="text-primary">Create New Account</h4>
+                      <h6 className="text-muted">
                         Get your free Chain Glance account now
-                      </p>
+                      </h6>
                     </div>
                     <div className="p-2 mt-4">
                       <Form
@@ -180,32 +169,32 @@ const Register = () => {
                           ) : null}
                         </div>
                         <div className="mb-3">
-                          <Label htmlFor="first_name" className="form-label">
-                            First Name <span className="text-danger">*</span>
+                          <Label htmlFor="full_name" className="form-label">
+                            Full Name <span className="text-danger">*</span>
                           </Label>
                           <Input
-                            name="first_name"
+                            name="full_name"
                             type="text"
-                            placeholder="Enter first name"
+                            placeholder="Enter full name"
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
-                            value={validation.values.first_name || ''}
+                            value={validation.values.full_name || ''}
                             invalid={
-                              validation.touched.first_name &&
-                              validation.errors.first_name
+                              validation.touched.full_name &&
+                              validation.errors.full_name
                                 ? true
                                 : false
                             }
                           />
-                          {validation.touched.first_name &&
-                          validation.errors.first_name ? (
+                          {validation.touched.full_name &&
+                          validation.errors.full_name ? (
                             <FormFeedback type="invalid">
-                              <div>{validation.errors.first_name}</div>
+                              <div>{validation.errors.full_name}</div>
                             </FormFeedback>
                           ) : null}
                         </div>
 
-                        <div className="mb-3">
+                        {/* <div className="mb-3">
                           <Label htmlFor="last_name" className="form-label">
                             Last Name <span className="text-danger">*</span>
                           </Label>
@@ -227,6 +216,34 @@ const Register = () => {
                           validation.errors.last_name ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.last_name}</div>
+                            </FormFeedback>
+                          ) : null}
+                        </div> */}
+                        <div className="mb-3">
+                          <Label htmlFor="account_type" className="form-label">
+                            Account Type <span className="text-danger">*</span>
+                          </Label>
+                          <Input
+                            type="select"
+                            name="account_type"
+                            onChange={validation.handleChange}
+                            onBlur={validation.handleBlur}
+                            value={validation.values.account_type || ''}
+                            invalid={
+                              validation.touched.account_type &&
+                              validation.errors.account_type
+                                ? true
+                                : false
+                            }
+                          >
+                            <option value="">Select Account Type</option>
+                            <option value="type1">Type 1</option>
+                            <option value="type2">Type 2</option>
+                          </Input>
+                          {validation.touched.account_type &&
+                          validation.errors.account_type ? (
+                            <FormFeedback type="invalid">
+                              <div>{validation.errors.account_type}</div>
                             </FormFeedback>
                           ) : null}
                         </div>
@@ -287,25 +304,18 @@ const Register = () => {
                           ) : null}
                         </div>
 
-                        <div className="mb-4">
-                          <p className="mb-0 fs-12 text-muted fst-italic">
-                            By registering you agree to the Velzon
-                            <Link
-                              to="#"
-                              className="text-primary text-decoration-underline fst-normal fw-medium"
-                            >
-                              Terms of Use
-                            </Link>
-                          </p>
-                        </div>
-
                         <div className="mt-4">
-                          <button
-                            className="btn btn-success w-100"
+                          <Button
                             type="submit"
+                            className="mt-3 d-flex btn-hover-light w-100 justify-content-center align-items-center"
+                            color="soft-light"
+                            style={{
+                              borderRadius: '10px',
+                              border: '.5px solid grey',
+                            }}
                           >
                             Sign Up
-                          </button>
+                          </Button>
                         </div>
 
                         <div className="mt-4 text-center">
@@ -315,17 +325,7 @@ const Register = () => {
                             </h5>
                           </div>
 
-                          <div>
-                            {/* <button type="button" className="btn btn-primary btn-icon waves-effect waves-light"><i className="ri-facebook-fill fs-16"></i></button>{" "} */}
-                            <button
-                              type="button"
-                              className="btn btn-danger btn-icon waves-effect waves-light"
-                            >
-                              <i className="ri-google-fill fs-16"></i>
-                            </button>{' '}
-                            {/* <button type="button" className="btn btn-dark btn-icon waves-effect waves-light"><i className="ri-github-fill fs-16"></i></button>{" "}
-                                                        <button type="button" className="btn btn-info btn-icon waves-effect waves-light"><i className="ri-twitter-fill fs-16"></i></button> */}
-                          </div>
+                          <SocialAuth />
                         </div>
                       </Form>
                     </div>
