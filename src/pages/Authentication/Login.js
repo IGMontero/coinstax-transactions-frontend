@@ -29,6 +29,7 @@ import { useFormik } from 'formik';
 import { login } from '../../slices/auth2/thunk';
 
 import logoLight from '../../assets/images/logo-light.png';
+import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 //import images
 
 const Login = (props) => {
@@ -83,32 +84,17 @@ const Login = (props) => {
   return (
     <React.Fragment>
       <ParticlesAuth>
-        <div className="auth-page-content ms-n5 me-5 pe-5">
+        <div className="auth-page-content ">
           <Container>
-            <Row>
-              <Col lg={12}>
-                <div className="text-center mt-sm-5 mb-4 text-white-50">
-                  <div>
-                    {/* <Link to="/" className="d-inline-block auth-logo">
-                                            <img src={logoLight} alt="" height="20" />
-                                        </Link> */}
-                  </div>
-                  <p className="mt-3 fs-15 fw-medium">
-                    {/* Premium Admin & Dashboard Template */}
-                  </p>
-                </div>
-              </Col>
-            </Row>
-
             <Row className=" justify-content-center">
               <Col md={8} lg={6} xl={5}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
-                    <div className="text-center mt-2">
-                      <h5 className="text-primary">Welcome Back !</h5>
-                      <p className="text-muted">
+                    <div className="text-center my-3">
+                      <h3 className="text-primary">Welcome Back !</h3>
+                      <h6 className="text-muted">
                         Sign in to continue to Chain Glance.
-                      </p>
+                      </h6>
                     </div>
                     {errorMsg && errorMsg ? (
                       <Alert color="danger"> {errorMsg} </Alert>
@@ -204,10 +190,14 @@ const Login = (props) => {
 
                         <div className="mt-4">
                           <Button
-                            color="success"
                             disabled={loading ? true : false}
-                            className="btn btn-success w-100"
                             type="submit"
+                            className="mt-3 d-flex btn-hover-light w-100 justify-content-center align-items-center"
+                            color="soft-light"
+                            style={{
+                              borderRadius: '10px',
+                              border: '.5px solid grey',
+                            }}
                           >
                             {loading ? (
                               <Spinner size="sm" className="me-2">
@@ -219,43 +209,18 @@ const Login = (props) => {
                           </Button>
                         </div>
 
-                        {/*<div className="mt-4 text-center">
+                        <div className="mt-4 text-center">
                           <div className="signin-other-title">
                             <h5 className="fs-13 mb-4 title">Sign In with</h5>
                           </div>
-                          <div>
-                            <Link
-                                                            to="#"
-                                                            className="btn btn-primary btn-icon me-1"
-                                                            onClick={e => {
-                                                                e.preventDefault();
-                                                                socialResponse("facebook");
-                                                            }}
-                                                            >
-                                                            <i className="ri-facebook-fill fs-16" />
-                                                        </Link> 
-                            <Link
-                              to="#"
-                              className="btn btn-danger btn-icon me-1"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                socialResponse('google');
-                              }}
-                            >
-                              <i className="ri-google-fill fs-16" />
-                            </Link>
-                         <Button color="primary" className="btn-icon"><i className="ri-facebook-fill fs-16"></i></Button>{" "} 
-                             <Button color="danger" className="btn-icon"><i className="ri-google-fill fs-16"></i></Button>{" "} 
-                             <Button color="dark" className="btn-icon"><i className="ri-github-fill fs-16"></i></Button>{" "} 
-                             <Button color="info" className="btn-icon"><i className="ri-twitter-fill fs-16"></i></Button> 
-                          </div>
-                        </div>*/}
+                          <SocialAuth />
+                        </div>
                       </Form>
                     </div>
                   </CardBody>
                 </Card>
 
-                {/* <div className="mt-4 text-center">
+                <div className="mt-4 text-center">
                   <p className="mb-0">
                     Don't have an account ?{' '}
                     <Link
@@ -266,7 +231,7 @@ const Login = (props) => {
                       Signup{' '}
                     </Link>{' '}
                   </p>
-                </div> */}
+                </div>
               </Col>
             </Row>
           </Container>
