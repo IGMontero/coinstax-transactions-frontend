@@ -10,6 +10,7 @@ import {
   DropdownItem,
   InputGroup,
   Badge,
+  Spinner,
 } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNFTS } from '../../slices/transactions/thunk';
@@ -320,7 +321,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   return (
     <React.Fragment>
       {renderTitle()}
-      {loading && !loadingIncludeSpam ? (
+      {loading && !loadingIncludeSpam && currentPage === 0 ? (
         <NftsSkeleton isDashboardPage={isDashboardPage} />
       ) : (
         <div className="w-100">
@@ -377,13 +378,17 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
                     <Button
                       className="mt-3 d-flex btn-hover-light justify-content-center align-items-center"
                       color="soft-light"
+                      disabled={loading}
                       style={{
                         borderRadius: '10px',
                         border: '.5px solid grey',
                       }}
                       onClick={handleShowMoreItems}
                     >
-                      <h6 className="text-dark fw-semibold my-2">More Items</h6>
+                      <h6 className="text-dark fw-semibold my-2">{
+                        loading ? <Spinner size="sm" />
+                          : 'See more NFTs'
+                      }</h6>
                     </Button>
                   </div>
                 )}
