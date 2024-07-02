@@ -1,25 +1,26 @@
+import { Chart } from 'chart.js';
+import _ from 'lodash';
+import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
+import { Col } from 'reactstrap';
+import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
+import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
+import { selectNetworkType } from '../../../slices/networkType/reducer';
 import {
   fetchPerformance,
   fetchPerformanceToken,
 } from '../../../slices/transactions/thunk';
-import { useDispatch, useSelector } from 'react-redux';
-import { Col, Spinner } from 'reactstrap';
 import {
   CurrencyUSD,
-  getMaxMinValues,
-  formatDateToLocale,
-  parseValuesToLocale,
   calculatePercentageChange,
   filtersChart,
+  formatCalendarDateToLocale,
   formatPercentageChange,
+  getMaxMinValues,
+  parseValuesToLocale
 } from '../../../utils/utils';
-import { Chart } from 'chart.js';
-import { useParams } from 'react-router-dom';
-import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
-import _ from 'lodash';
-import { selectNetworkType } from '../../../slices/networkType/reducer';
-import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
@@ -123,8 +124,9 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
               formatPercentageChange(percentageChange);
 
             setSubtitle(percentageChangeFormatted);
-            const date = new Date(data.labels[index]);
-            setActiveDate(formatDateToLocale(date));
+
+            const date = moment(data.labels[index]).format('YYYY-MM-DD')
+            setActiveDate(formatCalendarDateToLocale(date));
           }
           return '';
         },
@@ -133,9 +135,12 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
         },
         footer: function (tooltipItems, data) {
           // Show date formatted
-          const date = new Date(data.labels[tooltipItems[0].index]);
-          // console.log(tooltipItems);
-          return formatDateToLocale(date, true);
+
+          const dataLabel = data.labels[tooltipItems[0].index];
+
+          const date = moment(dataLabel).format('YYYY-MM-DD')
+
+          return formatCalendarDateToLocale(date, false);
         },
         // label: function (tooltipItem, data) {
         //   // Your label callback logic
@@ -213,7 +218,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
         .then((response) => {
           clearTimeout(timer);
           const newLabels = response.total.map(
-            (item) => new Date(item.calendarDate),
+            (item) => moment(item.calendarDate).format('YYYY-MM-DD'),
           );
           const newData = response.total.map((item) => {
             const result = Math.max(0, item.value.quote);
@@ -470,7 +475,8 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
     const percentageChangeFormatted = formatPercentageChange(percentageChange);
 
     setSubtitle(percentageChangeFormatted);
-    setActiveDate(formatDateToLocale(new Date(chartData.labels[index])));
+    const date = moment(chartData.labels[index]).format('YYYY-MM-DD')
+    setActiveDate(formatCalendarDateToLocale(date));
   };
 
   // #region UseEffects
