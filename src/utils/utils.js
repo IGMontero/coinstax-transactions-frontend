@@ -78,13 +78,28 @@ export const formatNumber = (number) => {
 //   return new Date(date).toLocaleDateString(undefined, options);
 // };
 
+export const formatCalendarDateToLocale = (date, showTime) => {
+  const dateObj = new Date(date);
+
+  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
+  const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
+
+  const dateString = dateObj.toLocaleDateString(undefined, dateOptions);
+  const timeString = showTime
+    ? dateObj.toLocaleTimeString(undefined, timeOptions)
+    : '';
+
+  return `${dateString}${showTime ? ', ' + timeString : ''}`;
+};
 export const formatDateToLocale = (date, showTime) => {
+  const dateObj = new Date(date);
+
   const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
 
-  const dateString = new Date(date).toLocaleDateString(undefined, dateOptions);
+  const dateString = dateObj.toLocaleDateString(undefined, dateOptions);
   const timeString = showTime
-    ? new Date(date).toLocaleTimeString(undefined, timeOptions)
+    ? dateObj.toLocaleTimeString(undefined, timeOptions)
     : '';
 
   return `${dateString}${showTime ? ', ' + timeString : ''}`;
