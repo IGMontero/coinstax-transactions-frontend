@@ -155,7 +155,9 @@ const Layout = (props) => {
   // #region Address Info & networks
   const isAuthPage =
     location.pathname.includes('/login') ||
-    location.pathname.includes('/register');
+    location.pathname.includes('/register') ||
+    location.pathname.includes('/forgot-password') ||
+    location.pathname.includes('/reset-password');
 
   const isAdminPages =
     location.pathname.includes('blockchain-contracts') ||
@@ -338,7 +340,10 @@ const Layout = (props) => {
             <Sidebar layoutType={layoutType} />
           </>
         )}
-        <div className="main-content" style={{ height: '100vh' }}>
+        <div
+          className={isAuthPage ? '' : 'main-content'}
+          style={{ height: '100vh' }}
+        >
           <div className="page-content">
             {!pagesNotToDisplayAddress.includes(location.pathname) &&
               !token &&
