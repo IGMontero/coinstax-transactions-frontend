@@ -46,13 +46,15 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   const networkType = useSelector(selectNetworkType);
   const fetchControllerRef = useRef(new AbortController());
 
-  const [itemsToShow, setItemsToShow] = useState(20);
+  const [totalItems, setTotalItems] = useState(0);
 
   const [nftsLoader, setNftsLoader] = useState({});
   const [includeSpamLoader, setIncludeSpamLoader] = useState({});
 
   const [hasMoreItems, setHasMoreItems] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+
+  const [initialTotalFiatValue, setInitialTotalFiatValue] = useState(null);
 
   const loading = Object.values(nftsLoader).some((loader) => loader);
   const loadingIncludeSpam = Object.values(includeSpamLoader).some(
@@ -61,15 +63,11 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
 
   const [includeSpam, setIncludeSpam] = useState(false);
   const navigate = useNavigate();
-  const [data, setData] = React.useState([]);
+  const [data, setData] = useState({ items: [] });
   const [showFiatValues, setShowFiatValues] = useState(true);
   const [updatedAt, setUpdatedAt] = useState();
 
-  const totalFiatValue = parseValuesToLocale(data?.totalValue || 0, CurrencyUSD);
-
   const handleChangeSymbol = () => {
-    // setCurrencySymbol((prevSymbol) => (prevSymbol === 'ETH' ? '$' : 'ETH'));
-
     setShowFiatValues((prev) => !prev);
   };
 
@@ -101,13 +99,19 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
       }),
     )
       .unwrap()
-      .then((response) => {
+      .then((response = {}) => {
         setData((prevData) => ({
           ...response,
           items: [...(prevData.items || []), ...(response.items || [])],
         }));
-        setHasMoreItems(response.hasMore);
+        setHasMoreItems(response?.hasMore || false);
+        setTotalItems(response?.totalItems || 0);
         setUpdatedAt(response?.updatedAt);
+        if (page === 0 && initialTotalFiatValue === null) {
+          setInitialTotalFiatValue(
+            parseValuesToLocale(response?.totalValue || 0, CurrencyUSD),
+          );
+        }
         setNftsLoader((prevLoader) => ({
           ...prevLoader,
           [fetchId]: false,
@@ -131,15 +135,27 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   useEffect(() => {
-    if (address) {
+    if (address || networkType) {
       setCurrentPage(0);
-      setData([]);
+      setData({ items: [] });
+      setInitialTotalFiatValue(null);
+      setIncludeSpam(false);
       fetchDataNFTS(0);
     }
     return () => {
       fetchControllerRef.current.abort();
     };
-  }, [address, includeSpam, networkType]);
+  }, [address, networkType]);
+
+  useEffect(() => {
+    setData({ items: [] });
+    fetchDataNFTS(0);
+  }, [includeSpam]);
+
+  const totalFiatValue =
+    initialTotalFiatValue !== null
+      ? initialTotalFiatValue
+      : parseValuesToLocale(data?.totalValue || 0, CurrencyUSD);
 
   const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     navigate(
@@ -163,7 +179,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
     fetchDataNFTS(nextPage);
   };
 
-  let items = data?.items || data?.nfts || [];
+  let items = data?.items || [];
   if (isDashboardPage) {
     items = items.slice(0, 4);
   }
@@ -294,7 +310,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   // if no NFTs found
-  if (items && items?.length === 0 && !loading) {
+  if (!loading && totalItems === 0 && !includeSpam) {
     return (
       <>
         {renderTitle()}
@@ -325,7 +341,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
         <NftsSkeleton isDashboardPage={isDashboardPage} />
       ) : (
         <div className="w-100">
-          {items && items.length > 0 && !isDashboardPage ? (
+          {totalItems > 0 && !isDashboardPage ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
                 <h6>
@@ -385,15 +401,14 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
                       }}
                       onClick={handleShowMoreItems}
                     >
-                      <h6 className="text-dark fw-semibold my-2">{
-                        loading ? <Spinner size="sm" />
-                          : 'See more NFTs'
-                      }</h6>
+                      <h6 className="text-dark fw-semibold my-2">
+                        {loading ? <Spinner size="sm" /> : 'See more NFTs'}
+                      </h6>
                     </Button>
                   </div>
                 )}
                 {isDashboardPage &&
-                  items?.length &&
+                  hasMoreItems &&
                   buttonSeeMore('nfts', 'NFTs')}
               </>
             </Col>
