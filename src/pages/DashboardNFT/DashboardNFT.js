@@ -18,23 +18,25 @@ const DashboardNFT = () => {
 
   const [loading, setLoading] = useState('');
   const [nft, setNft] = useState({});
-  const [description, setDescription] = useState('');
-  const [attributes, setAttributes] = useState([]);
-  const [collectionLogo, setCollectionLogo] = useState('');
-  const [collectionName, setCollectionName] = useState('');
-
-  const [logo, setLogo] = useState('');
-  const [name, setName] = useState('');
-
-  const [ownerAddress, setOwnerAddress] = useState('');
-
-  const [details, setDetails] = useState([]);
-
-  const [symbol, setSymbol] = useState('');
 
   const queryParams = new URLSearchParams(location.search);
   const tokenId = queryParams.get('tokenId');
   const blockchain = queryParams.get('blockchain');
+
+
+  const collectionLogo = nft?.collection?.logo;
+  const collectionName = nft?.collection?.name;
+  const attributes = nft?.metadata?.attributes;
+  const description = nft?.description;
+  const logo = nft?.logo;
+  const name = nft?.name;
+  const ownerAddress = nft?.ownerAddress;
+  const details = [
+    'Network',
+    `${blockchain === 'bnb' ? 'BNB Chain' : capitalizeFirstLetter(blockchain)}`,
+  ];
+
+
 
   const fetchNftByContractAddress = async () => {
     try {
@@ -56,22 +58,6 @@ const DashboardNFT = () => {
         return;
       } else {
         setNft(res);
-        setCollectionLogo(res.collection.logo);
-        setCollectionName(res.collection.name);
-        setLogo(res.logo);
-        setName(res.name);
-        setOwnerAddress(res.ownerAddress);
-        // setFloorPriceNativeToken(res.floorPriceNativeToken);
-        setSymbol(res.symbol);
-        setAttributes(res.metadata.attributes);
-        setDescription(res.description);
-        setDetails([
-          'Network',
-          `${blockchain === 'bnb'
-            ? 'BNB Chain'
-            : capitalizeFirstLetter(blockchain)
-          }`,
-        ]);
       }
       setLoading(false);
     } catch (error) {
