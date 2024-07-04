@@ -382,7 +382,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
                 <h6>
-                  As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}
+                  As of Date: {moment(updatedAt).format('MM/DD/YYYY')}
                 </h6>
                 <span className="text-dark">Total value by floor price</span>
                 <div className="d-flex align-items-center">
