@@ -110,7 +110,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
         setHasMoreItems(response?.hasMore || false);
         setTotalItems(response?.totalItems || 0);
         setUpdatedAt(response?.updatedAt);
-        if (page === 0 && initialTotalFiatValue === null) {
+        if (page === 0) {
           setInitialTotalFiatValue(
             parseValuesToLocale(response?.totalValue || 0, CurrencyUSD),
           );
