@@ -374,7 +374,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
   return (
     <React.Fragment>
       {renderTitle()}
-      {loading && !loadingIncludeSpam ? (
+      {loading && !loadingIncludeSpam && currentPage === 0 ? (
         <NftsSkeleton isDashboardPage={isDashboardPage} />
       ) : (
         <div className="w-100">
