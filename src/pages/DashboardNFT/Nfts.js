@@ -56,6 +56,8 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
 
   const [initialTotalFiatValue, setInitialTotalFiatValue] = useState(null);
 
+  const [initialized, setInitialized] = useState(false);
+
   const loading = Object.values(nftsLoader).some((loader) => loader);
   const loadingIncludeSpam = Object.values(includeSpamLoader).some(
     (loader) => loader,
@@ -72,6 +74,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   const fetchDataNFTS = (page) => {
+    console.log("FETCH DATA RNNING")
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
@@ -135,6 +138,14 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   useEffect(() => {
+    // Initialize
+    setInitialized(true);
+    fetchNFTS(0);
+  }, []);
+
+  useEffect(() => {
+    if (!initialized) return;
+
     if (address || networkType) {
       setCurrentPage(0);
       setData({ items: [] });
