@@ -861,3 +861,37 @@
 
 
 
+// Spam flag 
+.card-container {
+  position: relative;
+}
+
+.spam-flag {
+  display: none;
+  position: absolute;
+  padding: 3px;
+  padding-top: 0%;
+  padding-bottom: 0%;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  background-color: #16161a;
+  border-radius: 20%;
+}
+
+[data-layout-mode='dark'] .spam-flag {
+  background-color: #16161a;
+  color: white;
+}
+
+[data-layout-mode='light'] .spam-flag {
+  background-color: #f3f6f9;
+  color: #16161a;
+}
+
+.card-container:hover .spam-flag {
+  display: block;
+}
+
+
+
