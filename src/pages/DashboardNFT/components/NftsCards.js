@@ -23,7 +23,7 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
       {item &&
         item?.length > 0 &&
         item?.map((nft, index) => {
-          const { floorPriceFiat, floorPriceNativeToken } = nft;
+          const { floorPriceFiat, floorPriceNativeToken, isSpam } = nft;
           const hasFiatFloorPrice =
             floorPriceFiat && Number(floorPriceFiat) > 0;
           const hasNativeTokenFloorPrice =
@@ -41,9 +41,17 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
           return (
             <div
               key={index}
-              className="d-flex justify-content-center"
-              // style={{ maxWidth: '186px' }}
+              className="d-flex justify-content-center position-relative card-container"
             >
+              <div className={`spam-flag`}>
+                <span>
+                  {isSpam === true ? (
+                    <i className="ri-spam-fill fs-4 p-0"></i>
+                  ) : (
+                    <i className="ri-spam-line fs-4 p-0 "></i>
+                  )}
+                </span>
+              </div>
               <Card
                 onClick={() =>
                   handleVisitNFT(
