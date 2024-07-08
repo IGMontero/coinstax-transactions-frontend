@@ -10,7 +10,7 @@ const NftsSkeleton = (props) => {
   }));
 
   const darkMode = layoutModeType === layoutModeTypes['DARKMODE'];
-  const skeletonCount = props.isDashboardPage ? 4 : 10;
+  const skeletonCount = props.isDashboardPage ? 5 : 10;
 
   return (
     <SkeletonTheme
