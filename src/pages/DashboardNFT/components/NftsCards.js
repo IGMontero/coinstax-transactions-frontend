@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
-import { Card, CardBody, CardHeader } from 'reactstrap';
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  PopoverBody,
+  UncontrolledPopover,
+} from 'reactstrap';
 import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
-import eth from '../../../assets/images/svg/crypto-icons/eth.svg';
 import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
 
 const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
@@ -9,6 +14,32 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
 
   const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     onVisitNft(contractAddress, tokenId, blockchain);
+  };
+
+  const renderPopover = (id, text) => {
+    return (
+      <UncontrolledPopover
+        trigger="hover"
+        placement="left"
+        target={id}
+        className="popover-dark"
+      >
+        <PopoverBody
+          style={{
+            width: 'auto',
+          }}
+          className="text-center w-auto p-1 "
+        >
+          <span
+            style={{
+              fontSize: '0.70rem',
+            }}
+          >
+            {text}
+          </span>
+        </PopoverBody>
+      </UncontrolledPopover>
+    );
   };
 
   return (
@@ -43,12 +74,18 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
               key={index}
               className="d-flex justify-content-center position-relative card-container"
             >
-              <div className={`spam-flag`}>
+              <div className={`spam-flag cursor-pointer`}>
                 <span>
                   {isSpam === true ? (
-                    <i className="ri-spam-fill fs-4 p-0"></i>
+                    <div id="spam-icon-spam">
+                      <i className="ri-spam-fill fs-4 p-0"></i>
+                      {renderPopover('spam-icon-spam', 'Mark as Not Spam')}
+                    </div>
                   ) : (
-                    <i className="ri-spam-line fs-4 p-0 "></i>
+                    <div id="spam-icon-not-spam">
+                      <i className="ri-spam-line fs-4 p-0 "></i>
+                      {renderPopover('spam-icon-not-spam', ' Mark as Spam')}
+                    </div>
                   )}
                 </span>
               </div>
