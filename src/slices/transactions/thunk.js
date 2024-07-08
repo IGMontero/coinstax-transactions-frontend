@@ -236,3 +236,30 @@ export const getNftsByContractAddress = createAsyncThunk(
     }
   },
 );
+
+export const updateNftsSpamStatus = createAsyncThunk(
+  'transactions/updateNftsSpamStatus',
+  async (
+    { blockchain, contractAddress, tokenId, spam },
+    { rejectWithValue },
+  ) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(`${API_BASE}/nfts/spam`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${token}`,
+        },
+        body: JSON.stringify({ blockchain, contractAddress, tokenId, spam }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error: ${response.status}`);
+      }
+      return { tokenId, spam };
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
