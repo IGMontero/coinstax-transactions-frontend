@@ -36,6 +36,7 @@ import {
 } from '../slices/networkType/reducer';
 import { setAddressSummary } from '../slices/addresses/reducer';
 import UnsupportedPage from '../Components/UnsupportedPage/UnsupportedPage';
+import { setAddressName } from '../slices/addressName/reducer';
 
 const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
@@ -187,6 +188,8 @@ const Layout = (props) => {
 
   const [incompleteBlockchains, setIncompleteBlockchains] = useState([]);
 
+  const [nickName, setNickName] = useState(null);
+
   const fetchAddressInfo = async () => {
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
@@ -249,6 +252,10 @@ const Layout = (props) => {
             filtered.unshift(allNetwork);
           }
 
+          if (res.nickname) {
+            setNickName(res.nickname);
+          }
+
           const newNetworkType =
             filtered.find((n) => n.key === networkType)?.key || 'all';
           if (newNetworkType !== networkType) {
@@ -294,6 +301,7 @@ const Layout = (props) => {
         }
         setIsInInterval(false);
         setIsUnsupported(false);
+        setNickName(null);
         await fetchAddressInfo();
       };
 
@@ -349,6 +357,7 @@ const Layout = (props) => {
               !token &&
               !contractAddress && (
                 <AddressWithDropdown
+                  addressNickName={nickName}
                   isOnlyAllNetwork={isOnlyAllNetwork}
                   filteredNetworks={filteredNetworks}
                   incompleteBlockchains={incompleteBlockchains}
@@ -356,7 +365,11 @@ const Layout = (props) => {
                 />
               )}
             {(() => {
-              if (token || contractAddress || pagesNotToDisplayAddress.includes(location.pathname)) {
+              if (
+                token ||
+                contractAddress ||
+                pagesNotToDisplayAddress.includes(location.pathname)
+              ) {
                 return props.children;
               } else if (isUnsupported) {
                 return <UnsupportedPage />;
