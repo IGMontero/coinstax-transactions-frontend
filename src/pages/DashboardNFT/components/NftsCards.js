@@ -1,45 +1,59 @@
-import React, { useState } from 'react';
-import {
-  Card,
-  CardBody,
-  CardHeader,
-  PopoverBody,
-  UncontrolledPopover,
-} from 'reactstrap';
+import React, { useEffect, useRef, useState } from 'react';
+import { Card, CardBody, CardHeader, UncontrolledTooltip } from 'reactstrap';
+import { updateNftsSpamStatus } from '../../../slices/transactions/thunk';
 import { CurrencyUSD, parseValuesToLocale } from '../../../utils/utils';
 import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectNetworkType } from '../../../slices/networkType/reducer';
 
 const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
+  const dispatch = useDispatch();
+  const iconRefs = useRef([]);
   const [imageErrors, setImageErrors] = useState({});
+  const [nfts, setNfts] = useState(item);
+  const [tooltipTargetIds, setTooltipTargetIds] = useState([]);
+
+  const networkType = useSelector(selectNetworkType);
 
   const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     onVisitNft(contractAddress, tokenId, blockchain);
   };
 
-  const renderPopover = (id, text) => {
-    return (
-      <UncontrolledPopover
-        trigger="hover"
-        placement="left"
-        target={id}
-        className="popover-dark"
-      >
-        <PopoverBody
-          style={{
-            width: 'auto',
-          }}
-          className="text-center w-auto p-1 "
-        >
-          <span
-            style={{
-              fontSize: '0.70rem',
-            }}
-          >
-            {text}
-          </span>
-        </PopoverBody>
-      </UncontrolledPopover>
-    );
+  useEffect(() => {
+    iconRefs.current = iconRefs.current.slice(0, nfts.length);
+    const ids = nfts.map((nft, index) => {
+      return nft.isSpam
+        ? `spam-icon-spam-${index}`
+        : `spam-icon-not-spam-${index}`;
+    });
+    setTooltipTargetIds(ids);
+  }, [nfts]);
+
+  const handleSpam = async (contractAddress, tokenId, spam) => {
+    try {
+      const response = await dispatch(
+        updateNftsSpamStatus({
+          blockchain: networkType,
+          contractAddress,
+          tokenId,
+          spam,
+        }),
+      ).unwrap();
+
+      console.log(response);
+
+      if (response.spam !== undefined) {
+        setNfts((prevNfts) =>
+          prevNfts.map((nft) =>
+            nft.tokenId === tokenId && nft.contractAddress === contractAddress
+              ? { ...nft, isSpam: response.spam }
+              : nft,
+          ),
+        );
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -51,9 +65,9 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
         justifyContent: 'center',
       }}
     >
-      {item &&
-        item?.length > 0 &&
-        item?.map((nft, index) => {
+      {nfts &&
+        nfts?.length > 0 &&
+        nfts?.map((nft, index) => {
           const { floorPriceFiat, floorPriceNativeToken, isSpam } = nft;
           const hasFiatFloorPrice =
             floorPriceFiat && Number(floorPriceFiat) > 0;
@@ -65,26 +79,60 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
           const floorPrice = showFiatValues
             ? parseValuesToLocale(floorPriceFiat, CurrencyUSD)
             : parseValuesToLocale(floorPriceNativeToken) +
-              ` ${nft?.nativeSymbol || ''}`;
+              `${nft?.nativeSymbol || ''}`;
           const shouldShowUnsupported =
             !nft.logo || imageErrors[nft.contractAddress + nft.tokenId];
-
+          const iconId = isSpam
+            ? `spam-icon-spam-${index}`
+            : `spam-icon-not-spam-${index}`;
           return (
             <div
               key={index}
               className="d-flex justify-content-center position-relative card-container"
             >
-              <div className={`spam-flag cursor-pointer`}>
+              <div className="spam-flag cursor-pointer">
                 <span>
-                  {isSpam === true ? (
-                    <div id="spam-icon-spam">
+                  {isSpam ? (
+                    <div
+                      id={iconId}
+                      ref={(el) => (iconRefs.current[index] = el)}
+                      onClick={() =>
+                        handleSpam(nft.contractAddress, nft.tokenId, false)
+                      }
+                    >
                       <i className="ri-spam-fill fs-4 p-0"></i>
-                      {renderPopover('spam-icon-spam', 'Mark as Not Spam')}
+                      {tooltipTargetIds.includes(iconId) && (
+                        <UncontrolledTooltip
+                          placement="left"
+                          target={iconId}
+                          className="popover-dark"
+                        >
+                          <span style={{ fontSize: '0.70rem' }}>
+                            Unflag as Spam
+                          </span>
+                        </UncontrolledTooltip>
+                      )}
                     </div>
                   ) : (
-                    <div id="spam-icon-not-spam">
-                      <i className="ri-spam-line fs-4 p-0 "></i>
-                      {renderPopover('spam-icon-not-spam', ' Mark as Spam')}
+                    <div
+                      id={iconId}
+                      ref={(el) => (iconRefs.current[index] = el)}
+                      onClick={() =>
+                        handleSpam(nft.contractAddress, nft.tokenId, true)
+                      }
+                    >
+                      <i className="ri-spam-line fs-4 p-0"></i>
+                      {tooltipTargetIds.includes(iconId) && (
+                        <UncontrolledTooltip
+                          placement="left"
+                          target={iconId}
+                          className="popover-dark"
+                        >
+                          <span style={{ fontSize: '0.70rem' }}>
+                            Flag as Spam
+                          </span>
+                        </UncontrolledTooltip>
+                      )}
                     </div>
                   )}
                 </span>
@@ -101,7 +149,6 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
                 style={{
                   borderRadius: '10px',
                   minWidth: '100%',
-                  // maxWidth: '186px',
                 }}
               >
                 <CardHeader className="border-0 bg-transparent p-1">
@@ -157,7 +204,7 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
                           width: 'auto',
                           height: '10%',
                         }}
-                        className="img-fluid border-dark border border-rounded  border-1 d-flex justify-content-start shadow-md rounded-circle"
+                        className="img-fluid border-dark border border-rounded border-1 d-flex justify-content-start shadow-md rounded-circle"
                       />
                     </div>
                   </div>
