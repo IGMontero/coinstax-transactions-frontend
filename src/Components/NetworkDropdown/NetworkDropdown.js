@@ -146,11 +146,10 @@ const NetworkDropdown = ({
             className="dropdown-menu-end mt-2"
             id="network-dropdown-menu"
             style={{
-              width: '240px',
+              minWidth: '240px',
             }}
           >
             {filteredNetworks?.map((network) => {
-
               if (!network) return null;
 
               const displayValue =
