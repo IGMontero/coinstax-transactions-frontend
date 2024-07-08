@@ -14,7 +14,7 @@ import {
 } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNFTS } from '../../slices/transactions/thunk';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 import { selectNetworkType } from '../../slices/networkType/reducer';
@@ -41,12 +41,14 @@ const ethIcon = (
   </svg>
 );
 
-const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
+const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
   const dispatch = useDispatch();
+  const { address } = useParams();
+
   const networkType = useSelector(selectNetworkType);
   const fetchControllerRef = useRef(new AbortController());
 
-  const [itemsToShow, setItemsToShow] = useState(20);
+  const [totalItems, setTotalItems] = useState(0);
 
   const [nftsLoader, setNftsLoader] = useState({});
   const [includeSpamLoader, setIncludeSpamLoader] = useState({});
@@ -54,26 +56,34 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   const [hasMoreItems, setHasMoreItems] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
 
+  const [initialTotalFiatValue, setInitialTotalFiatValue] = useState(null);
+
+  const [initialized, setInitialized] = useState(false);
+
+  const [isFetching, setIsFetching] = useState(false);
+
   const loading = Object.values(nftsLoader).some((loader) => loader);
   const loadingIncludeSpam = Object.values(includeSpamLoader).some(
     (loader) => loader,
   );
 
+  const [loadingRefresh, setLoadingRefresh] = useState(false);
+
   const [includeSpam, setIncludeSpam] = useState(false);
+
   const navigate = useNavigate();
-  const [data, setData] = React.useState([]);
+  const [data, setData] = useState({ items: [] });
   const [showFiatValues, setShowFiatValues] = useState(true);
   const [updatedAt, setUpdatedAt] = useState();
 
-  const totalFiatValue = parseValuesToLocale(data?.totalValue || 0, CurrencyUSD);
-
   const handleChangeSymbol = () => {
-    // setCurrencySymbol((prevSymbol) => (prevSymbol === 'ETH' ? '$' : 'ETH'));
-
     setShowFiatValues((prev) => !prev);
   };
 
-  const fetchDataNFTS = (page) => {
+  const fetchDataNFTS = (page, refresh) => {
+    // if (isFetching) return;
+    setIsFetching(true);
+    console.log('FETCH DATA RUNNING');
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
@@ -91,23 +101,31 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
         [fetchId]: true,
       }));
     }
-    dispatch(
+
+    return dispatch(
       fetchNFTS({
         address: address,
         spam: includeSpam,
         page: page,
         networkType,
         signal,
+        refresh: refresh,
       }),
     )
       .unwrap()
-      .then((response) => {
+      .then((response = {}) => {
         setData((prevData) => ({
           ...response,
           items: [...(prevData.items || []), ...(response.items || [])],
         }));
-        setHasMoreItems(response.hasMore);
+        setHasMoreItems(response?.hasMore || false);
+        setTotalItems(response?.totalItems || 0);
         setUpdatedAt(response?.updatedAt);
+        if (page === 0) {
+          setInitialTotalFiatValue(
+            parseValuesToLocale(response?.totalValue || 0, CurrencyUSD),
+          );
+        }
         setNftsLoader((prevLoader) => ({
           ...prevLoader,
           [fetchId]: false,
@@ -127,19 +145,54 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
           ...prevLoader,
           [fetchId]: false,
         }));
+      })
+      .finally(() => {
+        setIsFetching(false);
       });
   };
 
   useEffect(() => {
-    if (address) {
+    // Initialize on first load
+    if (!initialized) {
+      setInitialized(true);
       setCurrentPage(0);
-      setData([]);
-      fetchDataNFTS(0);
+      setIncludeSpam(false);
+      setData({ items: [] });
+      setInitialTotalFiatValue(null);
+      fetchDataNFTS(0, false);
     }
-    return () => {
-      fetchControllerRef.current.abort();
-    };
-  }, [address, includeSpam, networkType]);
+  }, []);
+
+  useEffect(() => {
+    if (initialized) {
+      setCurrentPage(0);
+      setData({ items: [] });
+      // setIncludeSpam(false);
+      setInitialTotalFiatValue(null);
+      fetchDataNFTS(0, false);
+    }
+  }, [address, networkType]);
+
+  useEffect(() => {
+    if (initialized) {
+      setData({ items: [] });
+      setCurrentPage(0);
+      fetchDataNFTS(0, false);
+    }
+  }, [includeSpam]);
+
+  const handleRefreshClick = () => {
+    setLoadingRefresh(true);
+    setData({ items: [] });
+    fetchDataNFTS(0, true).finally(() => {
+      setLoadingRefresh(false);
+    });
+  };
+
+  const totalFiatValue =
+    initialTotalFiatValue !== null
+      ? initialTotalFiatValue
+      : parseValuesToLocale(data?.totalValue || 0, CurrencyUSD);
 
   const handleVisitNFT = (contractAddress, tokenId, blockchain) => {
     navigate(
@@ -163,9 +216,9 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
     fetchDataNFTS(nextPage);
   };
 
-  let items = data?.items || data?.nfts || [];
+  let items = data?.items || [];
   if (isDashboardPage) {
-    items = items.slice(0, 4);
+    items = items.slice(0, 5);
   }
 
   const renderDropdown = () => {
@@ -294,7 +347,7 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
   };
 
   // if no NFTs found
-  if (items && items?.length === 0 && !loading) {
+  if (!loading && totalItems === 0) {
     return (
       <>
         {renderTitle()}
@@ -325,14 +378,38 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
         <NftsSkeleton isDashboardPage={isDashboardPage} />
       ) : (
         <div className="w-100">
-          {items && items.length > 0 && !isDashboardPage ? (
+          {totalItems > 0 && !isDashboardPage ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
                 <h6>
-                  As of Date: {moment(updatedAt).format('MM/DD/YYYY hh:mm A')}
+                  As of Date: {moment(updatedAt).format('MM/DD/YYYY')}
                 </h6>
                 <span className="text-dark">Total value by floor price</span>
-                <h1>{totalFiatValue}</h1>
+                <div className="d-flex align-items-center">
+                  <h1>{totalFiatValue}</h1>
+                  <h1 className="ms-3">
+                    <button
+                      type="button"
+                      className={`button-reload ${loadingRefresh ? 'loading' : ''}`}
+                      onClick={handleRefreshClick}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        fill="currentColor"
+                        className="bi bi-arrow-repeat"
+                        viewBox="0 0 16 16"
+                      >
+                        <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"></path>
+                        <path
+                          fill-rule="evenodd"
+                          d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
+                        ></path>
+                      </svg>
+                    </button>
+                  </h1>
+                </div>
                 <div className="d-flex">
                   <Input
                     id="customCheck1"
@@ -385,15 +462,14 @@ const Nfts = ({ address, isDashboardPage, buttonSeeMore }) => {
                       }}
                       onClick={handleShowMoreItems}
                     >
-                      <h6 className="text-dark fw-semibold my-2">{
-                        loading ? <Spinner size="sm" />
-                          : 'See more NFTs'
-                      }</h6>
+                      <h6 className="text-dark fw-semibold my-2">
+                        {loading ? <Spinner size="sm" /> : 'See more NFTs'}
+                      </h6>
                     </Button>
                   </div>
                 )}
                 {isDashboardPage &&
-                  items?.length &&
+                  hasMoreItems &&
                   buttonSeeMore('nfts', 'NFTs')}
               </>
             </Col>

@@ -249,7 +249,6 @@ const DashboardInfo = () => {
                         <div className="">
                           <Nfts
                             isDashboardPage={true}
-                            address={addressForSearch}
                             buttonSeeMore={renderButtonSeeMore}
                           />
                         </div>
