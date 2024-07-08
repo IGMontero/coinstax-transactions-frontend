@@ -4,12 +4,16 @@ const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const fetchNFTS = createAsyncThunk(
   'transactions/fetchNFTS',
-  async ({ address, spam, networkType, signal, page }, { rejectWithValue }) => {
+  async (
+    { address, spam, networkType, signal, page, refresh },
+    { rejectWithValue },
+  ) => {
     try {
-      const response = await fetch(
-        `${API_BASE}/transactions/${networkType}/${address}/nfts?allowSpam=${spam}&page=${page}`,
-        { signal },
-      );
+      let url = `${API_BASE}/transactions/${networkType}/${address}/nfts?allowSpam=${spam}&page=${page}`;
+      if (refresh) {
+        url += '&refresh=true';
+      }
+      const response = await fetch(url, { signal });
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
@@ -24,6 +28,7 @@ export const fetchNFTS = createAsyncThunk(
     }
   },
 );
+
 export const fetchPerformance = createAsyncThunk(
   'transactions/fetchPerformance',
   async ({ address, days, networkType, signal }, { rejectWithValue }) => {
