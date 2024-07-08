@@ -445,6 +445,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
             <Col>
               <>
                 <NftsCards
+                  includeSpam={includeSpam}
                   isDashboardPage={isDashboardPage}
                   item={items}
                   onVisitNft={handleVisitNFT}

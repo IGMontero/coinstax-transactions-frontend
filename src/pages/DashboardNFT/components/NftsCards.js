@@ -6,7 +6,13 @@ import BlockchainImage from '../../../Components/BlockchainImage/BlockchainImage
 import { useDispatch, useSelector } from 'react-redux';
 import { selectNetworkType } from '../../../slices/networkType/reducer';
 
-const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
+const NftsCards = ({
+  item,
+  onVisitNft,
+  showFiatValues,
+  isDashboardPage,
+  includeSpam,
+}) => {
   const dispatch = useDispatch();
   const iconRefs = useRef([]);
   const [imageErrors, setImageErrors] = useState({});
@@ -40,21 +46,25 @@ const NftsCards = ({ item, onVisitNft, showFiatValues, isDashboardPage }) => {
         }),
       ).unwrap();
 
-      console.log(response);
-
       if (response.spam !== undefined) {
         setNfts((prevNfts) =>
-          prevNfts.map((nft) =>
-            nft.tokenId === tokenId && nft.contractAddress === contractAddress
-              ? { ...nft, isSpam: response.spam }
-              : nft,
-          ),
+          prevNfts
+            .map((nft) =>
+              nft.tokenId === tokenId && nft.contractAddress === contractAddress
+                ? { ...nft, isSpam: response.spam }
+                : nft,
+            )
+            .filter((nft) => !nft.isSpam),
         );
       }
     } catch (error) {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    setNfts(item.filter((nft) => !nft.isSpam));
+  }, [item]);
 
   return (
     <div
