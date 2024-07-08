@@ -58,7 +58,7 @@ const DashboardNFT = () => {
         setNft(res);
         setCollectionLogo(res.collection.logo);
         setCollectionName(res.collection.name);
-        setLogo(res.logo);
+        setLogo(res.logoLarge || res.logo);
         setName(res.name);
         setOwnerAddress(res.ownerAddress);
         // setFloorPriceNativeToken(res.floorPriceNativeToken);
@@ -67,9 +67,10 @@ const DashboardNFT = () => {
         setDescription(res.description);
         setDetails([
           'Network',
-          `${blockchain === 'bnb'
-            ? 'BNB Chain'
-            : capitalizeFirstLetter(blockchain)
+          `${
+            blockchain === 'bnb'
+              ? 'BNB Chain'
+              : capitalizeFirstLetter(blockchain)
           }`,
         ]);
       }
