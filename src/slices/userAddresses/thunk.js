@@ -118,3 +118,35 @@ export const deleteHistoricalBalance = createAsyncThunk(
     }
   },
 );
+
+export const deleteNftsForBlockchain = createAsyncThunk(
+  'userAddresses/deleteNftsForBlockchain',
+  async ({ blockchain, address }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/admin/addresses/${blockchain}/${address}/nfts`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
+        },
+      );
+
+      console.log(response);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const text = await response.text();
+      if (text) {
+        const data = JSON.parse(text);
+        return data;
+      }
+      return {};
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
