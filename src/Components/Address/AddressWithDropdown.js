@@ -21,6 +21,7 @@ const AddressWithDropdown = ({
   isOnlyAllNetwork,
   incompleteBlockchains,
   loading,
+  addressNickName,
 }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
@@ -104,7 +105,11 @@ const AddressWithDropdown = ({
     return (
       <div className="d-flex align-items-center ms-n3">
         <h4 className="mb-0 ms-3  text-custom-address-dropdown ">
-          {formattedAddressLabel}
+          {formattedAddressLabel !== formatIdTransaction(address, 6, 8)
+            ? formattedAddressLabel
+            : addressNickName
+              ? addressNickName
+              : formattedAddressLabel}
         </h4>
         <UncontrolledDropdown className="card-header-dropdown">
           <DropdownToggle tag="a" className="text-reset" role="button">

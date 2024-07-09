@@ -28,7 +28,7 @@ const DashboardNFT = () => {
   const collectionName = nft?.collection?.name;
   const attributes = nft?.metadata?.attributes;
   const description = nft?.description;
-  const logo = nft?.logo;
+  const logo = nft?.logoLarge || nft?.logo;
   const name = nft?.name;
   const ownerAddress = nft?.ownerAddress;
   const details = [

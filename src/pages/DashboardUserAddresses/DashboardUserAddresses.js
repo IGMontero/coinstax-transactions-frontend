@@ -18,9 +18,14 @@ import {
   refreshAllTransactions,
   deleteUsersAddress,
   deleteHistoricalBalance,
+  deleteNftsForBlockchain,
 } from '../../slices/userAddresses/thunk';
 import { useDispatch, useSelector } from 'react-redux';
-import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
+import {
+  capitalizeFirstLetter,
+  copyToClipboard,
+  formatIdTransaction,
+} from '../../utils/utils';
 import TablePagination from '../../Components/Pagination/TablePagination';
 import Swal from 'sweetalert2';
 import { setAllAsDirty } from '../../slices/blockchainContracts/thunk';
@@ -345,6 +350,55 @@ const DashboardUserAddresses = () => {
     }
   };
 
+  const handleDeleteNftsForBlockchain = async (item) => {
+    const result = await Swal.fire({
+      title: `Are you sure you want to delete all NFTs for address ${item.Address}?`,
+      // text: `You won't be able to revert this!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete all NFTs',
+      cancelButtonText: 'Cancel',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const actionResult = await dispatch(
+          deleteNftsForBlockchain({
+            blockchain: item.Blockchain,
+            address: item.Address,
+          }),
+        );
+
+        const errorMessage = 'Error deleting user address NFTs';
+        // const updateUserAddresses = actionResult;
+        const wasSuccessful = await handleActionResult(
+          deleteNftsForBlockchain,
+          actionResult,
+          errorMessageEdit,
+          errorMessage,
+          () => {
+            Swal.fire('Deleted!', 'NFTs have been deleted.', 'success');
+          },
+
+          fetchUserAddresses(),
+        );
+
+        if (!wasSuccessful) {
+          setLoading(false);
+          return;
+        }
+
+        setLoading(false);
+      } catch (error) {
+        setLoading(true);
+        console.error('Error deleting user address NFTs', error);
+        Swal.fire('Error', error.toString(), 'error');
+        setLoading(false);
+      }
+    }
+  };
+
   const handleCopyValue = (e, text) => {
     e.stopPropagation();
     copyToClipboard(text);
@@ -376,6 +430,12 @@ const DashboardUserAddresses = () => {
               onClick={() => handleDeleteUserAddress(item)}
             >
               Delete Transactions for {item.Blockchain}
+            </DropdownItem>
+            <DropdownItem
+              className="d-flex align-items-center"
+              onClick={() => handleDeleteNftsForBlockchain(item)}
+            >
+              Delete Nfts for {item.Blockchain}
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
