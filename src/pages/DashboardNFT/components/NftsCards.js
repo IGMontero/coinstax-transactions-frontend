@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectNetworkType } from '../../../slices/networkType/reducer';
 
 const NftsCards = ({
+  // Item refers to all items.
   item,
   onVisitNft,
   showFiatValues,
@@ -35,11 +36,16 @@ const NftsCards = ({
     setTooltipTargetIds(ids);
   }, [nfts]);
 
-  const handleSpam = async (contractAddress, tokenId, spam) => {
+  const handleUpdateNftSpamStatus = async (nft, spam) => {
     try {
+      const {
+        contractAddress,
+        tokenId,
+        blockchain
+      } = nft;
       const response = await dispatch(
         updateNftsSpamStatus({
-          blockchain: networkType,
+          blockchain: blockchain,
           contractAddress,
           tokenId,
           spam,
@@ -109,7 +115,7 @@ const NftsCards = ({
                     id={iconId}
                     ref={(el) => (iconRefs.current[index] = el)}
                     onClick={() =>
-                      handleSpam(nft.contractAddress, nft.tokenId, false)
+                      handleUpdateNftSpamStatus(nft, false)
                     }
                   >
                     <i className="ri-spam-fill fs-4 p-0"></i>
@@ -130,7 +136,7 @@ const NftsCards = ({
                     id={iconId}
                     ref={(el) => (iconRefs.current[index] = el)}
                     onClick={() =>
-                      handleSpam(nft.contractAddress, nft.tokenId, true)
+                      handleUpdateNftSpamStatus(nft, true)
                     }
                   >
                     <i className="ri-spam-line fs-4 p-0"></i>
