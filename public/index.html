@@ -32,6 +32,22 @@
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
+    <!-- Google Analytics 4 Script -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-QJKW5JWRX8"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+
+      gtag('config', 'G-QJKW5JWRX8');
+    </script>
+    <!-- Other head elements -->
+
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
