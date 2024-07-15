@@ -375,7 +375,9 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
 
   return (
     <React.Fragment>
-      <Helmet title={`NFTs`} />
+      {!isDashboardPage && (
+        <Helmet title={`NFTs`} />
+      )}
       {renderTitle()}
       {loading && !loadingIncludeSpam && currentPage === 0 ? (
         <NftsSkeleton isDashboardPage={isDashboardPage} />
