@@ -72,6 +72,8 @@
 		"react-dual-listbox": "^4.0.0",
 		"react-filepond": "^7.1.1",
 		"react-flatpickr": "^3.10.7",
+		"react-ga4": "^2.1.0",
+		"react-helmet": "^6.1.0",
 		"react-i18next": "^12.1.4",
 		"react-image-lightbox": "^5.1.4",
 		"react-jvectormap": "^0.0.16",

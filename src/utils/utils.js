@@ -49,6 +49,10 @@ export const formatIdTransaction = (address, prefixLength, suffixLength) => {
   }
 };
 
+export const formatAddressToShortVersion = (address) => {
+  return formatIdTransaction(address, 6, 6);
+}
+
 export const formatNumber = (number) => {
   if (typeof number !== 'number' || isNaN(number)) {
     return 'Invalid Number';

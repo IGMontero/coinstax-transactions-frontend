@@ -31,6 +31,7 @@ import { userForgetPassword } from '../../slices/thunks';
 // import profile from "../../assets/images/bg.png";
 import logoLight from '../../assets/images/logo-light.png';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const ForgetPasswordPage = (props) => {
   const dispatch = useDispatch();
@@ -55,10 +56,10 @@ const ForgetPasswordPage = (props) => {
     forgetSuccessMsg: state.ForgetPassword.forgetSuccessMsg,
   }));
 
-  document.title = 'Reset Password | Chain Glance';
 
   return (
     <ParticlesAuth>
+      <Helmet title={'Reset Password'} />
       <div className="auth-page-content mt-5">
         <Container>
           <Row className="justify-content-center">

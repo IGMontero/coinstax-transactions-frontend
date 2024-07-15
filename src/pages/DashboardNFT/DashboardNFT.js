@@ -9,6 +9,7 @@ import {
 } from '../../utils/utils';
 import { getNftsByContractAddress } from '../../slices/transactions/thunk';
 import { useDispatch } from 'react-redux';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const DashboardNFT = () => {
   const { contractAddress } = useParams();
@@ -167,10 +168,10 @@ const DashboardNFT = () => {
     );
   };
 
-  document.title = `${name || 'NFTs'}  ${'- ' + collectionName || ''} | Chain Glance`;
 
   return (
     <React.Fragment>
+      <Helmet title={`${name || 'NFTs'}  ${'- ' + collectionName || ''}`} />
       <div className="page-content mt-5">
         {loading ? (
           <div

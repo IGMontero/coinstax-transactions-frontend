@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  document.title = 'Chain Glance | Home';
+  document.title = 'Home · ChainGlance';
 
   window.onscroll = function () {
     scrollFunction();

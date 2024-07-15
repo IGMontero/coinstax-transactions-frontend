@@ -32,6 +32,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import logoLight from '../../assets/images/logo-light.png';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const Register = () => {
   const history = useNavigate();
@@ -88,10 +89,10 @@ const Register = () => {
     }, 3000);
   }, [dispatch, success, error, history]);
 
-  document.title = 'Register | Chain Glance';
 
   return (
     <React.Fragment>
+      <Helmet title="Register" />
       <ParticlesAuth>
         <div className="auth-page-content mt-n3">
           <Container>
@@ -156,13 +157,13 @@ const Register = () => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                              validation.errors.email
+                                validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                          validation.errors.email ? (
+                            validation.errors.email ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.email}</div>
                             </FormFeedback>
@@ -181,13 +182,13 @@ const Register = () => {
                             value={validation.values.full_name || ''}
                             invalid={
                               validation.touched.full_name &&
-                              validation.errors.full_name
+                                validation.errors.full_name
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.full_name &&
-                          validation.errors.full_name ? (
+                            validation.errors.full_name ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.full_name}</div>
                             </FormFeedback>
@@ -231,7 +232,7 @@ const Register = () => {
                             value={validation.values.account_type || ''}
                             invalid={
                               validation.touched.account_type &&
-                              validation.errors.account_type
+                                validation.errors.account_type
                                 ? true
                                 : false
                             }
@@ -241,7 +242,7 @@ const Register = () => {
                             <option value="type2">Type 2</option>
                           </Input>
                           {validation.touched.account_type &&
-                          validation.errors.account_type ? (
+                            validation.errors.account_type ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.account_type}</div>
                             </FormFeedback>
@@ -261,13 +262,13 @@ const Register = () => {
                             value={validation.values.password || ''}
                             invalid={
                               validation.touched.password &&
-                              validation.errors.password
+                                validation.errors.password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.password &&
-                          validation.errors.password ? (
+                            validation.errors.password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.password}</div>
                             </FormFeedback>
@@ -291,13 +292,13 @@ const Register = () => {
                             value={validation.values.confirm_password || ''}
                             invalid={
                               validation.touched.confirm_password &&
-                              validation.errors.confirm_password
+                                validation.errors.confirm_password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.confirm_password &&
-                          validation.errors.confirm_password ? (
+                            validation.errors.confirm_password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.confirm_password}</div>
                             </FormFeedback>
