@@ -7,6 +7,7 @@ import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import { layoutModeTypes } from '../constants/layout';
 import CustomOptions from './components/CustomOptions';
 import { setAddressName } from '../../slices/addressName/reducer';
+import { trackGAEvent } from '../../helpers/GAHelper';
 
 const SearchBar = ({ selectedOption }) => {
   const navigate = useNavigate();
@@ -174,6 +175,23 @@ const SearchBar = ({ selectedOption }) => {
       setSearchInput(inputValue);
     }
   };
+
+  const handleTrackAddressSearchAnalytics = (address) => {
+    // Track address search analytics
+    console.log('Tracking address search analytics for:', address);
+
+    const category = 'address_search';
+    const action = 'address_search';
+    const label = address;
+
+
+    trackGAEvent({
+      category,
+      action,
+      label,
+    })
+  }
+
   const handleChange = (selectedOption) => {
     if (selectedOption && selectedOption.value) {
       if (!selectedOption.value.trim()) {
@@ -192,6 +210,8 @@ const SearchBar = ({ selectedOption }) => {
           }),
         );
       }
+
+      handleTrackAddressSearchAnalytics(selectedOption.value);
 
       setSearchInput('');
     }
@@ -346,7 +366,7 @@ const SearchBar = ({ selectedOption }) => {
             // Close dropdown
             setIsMenuOpen(false);
             navigate(`/address/${searchInput}`);
-            // handleSaveInCookiesAndGlobalState();
+            handleTrackAddressSearchAnalytics(searchInput);
           }
         }}
       />
