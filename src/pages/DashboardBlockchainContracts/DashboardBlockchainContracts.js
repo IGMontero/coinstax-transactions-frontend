@@ -13,6 +13,7 @@ import { selectNetworkType } from '../../slices/networkType/reducer';
 import NetworkDropdown from '../../Components/NetworkDropdown/NetworkDropdown';
 import { networks } from '../../common/constants';
 import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const DashboardBlockchainContracts = () => {
   const dispatch = useDispatch();
@@ -140,10 +141,10 @@ const DashboardBlockchainContracts = () => {
     e.stopPropagation();
   };
 
-  document.title = 'Blockchain Contracts | Chain Glance';
 
   return (
     <React.Fragment>
+      <Helmet title="Blockchain Contracts" />
       <EditBlockChainContract
         open={modalEdit}
         loading={loadingUpdate}

@@ -30,6 +30,7 @@ import { login } from '../../slices/auth2/thunk';
 
 import logoLight from '../../assets/images/logo-light.png';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
+import Helmet from '../../Components/Helmet/Helmet';
 //import images
 
 const Login = (props) => {
@@ -72,7 +73,6 @@ const Login = (props) => {
     },
   });
 
-  document.title = 'Login | Chain Glance';
   useEffect(() => {
     if (errorMsg) {
       setTimeout(() => {
@@ -83,6 +83,7 @@ const Login = (props) => {
 
   return (
     <React.Fragment>
+      <Helmet title="Login" />
       <ParticlesAuth>
         <div className="auth-page-content ">
           <Container>
@@ -115,13 +116,13 @@ const Login = (props) => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                              validation.errors.email
+                                validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                          validation.errors.email ? (
+                            validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -151,13 +152,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                validation.errors.password
+                                  validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                            validation.errors.password ? (
+                              validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>

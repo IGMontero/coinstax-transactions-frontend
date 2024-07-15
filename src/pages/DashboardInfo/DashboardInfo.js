@@ -12,6 +12,8 @@ import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper'
 import { setAddressName } from '../../slices/addressName/reducer';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import { fetchAssets } from '../../slices/transactions/thunk';
+import { formatAddressToShortVersion } from '../../utils/utils';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -41,6 +43,7 @@ const DashboardInfo = () => {
 
   const [assetsLoaders, setAssetsLoaders] = useState({});
   const loadingAssets = Object.values(assetsLoaders).some((loader) => loader);
+  const formattedAddress = address ? formatAddressToShortVersion(address) : '';
 
   function usePrevious(value) {
     const ref = useRef();
@@ -176,9 +179,10 @@ const DashboardInfo = () => {
     );
   };
 
-  document.title = ` Dashboard ${address} | Chain Glance`;
+
   return (
     <React.Fragment>
+      <Helmet title="Dashboard" />
       <div>
         <QrModal
           showQrModal={showQrModal}

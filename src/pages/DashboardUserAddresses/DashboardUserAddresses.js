@@ -33,6 +33,7 @@ import { handleActionResult } from '../../utils/useHandleAction';
 import NetworkDropdown from '../../Components/NetworkDropdown/NetworkDropdown';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import { networks } from '../../common/constants';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const DashboardUserAddresses = () => {
   const dispatch = useDispatch();
@@ -412,53 +413,53 @@ const DashboardUserAddresses = () => {
     const portalRoot = document.getElementById('portal-root');
     return portalRoot
       ? ReactDOM.createPortal(
-          <DropdownMenu>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleRefreshAllTransactions(item)}
-            >
-              Refresh All Transactions
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleSetAllAsDirty(item)}
-            >
-              Set All Tx as Dirty
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleDeleteUserAddress(item)}
-            >
-              Delete Transactions for {item.Blockchain}
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleDeleteNftsForBlockchain(item)}
-            >
-              Delete Nfts for {item.Blockchain}
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleDeleteAllUserAddressTransactions(item)}
-            >
-              Delete Transactions for All Blockchains
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={() => handleDeleteHistoricalBalance(item)}
-            >
-              Delete Historical Balances
-            </DropdownItem>
-          </DropdownMenu>,
-          portalRoot,
-        )
+        <DropdownMenu>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleRefreshAllTransactions(item)}
+          >
+            Refresh All Transactions
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleSetAllAsDirty(item)}
+          >
+            Set All Tx as Dirty
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleDeleteUserAddress(item)}
+          >
+            Delete Transactions for {item.Blockchain}
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleDeleteNftsForBlockchain(item)}
+          >
+            Delete Nfts for {item.Blockchain}
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleDeleteAllUserAddressTransactions(item)}
+          >
+            Delete Transactions for All Blockchains
+          </DropdownItem>
+          <DropdownItem
+            className="d-flex align-items-center"
+            onClick={() => handleDeleteHistoricalBalance(item)}
+          >
+            Delete Historical Balances
+          </DropdownItem>
+        </DropdownMenu>,
+        portalRoot,
+      )
       : null;
   };
 
-  document.title = 'User Addresses | Chain Glance';
 
   return (
     <div className=" mt-5" style={{ minHeight: '100vh' }}>
+      <Helmet title="User Addresses" />
       <div className="d-flex my-5 justify-content-end">
         <NetworkDropdown
           isAdminPage={true}

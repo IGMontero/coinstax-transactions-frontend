@@ -16,10 +16,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchNFTS } from '../../slices/transactions/thunk';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
+import { CurrencyUSD, formatAddressToShortVersion, parseValuesToLocale } from '../../utils/utils';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import NftsCards from './components/NftsCards';
 import NftsSkeleton from '../../Components/Skeletons/NftsSkeleton';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const ethIcon = (
   <svg
@@ -75,6 +76,8 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
   const [data, setData] = useState({ items: [] });
   const [showFiatValues, setShowFiatValues] = useState(true);
   const [updatedAt, setUpdatedAt] = useState();
+
+  const formattedAddress = address ? formatAddressToShortVersion(address) : '';
 
   const handleChangeSymbol = () => {
     setShowFiatValues((prev) => !prev);
@@ -369,10 +372,10 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
     );
   }
 
-  document.title = 'NFTs | Chain Glance';
 
   return (
     <React.Fragment>
+      <Helmet title={`NFTs`} />
       {renderTitle()}
       {loading && !loadingIncludeSpam && currentPage === 0 ? (
         <NftsSkeleton isDashboardPage={isDashboardPage} />

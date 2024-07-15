@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import ActivesTable from '../DashboardInfo/components/ActivesTable';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const DashboardAssets = () => {
   const { address } = useParams();
@@ -67,9 +68,10 @@ const DashboardAssets = () => {
     };
   }, [networkType, address]);
 
-  document.title = 'Assets | Chain Glance';
+
   return (
     <div>
+      <Helmet title="Assets" />
       <ActivesTable
         isDashboardPage={false}
         loading={loadingAssets}

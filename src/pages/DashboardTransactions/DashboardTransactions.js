@@ -2,15 +2,16 @@ import React from 'react';
 import HistorialTable from './HistorialTable';
 import { useParams } from 'react-router-dom';
 import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const DashboardTransactions = () => {
   const { address } = useParams();
   const [historyData, setHistoryData] = React.useState([]);
 
-  document.title = 'Transactions | Chain Glance';
 
   return (
     <div>
+      <Helmet title="Transactions" />
       <HistorialTable
         isDashboardPage={false}
         data={historyData}

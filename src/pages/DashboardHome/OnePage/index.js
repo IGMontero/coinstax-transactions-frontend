@@ -14,9 +14,9 @@ import Team from './team';
 import Contact from './contact';
 import Cta from './cta';
 import Footer from './footer';
+import Helmet from '../../../Components/Helmet/Helmet';
 
 const Index = () => {
-  document.title = 'Home | Chain Glance';
 
   window.onscroll = function () {
     scrollFunction();
@@ -42,6 +42,7 @@ const Index = () => {
   };
   return (
     <React.Fragment>
+      <Helmet title="Home" />
       <div className="layout-wrapper landing">
         <Navbar />
         <Home />
