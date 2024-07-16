@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Row,
   Col,
@@ -11,6 +11,7 @@ import {
   Form,
   FormFeedback,
   Button,
+  Spinner,
 } from 'reactstrap';
 
 // Formik Validation
@@ -21,10 +22,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // action
-import { registerUser, apiError, resetRegisterFlag } from '../../slices/thunks';
+import { register } from '../../slices/auth2/thunk';
 
 //redux
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -37,25 +38,24 @@ const Register = () => {
   const history = useNavigate();
   const dispatch = useDispatch();
 
+  const [error, setError] = useState();
+
+  const [loading, setLoading] = useState(false);
+
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
 
     initialValues: {
       email: '',
-
-      full_name: '',
-
-      // username: '',
       password: '',
       confirm_password: '',
-      account_type: '',
+      role: '',
     },
     validationSchema: Yup.object({
       email: Yup.string().required('Please Enter Your Email'),
-      full_name: Yup.string().required('Please Enter Your Full Name'),
       password: Yup.string().required('Please Enter Your Password'),
-      account_type: Yup.string().required('Please Select Your Account Type'),
+      role: Yup.string().required('Please Select Your Account Type'),
       confirm_password: Yup.string().when('password', {
         is: (val) => (val && val.length > 0 ? true : false),
         then: Yup.string().oneOf(
@@ -65,28 +65,37 @@ const Register = () => {
       }),
     }),
     onSubmit: (values) => {
-      return dispatch(registerUser(values, dispatch));
+      handleSubmit(values);
     },
   });
 
-  const { error, success } = useSelector((state) => ({
-    success: state.Account.success,
-    error: state.Account.error,
-  }));
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const response = await dispatch(register(values));
 
-  useEffect(() => {
-    dispatch(apiError(''));
-  }, [dispatch]);
+      console.log(response);
 
-  useEffect(() => {
-    if (success) {
-      setTimeout(() => history('/login'), 3000);
+      if (response && !response.error) {
+        setLoading(false);
+        toast('Your Redirect To Login Page...', {
+          position: 'top-right',
+          hideProgressBar: false,
+          className: 'bg-success text-white',
+          progress: undefined,
+          toastId: '',
+        });
+        setTimeout(() => {
+          history('/login');
+        }, 2000);
+      } else {
+        setError(response.error.message);
+      }
+    } catch (error) {
+      setError(error.message);
+      console.log(error);
     }
-
-    setTimeout(() => {
-      dispatch(resetRegisterFlag());
-    }, 3000);
-  }, [dispatch, success, error, history]);
+  };
 
   document.title = 'Register | Chain Glance';
 
@@ -115,7 +124,7 @@ const Register = () => {
                         className="needs-validation"
                         action="#"
                       >
-                        {success && success ? (
+                        {/* {success && success ? (
                           <>
                             {toast('Your Redirect To Login Page...', {
                               position: 'top-right',
@@ -130,14 +139,11 @@ const Register = () => {
                               Login Page...
                             </Alert>
                           </>
-                        ) : null}
+                        ) : null} */}
 
                         {error && error ? (
                           <Alert color="danger">
-                            <div>
-                              Email has been Register Before, Please Use Another
-                              Email Address...{' '}
-                            </div>
+                            <div>{error}</div>
                           </Alert>
                         ) : null}
 
@@ -168,82 +174,30 @@ const Register = () => {
                             </FormFeedback>
                           ) : null}
                         </div>
-                        <div className="mb-3">
-                          <Label htmlFor="full_name" className="form-label">
-                            Full Name <span className="text-danger">*</span>
-                          </Label>
-                          <Input
-                            name="full_name"
-                            type="text"
-                            placeholder="Enter full name"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.full_name || ''}
-                            invalid={
-                              validation.touched.full_name &&
-                              validation.errors.full_name
-                                ? true
-                                : false
-                            }
-                          />
-                          {validation.touched.full_name &&
-                          validation.errors.full_name ? (
-                            <FormFeedback type="invalid">
-                              <div>{validation.errors.full_name}</div>
-                            </FormFeedback>
-                          ) : null}
-                        </div>
 
-                        {/* <div className="mb-3">
-                          <Label htmlFor="last_name" className="form-label">
-                            Last Name <span className="text-danger">*</span>
-                          </Label>
-                          <Input
-                            name="last_name"
-                            type="text"
-                            placeholder="Enter last name"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.last_name || ''}
-                            invalid={
-                              validation.touched.last_name &&
-                              validation.errors.last_name
-                                ? true
-                                : false
-                            }
-                          />
-                          {validation.touched.last_name &&
-                          validation.errors.last_name ? (
-                            <FormFeedback type="invalid">
-                              <div>{validation.errors.last_name}</div>
-                            </FormFeedback>
-                          ) : null}
-                        </div> */}
                         <div className="mb-3">
-                          <Label htmlFor="account_type" className="form-label">
+                          <Label htmlFor="role" className="form-label">
                             Account Type <span className="text-danger">*</span>
                           </Label>
                           <Input
                             type="select"
-                            name="account_type"
+                            name="role"
                             onChange={validation.handleChange}
                             onBlur={validation.handleBlur}
-                            value={validation.values.account_type || ''}
+                            value={validation.values.role || ''}
                             invalid={
-                              validation.touched.account_type &&
-                              validation.errors.account_type
+                              validation.touched.role && validation.errors.role
                                 ? true
                                 : false
                             }
                           >
                             <option value="">Select Account Type</option>
-                            <option value="type1">Type 1</option>
-                            <option value="type2">Type 2</option>
+                            <option value="user">User</option>
+                            <option value="accountant">Accountant</option>
                           </Input>
-                          {validation.touched.account_type &&
-                          validation.errors.account_type ? (
+                          {validation.touched.role && validation.errors.role ? (
                             <FormFeedback type="invalid">
-                              <div>{validation.errors.account_type}</div>
+                              <div>{validation.errors.role}</div>
                             </FormFeedback>
                           ) : null}
                         </div>
@@ -307,6 +261,7 @@ const Register = () => {
                         <div className="mt-4">
                           <Button
                             type="submit"
+                            disabled={loading}
                             className="mt-3 d-flex btn-hover-light w-100 justify-content-center align-items-center"
                             color="soft-light"
                             style={{
@@ -314,7 +269,18 @@ const Register = () => {
                               border: '.5px solid grey',
                             }}
                           >
-                            Sign Up
+                            {loading ? (
+                              <>
+                                <Spinner
+                                  color="primary"
+                                  size="sm"
+                                  className="ms-2"
+                                />{' '}
+                                Loading...
+                              </>
+                            ) : (
+                              'Sign Up'
+                            )}
                           </Button>
                         </div>
 
