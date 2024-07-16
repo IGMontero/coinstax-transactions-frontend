@@ -63,9 +63,41 @@ export const login = createAsyncThunk(
   },
 );
 
+export const googleLogin = createAsyncThunk(
+  'auth2/googleLogin',
+  async (_, { rejectWithValue, dispatch }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/google`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      console.log('request googleLogin response ->', data);
+
+      // if (data.token) {
+      //   saveTokenInCookies(data.token);
+      //   dispatch(authMe());
+      // }
+
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const register = createAsyncThunk(
   'auth2/register',
-  async ({ email, password, role }, { rejectWithValue }) => {
+  async ({ email, password, role }, { rejectWithValue, dispatch }) => {
     try {
       const response = await fetch(`${API_BASE}/auth/register`, {
         method: 'POST',
@@ -80,6 +112,13 @@ export const register = createAsyncThunk(
       }
 
       const data = await response.json();
+      if (data.token) {
+        saveTokenInCookies(data.token);
+        dispatch(authMe());
+      }
+
+      console.log('request register response ->', data);
+
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
