@@ -77,7 +77,11 @@ const DashboardNFT = () => {
       setLoading(false);
     } catch (error) {
       console.log(error);
-      window.history.back();
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = '/';
+      }
     } finally {
       setLoading(false);
     }

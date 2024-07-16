@@ -14,21 +14,12 @@ import {
   Spinner,
 } from 'reactstrap';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
-
-//redux
 import { useSelector, useDispatch } from 'react-redux';
-
 import { Link, useNavigate } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
-// Formik validation
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-
-// actions
-
-import { login } from '../../slices/auth2/thunk';
-
-import logoLight from '../../assets/images/logo-light.png';
+import { login, googleLogin } from '../../slices/auth2/thunk';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 //import images
 
@@ -37,6 +28,8 @@ const Login = (props) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
+
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
 
   const { error, status, user } = useSelector((state) => state.auth);
 
@@ -72,7 +65,23 @@ const Login = (props) => {
     },
   });
 
-  document.title = 'Login | Chain Glance';
+  const handleGoolgleLogin = async () => {
+    setLoadingGoogle(true);
+    try {
+      const res = await dispatch(googleLogin());
+
+      console.log('google', res);
+
+      // if (res.payload.error) {
+      //   setErrorMsg(res.payload.error);
+      // }
+      setLoadingGoogle(false);
+    } catch (error) {
+      console.log(error);
+      setLoadingGoogle(false);
+    }
+  };
+
   useEffect(() => {
     if (errorMsg) {
       setTimeout(() => {
@@ -81,6 +90,7 @@ const Login = (props) => {
     }
   }, [dispatch, error]);
 
+  document.title = 'Login | Chain Glance';
   return (
     <React.Fragment>
       <ParticlesAuth>
@@ -213,7 +223,10 @@ const Login = (props) => {
                           <div className="signin-other-title">
                             <h5 className="fs-13 mb-4 title">Sign In with</h5>
                           </div>
-                          <SocialAuth />
+                          <SocialAuth
+                            onGoogleLogin={handleGoolgleLogin}
+                            loadingGoogle={loadingGoogle}
+                          />
                         </div>
                       </Form>
                     </div>
