@@ -85,8 +85,6 @@ export const register = createAsyncThunk(
         dispatch(authMe());
       }
 
-      console.log('request register response ->', data);
-
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
