@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Collapse, Container, NavbarToggler, NavLink } from 'reactstrap';
+import {
+  Button,
+  Collapse,
+  Container,
+  NavbarToggler,
+  NavLink,
+} from 'reactstrap';
 import Scrollspy from 'react-scrollspy';
 import { Link } from 'react-router-dom';
 
@@ -7,10 +13,15 @@ import { Link } from 'react-router-dom';
 // import logodark from "../../../assets/images/logo-dark.png";
 // import logolight from "../../../assets/images/logo-light.png";
 import logo from '../../../assets/images/logos/coinstax_logos/logo-dark.png';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../../slices/auth2/reducer';
+import Swal from 'sweetalert2';
 
 const Navbar = () => {
+  const dispatch = useDispatch();
   const [isOpenMenu, setisOpenMenu] = useState(false);
   const [navClass, setnavClass] = useState('');
+  const { user } = useSelector((state) => state.auth);
 
   const toggle = () => setisOpenMenu(!isOpenMenu);
 
@@ -24,6 +35,21 @@ const Navbar = () => {
       setnavClass('is-sticky');
     } else {
       setnavClass('');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await dispatch(logout());
+      Swal.fire({
+        title: 'Logged Out!',
+        text: 'You have been logged out successfully!',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false,
+      });
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -108,18 +134,27 @@ const Navbar = () => {
                 <NavLink href="#contact">Contact</NavLink>
               </li>
             </Scrollspy>
-
-            <div className="">
-              <Link
-                to="/login"
-                className="btn btn-link fw-medium text-decoration-none text-dark"
+            {!user ? (
+              <div className="">
+                <Link
+                  to="/login"
+                  className="btn btn-link fw-medium text-decoration-none text-dark"
+                >
+                  Sign in
+                </Link>
+                <Link to="/register" className="btn btn-primary">
+                  Sign Up
+                </Link>
+              </div>
+            ) : (
+              <Button
+                onClick={handleLogout}
+                color="primary"
+                className="btn btn-primary"
               >
-                Sign in
-              </Link>
-              <Link to="/register" className="btn btn-primary">
-                Sign Up
-              </Link>
-            </div>
+                Logout
+              </Button>
+            )}
           </Collapse>
         </Container>
       </nav>

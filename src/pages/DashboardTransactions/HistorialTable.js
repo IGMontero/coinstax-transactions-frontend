@@ -29,6 +29,7 @@ import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
+import { DASHBOARD_USER_ROLES } from '../../Components/constants/constants';
 
 const internalPaginationPageSize = 10;
 
@@ -43,7 +44,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const { user } = useSelector((state) => state.auth);
   const networkType = useSelector(selectNetworkType);
 
-  const currentUser = user;
+  const isAdmin = user?.role === DASHBOARD_USER_ROLES.ADMIN;
 
   // #region STATES
   const [hasPreview, setHasPreview] = useState(false);
@@ -71,7 +72,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [currentEndIndex, setCurrentEndIndex] = useState(15);
 
-  const [allTransactionsProcessed, setAllTransactionsProcessed] = useState(false);
+  const [allTransactionsProcessed, setAllTransactionsProcessed] =
+    useState(false);
 
   const [refreshPreviewIntervals, setRefreshPreviewIntervals] = useState({});
 
@@ -131,7 +133,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     };
   }, [data]);
 
-
   // #region FETCH DATA
   const fetchData = async ({ abortSignal }) => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
@@ -170,11 +171,16 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       clearTimeout(timerId);
 
-      const { parsed, unsupported, isProcessing, transactionsCount, allTransactionsProcessed } = response;
+      const {
+        parsed,
+        unsupported,
+        isProcessing,
+        transactionsCount,
+        allTransactionsProcessed,
+      } = response;
 
       // Save that all transactions are processed
       setAllTransactionsProcessed(allTransactionsProcessed);
-
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -228,7 +234,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     let isRequestInProgress = false;
 
     const interval = setInterval(async () => {
-
       // Wait 5 seconds before making the next request
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
@@ -272,7 +277,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               ...prevIntervals,
               [pageIndex]: null,
             }));
-            console.log('Clearing interval for page because of an error', pageIndex, err);
+            console.log(
+              'Clearing interval for page because of an error',
+              pageIndex,
+              err,
+            );
           },
         });
       } catch (error) {
@@ -391,7 +400,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     let filteredTxs = txs;
 
     if (selectedFilters.length > 0) {
-      filteredTxs = txs.filter((tx) => selectedFilters.includes(tx.blockchainAction));
+      filteredTxs = txs.filter((tx) =>
+        selectedFilters.includes(tx.blockchainAction),
+      );
     }
 
     if (selectedAssets !== 'All Assets') {
@@ -401,7 +412,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           const hasNftLedger = tx.ledgers.some((ledger) => ledger.isNft);
           const isNft = tx.isNft;
           return !hasNftLedger && !isNft;
-        })
+        });
       } else if (selectedAssets === 'NFTs') {
         // Txs where isNft is true
         filteredTxs = txs.filter((tx) => {
@@ -420,20 +431,17 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     return filteredTxs;
   };
 
-
-
   // const filteredTransactions = getFilteredTransactions(data)
 
   // const groupedTransactions = filteredTransactions ? groupTxsByDate(filteredTransactions) : {};
 
-
   const filteredTransactions = getFilteredTransactions(data);
   const paginatedTransactions = filteredTransactions.slice(0, currentEndIndex);
-  const groupedTransactions = paginatedTransactions ? groupTxsByDate(paginatedTransactions) : {};
+  const groupedTransactions = paginatedTransactions
+    ? groupTxsByDate(paginatedTransactions)
+    : {};
 
-  const getMoreTransactions = async (
-    page,
-  ) => {
+  const getMoreTransactions = async (page) => {
     // fetchControllerRef.current.abort();
     // fetchControllerRef.current = new AbortController();
     const signal = abortControllersByBlockchain.current[networkType].signal;
@@ -447,9 +455,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         [fecthId]: true,
       }));
 
-      const nextPage =
-        page ||
-        currentPage + 1;
+      const nextPage = page || currentPage + 1;
 
       console.log('Next page:', nextPage);
 
@@ -474,14 +480,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       console.log('Fetching more transactions:', response);
 
-
       clearTimeout(timerId);
-      const { parsed, unsupported, isProcessing, allTransactionsProcessed } = response || {};
-
+      const { parsed, unsupported, isProcessing, allTransactionsProcessed } =
+        response || {};
 
       // Save that all transactions are processed
       setAllTransactionsProcessed(allTransactionsProcessed);
-
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -504,7 +508,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       } else {
         setData((prevData) => [...prevData, ...transactions]);
         setCurrentPage(nextPage);
-        setCurrentEndIndex((prevEndIndex) => prevEndIndex + internalPaginationPageSize); // Update internal pagination index
+        setCurrentEndIndex(
+          (prevEndIndex) => prevEndIndex + internalPaginationPageSize,
+        ); // Update internal pagination index
       }
 
       // Edge case: if there is a filter applied and no transactions with that filter are found,
@@ -792,7 +798,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -810,8 +816,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -959,10 +966,15 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     );
   };
 
-
   const renderMessageNoResults = () => {
-    const hasFilters = selectedFilters.length > 0 || selectedAssets !== 'All Assets' || includeSpam || searchTerm;
-    const finalMessage = hasFilters ? 'No transactions found with the selected filters' : 'No transactions found';
+    const hasFilters =
+      selectedFilters.length > 0 ||
+      selectedAssets !== 'All Assets' ||
+      includeSpam ||
+      searchTerm;
+    const finalMessage = hasFilters
+      ? 'No transactions found with the selected filters'
+      : 'No transactions found';
 
     return (
       <Col
@@ -1080,7 +1092,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-        // style={{ minHeight: '50vh' }}
+          // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1146,7 +1158,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                 Include Spam Transactions
               </label>
             </div>
-            {currentUser && (
+            {isAdmin && (
               <Button
                 className="d-flex btn-hover-light  justify-content-center align-items-center "
                 color="soft-light"
@@ -1173,7 +1185,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-        // style={{ minHeight: '50vh' }}
+          // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions

@@ -11,7 +11,7 @@ import Logout from '../pages/Authentication/Logout';
 import Register from '../pages/Authentication/Register';
 
 // User Profile
-import UserProfile from '../pages/Authentication/user-profile';
+import UserProfile from '../pages/Authentication/UserProfile';
 import DashboardInfo from '../pages/DashboardInfo/DashboardInfo';
 import DashboardNFT from '../pages/DashboardNFT/DashboardNFT';
 import DashboardBlockchainContracts from '../pages/DashboardBlockchainContracts/DashboardBlockchainContracts';
@@ -21,6 +21,8 @@ import DashboardTransactions from '../pages/DashboardTransactions/DashboardTrans
 import NFTsPage from '../pages/DashboardNFT/NFTsPage';
 import DashboardHome from '../pages/DashboardHome/DashboardHome';
 import DashboardTokens from '../pages/DashboardTokens/DashboardTokens';
+import RoleBaseRoutes from './RoleBaseRoutes';
+import { DASHBOARD_USER_ROLES } from '../Components/constants/constants';
 
 
 // Auth protected routes
@@ -52,6 +54,39 @@ const allRoutes = [
   ...authProtectedRoutes,
   ...publicRoutes,
   ...homePage,
+  {
+    path: '/blockchain-contracts',
+    component: (
+      <RoleBaseRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardBlockchainContracts />,
+      </RoleBaseRoutes>
+    ),
+  },
+  {
+    path: '/user-addresses',
+    component: (
+      <RoleBaseRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardUserAddresses />,
+      </RoleBaseRoutes>
+    ),
+  },
+
+  //User Profile
+  {
+    path: '/profile',
+
+    component: (
+      <RoleBaseRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+        ]}
+      >
+        <UserProfile />
+      </RoleBaseRoutes>
+    ),
+  },
 
   // this route should be at the end of all other routes
   { path: '*', component: <Navigate to="/" /> },

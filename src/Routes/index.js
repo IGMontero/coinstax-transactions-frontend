@@ -20,6 +20,7 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
 
   const isLoginPage = location.pathname.includes('/login');
+  const isRegisterPage = location.pathname.includes('/register');
 
   const token = getTokenFromCookies();
 
@@ -31,7 +32,7 @@ const Index = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (user && isLoginPage) {
+    if (user && (isLoginPage || isRegisterPage)) {
       navigate('/');
     }
   }, [user, isLoginPage, navigate]);

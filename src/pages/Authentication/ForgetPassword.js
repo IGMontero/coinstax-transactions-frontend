@@ -53,7 +53,8 @@ const ForgetPasswordPage = (props) => {
 
   const { forgetError, forgetSuccessMsg } = useSelector((state) => ({
     forgetError: state.ForgetPassword.forgetError,
-    forgetSuccessMsg: state.ForgetPassword.forgetSuccessMsg,
+    forgetSuccessMsg:
+      state.ForgetPassword.forgetSuccessMsg,
   }));
 
 
@@ -67,10 +68,10 @@ const ForgetPasswordPage = (props) => {
               <Card className="mt-4">
                 <CardBody className="p-4">
                   <div className="text-center mt-2">
-                    <h5 className="text-primary">Forgot Password?</h5>
-                    <p className="text-muted">
-                      Reset password with Chain Glance
-                    </p>
+                    <h5 className="text-primary">Forgot your password?</h5>
+                    {/* <p className="text-muted">
+                      Enter your email and we'll send you instructions to reset it.
+                    </p> */}
 
                     <lord-icon
                       src="https://cdn.lordicon.com/rhvddzym.json"
@@ -85,10 +86,10 @@ const ForgetPasswordPage = (props) => {
                     className="alert-borderless alert-warning text-center mb-2 mx-2"
                     role="alert"
                   >
-                    Enter your email and instructions will be sent to you!
+                    Enter your email and we'll send you instructions to reset it.
                   </Alert>
                   <div className="p-2">
-                    {forgetError && forgetError ? (
+                    {/* {forgetError ? (
                       <Alert color="danger" style={{ marginTop: '13px' }}>
                         {forgetError}
                       </Alert>
@@ -97,7 +98,7 @@ const ForgetPasswordPage = (props) => {
                       <Alert color="success" style={{ marginTop: '13px' }}>
                         {forgetSuccessMsg}
                       </Alert>
-                    ) : null}
+                    ) : null} */}
                     <Form
                       onSubmit={(e) => {
                         e.preventDefault();
@@ -148,13 +149,13 @@ const ForgetPasswordPage = (props) => {
 
               <div className="mt-4 text-center">
                 <p className="mb-0">
-                  Wait, I remember my password...{' '}
+                  Remember your password? <br />
                   <Link
                     to="/login"
                     className="fw-semibold text-primary text-decoration-underline"
                   >
                     {' '}
-                    Click here{' '}
+                    Sign In
                   </Link>{' '}
                 </p>
               </div>

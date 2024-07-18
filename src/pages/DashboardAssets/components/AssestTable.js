@@ -21,7 +21,6 @@ const AssetsTable = ({
 }) => {
   // Values from Redux for the blockchains
   const addressInfo = useSelector(addressSummary);
-  console.log('addressInfo', addressInfo);
 
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -169,17 +168,18 @@ const AssetsTable = ({
                 : parseValuesToLocale(0, CurrencyUSD)}
             </span>
             <small
-              className={`${row.prettyDeltaValuePercent === '0.00%'
+              className={`${
+                row.prettyDeltaValuePercent === '0.00%'
                   ? 'text-primary'
                   : row.prettyDeltaValuePercent[0] === '-'
                     ? 'text-danger'
                     : 'text-success'
-                }`}
+              }`}
             >
               {row.prettyDeltaValuePercent === '0.00%'
                 ? parseValuesToLocale(row.deltaValuePercent, '')
                 : (row.prettyDeltaValuePercent[0] === '-' ? '' : '+') +
-                parseValuesToLocale(row.deltaValuePercent, '')}
+                  parseValuesToLocale(row.deltaValuePercent, '')}
               {row.deltaValue
                 ? ' (' + parseValuesToLocale(row.deltaValue, CurrencyUSD) + ')'
                 : null}

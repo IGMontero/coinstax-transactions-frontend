@@ -1,16 +1,22 @@
 import React from 'react';
-import { Button, Col, Row } from 'reactstrap';
+import { Link, useNavigate } from 'react-router-dom';
+import { Button, Col, Row, Spinner } from 'reactstrap';
 
 const SocialAuth = () => {
+  const handleGoogleLogin = () => {
+    window.location.href = 'http://[::1]:8034/api/v1/auth/google';
+  };
+
   return (
     <Row className="d-flex align-items-center">
       <Col className="col-5">
         <Button
+          onClick={handleGoogleLogin}
           color="danger"
           className="w-100 btn-icon d-flex align-items-center "
         >
           <i className="ri-google-fill fs-16 me-2"></i> Google
-        </Button>{' '}
+        </Button>
       </Col>
       <Col className="col-2 ">or</Col>
       <Col className="col-5">
