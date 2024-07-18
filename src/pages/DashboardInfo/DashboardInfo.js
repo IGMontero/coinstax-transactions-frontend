@@ -67,8 +67,6 @@ const DashboardInfo = () => {
     }
   }, [address, previousAddress, navigate, type]);
 
-  console.log(address);
-
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
   };

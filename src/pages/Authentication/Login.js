@@ -14,23 +14,15 @@ import {
   Spinner,
 } from 'reactstrap';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
-
-//redux
 import { useSelector, useDispatch } from 'react-redux';
-
 import { Link, useNavigate } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
-// Formik validation
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-
-// actions
-
 import { login } from '../../slices/auth2/thunk';
-
-import logoLight from '../../assets/images/logo-light.png';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import Helmet from '../../Components/Helmet/Helmet';
+import Swal from 'sweetalert2';
 //import images
 
 const Login = (props) => {
@@ -49,12 +41,39 @@ const Login = (props) => {
     setLoading(true);
     try {
       const response = await dispatch(login(values));
-      if (response.payload.error) {
-        setErrorMsg(response.payload.error);
+
+      console.log(response);
+
+
+      if (response.error) {
+        setErrorMsg('There was a problem with your login. Please try again.');
+        setLoading(false);
+
+        return Swal.fire({
+          title: 'Error',
+          text: 'Invalid email or password',
+          icon: 'error',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+      } else {
+        Swal.fire({
+          // title: 'Success',
+          text: 'Welcome back!',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+        });
+
+        // Naviate to profile page
+        navigate('/profile');
       }
-      setLoading(false);
     } catch (error) {
       console.log(error);
+      setErrorMsg('Error in login. Please try again');
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -92,14 +111,14 @@ const Login = (props) => {
                 <Card className="mt-4">
                   <CardBody className="p-4">
                     <div className="text-center my-3">
-                      <h3 className="text-primary">Welcome Back !</h3>
+                      <h3 className="text-primary">Welcome to ChainGlance</h3>
                       <h6 className="text-muted">
-                        Sign in to continue to Chain Glance.
+                        Sign in to continue.
                       </h6>
                     </div>
-                    {errorMsg && errorMsg ? (
+                    {/* {errorMsg && errorMsg ? (
                       <Alert color="danger"> {errorMsg} </Alert>
-                    ) : null}
+                    ) : null} */}
                     <div className="p-2 mt-4">
                       <Form onSubmit={validation.handleSubmit} action="#">
                         <div className="mb-3">
@@ -131,7 +150,9 @@ const Login = (props) => {
 
                         <div className="mb-3">
                           <div className="float-end">
-                            <Link to="/forgot-password" className="text-muted">
+                            <Link tabIndex={
+                              5
+                            } to="/forgot-password" className="text-muted">
                               Forgot password?
                             </Link>
                           </div>
@@ -174,7 +195,7 @@ const Login = (props) => {
                           </div>
                         </div>
 
-                        <div className="form-check">
+                        {/* <div className="form-check">
                           <Input
                             className="form-check-input"
                             type="checkbox"
@@ -187,7 +208,7 @@ const Login = (props) => {
                           >
                             Remember me
                           </Label>
-                        </div>
+                        </div> */}
 
                         <div className="mt-4">
                           <Button

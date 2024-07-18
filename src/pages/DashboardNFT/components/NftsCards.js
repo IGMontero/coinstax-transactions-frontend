@@ -53,12 +53,9 @@ const NftsCards = ({
       ).unwrap();
 
       if (response.spam !== undefined) {
-
-
-
-        setNfts((prevNfts) =>
-          prevNfts
-            .map((nft) =>
+        setNfts(
+          (prevNfts) =>
+            prevNfts.map((nft) =>
               nft.tokenId === tokenId && nft.contractAddress === contractAddress
                 ? { ...nft, isSpam: response.spam }
                 : nft,
@@ -74,7 +71,9 @@ const NftsCards = ({
     setNfts(item);
   }, [item]);
 
-  const nftsToRender = includeSpam ? nfts : nfts.filter((nft) => !nft.isSpam) || []
+  const nftsToRender = includeSpam
+    ? nfts
+    : nfts.filter((nft) => !nft.isSpam) || [];
 
   return (
     <div
@@ -87,8 +86,7 @@ const NftsCards = ({
     >
       {nftsToRender?.map((nft, index) => {
         const { floorPriceFiat, floorPriceNativeToken, isSpam } = nft;
-        const hasFiatFloorPrice =
-          floorPriceFiat && Number(floorPriceFiat) > 0;
+        const hasFiatFloorPrice = floorPriceFiat && Number(floorPriceFiat) > 0;
         const hasNativeTokenFloorPrice =
           floorPriceNativeToken && Number(floorPriceNativeToken) > 0;
         const hasFloorPrice = showFiatValues
@@ -157,11 +155,7 @@ const NftsCards = ({
             </div>
             <Card
               onClick={() =>
-                handleVisitNFT(
-                  nft.contractAddress,
-                  nft.tokenId,
-                  nft.blockchain,
-                )
+                handleVisitNFT(nft.contractAddress, nft.tokenId, nft.blockchain)
               }
               className="cursor-pointer border-2 border bg-transparent shadow-none"
               style={{
@@ -188,9 +182,7 @@ const NftsCards = ({
                         backgroundColor: '',
                       }}
                     >
-                      <h3 className="text-center pt-5">
-                        Unsupported content
-                      </h3>
+                      <h3 className="text-center pt-5">Unsupported content</h3>
                     </div>
                   ) : (
                     <img

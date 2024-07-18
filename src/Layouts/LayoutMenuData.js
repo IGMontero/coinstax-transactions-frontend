@@ -1,12 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
+import { DASHBOARD_USER_ROLES } from '../Components/constants/constants';
 
 const Navdata = () => {
   const { address, token, contractAddress } = useParams();
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+
+  const isAdmin = user?.role === DASHBOARD_USER_ROLES.ADMIN;
+
+  // console.log('user', user);
   const { fetchData } = useSelector((state) => ({
     fetchData: state.fetchData,
   }));
@@ -91,7 +96,7 @@ const Navdata = () => {
     createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),
   ];
 
-  if (user) {
+  if (isAdmin) {
     allMenuItems.push(createMenuHeader('Admin'));
     allMenuItems.push(
       createMenuItemAdmin(
