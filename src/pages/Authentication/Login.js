@@ -19,8 +19,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import { login, googleLogin } from '../../slices/auth2/thunk';
+import { login } from '../../slices/auth2/thunk';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
+import Swal from 'sweetalert2';
 //import images
 
 const Login = (props) => {
@@ -28,8 +29,6 @@ const Login = (props) => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-
-  const [loadingGoogle, setLoadingGoogle] = useState(false);
 
   const { error, status, user } = useSelector((state) => state.auth);
 
@@ -42,11 +41,21 @@ const Login = (props) => {
     try {
       const response = await dispatch(login(values));
       if (response.payload.error) {
-        setErrorMsg(response.payload.error);
+        setErrorMsg('Error in login. Please try again');
+        setLoading(false);
+      } else {
+        Swal.fire({
+          title: 'Success',
+          text: 'Login Successful',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
+        });
       }
-      setLoading(false);
     } catch (error) {
       console.log(error);
+      setErrorMsg('Error in login. Please try again');
+      setLoading(false);
     }
   };
 
@@ -64,23 +73,6 @@ const Login = (props) => {
       dispatch(handleLogin(values));
     },
   });
-
-  const handleGoolgleLogin = async () => {
-    setLoadingGoogle(true);
-    try {
-      const res = await dispatch(googleLogin());
-
-      console.log('google', res);
-
-      // if (res.payload.error) {
-      //   setErrorMsg(res.payload.error);
-      // }
-      setLoadingGoogle(false);
-    } catch (error) {
-      console.log(error);
-      setLoadingGoogle(false);
-    }
-  };
 
   useEffect(() => {
     if (errorMsg) {
@@ -223,10 +215,7 @@ const Login = (props) => {
                           <div className="signin-other-title">
                             <h5 className="fs-13 mb-4 title">Sign In with</h5>
                           </div>
-                          <SocialAuth
-                            onGoogleLogin={handleGoolgleLogin}
-                            loadingGoogle={loadingGoogle}
-                          />
+                          <SocialAuth />
                         </div>
                       </Form>
                     </div>

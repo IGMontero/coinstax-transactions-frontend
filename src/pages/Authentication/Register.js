@@ -33,6 +33,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import logoLight from '../../assets/images/logo-light.png';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
+import Swal from 'sweetalert2';
 
 const Register = () => {
   const history = useNavigate();
@@ -74,26 +75,22 @@ const Register = () => {
       setLoading(true);
       const response = await dispatch(register(values));
 
-      console.log(response);
-
       if (response && !response.error) {
-        setLoading(false);
-        toast('Your Redirect To Login Page...', {
-          position: 'top-right',
-          hideProgressBar: false,
-          className: 'bg-success text-white',
-          progress: undefined,
-          toastId: '',
+        Swal.fire({
+          title: 'Success',
+          text: 'Register success! Welcome to Chain Glance',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false,
         });
-        setTimeout(() => {
-          history('/login');
-        }, 2000);
       } else {
         setError(response.error.message);
+        setLoading(false);
       }
     } catch (error) {
       setError(error.message);
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -274,7 +271,7 @@ const Register = () => {
                                 <Spinner
                                   color="primary"
                                   size="sm"
-                                  className="ms-2"
+                                  className="me-2"
                                 />{' '}
                                 Loading...
                               </>
