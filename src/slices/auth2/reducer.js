@@ -1,5 +1,5 @@
 import { removeTokenFromCookies } from '../../helpers/cookies_helper';
-import { login, authMe, googleLogin, register } from './thunk';
+import { login, authMe, register } from './thunk';
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
@@ -26,14 +26,6 @@ const auth2Slice = createSlice({
         state.status = 'succeeded';
       })
       .addCase(login.rejected, (state, action) => {
-        state.error = action.payload;
-        state.status = 'failed';
-      })
-      .addCase(googleLogin.fulfilled, (state, action) => {
-        state.token = action.payload.token;
-        state.status = 'succeeded';
-      })
-      .addCase(googleLogin.rejected, (state, action) => {
         state.error = action.payload;
         state.status = 'failed';
       })

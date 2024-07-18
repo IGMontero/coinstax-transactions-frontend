@@ -17,7 +17,7 @@ export const authMe = createAsyncThunk(
     try {
       const response = await fetch(`${API_BASE}/auth/me`, {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       });
 
@@ -55,38 +55,6 @@ export const login = createAsyncThunk(
         saveTokenInCookies(data.token);
         dispatch(authMe());
       }
-
-      return data;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  },
-);
-
-export const googleLogin = createAsyncThunk(
-  'auth2/googleLogin',
-  async (_, { rejectWithValue, dispatch }) => {
-    try {
-      const response = await fetch(`${API_BASE}/auth/google`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({}),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      console.log('request googleLogin response ->', data);
-
-      // if (data.token) {
-      //   saveTokenInCookies(data.token);
-      //   dispatch(authMe());
-      // }
 
       return data;
     } catch (error) {

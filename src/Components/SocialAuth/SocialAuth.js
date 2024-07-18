@@ -1,9 +1,10 @@
 import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { Button, Col, Row, Spinner } from 'reactstrap';
 
-const SocialAuth = ({ onGoogleLogin, loadingGoogle }) => {
+const SocialAuth = () => {
   const handleGoogleLogin = () => {
-    onGoogleLogin();
+    window.location.href = 'http://[::1]:8034/api/v1/auth/google';
   };
 
   return (
@@ -14,14 +15,8 @@ const SocialAuth = ({ onGoogleLogin, loadingGoogle }) => {
           color="danger"
           className="w-100 btn-icon d-flex align-items-center "
         >
-          {loadingGoogle ? (
-            <Spinner size="sm" className="me-2" color="white" />
-          ) : (
-            <>
-              <i className="ri-google-fill fs-16 me-2"></i> Google
-            </>
-          )}
-        </Button>{' '}
+          <i className="ri-google-fill fs-16 me-2"></i> Google
+        </Button>
       </Col>
       <Col className="col-2 ">or</Col>
       <Col className="col-5">
