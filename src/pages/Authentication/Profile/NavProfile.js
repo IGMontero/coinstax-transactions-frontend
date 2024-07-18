@@ -1,7 +1,7 @@
-import React from "react";
-import { Button, CardHeader, Nav, NavItem, NavLink } from "reactstrap";
-import classnames from "classnames";
-import { PopoverBody, UncontrolledPopover } from "reactstrap";
+import React from 'react';
+import { Button, CardHeader, Nav, NavItem, NavLink } from 'reactstrap';
+import classnames from 'classnames';
+import { PopoverBody, UncontrolledPopover } from 'reactstrap';
 const NavProfile = ({
   activeTab,
   tabChange,
@@ -17,7 +17,7 @@ const NavProfile = ({
         role="tablist"
       >
         <div className="d-flex align-items-center justify-content-start">
-          <NavItem>
+          {/* <NavItem>
             <NavLink
               className={` fw-semibold text-primary  ${classnames({
                 active: activeTab === "1",
@@ -30,14 +30,14 @@ const NavProfile = ({
               <i className="fas fa-home"></i>
               DETAILS
             </NavLink>
-          </NavItem>
+          </NavItem> */}
           <NavItem>
             <NavLink
               className={`text-primary fw-semibold  ${classnames({
-                active: activeTab === "2",
+                active: activeTab === '2',
               })}`}
               onClick={() => {
-                tabChange("2");
+                tabChange('2');
               }}
               type="button"
             >
@@ -48,10 +48,10 @@ const NavProfile = ({
           <NavItem>
             <NavLink
               className={`text-primary fw-semibold  ${classnames({
-                active: activeTab === "3",
+                active: activeTab === '3',
               })}`}
               onClick={() => {
-                tabChange("3");
+                tabChange('3');
               }}
               type="button"
             >
