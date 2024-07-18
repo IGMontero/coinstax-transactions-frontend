@@ -29,7 +29,7 @@ import Swal from 'sweetalert2';
 import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
-import { DASHBOARD_USER_ROLES } from '../../Components/constants/constanst';
+import { DASHBOARD_USER_ROLES } from '../../Components/constants/constants';
 
 const internalPaginationPageSize = 10;
 

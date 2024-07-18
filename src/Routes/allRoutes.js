@@ -21,6 +21,8 @@ import DashboardTransactions from '../pages/DashboardTransactions/DashboardTrans
 import NFTsPage from '../pages/DashboardNFT/NFTsPage';
 import DashboardHome from '../pages/DashboardHome/DashboardHome';
 import DashboardTokens from '../pages/DashboardTokens/DashboardTokens';
+import RoleBaseRoutes from './RoleBaseRoutes';
+import { DASHBOARD_USER_ROLES } from '../Components/constants/constants';
 
 const authProtectedRoutes = [
   { path: '/', component: <DashboardInfo /> },
@@ -65,15 +67,36 @@ const allRoutes = [
   { path: '/address/:address/history', component: <DashboardTransactions /> },
   {
     path: '/blockchain-contracts',
-    component: <DashboardBlockchainContracts />,
+    component: (
+      <RoleBaseRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardBlockchainContracts />,
+      </RoleBaseRoutes>
+    ),
   },
   {
     path: '/user-addresses',
-    component: <DashboardUserAddresses />,
+    component: (
+      <RoleBaseRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardUserAddresses />,
+      </RoleBaseRoutes>
+    ),
   },
 
   //User Profile
-  // { path: '/profile', component: <UserProfile /> },
+  {
+    path: '/profile',
+    component: (
+      <RoleBaseRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+        ]}
+      >
+        <UserProfile />
+      </RoleBaseRoutes>
+    ),
+  },
 
   // this route should be at the end of all other routes
   // eslint-disable-next-line react/display-name
