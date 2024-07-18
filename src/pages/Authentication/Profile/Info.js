@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, Card, CardBody, Table } from "reactstrap";
+import React from 'react';
+import { Button, Card, CardBody, Table } from 'reactstrap';
 
 const Info = ({ currentUser }) => {
   return (
@@ -12,7 +12,7 @@ const Info = ({ currentUser }) => {
                 <th className="ps-0" scope="row">
                   Email:
                 </th>
-                <td className="text-muted">{currentUser.email}</td>
+                <td className="text-muted">{currentUser?.email || ''}</td>
               </tr>
             </tbody>
           </Table>

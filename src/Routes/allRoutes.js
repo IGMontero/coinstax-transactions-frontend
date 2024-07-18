@@ -11,7 +11,7 @@ import Logout from '../pages/Authentication/Logout';
 import Register from '../pages/Authentication/Register';
 
 // User Profile
-import UserProfile from '../pages/Authentication/user-profile';
+import UserProfile from '../pages/Authentication/UserProfile';
 import DashboardInfo from '../pages/DashboardInfo/DashboardInfo';
 import DashboardNFT from '../pages/DashboardNFT/DashboardNFT';
 import DashboardBlockchainContracts from '../pages/DashboardBlockchainContracts/DashboardBlockchainContracts';
@@ -85,6 +85,7 @@ const allRoutes = [
   //User Profile
   {
     path: '/profile',
+
     component: (
       <RoleBaseRoutes
         allowedRoles={[

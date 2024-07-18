@@ -168,6 +168,7 @@ const Layout = (props) => {
     () => [
       '/login',
       '/register',
+      '/profile',
       '/forgot-password',
       '/reset-password',
       '/404',
