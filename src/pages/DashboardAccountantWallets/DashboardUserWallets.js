@@ -20,7 +20,7 @@ const DashboardUserWallets = () => {
               <Button color="primary">Connect Wallet</Button>
             </div>
           </div>
-          <AddressTable addresses={addresses} user={true} />
+          <AddressTable addresses={addresses} user={false} />
           <div className="mt-4">
             <h2>Watchlist</h2>
             <div className="watchlist-placeholder">
