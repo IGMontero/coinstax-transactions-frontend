@@ -30,7 +30,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 //import images
-import logoLight from '../../assets/images/logo-light.png';
+import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import Helmet from '../../Components/Helmet/Helmet';
@@ -62,7 +62,7 @@ const Register = () => {
         is: (val) => (val && val.length > 0 ? true : false),
         then: Yup.string().oneOf(
           [Yup.ref('password')],
-          "Password and Confirm Password do not match",
+          'Password and Confirm Password do not match',
         ),
       }),
     }),
@@ -95,7 +95,6 @@ const Register = () => {
     }
   };
 
-
   return (
     <React.Fragment>
       <Helmet title="Register" />
@@ -103,11 +102,22 @@ const Register = () => {
         <div className="auth-page-content mt-n3">
           <Container>
             <Row className="justify-content-center">
+              <div className="d-flex justify-content-center align-items-center">
+                <Link to={'/'}>
+                  <img
+                    src={logo}
+                    className="card-logo"
+                    alt="logo dark"
+                    height="70"
+                    width="auto"
+                  />
+                </Link>
+              </div>
               <Col md={8} lg={6} xl={5}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
                     <div className="text-center my-3">
-                      <h4 className="text-primary">Create a New Account</h4>
+                      <h3 className="text-primary">Create a New Account</h3>
                       <h6 className="text-muted">
                         Sign up to continue to ChainGlance
                       </h6>
@@ -160,13 +170,13 @@ const Register = () => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                                validation.errors.email
+                              validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                            validation.errors.email ? (
+                          validation.errors.email ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.email}</div>
                             </FormFeedback>
@@ -197,9 +207,8 @@ const Register = () => {
                             <FormFeedback type="invalid">
                               <div>{validation.errors.role}</div>
                             </FormFeedback>
-                          ) : null
-                          }
-                        </div >
+                          ) : null}
+                        </div>
 
                         <div className="mb-2">
                           <Label htmlFor="userpassword" className="form-label">
@@ -214,13 +223,13 @@ const Register = () => {
                             value={validation.values.password || ''}
                             invalid={
                               validation.touched.password &&
-                                validation.errors.password
+                              validation.errors.password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.password &&
-                            validation.errors.password ? (
+                          validation.errors.password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.password}</div>
                             </FormFeedback>
@@ -244,13 +253,13 @@ const Register = () => {
                             value={validation.values.confirm_password || ''}
                             invalid={
                               validation.touched.confirm_password &&
-                                validation.errors.confirm_password
+                              validation.errors.confirm_password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.confirm_password &&
-                            validation.errors.confirm_password ? (
+                          validation.errors.confirm_password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.confirm_password}</div>
                             </FormFeedback>
@@ -261,7 +270,7 @@ const Register = () => {
                           <Button
                             type="submit"
                             disabled={loading}
-                            className="mt-3 d-flex btn-hover-light w-100 justify-content-center align-items-center"
+                            className="mt-3 d-flex btn-hover-light text-dark w-100 justify-content-center align-items-center"
                             color="soft-light"
                             style={{
                               borderRadius: '10px',
@@ -292,10 +301,10 @@ const Register = () => {
 
                           <SocialAuth />
                         </div>
-                      </Form >
-                    </div >
-                  </CardBody >
-                </Card >
+                      </Form>
+                    </div>
+                  </CardBody>
+                </Card>
 
                 <div className="mt-4 text-center">
                   <p className="mb-0">
@@ -309,12 +318,12 @@ const Register = () => {
                     </Link>{' '}
                   </p>
                 </div>
-              </Col >
-            </Row >
-          </Container >
-        </div >
-      </ParticlesAuth >
-    </React.Fragment >
+              </Col>
+            </Row>
+          </Container>
+        </div>
+      </ParticlesAuth>
+    </React.Fragment>
   );
 };
 
