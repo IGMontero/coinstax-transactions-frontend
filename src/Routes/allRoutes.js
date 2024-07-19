@@ -22,7 +22,7 @@ import DashboardTokens from '../pages/DashboardTokens/DashboardTokens';
 import DashboardTransactions from '../pages/DashboardTransactions/DashboardTransactions';
 import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUserAddresses';
 import RoleBaseRoutes from './RoleBaseRoutes';
-
+import ResetPaswword from '../pages/Authentication/ResetPassword';
 
 // Auth protected routes
 const adminRoutes = [
@@ -48,6 +48,7 @@ const adminRoutes = [
 const publicRoutes = [
   { path: '/logout', component: <Logout /> },
   { path: '/login', component: <Login /> },
+  { path: '/reset-password', component: <ResetPaswword /> },
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
   { path: '/address/:address', component: <DashboardInfo /> },
@@ -78,7 +79,7 @@ const authProtectedRoutes = [
       </RoleBaseRoutes>
     ),
   },
-]
+];
 
 // Combine all routes
 const allRoutes = [
