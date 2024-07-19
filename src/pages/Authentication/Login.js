@@ -23,6 +23,7 @@ import { login } from '../../slices/auth2/thunk';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
+import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 //import images
 
 const Login = (props) => {
@@ -43,7 +44,6 @@ const Login = (props) => {
       const response = await dispatch(login(values));
 
       console.log(response);
-
 
       if (response.error) {
         setErrorMsg('There was a problem with your login. Please try again.');
@@ -107,14 +107,23 @@ const Login = (props) => {
         <div className="auth-page-content ">
           <Container>
             <Row className=" justify-content-center">
+              <div className="d-flex justify-content-center align-items-center">
+                <Link to={'/'}>
+                  <img
+                    src={logo}
+                    className="card-logo "
+                    alt="logo dark"
+                    height="70"
+                    width="auto"
+                  />
+                </Link>
+              </div>
               <Col md={8} lg={6} xl={5}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
                     <div className="text-center my-3">
                       <h3 className="text-primary">Welcome to ChainGlance</h3>
-                      <h6 className="text-muted">
-                        Sign in to continue.
-                      </h6>
+                      <h6 className="text-muted">Sign in to continue.</h6>
                     </div>
                     {/* {errorMsg && errorMsg ? (
                       <Alert color="danger"> {errorMsg} </Alert>
@@ -135,13 +144,13 @@ const Login = (props) => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                                validation.errors.email
+                              validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                            validation.errors.email ? (
+                          validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -150,9 +159,11 @@ const Login = (props) => {
 
                         <div className="mb-3">
                           <div className="float-end">
-                            <Link tabIndex={
-                              5
-                            } to="/forgot-password" className="text-muted">
+                            <Link
+                              tabIndex={5}
+                              to="/forgot-password"
+                              className="text-muted"
+                            >
                               Forgot password?
                             </Link>
                           </div>
@@ -173,13 +184,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                  validation.errors.password
+                                validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                              validation.errors.password ? (
+                            validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>
@@ -214,7 +225,7 @@ const Login = (props) => {
                           <Button
                             disabled={loading ? true : false}
                             type="submit"
-                            className="mt-3 d-flex btn-hover-light w-100 justify-content-center align-items-center"
+                            className="mt-3 d-flex btn-hover-light w-100 text-dark justify-content-center align-items-center"
                             color="soft-light"
                             style={{
                               borderRadius: '10px',
