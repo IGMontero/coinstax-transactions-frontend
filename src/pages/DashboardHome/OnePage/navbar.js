@@ -41,13 +41,13 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await dispatch(logout());
-      Swal.fire({
-        title: 'Logged Out!',
-        text: 'You have been logged out successfully!',
-        icon: 'success',
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      // Swal.fire({
+      //   title: 'Logged Out!',
+      //   text: 'You have been logged out successfully!',
+      //   icon: 'success',
+      //   timer: 2000,
+      //   showConfirmButton: false,
+      // });
     } catch (error) {
       console.log(error);
     }
