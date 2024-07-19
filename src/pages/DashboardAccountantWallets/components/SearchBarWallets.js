@@ -7,7 +7,11 @@ const SearchBarWallets = ({ onSearch }) => {
   };
 
   return (
-    <Input type="text" placeholder="Search addresses" onChange={handleSearch} />
+    <Input
+      type="text"
+      placeholder="Search by name or address"
+      onChange={handleSearch}
+    />
   );
 };
 
