@@ -51,7 +51,6 @@ export const login = createAsyncThunk(
         throw new Error(`Error: ${response.status}`);
       }
 
-
       const data = await response.json();
 
       if (data.token) {
@@ -88,6 +87,30 @@ export const register = createAsyncThunk(
         dispatch(authMe());
       }
 
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const forgotPassword = createAsyncThunk(
+  'auth2/forgotPassword',
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/forgot-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
       return data;
     } catch (error) {
       return rejectWithValue(error.message);

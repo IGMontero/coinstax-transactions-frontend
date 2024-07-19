@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Row,
   Col,
@@ -12,29 +12,23 @@ import {
   Label,
   Form,
   Button,
+  Spinner,
 } from 'reactstrap';
-
-//redux
-import { useSelector, useDispatch } from 'react-redux';
-
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
-
-// Formik Validation
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { forgotPassword } from '../../slices/auth2/thunk';
 
-// action
-import { userForgetPassword } from '../../slices/thunks';
-
-// import images
-// import profile from "../../assets/images/bg.png";
-import logoLight from '../../assets/images/logo-light.png';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import Helmet from '../../Components/Helmet/Helmet';
+import { parseValuesToLocale } from '../../utils/utils';
+import Swal from 'sweetalert2';
 
 const ForgetPasswordPage = (props) => {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -47,16 +41,50 @@ const ForgetPasswordPage = (props) => {
       email: Yup.string().required('Please Enter Your Email'),
     }),
     onSubmit: (values) => {
-      dispatch(userForgetPassword(values, props.router.navigate));
+      handleForgotPassword(values.email);
     },
   });
 
-  const { forgetError, forgetSuccessMsg } = useSelector((state) => ({
-    forgetError: state.ForgetPassword.forgetError,
-    forgetSuccessMsg:
-      state.ForgetPassword.forgetSuccessMsg,
-  }));
+  const handleForgotPassword = async (email) => {
+    setLoading(true);
+    try {
+      const response = await dispatch(forgotPassword(email));
 
+      const res = response.payload;
+
+      console.log(res);
+      console.log(response);
+
+      if (res && (res.error || response.error)) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error while sending reset link to your email',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Reset link sent to your email',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log('error', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+      setLoading(false);
+    }
+  };
 
   return (
     <ParticlesAuth>
@@ -86,7 +114,8 @@ const ForgetPasswordPage = (props) => {
                     className="alert-borderless alert-warning text-center mb-2 mx-2"
                     role="alert"
                   >
-                    Enter your email and we'll send you instructions to reset it.
+                    Enter your email and we'll send you instructions to reset
+                    it.
                   </Alert>
                   <div className="p-2">
                     {/* {forgetError ? (
@@ -139,7 +168,18 @@ const ForgetPasswordPage = (props) => {
                           }}
                           type="submit"
                         >
-                          Send Reset Link
+                          {loading ? (
+                            <>
+                              <Spinner
+                                size="sm"
+                                color="primary"
+                                className="me-2"
+                              />
+                              {'Sending Reset Link'}
+                            </>
+                          ) : (
+                            'Send Reset Link'
+                          )}
                         </Button>
                       </div>
                     </Form>
