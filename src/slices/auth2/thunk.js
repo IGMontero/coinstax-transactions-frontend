@@ -55,7 +55,7 @@ export const login = createAsyncThunk(
 
       if (data.token) {
         saveTokenInCookies(data.token);
-        dispatch(authMe());
+        // dispatch(authMe());
       }
 
       return data;

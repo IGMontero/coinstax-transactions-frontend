@@ -8,7 +8,7 @@ import VerticalLayout from '../Layouts/index';
 //routes
 import { useDispatch, useSelector } from 'react-redux';
 import { authMe } from '../slices/auth2/thunk';
-import { allRoutes, homePage } from './allRoutes';
+import { allRoutes, noVerticalLayoutRoutes } from './allRoutes';
 import { getTokenFromCookies } from '../helpers/cookies_helper';
 
 const Index = () => {
@@ -19,16 +19,23 @@ const Index = () => {
 
   const [loading, setLoading] = useState(true);
 
+  const [authCompleted, setAuthCompleted] = useState(false);
+
   const isLoginPage = location.pathname.includes('/login');
   const isRegisterPage = location.pathname.includes('/register');
 
   const token = getTokenFromCookies();
 
   useEffect(() => {
-    if (token) {
-      dispatch(authMe());
-    }
-    setLoading(false);
+    const authenticate = async () => {
+      if (token) {
+        await dispatch(authMe());
+      }
+      setAuthCompleted(true);
+      setLoading(false);
+    };
+
+    authenticate();
   }, [dispatch]);
 
   useEffect(() => {
@@ -79,15 +86,17 @@ const Index = () => {
     );
   }
 
-  const isHomePage =
-    location.pathname === '/dashboard' || location.pathname === '/';
+  const noVerticalLayoutDisplay =
+    location.pathname === '/dashboard' ||
+    location.pathname === '/' ||
+    location.pathname === '/wallets';
 
   return (
     <React.Fragment>
       <Routes>
-        {isHomePage && (
+        {noVerticalLayoutDisplay && authCompleted && (
           <Route>
-            {homePage.map((route, idx) => (
+            {noVerticalLayoutRoutes.map((route, idx) => (
               <Route
                 path={route.path}
                 element={<NonAuthLayout>{route.component}</NonAuthLayout>}
@@ -97,14 +106,15 @@ const Index = () => {
             ))}
           </Route>
         )}
-        {allRoutes.map((route, idx) => (
-          <Route
-            path={route.path}
-            element={<VerticalLayout>{route.component}</VerticalLayout>}
-            key={idx}
-            exact={true}
-          />
-        ))}
+        {authCompleted &&
+          allRoutes.map((route, idx) => (
+            <Route
+              path={route.path}
+              element={<VerticalLayout>{route.component}</VerticalLayout>}
+              key={idx}
+              exact={true}
+            />
+          ))}
 
         {/* <Route>
           {allRoutes.map((route, idx) => (

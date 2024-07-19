@@ -900,3 +900,11 @@
 
 
 
+// Wallet cards
+.address-card {
+  transition: all 0.3s ease-in-out;
+}
+
+.address-card:hover {
+  border-color: #007bff !important;
+}

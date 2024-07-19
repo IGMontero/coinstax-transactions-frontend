@@ -21,25 +21,26 @@ import NFTsPage from '../pages/DashboardNFT/NFTsPage';
 import DashboardTokens from '../pages/DashboardTokens/DashboardTokens';
 import DashboardTransactions from '../pages/DashboardTransactions/DashboardTransactions';
 import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUserAddresses';
-import RoleBaseRoutes from './RoleBaseRoutes';
+import AuthProtectedRoutes from './AuthProtectedRoutes';
 import ResetPaswword from '../pages/Authentication/ResetPassword';
+import DashboardUserWallets from '../pages/DashboardAccountantWallets/DashboardUserWallets';
 
 // Auth protected routes
 const adminRoutes = [
   {
     path: '/blockchain-contracts',
     component: (
-      <RoleBaseRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
         <DashboardBlockchainContracts />,
-      </RoleBaseRoutes>
+      </AuthProtectedRoutes>
     ),
   },
   {
     path: '/user-addresses',
     component: (
-      <RoleBaseRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
         <DashboardUserAddresses />,
-      </RoleBaseRoutes>
+      </AuthProtectedRoutes>
     ),
   },
 ];
@@ -48,6 +49,7 @@ const adminRoutes = [
 const publicRoutes = [
   { path: '/logout', component: <Logout /> },
   { path: '/login', component: <Login /> },
+
   { path: '/reset-password', component: <ResetPaswword /> },
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
@@ -60,15 +62,30 @@ const publicRoutes = [
 ];
 
 // Home page
-const homePage = [{ path: '/', component: <DashboardHome /> }];
+const noVerticalLayoutRoutes = [
+  { path: '/', component: <DashboardHome /> },
+  {
+    path: '/wallets',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          // DASHBOARD_USER_ROLES.ACCOUNTANT,
+        ]}
+      >
+        <DashboardUserWallets />
+      </AuthProtectedRoutes>
+    ),
+  },
+];
 
 const authProtectedRoutes = [
   {
     path: '/profile',
 
-    // TODO: Cambiar guard a AuthProtectedRoutes
     component: (
-      <RoleBaseRoutes
+      <AuthProtectedRoutes
         allowedRoles={[
           DASHBOARD_USER_ROLES.ADMIN,
           DASHBOARD_USER_ROLES.USER,
@@ -76,7 +93,7 @@ const authProtectedRoutes = [
         ]}
       >
         <UserProfile />
-      </RoleBaseRoutes>
+      </AuthProtectedRoutes>
     ),
   },
 ];
@@ -92,4 +109,4 @@ const allRoutes = [
   { path: '*', component: <Navigate to="/" /> },
 ];
 
-export { allRoutes, authProtectedRoutes, homePage, publicRoutes };
+export { allRoutes, authProtectedRoutes, noVerticalLayoutRoutes, publicRoutes };

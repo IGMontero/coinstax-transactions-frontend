@@ -19,7 +19,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-import { login } from '../../slices/auth2/thunk';
+import { authMe, login } from '../../slices/auth2/thunk';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
@@ -65,8 +65,9 @@ const Login = (props) => {
           showConfirmButton: false,
         });
 
-        // Naviate to profile page
-        navigate('/profile');
+        // Naviate to wallets page
+        await dispatch(authMe());
+        navigate('/wallets');
       }
     } catch (error) {
       console.log(error);

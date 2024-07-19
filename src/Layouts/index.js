@@ -174,6 +174,7 @@ const Layout = (props) => {
       '/404',
       '/blockchain-contracts',
       '/user-addresses',
+      '/wallets',
     ],
     [],
   );
