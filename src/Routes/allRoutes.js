@@ -69,9 +69,9 @@ const noVerticalLayoutRoutes = [
   {
     path: '/wallets',
     component: (
-      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER]}>
-        <DashboardUserWallets />
-      </AuthProtectedRoutes>
+      // <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER]}>
+      <DashboardUserWallets />
+      // </AuthProtectedRoutes>
     ),
   },
   {

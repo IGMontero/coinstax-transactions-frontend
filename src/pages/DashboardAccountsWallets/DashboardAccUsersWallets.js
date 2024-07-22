@@ -41,7 +41,7 @@ const DashboardAccUsersWallets = () => {
                 }}
               >
                 <i className="ri-arrow-left-s-line me-2"></i>
-                Back To Dashboard
+                Back To Clients
               </Button>
             </div>
           </div>

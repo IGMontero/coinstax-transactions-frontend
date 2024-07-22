@@ -13,7 +13,7 @@ const DashboardUserWallets = () => {
         <Container>
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1>Manage Wallets</h1>
-            <div>
+            <div className="d-flex ">
               <Button
                 className="d-flex btn-hover-light justify-content-center align-items-center me-2"
                 color="soft-light"
