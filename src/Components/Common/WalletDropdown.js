@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
   Dropdown,
@@ -6,8 +7,13 @@ import {
   DropdownMenu,
   DropdownToggle,
 } from 'reactstrap';
+import { DASHBOARD_USER_ROLES } from '../constants/constants';
 
 const WalletDropdown = () => {
+  const { user } = useSelector((state) => state.auth);
+
+  const isUser = DASHBOARD_USER_ROLES.USER === user.role;
+
   const [isWalletDropdowon, setIsWalletDropdown] = useState(false);
   const toggleProfileDropdown = () => {
     setIsWalletDropdown(!isWalletDropdowon);
@@ -50,7 +56,9 @@ const WalletDropdown = () => {
 
           <DropdownItem className="p-0">
             <Link
-              to={process.env.PUBLIC_URL + '/wallets'}
+              to={
+                process.env.PUBLIC_URL + `${isUser ? '/wallets' : '/clients'}`
+              }
               className="dropdown-item ps-2"
             >
               <i className="mdi mdi-wallet text-muted fs-16 align-middle me-2"></i>
