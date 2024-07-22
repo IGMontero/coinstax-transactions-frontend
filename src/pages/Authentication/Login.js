@@ -66,8 +66,17 @@ const Login = (props) => {
         });
 
         // Naviate to wallets page
-        await dispatch(authMe());
-        navigate('/wallets');
+        const authMeRes = await dispatch(authMe());
+
+        const { role } = authMeRes.payload;
+
+        console.log('authMe response', role);
+
+        if (role === 'accountant') {
+          navigate('/clients');
+        } else {
+          navigate('/wallets');
+        }
       }
     } catch (error) {
       console.log(error);
