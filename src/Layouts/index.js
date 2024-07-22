@@ -37,6 +37,7 @@ import {
 import { setAddressSummary } from '../slices/addresses/reducer';
 import UnsupportedPage from '../Components/UnsupportedPage/UnsupportedPage';
 import { setAddressName } from '../slices/addressName/reducer';
+import { pagesWithoutAddress } from '../Components/constants/constants';
 
 const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
@@ -164,20 +165,7 @@ const Layout = (props) => {
     location.pathname.includes('blockchain-contracts') ||
     location.pathname.includes('user-addresses');
 
-  const pagesNotToDisplayAddress = useMemo(
-    () => [
-      '/login',
-      '/register',
-      '/profile',
-      '/forgot-password',
-      '/reset-password',
-      '/404',
-      '/blockchain-contracts',
-      '/user-addresses',
-      '/wallets',
-    ],
-    [],
-  );
+  const pagesNotToDisplayAddress = useMemo(() => pagesWithoutAddress, []);
 
   const fetchControllerRef = useRef(new AbortController());
   const fetchInterval = useRef(null);
