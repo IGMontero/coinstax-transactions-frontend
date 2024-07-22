@@ -12,7 +12,10 @@ import { DASHBOARD_USER_ROLES } from '../constants/constants';
 const WalletDropdown = () => {
   const { user } = useSelector((state) => state.auth);
 
-  const isUser = DASHBOARD_USER_ROLES.USER === user?.role;
+  const isUserOrNoUser = user?.role === DASHBOARD_USER_ROLES.USER || !user;
+  const isAdminOrAccountant =
+    user?.role === DASHBOARD_USER_ROLES.ADMIN ||
+    user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
 
   const [isWalletDropdowon, setIsWalletDropdown] = useState(false);
   const toggleProfileDropdown = () => {
@@ -46,7 +49,7 @@ const WalletDropdown = () => {
         <DropdownMenu className="dropdown-menu-end">
           <DropdownItem className="p-0 ">
             <Link
-              to={process.env.PUBLIC_URL + '/profile'}
+              to={process.env.PUBLIC_URL + '/wallets/connect'}
               className="dropdown-item ps-2"
             >
               <i className="ri-add-line text-muted fs-16 align-middle me-2"></i>
@@ -57,7 +60,8 @@ const WalletDropdown = () => {
           <DropdownItem className="p-0">
             <Link
               to={
-                process.env.PUBLIC_URL + `${isUser ? '/wallets' : '/clients'}`
+                process.env.PUBLIC_URL +
+                (isUserOrNoUser ? '/wallets' : '/clients')
               }
               className="dropdown-item ps-2"
             >
