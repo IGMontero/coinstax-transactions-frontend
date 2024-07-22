@@ -16,14 +16,14 @@ import { useDispatch } from 'react-redux';
 import {
   removeAddressName,
   setAddressName,
-} from '../../../slices/addressName/reducer';
+} from '../../../../slices/addressName/reducer';
 import {
   removeAddressFromCookies,
   renameAddressInCookies,
   setUserSavedAddresses,
-} from '../../../helpers/cookies_helper';
-import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
-import SearchBarWallets from './SearchBarWallets';
+} from '../../../../helpers/cookies_helper';
+import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
+import SearchBarWallets from '../SearchBarWallets';
 
 const AddressTable = ({ addresses, user }) => {
   const [openCollapse, setOpenCollapse] = useState(new Set());

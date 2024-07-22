@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import AddressTable from './components/AddressTable';
+import AddressTable from './components/tables/AddressTable';
 import { Button, Container } from 'reactstrap';
 import { useSelector } from 'react-redux';
-import UsersTable from './components/UsersTable';
+import UsersTable from './components/tables/UsersTable';
 import Helmet from '../../Components/Helmet/Helmet';
 
 const DashboardAccountantWallets = () => {
@@ -44,19 +44,21 @@ const DashboardAccountantWallets = () => {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1>Manage Clients</h1>
             <div>
-              <Button color="primary" className="me-2">
-                Sync Addresses
+              <Button
+                className="d-flex btn-hover-light justify-content-center align-items-center"
+                color="soft-light"
+                style={{
+                  borderRadius: '10px',
+                  border: '.5px solid grey',
+                }}
+              >
+                <i className="ri-add-line me-2"></i>
+                Add Client
               </Button>
-              <Button color="primary">Connect Wallet</Button>
+              {/* <Button color="primary">Connect Wallet</Button> */}
             </div>
           </div>
           <UsersTable users={fakeUsers} />
-          <div className="mt-4">
-            <h2>Watchlist</h2>
-            <div className="watchlist-placeholder">
-              <p>Drag your wallets here</p>
-            </div>
-          </div>
         </Container>
       </div>
     </React.Fragment>

@@ -23,8 +23,9 @@ import DashboardTransactions from '../pages/DashboardTransactions/DashboardTrans
 import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUserAddresses';
 import AuthProtectedRoutes from './AuthProtectedRoutes';
 import ResetPaswword from '../pages/Authentication/ResetPassword';
-import DashboardUserWallets from '../pages/DashboardAccountantWallets/DashboardUserWallets';
-import DashboardAccountantWallets from '../pages/DashboardAccountantWallets/DashboardAccountantWallets';
+import DashboardUserWallets from '../pages/DashboardAccoutWallets/DashboardUserWallets';
+import DashboardAccountantWallets from '../pages/DashboardAccoutWallets/DashboardAccountantWallets';
+import DashboardAccUsersWallets from '../pages/DashboardAccoutWallets/DashboardAccUsersWallets';
 
 // Auth protected routes
 const adminRoutes = [
@@ -95,7 +96,7 @@ const noVerticalLayoutRoutes = [
           DASHBOARD_USER_ROLES.ACCOUNTANT,
         ]}
       >
-        <DashboardUserWallets />
+        <DashboardAccUsersWallets />
       </AuthProtectedRoutes>
     ),
   },

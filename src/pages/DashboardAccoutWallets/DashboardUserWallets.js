@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Button } from 'reactstrap';
 import Helmet from '../../Components/Helmet/Helmet';
-import AddressTable from './components/AddressTable';
+import AddressTable from './components/tables/AddressTable';
 import { useSelector } from 'react-redux';
 
 const DashboardUserWallets = () => {
@@ -14,10 +14,26 @@ const DashboardUserWallets = () => {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h1>Manage Wallets</h1>
             <div>
-              <Button color="primary" className="me-2">
+              <Button
+                className="d-flex btn-hover-light justify-content-center align-items-center me-2"
+                color="soft-light"
+                style={{
+                  borderRadius: '10px',
+                  border: '.5px solid grey',
+                }}
+              >
                 Sync Addresses
               </Button>
-              <Button color="primary">Connect Wallet</Button>
+              <Button
+                className="d-flex btn-hover-light justify-content-center align-items-center"
+                color="soft-light"
+                style={{
+                  borderRadius: '10px',
+                  border: '.5px solid grey',
+                }}
+              >
+                Connect Wallet
+              </Button>
             </div>
           </div>
           <AddressTable addresses={addresses} user={false} />
