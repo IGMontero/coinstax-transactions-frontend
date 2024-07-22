@@ -7,16 +7,11 @@ import Helmet from '../../Components/Helmet/Helmet';
 import Header from '../../Layouts/Header';
 
 const DashboardAccountantUsers = () => {
-  const addresses = useSelector((state) => state.addressName.addresses);
-  const { layoutModeType } = useSelector((state) => ({
-    layoutModeType: state.Layout.layoutModeType,
-  }));
-
-  // Array with fake users with name, email, address and id
   const [fakeUsers, setFakeUsers] = useState([
     {
       id: 1,
       name: 'John Doe',
+
       email: 'JhonDoe@emial.com',
       address: '0x1234567890',
     },

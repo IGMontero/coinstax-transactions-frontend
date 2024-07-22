@@ -23,9 +23,9 @@ import DashboardTransactions from '../pages/DashboardTransactions/DashboardTrans
 import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUserAddresses';
 import AuthProtectedRoutes from './AuthProtectedRoutes';
 import ResetPaswword from '../pages/Authentication/ResetPassword';
-import DashboardUserWallets from '../pages/DashboardAccoutWallets/DashboardUserWallets';
-import DashboardAccountantUsers from '../pages/DashboardAccoutWallets/DashboardAccountantUsers';
-import DashboardAccUsersWallets from '../pages/DashboardAccoutWallets/DashboardAccUsersWallets';
+import DashboardUserWallets from '../pages/DashboardAccountsWallets/DashboardUserWallets';
+import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/DashboardAccountantUsers';
+import DashboardAccUsersWallets from '../pages/DashboardAccountsWallets/DashboardAccUsersWallets';
 
 // Auth protected routes
 const adminRoutes = [

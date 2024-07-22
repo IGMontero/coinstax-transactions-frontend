@@ -12,7 +12,7 @@ import { DASHBOARD_USER_ROLES } from '../constants/constants';
 const WalletDropdown = () => {
   const { user } = useSelector((state) => state.auth);
 
-  const isUser = DASHBOARD_USER_ROLES.USER === user.role;
+  const isUser = DASHBOARD_USER_ROLES.USER === user?.role;
 
   const [isWalletDropdowon, setIsWalletDropdown] = useState(false);
   const toggleProfileDropdown = () => {
