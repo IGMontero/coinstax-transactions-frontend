@@ -8,7 +8,7 @@ import {
   DropdownToggle,
 } from 'reactstrap';
 import { useSelector } from 'react-redux';
-import { layoutModeTypes } from '../../../Components/constants/layout';
+import { layoutModeTypes } from '../../../../Components/constants/layout';
 import { useNavigate } from 'react-router-dom';
 
 const UsersTable = ({ users }) => {
@@ -50,7 +50,7 @@ const UsersTable = ({ users }) => {
   };
 
   const handleRowClick = (row) => {
-    navigate(`/${row.id}`);
+    navigate(`${row.id}`);
   };
 
   const columns = [
