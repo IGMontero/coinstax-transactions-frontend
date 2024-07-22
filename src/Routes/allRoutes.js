@@ -26,6 +26,7 @@ import ResetPaswword from '../pages/Authentication/ResetPassword';
 import DashboardUserWallets from '../pages/DashboardAccountsWallets/DashboardUserWallets';
 import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/DashboardAccountantUsers';
 import DashboardAccUsersWallets from '../pages/DashboardAccountsWallets/DashboardAccUsersWallets';
+import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWallets';
 
 // Auth protected routes
 const adminRoutes = [
@@ -85,6 +86,14 @@ const noVerticalLayoutRoutes = [
       >
         <DashboardAccountantUsers />
       </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/wallets/connect',
+    component: (
+      // <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER]}>
+      <DashboardConnectWallets />
+      // </AuthProtectedRoutes>
     ),
   },
   {
