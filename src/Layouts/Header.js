@@ -30,6 +30,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeSidebarVisibility } from '../slices/thunks';
 import { layoutModeTypes } from '../Components/constants/layout';
 import ParentComponentSearchBar from '../Components/SearchBar/ParentComponent';
+import WalletDropdown from '../Components/Common/WalletDropdown';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
@@ -229,6 +230,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                     onChangeLayoutMode={onChangeLayoutMode}
                   />
                   {/* {commentedCode()} */}
+                  <WalletDropdown />
                   {currentUser && <ProfileDropdown />}
                 </div>
               </Col>
