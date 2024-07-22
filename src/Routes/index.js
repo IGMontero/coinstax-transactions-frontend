@@ -89,7 +89,7 @@ const Index = () => {
   const noVerticalLayoutDisplay =
     location.pathname === '/dashboard' ||
     location.pathname === '/' ||
-    location.pathname === '/wallets' ||
+    location.pathname.includes('/wallets') ||
     location.pathname.includes('/clients');
 
   return (
