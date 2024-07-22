@@ -72,10 +72,10 @@ const Login = (props) => {
 
         console.log('authMe response', role);
 
-        if (role === 'accountant') {
-          navigate('/clients');
-        } else {
+        if (role === 'user') {
           navigate('/wallets');
+        } else {
+          navigate('/clients');
         }
       }
     } catch (error) {
