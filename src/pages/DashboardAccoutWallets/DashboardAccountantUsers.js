@@ -4,9 +4,13 @@ import { Button, Container } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import UsersTable from './components/tables/UsersTable';
 import Helmet from '../../Components/Helmet/Helmet';
+import Header from '../../Layouts/Header';
 
-const DashboardAccountantWallets = () => {
+const DashboardAccountantUsers = () => {
   const addresses = useSelector((state) => state.addressName.addresses);
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
 
   // Array with fake users with name, email, address and id
   const [fakeUsers, setFakeUsers] = useState([
@@ -65,4 +69,4 @@ const DashboardAccountantWallets = () => {
   );
 };
 
-export default DashboardAccountantWallets;
+export default DashboardAccountantUsers;
