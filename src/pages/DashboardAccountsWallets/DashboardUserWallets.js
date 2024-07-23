@@ -3,6 +3,7 @@ import { Container, Button } from 'reactstrap';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddressTable from './components/tables/AddressTable';
 import { useSelector } from 'react-redux';
+import Header from '../../Layouts/Header';
 
 const DashboardUserWallets = () => {
   const addresses = useSelector((state) => state.addressName.addresses);
