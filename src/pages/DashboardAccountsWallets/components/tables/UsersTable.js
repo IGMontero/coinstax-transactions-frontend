@@ -6,12 +6,13 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Spinner,
 } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
 import { useNavigate } from 'react-router-dom';
 
-const UsersTable = ({ users }) => {
+const UsersTable = ({ users, loading }) => {
   const navigate = useNavigate();
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
