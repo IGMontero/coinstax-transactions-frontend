@@ -10,7 +10,7 @@ import Logout from '../pages/Authentication/Logout';
 import Register from '../pages/Authentication/Register';
 
 // User Profile
-import { DASHBOARD_USER_ROLES } from '../Components/constants/constants';
+import { DASHBOARD_USER_ROLES } from '../common/constants';
 import UserProfile from '../pages/Authentication/UserProfile';
 import DashboardAssets from '../pages/DashboardAssets/DashboardAssets';
 import DashboardBlockchainContracts from '../pages/DashboardBlockchainContracts/DashboardBlockchainContracts';
@@ -65,14 +65,22 @@ const publicRoutes = [
 ];
 
 // Home page
-const noVerticalLayoutRoutes = [
-  { path: '/', component: <DashboardHome /> },
+const noVerticalLayoutRoutes = [{ path: '/', component: <DashboardHome /> }];
+
+const authProtectedRoutes = [
   {
-    path: '/wallets',
+    path: '/profile',
+
     component: (
-      // <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER]}>
-      <DashboardUserWallets />
-      // </AuthProtectedRoutes>
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+        ]}
+      >
+        <UserProfile />
+      </AuthProtectedRoutes>
     ),
   },
   {
@@ -88,6 +96,15 @@ const noVerticalLayoutRoutes = [
       </AuthProtectedRoutes>
     ),
   },
+  {
+    path: '/wallets',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER]}>
+        <DashboardUserWallets />
+      </AuthProtectedRoutes>
+    ),
+  },
+
   {
     path: '/wallets/connect',
     component: (
@@ -106,24 +123,6 @@ const noVerticalLayoutRoutes = [
         ]}
       >
         <DashboardAccUsersWallets />
-      </AuthProtectedRoutes>
-    ),
-  },
-];
-
-const authProtectedRoutes = [
-  {
-    path: '/profile',
-
-    component: (
-      <AuthProtectedRoutes
-        allowedRoles={[
-          DASHBOARD_USER_ROLES.ADMIN,
-          DASHBOARD_USER_ROLES.USER,
-          DASHBOARD_USER_ROLES.ACCOUNTANT,
-        ]}
-      >
-        <UserProfile />
       </AuthProtectedRoutes>
     ),
   },

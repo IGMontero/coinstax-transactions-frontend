@@ -7,7 +7,7 @@ import {
   DropdownMenu,
   DropdownToggle,
 } from 'reactstrap';
-import { DASHBOARD_USER_ROLES } from '../constants/constants';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
 
 const WalletDropdown = () => {
   const { user } = useSelector((state) => state.auth);
@@ -56,19 +56,20 @@ const WalletDropdown = () => {
               <span className="align-middle">Connect another Wallet </span>
             </Link>
           </DropdownItem>
-
-          <DropdownItem className="p-0">
-            <Link
-              to={
-                process.env.PUBLIC_URL +
-                (isUserOrNoUser ? '/wallets' : '/clients')
-              }
-              className="dropdown-item ps-2"
-            >
-              <i className="mdi mdi-wallet text-muted fs-16 align-middle me-2"></i>
-              <span className="align-middle">Manage Wallets</span>
-            </Link>
-          </DropdownItem>
+          {user && (
+            <DropdownItem className="p-0">
+              <Link
+                to={
+                  process.env.PUBLIC_URL +
+                  (isUserOrNoUser ? '/wallets' : '/clients')
+                }
+                className="dropdown-item ps-2"
+              >
+                <i className="mdi mdi-wallet text-muted fs-16 align-middle me-2"></i>
+                <span className="align-middle">Manage Wallets</span>
+              </Link>
+            </DropdownItem>
+          )}
           {/* <div className="dropdown-divider"></div> */}
         </DropdownMenu>
       </Dropdown>

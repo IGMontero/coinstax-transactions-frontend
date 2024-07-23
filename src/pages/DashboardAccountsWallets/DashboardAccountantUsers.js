@@ -44,7 +44,7 @@ const DashboardAccountantUsers = () => {
             <h1>Manage Clients</h1>
             <div>
               <Button
-                className="d-flex btn-hover-light justify-content-center align-items-center"
+                className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
                 color="soft-light"
                 style={{
                   borderRadius: '10px',

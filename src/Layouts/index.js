@@ -37,8 +37,7 @@ import {
 import { setAddressSummary } from '../slices/addresses/reducer';
 import UnsupportedPage from '../Components/UnsupportedPage/UnsupportedPage';
 import { setAddressName } from '../slices/addressName/reducer';
-import { pagesWithoutAddress } from '../Components/constants/constants';
-
+import { pagesWithoutAddress } from '../common/constants';
 const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
   const location = useLocation();
@@ -307,12 +306,26 @@ const Layout = (props) => {
     }
   }, [token, address]);
 
+  const isPageWithoutAddress = (pathname) => {
+    if (pagesNotToDisplayAddress.includes(pathname)) {
+      return true;
+    }
+    const dynamicRoutes = ['/clients/:userId'];
+    for (const route of dynamicRoutes) {
+      const regex = new RegExp(`^${route.replace(':userId', '[^/]+')}$`);
+      if (regex.test(pathname)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   useEffect(() => {
     if (
       !address &&
       !token &&
       !contractAddress &&
-      !pagesNotToDisplayAddress.includes(location.pathname)
+      !isPageWithoutAddress(location.pathname)
     ) {
       navigate('/');
     }
@@ -343,7 +356,7 @@ const Layout = (props) => {
           style={{ height: '100vh' }}
         >
           <div className="page-content">
-            {!pagesNotToDisplayAddress.includes(location.pathname) &&
+            {!isPageWithoutAddress(location.pathname) &&
               !token &&
               !contractAddress && (
                 <AddressWithDropdown
@@ -358,7 +371,7 @@ const Layout = (props) => {
               if (
                 token ||
                 contractAddress ||
-                pagesNotToDisplayAddress.includes(location.pathname)
+                isPageWithoutAddress(location.pathname)
               ) {
                 return props.children;
               } else if (isUnsupported) {

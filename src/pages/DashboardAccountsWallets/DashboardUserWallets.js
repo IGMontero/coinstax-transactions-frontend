@@ -16,7 +16,7 @@ const DashboardUserWallets = () => {
             <h1>Manage Wallets</h1>
             <div className="d-flex ">
               <Button
-                className="d-flex btn-hover-light justify-content-center align-items-center me-2"
+                className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
                 color="soft-light"
                 style={{
                   borderRadius: '10px',
@@ -26,7 +26,7 @@ const DashboardUserWallets = () => {
                 Sync Addresses
               </Button>
               <Button
-                className="d-flex btn-hover-light justify-content-center align-items-center"
+                className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
                 color="soft-light"
                 style={{
                   borderRadius: '10px',
