@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AddressTable from './components/tables/AddressTable';
 import { Button, Container } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import UsersTable from './components/tables/UsersTable';
 import Helmet from '../../Components/Helmet/Helmet';
-import Header from '../../Layouts/Header';
+import AddClientModal from '../../Components/Modals/AddClientModal';
+import { getClientsByUserId } from '../../slices/clients/thunk';
+import { useDispatch } from 'react-redux';
 
 const DashboardAccountantUsers = () => {
   const [fakeUsers, setFakeUsers] = useState([
@@ -35,8 +37,42 @@ const DashboardAccountantUsers = () => {
     },
   ]);
 
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [clients, setClients] = useState([]);
+
+  const [modalAddClient, setModalAddClient] = useState(false);
+  const handleOpenModalAddClient = () => {
+    setModalAddClient(true);
+  };
+
+  const fetchClients = async () => {
+    try {
+      setLoading(true);
+      const response = await dispatch(getClientsByUserId()).unwrap();
+
+      console.log(response);
+      if (response && !response.error) {
+        setClients(response);
+      } else {
+        console.log('Failed to fetch clients');
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchClients();
+  }, []);
+
   return (
     <React.Fragment>
+      <AddClientModal isOpen={modalAddClient} setIsOpen={setModalAddClient} />
       <Helmet title="Clients" />
       <div className="page-content">
         <Container>
@@ -44,6 +80,7 @@ const DashboardAccountantUsers = () => {
             <h1>Manage Clients</h1>
             <div>
               <Button
+                onClick={handleOpenModalAddClient}
                 className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
                 color="soft-light"
                 style={{
@@ -57,7 +94,7 @@ const DashboardAccountantUsers = () => {
               {/* <Button color="primary">Connect Wallet</Button> */}
             </div>
           </div>
-          <UsersTable users={fakeUsers} />
+          <UsersTable users={fakeUsers} loading={loading} />
         </Container>
       </div>
     </React.Fragment>
