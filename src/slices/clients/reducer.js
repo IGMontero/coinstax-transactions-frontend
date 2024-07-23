@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-import { addClient, getClientsByUserId } from './thunk';
+import { addClient, getClientsByUserId, deleteAddressByUserId } from './thunk';
 
 const initialState = {
   clients: [],
@@ -40,6 +40,20 @@ const clientsSlice = createSlice({
       state.error = null;
     },
     [getClientsByUserId.rejected]: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    [deleteAddressByUserId.pending]: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    [deleteAddressByUserId.fulfilled]: (state, action) => {
+      state.clients = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    [deleteAddressByUserId.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },

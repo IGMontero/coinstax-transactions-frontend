@@ -12,7 +12,11 @@ import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
 import { useNavigate } from 'react-router-dom';
 
-const UsersTable = ({ users, loading }) => {
+const UsersTable = ({ users, loading, onDeleteAddress }) => {
+  const { userId } = useSelector((state) => ({
+    userId: state.auth.user.id,
+  }));
+
   const navigate = useNavigate();
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -45,9 +49,9 @@ const UsersTable = ({ users, loading }) => {
     console.log('Edit user', userId);
   };
 
-  const handleDelete = (userId) => {
-    // Handle delete user logic here
-    console.log('Delete user', userId);
+  const handleDelete = (row) => {
+    console.log('row', row.address);
+    onDeleteAddress(userId, row.address);
   };
 
   const handleRowClick = (row) => {
@@ -106,7 +110,7 @@ const UsersTable = ({ users, loading }) => {
             </DropdownItem>
             <DropdownItem
               className="d-flex aling-items-center ps-3"
-              onClick={() => handleDelete(row.id)}
+              onClick={() => handleDelete(row)}
             >
               <i className="ri-delete-bin-line  pe-3"></i> Delete
             </DropdownItem>
