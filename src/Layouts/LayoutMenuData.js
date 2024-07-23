@@ -11,6 +11,8 @@ const Navdata = () => {
 
   const isAdmin = user?.role === DASHBOARD_USER_ROLES.ADMIN;
 
+  const isAccountant = user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
+
   // console.log('user', user);
   const { fetchData } = useSelector((state) => ({
     fetchData: state.fetchData,
@@ -59,7 +61,7 @@ const Navdata = () => {
     },
   });
 
-  const createMenuItemAdmin = (id, label, icon, page) => ({
+  const createMenuItemAdminOrAccountant = (id, label, icon, page) => ({
     id,
     label,
     icon,
@@ -99,7 +101,7 @@ const Navdata = () => {
   if (isAdmin) {
     allMenuItems.push(createMenuHeader('Admin'));
     allMenuItems.push(
-      createMenuItemAdmin(
+      createMenuItemAdminOrAccountant(
         'blockchain',
         'Blockchain Contracts',
         'bx bx-link fs-3',
@@ -107,11 +109,23 @@ const Navdata = () => {
       ),
     );
     allMenuItems.push(
-      createMenuItemAdmin(
+      createMenuItemAdminOrAccountant(
         'userAddresses',
         'User Addresses',
         'bx bx-user fs-3',
         'user-addresses',
+      ),
+    );
+  }
+
+  if (isAccountant) {
+    allMenuItems.push(createMenuHeader('Accountant'));
+    allMenuItems.push(
+      createMenuItemAdminOrAccountant(
+        'accountantUsers',
+        'Manage Clients',
+        'bx bx-user fs-3',
+        'clients',
       ),
     );
   }

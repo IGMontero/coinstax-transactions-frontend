@@ -189,6 +189,9 @@ const VerticalLayout = (props) => {
       ? itemLink.slice(0, -1)
       : itemLink;
 
+    if (normalizedItemLink === '/clients') {
+      return currentPath.startsWith('/clients');
+    }
     return currentPath === normalizedItemLink;
   };
 
