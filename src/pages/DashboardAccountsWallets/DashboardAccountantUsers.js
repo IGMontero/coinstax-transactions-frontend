@@ -7,10 +7,12 @@ import Helmet from '../../Components/Helmet/Helmet';
 import AddClientModal from '../../Components/Modals/AddClientModal';
 import {
   getClientsByUserId,
-  deleteAddressByUserId,
+  deleteUserAddressWallet,
+  updateUserWalletAddress,
 } from '../../slices/clients/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
+import EditClientModal from '../../Components/Modals/EditClientModal';
 
 const DashboardAccountantUsers = () => {
   const [fakeUsers, setFakeUsers] = useState([
@@ -46,6 +48,7 @@ const DashboardAccountantUsers = () => {
   const [clients, setClients] = useState([]);
 
   const [modalAddClient, setModalAddClient] = useState(false);
+
   const handleOpenModalAddClient = () => {
     setModalAddClient(true);
   };
@@ -73,7 +76,7 @@ const DashboardAccountantUsers = () => {
   const handleDeleteAddress = async (userId, addressId) => {
     try {
       const response = await dispatch(
-        deleteAddressByUserId({ userId, addressId }),
+        deleteUserAddressWallet({ userId, addressId }),
       ).unwrap();
 
       if (response && !response.error) {
@@ -106,6 +109,7 @@ const DashboardAccountantUsers = () => {
   return (
     <React.Fragment>
       <AddClientModal isOpen={modalAddClient} setIsOpen={setModalAddClient} />
+
       <Helmet title="Clients" />
       <div className="page-content">
         <Container>

@@ -11,6 +11,7 @@ import {
 import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
 import { useNavigate } from 'react-router-dom';
+import EditClientModal from '../../../../Components/Modals/EditClientModal';
 
 const UsersTable = ({ users, loading, onDeleteAddress }) => {
   const { userId } = useSelector((state) => ({
@@ -26,6 +27,11 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 955);
 
   const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [modalEditClient, setModalEditClient] = useState(false);
+
+  const handleOpenModalEditClient = () => {
+    setModalEditClient(true);
+  };
 
   const toggleDropdown = (id) => {
     if (dropdownOpen === id) {
@@ -44,13 +50,15 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleEdit = (userId) => {
-    // Handle edit user logic here
-    console.log('Edit user', userId);
+  const [selectedUser, setSelectedUser] = useState(null);
+
+  const handleEdit = (id) => {
+    const user = users.find((user) => user.id === id);
+    setSelectedUser(user);
+    handleOpenModalEditClient();
   };
 
   const handleDelete = (row) => {
-    console.log('row', row.address);
     onDeleteAddress(userId, row.address);
   };
 
@@ -60,26 +68,21 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
 
   const columns = [
     {
-      name: 'ID',
-      selector: (row) => row.id,
-      sortable: true,
-    },
-    {
       name: 'Name',
       selector: (row) => row.name,
-      sortable: true,
+      sortable: false,
       grow: 2,
     },
     {
       name: 'Email',
       selector: (row) => row.email,
-      sortable: true,
+      sortable: false,
       grow: 2,
     },
     {
       name: 'Address',
       selector: (row) => row.address,
-      sortable: true,
+      sortable: false,
       grow: 3,
       cell: (row) => (
         <div className="d-flex flex-column">
@@ -125,6 +128,12 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
 
   return (
     <div className="table-container">
+      <EditClientModal
+        isOpen={modalEditClient}
+        setIsOpen={setModalEditClient}
+        selectedUser={selectedUser}
+      />
+
       <DataTable
         columns={columns}
         data={users}
