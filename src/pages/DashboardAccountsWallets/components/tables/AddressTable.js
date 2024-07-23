@@ -139,16 +139,11 @@ const AddressTable = ({ addresses, user }) => {
   );
 
   const onDragEnd = (result) => {
-    if (!result.destination) {
-      return;
-    }
-
-    const sourceIndex = result.source.index;
-    const destinationIndex = result.destination.index;
+    if (!result.destination) return;
 
     const reorderedList = Array.from(addressList);
-    const [movedItem] = reorderedList.splice(sourceIndex, 1);
-    reorderedList.splice(destinationIndex, 0, movedItem);
+    const [movedItem] = reorderedList.splice(result.source.index, 1);
+    reorderedList.splice(result.destination.index, 0, movedItem);
 
     setAddressList(reorderedList);
     setUserSavedAddresses(reorderedList);

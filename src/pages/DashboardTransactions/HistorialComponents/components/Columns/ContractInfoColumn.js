@@ -11,7 +11,7 @@ import { editBlockChainContract } from '../../../../../slices/blockchainContract
 
 import { useDispatch, useSelector } from 'react-redux';
 import { handleActionResult } from '../../../../../utils/useHandleAction';
-import { DASHBOARD_USER_ROLES } from '../../../../../Components/constants/constants';
+import { DASHBOARD_USER_ROLES } from '../../../../../common/constants';
 
 const ContractInfoColumn = ({ transaction, setTransactions }) => {
   const dispatch = useDispatch();

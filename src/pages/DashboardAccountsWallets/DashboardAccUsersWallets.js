@@ -21,7 +21,7 @@ const DashboardAccUsersWallets = () => {
             <h1>Client Addresses</h1>
             <div className="d-flex">
               <Button
-                className="d-flex btn-hover-light justify-content-center align-items-center"
+                className="d-flex btn-hover-light text-dark justify-content-center align-items-center"
                 color="soft-light"
                 style={{
                   borderRadius: '10px',
@@ -33,7 +33,7 @@ const DashboardAccUsersWallets = () => {
               </Button>
               <Button
                 onClick={handeGoToDashboard}
-                className=" d-flex btn-hover-light justify-content-center align-items-center ms-3"
+                className=" d-flex btn-hover-light  text-dark justify-content-center align-items-center ms-3"
                 color="soft-light"
                 style={{
                   borderRadius: '10px',

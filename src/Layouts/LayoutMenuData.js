@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { DASHBOARD_USER_ROLES } from '../Components/constants/constants';
+import { DASHBOARD_USER_ROLES } from '../common/constants';
 
 const Navdata = () => {
   const { address, token, contractAddress } = useParams();
