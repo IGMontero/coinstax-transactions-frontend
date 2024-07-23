@@ -52,3 +52,27 @@ export const getClientsByUserId = createAsyncThunk(
     }
   },
 );
+
+export const deleteAddressByUserId = createAsyncThunk(
+  'clients/deleteAddressByUserId',
+  async ({ userId, addressId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/wallet-addresses/${addressId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      return addressId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);

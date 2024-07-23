@@ -5,8 +5,12 @@ import { useSelector } from 'react-redux';
 import UsersTable from './components/tables/UsersTable';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddClientModal from '../../Components/Modals/AddClientModal';
-import { getClientsByUserId } from '../../slices/clients/thunk';
+import {
+  getClientsByUserId,
+  deleteAddressByUserId,
+} from '../../slices/clients/thunk';
 import { useDispatch } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const DashboardAccountantUsers = () => {
   const [fakeUsers, setFakeUsers] = useState([
@@ -66,6 +70,35 @@ const DashboardAccountantUsers = () => {
     }
   };
 
+  const handleDeleteAddress = async (userId, addressId) => {
+    try {
+      const response = await dispatch(
+        deleteAddressByUserId({ userId, addressId }),
+      ).unwrap();
+
+      if (response && !response.error) {
+        Swal.fire({
+          title: 'Success',
+          text: 'Address deleted successfully',
+          icon: 'success',
+        });
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to delete address',
+          icon: 'error',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to delete address:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to delete address',
+        icon: 'error',
+      });
+    }
+  };
+
   useEffect(() => {
     fetchClients();
   }, []);
@@ -94,7 +127,11 @@ const DashboardAccountantUsers = () => {
               {/* <Button color="primary">Connect Wallet</Button> */}
             </div>
           </div>
-          <UsersTable users={fakeUsers} loading={loading} />
+          <UsersTable
+            users={fakeUsers}
+            loading={loading}
+            onDeleteAddress={handleDeleteAddress}
+          />
         </Container>
       </div>
     </React.Fragment>
