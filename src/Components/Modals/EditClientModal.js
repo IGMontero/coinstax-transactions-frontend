@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Modal,
@@ -11,70 +11,88 @@ import {
   Label,
   Input,
 } from 'reactstrap';
-import { addClient } from '../../slices/clients/thunk';
 import Swal from 'sweetalert2';
-import { useSelector } from 'react-redux';
+import { updateUserWalletAddress } from '../../slices/clients/thunk';
 
-const AddClientModal = ({ isOpen, setIsOpen }) => {
+const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
   const dispatch = useDispatch();
 
-  const { user } = useSelector((state) => state.auth);
-  const userId = user?.id;
-
-  const [clientName, setClientName] = useState('');
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [address, setAddress] = useState('');
   const [isShared, setIsShared] = useState(false);
+
+  useEffect(() => {
+    if (selectedUser) {
+      setName(selectedUser.name);
+      setEmail(selectedUser.email);
+      setAddress(selectedUser.address);
+      setIsShared(selectedUser.isShared);
+    }
+  }, [selectedUser]);
 
   const toggleModal = () => setIsOpen(!isOpen);
 
   const handleSubmit = async () => {
-    const newClient = {
-      clientName,
+    const updatedUser = {
+      ...selectedUser,
+      name,
       email,
+      address,
       isShared,
-      userId,
     };
 
     try {
-      const response = await dispatch(addClient(newClient)).unwrap();
-
-      console.log(response);
+      const response = await dispatch(
+        updateUserWalletAddress(updatedUser),
+      ).unwrap();
 
       if (response && !response.error) {
         Swal.fire({
           title: 'Success',
-          text: 'Client added successfully',
+          text: 'User updated successfully',
           icon: 'success',
         });
         toggleModal();
       } else {
         Swal.fire({
           title: 'Error',
-          text: 'Failed to add client',
+          text: 'Failed to update user',
           icon: 'error',
         });
       }
     } catch (error) {
-      console.error('Failed to add client: ', error);
+      console.error('Failed to update user: ', error);
       Swal.fire({
         title: 'Error',
-        text: 'Failed to add client',
+        text: 'Failed to update user',
         icon: 'error',
       });
     }
   };
+
   return (
     <Modal isOpen={isOpen} toggle={toggleModal}>
-      <ModalHeader toggle={toggleModal}>Add New Client</ModalHeader>
+      <ModalHeader toggle={toggleModal}>Edit User</ModalHeader>
       <ModalBody>
         <Form>
           <FormGroup>
-            <Label for="clientName">Client Name</Label>
+            <Label for="address">Address</Label>
             <Input
               type="text"
-              id="clientName"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
+              id="address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              placeholder="Enter address"
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="name">Client Name</Label>
+            <Input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               placeholder="Enter client name"
             />
           </FormGroup>
@@ -102,7 +120,7 @@ const AddClientModal = ({ isOpen, setIsOpen }) => {
       </ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={handleSubmit}>
-          Add Client
+          Save Changes
         </Button>
         <Button color="secondary" onClick={toggleModal}>
           Cancel
@@ -112,4 +130,4 @@ const AddClientModal = ({ isOpen, setIsOpen }) => {
   );
 };
 
-export default AddClientModal;
+export default EditClientModal;

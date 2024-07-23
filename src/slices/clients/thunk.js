@@ -53,8 +53,8 @@ export const getClientsByUserId = createAsyncThunk(
   },
 );
 
-export const deleteAddressByUserId = createAsyncThunk(
-  'clients/deleteAddressByUserId',
+export const deleteUserAddressWallet = createAsyncThunk(
+  'clients/deleteUserAddressWallet',
   async ({ userId, addressId }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
@@ -71,6 +71,33 @@ export const deleteAddressByUserId = createAsyncThunk(
         throw new Error(`Error: ${response.status}`);
       }
       return addressId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const updateUserWalletAddress = createAsyncThunk(
+  'clients/updateUserWalletAddress',
+  async ({ userId, clientName, email, isShared }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/wallet-addresses/${addressId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({ clientName, email, isShared }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }
