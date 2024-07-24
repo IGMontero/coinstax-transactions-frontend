@@ -14,7 +14,7 @@ import {
   InputGroupText,
   Spinner,
 } from 'reactstrap';
-import { addUserWallet } from '../../slices/clients/thunk';
+import { addUserWallet } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 

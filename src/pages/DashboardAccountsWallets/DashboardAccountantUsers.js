@@ -9,7 +9,7 @@ import {
   deleteUserAddressWallet,
   updateUserWalletAddress,
   getUserWallets,
-} from '../../slices/clients/thunk';
+} from '../../slices/userWallets/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 import EditClientModal from '../../Components/Modals/EditClientModal';

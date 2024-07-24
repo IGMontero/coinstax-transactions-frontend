@@ -12,7 +12,7 @@ import {
   Input,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
-import { updateUserWalletAddress } from '../../slices/clients/thunk';
+import { updateUserWalletAddress } from '../../slices/userWallets/thunk';
 
 const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
   const dispatch = useDispatch();

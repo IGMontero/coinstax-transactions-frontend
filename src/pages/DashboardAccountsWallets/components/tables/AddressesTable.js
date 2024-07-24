@@ -17,7 +17,7 @@ import { useDispatch } from 'react-redux';
 import {
   updateUserWalletAddress,
   deleteUserAddressWallet,
-} from '../../../../slices/clients/thunk';
+} from '../../../../slices/userWallets/thunk';
 import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
 import SearchBarWallets from '../SearchBarWallets';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
