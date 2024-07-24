@@ -4,7 +4,7 @@ import Helmet from '../../Components/Helmet/Helmet';
 import AddressesTable from './components/tables/AddressesTable';
 import { useSelector } from 'react-redux';
 import Header from '../../Layouts/Header';
-import { getUserWallets } from '../../slices/clients/thunk';
+import { getUserWallets } from '../../slices/userWallets/thunk';
 import { useDispatch } from 'react-redux';
 import AddClientModal from '../../Components/Modals/AddClientModal';
 import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
