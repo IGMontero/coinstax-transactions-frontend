@@ -5,56 +5,21 @@ import { useSelector } from 'react-redux';
 import UsersTable from './components/tables/UsersTable';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddClientModal from '../../Components/Modals/AddClientModal';
-import {
-  deleteUserAddressWallet,
-  updateUserWalletAddress,
-  getUserWallets,
-} from '../../slices/userWallets/thunk';
+
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 import EditClientModal from '../../Components/Modals/EditClientModal';
+import {
+  getClientsByAccountantId,
+  deleteClientByAccountantId,
+} from '../../slices/accountants/thunk';
 
 const DashboardAccountantUsers = () => {
-  const [fakeUsers, setFakeUsers] = useState([
-    {
-      id: 1,
-      name: 'John Doe',
-      accountType: 'Client',
-      email: 'JhonDoe@emial.com',
-      lastDateViewed: '2021-10-10',
-      address: '0x1234567890',
-    },
-    {
-      id: 2,
-      name: 'Jane Doe',
-      accountType: 'User',
-      email: 'JaneDoe@email.com',
-      lastDateViewed: '2021-10-10',
-      address: '0x123456789',
-    },
-    {
-      id: 3,
-      name: 'John Smith',
-      accountType: 'Client',
-      email: 'JhonSmith@email.com',
-      lastDateViewed: '2021-10-10',
-      address: '0x123456789',
-    },
-    {
-      id: 4,
-      name: 'Jane Smith',
-      accountType: 'User',
-      email: 'JaneSmith@email.com',
-      lastDateViewed: '2021-10-10',
-      address: '0x123456789',
-    },
-  ]);
-
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
   const userId = user.id;
 
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState([]);
 
@@ -67,7 +32,9 @@ const DashboardAccountantUsers = () => {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const response = await dispatch(getUserWallets(userId)).unwrap();
+      const response = await dispatch(
+        getClientsByAccountantId(userId),
+      ).unwrap();
 
       console.log(response);
       if (response && !response.error) {
@@ -83,39 +50,46 @@ const DashboardAccountantUsers = () => {
       setLoading(false);
     }
   };
+  const handleDeleteClient = (clientId) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Are you sure you want to delete client with ID ${clientId}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await dispatch(
+            deleteClientByAccountantId({ clientId, accountantId: userId }),
+          ).unwrap();
 
-  const handleDeleteAddress = async (userId, addressId) => {
-    try {
-      const response = await dispatch(
-        deleteUserAddressWallet({ userId, addressId }),
-      ).unwrap();
+          if (response && !response.error) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Client deleted successfully',
+            });
+            fetchClients();
+          }
+        } catch (error) {
+          console.error('Failed to delete client:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to delete client',
+          });
+        }
 
-      if (response && !response.error) {
-        Swal.fire({
-          title: 'Success',
-          text: 'Address deleted successfully',
-          icon: 'success',
-        });
-      } else {
-        Swal.fire({
-          title: 'Error',
-          text: 'Failed to delete address',
-          icon: 'error',
-        });
+        console.log('Delete client', clientId);
       }
-    } catch (error) {
-      console.error('Failed to delete address:', error);
-      Swal.fire({
-        title: 'Error',
-        text: 'Failed to delete address',
-        icon: 'error',
-      });
-    }
+    });
   };
 
-  // useEffect(() => {
-  //   fetchClients();
-  // }, []);
+  useEffect(() => {
+    fetchClients();
+  }, []);
 
   return (
     <React.Fragment>
@@ -143,9 +117,9 @@ const DashboardAccountantUsers = () => {
             </div>
           </div>
           <UsersTable
-            users={fakeUsers}
+            users={clients}
             loading={loading}
-            onDeleteAddress={handleDeleteAddress}
+            onDeleteAddress={handleDeleteClient}
           />
         </Container>
       </div>
