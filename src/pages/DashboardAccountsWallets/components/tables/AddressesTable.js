@@ -13,30 +13,21 @@ import {
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
+
 import {
-  removeAddressName,
-  setAddressName,
-} from '../../../../slices/addressName/reducer';
-import {
-  removeAddressFromCookies,
-  renameAddressInCookies,
-  setUserSavedAddresses,
-} from '../../../../helpers/cookies_helper';
-import { updateUserWalletAddress } from '../../../../slices/clients/thunk';
+  updateUserWalletAddress,
+  deleteUserAddressWallet,
+} from '../../../../slices/clients/thunk';
 import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
 import SearchBarWallets from '../SearchBarWallets';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
-  const [openCollapse, setOpenCollapse] = useState(new Set());
-  const [dropdownOpen, setDropdownOpen] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [addressList, setAddressList] = useState(addresses);
-
-  console.log('AddressesTable -> addresses', addresses);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const [openCollapse, setOpenCollapse] = useState(new Set());
+  const [dropdownOpen, setDropdownOpen] = useState(null);
 
   const toggleCollapse = (collapseId) => {
     const newSet = new Set(openCollapse);
@@ -78,10 +69,6 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
     });
   };
 
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-  };
-
   const handleUpdateAddress = (e, address) => {
     e.preventDefault();
     e.stopPropagation();
@@ -117,13 +104,10 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
           if (response && !response.error) {
             Swal.fire({
               title: 'Success',
-              text: 'Address updated successfully',
+              text: 'Wallet address updated successfully',
               icon: 'success',
             });
-            setAddresses((prev) => ({
-              ...prev,
-              Name: newName,
-            }));
+
             onRefresh();
           } else {
             Swal.fire({
@@ -145,24 +129,63 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
     });
   };
 
+  const handleDeleteUserAddress = (address) => {
+    console.log(address);
+
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Are you sure to delete wallet ${address.Name ? address.Name : address.Address}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await dispatch(
+            deleteUserAddressWallet({ userId: user.id, addressId: address.Id }),
+          ).unwrap();
+
+          if (response && !response.error) {
+            Swal.fire({
+              title: 'Success',
+              text: 'Wallet address deleted successfully',
+              icon: 'success',
+            });
+            onRefresh();
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to delete address',
+              icon: 'error',
+            });
+          }
+        } catch (error) {
+          console.error('Failed to delete address:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to delete address',
+            icon: 'error',
+          });
+        }
+      }
+    });
+  };
+
   const onDragEnd = (result) => {
     if (!result.destination) return;
 
-    const reorderedList = Array.from(addressList);
-    const [movedItem] = reorderedList.splice(result.source.index, 1);
-    reorderedList.splice(result.destination.index, 0, movedItem);
+    const items = Array.from(addresses);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
 
-    setAddressList(reorderedList);
-    setUserSavedAddresses(reorderedList);
-    dispatch(setAddressName(reorderedList));
+    setAddresses(items);
   };
 
   return (
     <Container fluid>
       <Row className="mb-5">
-        <Col md={4}>
-          <SearchBarWallets onSearch={handleSearch} />
-        </Col>
+        <Col md={4}>{/* <SearchBarWallets onSearch={handleSearch} /> */}</Col>
       </Row>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="addresses">
@@ -173,8 +196,8 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                   const collapseId = `address-${index}`;
                   return (
                     <Draggable
-                      key={address.value}
-                      draggableId={address.value}
+                      key={address.Name}
+                      draggableId={address.index}
                       index={index}
                     >
                       {(provided) => (
@@ -262,7 +285,9 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                                           </DropdownItem>
                                           <DropdownItem
                                             className="d-flex aling-items-center"
-                                            onClick={() => {}}
+                                            onClick={() => {
+                                              handleDeleteUserAddress(address);
+                                            }}
                                           >
                                             <i className="ri-delete-bin-line me-2"></i>{' '}
                                             Delete
