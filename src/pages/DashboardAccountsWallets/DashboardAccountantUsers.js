@@ -50,6 +50,7 @@ const DashboardAccountantUsers = () => {
       setLoading(false);
     }
   };
+
   const handleDeleteClient = (clientId) => {
     Swal.fire({
       title: 'Are you sure?',
