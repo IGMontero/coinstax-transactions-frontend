@@ -11,7 +11,7 @@ import {
   Label,
   Input,
 } from 'reactstrap';
-// import { addClient } from '../../slices/clients/thunk';
+import { addClientByAccountantId } from '../../slices/accountants/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 
@@ -32,12 +32,12 @@ const AddClientModal = ({ isOpen, setIsOpen }) => {
       clientName,
       email,
       isShared,
-      userId,
     };
 
     try {
-      // const response = await dispatch(addClient(newClient)).unwrap();
-      const response = true;
+      const response = await dispatch(
+        addClientByAccountantId({ client: newClient, accountantId: userId }),
+      ).unwrap();
 
       console.log(response);
 

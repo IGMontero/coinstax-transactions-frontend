@@ -13,10 +13,14 @@ import {
 } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { updateUserWalletAddress } from '../../slices/userWallets/thunk';
+import { updateClientByAccountantId } from '../../slices/accountants/thunk';
+import { useSelector } from 'react-redux';
 
 const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
+  const userId = user?.id;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
@@ -44,7 +48,11 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
 
     try {
       const response = await dispatch(
-        updateUserWalletAddress(updatedUser),
+        updateClientByAccountantId({
+          clientId: selectedUser.id,
+          accountantId: userId,
+          client: updatedUser,
+        }),
       ).unwrap();
 
       if (response && !response.error) {
