@@ -18,7 +18,7 @@ import { addUserWallet } from '../../slices/clients/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 
-const ConnectWalletModal = ({ isOpen, setIsOpen }) => {
+const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh }) => {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
@@ -43,6 +43,7 @@ const ConnectWalletModal = ({ isOpen, setIsOpen }) => {
           text: 'Wallet connected successfully',
           icon: 'success',
         });
+        onRefresh();
         toggleModal();
       } else {
         Swal.fire({

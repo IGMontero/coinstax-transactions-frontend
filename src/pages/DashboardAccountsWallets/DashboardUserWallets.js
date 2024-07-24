@@ -54,6 +54,7 @@ const DashboardUserWallets = () => {
       <ConnectWalletModal
         isOpen={modalConnectWallet}
         setIsOpen={setModalConnectWallet}
+        onRefresh={fetchUserWallets}
       />
       <div className="page-content">
         <Container>
@@ -85,8 +86,10 @@ const DashboardUserWallets = () => {
           </div>
           <AddressesTable
             addresses={addresses}
-            user={false}
+            setAddresses={setAddresses}
+            user={user}
             loading={loading}
+            onRefresh={fetchUserWallets}
           />
           {/* <div className="mt-4">
             <h2>Watchlist</h2>

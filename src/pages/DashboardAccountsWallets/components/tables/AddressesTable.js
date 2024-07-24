@@ -22,17 +22,18 @@ import {
   renameAddressInCookies,
   setUserSavedAddresses,
 } from '../../../../helpers/cookies_helper';
+import { updateUserWalletAddress } from '../../../../slices/clients/thunk';
 import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
 import SearchBarWallets from '../SearchBarWallets';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-const AddressesTable = ({ addresses, user }) => {
+const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [addressList, setAddressList] = useState(addresses);
 
-  console.log('AddressesTable -> addresses', addressList);
+  console.log('AddressesTable -> addresses', addresses);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -77,68 +78,72 @@ const AddressesTable = ({ addresses, user }) => {
     });
   };
 
-  const handleOpenModalRename = (e, address) => {
+  const handleSearch = (term) => {
+    setSearchTerm(term);
+  };
+
+  const handleUpdateAddress = (e, address) => {
     e.preventDefault();
     e.stopPropagation();
 
     Swal.fire({
-      title: 'Rename Wallet',
+      title: 'Update Wallet Address',
       input: 'text',
-      inputValue: address.label,
+      inputValue: address.Name,
       showCancelButton: true,
       confirmButtonText: 'Save',
       inputValidator: (value) => {
         if (
           addresses.some(
-            (addr) => addr.label === value && addr.value !== address.value,
+            (addr) => addr.Name === value && addr.Address !== address.Address,
           )
         ) {
           return 'This name already exists!';
         }
       },
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
         const newName = result.value.trim() ? result.value : null;
-        handleRenameAddress(address.value, newName);
+
+        try {
+          const response = await dispatch(
+            updateUserWalletAddress({
+              userId: user.id,
+              name: newName,
+              addressId: address.Id,
+            }),
+          ).unwrap();
+
+          if (response && !response.error) {
+            Swal.fire({
+              title: 'Success',
+              text: 'Address updated successfully',
+              icon: 'success',
+            });
+            setAddresses((prev) => ({
+              ...prev,
+              Name: newName,
+            }));
+            onRefresh();
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to update address',
+              icon: 'error',
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to update address',
+            icon: 'error',
+          });
+
+          console.log(error);
+        }
       }
     });
   };
-
-  const handleRenameAddress = (valueToFind, newName) => {
-    dispatch(setAddressName({ value: valueToFind, label: newName }));
-    const updatedAddresses = renameAddressInCookies(valueToFind, newName);
-    setUserSavedAddresses(updatedAddresses);
-    Swal.fire('Updated!', 'Your address has been renamed.', 'success');
-  };
-
-  const handleDelete = (e, address) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    Swal.fire({
-      title: `Are you sure you want to remove ${address.label}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Close',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const updatedOptions = removeAddressFromCookies(address.value);
-        setUserSavedAddresses(updatedOptions);
-        dispatch(removeAddressName({ value: address.value }));
-        Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
-      }
-    });
-  };
-
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-  };
-  const filteredAddresses = addressList.filter(
-    (address) =>
-      address.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      address.Address?.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
 
   const onDragEnd = (result) => {
     if (!result.destination) return;
@@ -152,8 +157,6 @@ const AddressesTable = ({ addresses, user }) => {
     dispatch(setAddressName(reorderedList));
   };
 
-  console.log(addressList);
-
   return (
     <Container fluid>
       <Row className="mb-5">
@@ -166,7 +169,7 @@ const AddressesTable = ({ addresses, user }) => {
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               <Row>
-                {addressList?.map((address, index) => {
+                {addresses?.map((address, index) => {
                   const collapseId = `address-${index}`;
                   return (
                     <Draggable
@@ -250,7 +253,9 @@ const AddressesTable = ({ addresses, user }) => {
                                           </DropdownItem>
                                           <DropdownItem
                                             className="d-flex aling-items-center"
-                                            onClick={() => {}}
+                                            onClick={(e) => {
+                                              handleUpdateAddress(e, address);
+                                            }}
                                           >
                                             <i className="ri-edit-line me-2"></i>{' '}
                                             Rename
@@ -304,7 +309,7 @@ const AddressesTable = ({ addresses, user }) => {
           )}
         </Droppable>
       </DragDropContext>
-      {filteredAddresses.length === 0 && (
+      {addresses.length === 0 && (
         <Col className="py-5">
           <h4>No addresses Yet</h4>
         </Col>
