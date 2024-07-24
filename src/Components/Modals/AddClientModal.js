@@ -11,7 +11,7 @@ import {
   Label,
   Input,
 } from 'reactstrap';
-import { addClient } from '../../slices/clients/thunk';
+// import { addClient } from '../../slices/clients/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 
@@ -36,7 +36,8 @@ const AddClientModal = ({ isOpen, setIsOpen }) => {
     };
 
     try {
-      const response = await dispatch(addClient(newClient)).unwrap();
+      // const response = await dispatch(addClient(newClient)).unwrap();
+      const response = true;
 
       console.log(response);
 

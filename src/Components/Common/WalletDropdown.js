@@ -66,7 +66,9 @@ const WalletDropdown = () => {
                 className="dropdown-item ps-2"
               >
                 <i className="mdi mdi-wallet text-muted fs-16 align-middle me-2"></i>
-                <span className="align-middle">Manage Wallets</span>
+                <span className="align-middle">
+                  Manage {isAdminOrAccountant ? 'Clients' : 'Wallets'}
+                </span>
               </Link>
             </DropdownItem>
           )}

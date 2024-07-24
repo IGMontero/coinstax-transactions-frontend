@@ -1,8 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import {
-  addClient,
-  getClientsByUserId,
+  addUserWallet,
+  getUserWallets,
   deleteUserAddressWallet,
 } from './thunk';
 
@@ -21,29 +21,29 @@ const clientsSlice = createSlice({
     },
   },
   extraReducers: {
-    [addClient.pending]: (state) => {
+    [addUserWallet.pending]: (state) => {
       state.loading = true;
       state.error = null;
     },
-    [addClient.fulfilled]: (state, action) => {
+    [addUserWallet.fulfilled]: (state, action) => {
       state.clients = action.payload;
       state.loading = false;
       state.error = null;
     },
-    [addClient.rejected]: (state, action) => {
+    [addUserWallet.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
-    [getClientsByUserId.pending]: (state) => {
+    [getUserWallets.pending]: (state) => {
       state.loading = true;
       state.error = null;
     },
-    [getClientsByUserId.fulfilled]: (state, action) => {
+    [getUserWallets.fulfilled]: (state, action) => {
       state.clients = action.payload;
       state.loading = false;
       state.error = null;
     },
-    [getClientsByUserId.rejected]: (state, action) => {
+    [getUserWallets.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },

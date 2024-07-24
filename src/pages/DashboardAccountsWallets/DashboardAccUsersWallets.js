@@ -1,7 +1,7 @@
 import React from 'react';
 import { Container, Button } from 'reactstrap';
 import Helmet from '../../Components/Helmet/Helmet';
-import AddressTable from './components/tables/AddressTable';
+import AddressesTable from './components/tables/AddressesTable';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -45,7 +45,7 @@ const DashboardAccUsersWallets = () => {
               </Button>
             </div>
           </div>
-          <AddressTable addresses={addresses} user={false} />
+          <AddressesTable addresses={addresses} user={false} />
         </Container>
       </div>
     </React.Fragment>

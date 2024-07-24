@@ -26,11 +26,13 @@ import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
 import SearchBarWallets from '../SearchBarWallets';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
-const AddressTable = ({ addresses, user }) => {
+const AddressesTable = ({ addresses, user }) => {
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [addressList, setAddressList] = useState(addresses);
+
+  console.log('AddressesTable -> addresses', addressList);
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -134,8 +136,8 @@ const AddressTable = ({ addresses, user }) => {
   };
   const filteredAddresses = addressList.filter(
     (address) =>
-      address.label?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      address.value?.toLowerCase().includes(searchTerm.toLowerCase()),
+      address.Name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      address.Address?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const onDragEnd = (result) => {
@@ -150,6 +152,8 @@ const AddressTable = ({ addresses, user }) => {
     dispatch(setAddressName(reorderedList));
   };
 
+  console.log(addressList);
+
   return (
     <Container fluid>
       <Row className="mb-5">
@@ -162,7 +166,7 @@ const AddressTable = ({ addresses, user }) => {
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               <Row>
-                {filteredAddresses.map((address, index) => {
+                {addressList?.map((address, index) => {
                   const collapseId = `address-${index}`;
                   return (
                     <Draggable
@@ -208,10 +212,10 @@ const AddressTable = ({ addresses, user }) => {
                                 >
                                   <div className="d-flex justify-content-between w-100">
                                     <div className="d-flex flex-column">
-                                      <h5>{address.label}</h5>
+                                      <h5>{address.Name}</h5>
                                       <span className="text-muted">
                                         {formatIdTransaction(
-                                          address.value,
+                                          address.Address,
                                           8,
                                           12,
                                         )}
@@ -238,7 +242,7 @@ const AddressTable = ({ addresses, user }) => {
                                           <DropdownItem
                                             className="d-flex aling-items-center"
                                             onClick={(e) =>
-                                              handleCopy(e, address.value)
+                                              handleCopy(e, address.Address)
                                             }
                                           >
                                             <i className="ri-file-copy-line me-2"></i>{' '}
@@ -246,24 +250,14 @@ const AddressTable = ({ addresses, user }) => {
                                           </DropdownItem>
                                           <DropdownItem
                                             className="d-flex aling-items-center"
-                                            onClick={(e) =>
-                                              handleOpenModalRename(e, {
-                                                label: address.label,
-                                                value: address.value,
-                                              })
-                                            }
+                                            onClick={() => {}}
                                           >
                                             <i className="ri-edit-line me-2"></i>{' '}
                                             Rename
                                           </DropdownItem>
                                           <DropdownItem
                                             className="d-flex aling-items-center"
-                                            onClick={(e) =>
-                                              handleDelete(e, {
-                                                label: address.label,
-                                                value: address.value,
-                                              })
-                                            }
+                                            onClick={() => {}}
                                           >
                                             <i className="ri-delete-bin-line me-2"></i>{' '}
                                             Delete
@@ -311,7 +305,7 @@ const AddressTable = ({ addresses, user }) => {
         </Droppable>
       </DragDropContext>
       {filteredAddresses.length === 0 && (
-        <Col>
+        <Col className="py-5">
           <h4>No addresses Yet</h4>
         </Col>
       )}
@@ -319,4 +313,4 @@ const AddressTable = ({ addresses, user }) => {
   );
 };
 
-export default AddressTable;
+export default AddressesTable;
