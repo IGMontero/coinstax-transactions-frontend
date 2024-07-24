@@ -44,6 +44,7 @@ const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh }) => {
           icon: 'success',
         });
         onRefresh();
+        setAddress('');
         toggleModal();
       } else {
         Swal.fire({

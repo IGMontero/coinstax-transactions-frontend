@@ -179,7 +179,10 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    setAddresses(items);
+    // Actualiza los índices después de reordenar
+    const updatedItems = items.map((item, idx) => ({ ...item, Index: idx }));
+
+    setAddresses(updatedItems);
   };
 
   return (
@@ -196,8 +199,8 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                   const collapseId = `address-${index}`;
                   return (
                     <Draggable
-                      key={address.Name}
-                      draggableId={address.index}
+                      key={address.Id.toString()}
+                      draggableId={address.Id.toString()}
                       index={index}
                     >
                       {(provided) => (
@@ -298,29 +301,28 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                                   </div>
                                 </Col>
                               </Row>
-                              {!user && (
-                                <Collapse isOpen={openCollapse.has(collapseId)}>
-                                  <CardBody
-                                    className={`cursor-pointer px-3 ${
-                                      openCollapse.has(collapseId)
-                                        ? 'border-info'
-                                        : ''
-                                    }`}
-                                  >
-                                    <div className="d-flex flex-column">
-                                      <span
-                                        className="text-hover-underline  text-dark col-2"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          handleVisitAddress(address.value);
-                                        }}
-                                      >
-                                        Visit Address
-                                      </span>
-                                    </div>
-                                  </CardBody>
-                                </Collapse>
-                              )}
+
+                              <Collapse isOpen={openCollapse.has(collapseId)}>
+                                <CardBody
+                                  className={`cursor-pointer px-3 ${
+                                    openCollapse.has(collapseId)
+                                      ? 'border-info'
+                                      : ''
+                                  }`}
+                                >
+                                  <div className="d-flex flex-column">
+                                    <span
+                                      className="text-hover-underline  text-dark col-2"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleVisitAddress(address.value);
+                                      }}
+                                    >
+                                      Visit Address
+                                    </span>
+                                  </div>
+                                </CardBody>
+                              </Collapse>
                             </div>
                           </Col>
                         </div>
