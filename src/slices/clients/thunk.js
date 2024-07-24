@@ -79,7 +79,7 @@ export const deleteUserAddressWallet = createAsyncThunk(
 
 export const updateUserWalletAddress = createAsyncThunk(
   'clients/updateUserWalletAddress',
-  async ({ userId, clientName, email, isShared }, { rejectWithValue }) => {
+  async ({ userId, name, addressId }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
@@ -90,7 +90,7 @@ export const updateUserWalletAddress = createAsyncThunk(
             'Content-Type': 'application/json',
             Authorization: `${token}`,
           },
-          body: JSON.stringify({ clientName, email, isShared }),
+          body: JSON.stringify({ name }),
         },
       );
       if (!response.ok) {
