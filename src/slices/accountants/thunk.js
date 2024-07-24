@@ -1,0 +1,105 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { getTokenFromCookies } from '../../helpers/cookies_helper';
+const API_BASE = process.env.REACT_APP_API_URL_BASE;
+
+export const getClientsByAccountantId = createAsyncThunk(
+  'clients/getClientsByAccountantId',
+  async (accountantId, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/accountants/${accountantId}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const addClientByAccountantId = createAsyncThunk(
+  'clients/addClientByAccountantId',
+  async ({ client, accountantId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/accountants/${accountantId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({ client }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const updateClientByAccountantId = createAsyncThunk(
+  'clients/updateClientByAccountantId',
+  async ({ clientId, accountantId, client }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/accountants/${accountantId}/${clientId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({ client }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const deleteClientByAccountantId = createAsyncThunk(
+  'clients/deleteClientByAccountantId',
+  async ({ clientId, accountantId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/accountants/${accountantId}/${clientId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      return clientId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
