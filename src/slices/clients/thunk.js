@@ -2,9 +2,9 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getTokenFromCookies } from '../../helpers/cookies_helper';
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
-export const addClient = createAsyncThunk(
+export const addUserWallet = createAsyncThunk(
   'clients/addClient',
-  async ({ clientName, email, isShared, userId }, { rejectWithValue }) => {
+  async ({ address, userId }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
@@ -15,7 +15,7 @@ export const addClient = createAsyncThunk(
             'Content-Type': 'application/json',
             Authorization: `${token}`,
           },
-          body: JSON.stringify({ clientName, email, isShared }),
+          body: JSON.stringify({ address }),
         },
       );
       if (!response.ok) {
@@ -29,7 +29,7 @@ export const addClient = createAsyncThunk(
   },
 );
 
-export const getClientsByUserId = createAsyncThunk(
+export const getUserWallets = createAsyncThunk(
   'clients/getClientsByUserId',
   async (userId, { rejectWithValue }) => {
     const token = getTokenFromCookies();

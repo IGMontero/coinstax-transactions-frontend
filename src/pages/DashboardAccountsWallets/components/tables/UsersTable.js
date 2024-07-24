@@ -79,16 +79,29 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
       sortable: false,
       grow: 2,
     },
+    // Account Type, Last Date Viewed,
+    // {
+    //   name: 'Address',
+    //   selector: (row) => row.address,
+    //   sortable: false,
+    //   grow: 3,
+    //   cell: (row) => (
+    //     <div className="d-flex flex-column">
+    //       <span>{row.address}</span>
+    //     </div>
+    //   ),
+    // },
     {
-      name: 'Address',
-      selector: (row) => row.address,
+      name: 'Account Type',
+      selector: (row) => row.accountType,
       sortable: false,
-      grow: 3,
-      cell: (row) => (
-        <div className="d-flex flex-column">
-          <span>{row.address}</span>
-        </div>
-      ),
+      grow: 2,
+    },
+    {
+      name: 'Last Date Viewed',
+      selector: (row) => row.lastDateViewed,
+      sortable: false,
+      grow: 2,
     },
     {
       name: 'Manage',
@@ -104,6 +117,12 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
             <i className="ri-more-2-fill"></i>
           </DropdownToggle>
           <DropdownMenu>
+            <DropdownItem
+              className="d-flex aling-items-center ps-3"
+              onClick={() => handleRowClick(row)}
+            >
+              <i className="ri-eye-fill pe-3"></i> View
+            </DropdownItem>
             <DropdownItem
               className="d-flex aling-items-center ps-3"
               onClick={() => handleEdit(row.id)}

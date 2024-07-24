@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import AddressTable from './components/tables/AddressTable';
+import AddressTable from './components/tables/AddressesTable';
 import { Button, Container } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import UsersTable from './components/tables/UsersTable';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddClientModal from '../../Components/Modals/AddClientModal';
 import {
-  getClientsByUserId,
   deleteUserAddressWallet,
   updateUserWalletAddress,
+  getUserWallets,
 } from '../../slices/clients/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
@@ -19,29 +19,40 @@ const DashboardAccountantUsers = () => {
     {
       id: 1,
       name: 'John Doe',
-
+      accountType: 'Client',
       email: 'JhonDoe@emial.com',
+      lastDateViewed: '2021-10-10',
       address: '0x1234567890',
     },
     {
       id: 2,
       name: 'Jane Doe',
+      accountType: 'User',
       email: 'JaneDoe@email.com',
+      lastDateViewed: '2021-10-10',
       address: '0x123456789',
     },
     {
       id: 3,
       name: 'John Smith',
+      accountType: 'Client',
       email: 'JhonSmith@email.com',
+      lastDateViewed: '2021-10-10',
       address: '0x123456789',
     },
     {
       id: 4,
       name: 'Jane Smith',
+      accountType: 'User',
       email: 'JaneSmith@email.com',
+      lastDateViewed: '2021-10-10',
       address: '0x123456789',
     },
   ]);
+
+  const { user } = useSelector((state) => state.auth);
+
+  const userId = user.id;
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -56,7 +67,7 @@ const DashboardAccountantUsers = () => {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const response = await dispatch(getClientsByUserId()).unwrap();
+      const response = await dispatch(getUserWallets(userId)).unwrap();
 
       console.log(response);
       if (response && !response.error) {
@@ -102,9 +113,9 @@ const DashboardAccountantUsers = () => {
     }
   };
 
-  useEffect(() => {
-    fetchClients();
-  }, []);
+  // useEffect(() => {
+  //   fetchClients();
+  // }, []);
 
   return (
     <React.Fragment>
