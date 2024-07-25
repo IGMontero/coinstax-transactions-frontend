@@ -70,7 +70,7 @@ const CustomOptions = (props) => {
     } else if (isSmallScreen) {
       formattedLabel = label || formatIdTransaction(value, 8, 15);
     } else {
-      formattedLabel = label || formatIdTransaction(value, 15, 25);
+      formattedLabel = label || formatIdTransaction(value, 12, 20);
     }
 
     setDisplayLabel(formattedLabel);

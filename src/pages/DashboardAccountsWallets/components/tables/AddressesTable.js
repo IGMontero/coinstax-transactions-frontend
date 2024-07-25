@@ -199,7 +199,7 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                   const collapseId = `address-${index}`;
                   return (
                     <Draggable
-                      key={address.Id.toString()}
+                      key={address?.Id}
                       draggableId={address?.Id?.toString() || 1}
                       index={index}
                     >

@@ -128,7 +128,7 @@ const Login = (props) => {
                   />
                 </Link>
               </div>
-              <Col md={8} lg={6} xl={5}>
+              <Col md={9} lg={7} xl={7}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
                     <div className="text-center my-3">

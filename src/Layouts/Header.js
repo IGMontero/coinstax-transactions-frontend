@@ -177,7 +177,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
           className="header-container"
           style={{
             width: '100%',
-            maxWidth: '1250px',
+            maxWidth: '960px',
           }}
         >
           <Row

@@ -27,16 +27,16 @@ const WalletDropdown = () => {
       <Dropdown
         isOpen={isWalletDropdowon}
         toggle={toggleProfileDropdown}
-        className="ms-sm-3 h bg bg-transparent"
+        className="bg bg-transparent"
       >
         <DropdownToggle tag="button" type="button" className="btn">
           <span className="d-flex align-items-center">
             {/* wallet icon  */}
             <div
-              className="border rounded-circle header-profile-user"
+              className="border  btn-ghost-dark rounded-circle header-profile-user"
               style={{
-                height: '38px',
-                width: '38px',
+                height: '35px',
+                width: '35px',
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',

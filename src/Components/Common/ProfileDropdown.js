@@ -49,9 +49,9 @@ const ProfileDropdown = () => {
       <Dropdown
         isOpen={isProfileDropdown}
         toggle={toggleProfileDropdown}
-        className="ms-sm-3 h bg bg-transparent"
+        className=" bg bg-transparent"
       >
-        <DropdownToggle tag="button" type="button" className="btn">
+        <DropdownToggle tag="button" type="button" className="btn ps-0">
           <span className="d-flex align-items-center">
             <img
               className="rounded-circle header-profile-user"
