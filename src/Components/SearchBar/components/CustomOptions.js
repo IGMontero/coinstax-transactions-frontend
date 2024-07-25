@@ -22,6 +22,7 @@ import {
   setAddressName,
 } from '../../../slices/addressName/reducer';
 import { useParams } from 'react-router-dom';
+import DropdownMenuPortal from '../../DropdownPortal';
 
 const CustomOptions = (props) => {
   const dispatch = useDispatch();
@@ -165,13 +166,6 @@ const CustomOptions = (props) => {
     setUserSavedAddresses(updatedAddresses);
     setDisplayLabel(newName);
     // Swal.fire('Updated!', 'Your address has been renamed.', 'success');
-  };
-
-  const DropdownMenuPortal = ({ children }) => {
-    return ReactDOM.createPortal(
-      children,
-      document.getElementById('portal-root'),
-    );
   };
 
   const renderDropdownMenu = () => {

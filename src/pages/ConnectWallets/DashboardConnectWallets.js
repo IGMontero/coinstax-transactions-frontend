@@ -32,7 +32,7 @@ const DashboardConnectWallets = () => {
       <Helmet title="Connect Wallets" />
       <div className="d-flex justify-content-center flex-column align-items-center">
         <div>
-          <h1>Connect to ChaignLance</h1>
+          <h1>Connect to ChainGlance</h1>
         </div>
         <div className="d-flex my-5">
           {wallets.map((wallet, index) => (

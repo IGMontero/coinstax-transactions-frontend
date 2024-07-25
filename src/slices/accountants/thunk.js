@@ -28,8 +28,9 @@ export const getClientsByAccountantId = createAsyncThunk(
 
 export const addClientByAccountantId = createAsyncThunk(
   'clients/addClientByAccountantId',
-  async ({ client, accountantId }, { rejectWithValue }) => {
+  async ({ name, email, isShared, accountantId }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
+
     try {
       const response = await fetch(
         `${API_BASE}/clients/accountants/${accountantId}`,
@@ -39,7 +40,7 @@ export const addClientByAccountantId = createAsyncThunk(
             'Content-Type': 'application/json',
             Authorization: `${token}`,
           },
-          body: JSON.stringify({ client }),
+          body: JSON.stringify({ name, email, isShared }),
         },
       );
       if (!response.ok) {

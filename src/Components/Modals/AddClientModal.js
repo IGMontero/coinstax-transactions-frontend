@@ -15,7 +15,7 @@ import { addClientByAccountantId } from '../../slices/accountants/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 
-const AddClientModal = ({ isOpen, setIsOpen }) => {
+const AddClientModal = ({ isOpen, setIsOpen, onRefresh }) => {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
@@ -28,18 +28,15 @@ const AddClientModal = ({ isOpen, setIsOpen }) => {
   const toggleModal = () => setIsOpen(!isOpen);
 
   const handleSubmit = async () => {
-    const newClient = {
-      clientName,
-      email,
-      isShared,
-    };
-
     try {
       const response = await dispatch(
-        addClientByAccountantId({ client: newClient, accountantId: userId }),
+        addClientByAccountantId({
+          name: clientName,
+          email,
+          isShared,
+          accountantId: userId,
+        }),
       ).unwrap();
-
-      console.log(response);
 
       if (response && !response.error) {
         Swal.fire({
@@ -47,6 +44,7 @@ const AddClientModal = ({ isOpen, setIsOpen }) => {
           text: 'Client added successfully',
           icon: 'success',
         });
+        onRefresh();
         toggleModal();
       } else {
         Swal.fire({
@@ -96,7 +94,7 @@ const AddClientModal = ({ isOpen, setIsOpen }) => {
                 checked={isShared}
                 onChange={(e) => setIsShared(e.target.checked)}
               />{' '}
-              {/* Text for checkbox */}
+              is Shared
             </Label>
           </FormGroup>
         </Form>

@@ -94,7 +94,11 @@ const DashboardAccountantUsers = () => {
 
   return (
     <React.Fragment>
-      <AddClientModal isOpen={modalAddClient} setIsOpen={setModalAddClient} />
+      <AddClientModal
+        isOpen={modalAddClient}
+        setIsOpen={setModalAddClient}
+        onRefresh={fetchClients}
+      />
 
       <Helmet title="Clients" />
       <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
