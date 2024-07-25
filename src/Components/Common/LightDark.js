@@ -10,12 +10,19 @@ const LightDark = ({ layoutMode, onChangeLayoutMode }) => {
       : layoutModeTypes['DARKMODE'];
 
   return (
-    <div className="ms-1 header-item d-sm-flex">
+    <div className="ms-2   d-sm-flex">
       <button
         onClick={() => onChangeLayoutMode(mode)}
         type="button"
+        style={{
+          height: '35px',
+          width: '35px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
         className="btn btn-icon 
-         btn-ghost-dark rounded-circle light-dark-mode"
+         btn-ghost-dark border rounded-circle light-dark-mode"
       >
         <i className="bx bx-moon fs-22"></i>
       </button>
