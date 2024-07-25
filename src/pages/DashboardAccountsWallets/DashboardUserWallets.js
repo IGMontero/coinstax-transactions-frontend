@@ -56,49 +56,46 @@ const DashboardUserWallets = () => {
         setIsOpen={setModalConnectWallet}
         onRefresh={fetchUserWallets}
       />
-      <div className="page-content">
-        <Container>
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h1>Manage Wallets</h1>
-            <div className="d-flex ">
-              <Button
-                className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
-                color="soft-light"
-                style={{
-                  borderRadius: '10px',
-                  border: '.5px solid grey',
-                }}
-              >
-                Sync Addresses
-              </Button>
-              <Button
-                onClick={toggleModalConnectWallet}
-                className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
-                color="soft-light"
-                style={{
-                  borderRadius: '10px',
-                  border: '.5px solid grey',
-                }}
-              >
-                Connect Wallet
-              </Button>
-            </div>
-          </div>
-          <AddressesTable
-            addresses={addresses}
-            setAddresses={setAddresses}
-            user={user}
-            loading={loading}
-            onRefresh={fetchUserWallets}
-          />
-          {/* <div className="mt-4">
+
+      <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
+        <h1>Manage Wallets</h1>
+        <div className="d-flex ">
+          <Button
+            className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
+            color="soft-light"
+            style={{
+              borderRadius: '10px',
+              border: '.5px solid grey',
+            }}
+          >
+            Sync Addresses
+          </Button>
+          <Button
+            onClick={toggleModalConnectWallet}
+            className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
+            color="soft-light"
+            style={{
+              borderRadius: '10px',
+              border: '.5px solid grey',
+            }}
+          >
+            Connect Wallet
+          </Button>
+        </div>
+      </div>
+      <AddressesTable
+        addresses={addresses}
+        setAddresses={setAddresses}
+        user={user}
+        loading={loading}
+        onRefresh={fetchUserWallets}
+      />
+      {/* <div className="mt-4">
             <h2>Watchlist</h2>
             <div className="watchlist-placeholder">
               <p>Drag your wallets here</p>
             </div>
           </div> */}
-        </Container>
-      </div>
     </React.Fragment>
   );
 };
