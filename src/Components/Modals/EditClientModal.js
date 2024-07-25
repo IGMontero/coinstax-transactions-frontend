@@ -23,14 +23,12 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
   const userId = user?.id;
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
   const [isShared, setIsShared] = useState(false);
 
   useEffect(() => {
     if (selectedUser) {
-      setName(selectedUser.name);
-      setEmail(selectedUser.email);
-      setAddress(selectedUser.address);
+      setName(selectedUser.Name);
+      setEmail(selectedUser.Email);
       setIsShared(selectedUser.isShared);
     }
   }, [selectedUser]);
@@ -38,20 +36,13 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
   const toggleModal = () => setIsOpen(!isOpen);
 
   const handleSubmit = async () => {
-    const updatedUser = {
-      ...selectedUser,
-      name,
-      email,
-      address,
-      isShared,
-    };
-
     try {
       const response = await dispatch(
         updateClientByAccountantId({
-          clientId: selectedUser.id,
+          clientId: selectedUser.Id,
           accountantId: userId,
-          client: updatedUser,
+          name,
+          email,
         }),
       ).unwrap();
 
@@ -85,17 +76,7 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
       <ModalBody>
         <Form>
           <FormGroup>
-            <Label for="address">Address</Label>
-            <Input
-              type="text"
-              id="address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Enter address"
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label for="name">Client Name</Label>
+            <Label for="name">Name</Label>
             <Input
               type="text"
               id="name"
@@ -121,7 +102,7 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
                 checked={isShared}
                 onChange={(e) => setIsShared(e.target.checked)}
               />{' '}
-              {/* Text for checkbox */}
+              Is Shared
             </Label>
           </FormGroup>
         </Form>

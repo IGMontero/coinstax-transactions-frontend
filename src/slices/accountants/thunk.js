@@ -56,7 +56,7 @@ export const addClientByAccountantId = createAsyncThunk(
 
 export const updateClientByAccountantId = createAsyncThunk(
   'clients/updateClientByAccountantId',
-  async ({ clientId, accountantId, client }, { rejectWithValue }) => {
+  async ({ clientId, accountantId, name, email }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
@@ -67,7 +67,7 @@ export const updateClientByAccountantId = createAsyncThunk(
             'Content-Type': 'application/json',
             Authorization: `${token}`,
           },
-          body: JSON.stringify({ client }),
+          body: JSON.stringify({ name, email }),
         },
       );
       if (!response.ok) {
