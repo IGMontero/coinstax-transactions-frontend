@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardBody, Col, Container, Row, Spinner } from 'reactstrap';
+import {
+  Card,
+  CardBody,
+  Col,
+  Container,
+  Row,
+  Spinner,
+  Alert,
+} from 'reactstrap';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import { useDispatch } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Helmet from '../../Components/Helmet/Helmet';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { useSelector } from 'react-redux';
+import { verifyInviteCode } from '../../slices/userWallets/thunk';
 //import images
 
 const DashboardInvite = () => {
@@ -14,16 +23,21 @@ const DashboardInvite = () => {
 
   const { user } = useSelector((state) => state.auth);
   const [code, setCode] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [passwordShow, setPasswordShow] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const handleVerifyInvite = async () => {
-    setLoading(true);
     try {
-      // await dispatch(verifyInvite(code));
-      setLoading(false);
+      const response = await dispatch(verifyInviteCode(code));
+
+      console.log(response);
+      const res = response.payload;
+      if (res && response.error) {
+        setErrorMsg('Error verifying invite code. Please try again.');
+      } else {
+        console.log('Invite code verified');
+      }
     } catch (error) {
-      setLoading(false);
+      console.log(error);
     }
   };
 
@@ -64,6 +78,11 @@ const DashboardInvite = () => {
                       <h6 className="text-muted">
                         Verifying invite code: {code}
                       </h6>
+                    </div>
+                    <div className="d-flex justify-content-center">
+                      <Alert color="danger" isOpen={errorMsg !== ''}>
+                        {errorMsg}
+                      </Alert>
                     </div>
                     <div className="d-flex aling-items-center justify-content-center">
                       <Spinner color="primary" size="lg" />
