@@ -97,33 +97,29 @@ const DashboardAccountantUsers = () => {
       <AddClientModal isOpen={modalAddClient} setIsOpen={setModalAddClient} />
 
       <Helmet title="Clients" />
-      <div className="page-content">
-        <Container>
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h1>Manage Clients</h1>
-            <div>
-              <Button
-                onClick={handleOpenModalAddClient}
-                className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
-                color="soft-light"
-                style={{
-                  borderRadius: '10px',
-                  border: '.5px solid grey',
-                }}
-              >
-                <i className="ri-add-line me-2"></i>
-                Add Client
-              </Button>
-              {/* <Button color="primary">Connect Wallet</Button> */}
-            </div>
-          </div>
-          <UsersTable
-            users={clients}
-            loading={loading}
-            onDeleteAddress={handleDeleteClient}
-          />
-        </Container>
+      <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
+        <h1>Manage Clients</h1>
+        <div>
+          <Button
+            onClick={handleOpenModalAddClient}
+            className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
+            color="soft-light"
+            style={{
+              borderRadius: '10px',
+              border: '.5px solid grey',
+            }}
+          >
+            <i className="ri-add-line me-2"></i>
+            Add Client
+          </Button>
+          {/* <Button color="primary">Connect Wallet</Button> */}
+        </div>
       </div>
+      <UsersTable
+        users={clients}
+        loading={loading}
+        onDeleteAddress={handleDeleteClient}
+      />
     </React.Fragment>
   );
 };

@@ -15,38 +15,36 @@ const DashboardAccUsersWallets = () => {
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
-      <div className="page-content">
-        <Container>
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h1>Client Addresses</h1>
-            <div className="d-flex">
-              <Button
-                className="d-flex btn-hover-light text-dark justify-content-center align-items-center"
-                color="soft-light"
-                style={{
-                  borderRadius: '10px',
-                  border: '.5px solid grey',
-                }}
-              >
-                <i className="ri-add-line me-2"></i>
-                Add Wallet
-              </Button>
-              <Button
-                onClick={handeGoToDashboard}
-                className=" d-flex btn-hover-light  text-dark justify-content-center align-items-center ms-3"
-                color="soft-light"
-                style={{
-                  borderRadius: '10px',
-                  border: '.5px solid grey',
-                }}
-              >
-                <i className="ri-arrow-left-s-line me-2"></i>
-                Back To Clients
-              </Button>
-            </div>
+      <div className="mt-5">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h1>Client Addresses</h1>
+          <div className="d-flex">
+            <Button
+              className="d-flex btn-hover-light text-dark justify-content-center align-items-center"
+              color="soft-light"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+              }}
+            >
+              <i className="ri-add-line me-2"></i>
+              Add Wallet
+            </Button>
+            <Button
+              onClick={handeGoToDashboard}
+              className=" d-flex btn-hover-light  text-dark justify-content-center align-items-center ms-3"
+              color="soft-light"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+              }}
+            >
+              <i className="ri-arrow-left-s-line me-2"></i>
+              Back To Clients
+            </Button>
           </div>
-          <AddressesTable addresses={addresses} user={false} />
-        </Container>
+        </div>
+        <AddressesTable addresses={addresses} user={false} />
       </div>
     </React.Fragment>
   );
