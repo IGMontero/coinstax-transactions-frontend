@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
+import ReactDOM from 'react-dom';
 import {
   Badge,
   Dropdown,
@@ -12,6 +13,7 @@ import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
 import { useNavigate } from 'react-router-dom';
 import EditClientModal from '../../../../Components/Modals/EditClientModal';
+import DropdownMenuPortal from '../../../../Components/DropdownPortal';
 
 const UsersTable = ({ users, loading, onDeleteAddress }) => {
   const { userId } = useSelector((state) => ({
@@ -53,7 +55,7 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
   const [selectedUser, setSelectedUser] = useState(null);
 
   const handleEdit = (id) => {
-    const user = users.find((user) => user.id === id);
+    const user = users.find((user) => user.Id === id);
     setSelectedUser(user);
     handleOpenModalEditClient();
   };
@@ -63,19 +65,19 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
   };
 
   const handleRowClick = (row) => {
-    navigate(`${row.id}`);
+    navigate(`${row.Id}`);
   };
 
   const columns = [
     {
       name: 'Name',
-      selector: (row) => row.name,
+      selector: (row) => row.Name,
       sortable: false,
       grow: 2,
     },
     {
       name: 'Email',
-      selector: (row) => row.email,
+      selector: (row) => row.Email,
       sortable: false,
       grow: 2,
     },
@@ -93,13 +95,13 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
     // },
     {
       name: 'Account Type',
-      selector: (row) => row.accountType,
+      selector: (row) => row.AccountType,
       sortable: false,
       grow: 2,
     },
     {
       name: 'Last Date Viewed',
-      selector: (row) => row.lastDateViewed,
+      selector: (row) => row.LastDateViewed,
       sortable: false,
       grow: 2,
     },
@@ -107,8 +109,8 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
       name: 'Manage',
       cell: (row) => (
         <Dropdown
-          isOpen={dropdownOpen === row.id}
-          toggle={() => toggleDropdown(row.id)}
+          isOpen={dropdownOpen === row.Id}
+          toggle={() => toggleDropdown(row.Id)}
         >
           <DropdownToggle
             caret={false}
@@ -116,27 +118,29 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
           >
             <i className="ri-more-2-fill"></i>
           </DropdownToggle>
-          <DropdownMenu>
-            <DropdownItem
-              className="d-flex aling-items-center ps-3"
-              onClick={() => handleRowClick(row)}
-            >
-              <i className="ri-eye-fill pe-3"></i> View
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex aling-items-center ps-3"
-              onClick={() => handleEdit(row.id)}
-            >
-              {' '}
-              <i className="ri-edit-line pe-3"></i> Edit
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex aling-items-center ps-3"
-              onClick={() => handleDelete(row)}
-            >
-              <i className="ri-delete-bin-line  pe-3"></i> Delete
-            </DropdownItem>
-          </DropdownMenu>
+          <DropdownMenuPortal>
+            <DropdownMenu>
+              <DropdownItem
+                className="d-flex aling-items-center ps-3"
+                onClick={() => handleRowClick(row)}
+              >
+                <i className="ri-eye-fill pe-3"></i> View
+              </DropdownItem>
+              <DropdownItem
+                className="d-flex aling-items-center ps-3"
+                onClick={() => handleEdit(row.Id)}
+              >
+                {' '}
+                <i className="ri-edit-line pe-3"></i> Edit
+              </DropdownItem>
+              <DropdownItem
+                className="d-flex aling-items-center ps-3"
+                onClick={() => handleDelete(row)}
+              >
+                <i className="ri-delete-bin-line  pe-3"></i> Delete
+              </DropdownItem>
+            </DropdownMenu>
+          </DropdownMenuPortal>
         </Dropdown>
       ),
       ignoreRowClick: true,

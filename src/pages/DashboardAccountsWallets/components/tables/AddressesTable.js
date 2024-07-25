@@ -200,7 +200,7 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                   return (
                     <Draggable
                       key={address.Id.toString()}
-                      draggableId={address.Id.toString()}
+                      draggableId={address?.Id?.toString() || 1}
                       index={index}
                     >
                       {(provided) => (
