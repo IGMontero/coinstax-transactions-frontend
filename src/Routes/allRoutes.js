@@ -27,6 +27,7 @@ import DashboardUserWallets from '../pages/DashboardAccountsWallets/DashboardUse
 import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/DashboardAccountantUsers';
 import DashboardAccUsersWallets from '../pages/DashboardAccountsWallets/DashboardAccUsersWallets';
 import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWallets';
+import DashboardInvite from '../pages/DashboardInvite /DashboardInvite';
 
 // Auth protected routes
 const adminRoutes = [
@@ -34,7 +35,7 @@ const adminRoutes = [
     path: '/blockchain-contracts',
     component: (
       <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
-        <DashboardBlockchainContracts />,
+        <DashboardBlockchainContracts />
       </AuthProtectedRoutes>
     ),
   },
@@ -54,6 +55,7 @@ const publicRoutes = [
   { path: '/login', component: <Login /> },
 
   { path: '/reset-password', component: <ResetPaswword /> },
+  { path: '/invite', component: <DashboardInvite /> },
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
   { path: '/address/:address', component: <DashboardInfo /> },
@@ -65,7 +67,10 @@ const publicRoutes = [
 ];
 
 // Home page
-const noVerticalLayoutRoutes = [{ path: '/', component: <DashboardHome /> }];
+const noVerticalLayoutRoutes = [
+  { path: '/', component: <DashboardHome /> },
+  { path: '/invite', component: <DashboardInvite /> },
+];
 
 const authProtectedRoutes = [
   {

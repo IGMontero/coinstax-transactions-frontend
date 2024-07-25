@@ -87,7 +87,9 @@ const Index = () => {
   }
 
   const noVerticalLayoutDisplay =
-    location.pathname === '/dashboard' || location.pathname === '/';
+    location.pathname === '/dashboard' ||
+    location.pathname === '/' ||
+    location.pathname === '/invite';
 
   return (
     <React.Fragment>
