@@ -6,24 +6,24 @@ import walletConnect from '../../assets/images/wallets/WalletConnect.png';
 import zerionWallet from '../../assets/images/wallets/zerionWallet.svg';
 const DashboardConnectWallets = () => {
   const wallets = [
-    {
-      icon: zerionWallet,
-      name: 'Zerion Wallet',
-      link: '',
-      handler: () => {},
-    },
+    // {
+    //   icon: zerionWallet,
+    //   name: 'Zerion Wallet',
+    //   link: '',
+    //   handler: () => {},
+    // },
     {
       icon: walletConnect,
       name: 'WalletConnect',
       link: '',
-      handler: () => {},
+      handler: () => { },
     },
 
     {
       icon: ledgerWallet,
       name: 'Ledger',
       link: '',
-      handler: () => {},
+      handler: () => { },
     },
   ];
 
