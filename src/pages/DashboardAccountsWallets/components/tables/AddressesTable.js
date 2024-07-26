@@ -197,16 +197,18 @@ const AddressesTable = ({
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Actualiza los índices después de reordenar
-    const updatedItems = items.map((item, idx) => ({ ...item, Index: idx }));
+    const updatedItems = items.map((item, idx) => ({
+      ...item,
+      Index: idx + 1,
+    }));
 
     setAddresses(updatedItems);
 
     await handleReorderAddresses(updatedItems);
   };
 
-  const handleReorderAddresses = async () => {
-    const payload = addresses.map((address) => ({
+  const handleReorderAddresses = async (updatedAddresses) => {
+    const payload = updatedAddresses.map((address) => ({
       Id: address.Id,
       Index: address.Index,
     }));
