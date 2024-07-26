@@ -31,6 +31,7 @@ import { changeSidebarVisibility } from '../slices/thunks';
 import { layoutModeTypes } from '../Components/constants/layout';
 import ParentComponentSearchBar from '../Components/SearchBar/ParentComponent';
 import WalletDropdown from '../Components/Common/WalletDropdown';
+import { DASHBOARD_USER_ROLES } from '../common/constants';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
@@ -39,15 +40,13 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
 
   const [searchInput, setSearchInput] = useState('');
   const { user } = useSelector((state) => state.auth);
-  const { assets, transactions, performance } = useSelector(
-    (state) => state.fetchData,
-  );
 
   const [windowSize, setWindowSize] = useState(window.innerWidth);
 
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
   const currentUser = user;
+  console.log(currentUser);
 
   const { sidebarVisibilitytype } = useSelector((state) => ({
     sidebarVisibilitytype: state.Layout.sidebarVisibilitytype,
@@ -230,8 +229,10 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                     onChangeLayoutMode={onChangeLayoutMode}
                   />
                   {/* {commentedCode()} */}
-                  <WalletDropdown />
-                  {currentUser && <ProfileDropdown />}
+                  {currentUser?.role === DASHBOARD_USER_ROLES.USER && (
+                    <WalletDropdown />
+                  )}
+                  {currentUser && <ProfileDropdown currentUser={currentUser} />}
                 </div>
               </Col>
             </Col>
