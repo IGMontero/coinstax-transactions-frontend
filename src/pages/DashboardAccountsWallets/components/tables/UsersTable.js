@@ -14,12 +14,9 @@ import { layoutModeTypes } from '../../../../Components/constants/layout';
 import { useNavigate } from 'react-router-dom';
 import EditClientModal from '../../../../Components/Modals/EditClientModal';
 import DropdownMenuPortal from '../../../../Components/DropdownPortal';
+import { formatDateToLocale } from '../../../../utils/utils';
 
 const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
-  const { userId } = useSelector((state) => ({
-    userId: state.auth.user.id,
-  }));
-
   const navigate = useNavigate();
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -29,6 +26,7 @@ const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 955);
 
   const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [modalEditClient, setModalEditClient] = useState(false);
 
   const handleOpenModalEditClient = () => {
@@ -51,8 +49,6 @@ const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-
-  const [selectedUser, setSelectedUser] = useState(null);
 
   const handleEdit = (id) => {
     const user = users.find((user) => user.Id === id);
@@ -101,7 +97,7 @@ const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
     },
     {
       name: 'Last Date Viewed',
-      selector: (row) => row.LastDateViewed,
+      selector: (row) => row.LastViewedDate ? formatDateToLocale(row.LastViewedDate) : null,
       sortable: false,
       grow: 2,
     },
