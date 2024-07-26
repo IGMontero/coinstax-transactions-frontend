@@ -232,7 +232,13 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   {currentUser?.role === DASHBOARD_USER_ROLES.USER && (
                     <WalletDropdown />
                   )}
-                  {currentUser && <ProfileDropdown currentUser={currentUser} />}
+                  {currentUser ? (
+                    <ProfileDropdown currentUser={currentUser} />
+                  ) : (
+                    <Link to={'/login'}>
+                      <ProfileDropdown />
+                    </Link>
+                  )}
                 </div>
               </Col>
             </Col>
