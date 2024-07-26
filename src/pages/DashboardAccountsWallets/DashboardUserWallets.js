@@ -55,6 +55,7 @@ const DashboardUserWallets = () => {
         isOpen={modalConnectWallet}
         setIsOpen={setModalConnectWallet}
         onRefresh={fetchUserWallets}
+        userId={userId}
       />
 
       <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
