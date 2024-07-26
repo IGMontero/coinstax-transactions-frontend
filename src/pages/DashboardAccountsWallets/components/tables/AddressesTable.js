@@ -336,7 +336,7 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
       </DragDropContext>
       {addresses.length === 0 && (
         <Col className="py-5">
-          <h4>No addresses Yet</h4>
+          <h4>Connect a wallet to get started</h4>
         </Col>
       )}
     </Container>

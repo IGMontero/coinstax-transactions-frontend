@@ -160,7 +160,7 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
       <DataTable
         columns={columns}
         data={users}
-        noDataComponent={<h4>Add a Client to get started</h4>}
+        noDataComponent={<h4>Add a client to get started</h4>}
         noHeader
         responsive
         onRowClicked={handleRowClick}
