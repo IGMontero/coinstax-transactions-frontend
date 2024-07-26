@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { fetchHistory } from '../slices/transactions/thunk';
 
 // #region Constants
@@ -96,7 +97,7 @@ export const formatCalendarDateToLocale = (date, showTime) => {
   return `${dateString}${showTime ? ', ' + timeString : ''}`;
 };
 export const formatDateToLocale = (date, showTime) => {
-  const dateObj = new Date(date);
+  const dateObj = moment(date).utc().toDate();
 
   const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
