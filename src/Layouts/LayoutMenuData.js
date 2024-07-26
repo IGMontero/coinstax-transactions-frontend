@@ -12,6 +12,7 @@ const Navdata = () => {
   const isAdmin = user?.role === DASHBOARD_USER_ROLES.ADMIN;
 
   const isAccountant = user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
+  const isUser = user?.role === DASHBOARD_USER_ROLES.USER;
 
   // console.log('user', user);
   const { fetchData } = useSelector((state) => ({
@@ -61,7 +62,7 @@ const Navdata = () => {
     },
   });
 
-  const createMenuItemAdminOrAccountant = (id, label, icon, page) => ({
+  const createManageMenu = (id, label, icon, page) => ({
     id,
     label,
     icon,
@@ -91,17 +92,32 @@ const Navdata = () => {
     return menuItems;
   };
 
-  let allMenuItems = [
-    createMenuItem('summary', 'Summary', 'bx bx-home', ''),
-    createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
-    createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
-    createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),
-  ];
+  let allMenuItems = [];
+
+  if (address || prevAddress) {
+    allMenuItems = [
+      createMenuItem('summary', 'Summary', 'bx bx-home', ''),
+      createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
+      createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
+      createMenuItem(
+        'transactions',
+        'Transactions',
+        'bx bx-transfer',
+        'history',
+      ),
+    ];
+  }
+  // let allMenuItems = [
+  //   createMenuItem('summary', 'Summary', 'bx bx-home', ''),
+  //   createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
+  //   createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
+  //   createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),
+  // ];
 
   if (isAdmin) {
     allMenuItems.push(createMenuHeader('Admin'));
     allMenuItems.push(
-      createMenuItemAdminOrAccountant(
+      createManageMenu(
         'blockchain',
         'Blockchain Contracts',
         'bx bx-link fs-3',
@@ -109,11 +125,19 @@ const Navdata = () => {
       ),
     );
     allMenuItems.push(
-      createMenuItemAdminOrAccountant(
+      createManageMenu(
         'userAddresses',
         'User Addresses',
         'bx bx-user fs-3',
         'user-addresses',
+      ),
+    );
+    allMenuItems.push(
+      createManageMenu(
+        'accountantUsers',
+        'Manage Clients',
+        'bx bx-user fs-3',
+        'clients',
       ),
     );
   }
@@ -121,11 +145,30 @@ const Navdata = () => {
   if (isAccountant) {
     allMenuItems.push(createMenuHeader('Accountant'));
     allMenuItems.push(
-      createMenuItemAdminOrAccountant(
+      createManageMenu(
         'accountantUsers',
         'Manage Clients',
         'bx bx-user fs-3',
         'clients',
+      ),
+    );
+  }
+  if (isUser) {
+    allMenuItems.push(createMenuHeader('Manage'));
+    allMenuItems.push(
+      createManageMenu(
+        'connectWallet',
+        'Connect Wallet',
+        'bx bx-add-to-queue fs-3',
+        'wallets/connect',
+      ),
+    );
+    allMenuItems.push(
+      createManageMenu(
+        'usersWallets',
+        'Manage Wallets',
+        'bx bx-wallet fs-3',
+        'wallets',
       ),
     );
   }
