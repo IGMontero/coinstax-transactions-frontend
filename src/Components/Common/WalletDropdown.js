@@ -33,7 +33,7 @@ const WalletDropdown = () => {
           <span className="d-flex align-items-center">
             {/* wallet icon  */}
             <div
-              className="border  btn-ghost-dark rounded-circle header-profile-user"
+              className="border  btn-ghost-dark rounded-circle header-profile-user "
               style={{
                 height: '35px',
                 width: '35px',
