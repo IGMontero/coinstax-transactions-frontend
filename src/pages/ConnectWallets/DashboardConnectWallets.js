@@ -43,12 +43,12 @@ const DashboardConnectWallets = () => {
 
   return (
     <div className="page-content ">
-      <Helmet title="Connect Wallets" />
+      <Helmet title="Connect Wallet" />
       <div className="d-flex justify-content-center flex-column align-items-center">
         <div>
           <h1>Connect to ChainGlance</h1>
         </div>
-        <div className="d-flex my-5">
+        <div className="d-flex mt-4 mb-5">
           {wallets.map((wallet, index) => (
             <div
               key={index}
@@ -65,7 +65,7 @@ const DashboardConnectWallets = () => {
             </div>
           ))}
         </div>
-        <div className="w-50 py-5">
+        <div className="w-50 py-3">
           <span>Track any wallet</span>
           <div className="d-flex align-items-center">
             <SearchBarWallets onSearch={handleSearch} />
