@@ -20,15 +20,13 @@ import {
 } from '../../../../slices/userWallets/thunk';
 import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
 import SearchBarWallets from '../SearchBarWallets';
-import { getUserWallets } from '../../../../slices/userWallets/thunk';
+import { reorderUserWallets } from '../../../../slices/userWallets/thunk';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { userId } = useParams();
-
-  console.log(userId);
 
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -176,7 +174,7 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
     });
   };
 
-  const onDragEnd = (result) => {
+  const onDragEnd = async (result) => {
     if (!result.destination) return;
 
     const items = Array.from(addresses);
@@ -187,6 +185,39 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
     const updatedItems = items.map((item, idx) => ({ ...item, Index: idx }));
 
     setAddresses(updatedItems);
+
+    await handleReorderAddresses(updatedItems);
+  };
+
+  const handleReorderAddresses = async () => {
+    const payload = addresses.map((address) => ({
+      Id: address.Id,
+      Index: address.Index,
+    }));
+
+    try {
+      const userIdToReorder = userId ? userId : user.id;
+      const response = await dispatch(
+        reorderUserWallets({ userId: userIdToReorder, addresses: payload }),
+      ).unwrap();
+
+      if (response && !response.error) {
+        onRefresh();
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to reorder addresses',
+          icon: 'error',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to reorder addresses:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to reorder addresses',
+        icon: 'error',
+      });
+    }
   };
 
   return (

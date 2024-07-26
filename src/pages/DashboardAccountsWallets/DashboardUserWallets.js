@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Container, Button } from 'reactstrap';
+import { Button } from 'reactstrap';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddressesTable from './components/tables/AddressesTable';
 import { useSelector } from 'react-redux';
-import Header from '../../Layouts/Header';
 import { getUserWallets } from '../../slices/userWallets/thunk';
 import { useDispatch } from 'react-redux';
-import AddClientModal from '../../Components/Modals/AddClientModal';
 import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 
 const DashboardUserWallets = () => {
@@ -29,7 +27,6 @@ const DashboardUserWallets = () => {
       setLoading(true);
       const response = await dispatch(getUserWallets(userId)).unwrap();
 
-      console.log(response);
       if (response && !response.error) {
         setAddresses(response);
       } else {
