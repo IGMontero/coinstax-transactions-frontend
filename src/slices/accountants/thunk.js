@@ -104,3 +104,27 @@ export const deleteClientByAccountantId = createAsyncThunk(
     }
   },
 );
+
+export const getInfoClientByAccountantId = createAsyncThunk(
+  'clients/getInfoClientByAccountantId',
+  async ({ clientId, accountantId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/accountant/${accountantId}/${clientId}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);

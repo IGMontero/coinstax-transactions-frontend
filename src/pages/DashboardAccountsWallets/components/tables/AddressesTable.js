@@ -10,26 +10,42 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 
 import {
   updateUserWalletAddress,
   deleteUserAddressWallet,
+  getUserWallets,
 } from '../../../../slices/userWallets/thunk';
 import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
-import SearchBarWallets from '../SearchBarWallets';
+import { getInfoClientByAccountantId } from '../../../../slices/accountants/thunk';
 import { reorderUserWallets } from '../../../../slices/userWallets/thunk';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import ConnectWalletModal from '../../../../Components/Modals/ConnectWalletModal';
 
-const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
+const AddressesTable = ({
+  addresses,
+  setAddresses,
+  user,
+  onRefresh,
+  modalConnectWallet,
+  setModalConnectWallet,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { userId } = useParams();
 
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
+
+  const [clientId, setClienId] = useState(null);
+
+  const isUserWalletPage = location.pathname.includes('wallets');
+
+  console.log(isUserWalletPage);
 
   const toggleCollapse = (collapseId) => {
     const newSet = new Set(openCollapse);
@@ -220,8 +236,63 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
     }
   };
 
+  const fetchUserWallets = async () => {
+    let userIdToFetch = userId;
+
+    if (!isUserWalletPage) {
+      const fetchedClientId = await fecthClientInfo();
+      if (fetchedClientId) {
+        userIdToFetch = fetchedClientId;
+      } else {
+        console.log('Failed to fetch client info.');
+        return;
+      }
+    } else {
+      return;
+    }
+
+    try {
+      const response = await dispatch(getUserWallets(userIdToFetch)).unwrap();
+
+      if (response && !response.error) {
+        setAddresses(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fecthClientInfo = async () => {
+    try {
+      const response = await dispatch(
+        getInfoClientByAccountantId({
+          clientId: userId,
+          accountantId: user.id,
+        }),
+      ).unwrap();
+      console.log(response);
+      if (response && !response.error) {
+        setClienId(response.UserId);
+        return response.UserId;
+      }
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    fetchUserWallets();
+  }, [userId]);
+
   return (
     <Container fluid>
+      <ConnectWalletModal
+        isOpen={modalConnectWallet}
+        setIsOpen={setModalConnectWallet}
+        onRefresh={fetchUserWallets}
+        userId={clientId}
+      />
       <Row className="mb-5">
         <Col md={4}>{/* <SearchBarWallets onSearch={handleSearch} /> */}</Col>
       </Row>
