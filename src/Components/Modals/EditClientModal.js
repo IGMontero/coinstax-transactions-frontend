@@ -102,7 +102,7 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
                 checked={isShared}
                 onChange={(e) => setIsShared(e.target.checked)}
               />{' '}
-              Is Shared
+              Shared Account
             </Label>
           </FormGroup>
         </Form>
