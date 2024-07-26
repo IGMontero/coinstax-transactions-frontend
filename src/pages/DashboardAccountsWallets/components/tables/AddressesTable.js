@@ -238,9 +238,11 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                                   xs={12}
                                   className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-3"
                                 >
-                                  <div className="d-flex justify-content-between w-100">
+                                  <div className="d-flex justify-content-between align-items-center w-100">
                                     <div className="d-flex flex-column">
-                                      <h5>{address.Name}</h5>
+                                      {address.Name && (
+                                        <h5>{address.Name}</h5>
+                                      )}
                                       <span className="text-muted">
                                         {formatIdTransaction(
                                           address.Address,
