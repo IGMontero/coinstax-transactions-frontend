@@ -94,7 +94,7 @@ const AddClientModal = ({ isOpen, setIsOpen, onRefresh }) => {
                 checked={isShared}
                 onChange={(e) => setIsShared(e.target.checked)}
               />{' '}
-              is Shared
+              Shared Account
             </Label>
           </FormGroup>
         </Form>

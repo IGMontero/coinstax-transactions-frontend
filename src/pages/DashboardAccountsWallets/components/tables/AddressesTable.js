@@ -61,12 +61,12 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
     e.preventDefault();
     e.stopPropagation();
     copyToClipboard(text);
-    Swal.fire({
-      text: 'Address copied to clipboard!',
-      icon: 'success',
-      timer: 2000,
-      showConfirmButton: false,
-    });
+    // Swal.fire({
+    //   text: 'Address copied to clipboard!',
+    //   icon: 'success',
+    //   timer: 2000,
+    //   showConfirmButton: false,
+    // });
   };
 
   const handleUpdateAddress = (e, address) => {
@@ -102,11 +102,11 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
           ).unwrap();
 
           if (response && !response.error) {
-            Swal.fire({
-              title: 'Success',
-              text: 'Wallet address updated successfully',
-              icon: 'success',
-            });
+            // Swal.fire({
+            //   title: 'Success',
+            //   text: 'Wallet address updated successfully',
+            //   icon: 'success',
+            // });
 
             onRefresh();
           } else {
@@ -147,11 +147,11 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
           ).unwrap();
 
           if (response && !response.error) {
-            Swal.fire({
-              title: 'Success',
-              text: 'Wallet address deleted successfully',
-              icon: 'success',
-            });
+            // Swal.fire({
+            //   title: 'Success',
+            //   text: 'Wallet address deleted successfully',
+            //   icon: 'success',
+            // });
             onRefresh();
           } else {
             Swal.fire({
@@ -218,11 +218,10 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                           >
                             <div
                               onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-pointer ${
-                                openCollapse.has(collapseId)
-                                  ? 'border border-primary rounded px-2 mb-2'
-                                  : 'bg-light'
-                              }`}
+                              className={`address-card border rounded-4 p-2 bg-transparent cursor-pointer ${openCollapse.has(collapseId)
+                                ? 'border border-primary rounded px-2 mb-2'
+                                : 'bg-light'
+                                }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
@@ -304,11 +303,10 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
 
                               <Collapse isOpen={openCollapse.has(collapseId)}>
                                 <CardBody
-                                  className={`cursor-pointer px-3 ${
-                                    openCollapse.has(collapseId)
-                                      ? 'border-info'
-                                      : ''
-                                  }`}
+                                  className={`cursor-pointer px-3 ${openCollapse.has(collapseId)
+                                    ? 'border-info'
+                                    : ''
+                                    }`}
                                 >
                                   <div className="d-flex flex-column">
                                     <span
