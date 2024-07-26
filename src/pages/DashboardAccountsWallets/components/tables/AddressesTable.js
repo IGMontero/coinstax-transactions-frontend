@@ -10,26 +10,42 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 
 import {
   updateUserWalletAddress,
   deleteUserAddressWallet,
+  getUserWallets,
 } from '../../../../slices/userWallets/thunk';
 import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
-import SearchBarWallets from '../SearchBarWallets';
+import { getInfoClientByAccountantId } from '../../../../slices/accountants/thunk';
 import { reorderUserWallets } from '../../../../slices/userWallets/thunk';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import ConnectWalletModal from '../../../../Components/Modals/ConnectWalletModal';
+import ClientInfo from '../ClientInfo';
 
-const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
+const AddressesTable = ({
+  addresses,
+  setAddresses,
+  user,
+  onRefresh,
+  modalConnectWallet,
+  setModalConnectWallet,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { userId } = useParams();
 
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
+
+  const [client, setClient] = useState(null);
+  const clientId = client?.UserId;
+
+  const isUserWalletPage = location.pathname.includes('wallets');
 
   const toggleCollapse = (collapseId) => {
     const newSet = new Set(openCollapse);
@@ -181,28 +197,34 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    // Actualiza los índices después de reordenar
-    const updatedItems = items.map((item, idx) => ({ ...item, Index: idx }));
+    const updatedItems = items.map((item, idx) => ({
+      ...item,
+      Index: idx + 1,
+    }));
 
     setAddresses(updatedItems);
 
     await handleReorderAddresses(updatedItems);
   };
 
-  const handleReorderAddresses = async () => {
-    const payload = addresses.map((address) => ({
+  const handleReorderAddresses = async (updatedAddresses) => {
+    const payload = updatedAddresses.map((address) => ({
       Id: address.Id,
       Index: address.Index,
     }));
 
     try {
-      const userIdToReorder = userId ? userId : user.id;
+      const userIdToReorder = userId ? clientId : user.id;
       const response = await dispatch(
         reorderUserWallets({ userId: userIdToReorder, addresses: payload }),
       ).unwrap();
 
       if (response && !response.error) {
-        onRefresh();
+        if (isUserWalletPage) {
+          onRefresh();
+        } else {
+          fetchUserWallets();
+        }
       } else {
         Swal.fire({
           title: 'Error',
@@ -220,11 +242,70 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
     }
   };
 
+  const fetchUserWallets = async () => {
+    let userIdToFetch = userId;
+
+    if (!isUserWalletPage) {
+      const fetchedClientId = await fecthClientInfo();
+      if (fetchedClientId) {
+        userIdToFetch = fetchedClientId;
+      } else {
+        console.log('Failed to fetch client info.');
+        return;
+      }
+    } else {
+      return;
+    }
+
+    try {
+      const response = await dispatch(getUserWallets(userIdToFetch)).unwrap();
+
+      if (response && !response.error) {
+        setAddresses(response);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fecthClientInfo = async () => {
+    try {
+      const response = await dispatch(
+        getInfoClientByAccountantId({
+          clientId: userId,
+          accountantId: user.id,
+        }),
+      ).unwrap();
+      console.log(response);
+      if (response && !response.error) {
+        setClient(response);
+        return response.UserId;
+      }
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    fetchUserWallets();
+  }, [userId]);
+
   return (
     <Container fluid>
-      <Row className="mb-5">
-        <Col md={4}>{/* <SearchBarWallets onSearch={handleSearch} /> */}</Col>
-      </Row>
+      <ConnectWalletModal
+        isOpen={modalConnectWallet}
+        setIsOpen={setModalConnectWallet}
+        onRefresh={fetchUserWallets}
+        userId={clientId}
+      />
+      <div className="mb-5 mt-2">
+        {client && (
+          <>
+            <ClientInfo client={client} />
+          </>
+        )}
+      </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="addresses">
           {(provided) => (
@@ -253,7 +334,7 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                           >
                             <div
                               onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-pointer ${
+                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${
                                 openCollapse.has(collapseId)
                                   ? 'border border-primary rounded px-2 mb-2'
                                   : 'bg-light'
@@ -262,7 +343,7 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                               <Row
                                 className="align-items-center justify-content-between"
                                 style={{
-                                  cursor: 'pointer',
+                                  cursor: 'grab',
                                   padding: '.7rem',
                                   paddingRight: '1rem',
                                 }}

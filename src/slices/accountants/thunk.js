@@ -87,7 +87,7 @@ export const deleteClientByAccountantId = createAsyncThunk(
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
-        `${API_BASE}/clients/accountant/${accountantId}/${clientId}`,
+        `${API_BASE}/clients/accountants/${accountantId}/${clientId}`,
         {
           method: 'DELETE',
           headers: {
@@ -99,6 +99,30 @@ export const deleteClientByAccountantId = createAsyncThunk(
         throw new Error(`Error: ${response.status}`);
       }
       return clientId;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const getInfoClientByAccountantId = createAsyncThunk(
+  'clients/getInfoClientByAccountantId',
+  async ({ clientId, accountantId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/accountants/${accountantId}/${clientId}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
     } catch (error) {
       return rejectWithValue(error.message);
     }

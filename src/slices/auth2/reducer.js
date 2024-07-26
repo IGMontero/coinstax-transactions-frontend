@@ -1,6 +1,6 @@
-import { removeTokenFromCookies } from '../../helpers/cookies_helper';
-import { login, authMe, register } from './thunk';
 import { createSlice } from '@reduxjs/toolkit';
+import { login, authMe, register } from './thunk';
+import { removeTokenFromCookies } from '../../helpers/cookies_helper';
 
 const initialState = {
   user: null,
@@ -29,7 +29,6 @@ const auth2Slice = createSlice({
         state.error = action.payload;
         state.status = 'failed';
       })
-
       .addCase(register.fulfilled, (state, action) => {
         state.token = action.payload.token;
         state.status = 'succeeded';
@@ -38,7 +37,6 @@ const auth2Slice = createSlice({
         state.error = action.payload;
         state.status = 'failed';
       })
-
       .addCase(authMe.fulfilled, (state, action) => {
         state.user = action.payload;
         state.status = 'succeeded';

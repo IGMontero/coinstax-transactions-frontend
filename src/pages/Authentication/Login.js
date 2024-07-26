@@ -38,6 +38,8 @@ const Login = (props) => {
 
   const [passwordShow, setPasswordShow] = useState(false);
 
+  console.log('USER', user);
+
   const handleLogin = async (values) => {
     setLoading(true);
     try {
