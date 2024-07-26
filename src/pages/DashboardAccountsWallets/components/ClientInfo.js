@@ -1,20 +1,30 @@
 import React from 'react';
-import { Col, Row } from 'reactstrap';
+import { Table } from 'reactstrap';
 import { formatDateToLocale } from '../../../utils/utils';
 
 const ClientInfo = ({ client }) => {
   return (
-    <Row className="align-items-center justify-content-between border-top border-bottom py-3 px-0 mx-0">
-      <Col sm={12} xs={12} md={12} lg={4} className="mb-2 mb-md-0">
-        <h5>{client.Name}</h5>
-      </Col>
-      <Col sm={12} xs={12} md={12} lg={4} className="mb-2 mb-md-0">
-        <h5>{client.Email}</h5>
-      </Col>
-      <Col sm={12} xs={12} md={12} lg={4}>
-        <h5>Last viewed: {formatDateToLocale(client.LastViewedDate)}</h5>
-      </Col>
-    </Row>
+    <>
+      <Table responsive className="mt-3 border-none">
+        <thead>
+          <tr>
+            <th className="text-start fs-5">Email</th>
+            <th className="text-center fs-5">Name</th>
+            <th className="text-end fs-5">Last Viewed</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td className="text-start">{client.Email}</td>
+            <td className="text-center">{client.Name}</td>
+            <td className="text-end ">
+              {formatDateToLocale(client.LastViewedDate)}
+            </td>
+          </tr>
+        </tbody>
+      </Table>
+      {/* <hr /> */}
+    </>
   );
 };
 
