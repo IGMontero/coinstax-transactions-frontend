@@ -24,6 +24,7 @@ import { getInfoClientByAccountantId } from '../../../../slices/accountants/thun
 import { reorderUserWallets } from '../../../../slices/userWallets/thunk';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ConnectWalletModal from '../../../../Components/Modals/ConnectWalletModal';
+import ClientInfo from '../ClientInfo';
 
 const AddressesTable = ({
   addresses,
@@ -41,11 +42,10 @@ const AddressesTable = ({
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
 
-  const [clientId, setClienId] = useState(null);
+  const [client, setClient] = useState(null);
+  const clientId = client?.UserId;
 
   const isUserWalletPage = location.pathname.includes('wallets');
-
-  console.log(isUserWalletPage);
 
   const toggleCollapse = (collapseId) => {
     const newSet = new Set(openCollapse);
@@ -278,7 +278,7 @@ const AddressesTable = ({
       ).unwrap();
       console.log(response);
       if (response && !response.error) {
-        setClienId(response.UserId);
+        setClient(response);
         return response.UserId;
       }
     } catch (error) {
@@ -299,9 +299,9 @@ const AddressesTable = ({
         onRefresh={fetchUserWallets}
         userId={clientId}
       />
-      <Row className="mb-5">
-        <Col md={4}>{/* <SearchBarWallets onSearch={handleSearch} /> */}</Col>
-      </Row>
+      <div className="mb-5 mt-2">
+        {client && <ClientInfo client={client} />}
+      </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="addresses">
           {(provided) => (
@@ -330,7 +330,7 @@ const AddressesTable = ({
                           >
                             <div
                               onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-pointer ${
+                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${
                                 openCollapse.has(collapseId)
                                   ? 'border border-primary rounded px-2 mb-2'
                                   : 'bg-light'
@@ -339,7 +339,7 @@ const AddressesTable = ({
                               <Row
                                 className="align-items-center justify-content-between"
                                 style={{
-                                  cursor: 'pointer',
+                                  cursor: 'grab',
                                   padding: '.7rem',
                                   paddingRight: '1rem',
                                 }}
