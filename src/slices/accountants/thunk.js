@@ -87,7 +87,7 @@ export const deleteClientByAccountantId = createAsyncThunk(
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
-        `${API_BASE}/clients/accountants/${accountantId}/${clientId}`,
+        `${API_BASE}/clients/accountant/${accountantId}/${clientId}`,
         {
           method: 'DELETE',
           headers: {

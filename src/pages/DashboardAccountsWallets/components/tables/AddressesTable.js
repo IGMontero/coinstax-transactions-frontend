@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   Row,
@@ -10,7 +10,7 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 
@@ -20,11 +20,15 @@ import {
 } from '../../../../slices/userWallets/thunk';
 import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
 import SearchBarWallets from '../SearchBarWallets';
+import { getUserWallets } from '../../../../slices/userWallets/thunk';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { userId } = useParams();
+
+  console.log(userId);
 
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -218,10 +222,11 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
                           >
                             <div
                               onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-pointer ${openCollapse.has(collapseId)
-                                ? 'border border-primary rounded px-2 mb-2'
-                                : 'bg-light'
-                                }`}
+                              className={`address-card border rounded-4 p-2 bg-transparent cursor-pointer ${
+                                openCollapse.has(collapseId)
+                                  ? 'border border-primary rounded px-2 mb-2'
+                                  : 'bg-light'
+                              }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
@@ -305,10 +310,11 @@ const AddressesTable = ({ addresses, setAddresses, user, onRefresh }) => {
 
                               <Collapse isOpen={openCollapse.has(collapseId)}>
                                 <CardBody
-                                  className={`cursor-pointer px-3 ${openCollapse.has(collapseId)
-                                    ? 'border-info'
-                                    : ''
-                                    }`}
+                                  className={`cursor-pointer px-3 ${
+                                    openCollapse.has(collapseId)
+                                      ? 'border-info'
+                                      : ''
+                                  }`}
                                 >
                                   <div className="d-flex flex-column">
                                     <span

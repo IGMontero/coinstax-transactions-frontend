@@ -16,7 +16,7 @@ import { updateUserWalletAddress } from '../../slices/userWallets/thunk';
 import { updateClientByAccountantId } from '../../slices/accountants/thunk';
 import { useSelector } from 'react-redux';
 
-const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
+const EditClientModal = ({ isOpen, setIsOpen, selectedUser, onRefresh }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
@@ -52,6 +52,7 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser }) => {
           text: 'User updated successfully',
           icon: 'success',
         });
+        onRefresh?.();
         toggleModal();
       } else {
         Swal.fire({
