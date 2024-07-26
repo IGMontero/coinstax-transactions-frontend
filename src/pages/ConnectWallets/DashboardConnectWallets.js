@@ -1,10 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Helmet from '../../Components/Helmet/Helmet';
 import SearchBar from '../../Components/SearchBar/SearchBar';
 import ledgerWallet from '../../assets/images/wallets/ledgerWallet.svg';
 import walletConnect from '../../assets/images/wallets/WalletConnect.png';
 import zerionWallet from '../../assets/images/wallets/zerionWallet.svg';
+import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
+import { useNavigate } from 'react-router-dom';
+import { Button } from 'reactstrap';
 const DashboardConnectWallets = () => {
+  const navigate = useNavigate();
   const wallets = [
     {
       icon: zerionWallet,
@@ -26,6 +30,16 @@ const DashboardConnectWallets = () => {
       handler: () => {},
     },
   ];
+
+  const [searchValue, setSearchValue] = useState('');
+
+  const handleAddWallet = (value) => {
+    navigate(`/address/${value}`);
+  };
+
+  const handleSearch = (value) => {
+    setSearchValue(value);
+  };
 
   return (
     <div className="page-content ">
@@ -53,7 +67,21 @@ const DashboardConnectWallets = () => {
         </div>
         <div className="w-50 py-5">
           <span>Track any wallet</span>
-          <SearchBar />
+          <div className="d-flex align-items-center">
+            <SearchBarWallets onSearch={handleSearch} />
+            <Button
+              className="d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center"
+              color="soft-light"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+              }}
+              onClick={() => handleAddWallet(searchValue)}
+            >
+              <i className="bx bx-plus me-2"></i>
+              Add
+            </Button>
+          </div>
         </div>
       </div>
     </div>
