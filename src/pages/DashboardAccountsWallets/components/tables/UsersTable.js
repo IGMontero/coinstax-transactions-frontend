@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import EditClientModal from '../../../../Components/Modals/EditClientModal';
 import DropdownMenuPortal from '../../../../Components/DropdownPortal';
 
-const UsersTable = ({ users, loading, onDeleteAddress }) => {
+const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
   const { userId } = useSelector((state) => ({
     userId: state.auth.user.id,
   }));
@@ -155,6 +155,7 @@ const UsersTable = ({ users, loading, onDeleteAddress }) => {
         isOpen={modalEditClient}
         setIsOpen={setModalEditClient}
         selectedUser={selectedUser}
+        onRefresh={onRefresh}
       />
 
       <DataTable

@@ -27,7 +27,7 @@ const DashboardInvite = () => {
 
   const handleVerifyInvite = async () => {
     try {
-      const response = await dispatch(verifyInviteCode(code));
+      const response = await dispatch(verifyInviteCode({ inviteCode: code }));
 
       console.log(response);
       const res = response.payload;
