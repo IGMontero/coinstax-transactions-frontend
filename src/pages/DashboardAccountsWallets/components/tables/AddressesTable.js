@@ -300,7 +300,11 @@ const AddressesTable = ({
         userId={clientId}
       />
       <div className="mb-5 mt-2">
-        {client && <ClientInfo client={client} />}
+        {client && (
+          <>
+            <ClientInfo client={client} />
+          </>
+        )}
       </div>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="addresses">
