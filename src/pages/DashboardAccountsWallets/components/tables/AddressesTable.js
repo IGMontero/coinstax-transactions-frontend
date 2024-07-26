@@ -214,13 +214,17 @@ const AddressesTable = ({
     }));
 
     try {
-      const userIdToReorder = userId ? userId : user.id;
+      const userIdToReorder = userId ? clientId : user.id;
       const response = await dispatch(
         reorderUserWallets({ userId: userIdToReorder, addresses: payload }),
       ).unwrap();
 
       if (response && !response.error) {
-        onRefresh();
+        if (isUserWalletPage) {
+          onRefresh();
+        } else {
+          fetchUserWallets();
+        }
       } else {
         Swal.fire({
           title: 'Error',
