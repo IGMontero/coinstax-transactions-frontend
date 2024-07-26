@@ -19,9 +19,10 @@ const ProfileDropdown = ({ currentUser }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     try {
-      await dispatch(logout());
+      dispatch(logout());
+
       // Swal.fire({
       //   title: 'Logged Out!',
       //   text: 'You have been logged out successfully!',
@@ -30,7 +31,6 @@ const ProfileDropdown = ({ currentUser }) => {
       //   showConfirmButton: false,
       // });
 
-      // Redirect user to homepage
       navigate('/login');
     } catch (error) {
       console.log(error);
