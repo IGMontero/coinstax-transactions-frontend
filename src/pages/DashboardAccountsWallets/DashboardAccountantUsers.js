@@ -123,6 +123,7 @@ const DashboardAccountantUsers = () => {
         users={clients}
         loading={loading}
         onDeleteAddress={handleDeleteClient}
+        onRefresh={fetchClients}
       />
     </React.Fragment>
   );

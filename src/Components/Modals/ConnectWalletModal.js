@@ -18,11 +18,11 @@ import { addUserWallet } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 
-const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh }) => {
+const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh, userId }) => {
   const dispatch = useDispatch();
 
   const { user } = useSelector((state) => state.auth);
-  const userId = user?.id;
+
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
 
