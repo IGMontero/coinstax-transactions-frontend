@@ -106,7 +106,7 @@ export const updateUserWalletAddress = createAsyncThunk(
 
 export const verifyInviteCode = createAsyncThunk(
   'clients/verifyInviteCode',
-  async (inviteCode, { rejectWithValue }) => {
+  async ({ inviteCode }, { rejectWithValue }) => {
     try {
       const response = await fetch(
         `${API_BASE}/clients/invite-code/${inviteCode}`,
@@ -114,6 +114,36 @@ export const verifyInviteCode = createAsyncThunk(
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const reorderUserWallets = createAsyncThunk(
+  'clients/reorderUserWallets',
+  async ({ userId, addresses }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/wallet-addresses/reorder`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({ addresses }),
+        },
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error: ${response.status}`);
+      }
+
       const data = await response.json();
       return data;
     } catch (error) {
