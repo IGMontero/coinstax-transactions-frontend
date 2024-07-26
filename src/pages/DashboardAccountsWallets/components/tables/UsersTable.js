@@ -61,7 +61,7 @@ const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
   };
 
   const handleDelete = (row) => {
-    onDeleteAddress(userId, row.address);
+    onDeleteAddress(row.Id);
   };
 
   const handleRowClick = (row) => {
