@@ -25,7 +25,7 @@ import AuthProtectedRoutes from './AuthProtectedRoutes';
 import ResetPaswword from '../pages/Authentication/ResetPassword';
 import DashboardUserWallets from '../pages/DashboardAccountsWallets/DashboardUserWallets';
 import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/DashboardAccountantUsers';
-import DashboardAccUsersWallets from '../pages/DashboardAccountsWallets/DashboardAccUsersWallets';
+import DashboardClientProfile from '../pages/DashboardAccountsWallets/DashboardClientProfile';
 import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWallets';
 import DashboardInvite from '../pages/DashboardInvite /DashboardInvite';
 
@@ -127,7 +127,7 @@ const authProtectedRoutes = [
           DASHBOARD_USER_ROLES.ACCOUNTANT,
         ]}
       >
-        <DashboardAccUsersWallets />
+        <DashboardClientProfile />
       </AuthProtectedRoutes>
     ),
   },

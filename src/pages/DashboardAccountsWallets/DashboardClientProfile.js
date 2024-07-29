@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
-import { Button } from 'reactstrap';
+import React, { useState, useEffect } from 'react';
+import { Button, Spinner } from 'reactstrap';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddressesTable from './components/tables/AddressesTable';
 import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getInfoClientByAccountantId } from '../../slices/accountants/thunk';
+import { useDispatch } from 'react-redux';
+import ClientInfo from './components/ClientInfo';
 
-const DashboardAccUsersWallets = () => {
+const DashboardClientProfile = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+  const { userId } = useParams();
 
-  const [addresses, setAddresses] = useState([]);
+  const [client, setClient] = useState(null);
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const handeGoToDashboard = () => {
     navigate('/clients');
@@ -20,13 +26,47 @@ const DashboardAccUsersWallets = () => {
     setModalConnectWallet(!modalConnectWallet);
   };
 
+  const fetchClientInfo = async () => {
+    try {
+      const response = await dispatch(
+        getInfoClientByAccountantId({
+          clientId: userId,
+          accountantId: user.id,
+        }),
+      ).unwrap();
+      if (response && !response.error) {
+        setClient(response);
+        return response.UserId;
+      }
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      await fetchClientInfo();
+      setIsInitialized(true);
+    };
+    initialize();
+  }, []);
+
+  if (!isInitialized) {
+    return (
+      <div className="d-flex justify-content-center align-items-center page-content">
+        <Helmet title="Wallets" />
+        <Spinner color="primary" size="lg" />
+      </div>
+    );
+  }
+
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
-
       <div className="mt-5">
         <div className="d-flex justify-content-between align-items-center mb-4">
-          <h1>Client Addresses</h1>
+          <h1>Client Profile</h1>
           <div className="d-flex">
             <Button
               onClick={toggleModalConnectWallet}
@@ -54,10 +94,11 @@ const DashboardAccUsersWallets = () => {
             </Button>
           </div>
         </div>
+        <div className="mb-5 mt-2">
+          <ClientInfo client={client} />
+        </div>
         <AddressesTable
-          addresses={addresses}
-          setAddresses={setAddresses}
-          user={user}
+          userId={client?.UserId}
           modalConnectWallet={modalConnectWallet}
           setModalConnectWallet={setModalConnectWallet}
         />
@@ -66,4 +107,4 @@ const DashboardAccUsersWallets = () => {
   );
 };
 
-export default DashboardAccUsersWallets;
+export default DashboardClientProfile;
