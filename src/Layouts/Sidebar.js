@@ -221,10 +221,11 @@ const Sidebar = ({ layoutType }) => {
   };
 
   useEffect(() => {
-    fetchUserWallets();
     fetchPortfolioWallets();
   }, []);
-
+  useEffect(() => {
+    fetchUserWallets();
+  }, [address]);
   return (
     <React.Fragment>
       <div
