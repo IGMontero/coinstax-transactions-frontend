@@ -10,42 +10,32 @@ import {
   DropdownMenu,
   DropdownItem,
 } from 'reactstrap';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
-
 import {
   updateUserWalletAddress,
   deleteUserAddressWallet,
   getUserWallets,
 } from '../../../../slices/userWallets/thunk';
 import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
-import { getInfoClientByAccountantId } from '../../../../slices/accountants/thunk';
 import { reorderUserWallets } from '../../../../slices/userWallets/thunk';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ConnectWalletModal from '../../../../Components/Modals/ConnectWalletModal';
-import ClientInfo from '../ClientInfo';
 
 const AddressesTable = ({
-  addresses,
-  setAddresses,
-  user,
-  onRefresh,
   modalConnectWallet,
   setModalConnectWallet,
+  userId,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
-  const { userId } = useParams();
 
+  const [addresses, setAddresses] = useState([]);
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
 
-  const [client, setClient] = useState(null);
-  const clientId = client?.UserId;
-
-  const isUserWalletPage = location.pathname.includes('wallets');
+  const [loading, setLoading] = useState(false);
 
   const toggleCollapse = (collapseId) => {
     const newSet = new Set(openCollapse);
@@ -113,7 +103,7 @@ const AddressesTable = ({
         try {
           const response = await dispatch(
             updateUserWalletAddress({
-              userId: user.id,
+              userId,
               name: newName,
               addressId: address.Id,
             }),
@@ -126,7 +116,7 @@ const AddressesTable = ({
             //   icon: 'success',
             // });
 
-            onRefresh();
+            fetchUserWallets();
           } else {
             Swal.fire({
               title: 'Error',
@@ -148,8 +138,6 @@ const AddressesTable = ({
   };
 
   const handleDeleteUserAddress = (address) => {
-    console.log(address);
-
     Swal.fire({
       title: 'Are you sure?',
       text: `Are you sure to delete wallet ${address.Name ? address.Name : address.Address}?`,
@@ -161,16 +149,16 @@ const AddressesTable = ({
       if (result.isConfirmed) {
         try {
           const response = await dispatch(
-            deleteUserAddressWallet({ userId: user.id, addressId: address.Id }),
+            deleteUserAddressWallet({ userId, addressId: address.Id }),
           ).unwrap();
 
           if (response && !response.error) {
-            // Swal.fire({
-            //   title: 'Success',
-            //   text: 'Wallet address deleted successfully',
-            //   icon: 'success',
-            // });
-            onRefresh();
+            Swal.fire({
+              title: 'Success',
+              text: 'Wallet address deleted successfully',
+              icon: 'success',
+            });
+            fetchUserWallets();
           } else {
             Swal.fire({
               title: 'Error',
@@ -214,17 +202,12 @@ const AddressesTable = ({
     }));
 
     try {
-      const userIdToReorder = userId ? clientId : user.id;
       const response = await dispatch(
-        reorderUserWallets({ userId: userIdToReorder, addresses: payload }),
+        reorderUserWallets({ userId: userId, addresses: payload }),
       ).unwrap();
 
       if (response && !response.error) {
-        if (isUserWalletPage) {
-          onRefresh();
-        } else {
-          fetchUserWallets();
-        }
+        fetchUserWallets();
       } else {
         Swal.fire({
           title: 'Error',
@@ -243,69 +226,37 @@ const AddressesTable = ({
   };
 
   const fetchUserWallets = async () => {
-    let userIdToFetch = userId;
-
-    if (!isUserWalletPage) {
-      const fetchedClientId = await fecthClientInfo();
-      if (fetchedClientId) {
-        userIdToFetch = fetchedClientId;
-      } else {
-        console.log('Failed to fetch client info.');
-        return;
-      }
-    } else {
-      return;
-    }
-
+    setLoading(true);
     try {
-      const response = await dispatch(getUserWallets(userIdToFetch)).unwrap();
+      const response = await dispatch(getUserWallets(userId)).unwrap();
 
       if (response && !response.error) {
         setAddresses(response);
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
-    }
-  };
-
-  const fecthClientInfo = async () => {
-    try {
-      const response = await dispatch(
-        getInfoClientByAccountantId({
-          clientId: userId,
-          accountantId: user.id,
-        }),
-      ).unwrap();
-      console.log(response);
-      if (response && !response.error) {
-        setClient(response);
-        return response.UserId;
-      }
-    } catch (error) {
-      console.log(error);
-      return null;
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUserWallets();
+    if (userId) {
+      fetchUserWallets();
+    } else {
+      window.history.back();
+    }
   }, [userId]);
 
   return (
-    <Container fluid>
+    <>
       <ConnectWalletModal
         isOpen={modalConnectWallet}
         setIsOpen={setModalConnectWallet}
         onRefresh={fetchUserWallets}
-        userId={clientId}
+        userId={userId}
       />
-      <div className="mb-5 mt-2">
-        {client && (
-          <>
-            <ClientInfo client={client} />
-          </>
-        )}
-      </div>
+
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="addresses">
           {(provided) => (
@@ -452,12 +403,12 @@ const AddressesTable = ({
           )}
         </Droppable>
       </DragDropContext>
-      {addresses.length === 0 && (
+      {addresses?.length === 0 && !loading && (
         <Col className="py-5">
           <h4>No addresses Yet</h4>
         </Col>
       )}
-    </Container>
+    </>
   );
 };
 

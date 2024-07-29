@@ -1,59 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button } from 'reactstrap';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddressesTable from './components/tables/AddressesTable';
 import { useSelector } from 'react-redux';
-import { getUserWallets } from '../../slices/userWallets/thunk';
-import { useDispatch } from 'react-redux';
-import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 
 const DashboardUserWallets = () => {
-  // const addresses = useSelector((state) => state.addressName.addresses);
-  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
-
-  const [addresses, setAddresses] = useState([]);
-
-  const [loading, setLoading] = useState(false);
 
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
 
   const toggleModalConnectWallet = () =>
     setModalConnectWallet(!modalConnectWallet);
 
-  const fetchUserWallets = async () => {
-    try {
-      setLoading(true);
-      const response = await dispatch(getUserWallets(userId)).unwrap();
-
-      if (response && !response.error) {
-        setAddresses(response);
-      } else {
-        console.log('Failed to fetch clients');
-      }
-
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUserWallets();
-  }, []);
-
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
-      <ConnectWalletModal
-        isOpen={modalConnectWallet}
-        setIsOpen={setModalConnectWallet}
-        onRefresh={fetchUserWallets}
-        userId={userId}
-      />
 
       <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
         <h1>Manage Wallets</h1>
@@ -82,11 +44,9 @@ const DashboardUserWallets = () => {
         </div>
       </div>
       <AddressesTable
-        addresses={addresses}
-        setAddresses={setAddresses}
-        user={user}
-        loading={loading}
-        onRefresh={fetchUserWallets}
+        modalConnectWallet={modalConnectWallet}
+        setModalConnectWallet={setModalConnectWallet}
+        userId={userId}
       />
       {/* <div className="mt-4">
             <h2>Watchlist</h2>
