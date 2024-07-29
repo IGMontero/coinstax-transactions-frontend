@@ -382,7 +382,7 @@ const AddressesTable = ({
                                       className="text-hover-underline  text-dark col-2"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        handleVisitAddress(address.value);
+                                        handleVisitAddress(address.Address);
                                       }}
                                     >
                                       Visit Address
