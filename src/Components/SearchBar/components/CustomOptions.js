@@ -22,7 +22,7 @@ import {
   setAddressName,
 } from '../../../slices/addressName/reducer';
 import { useParams } from 'react-router-dom';
-import DropdownMenuPortal from '../../DropdownPortal';
+import DropdownMenuPortal from '../../Dropdowns/DropdownPortal';
 
 const CustomOptions = (props) => {
   const dispatch = useDispatch();
