@@ -52,6 +52,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
 
   const [initialLoad, setInitialLoad] = useState(true);
 
+  const [subDropdownOpen, setSubDropdownOpen] = useState(null);
+
+  const [prevAddress, setPrevAddress] = useState('');
+
   const fetchUserWallets = async () => {
     setLoadingWallets(true);
     try {
@@ -103,33 +107,19 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
   }, [address]);
 
   useEffect(() => {
-    if (userPortfolio.length > 0) {
-      if (address) {
-        const selected = userPortfolio.find(
-          (wallet) => wallet.Address === address,
-        );
-        setSelectedAddress(selected || null);
-      } else {
-        setSelectedAddress(null);
-      }
+    if (address) {
+      setPrevAddress(address);
+    } else if (!address && prevAddress) {
+      setSelectedAddress(
+        userPortfolio.find((wallet) => wallet.Address === prevAddress) || null,
+      );
     }
-  }, [address, userPortfolio]);
+  }, [address, prevAddress, userPortfolio]);
 
   const handleSelectAddress = (address) => {
+    setPrevAddress(address.Address);
     setSelectedAddress(address);
     toggleDropdown();
-  };
-
-  const [subDropdownOpen, setSubDropdownOpen] = useState(null);
-
-  const toggleSubDropdown = (e, index) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (subDropdownOpen === index) {
-      setSubDropdownOpen(null);
-    } else {
-      setSubDropdownOpen(index);
-    }
   };
 
   const handleUpdateAddress = (e, address) => {
@@ -243,6 +233,16 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
     //   timer: 2000,
     //   showConfirmButton: false,
     // });
+  };
+
+  const toggleSubDropdown = (e, index) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (subDropdownOpen === index) {
+      setSubDropdownOpen(null);
+    } else {
+      setSubDropdownOpen(index);
+    }
   };
 
   const renderOptionsSubDropdown = (index, address) => {
@@ -384,6 +384,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
                       </div>
                     </div>
                   </Link>
+                  {selectedAddress &&
+                    selectedAddress.Address === address.Address && (
+                      <i className="ri-check-line text-muted fs-16 align-middle me-3"></i>
+                    )}
                   {renderOptionsSubDropdown(index, address)}
                 </DropdownItem>
               </>
