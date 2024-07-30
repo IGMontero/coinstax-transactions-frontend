@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Dropdown,
   DropdownItem,
@@ -24,6 +24,7 @@ import { layoutModeTypes } from '../constants/layout';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
   const dispatch = useDispatch();
+  const fetchInterval = useRef(null);
   const { address } = useParams();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
@@ -34,6 +35,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
+  const isUserOrNoUser = user?.role === DASHBOARD_USER_ROLES.USER || !user;
+  const isAdminOrAccountant =
+    user?.role === DASHBOARD_USER_ROLES.ADMIN ||
+    user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
 
   const [loadingWallets, setLoadingWallets] = useState(false);
   const [loadingPortfolio, setLoadingPortfolio] = useState(false);
@@ -41,10 +46,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
 
   const [selectedAddress, setSelectedAddress] = useState(null);
 
-  const isUserOrNoUser = user?.role === DASHBOARD_USER_ROLES.USER || !user;
-  const isAdminOrAccountant =
-    user?.role === DASHBOARD_USER_ROLES.ADMIN ||
-    user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const fetchUserWallets = async () => {
     setLoadingWallets(true);
@@ -57,23 +59,40 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
     }
   };
 
-  const fetchPortfolioWallets = async () => {
-    setLoadingPortfolio(true);
+  const fetchPortfolioWallets = async (isInitialLoad = false) => {
+    if (isInitialLoad) {
+      setLoadingPortfolio(true);
+    }
     try {
       const response = await dispatch(getPortfolioWallets(userId)).unwrap();
       if (response && !response.error) {
         setTotalValue(response.blockchains?.all?.totalValue);
+        if (response.complete) {
+          clearInterval(fetchInterval.current);
+          fetchInterval.current = null;
+        }
       }
-      setLoadingPortfolio(false);
     } catch (error) {
       console.log(error);
-      setLoadingPortfolio(false);
+    } finally {
+      if (isInitialLoad) {
+        setLoadingPortfolio(false);
+      }
     }
   };
 
   useEffect(() => {
-    fetchPortfolioWallets();
-  }, []);
+    if (initialLoad) {
+      fetchPortfolioWallets(true);
+      setInitialLoad(false);
+    }
+    if (!fetchInterval.current) {
+      fetchInterval.current = setInterval(() => {
+        fetchPortfolioWallets();
+      }, 2000);
+    }
+    return () => clearInterval(fetchInterval.current);
+  }, [userId, initialLoad]);
 
   useEffect(() => {
     fetchUserWallets();
