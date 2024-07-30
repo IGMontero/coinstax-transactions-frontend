@@ -94,3 +94,10 @@ export const pagesWithoutAddress = [
   '/clients',
   '/invite',
 ];
+
+
+export const userInviteTypes = {
+  USER_TO_ACCOUNTANT: 'ua',
+  ACCOUNTANT_TO_USER: 'au',
+  ACCOUNTANT_TO_AGENT: 'aa',
+}
