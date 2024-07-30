@@ -28,6 +28,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
+  const { userPortfolio } = useSelector((state) => state.userWallets);
+
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
@@ -39,8 +41,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
 
   const [totalValue, setTotalValue] = useState(0);
 
-  const [addresses, setAddresses] = React.useState([]);
-
   const isUserOrNoUser = user?.role === DASHBOARD_USER_ROLES.USER || !user;
   const isAdminOrAccountant =
     user?.role === DASHBOARD_USER_ROLES.ADMIN ||
@@ -49,11 +49,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
   const fetchUserWallets = async () => {
     setLoadingWallets(true);
     try {
-      const response = await dispatch(getUserWallets(userId)).unwrap();
+      await dispatch(getUserWallets(userId)).unwrap();
 
-      if (response && !response.error) {
-        setAddresses(response);
-      }
       setLoadingWallets(false);
     } catch (error) {
       console.log(error);
@@ -129,8 +126,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
             </Link>
           </DropdownItem>
           <div className="dropdown-divider"></div>
-          {addresses &&
-            addresses?.map((address, index) => (
+          {userPortfolio &&
+            userPortfolio?.map((address, index) => (
               <DropdownItem className="d-flex align-items-center" key={index}>
                 <Link
                   to={process.env.PUBLIC_URL + `/address/${address.Address}`}
@@ -170,7 +167,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
                 </Link>
               </DropdownItem>
             ))}
-          {addresses.length > 0 && <div className="dropdown-divider"></div>}
+          {userPortfolio.length > 0 && <div className="dropdown-divider"></div>}
           <DropdownItem>
             <Link
               to={process.env.PUBLIC_URL + '/wallets/connect'}

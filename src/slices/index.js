@@ -17,6 +17,9 @@ import APIKeyReducer from './apiKey/reducer';
 // Address Name
 import AddressNameReducer from './addressName/reducer';
 
+// USER ADDRESSES
+
+import userWalletsReducer from './userWallets/reducer';
 // Selected Network
 import NetworkTypeReducer from './networkType/reducer';
 
@@ -33,6 +36,7 @@ const rootReducer = combineReducers({
   addresses: AddressesReducer,
   addressName: AddressNameReducer,
   networkType: NetworkTypeReducer,
+  userWallets: userWalletsReducer,
 });
 
 export default rootReducer;
