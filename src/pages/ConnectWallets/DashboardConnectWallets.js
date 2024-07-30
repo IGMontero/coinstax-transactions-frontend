@@ -7,8 +7,17 @@ import zerionWallet from '../../assets/images/wallets/zerionWallet.svg';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
 import { useNavigate } from 'react-router-dom';
 import { Button } from 'reactstrap';
+import { useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { addUserWallet } from '../../slices/userWallets/thunk';
+import Swal from 'sweetalert2';
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth);
+  const userId = user?.id;
+
   const wallets = [
     // {
     //   icon: zerionWallet,
@@ -39,6 +48,31 @@ const DashboardConnectWallets = () => {
 
   const handleSearch = (value) => {
     setSearchValue(value);
+  };
+
+  const handleConnectWallet = async (address) => {
+    try {
+      const response = await dispatch(
+        addUserWallet({ address, userId }),
+      ).unwrap();
+
+      if (response && !response.error) {
+        navigate(`/address/${address}`);
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to connect wallet',
+          icon: 'error',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to connect wallet: ', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to connect wallet',
+        icon: 'error',
+      });
+    }
   };
 
   return (
@@ -76,7 +110,13 @@ const DashboardConnectWallets = () => {
                 borderRadius: '10px',
                 border: '.5px solid grey',
               }}
-              onClick={() => handleAddWallet(searchValue)}
+              onClick={() => {
+                if (!user) {
+                  handleAddWallet(searchValue);
+                } else {
+                  handleConnectWallet(searchValue);
+                }
+              }}
             >
               <i className="bx bx-plus me-2"></i>
               Add

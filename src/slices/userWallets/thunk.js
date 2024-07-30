@@ -53,6 +53,30 @@ export const getUserWallets = createAsyncThunk(
   },
 );
 
+export const getPortfolioWallets = createAsyncThunk(
+  'clients/getPortfolioWallets',
+  async (userId, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/portfolio/summary`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const deleteUserAddressWallet = createAsyncThunk(
   'clients/deleteUserAddressWallet',
   async ({ userId, addressId }, { rejectWithValue }) => {

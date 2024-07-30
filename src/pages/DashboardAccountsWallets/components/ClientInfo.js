@@ -18,7 +18,7 @@ const ClientInfo = ({ client }) => {
             <td className="text-start">{client.Name}</td>
             <td className="text-center">{client.Email}</td>
             <td className="text-end ">
-              {formatDateToLocale(client.LastViewedDate)}
+              {formatDateToLocale(client?.LastViewedDate)}
             </td>
           </tr>
         </tbody>
