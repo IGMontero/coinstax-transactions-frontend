@@ -25,25 +25,39 @@ const AddressWithDropdown = ({
 }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const addresses = useSelector((state) => state.addressName.addresses);
+  const { userPortfolio } = useSelector((state) => state.userWallets);
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [formattedAddressLabel, setFormattedAddressLabel] = useState('');
   const [formattedValue, setFormattedValue] = useState('');
 
-  const addresses = useSelector((state) => state.addressName.addresses);
-
   useEffect(() => {
-    const matchingAddress = addresses.find((addr) => addr.value === address);
+    // First look in userPortfolio
+    let matchingAddress;
+    if (user) {
+      matchingAddress = userPortfolio.find((addr) => addr.Address === address);
+    }
+
+    // if not found in userPortfolio, look in addresses
+    if (!matchingAddress) {
+      matchingAddress = addresses.find((addr) => addr.value === address);
+    }
+
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
 
     if (matchingAddress) {
-      setFormattedAddressLabel(matchingAddress.label || currentFormattedValue);
+      setFormattedAddressLabel(
+        matchingAddress.Name || matchingAddress.label || currentFormattedValue,
+      );
     } else {
       setFormattedAddressLabel(currentFormattedValue);
     }
-  }, [address, addresses]);
+  }, [address, user, userPortfolio, addresses]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
