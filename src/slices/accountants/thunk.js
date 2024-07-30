@@ -111,7 +111,7 @@ export const getInfoClientByAccountantId = createAsyncThunk(
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
-        `${API_BASE}/clients/accountant/${accountantId}/${clientId}`,
+        `${API_BASE}/clients/accountants/${accountantId}/${clientId}`,
         {
           headers: {
             Authorization: `${token}`,
