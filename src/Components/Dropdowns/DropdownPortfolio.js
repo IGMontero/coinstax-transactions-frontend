@@ -26,7 +26,7 @@ import Skeleton from 'react-loading-skeleton';
 import { layoutModeTypes } from '../constants/layout';
 import Swal from 'sweetalert2';
 
-const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
+const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
   const fetchInterval = useRef(null);
   const { address } = useParams();
@@ -290,24 +290,28 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className="w-100 bg-transparent border-2 border-light rounded-4 d-flex align-items-center"
+        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''} border-2 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
-        <i className="ri-dashboard-fill pe-3 fs-2"></i>
+        {!isInHeader && (
+          <i className="ri-dashboard-fill pe-3 fs-2 text-dark"></i>
+        )}
         <div className="d-flex flex-column align-items-start flex-grow-1">
-          <span className="text-start">
+          <span className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}>
             {selectedAddress
               ? selectedAddress.Name
                 ? selectedAddress.Name
                 : formatIdTransaction(selectedAddress.Address, 3, 6)
               : 'Portfolio'}
           </span>
-          <div className="text-start text-muted">
-            {selectedAddress
-              ? '$123'
-              : parseValuesToLocale(totalValue, CurrencyUSD)}
-          </div>
+          {!isInHeader && (
+            <div className="text-start text-muted">
+              {selectedAddress
+                ? '$123'
+                : parseValuesToLocale(totalValue, CurrencyUSD)}
+            </div>
+          )}
         </div>
         <i className="ri-arrow-down-s-line fs-4"></i>
       </DropdownToggle>
