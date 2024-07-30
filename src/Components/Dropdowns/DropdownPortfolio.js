@@ -108,13 +108,16 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
   useEffect(() => {
     if (address) {
-      setPrevAddress(address);
+      const matchingAddress = userPortfolio.find(
+        (wallet) => wallet.Address === address,
+      );
+      setSelectedAddress(matchingAddress || null);
     } else if (!address && prevAddress) {
       setSelectedAddress(
         userPortfolio.find((wallet) => wallet.Address === prevAddress) || null,
       );
     }
-  }, [address, prevAddress, userPortfolio]);
+  }, [address, userPortfolio, prevAddress]);
 
   const handleSelectAddress = (address) => {
     setPrevAddress(address.Address);
@@ -317,7 +320,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       </DropdownToggle>
 
       <DropdownMenuPortal>
-        <DropdownMenu className="ms-5" style={{ zIndex: 1002 }}>
+        <DropdownMenu
+          className={isInHeader ? '' : 'ms-5'}
+          style={{ zIndex: 1002 }}
+        >
           <DropdownItem className="d-flex align-items-center">
             <Link
               to={process.env.PUBLIC_URL + '/portfolio'}
