@@ -36,10 +36,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const [loadingWallets, setLoadingWallets] = useState(false);
-
   const [loadingPortfolio, setLoadingPortfolio] = useState(false);
-
   const [totalValue, setTotalValue] = useState(0);
+
+  const [selectedAddress, setSelectedAddress] = useState(null);
 
   const isUserOrNoUser = user?.role === DASHBOARD_USER_ROLES.USER || !user;
   const isAdminOrAccountant =
@@ -50,7 +50,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
     setLoadingWallets(true);
     try {
       await dispatch(getUserWallets(userId)).unwrap();
-
       setLoadingWallets(false);
     } catch (error) {
       console.log(error);
@@ -62,7 +61,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
     setLoadingPortfolio(true);
     try {
       const response = await dispatch(getPortfolioWallets(userId)).unwrap();
-
       if (response && !response.error) {
         setTotalValue(response.blockchains?.all?.totalValue);
       }
@@ -81,35 +79,61 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
     fetchUserWallets();
   }, [address]);
 
+  useEffect(() => {
+    if (userPortfolio.length > 0) {
+      if (address) {
+        const selected = userPortfolio.find(
+          (wallet) => wallet.Address === address,
+        );
+        setSelectedAddress(selected || null);
+      } else {
+        setSelectedAddress(null);
+      }
+    }
+  }, [address, userPortfolio]);
+
+  const handleSelectAddress = (address) => {
+    setSelectedAddress(address);
+    toggleDropdown();
+  };
+
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className="w-100 bg-transparent border-2 border-light rounded-4 "
+        className="w-100 bg-transparent border-2 border-light rounded-4 d-flex align-items-center"
         variant="transparent"
         id="dropdown-basic"
       >
-        <span className="d-flex align-items-start justify-content-center">
-          <i className="ri-wallet-3-fill pe-3 fs-3"></i>
-          <div className="d-flex flex-column align-items-center">
-            <span>
-              {address ? formatIdTransaction(address, 3, 6) : 'Portfolio'}
-              <div className="text-start text-muted">{}</div>
-            </span>
+        <i className="ri-dashboard-fill pe-3 fs-2"></i>
+        <div className="d-flex flex-column align-items-start flex-grow-1">
+          <span className="text-start">
+            {selectedAddress
+              ? selectedAddress.Name
+                ? selectedAddress.Name
+                : formatIdTransaction(selectedAddress.Address, 3, 6)
+              : 'Portfolio'}
+          </span>
+          <div className="text-start text-muted">
+            {selectedAddress
+              ? '$123'
+              : parseValuesToLocale(totalValue, CurrencyUSD)}
           </div>
-          <i className="ri-arrow-down-s-fill ms-4 fs-4"></i>
-        </span>
+        </div>
+        <i className="ri-arrow-down-s-line fs-4"></i>
       </DropdownToggle>
+
       <DropdownMenuPortal>
         <DropdownMenu className="ms-5" style={{ zIndex: 1002 }}>
           <DropdownItem className="d-flex align-items-center">
             <Link
               to={process.env.PUBLIC_URL + '/portfolio'}
               className="dropdown-item ps-0"
+              onClick={() => handleSelectAddress(null)}
             >
               <div className="d-flex align-items-center">
                 <i className="ri-dashboard-fill text-muted fs-3 align-middle me-3"></i>
                 <div className="d-flex flex-column">
-                  <span className="align-middle">Porfolio</span>
+                  <span className="align-middle">Portfolio</span>
                   <span className="text-muted">
                     {loadingPortfolio ? (
                       <Skeleton
@@ -127,8 +151,12 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
           </DropdownItem>
           <div className="dropdown-divider"></div>
           {userPortfolio &&
-            userPortfolio?.map((address, index) => (
-              <DropdownItem className="d-flex align-items-center" key={index}>
+            userPortfolio.map((address, index) => (
+              <DropdownItem
+                className="d-flex align-items-center"
+                key={index}
+                onClick={() => handleSelectAddress(address)}
+              >
                 <Link
                   to={process.env.PUBLIC_URL + `/address/${address.Address}`}
                   className="dropdown-item ps-0"
@@ -174,11 +202,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown }) => {
               className="dropdown-item ps-0"
             >
               <i className="ri-add-line text-muted fs-16 align-middle me-3"></i>
-              <span className="align-middle">Connect another Wallet </span>
+              <span className="align-middle">Connect another Wallet</span>
             </Link>
           </DropdownItem>
           <DropdownItem href="#/action-2">
-            {' '}
             {user && (
               <DropdownItem className="p-0">
                 <Link
