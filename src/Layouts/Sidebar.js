@@ -1,11 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
-//import logo
-import logoSm from '../assets/images/logo-sm.png';
-import logoDark from '../assets/images/logo-dark.png';
-// import logoLight from '../assets/images/logo-light.png';
-
 import logo from '../assets/images/logos/coinstax_logos/logo-dark.png';
 import logoLight from '../assets/images/logos/coinstax_logos/logo-light.png';
 
@@ -17,7 +12,17 @@ import HorizontalLayout from './HorizontalLayout';
 import { layoutModeTypes } from '../Components/constants/layout';
 import { useSelector } from 'react-redux';
 
+import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
+
 const Sidebar = ({ layoutType }) => {
+  const { user } = useSelector((state) => state.auth);
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+
+  const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
+
   useEffect(() => {
     var verticalOverlay = document.getElementsByClassName('vertical-overlay');
     if (verticalOverlay) {
@@ -26,12 +31,6 @@ const Sidebar = ({ layoutType }) => {
       });
     }
   });
-
-  const { layoutModeType } = useSelector((state) => ({
-    layoutModeType: state.Layout.layoutModeType,
-  }));
-
-  const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
   const addEventListenerOnSmHoverMenu = () => {
     if (
@@ -50,6 +49,10 @@ const Sidebar = ({ layoutType }) => {
       document.documentElement.setAttribute('data-sidebar-size', 'sm-hover');
     }
   };
+
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+
+  const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
   return (
     <React.Fragment>
@@ -111,7 +114,14 @@ const Sidebar = ({ layoutType }) => {
                     width="100"
                   />
                 </span>
+                {/* // dropdwpn  */}
               </Link>
+              {user && (
+                <DropdownPortfolio
+                  dropdownOpen={dropdownOpen}
+                  toggleDropdown={toggleDropdown}
+                />
+              )}
               <Container fluid>
                 <div id="two-column-menu"></div>
                 <ul className="navbar-nav" id="navbar-nav">

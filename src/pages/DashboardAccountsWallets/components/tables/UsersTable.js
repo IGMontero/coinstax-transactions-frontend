@@ -13,7 +13,7 @@ import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
 import { useNavigate } from 'react-router-dom';
 import EditClientModal from '../../../../Components/Modals/EditClientModal';
-import DropdownMenuPortal from '../../../../Components/DropdownPortal';
+import DropdownMenuPortal from '../../../../Components/Dropdowns/DropdownPortal';
 import { formatDateToLocale } from '../../../../utils/utils';
 
 const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
