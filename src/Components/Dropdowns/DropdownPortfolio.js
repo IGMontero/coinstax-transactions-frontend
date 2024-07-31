@@ -130,9 +130,12 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     e.stopPropagation();
 
     Swal.fire({
-      title: 'Update Wallet Address',
+      title: 'Rename Wallet',
       input: 'text',
       inputValue: address.Name,
+      html: `
+      <span class="fs-6 align-items-start border rounded bg-light" >${address.Address}</span>
+    `,
       showCancelButton: true,
       confirmButtonText: 'Save',
       inputValidator: (value) => {
