@@ -55,56 +55,55 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
   const [prevAddress, setPrevAddress] = useState('');
-
   const fetchUserWallets = async () => {
     setLoadingWallets(true);
     try {
       await dispatch(getUserWallets(userId)).unwrap();
-      setLoadingWallets(false);
     } catch (error) {
       console.log(error);
+    } finally {
       setLoadingWallets(false);
     }
   };
 
-  const fetchPortfolioWallets = async (isInitialLoad = false) => {
-    if (isInitialLoad) {
-      setLoadingPortfolio(true);
-    }
+  const fetchPortfolioWallets = async () => {
+    setLoadingPortfolio(true);
     try {
       const response = await dispatch(getPortfolioWallets(userId)).unwrap();
       if (response && !response.error) {
         setTotalValue(response.blockchains?.all?.totalValue);
-        if (response.complete) {
+        if (response.complete && fetchInterval.current) {
+          setLoadingPortfolio(false);
           clearInterval(fetchInterval.current);
           fetchInterval.current = null;
         }
       }
     } catch (error) {
       console.log(error);
-    } finally {
-      if (isInitialLoad) {
-        setLoadingPortfolio(false);
-      }
+      setLoadingPortfolio(false);
     }
   };
 
   useEffect(() => {
-    if (initialLoad) {
-      fetchPortfolioWallets(true);
+    const initializeFetch = async () => {
+      await fetchPortfolioWallets();
+      await fetchUserWallets();
       setInitialLoad(false);
-    }
-    if (!fetchInterval.current) {
+    };
+
+    if (initialLoad) {
+      initializeFetch();
       fetchInterval.current = setInterval(() => {
         fetchPortfolioWallets();
       }, 2000);
     }
-    return () => clearInterval(fetchInterval.current);
-  }, [userId, initialLoad]);
 
-  useEffect(() => {
-    fetchUserWallets();
-  }, []);
+    return () => {
+      if (fetchInterval.current) {
+        clearInterval(fetchInterval.current);
+      }
+    };
+  }, [initialLoad, userId]);
 
   useEffect(() => {
     if (address) {
