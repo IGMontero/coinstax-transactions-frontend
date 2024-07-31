@@ -104,7 +104,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
   useEffect(() => {
     fetchUserWallets();
-  }, [address]);
+  }, []);
 
   useEffect(() => {
     if (address) {
@@ -327,32 +327,36 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           className={isInHeader ? '' : 'ms-5'}
           style={{ zIndex: 1002 }}
         >
-          <DropdownItem className="d-flex align-items-center">
-            <Link
-              to={process.env.PUBLIC_URL + '/portfolio'}
-              className="dropdown-item ps-0"
-              onClick={() => handleSelectAddress(null)}
-            >
-              <div className="d-flex align-items-center">
-                <i className="ri-dashboard-fill text-muted fs-3 align-middle me-3"></i>
-                <div className="d-flex flex-column">
-                  <span className="align-middle">Portfolio</span>
-                  <span className="text-muted">
-                    {loadingPortfolio ? (
-                      <Skeleton
-                        width={80}
-                        baseColor={isDarkMode ? '#333' : '#f3f3f3'}
-                        highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
-                      />
-                    ) : (
-                      parseValuesToLocale(totalValue, CurrencyUSD)
-                    )}
-                  </span>
-                </div>
-              </div>
-            </Link>
-          </DropdownItem>
-          <div className="dropdown-divider"></div>
+          {!userPortfolio.length ? null : (
+            <>
+              <DropdownItem className="d-flex align-items-center">
+                <Link
+                  to={process.env.PUBLIC_URL + '/portfolio'}
+                  className="dropdown-item ps-0"
+                  onClick={() => handleSelectAddress(null)}
+                >
+                  <div className="d-flex align-items-center">
+                    <i className="ri-dashboard-fill text-muted fs-3 align-middle me-3"></i>
+                    <div className="d-flex flex-column">
+                      <span className="align-middle">Portfolio</span>
+                      <span className="text-muted">
+                        {loadingPortfolio ? (
+                          <Skeleton
+                            width={80}
+                            baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+                            highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+                          />
+                        ) : (
+                          parseValuesToLocale(totalValue, CurrencyUSD)
+                        )}
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </DropdownItem>
+              <div className="dropdown-divider"></div>
+            </>
+          )}
           {userPortfolio &&
             userPortfolio.map((address, index) => (
               <>
