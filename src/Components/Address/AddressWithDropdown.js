@@ -106,8 +106,11 @@ const AddressWithDropdown = ({
     e.stopPropagation();
 
     Swal.fire({
-      title: 'Update Wallet Address',
+      title: 'Rename Wallet',
       input: 'text',
+      html: `
+      <span class="fs-6 align-items-start border rounded bg-light" >${address.Address}</span>
+    `,
       inputValue: address.Name,
       showCancelButton: true,
       confirmButtonText: 'Save',
