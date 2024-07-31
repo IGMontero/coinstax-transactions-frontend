@@ -50,11 +50,14 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
   const [selectedAddress, setSelectedAddress] = useState(null);
 
+  const [addressesValues, setAddressesValues] = useState({});
+
   const [initialLoad, setInitialLoad] = useState(true);
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
   const [prevAddress, setPrevAddress] = useState('');
+
   const fetchUserWallets = async () => {
     setLoadingWallets(true);
     try {
@@ -72,6 +75,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       const response = await dispatch(getPortfolioWallets(userId)).unwrap();
       if (response && !response.error) {
         setTotalValue(response.blockchains?.all?.totalValue);
+        setAddressesValues(response.addressesValues || {});
         if (response.complete && fetchInterval.current) {
           setLoadingPortfolio(false);
           clearInterval(fetchInterval.current);
@@ -103,7 +107,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         clearInterval(fetchInterval.current);
       }
     };
-  }, [initialLoad, userId]);
+  }, [address, initialLoad, userId, userPortfolio]);
 
   useEffect(() => {
     if (address) {
@@ -292,6 +296,12 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     );
   };
 
+  const getValueForAddress = (address) => {
+    return addressesValues[address]
+      ? parseValuesToLocale(addressesValues[address], CurrencyUSD)
+      : '$ 0';
+  };
+
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
@@ -313,7 +323,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           {!isInHeader && (
             <div className="text-start text-muted">
               {selectedAddress
-                ? '$123'
+                ? getValueForAddress(selectedAddress.Address)
                 : parseValuesToLocale(totalValue, CurrencyUSD)}
             </div>
           )}
@@ -391,11 +401,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
                             highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
                           />
                         ) : (
-                          address.Name && (
-                            <span className="text-muted">
-                              {formatIdTransaction(address.Address, 3, 6)}
-                            </span>
-                          )
+                          <span className="text-muted">
+                            {getValueForAddress(address.Address)}
+                          </span>
                         )}
                       </div>
                     </div>
