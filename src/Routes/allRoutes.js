@@ -59,11 +59,19 @@ const publicRoutes = [
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
   { path: '/address/:address', component: <DashboardInfo /> },
+
   { path: '/tokens/:token', component: <DashboardTokens /> },
   { path: '/contract/:contractAddress', component: <DashboardNFT /> },
+
+  { path: '/address/:address/assets', component: <DashboardAssets /> },
   { path: '/address/:address/assets', component: <DashboardAssets /> },
   { path: '/address/:address/nfts', component: <NFTsPage /> },
   { path: '/address/:address/history', component: <DashboardTransactions /> },
+  // PORTFOLIO
+  { path: '/portfolio', component: <DashboardInfo /> },
+  { path: '/portfolio/assets', component: <DashboardAssets /> },
+  { path: '/portfolio/nfts', component: <NFTsPage /> },
+  { path: '/portfolio/history', component: <DashboardTransactions /> },
 ];
 
 // Home page
