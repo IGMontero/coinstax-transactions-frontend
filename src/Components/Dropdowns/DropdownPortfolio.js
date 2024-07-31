@@ -121,10 +121,13 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       );
     }
   }, [address, userPortfolio, prevAddress]);
-
   const handleSelectAddress = (address) => {
-    setPrevAddress(address.Address);
-    setSelectedAddress(address);
+    if (address === null) {
+      setSelectedAddress(null);
+    } else {
+      setPrevAddress(address.Address);
+      setSelectedAddress(address);
+    }
     toggleDropdown();
   };
 
@@ -323,7 +326,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           {!isInHeader && (
             <div className="text-start text-muted">
               {selectedAddress
-                ? getValueForAddress(selectedAddress.Address)
+                ? getValueForAddress(selectedAddress?.Address)
                 : parseValuesToLocale(totalValue, CurrencyUSD)}
             </div>
           )}
