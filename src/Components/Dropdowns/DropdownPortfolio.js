@@ -110,7 +110,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       input: 'text',
       inputValue: address.Name,
       html: `
-      <span class="fs-6 align-items-start border rounded bg-light" >${address.Address}</span>
+      <span class="fs-6 align-items-start border rounded bg-light" >${address.address}</span>
     `,
       showCancelButton: true,
       confirmButtonText: 'Save',
