@@ -4,7 +4,6 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Row,
   Spinner,
   UncontrolledDropdown,
 } from 'reactstrap';
@@ -29,21 +28,43 @@ const AddressWithDropdown = ({
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
-  const addresses = useSelector((state) => state.addressName.addresses);
-  const { userPortfolio } = useSelector((state) => state.userWallets);
+  const addresses = useSelector((state) => state.addressName?.addresses);
+  const { userPortfolioSummary, loaders } = useSelector(
+    (state) => state.userWallets,
+  );
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [formattedAddressLabel, setFormattedAddressLabel] = useState('');
   const [formattedValue, setFormattedValue] = useState('');
 
-  const [userPortfolioState, setUserPortfolioState] = useState([]);
-
   useEffect(() => {
-    if (userPortfolio) {
-      setUserPortfolioState(userPortfolio);
+    if (!userPortfolioSummary?.addresses)
+      return;
+
+    const currentFormattedValue = formatIdTransaction(address, 6, 8);
+    setFormattedValue(currentFormattedValue);
+
+    let matchingAddress;
+
+    if (user) {
+      matchingAddress = userPortfolioSummary?.addresses.find(
+        (addr) => addr.address === address,
+      );
     }
-  }, [userPortfolio]);
+
+    if (!matchingAddress) {
+      matchingAddress = addresses?.find((addr) => addr.value === address);
+    }
+
+    if (matchingAddress) {
+      setFormattedAddressLabel(
+        matchingAddress.name || matchingAddress.label || currentFormattedValue,
+      );
+    } else {
+      setFormattedAddressLabel(currentFormattedValue);
+    }
+  }, [address, user, userPortfolioSummary, addresses]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -78,9 +99,6 @@ const AddressWithDropdown = ({
       showCancelButton: true,
       confirmButtonText: 'Save',
       inputValidator: (value) => {
-        // if (!value) {
-        //   return 'You need to write something!';
-        // }
         if (
           addresses.some(
             (addr) => addr.label === value && addr.value !== option.value,
@@ -101,28 +119,32 @@ const AddressWithDropdown = ({
     dispatch(setAddressName({ value, label: newName || null }));
   };
 
+  console.log('userPortfolioSummary', userPortfolioSummary);
+
   const handleUpdateAddress = (e, address) => {
     e.preventDefault();
     e.stopPropagation();
+
+    console.log('address update', address);
 
     Swal.fire({
       title: 'Rename Wallet',
       input: 'text',
       html: `
-      <span class="fs-6 align-items-start border rounded bg-light" >${address.Address}</span>
+      <span class="fs-6 align-items-start border rounded bg-light" >${address.address}</span>
     `,
-      inputValue: address.Name,
+      inputValue: address.name,
       showCancelButton: true,
       confirmButtonText: 'Save',
-      inputValidator: (value) => {
-        if (
-          userPortfolio.some(
-            (addr) => addr.Name === value && addr.Address !== address.Address,
-          )
-        ) {
-          return 'This name already exists!';
-        }
-      },
+      // inputValidator: (value) => {
+      //   if (
+      //     userPortfolioSummary.addresses.some(
+      //       (addr) => addr.name === value && addr.address !== address.address,
+      //     )
+      //   ) {
+      //     return 'This name already exists!';
+      //   }
+      // },
     }).then(async (result) => {
       if (result.isConfirmed) {
         const newName = result.value.trim() ? result.value : null;
@@ -137,15 +159,7 @@ const AddressWithDropdown = ({
           ).unwrap();
 
           if (response && !response.error) {
-            // Update the local state to reflect the changes immediately
-            setUserPortfolioState((prevState) =>
-              prevState.map((addr) =>
-                addr.Address === address.Address
-                  ? { ...addr, Name: newName }
-                  : addr,
-              ),
-            );
-
+            // Actualizar el estado global si es necesario
             // Swal.fire({
             //   title: 'Success',
             //   text: 'Wallet address updated successfully',
@@ -171,36 +185,10 @@ const AddressWithDropdown = ({
     });
   };
 
-  useEffect(() => {
-    // First look in userPortfolioState (updated state)
-    let matchingAddress;
-    if (user) {
-      matchingAddress = userPortfolioState.find(
-        (addr) => addr.Address === address,
-      );
-    }
-
-    // if not found in userPortfolioState, look in addresses
-    if (!matchingAddress) {
-      matchingAddress = addresses.find((addr) => addr.value === address);
-    }
-
-    const currentFormattedValue = formatIdTransaction(address, 6, 8);
-    setFormattedValue(currentFormattedValue);
-
-    if (matchingAddress) {
-      setFormattedAddressLabel(
-        matchingAddress.Name || matchingAddress.label || currentFormattedValue,
-      );
-    } else {
-      setFormattedAddressLabel(currentFormattedValue);
-    }
-  }, [address, user, userPortfolioState, addresses]);
-
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
-        <h4 className="mb-0 ms-3  text-custom-address-dropdown ">
+        <h4 className="mb-0 ms-3 text-custom-address-dropdown">
           {formattedAddressLabel !== formatIdTransaction(address, 6, 8)
             ? formattedAddressLabel
             : addressNickName
@@ -234,9 +222,11 @@ const AddressWithDropdown = ({
               className="d-flex align-items-center"
               onClick={(e) => {
                 if (user) {
-                  const addr = userPortfolioState.find(
-                    (addr) => addr.Address === address,
+                  const addr = userPortfolioSummary.addresses.find(
+                    (addr) => addr.address === address,
                   );
+
+                  console.log(addr);
                   handleUpdateAddress(e, addr);
                 } else {
                   handleOpenModalRename(e, {
