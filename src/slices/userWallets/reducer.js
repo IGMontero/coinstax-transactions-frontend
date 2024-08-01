@@ -4,66 +4,54 @@ import {
   addUserWallet,
   getUserWallets,
   deleteUserAddressWallet,
+  getPortfolioWallets,
 } from './thunk';
 
-const initialState = {
-  clients: [],
-  loading: false,
-  error: null,
-};
-
-const clientsSlice = createSlice({
-  name: 'clients',
-  initialState,
-  reducers: {
-    clearClients: (state) => {
-      state.clients = [];
-    },
+const userWalletsSlice = createSlice({
+  name: 'userWallets',
+  initialState: {
+    userPortfolio: [],
+    status: 'idle',
+    error: null,
   },
+
   extraReducers: {
-    [addUserWallet.pending]: (state) => {
-      state.loading = true;
-      state.error = null;
-    },
-    [addUserWallet.fulfilled]: (state, action) => {
-      state.clients = action.payload;
-      state.loading = false;
-      state.error = null;
-    },
-    [addUserWallet.rejected]: (state, action) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
     [getUserWallets.pending]: (state) => {
-      state.loading = true;
-      state.error = null;
+      state.status = 'loading';
     },
     [getUserWallets.fulfilled]: (state, action) => {
-      state.clients = action.payload;
-      state.loading = false;
-      state.error = null;
+      state.status = 'succeeded';
+      state.userPortfolio = action.payload;
     },
     [getUserWallets.rejected]: (state, action) => {
-      state.loading = false;
+      state.status = 'failed';
       state.error = action.payload;
     },
-
+    [addUserWallet.pending]: (state) => {
+      state.status = 'loading';
+    },
+    [addUserWallet.fulfilled]: (state, action) => {
+      state.status = 'succeeded';
+      state.userPortfolio.push(action.payload);
+    },
+    [addUserWallet.rejected]: (state, action) => {
+      state.status = 'failed';
+      state.error = action.payload;
+    },
     [deleteUserAddressWallet.pending]: (state) => {
-      state.loading = true;
-      state.error = null;
+      state.status = 'loading';
     },
     [deleteUserAddressWallet.fulfilled]: (state, action) => {
-      state.clients = action.payload;
-      state.loading = false;
-      state.error = null;
+      state.status = 'succeeded';
+      state.userPortfolio = state.userPortfolio.filter(
+        (wallet) => wallet.id !== action.payload.id,
+      );
     },
     [deleteUserAddressWallet.rejected]: (state, action) => {
-      state.loading = false;
+      state.status = 'failed';
       state.error = action.payload;
     },
   },
 });
 
-export const { clearClients } = clientsSlice.actions;
-
-export default clientsSlice.reducer;
+export default userWalletsSlice.reducer;

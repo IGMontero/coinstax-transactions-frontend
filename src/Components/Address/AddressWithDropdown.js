@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAddressName } from '../../slices/addressName/reducer';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
+import { updateUserWalletAddress } from '../../slices/userWallets/thunk';
 
 const AddressWithDropdown = ({
   filteredNetworks,
@@ -25,25 +26,24 @@ const AddressWithDropdown = ({
 }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const userId = user?.id;
+
+  const addresses = useSelector((state) => state.addressName.addresses);
+  const { userPortfolio } = useSelector((state) => state.userWallets);
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [formattedAddressLabel, setFormattedAddressLabel] = useState('');
   const [formattedValue, setFormattedValue] = useState('');
 
-  const addresses = useSelector((state) => state.addressName.addresses);
+  const [userPortfolioState, setUserPortfolioState] = useState([]);
 
   useEffect(() => {
-    const matchingAddress = addresses.find((addr) => addr.value === address);
-    const currentFormattedValue = formatIdTransaction(address, 6, 8);
-    setFormattedValue(currentFormattedValue);
-
-    if (matchingAddress) {
-      setFormattedAddressLabel(matchingAddress.label || currentFormattedValue);
-    } else {
-      setFormattedAddressLabel(currentFormattedValue);
+    if (userPortfolio) {
+      setUserPortfolioState(userPortfolio);
     }
-  }, [address, addresses]);
+  }, [userPortfolio]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -101,6 +101,102 @@ const AddressWithDropdown = ({
     dispatch(setAddressName({ value, label: newName || null }));
   };
 
+  const handleUpdateAddress = (e, address) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    Swal.fire({
+      title: 'Rename Wallet',
+      input: 'text',
+      html: `
+      <span class="fs-6 align-items-start border rounded bg-light" >${address.Address}</span>
+    `,
+      inputValue: address.Name,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      inputValidator: (value) => {
+        if (
+          userPortfolio.some(
+            (addr) => addr.Name === value && addr.Address !== address.Address,
+          )
+        ) {
+          return 'This name already exists!';
+        }
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const newName = result.value.trim() ? result.value : null;
+
+        try {
+          const response = await dispatch(
+            updateUserWalletAddress({
+              userId,
+              name: newName,
+              addressId: address.Id,
+            }),
+          ).unwrap();
+
+          if (response && !response.error) {
+            // Update the local state to reflect the changes immediately
+            setUserPortfolioState((prevState) =>
+              prevState.map((addr) =>
+                addr.Address === address.Address
+                  ? { ...addr, Name: newName }
+                  : addr,
+              ),
+            );
+
+            // Swal.fire({
+            //   title: 'Success',
+            //   text: 'Wallet address updated successfully',
+            //   icon: 'success',
+            // });
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to update address',
+              icon: 'error',
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to update address',
+            icon: 'error',
+          });
+
+          console.log(error);
+        }
+      }
+    });
+  };
+
+  useEffect(() => {
+    // First look in userPortfolioState (updated state)
+    let matchingAddress;
+    if (user) {
+      matchingAddress = userPortfolioState.find(
+        (addr) => addr.Address === address,
+      );
+    }
+
+    // if not found in userPortfolioState, look in addresses
+    if (!matchingAddress) {
+      matchingAddress = addresses.find((addr) => addr.value === address);
+    }
+
+    const currentFormattedValue = formatIdTransaction(address, 6, 8);
+    setFormattedValue(currentFormattedValue);
+
+    if (matchingAddress) {
+      setFormattedAddressLabel(
+        matchingAddress.Name || matchingAddress.label || currentFormattedValue,
+      );
+    } else {
+      setFormattedAddressLabel(currentFormattedValue);
+    }
+  }, [address, user, userPortfolioState, addresses]);
+
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
@@ -136,12 +232,19 @@ const AddressWithDropdown = ({
             </DropdownItem>
             <DropdownItem
               className="d-flex align-items-center"
-              onClick={(e) =>
-                handleOpenModalRename(e, {
-                  label: formattedAddressLabel,
-                  value: address,
-                })
-              }
+              onClick={(e) => {
+                if (user) {
+                  const addr = userPortfolioState.find(
+                    (addr) => addr.Address === address,
+                  );
+                  handleUpdateAddress(e, addr);
+                } else {
+                  handleOpenModalRename(e, {
+                    label: formattedAddressLabel,
+                    value: address,
+                  });
+                }
+              }}
             >
               <i className="ri-pencil-line fs-4 me-2"></i>
               <span className="fw-normal">Rename</span>
