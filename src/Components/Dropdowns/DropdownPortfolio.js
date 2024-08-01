@@ -19,12 +19,10 @@ import {
   CurrencyUSD,
   copyToClipboard,
   formatAddressToShortVersion,
-  formatIdTransaction,
-  parseValuesToLocale,
+  parseValuesToLocale
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';
 import DropdownMenuPortal from './DropdownPortal';
-import usePortfolioData from '../../hooks/useUserPortfolio';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
@@ -56,7 +54,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const [prevAddress, setPrevAddress] = useState('');
 
 
-  const userPortfolio = []
   const userPortfolioAddresses = userPortfolioSummary?.addresses || [];
   const totalPortfolioValue = userPortfolioSummary?.blockchains?.all?.totalValue || 0;
   const loadingPortfolio = loaders?.userPortfolioSummary
@@ -87,7 +84,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     if (address === null) {
       setSelectedAddress(null);
     } else {
-      setPrevAddress(address.Address);
+      setPrevAddress(address);
       setSelectedAddress(address);
     }
     toggleDropdown();
@@ -398,7 +395,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           )}
           {
             userPortfolioAddresses?.map((address, index) => renderPortfolioAddress(address, index))}
-          {userPortfolio.length > 0 && <div className="dropdown-divider"></div>}
+          {userPortfolioAddresses.length > 0 && <div className="dropdown-divider"></div>}
           <DropdownItem>
             <Link
               to={process.env.PUBLIC_URL + '/wallets/connect'}
