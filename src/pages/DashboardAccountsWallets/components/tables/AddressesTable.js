@@ -27,6 +27,7 @@ const AddressesTable = ({
   modalConnectWallet,
   setModalConnectWallet,
   userId,
+  items
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -240,13 +241,11 @@ const AddressesTable = ({
     }
   };
 
-  useEffect(() => {
-    if (userId) {
-      fetchUserWallets();
-    } else {
-      window.history.back();
-    }
-  }, [userId]);
+  // useEffect(() => {
+  //   if (userId) {
+  //     fetchUserWallets();
+  //   }
+  // }, [userId]);
 
   return (
     <>
@@ -285,11 +284,10 @@ const AddressesTable = ({
                           >
                             <div
                               onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${
-                                openCollapse.has(collapseId)
-                                  ? 'border border-primary rounded px-2 mb-2'
-                                  : 'bg-light'
-                              }`}
+                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
+                                ? 'border border-primary rounded px-2 mb-2'
+                                : 'bg-light'
+                                }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
@@ -373,11 +371,10 @@ const AddressesTable = ({
 
                               <Collapse isOpen={openCollapse.has(collapseId)}>
                                 <CardBody
-                                  className={`cursor-pointer px-3 ${
-                                    openCollapse.has(collapseId)
-                                      ? 'border-info'
-                                      : ''
-                                  }`}
+                                  className={`cursor-pointer px-3 ${openCollapse.has(collapseId)
+                                    ? 'border-info'
+                                    : ''
+                                    }`}
                                 >
                                   <div className="d-flex flex-column">
                                     <span

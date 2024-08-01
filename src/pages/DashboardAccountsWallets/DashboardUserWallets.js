@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 
 const DashboardUserWallets = () => {
   const { user } = useSelector((state) => state.auth);
+  const { userPortfolio } = useSelector((state) => state.userWallets);
   const userId = user?.id;
 
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
@@ -43,11 +44,14 @@ const DashboardUserWallets = () => {
           </Button>
         </div>
       </div>
+
       <AddressesTable
         modalConnectWallet={modalConnectWallet}
         setModalConnectWallet={setModalConnectWallet}
         userId={userId}
       />
+
+
       {/* <div className="mt-4">
             <h2>Watchlist</h2>
             <div className="watchlist-placeholder">

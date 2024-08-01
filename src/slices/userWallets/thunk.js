@@ -53,8 +53,8 @@ export const getUserWallets = createAsyncThunk(
   },
 );
 
-export const getPortfolioWallets = createAsyncThunk(
-  'clients/getPortfolioWallets',
+export const getUserPortfolioSummary = createAsyncThunk(
+  'clients/getUserPortfolioSummary',
   async (userId, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
@@ -76,6 +76,8 @@ export const getPortfolioWallets = createAsyncThunk(
     }
   },
 );
+
+
 
 export const deleteUserAddressWallet = createAsyncThunk(
   'clients/deleteUserAddressWallet',

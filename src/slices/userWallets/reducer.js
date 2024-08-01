@@ -4,7 +4,7 @@ import {
   addUserWallet,
   getUserWallets,
   deleteUserAddressWallet,
-  getPortfolioWallets,
+  getUserPortfolioSummary,
 } from './thunk';
 
 const userWalletsSlice = createSlice({
@@ -13,6 +13,10 @@ const userWalletsSlice = createSlice({
     userPortfolio: [],
     status: 'idle',
     error: null,
+    loaders: {
+      userWallets: false,
+      userPortfolioSummary: false,
+    }
   },
 
   extraReducers: {
@@ -26,6 +30,21 @@ const userWalletsSlice = createSlice({
     [getUserWallets.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.payload;
+
+    },
+    [getUserPortfolioSummary.fulfilled]: (state, action) => {
+      state.status = 'succeeded';
+      state.userPortfolioSummary = action.payload;
+      // state.loaders.userPortfolioSummary = false;
+    },
+    [getUserPortfolioSummary.rejected]: (state, action) => {
+      state.status = 'failed';
+      state.error = action.payload;
+      // state.loaders.userPortfolioSummary = false;
+    },
+    [getUserPortfolioSummary.pending]: (state) => {
+      state.status = 'loading';
+      // state.loaders.userPortfolioSummary = true;
     },
     [addUserWallet.pending]: (state) => {
       state.status = 'loading';
@@ -52,6 +71,15 @@ const userWalletsSlice = createSlice({
       state.error = action.payload;
     },
   },
+
+  reducers: {
+    setLoader: (state, action) => {
+      const { loader, value } = action.payload;
+      state.loaders[loader] = value;
+    },
+  },
 });
+
+export const { setLoader } = userWalletsSlice.actions;
 
 export default userWalletsSlice.reducer;

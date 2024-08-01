@@ -64,9 +64,9 @@ const Sidebar = ({ layoutType }) => {
               ? '#1d1d21'
               : '#F1F2FA',
         }}
-        // style={{
-        //   background: '#23282C',
-        // }}
+      // style={{
+      //   background: '#23282C',
+      // }}
       >
         <div className="navbar-brand-box ">
           <button
