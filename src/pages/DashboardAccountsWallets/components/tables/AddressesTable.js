@@ -18,19 +18,27 @@ import {
   deleteUserAddressWallet,
   getUserWallets,
 } from '../../../../slices/userWallets/thunk';
-import { copyToClipboard, formatIdTransaction } from '../../../../utils/utils';
+import {
+  copyToClipboard,
+  CurrencyUSD,
+  formatIdTransaction,
+  parseValuesToLocale,
+} from '../../../../utils/utils';
 import { reorderUserWallets } from '../../../../slices/userWallets/thunk';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ConnectWalletModal from '../../../../Components/Modals/ConnectWalletModal';
+import { useSelector } from 'react-redux';
 
 const AddressesTable = ({
   modalConnectWallet,
   setModalConnectWallet,
   userId,
-  items
+  items,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
 
   const [addresses, setAddresses] = useState([]);
   const [openCollapse, setOpenCollapse] = useState(new Set());
@@ -247,6 +255,20 @@ const AddressesTable = ({
     }
   }, [userId]);
 
+  const getValueForAddress = (address) => {
+    if (!userPortfolioSummary || !userPortfolioSummary.addresses) {
+      return '$ 0';
+    }
+
+    const addressEntry = userPortfolioSummary.addresses.find(
+      (entry) => entry.address.toLowerCase() === address.toLowerCase(),
+    );
+    if (!addressEntry) {
+      return '';
+    }
+    return parseValuesToLocale(addressEntry.value, CurrencyUSD);
+  };
+
   return (
     <>
       <ConnectWalletModal
@@ -284,10 +306,11 @@ const AddressesTable = ({
                           >
                             <div
                               onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
-                                ? 'border border-primary rounded px-2 mb-2'
-                                : 'bg-light'
-                                }`}
+                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${
+                                openCollapse.has(collapseId)
+                                  ? 'border border-primary rounded px-2 mb-2'
+                                  : 'bg-light'
+                              }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
@@ -306,15 +329,16 @@ const AddressesTable = ({
                                 >
                                   <div className="d-flex justify-content-between align-items-center w-100">
                                     <div className="d-flex flex-column">
-                                      {address.Name && (
-                                        <h5>{address.Name}</h5>
-                                      )}
+                                      {address.Name && <h5>{address.Name}</h5>}
                                       <span className="text-muted">
                                         {formatIdTransaction(
                                           address.Address,
                                           8,
                                           12,
                                         )}
+                                      </span>
+                                      <span className="text-muted">
+                                        {getValueForAddress(address.Address)}
                                       </span>
                                     </div>
                                     <div className="d-flex justify-content-end">
@@ -371,10 +395,11 @@ const AddressesTable = ({
 
                               <Collapse isOpen={openCollapse.has(collapseId)}>
                                 <CardBody
-                                  className={`cursor-pointer px-3 ${openCollapse.has(collapseId)
-                                    ? 'border-info'
-                                    : ''
-                                    }`}
+                                  className={`cursor-pointer px-3 ${
+                                    openCollapse.has(collapseId)
+                                      ? 'border-info'
+                                      : ''
+                                  }`}
                                 >
                                   <div className="d-flex flex-column">
                                     <span
