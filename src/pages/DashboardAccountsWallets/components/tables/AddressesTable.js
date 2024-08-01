@@ -28,6 +28,8 @@ import { reorderUserWallets } from '../../../../slices/userWallets/thunk';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ConnectWalletModal from '../../../../Components/Modals/ConnectWalletModal';
 import { useSelector } from 'react-redux';
+import Skeleton from 'react-loading-skeleton';
+import { layoutModeTypes } from '../../../../Components/constants/layout';
 
 const AddressesTable = ({
   modalConnectWallet,
@@ -39,7 +41,10 @@ const AddressesTable = ({
   const dispatch = useDispatch();
 
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
-
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
   const [addresses, setAddresses] = useState([]);
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
@@ -256,12 +261,19 @@ const AddressesTable = ({
   }, [userId]);
 
   const getValueForAddress = (address) => {
+    if (loading) {
+      <Skeleton
+        width={60}
+        baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+        highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+      />;
+    }
     if (!userPortfolioSummary || !userPortfolioSummary.addresses) {
       return '$ 0';
     }
 
     const addressEntry = userPortfolioSummary.addresses.find(
-      (entry) => entry.address.toLowerCase() === address.toLowerCase(),
+      (entry) => entry.address?.toLowerCase() === address?.toLowerCase(),
     );
     if (!addressEntry) {
       return '';
