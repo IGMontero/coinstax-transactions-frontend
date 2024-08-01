@@ -61,9 +61,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     userPortfolioSummary?.blockchains?.all?.totalValue || 0;
   const loadingPortfolio = loaders?.userPortfolioSummary;
 
-  console.log('User potfolio summary:', userPortfolioSummary);
+  // console.log('User potfolio summary:', userPortfolioSummary);
 
-  console.log('Loading Portfolio:', loadingPortfolio);
+  // console.log('Loading Portfolio:', loadingPortfolio);
 
   // console.log('portfolioData:', portfolioData);
 
