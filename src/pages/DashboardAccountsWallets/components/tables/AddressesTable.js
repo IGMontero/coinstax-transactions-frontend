@@ -241,11 +241,11 @@ const AddressesTable = ({
     }
   };
 
-  // useEffect(() => {
-  //   if (userId) {
-  //     fetchUserWallets();
-  //   }
-  // }, [userId]);
+  useEffect(() => {
+    if (userId) {
+      fetchUserWallets();
+    }
+  }, [userId]);
 
   return (
     <>
