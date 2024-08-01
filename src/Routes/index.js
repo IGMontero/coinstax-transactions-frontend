@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { authMe } from '../slices/auth2/thunk';
 import { allRoutes, noVerticalLayoutRoutes } from './allRoutes';
 import { getTokenFromCookies } from '../helpers/cookies_helper';
+import usePortfolioData from '../hooks/useUserPortfolio';
 
 const Index = () => {
   const dispatch = useDispatch();
@@ -25,6 +26,8 @@ const Index = () => {
   const isRegisterPage = location.pathname.includes('/register');
 
   const token = getTokenFromCookies();
+
+  const userPortfolioData = usePortfolioData(user?.id);
 
   useEffect(() => {
     const authenticate = async () => {
