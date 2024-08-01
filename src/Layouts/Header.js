@@ -32,6 +32,7 @@ import { layoutModeTypes } from '../Components/constants/layout';
 import ParentComponentSearchBar from '../Components/SearchBar/ParentComponent';
 import WalletDropdown from '../Components/Common/WalletDropdown';
 import { DASHBOARD_USER_ROLES } from '../common/constants';
+import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
@@ -161,6 +162,9 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       </>
     );
   };
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
   return (
     <React.Fragment>
@@ -229,9 +233,18 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                     onChangeLayoutMode={onChangeLayoutMode}
                   />
                   {/* {commentedCode()} */}
-                  {currentUser?.role === DASHBOARD_USER_ROLES.USER && (
-                    <WalletDropdown />
-                  )}
+
+                  {currentUser &&
+                    currentUser?.role === DASHBOARD_USER_ROLES.USER && (
+                      // <WalletDropdown />
+                      <div className="me-2">
+                        <DropdownPortfolio
+                          dropdownOpen={dropdownOpen}
+                          toggleDropdown={toggleDropdown}
+                          isInHeader={true}
+                        />
+                      </div>
+                    )}
                   {currentUser ? (
                     <ProfileDropdown currentUser={currentUser} />
                   ) : (
