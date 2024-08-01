@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import {
   Dropdown,
   DropdownItem,
@@ -27,7 +27,7 @@ import DropdownMenuPortal from './DropdownPortal';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
-  const fetchInterval = useRef(null);
+  const navigate = useNavigate();
   const { address } = useParams();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
@@ -47,10 +47,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
   const [loadingWallets, setLoadingWallets] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(null);
-
-  const [addressesValues, setAddressesValues] = useState({});
-
-  const [initialLoad, setInitialLoad] = useState(true);
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
@@ -86,6 +82,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       setPrevAddress(address);
       setSelectedAddress(address);
     }
+
     toggleDropdown();
   };
 
@@ -262,11 +259,13 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const getValueForAddress = (address) => {
     const addressValue = userPortfolioSummary?.addressesValues?.[address];
 
-    console.log('addressValue:', addressValue);
-
     return addressValue
       ? parseValuesToLocale(addressValue, CurrencyUSD)
       : '$ 0';
+  };
+
+  const handleVisitAddress = (link) => {
+    navigate(`${link}`);
   };
 
   const renderPortfolioAddress = (addressData, index) => {
@@ -277,32 +276,31 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     return (
       <>
         <DropdownItem
-          className="d-flex align-items-center"
+          className="d-flex align-items-center "
           key={address}
-          onClick={() => handleSelectAddress(address)}
+          onClick={() => {
+            handleSelectAddress(address);
+            handleVisitAddress(`/address/${address}`);
+          }}
         >
-          <Link
-            to={process.env.PUBLIC_URL + `/address/${address}`}
-            className="dropdown-item ps-0"
-          >
-            <div className="d-flex align-items-center">
-              <i className="ri-link text-muted fs-3 align-middle me-3"></i>
-              <div className="d-flex flex-column">
-                <span className="align-middle">
-                  {name ? name : formatAddressToShortVersion(address)}
-                </span>
-                {loadingAddressValue ? (
-                  <Skeleton
-                    width={60}
-                    baseColor={isDarkMode ? '#333' : '#f3f3f3'}
-                    highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
-                  />
-                ) : (
-                  <span className="text-muted">{addressValue}</span>
-                )}
-              </div>
+          <div className="d-flex align-items-center dropdown-item ps-0">
+            <i className="ri-link text-muted fs-3 align-middle me-3"></i>
+            <div className="d-flex flex-column">
+              <span className="align-middle">
+                {name ? name : formatAddressToShortVersion(address)}
+              </span>
+              {loadingAddressValue ? (
+                <Skeleton
+                  width={60}
+                  baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+                  highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+                />
+              ) : (
+                <span className="text-muted">{addressValue}</span>
+              )}
             </div>
-          </Link>
+          </div>
+
           {selectedAddress && selectedAddress.Address === address && (
             <i className="ri-check-line text-muted fs-16 align-middle me-3"></i>
           )}
@@ -315,7 +313,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''} border-2 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''} border-1 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
@@ -346,7 +344,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             </div>
           )}
         </div>
-        <i className="ri-arrow-down-s-line fs-4"></i>
+        <i className="ri-arrow-down-s-line fs-4 text-dark"></i>
       </DropdownToggle>
 
       <DropdownMenuPortal>
@@ -356,30 +354,30 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         >
           {!userPortfolioAddresses.length ? null : (
             <>
-              <DropdownItem className="d-flex align-items-center">
-                <Link
-                  to={process.env.PUBLIC_URL + '/portfolio'}
-                  className="dropdown-item ps-0"
-                  onClick={() => handleSelectAddress(null)}
-                >
-                  <div className="d-flex align-items-center">
-                    <i className="ri-dashboard-fill text-muted fs-3 align-middle me-3"></i>
-                    <div className="d-flex flex-column">
-                      <span className="align-middle">Portfolio</span>
-                      <span className="text-muted">
-                        {loadingPortfolio ? (
-                          <Skeleton
-                            width={80}
-                            baseColor={isDarkMode ? '#333' : '#f3f3f3'}
-                            highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
-                          />
-                        ) : (
-                          parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
-                        )}
-                      </span>
-                    </div>
+              <DropdownItem
+                onClick={() => {
+                  handleSelectAddress(null);
+                  handleVisitAddress('/portfolio');
+                }}
+                className="d-flex align-items-center"
+              >
+                <div className="d-flex align-items-center dropdown-item ps-0">
+                  <i className="ri-dashboard-fill text-muted fs-3 align-middle me-3"></i>
+                  <div className="d-flex flex-column">
+                    <span className="align-middle">Portfolio</span>
+                    <span className="text-muted">
+                      {loadingPortfolio ? (
+                        <Skeleton
+                          width={80}
+                          baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+                          highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+                        />
+                      ) : (
+                        parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
+                      )}
+                    </span>
                   </div>
-                </Link>
+                </div>
               </DropdownItem>
               <div className="dropdown-divider"></div>
             </>
@@ -390,33 +388,31 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           {userPortfolioAddresses.length > 0 && (
             <div className="dropdown-divider"></div>
           )}
-          <DropdownItem>
-            <Link
-              to={process.env.PUBLIC_URL + '/wallets/connect'}
-              className="dropdown-item ps-0"
-            >
+          <DropdownItem
+            onClick={() => {
+              handleVisitAddress('/wallets/connect');
+            }}
+          >
+            <div className="dropdown-item ps-0">
               <i className="ri-add-line text-muted fs-16 align-middle me-3"></i>
               <span className="align-middle">Connect another Wallet</span>
-            </Link>
+            </div>
           </DropdownItem>
-          <DropdownItem href="#/action-2">
-            {user && (
-              <DropdownItem className="p-0">
-                <Link
-                  to={
-                    process.env.PUBLIC_URL +
-                    (isUserOrNoUser ? '/wallets' : '/clients')
-                  }
-                  className="dropdown-item ps-0"
-                >
-                  <i className="mdi mdi-wallet text-muted fs-16 align-middle me-3"></i>
-                  <span className="align-middle">
-                    Manage {isAdminOrAccountant ? 'Clients' : 'Wallets'}
-                  </span>
-                </Link>
-              </DropdownItem>
-            )}
-          </DropdownItem>
+
+          {user && (
+            <DropdownItem
+              onClick={() => {
+                handleVisitAddress(isUserOrNoUser ? '/wallets' : '/clients');
+              }}
+            >
+              <div className="dropdown-item ps-0">
+                <i className="mdi mdi-wallet text-muted fs-16 align-middle me-3"></i>
+                <span className="align-middle">
+                  Manage {isAdminOrAccountant ? 'Clients' : 'Wallets'}
+                </span>
+              </div>
+            </DropdownItem>
+          )}
         </DropdownMenu>
       </DropdownMenuPortal>
     </Dropdown>
