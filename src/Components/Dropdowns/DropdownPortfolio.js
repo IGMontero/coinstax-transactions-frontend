@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -29,6 +29,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { address } = useParams();
+  const addressParams = address;
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
@@ -45,23 +46,33 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     user?.role === DASHBOARD_USER_ROLES.ADMIN ||
     user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
 
+  const userPortfolioAddresses = userPortfolioSummary?.addresses || [];
   const [loadingWallets, setLoadingWallets] = useState(false);
-  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [selectedAddress, setSelectedAddress] = useState(
+    userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
+      null,
+  );
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
   const [prevAddress, setPrevAddress] = useState('');
 
-  const userPortfolioAddresses = userPortfolioSummary?.addresses || [];
   const totalPortfolioValue =
     userPortfolioSummary?.blockchains?.all?.totalValue || 0;
   const loadingPortfolio = loaders?.userPortfolioSummary;
 
-  // console.log('User potfolio summary:', userPortfolioSummary);
-
-  // console.log('Loading Portfolio:', loadingPortfolio);
-
-  // console.log('portfolioData:', portfolioData);
+  useEffect(() => {
+    // Mantén `selectedAddress` actualizado si `addressParams` cambia
+    if (addressParams) {
+      const matchedAddress = userPortfolioAddresses.find(
+        (addr) => addr.address === addressParams,
+      );
+      if (matchedAddress) {
+        setSelectedAddress(matchedAddress);
+        setPrevAddress(matchedAddress.address);
+      }
+    }
+  }, [addressParams, userPortfolioAddresses]);
 
   const fetchUserWallets = async () => {
     console.log('fetching user wallets');
@@ -78,9 +89,13 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleSelectAddress = (address) => {
     if (address === null) {
       setSelectedAddress(null);
+      setPrevAddress(''); // Reiniciar prevAddress si se selecciona null
     } else {
-      setPrevAddress(address);
-      setSelectedAddress(address);
+      const selected = userPortfolioAddresses.find(
+        (addr) => addr.address === address,
+      );
+      setPrevAddress(selected.address); // Actualizar prevAddress
+      setSelectedAddress(selected);
     }
 
     toggleDropdown();
@@ -152,7 +167,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.Name ? address.Name : address.Address}?`,
+      text: `Are you sure to delete wallet ${
+        address.Name ? address.Name : address.Address
+      }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -259,6 +276,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const getValueForAddress = (address) => {
     const addressValue = userPortfolioSummary?.addressesValues?.[address];
 
+    console.log('addressValue', addressValue);
+
     return addressValue
       ? parseValuesToLocale(addressValue, CurrencyUSD)
       : '$ 0';
@@ -301,9 +320,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             </div>
           </div>
 
-          {selectedAddress && selectedAddress.Address === address && (
+          {(selectedAddress && selectedAddress.address === address) ||
+          addressParams === address ? (
             <i className="ri-check-line text-muted fs-16 align-middle me-3"></i>
-          )}
+          ) : null}
           {renderOptionsSubDropdown(index, addressData)}
         </DropdownItem>
       </>
@@ -313,7 +333,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''} border-1 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent ${
+          isInHeader ? 'py-1 ' : ''
+        } border-1 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
@@ -322,16 +344,17 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         )}
         <div className="d-flex flex-column align-items-start flex-grow-1">
           <span className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}>
-            {selectedAddress
-              ? selectedAddress.Name
-                ? selectedAddress.Name
+            {selectedAddress &&
+            (selectedAddress.name || selectedAddress.address)
+              ? selectedAddress.name
+                ? selectedAddress.name
                 : formatAddressToShortVersion(selectedAddress.Address)
               : 'Portfolio'}
           </span>
           {!isInHeader && (
             <div className="text-start text-muted">
               {selectedAddress ? (
-                getValueForAddress(selectedAddress?.Address)
+                parseValuesToLocale(selectedAddress.value, CurrencyUSD)
               ) : loadingPortfolio ? (
                 <Skeleton
                   width={80}
