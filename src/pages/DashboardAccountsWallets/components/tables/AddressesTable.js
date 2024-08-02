@@ -40,8 +40,6 @@ const AddressesTable = ({
   onDeleteAddress,
 }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  console.log('addresses ', addresses);
 
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,

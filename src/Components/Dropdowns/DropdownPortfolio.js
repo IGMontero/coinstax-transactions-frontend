@@ -78,17 +78,17 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     }
   }, [addressParams, userPortfolioAddresses]);
 
-  const fetchUserWallets = async () => {
-    console.log('fetching user wallets');
-    setLoadingWallets(true);
-    try {
-      await dispatch(getUserWallets(userId)).unwrap();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingWallets(false);
-    }
-  };
+  // const fetchUserWallets = async () => {
+  //   console.log('fetching user wallets');
+  //   setLoadingWallets(true);
+  //   try {
+  //     await dispatch(getUserWallets(userId)).unwrap();
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setLoadingWallets(false);
+  //   }
+  // };
 
   const handleSelectAddress = (address) => {
     if (address === null) {
@@ -277,15 +277,15 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     );
   };
 
-  const getValueForAddress = (address) => {
-    const addressValue = userPortfolioSummary?.addressesValues?.[address];
+  // const getValueForAddress = (address) => {
+  //   const addressValue = userPortfolioSummary?.addressesValues?.[address];
 
-    console.log('addressValue', addressValue);
+  //   console.log('addressValue', addressValue);
 
-    return addressValue
-      ? parseValuesToLocale(addressValue, CurrencyUSD)
-      : '$ 0';
-  };
+  //   return addressValue
+  //     ? parseValuesToLocale(addressValue, CurrencyUSD)
+  //     : '$ 0';
+  // };
 
   const handleVisitAddress = (link) => {
     navigate(`${link}`);
