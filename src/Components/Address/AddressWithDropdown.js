@@ -29,9 +29,9 @@ const AddressWithDropdown = ({
   const userId = user?.id;
 
   const addresses = useSelector((state) => state.addressName.addresses);
-  const { userPortfolioSummary, loaders } = useSelector(
-    (state) => state.userWallets,
-  );
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
+
+  console.log('user portfolio summary', userPortfolioSummary);
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);

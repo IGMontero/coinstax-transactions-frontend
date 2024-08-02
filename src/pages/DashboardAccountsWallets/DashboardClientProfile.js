@@ -64,7 +64,7 @@ const DashboardClientProfile = () => {
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
-      <div className="mt-5">
+      <div className="mt-5" style={{ maxWidth: '610px' }}>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1>Client Profile</h1>
           <div className="d-flex">
@@ -103,7 +103,6 @@ const DashboardClientProfile = () => {
           setModalConnectWallet={setModalConnectWallet}
         />
       </div>
-
     </React.Fragment>
   );
 };

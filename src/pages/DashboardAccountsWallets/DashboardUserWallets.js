@@ -17,47 +17,47 @@ const DashboardUserWallets = () => {
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
-
-      <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
-        <h1>Manage Wallets</h1>
-        <div className="d-flex ">
-          <Button
-            className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
-            color="soft-light"
-            style={{
-              borderRadius: '10px',
-              border: '.5px solid grey',
-            }}
-          >
-            Sync Addresses
-          </Button>
-          <Button
-            onClick={toggleModalConnectWallet}
-            className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
-            color="soft-light"
-            style={{
-              borderRadius: '10px',
-              border: '.5px solid grey',
-            }}
-          >
-            Connect Wallet
-          </Button>
+      <div style={{ maxWidth: '610px' }}>
+        <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
+          <h1>Manage Wallets</h1>
+          <div className="d-flex ">
+            <Button
+              className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
+              color="soft-light"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+              }}
+            >
+              Sync Addresses
+            </Button>
+            <Button
+              onClick={toggleModalConnectWallet}
+              className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
+              color="soft-light"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+              }}
+            >
+              Connect Wallet
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <AddressesTable
-        modalConnectWallet={modalConnectWallet}
-        setModalConnectWallet={setModalConnectWallet}
-        userId={userId}
-      />
+        <AddressesTable
+          modalConnectWallet={modalConnectWallet}
+          setModalConnectWallet={setModalConnectWallet}
+          userId={userId}
+        />
 
-
-      {/* <div className="mt-4">
+        {/* <div className="mt-4">
             <h2>Watchlist</h2>
             <div className="watchlist-placeholder">
               <p>Drag your wallets here</p>
             </div>
           </div> */}
+      </div>
     </React.Fragment>
   );
 };
