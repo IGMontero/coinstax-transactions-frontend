@@ -12,15 +12,12 @@ import Swal from 'sweetalert2';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
 import {
   deleteUserAddressWallet,
-  getUserPortfolioSummary,
-  getUserWallets,
   updateUserWalletAddress,
 } from '../../slices/userWallets/thunk';
 import {
   CurrencyUSD,
   copyToClipboard,
   formatAddressToShortVersion,
-  formatIdTransaction,
   parseValuesToLocale,
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';

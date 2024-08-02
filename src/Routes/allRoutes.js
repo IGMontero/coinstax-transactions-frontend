@@ -127,7 +127,7 @@ const authProtectedRoutes = [
     ),
   },
   {
-    path: '/clients/:userId',
+    path: '/clients/:clientId',
     component: (
       <AuthProtectedRoutes
         allowedRoles={[

@@ -4,7 +4,7 @@ import {
   addUserWallet,
   getUserWallets,
   deleteUserAddressWallet,
-  getUserPortfolioSummary,
+  getCurrentUserPortfolioSummary,
 } from './thunk';
 
 const userWalletsSlice = createSlice({
@@ -34,15 +34,15 @@ const userWalletsSlice = createSlice({
       state.status = 'failed';
       state.error = action.payload;
     },
-    [getUserPortfolioSummary.fulfilled]: (state, action) => {
+    [getCurrentUserPortfolioSummary.fulfilled]: (state, action) => {
       state.status = 'succeeded';
       state.userPortfolioSummary = action.payload;
     },
-    [getUserPortfolioSummary.rejected]: (state, action) => {
+    [getCurrentUserPortfolioSummary.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.payload;
     },
-    [getUserPortfolioSummary.pending]: (state) => {
+    [getCurrentUserPortfolioSummary.pending]: (state) => {
       state.status = 'loading';
     },
     [addUserWallet.pending]: (state) => {
