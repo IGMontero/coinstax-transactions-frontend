@@ -45,7 +45,7 @@ const AddressWithDropdown = ({
     let matchingAddress;
 
     if (user) {
-      matchingAddress = userPortfolioSummary.addresses.find(
+      matchingAddress = userPortfolioSummary?.addresses?.find(
         (addr) => addr.address === address,
       );
     }
