@@ -147,6 +147,9 @@ const AddressesTable = ({
               <Row>
                 {addresses?.map((address, index) => {
                   const collapseId = `address-${index}`;
+
+                  const addressName = address.name || address.Name;
+                  const itemAddress = address.address || address.Address;
                   return (
                     <Draggable
                       key={address?.id}
@@ -191,16 +194,16 @@ const AddressesTable = ({
                                 >
                                   <div className="d-flex justify-content-between align-items-center w-100">
                                     <div className="d-flex flex-column">
-                                      {address.name && <h5>{address.name}</h5>}
+                                      {addressName && <h5>{addressName}</h5>}
                                       <span className="text-muted">
                                         {formatIdTransaction(
-                                          address.address,
+                                          itemAddress,
                                           8,
                                           12,
                                         )}
                                       </span>
                                       <span className="text-muted">
-                                        {getValueForAddress(address.address)}
+                                        {getValueForAddress(itemAddress)}
                                       </span>
                                     </div>
                                     <div className="d-flex justify-content-end">
@@ -224,7 +227,7 @@ const AddressesTable = ({
                                           <DropdownItem
                                             className="d-flex aling-items-center"
                                             onClick={(e) =>
-                                              handleCopy(e, address.address)
+                                              handleCopy(e, itemAddress)
                                             }
                                           >
                                             <i className="ri-file-copy-line me-2"></i>{' '}
@@ -268,7 +271,7 @@ const AddressesTable = ({
                                       className="text-hover-underline  text-dark col-2"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        handleVisitAddress(address.address);
+                                        handleVisitAddress(itemAddress);
                                       }}
                                     >
                                       Visit Address
