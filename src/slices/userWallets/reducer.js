@@ -11,12 +11,13 @@ const userWalletsSlice = createSlice({
   name: 'userWallets',
   initialState: {
     userPortfolio: [],
+    userPortfolioSummary: {},
     status: 'idle',
     error: null,
     loaders: {
       userWallets: false,
       userPortfolioSummary: false,
-    }
+    },
   },
 
   extraReducers: {
@@ -30,7 +31,6 @@ const userWalletsSlice = createSlice({
     [getUserWallets.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.payload;
-
     },
     [getUserPortfolioSummary.fulfilled]: (state, action) => {
       state.status = 'succeeded';
@@ -77,9 +77,16 @@ const userWalletsSlice = createSlice({
       const { loader, value } = action.payload;
       state.loaders[loader] = value;
     },
+    setUserPortfolioSummary: (state, action) => {
+      state.userPortfolioSummary = {
+        ...state.userPortfolioSummary,
+        addresses: action.payload,
+      };
+      state.loaders.userPortfolioSummary = false;
+    },
   },
 });
 
-export const { setLoader } = userWalletsSlice.actions;
+export const { setLoader, setUserPortfolioSummary } = userWalletsSlice.actions;
 
 export default userWalletsSlice.reducer;

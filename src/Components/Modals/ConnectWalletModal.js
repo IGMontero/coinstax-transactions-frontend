@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Modal,
   ModalHeader,
   ModalBody,
-  ModalFooter,
-  Button,
   Form,
   FormGroup,
   Label,
   Input,
   InputGroup,
-  InputGroupText,
+  Button,
   Spinner,
 } from 'reactstrap';
-import { addUserWallet } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
+import { addUserWallet } from '../../slices/userWallets/thunk';
+import { setUserPortfolioSummary } from '../../slices/userWallets/reducer';
 
-const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh, userId }) => {
+const ConnectWalletModal = ({ isOpen, setIsOpen, userId }) => {
   const dispatch = useDispatch();
+  const userAddresses = useSelector(
+    (state) => state.userWallets.userPortfolioSummary.addresses,
+  );
 
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
@@ -32,15 +34,15 @@ const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh, userId }) => {
         addUserWallet({ address, userId }),
       ).unwrap();
 
-      console.log(response);
-
       if (response && !response.error) {
         Swal.fire({
           title: 'Success',
           text: 'Wallet connected successfully',
           icon: 'success',
         });
-        onRefresh();
+
+        dispatch(setUserPortfolioSummary([...userAddresses, response]));
+
         setAddress('');
         toggleModal();
       } else {
@@ -69,25 +71,22 @@ const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh, userId }) => {
         <Form>
           <FormGroup>
             <Label for="address">Wallet Address</Label>
-            <div className="d-flex align-items-center">
-              <InputGroup>
-                <Input
-                  type="text"
-                  id="address"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="Enter wallet address"
-                />
-                <Button
-                  disabled={loading || !address}
-                  color="primary"
-                  className=""
-                  onClick={handleSubmit}
-                >
-                  {loading ? <Spinner size="sm" color="primary" /> : 'Add'}
-                </Button>
-              </InputGroup>
-            </div>
+            <InputGroup>
+              <Input
+                type="text"
+                id="address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="Enter wallet address"
+              />
+              <Button
+                disabled={loading || !address}
+                color="primary"
+                onClick={handleSubmit}
+              >
+                {loading ? <Spinner size="sm" color="light" /> : 'Add'}
+              </Button>
+            </InputGroup>
           </FormGroup>
         </Form>
       </ModalBody>

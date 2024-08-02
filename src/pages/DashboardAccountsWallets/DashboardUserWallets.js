@@ -2,17 +2,174 @@ import React, { useState } from 'react';
 import { Button } from 'reactstrap';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddressesTable from './components/tables/AddressesTable';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { setUserPortfolioSummary } from '../../slices/userWallets/reducer';
+import {
+  deleteUserAddressWallet,
+  reorderUserWallets,
+  updateUserWalletAddress,
+} from '../../slices/userWallets/thunk';
+import Swal from 'sweetalert2';
 
 const DashboardUserWallets = () => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { userPortfolio } = useSelector((state) => state.userWallets);
+  const { userPortfolioSummary, loaders } = useSelector(
+    (state) => state.userWallets,
+  );
+
+  const userAddresses = userPortfolioSummary?.addresses;
+
+  console.log(loaders.userPortfolioSummary);
   const userId = user?.id;
 
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
 
   const toggleModalConnectWallet = () =>
     setModalConnectWallet(!modalConnectWallet);
+
+  const handleSetAddresses = (updatedAddresses) => {
+    dispatch(setUserPortfolioSummary(updatedAddresses));
+  };
+
+  const handleUpdateAddress = (e, address) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    Swal.fire({
+      title: 'Update Wallet Address',
+      input: 'text',
+      inputValue: address.name,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      inputValidator: (value) => {
+        if (
+          userAddresses?.some(
+            (addr) => addr.name === value && addr.address !== address.address,
+          )
+        ) {
+          return 'This name already exists!';
+        }
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const newName = result.value.trim() ? result.value : null;
+
+        try {
+          const response = await dispatch(
+            updateUserWalletAddress({
+              userId,
+              name: newName,
+              addressId: address.id,
+            }),
+          ).unwrap();
+
+          if (response && !response.error) {
+            // Actualiza la lista de direcciones localmente
+            const updatedAddresses = userAddresses.map((addr) => {
+              if (addr.id === address.id) {
+                return {
+                  ...addr,
+                  name: newName,
+                };
+              }
+              return addr;
+            });
+
+            handleSetAddresses(updatedAddresses);
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to update address',
+              icon: 'error',
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to update address',
+            icon: 'error',
+          });
+
+          console.log(error);
+        }
+      }
+    });
+  };
+
+  const handleReorderAddresses = async (updatedAddresses) => {
+    const payload = updatedAddresses.map((address) => ({
+      Id: address.id,
+      Index: address.index,
+    }));
+
+    try {
+      const response = await dispatch(
+        reorderUserWallets({ userId: userId, addresses: payload }),
+      ).unwrap();
+
+      if (response && !response.error) {
+        handleSetAddresses(updatedAddresses);
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to reorder addresses',
+          icon: 'error',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to reorder addresses:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to reorder addresses',
+        icon: 'error',
+      });
+    }
+  };
+
+  const handleDeleteUserAddress = (address) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Are you sure to delete wallet ${address.name ? address.name : address.address}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await dispatch(
+            deleteUserAddressWallet({ userId, addressId: address.id }),
+          ).unwrap();
+
+          if (response && !response.error) {
+            Swal.fire({
+              title: 'Success',
+              text: 'Wallet address deleted successfully',
+              icon: 'success',
+            });
+
+            handleSetAddresses(
+              userAddresses.filter((addr) => addr.id !== address.id),
+            );
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to delete address',
+              icon: 'error',
+            });
+          }
+        } catch (error) {
+          console.error('Failed to delete address:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to delete address',
+            icon: 'error',
+          });
+        }
+      }
+    });
+  };
 
   return (
     <React.Fragment>
@@ -44,11 +201,24 @@ const DashboardUserWallets = () => {
             </Button>
           </div>
         </div>
+        {loaders.userPortfolioSummary && (
+          <div className="d-flex justify-content-center">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        )}
 
         <AddressesTable
           modalConnectWallet={modalConnectWallet}
           setModalConnectWallet={setModalConnectWallet}
           userId={userId}
+          addresses={userPortfolioSummary?.addresses}
+          setAddresses={handleSetAddresses}
+          loading={loaders.userPortfolioSummary}
+          onUpdateAddress={handleUpdateAddress}
+          onReorderAddress={handleReorderAddresses}
+          onDeleteAddress={handleDeleteUserAddress}
         />
 
         {/* <div className="mt-4">
