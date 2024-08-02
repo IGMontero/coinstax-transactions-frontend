@@ -40,7 +40,7 @@ const AddressesTable = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
+  const { userPortfolioSummary, loaders } = useSelector((state) => state.userWallets);
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
@@ -261,6 +261,8 @@ const AddressesTable = ({
   }, [userId]);
 
   const getValueForAddress = (address) => {
+
+
     if (loading) {
       <Skeleton
         width={60}
@@ -269,7 +271,7 @@ const AddressesTable = ({
       />;
     }
     if (!userPortfolioSummary || !userPortfolioSummary.addresses) {
-      return '$ 0';
+      return '';
     }
 
     const addressEntry = userPortfolioSummary.addresses.find(
@@ -318,11 +320,10 @@ const AddressesTable = ({
                           >
                             <div
                               onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${
-                                openCollapse.has(collapseId)
-                                  ? 'border border-primary rounded px-2 mb-2'
-                                  : 'bg-light'
-                              }`}
+                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
+                                ? 'border border-primary rounded px-2 mb-2'
+                                : 'bg-light'
+                                }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
@@ -407,11 +408,10 @@ const AddressesTable = ({
 
                               <Collapse isOpen={openCollapse.has(collapseId)}>
                                 <CardBody
-                                  className={`cursor-pointer px-3 ${
-                                    openCollapse.has(collapseId)
-                                      ? 'border-info'
-                                      : ''
-                                  }`}
+                                  className={`cursor-pointer px-3 ${openCollapse.has(collapseId)
+                                    ? 'border-info'
+                                    : ''
+                                    }`}
                                 >
                                   <div className="d-flex flex-column">
                                     <span
