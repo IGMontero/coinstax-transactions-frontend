@@ -196,14 +196,38 @@ const AddressesTable = ({
                                     <div className="d-flex flex-column">
                                       {addressName && <h5>{addressName}</h5>}
                                       <span className="text-muted">
-                                        {formatIdTransaction(
-                                          itemAddress,
-                                          8,
-                                          12,
+                                        {loading ? (
+                                          <Skeleton
+                                            width={60}
+                                            baseColor={
+                                              isDarkMode ? '#333' : '#f3f3f3'
+                                            }
+                                            highlightColor={
+                                              isDarkMode ? '#444' : '#e0e0e0'
+                                            }
+                                          />
+                                        ) : (
+                                          formatIdTransaction(
+                                            itemAddress,
+                                            8,
+                                            12,
+                                          )
                                         )}
                                       </span>
                                       <span className="text-muted">
-                                        {getValueForAddress(itemAddress)}
+                                        {loading ? (
+                                          <Skeleton
+                                            width={60}
+                                            baseColor={
+                                              isDarkMode ? '#333' : '#f3f3f3'
+                                            }
+                                            highlightColor={
+                                              isDarkMode ? '#444' : '#e0e0e0'
+                                            }
+                                          />
+                                        ) : (
+                                          getValueForAddress(itemAddress)
+                                        )}
                                       </span>
                                     </div>
                                     <div className="d-flex justify-content-end">

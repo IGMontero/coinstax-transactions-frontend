@@ -13,35 +13,17 @@ import {
   Spinner,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
-import {
-  addUserWallet,
-  getUserPortfolioSummary,
-} from '../../slices/userWallets/thunk';
+import { addUserWallet } from '../../slices/userWallets/thunk';
+import useRefreshPortfolio from '../Hooks/PortfolioHook';
 
 const ConnectWalletModal = ({ isOpen, setIsOpen, userId }) => {
   const dispatch = useDispatch();
-  const fetchControllerRef = useRef(new AbortController());
+  const { refreshPortfolio } = useRefreshPortfolio(userId);
 
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
 
   const toggleModal = () => setIsOpen(!isOpen);
-
-  const refreshPortfolio = async () => {
-    try {
-      fetchControllerRef.current.abort();
-      fetchControllerRef.current = new AbortController();
-      const signal = fetchControllerRef.current.signal;
-
-      await dispatch(getUserPortfolioSummary({ userId, signal })).unwrap();
-    } catch (error) {
-      if (error.name === 'AbortError') {
-        console.log('Fetch aborted');
-      } else {
-        console.error('Fetch failed:', error);
-      }
-    }
-  };
 
   const handleSubmit = async () => {
     try {
