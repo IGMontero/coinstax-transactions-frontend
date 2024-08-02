@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -12,6 +12,7 @@ import Swal from 'sweetalert2';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
 import {
   deleteUserAddressWallet,
+  getUserPortfolioSummary,
   getUserWallets,
   updateUserWalletAddress,
 } from '../../slices/userWallets/thunk';
@@ -24,6 +25,7 @@ import {
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';
 import DropdownMenuPortal from './DropdownPortal';
+import useRefreshPortfolio from '../Hooks/PortfolioHook';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
@@ -32,6 +34,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const addressParams = address;
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
+
+  const { refreshPortfolio } = useRefreshPortfolio(userId);
 
   const { userPortfolioSummary, loaders } = useSelector(
     (state) => state.userWallets,
@@ -108,7 +112,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     Swal.fire({
       title: 'Rename Wallet',
       input: 'text',
-      inputValue: address.Name,
+      inputValue: address.name,
       html: `
       <span class="fs-6 align-items-start border rounded bg-light" >${address.address}</span>
     `,
@@ -132,7 +136,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             updateUserWalletAddress({
               userId,
               name: newName,
-              addressId: address.Id,
+              addressId: address.id,
             }),
           ).unwrap();
 
@@ -143,7 +147,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             //   icon: 'success',
             // });
 
-            fetchUserWallets();
+            refreshPortfolio();
           } else {
             Swal.fire({
               title: 'Error',
@@ -187,7 +191,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
               text: 'Wallet address deleted successfully',
               icon: 'success',
             });
-            fetchUserWallets();
+            refreshPortfolio();
           } else {
             Swal.fire({
               title: 'Error',
