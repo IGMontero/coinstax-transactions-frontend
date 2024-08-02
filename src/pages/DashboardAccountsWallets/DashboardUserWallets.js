@@ -10,6 +10,7 @@ import {
   updateUserWalletAddress,
 } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
+import useRefreshPortfolio from '../../Components/Hooks/PortfolioHook';
 
 const DashboardUserWallets = () => {
   const dispatch = useDispatch();
@@ -17,11 +18,9 @@ const DashboardUserWallets = () => {
   const { userPortfolioSummary, loaders } = useSelector(
     (state) => state.userWallets,
   );
-
-  const userAddresses = userPortfolioSummary?.addresses;
-
-  console.log(loaders.userPortfolioSummary);
   const userId = user?.id;
+  const { refreshPortfolio } = useRefreshPortfolio(userId);
+  const userAddresses = userPortfolioSummary?.addresses;
 
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
 
@@ -65,8 +64,7 @@ const DashboardUserWallets = () => {
           ).unwrap();
 
           if (response && !response.error) {
-            // Actualiza la lista de direcciones localmente
-            const updatedAddresses = userAddresses.map((addr) => {
+            const updatedAddresses = userAddresses?.map((addr) => {
               if (addr.id === address.id) {
                 return {
                   ...addr,
@@ -95,6 +93,23 @@ const DashboardUserWallets = () => {
         }
       }
     });
+  };
+
+  const onDragEnd = async (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(userAddresses);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    const updatedItems = items.map((item, idx) => ({
+      ...item,
+      index: idx + 1,
+    }));
+
+    handleSetAddresses(updatedItems);
+
+    await handleReorderAddresses(updatedItems);
   };
 
   const handleReorderAddresses = async (updatedAddresses) => {
@@ -201,24 +216,24 @@ const DashboardUserWallets = () => {
             </Button>
           </div>
         </div>
-        {loaders.userPortfolioSummary && (
-          <div className="d-flex justify-content-center">
+        {/* {!loaders.userPortfolioSummary && (
+          <div className="d-flex justify-content-center my-3">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
-        )}
+        )} */}
 
         <AddressesTable
           modalConnectWallet={modalConnectWallet}
           setModalConnectWallet={setModalConnectWallet}
           userId={userId}
           addresses={userPortfolioSummary?.addresses}
-          setAddresses={handleSetAddresses}
           loading={loaders.userPortfolioSummary}
           onUpdateAddress={handleUpdateAddress}
-          onReorderAddress={handleReorderAddresses}
+          onReorderAddress={onDragEnd}
           onDeleteAddress={handleDeleteUserAddress}
+          onRefresh={refreshPortfolio}
         />
 
         {/* <div className="mt-4">
