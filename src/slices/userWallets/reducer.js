@@ -11,7 +11,9 @@ const userWalletsSlice = createSlice({
   name: 'userWallets',
   initialState: {
     userPortfolio: [],
-    userPortfolioSummary: {},
+    userPortfolioSummary: {
+      addresses: [],
+    },
     status: 'idle',
     error: null,
     loaders: {
@@ -35,23 +37,22 @@ const userWalletsSlice = createSlice({
     [getUserPortfolioSummary.fulfilled]: (state, action) => {
       state.status = 'succeeded';
       state.userPortfolioSummary = action.payload;
-      // state.loaders.userPortfolioSummary = false;
     },
     [getUserPortfolioSummary.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.payload;
-      // state.loaders.userPortfolioSummary = false;
     },
     [getUserPortfolioSummary.pending]: (state) => {
       state.status = 'loading';
-      // state.loaders.userPortfolioSummary = true;
     },
     [addUserWallet.pending]: (state) => {
       state.status = 'loading';
     },
     [addUserWallet.fulfilled]: (state, action) => {
       state.status = 'succeeded';
-      state.userPortfolio.push(action.payload);
+      // Asegúrate de que el payload está en el formato correcto
+      const newWallet = action.payload;
+      state.userPortfolioSummary.addresses.push(newWallet);
     },
     [addUserWallet.rejected]: (state, action) => {
       state.status = 'failed';
@@ -62,9 +63,10 @@ const userWalletsSlice = createSlice({
     },
     [deleteUserAddressWallet.fulfilled]: (state, action) => {
       state.status = 'succeeded';
-      state.userPortfolio = state.userPortfolio.filter(
-        (wallet) => wallet.id !== action.payload.id,
-      );
+      state.userPortfolioSummary.addresses =
+        state.userPortfolioSummary.addresses.filter(
+          (wallet) => wallet.id !== action.payload.id,
+        );
     },
     [deleteUserAddressWallet.rejected]: (state, action) => {
       state.status = 'failed';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Modal,
@@ -13,19 +13,35 @@ import {
   Spinner,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
-import { addUserWallet } from '../../slices/userWallets/thunk';
-import { setUserPortfolioSummary } from '../../slices/userWallets/reducer';
+import {
+  addUserWallet,
+  getUserPortfolioSummary,
+} from '../../slices/userWallets/thunk';
 
 const ConnectWalletModal = ({ isOpen, setIsOpen, userId }) => {
   const dispatch = useDispatch();
-  const userAddresses = useSelector(
-    (state) => state.userWallets.userPortfolioSummary.addresses,
-  );
+  const fetchControllerRef = useRef(new AbortController());
 
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
 
   const toggleModal = () => setIsOpen(!isOpen);
+
+  const refreshPortfolio = async () => {
+    try {
+      fetchControllerRef.current.abort();
+      fetchControllerRef.current = new AbortController();
+      const signal = fetchControllerRef.current.signal;
+
+      await dispatch(getUserPortfolioSummary({ userId, signal })).unwrap();
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted');
+      } else {
+        console.error('Fetch failed:', error);
+      }
+    }
+  };
 
   const handleSubmit = async () => {
     try {
@@ -41,8 +57,8 @@ const ConnectWalletModal = ({ isOpen, setIsOpen, userId }) => {
           icon: 'success',
         });
 
-        dispatch(setUserPortfolioSummary([...userAddresses, response]));
-
+        // dispatch(setUserPortfolioSummary([...userAddresses]));
+        refreshPortfolio();
         setAddress('');
         toggleModal();
       } else {
