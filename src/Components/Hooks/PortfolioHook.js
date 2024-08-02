@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserPortfolioSummary } from '../../slices/userWallets/thunk';
+import { getCurrentUserPortfolioSummary } from '../../slices/userWallets/thunk';
 import { setLoader } from '../../slices/userWallets/reducer';
 
 const useRefreshPortfolio = (userId) => {
@@ -18,7 +18,7 @@ const useRefreshPortfolio = (userId) => {
       const signal = fetchControllerRef.current.signal;
 
       const response = await dispatch(
-        getUserPortfolioSummary({ userId, signal }),
+        getCurrentUserPortfolioSummary({ userId, signal }),
       ).unwrap();
 
       if (response.complete) {

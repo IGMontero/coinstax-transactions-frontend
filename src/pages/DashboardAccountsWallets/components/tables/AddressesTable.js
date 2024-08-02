@@ -10,13 +10,7 @@ import {
   DropdownItem,
 } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  updateUserWalletAddress,
-  deleteUserAddressWallet,
-  reorderUserWallets,
-} from '../../../../slices/userWallets/thunk';
+import { useSelector } from 'react-redux';
 import {
   copyToClipboard,
   CurrencyUSD,

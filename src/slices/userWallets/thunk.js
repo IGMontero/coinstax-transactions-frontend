@@ -53,8 +53,37 @@ export const getUserWallets = createAsyncThunk(
   },
 );
 
-export const getUserPortfolioSummary = createAsyncThunk(
-  'clients/getUserPortfolioSummary',
+export const getCurrentUserPortfolioSummary = createAsyncThunk(
+  'clients/getCurrentUserPortfolioSummary',
+  async ({ userId, signal }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/portfolio/summary`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          signal: signal,
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Request was aborted');
+        return rejectWithValue('Request was aborted');
+      }
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const getClientUserPortfolioSummary = createAsyncThunk(
+  'clients/getClientUserPortfolioSummary',
   async ({ userId, signal }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {

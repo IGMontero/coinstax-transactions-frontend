@@ -7,16 +7,19 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getInfoClientByAccountantId } from '../../slices/accountants/thunk';
 import { useDispatch } from 'react-redux';
 import ClientInfo from './components/ClientInfo';
+import { getUserWallets } from '../../slices/userWallets/thunk';
 
 const DashboardClientProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  const { userId } = useParams();
+  const { clientId } = useParams();
 
   const [client, setClient] = useState(null);
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+
+  const [loadingWallets, setLoadingWallets] = useState(false);
 
   const handeGoToDashboard = () => {
     navigate('/clients');
@@ -30,7 +33,7 @@ const DashboardClientProfile = () => {
     try {
       const response = await dispatch(
         getInfoClientByAccountantId({
-          clientId: userId,
+          clientId: clientId,
           accountantId: user.id,
         }),
       ).unwrap();
@@ -51,6 +54,24 @@ const DashboardClientProfile = () => {
     };
     initialize();
   }, []);
+
+  // const fetchUserWallets = async () => {
+  //   console.log('fetching user wallets');
+  //   setLoadingWallets(true);
+  //   try {
+  //     await dispatch(getUserWallets(clientId)).unwrap();
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setLoadingWallets(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (client) {
+  //     fetchUserWallets();
+  //   }
+  // }, [client]);
 
   if (!isInitialized) {
     return (
@@ -98,9 +119,12 @@ const DashboardClientProfile = () => {
           <ClientInfo client={client} />
         </div>
         <AddressesTable
-          userId={client?.UserId}
+          clientId={client?.UserId}
           modalConnectWallet={modalConnectWallet}
           setModalConnectWallet={setModalConnectWallet}
+          addresses={client?.Addresses}
+          loading={loadingWallets}
+          // onRefresh={fetchUserWallets}
         />
       </div>
     </React.Fragment>
