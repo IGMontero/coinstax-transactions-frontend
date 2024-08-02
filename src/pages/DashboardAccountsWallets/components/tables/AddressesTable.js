@@ -27,11 +27,11 @@ const AddressesTable = ({
   setModalConnectWallet,
   userId,
   addresses,
-  setAddresses,
   loading,
   onUpdateAddress,
   onReorderAddress,
   onDeleteAddress,
+  onRefresh,
 }) => {
   const navigate = useNavigate();
 
@@ -84,23 +84,6 @@ const AddressesTable = ({
     onDeleteAddress(address);
   };
 
-  const onDragEnd = async (result) => {
-    if (!result.destination) return;
-
-    const items = Array.from(addresses);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    const updatedItems = items.map((item, idx) => ({
-      ...item,
-      index: idx + 1,
-    }));
-
-    setAddresses(updatedItems);
-
-    await onReorderAddress(updatedItems);
-  };
-
   const getValueForAddress = (address) => {
     if (loading) {
       return (
@@ -130,9 +113,10 @@ const AddressesTable = ({
         isOpen={modalConnectWallet}
         setIsOpen={setModalConnectWallet}
         userId={userId}
+        onRefresh={onRefresh}
       />
 
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={onReorderAddress}>
         <Droppable droppableId="addresses">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -142,10 +126,12 @@ const AddressesTable = ({
 
                   const addressName = address.name || address.Name;
                   const itemAddress = address.address || address.Address;
+
+                  const addressId = address.id || address.Id;
                   return (
                     <Draggable
-                      key={address?.id}
-                      draggableId={address?.id?.toString() || 1}
+                      key={addressId}
+                      draggableId={addressId}
                       index={index}
                     >
                       {(provided) => (

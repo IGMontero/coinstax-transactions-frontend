@@ -84,7 +84,7 @@ export const getCurrentUserPortfolioSummary = createAsyncThunk(
 
 export const getClientUserPortfolioSummary = createAsyncThunk(
   'clients/getClientUserPortfolioSummary',
-  async ({ userId, signal }, { rejectWithValue }) => {
+  async (userId, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
@@ -93,7 +93,7 @@ export const getClientUserPortfolioSummary = createAsyncThunk(
           headers: {
             Authorization: `${token}`,
           },
-          signal: signal,
+          // signal: signal,
         },
       );
       if (!response.ok) {

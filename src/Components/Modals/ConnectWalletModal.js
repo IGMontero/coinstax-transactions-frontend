@@ -14,11 +14,9 @@ import {
 } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { addUserWallet } from '../../slices/userWallets/thunk';
-import useRefreshPortfolio from '../Hooks/PortfolioHook';
 
-const ConnectWalletModal = ({ isOpen, setIsOpen, userId }) => {
+const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh, userId }) => {
   const dispatch = useDispatch();
-  const { refreshPortfolio } = useRefreshPortfolio(userId);
 
   const [loading, setLoading] = useState(false);
   const [address, setAddress] = useState('');
@@ -39,8 +37,7 @@ const ConnectWalletModal = ({ isOpen, setIsOpen, userId }) => {
           icon: 'success',
         });
 
-        // dispatch(setUserPortfolioSummary([...userAddresses]));
-        refreshPortfolio();
+        onRefresh();
         setAddress('');
         toggleModal();
       } else {
