@@ -104,7 +104,7 @@ const AddressesTable = ({
       inputValidator: (value) => {
         if (
           addresses.some(
-            (addr) => addr.Name === value && addr.Address !== address.Address,
+            (addr) => addr.name === value && addr.address !== address.address,
           )
         ) {
           return 'This name already exists!';
