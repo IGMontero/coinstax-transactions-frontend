@@ -2,6 +2,34 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getTokenFromCookies } from '../../helpers/cookies_helper';
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
+export const addCurrentUserWallet = createAsyncThunk(
+  'clients/addCurrentUserWallet',
+  async ({ address, userId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/wallet-addresses`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({ address }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+
 export const addUserWallet = createAsyncThunk(
   'clients/addClient',
   async ({ address, userId }, { rejectWithValue }) => {
@@ -53,8 +81,8 @@ export const getUserWallets = createAsyncThunk(
   },
 );
 
-export const getUserPortfolioSummary = createAsyncThunk(
-  'clients/getUserPortfolioSummary',
+export const getCurrentUserPortfolioSummary = createAsyncThunk(
+  'clients/getCurrentUserPortfolioSummary',
   async ({ userId, signal }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
@@ -65,6 +93,35 @@ export const getUserPortfolioSummary = createAsyncThunk(
             Authorization: `${token}`,
           },
           signal: signal,
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Request was aborted');
+        return rejectWithValue('Request was aborted');
+      }
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const getClientUserPortfolioSummary = createAsyncThunk(
+  'clients/getClientUserPortfolioSummary',
+  async ({ userId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/portfolio/summary`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          // signal: signal,
         },
       );
       if (!response.ok) {
