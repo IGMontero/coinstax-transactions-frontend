@@ -33,7 +33,6 @@ const AddressesTable = ({
   onReorderAddress,
   onDeleteAddress,
   onRefresh,
-  onAddAddress,
 }) => {
   const navigate = useNavigate();
 

@@ -145,6 +145,10 @@ const DashboardUserWallets = () => {
     }
   };
 
+  const handleRefreshPortfolio = () => {
+    refreshUserPortfolio(userId);
+  };
+
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
@@ -234,8 +238,7 @@ const DashboardUserWallets = () => {
           onUpdateAddress={handleUpdateAddress}
           onReorderAddress={onDragEnd}
           onDeleteAddress={handleDeleteUserAddress}
-          onRefresh={refreshUserPortfolio}
-          onAddAddress={refreshUserPortfolio}
+          onRefresh={handleRefreshPortfolio}
         />
 
         {/* <div className="mt-4">
