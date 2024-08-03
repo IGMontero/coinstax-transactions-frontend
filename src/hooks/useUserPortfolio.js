@@ -87,7 +87,7 @@ const usePortfolioData = (userId) => {
       }
 
       if (!isComplete) {
-        shortPollInterval.current = setInterval(fetchData, 10 * 1000); // 10 seconds
+        shortPollInterval.current = setInterval(fetchData, 5 * 1000); // 5 seconds
       }
     } else {
       hasFetched.current = false;
