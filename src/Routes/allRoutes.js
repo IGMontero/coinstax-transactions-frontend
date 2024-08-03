@@ -112,7 +112,9 @@ const authProtectedRoutes = [
   {
     path: '/wallets',
     component: (
-      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER]}>
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER,
+      DASHBOARD_USER_ROLES.ACCOUNTANT
+      ]}>
         <DashboardUserWallets />
       </AuthProtectedRoutes>
     ),

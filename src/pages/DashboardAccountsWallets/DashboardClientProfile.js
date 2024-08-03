@@ -10,11 +10,11 @@ import ClientInfo from './components/ClientInfo';
 import {
   deleteUserAddressWallet,
   getClientUserPortfolioSummary,
-  getUserWallets,
   reorderUserWallets,
   updateUserWalletAddress,
 } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
+import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 
 const DashboardClientProfile = () => {
   const navigate = useNavigate();
@@ -26,7 +26,11 @@ const DashboardClientProfile = () => {
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  const [addresses, setAddresses] = useState([]);
+  const [clientUserPortfolio, setClientUserPortfolio] = useState(null);
+
+  const addresses = clientUserPortfolio?.addresses;
+  const totalPortfolioValue = clientUserPortfolio?.totalValue;
+  const parsedTotalPortfolioValue = parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
 
   const [loadingWallets, setLoadingWallets] = useState(false);
 
@@ -64,28 +68,16 @@ const DashboardClientProfile = () => {
     initialize();
   }, []);
 
-  // const fetchUserWallets = async () => {
-  //   console.log('fetching user wallets');
-  //   setLoadingWallets(true);
-  //   try {
-  //     const response = await dispatch(
-  //       getClientUserPortfolioSummary({ userId: client.UserId }),
-  //     ).unwrap();
-  //     console.log(response);
-  //   } catch (error) {
-  //     console.log(error);
-  //   } finally {
-  //     setLoadingWallets(false);
-  //   }
-  // };
-
   const fetchUserWallets = async () => {
     setLoadingWallets(true);
     try {
-      const response = await dispatch(getUserWallets(client.UserId));
-      console.log(response);
+      const response = await dispatch(
+        getClientUserPortfolioSummary({ userId: client.UserId }),
+      ).unwrap();
 
-      setAddresses(response.payload);
+      if (response && !response.error) {
+        setClientUserPortfolio(response);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -93,11 +85,33 @@ const DashboardClientProfile = () => {
     }
   };
 
+  // const fetchUserWallets = async () => {
+  //   setLoadingWallets(true);
+  //   try {
+  //     console.log("clIENT:", client);
+  //     const response = await dispatch(getUserWallets(client.UserId));
+  //     console.log(response);
+
+  //     setAddresses(response.payload);
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setLoadingWallets(false);
+  //   }
+  // };
+
   useEffect(() => {
-    if (client) {
+    if (client?.UserId) {
       fetchUserWallets();
     }
   }, [client]);
+
+  const updatePortfolioAddresses = (updatedAddresses) => {
+    setClientUserPortfolio({
+      ...clientUserPortfolio,
+      addresses: updatedAddresses,
+    });
+  };
 
   const onDragEnd = async (result) => {
     if (!result.destination) return;
@@ -111,14 +125,14 @@ const DashboardClientProfile = () => {
       Index: idx + 1,
     }));
 
-    setAddresses(updatedItems);
+    updatePortfolioAddresses(updatedItems);
 
     await handleReorderAddresses(updatedItems);
   };
 
   const handleReorderAddresses = async (updatedAddresses) => {
     const payload = updatedAddresses.map((address) => ({
-      Id: address.Id,
+      Id: address.id,
       Index: address.Index,
     }));
 
@@ -175,7 +189,7 @@ const DashboardClientProfile = () => {
             updateUserWalletAddress({
               userId: client.UserId,
               name: newName,
-              addressId: address.Id,
+              addressId: address.id,
             }),
           ).unwrap();
 
@@ -212,10 +226,12 @@ const DashboardClientProfile = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
+          console.log('Client:', client);
+
           const response = await dispatch(
             deleteUserAddressWallet({
               userId: client.UserId,
-              addressId: address.Id,
+              addressId: address.id,
             }),
           ).unwrap();
 
@@ -226,7 +242,7 @@ const DashboardClientProfile = () => {
               icon: 'success',
             });
 
-            setAddresses(addresses.filter((addr) => addr.Id !== address.Id));
+            fetchUserWallets();
           } else {
             Swal.fire({
               title: 'Error',
@@ -258,7 +274,9 @@ const DashboardClientProfile = () => {
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
-      <div className="mt-5" style={{ maxWidth: '610px' }}>
+      <div className="mt-5"
+      // style={{ maxWidth: '610px' }}
+      >
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1>Client Profile</h1>
           <div className="d-flex">
@@ -291,17 +309,41 @@ const DashboardClientProfile = () => {
         <div className="mb-5 mt-2">
           <ClientInfo client={client} />
         </div>
-        <AddressesTable
-          userId={client?.UserId}
-          modalConnectWallet={modalConnectWallet}
-          setModalConnectWallet={setModalConnectWallet}
-          addresses={addresses}
-          loading={loadingWallets}
-          onRefresh={fetchUserWallets}
-          onDeleteAddress={handleDeleteUserAddress}
-          onReorderAddress={onDragEnd}
-          onUpdateAddress={handleUpdateAddress}
-        />
+        {loadingWallets ? (
+          <div className="d-flex my-3">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+          </div>
+        ) :
+          (addresses?.length === 0 || !addresses) ? (
+            <div className="d-flex my-3">
+              <h5>No wallets found</h5>
+            </div>
+          ) : (
+            <>
+              {/* // toTAL POrtfolio value */}
+              <div className="d-flex justify-content-between align-items-center mb-2">
+                <h4>Portfolio Value: {parsedTotalPortfolioValue}</h4>
+              </div>
+
+              <AddressesTable
+                userId={client?.UserId}
+                modalConnectWallet={modalConnectWallet}
+                setModalConnectWallet={setModalConnectWallet}
+                addresses={addresses}
+                loading={loadingWallets}
+                onRefresh={fetchUserWallets}
+                onDeleteAddress={handleDeleteUserAddress}
+                onReorderAddress={onDragEnd}
+                onUpdateAddress={handleUpdateAddress}
+              />
+
+            </>
+
+          )
+        }
+
       </div>
     </React.Fragment>
   );

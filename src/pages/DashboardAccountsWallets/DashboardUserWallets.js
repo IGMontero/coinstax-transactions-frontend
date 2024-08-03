@@ -11,6 +11,7 @@ import {
 } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
 import useRefreshPortfolio from '../../Components/Hooks/PortfolioHook';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 
 const DashboardUserWallets = () => {
   const dispatch = useDispatch();
@@ -19,8 +20,9 @@ const DashboardUserWallets = () => {
     (state) => state.userWallets,
   );
   const userId = user?.id;
-  const { refreshPortfolio } = useRefreshPortfolio(userId);
+  // const { refreshPortfolio } = useRefreshPortfolio(userId);
   const userAddresses = userPortfolioSummary?.addresses;
+  const refreshUserPortfolio = useRefreshUserPortfolio();
 
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
 
@@ -64,17 +66,18 @@ const DashboardUserWallets = () => {
           ).unwrap();
 
           if (response && !response.error) {
-            const updatedAddresses = userAddresses?.map((addr) => {
-              if (addr.id === address.id) {
-                return {
-                  ...addr,
-                  name: newName,
-                };
-              }
-              return addr;
-            });
+            // const updatedAddresses = userAddresses?.map((addr) => {
+            //   if (addr.id === address.id) {
+            //     return {
+            //       ...addr,
+            //       name: newName,
+            //     };
+            //   }
+            //   return addr;
+            // });
 
-            handleSetAddresses(updatedAddresses);
+            // handleSetAddresses(updatedAddresses);
+            refreshUserPortfolio(userId);
           } else {
             Swal.fire({
               title: 'Error',
@@ -124,7 +127,7 @@ const DashboardUserWallets = () => {
       ).unwrap();
 
       if (response && !response.error) {
-        handleSetAddresses(updatedAddresses);
+        refreshUserPortfolio(userId);
       } else {
         Swal.fire({
           title: 'Error',
@@ -164,9 +167,7 @@ const DashboardUserWallets = () => {
               icon: 'success',
             });
 
-            handleSetAddresses(
-              userAddresses.filter((addr) => addr.id !== address.id),
-            );
+            refreshUserPortfolio(userId);
           } else {
             Swal.fire({
               title: 'Error',
@@ -233,7 +234,8 @@ const DashboardUserWallets = () => {
           onUpdateAddress={handleUpdateAddress}
           onReorderAddress={onDragEnd}
           onDeleteAddress={handleDeleteUserAddress}
-          onRefresh={refreshPortfolio}
+          onRefresh={refreshUserPortfolio}
+          onAddAddress={refreshUserPortfolio}
         />
 
         {/* <div className="mt-4">
