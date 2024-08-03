@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import {
   copyToClipboard,
   CurrencyUSD,
+  formatAddressToShortVersion,
   formatIdTransaction,
   parseValuesToLocale,
 } from '../../../../utils/utils';
@@ -32,6 +33,7 @@ const AddressesTable = ({
   onReorderAddress,
   onDeleteAddress,
   onRefresh,
+  onAddAddress,
 }) => {
   const navigate = useNavigate();
 
@@ -41,6 +43,7 @@ const AddressesTable = ({
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
+
 
   const toggleCollapse = (collapseId) => {
     const newSet = new Set(openCollapse);
@@ -84,8 +87,9 @@ const AddressesTable = ({
     onDeleteAddress(address);
   };
 
-  const getValueForAddress = (address) => {
-    if (loading) {
+  const getValueForAddress = (addressData) => {
+    const isCompleted = addressData.complete;
+    if (!isCompleted) {
       return (
         <Skeleton
           width={60}
@@ -94,17 +98,11 @@ const AddressesTable = ({
         />
       );
     }
-    if (!address) {
-      return '$ 0';
+    if (!addressData) {
+      return '$0';
     }
 
-    const addressEntry = addresses.find(
-      (entry) => entry.address?.toLowerCase() === address?.toLowerCase(),
-    );
-    if (!addressEntry) {
-      return '';
-    }
-    return parseValuesToLocale(addressEntry.value, CurrencyUSD);
+    return parseValuesToLocale(addressData.value, CurrencyUSD);
   };
 
   return (
@@ -127,7 +125,11 @@ const AddressesTable = ({
                   const addressName = address.name || address.Name;
                   const itemAddress = address.address || address.Address;
 
-                  const addressId = address.id || address.Id;
+                  const isCompleted = address.complete;
+                  const isLoading = !isCompleted;
+
+
+                  const addressId = String(address.id || address.Id);
                   return (
                     <Draggable
                       key={addressId}
@@ -149,11 +151,10 @@ const AddressesTable = ({
                           >
                             <div
                               onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${
-                                openCollapse.has(collapseId)
-                                  ? 'border border-primary rounded px-2 mb-2'
-                                  : 'bg-light'
-                              }`}
+                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
+                                ? 'border border-primary rounded px-2 mb-2'
+                                : 'bg-light'
+                                }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
@@ -174,26 +175,12 @@ const AddressesTable = ({
                                     <div className="d-flex flex-column">
                                       {addressName && <h5>{addressName}</h5>}
                                       <span className="text-muted">
-                                        {loading ? (
-                                          <Skeleton
-                                            width={60}
-                                            baseColor={
-                                              isDarkMode ? '#333' : '#f3f3f3'
-                                            }
-                                            highlightColor={
-                                              isDarkMode ? '#444' : '#e0e0e0'
-                                            }
-                                          />
-                                        ) : (
-                                          formatIdTransaction(
-                                            itemAddress,
-                                            8,
-                                            12,
-                                          )
+                                        {formatAddressToShortVersion(
+                                          itemAddress,
                                         )}
                                       </span>
                                       <span className="text-muted">
-                                        {loading ? (
+                                        {isLoading ? (
                                           <Skeleton
                                             width={60}
                                             baseColor={
@@ -204,7 +191,7 @@ const AddressesTable = ({
                                             }
                                           />
                                         ) : (
-                                          getValueForAddress(itemAddress)
+                                          getValueForAddress(address)
                                         )}
                                       </span>
                                     </div>
@@ -226,6 +213,16 @@ const AddressesTable = ({
                                           <i className="ri-more-2-fill"></i>
                                         </DropdownToggle>
                                         <DropdownMenu>
+                                          <DropdownItem
+                                            className="d-flex aling-items-center"
+                                            onClick={() => {
+                                              handleVisitAddress(itemAddress);
+                                            }}
+                                          >
+                                            <i className="ri-eye-fill me-2"></i>{' '}
+                                            View
+                                          </DropdownItem>
+
                                           <DropdownItem
                                             className="d-flex aling-items-center"
                                             onClick={(e) =>
@@ -262,11 +259,10 @@ const AddressesTable = ({
 
                               <Collapse isOpen={openCollapse.has(collapseId)}>
                                 <CardBody
-                                  className={`cursor-pointer px-3 ${
-                                    openCollapse.has(collapseId)
-                                      ? 'border-info'
-                                      : ''
-                                  }`}
+                                  className={`cursor-pointer px-3 ${openCollapse.has(collapseId)
+                                    ? 'border-info'
+                                    : ''
+                                    }`}
                                 >
                                   <div className="d-flex flex-column">
                                     <span
