@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserPortfolioSummary } from '../slices/userWallets/thunk';
+import { getCurrentUserPortfolioSummary } from '../slices/userWallets/thunk';
 import { setLoader } from '../slices/userWallets/reducer';
 
 const usePortfolioData = (userId) => {
@@ -10,14 +10,20 @@ const usePortfolioData = (userId) => {
   const fetchControllerRef = useRef(new AbortController());
   const shortPollInterval = useRef(null);
   const hasFetched = useRef(false);
-  const { loading, error, userPortfolio } = useSelector(
+  const { loading, error, userPortfolioSummary } = useSelector(
     (state) => state.userWallets,
   );
   const [isComplete, setIsComplete] = useState(false);
 
+  // If portfolio changes, and complete is false, set complete to false again.
   useEffect(() => {
-    console.log('Portfolio is complete:', isComplete);
+    if (userPortfolioSummary && !userPortfolioSummary?.complete) {
+      setIsComplete(false);
+    }
+  }, [userPortfolioSummary]);
 
+
+  useEffect(() => {
     if (isComplete) {
       console.log('Portfolio data fetched.');
       dispatch(
@@ -42,12 +48,12 @@ const usePortfolioData = (userId) => {
 
     const fetchData = async () => {
       try {
-        fetchControllerRef.current.abort();
+        // fetchControllerRef.current.abort();
         fetchControllerRef.current = new AbortController();
         const signal = fetchControllerRef.current.signal;
         console.log('Fetching portfolio data');
         const response = await dispatch(
-          getUserPortfolioSummary({ userId, signal }),
+          getCurrentUserPortfolioSummary({ userId, signal }),
         ).unwrap();
 
         if (response.complete) {
@@ -81,7 +87,7 @@ const usePortfolioData = (userId) => {
       }
 
       if (!isComplete) {
-        shortPollInterval.current = setInterval(fetchData, 5000); // 5 seconds
+        shortPollInterval.current = setInterval(fetchData, 10 * 1000); // 10 seconds
       }
     } else {
       hasFetched.current = false;
@@ -108,9 +114,27 @@ const usePortfolioData = (userId) => {
         fetchControllerRef.current.abort();
       }
     };
-  }, [dispatch, userId, isComplete]);
+  }, [dispatch, userId, isComplete, userPortfolioSummary]);
 
-  return { loading, error, userPortfolio };
+  return { loading, error, userPortfolioSummary };
 };
+
+export const useRefreshUserPortfolio = () => {
+  const dispatch = useDispatch();
+
+  const refreshPortfolio = async (userId) => {
+    try {
+      const response = await dispatch(
+        getCurrentUserPortfolioSummary({ userId }),
+      ).unwrap();
+      return response;
+    } catch (error) {
+      console.error('Failed to refresh portfolio:', error);
+      return null;
+    }
+  };
+
+  return refreshPortfolio;
+}
 
 export default usePortfolioData;

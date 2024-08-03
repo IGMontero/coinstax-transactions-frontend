@@ -28,10 +28,10 @@ const AddressWithDropdown = ({
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
-  const addresses = useSelector((state) => state.addressName?.addresses);
-  const { userPortfolioSummary, loaders } = useSelector(
-    (state) => state.userWallets,
-  );
+  const addresses = useSelector((state) => state.addressName.addresses);
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
+
+  console.log('user portfolio summary', userPortfolioSummary);
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
@@ -48,7 +48,7 @@ const AddressWithDropdown = ({
     let matchingAddress;
 
     if (user) {
-      matchingAddress = userPortfolioSummary?.addresses.find(
+      matchingAddress = userPortfolioSummary?.addresses?.find(
         (addr) => addr.address === address,
       );
     }

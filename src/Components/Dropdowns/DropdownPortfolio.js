@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -12,17 +12,17 @@ import Swal from 'sweetalert2';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
 import {
   deleteUserAddressWallet,
-  getUserWallets,
   updateUserWalletAddress,
 } from '../../slices/userWallets/thunk';
 import {
   CurrencyUSD,
   copyToClipboard,
   formatAddressToShortVersion,
-  parseValuesToLocale
+  parseValuesToLocale,
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';
 import DropdownMenuPortal from './DropdownPortal';
+import useRefreshPortfolio from '../Hooks/PortfolioHook';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
@@ -31,6 +31,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const addressParams = address;
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
+
+  const { refreshPortfolio } = useRefreshPortfolio(userId);
 
   const { userPortfolioSummary, loaders } = useSelector(
     (state) => state.userWallets,
@@ -48,7 +50,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const userPortfolioAddresses = userPortfolioSummary?.addresses || [];
   const [loadingWallets, setLoadingWallets] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(
-    userPortfolioAddresses?.find((addr) => addr.address === addressParams) ||
+    userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
     null,
   );
 
@@ -82,17 +84,17 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     }
   }, [addressParams, userPortfolioAddresses]);
 
-  const fetchUserWallets = async () => {
-    console.log('fetching user wallets');
-    setLoadingWallets(true);
-    try {
-      await dispatch(getUserWallets(userId)).unwrap();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingWallets(false);
-    }
-  };
+  // const fetchUserWallets = async () => {
+  //   console.log('fetching user wallets');
+  //   setLoadingWallets(true);
+  //   try {
+  //     await dispatch(getUserWallets(userId)).unwrap();
+  //   } catch (error) {
+  //     console.log(error);
+  //   } finally {
+  //     setLoadingWallets(false);
+  //   }
+  // };
 
   const handleSelectAddress = (address) => {
     if (address === null) {
@@ -116,7 +118,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     Swal.fire({
       title: 'Rename Wallet',
       input: 'text',
-      inputValue: address.Name,
+      inputValue: address.name,
       html: `
       <span class="fs-6 align-items-start border rounded bg-light" >${address.address}</span>
     `,
@@ -140,7 +142,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             updateUserWalletAddress({
               userId,
               name: newName,
-              addressId: address.Id,
+              addressId: address.id,
             }),
           ).unwrap();
 
@@ -151,7 +153,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             //   icon: 'success',
             // });
 
-            fetchUserWallets();
+            refreshPortfolio();
           } else {
             Swal.fire({
               title: 'Error',
@@ -194,7 +196,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
               text: 'Wallet address deleted successfully',
               icon: 'success',
             });
-            fetchUserWallets();
+            refreshPortfolio();
           } else {
             Swal.fire({
               title: 'Error',
@@ -280,15 +282,15 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     );
   };
 
-  const getValueForAddress = (address) => {
-    const addressValue = userPortfolioSummary?.addressesValues?.[address];
+  // const getValueForAddress = (address) => {
+  //   const addressValue = userPortfolioSummary?.addressesValues?.[address];
 
-    console.log('addressValue', addressValue);
+  //   console.log('addressValue', addressValue);
 
-    return addressValue
-      ? parseValuesToLocale(addressValue, CurrencyUSD)
-      : '$ 0';
-  };
+  //   return addressValue
+  //     ? parseValuesToLocale(addressValue, CurrencyUSD)
+  //     : '$ 0';
+  // };
 
   const handleVisitAddress = (link) => {
     navigate(`${link}`);
@@ -354,7 +356,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
               (selectedAddress.name || selectedAddress.address)
               ? selectedAddress.name
                 ? selectedAddress.name
-                : formatAddressToShortVersion(selectedAddress.Address)
+                : formatAddressToShortVersion(selectedAddress.address)
               : 'Portfolio'}
           </span>
           {!isInHeader && (
@@ -434,13 +436,13 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           {user && (
             <DropdownItem
               onClick={() => {
-                handleVisitAddress(isUserOrNoUser ? '/wallets' : '/clients');
+                handleVisitAddress('/wallets');
               }}
             >
               <div className="dropdown-item ps-0">
                 <i className="mdi mdi-wallet text-muted fs-16 align-middle me-3"></i>
                 <span className="align-middle">
-                  Manage {isAdminOrAccountant ? 'Clients' : 'Wallets'}
+                  Manage Wallets
                 </span>
               </div>
             </DropdownItem>

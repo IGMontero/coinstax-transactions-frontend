@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  Container,
   Row,
   Col,
   Collapse,
@@ -11,23 +10,16 @@ import {
   DropdownItem,
 } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
-import { useDispatch } from 'react-redux';
-import {
-  updateUserWalletAddress,
-  deleteUserAddressWallet,
-  getUserWallets,
-} from '../../../../slices/userWallets/thunk';
+import { useSelector } from 'react-redux';
 import {
   copyToClipboard,
   CurrencyUSD,
+  formatAddressToShortVersion,
   formatIdTransaction,
   parseValuesToLocale,
 } from '../../../../utils/utils';
-import { reorderUserWallets } from '../../../../slices/userWallets/thunk';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ConnectWalletModal from '../../../../Components/Modals/ConnectWalletModal';
-import { useSelector } from 'react-redux';
 import Skeleton from 'react-loading-skeleton';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
 
@@ -35,21 +27,24 @@ const AddressesTable = ({
   modalConnectWallet,
   setModalConnectWallet,
   userId,
-  items,
+  addresses,
+  loading,
+  onUpdateAddress,
+  onReorderAddress,
+  onDeleteAddress,
+  onRefresh,
+  onAddAddress,
 }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const { userPortfolioSummary, loaders } = useSelector((state) => state.userWallets);
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
-  const [addresses, setAddresses] = useState([]);
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
 
-  const [loading, setLoading] = useState(false);
 
   const toggleCollapse = (collapseId) => {
     const newSet = new Set(openCollapse);
@@ -83,204 +78,32 @@ const AddressesTable = ({
     e.preventDefault();
     e.stopPropagation();
     copyToClipboard(text);
-    // Swal.fire({
-    //   text: 'Address copied to clipboard!',
-    //   icon: 'success',
-    //   timer: 2000,
-    //   showConfirmButton: false,
-    // });
   };
 
   const handleUpdateAddress = (e, address) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    Swal.fire({
-      title: 'Update Wallet Address',
-      input: 'text',
-      inputValue: address.Name,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      inputValidator: (value) => {
-        if (
-          addresses.some(
-            (addr) => addr.Name === value && addr.Address !== address.Address,
-          )
-        ) {
-          return 'This name already exists!';
-        }
-      },
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const newName = result.value.trim() ? result.value : null;
-
-        try {
-          const response = await dispatch(
-            updateUserWalletAddress({
-              userId,
-              name: newName,
-              addressId: address.Id,
-            }),
-          ).unwrap();
-
-          if (response && !response.error) {
-            // Swal.fire({
-            //   title: 'Success',
-            //   text: 'Wallet address updated successfully',
-            //   icon: 'success',
-            // });
-
-            fetchUserWallets();
-          } else {
-            Swal.fire({
-              title: 'Error',
-              text: 'Failed to update address',
-              icon: 'error',
-            });
-          }
-        } catch (error) {
-          Swal.fire({
-            title: 'Error',
-            text: 'Failed to update address',
-            icon: 'error',
-          });
-
-          console.log(error);
-        }
-      }
-    });
+    onUpdateAddress(e, address);
   };
 
   const handleDeleteUserAddress = (address) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.Name ? address.Name : address.Address}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await dispatch(
-            deleteUserAddressWallet({ userId, addressId: address.Id }),
-          ).unwrap();
-
-          if (response && !response.error) {
-            Swal.fire({
-              title: 'Success',
-              text: 'Wallet address deleted successfully',
-              icon: 'success',
-            });
-            fetchUserWallets();
-          } else {
-            Swal.fire({
-              title: 'Error',
-              text: 'Failed to delete address',
-              icon: 'error',
-            });
-          }
-        } catch (error) {
-          console.error('Failed to delete address:', error);
-          Swal.fire({
-            title: 'Error',
-            text: 'Failed to delete address',
-            icon: 'error',
-          });
-        }
-      }
-    });
+    onDeleteAddress(address);
   };
 
-  const onDragEnd = async (result) => {
-    if (!result.destination) return;
-
-    const items = Array.from(addresses);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    const updatedItems = items.map((item, idx) => ({
-      ...item,
-      Index: idx + 1,
-    }));
-
-    setAddresses(updatedItems);
-
-    await handleReorderAddresses(updatedItems);
-  };
-
-  const handleReorderAddresses = async (updatedAddresses) => {
-    const payload = updatedAddresses.map((address) => ({
-      Id: address.Id,
-      Index: address.Index,
-    }));
-
-    try {
-      const response = await dispatch(
-        reorderUserWallets({ userId: userId, addresses: payload }),
-      ).unwrap();
-
-      if (response && !response.error) {
-        fetchUserWallets();
-      } else {
-        Swal.fire({
-          title: 'Error',
-          text: 'Failed to reorder addresses',
-          icon: 'error',
-        });
-      }
-    } catch (error) {
-      console.error('Failed to reorder addresses:', error);
-      Swal.fire({
-        title: 'Error',
-        text: 'Failed to reorder addresses',
-        icon: 'error',
-      });
+  const getValueForAddress = (addressData) => {
+    const isCompleted = addressData.complete;
+    if (!isCompleted) {
+      return (
+        <Skeleton
+          width={60}
+          baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+          highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+        />
+      );
     }
-  };
-
-  const fetchUserWallets = async () => {
-    setLoading(true);
-    try {
-      const response = await dispatch(getUserWallets(userId)).unwrap();
-
-      if (response && !response.error) {
-        setAddresses(response);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (userId) {
-      fetchUserWallets();
-    }
-  }, [userId]);
-
-  const getValueForAddress = (address) => {
-
-
-    if (loading) {
-      <Skeleton
-        width={60}
-        baseColor={isDarkMode ? '#333' : '#f3f3f3'}
-        highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
-      />;
-    }
-    if (!userPortfolioSummary || !userPortfolioSummary.addresses) {
-      return '';
+    if (!addressData) {
+      return '$0';
     }
 
-    const addressEntry = userPortfolioSummary.addresses.find(
-      (entry) => entry.address?.toLowerCase() === address?.toLowerCase(),
-    );
-    if (!addressEntry) {
-      return '';
-    }
-    return parseValuesToLocale(addressEntry.value, CurrencyUSD);
+    return parseValuesToLocale(addressData.value, CurrencyUSD);
   };
 
   return (
@@ -288,21 +111,30 @@ const AddressesTable = ({
       <ConnectWalletModal
         isOpen={modalConnectWallet}
         setIsOpen={setModalConnectWallet}
-        onRefresh={fetchUserWallets}
         userId={userId}
+        onRefresh={onRefresh}
       />
 
-      <DragDropContext onDragEnd={onDragEnd}>
+      <DragDropContext onDragEnd={onReorderAddress}>
         <Droppable droppableId="addresses">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               <Row>
                 {addresses?.map((address, index) => {
                   const collapseId = `address-${index}`;
+
+                  const addressName = address.name || address.Name;
+                  const itemAddress = address.address || address.Address;
+
+                  const isCompleted = address.complete;
+                  const isLoading = !isCompleted;
+
+
+                  const addressId = String(address.id || address.Id);
                   return (
                     <Draggable
-                      key={address?.Id}
-                      draggableId={address?.Id?.toString() || 1}
+                      key={addressId}
+                      draggableId={addressId}
                       index={index}
                     >
                       {(provided) => (
@@ -342,16 +174,26 @@ const AddressesTable = ({
                                 >
                                   <div className="d-flex justify-content-between align-items-center w-100">
                                     <div className="d-flex flex-column">
-                                      {address.Name && <h5>{address.Name}</h5>}
+                                      {addressName && <h5>{addressName}</h5>}
                                       <span className="text-muted">
-                                        {formatIdTransaction(
-                                          address.Address,
-                                          8,
-                                          12,
+                                        {formatAddressToShortVersion(
+                                          itemAddress,
                                         )}
                                       </span>
                                       <span className="text-muted">
-                                        {getValueForAddress(address.Address)}
+                                        {isLoading ? (
+                                          <Skeleton
+                                            width={60}
+                                            baseColor={
+                                              isDarkMode ? '#333' : '#f3f3f3'
+                                            }
+                                            highlightColor={
+                                              isDarkMode ? '#444' : '#e0e0e0'
+                                            }
+                                          />
+                                        ) : (
+                                          getValueForAddress(address)
+                                        )}
                                       </span>
                                     </div>
                                     <div className="d-flex justify-content-end">
@@ -374,8 +216,18 @@ const AddressesTable = ({
                                         <DropdownMenu>
                                           <DropdownItem
                                             className="d-flex aling-items-center"
+                                            onClick={() => {
+                                              handleVisitAddress(itemAddress);
+                                            }}
+                                          >
+                                            <i className="ri-eye-fill me-2"></i>{' '}
+                                            View
+                                          </DropdownItem>
+
+                                          <DropdownItem
+                                            className="d-flex aling-items-center"
                                             onClick={(e) =>
-                                              handleCopy(e, address.Address)
+                                              handleCopy(e, itemAddress)
                                             }
                                           >
                                             <i className="ri-file-copy-line me-2"></i>{' '}
@@ -418,7 +270,7 @@ const AddressesTable = ({
                                       className="text-hover-underline  text-dark col-2"
                                       onClick={(e) => {
                                         e.stopPropagation();
-                                        handleVisitAddress(address.Address);
+                                        handleVisitAddress(itemAddress);
                                       }}
                                     >
                                       Visit Address

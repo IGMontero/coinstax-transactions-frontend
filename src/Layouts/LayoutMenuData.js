@@ -41,9 +41,9 @@ const Navdata = () => {
     const { assets, transactions, performance } = fetchData;
     setIsUnsupported(
       assets?.unsupported ||
-        transactions?.unsupported ||
-        performance?.unsupported ||
-        !addressSearched,
+      transactions?.unsupported ||
+      performance?.unsupported ||
+      !addressSearched,
     );
   }, [fetchData, addressSearched]);
 
@@ -142,19 +142,9 @@ const Navdata = () => {
     );
   }
 
-  if (isAccountant) {
-    allMenuItems.push(createMenuHeader('Accountant'));
-    allMenuItems.push(
-      createManageMenu(
-        'accountantUsers',
-        'Manage Clients',
-        'bx bx-user fs-3',
-        'clients',
-      ),
-    );
-  }
-  if (isUser) {
-    allMenuItems.push(createMenuHeader('Manage'));
+
+  if (isUser || isAccountant) {
+    allMenuItems.push(createMenuHeader('Wallets'));
     allMenuItems.push(
       createManageMenu(
         'connectWallet',
@@ -169,6 +159,18 @@ const Navdata = () => {
         'Manage Wallets',
         'bx bx-wallet fs-3',
         'wallets',
+      ),
+    );
+  }
+
+  if (isAccountant) {
+    allMenuItems.push(createMenuHeader('Accountant'));
+    allMenuItems.push(
+      createManageMenu(
+        'accountantUsers',
+        'Manage Clients',
+        'bx bx-user fs-3',
+        'clients',
       ),
     );
   }
