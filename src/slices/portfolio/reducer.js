@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import {
   getAssetsPortfolio,
   getBalancesPortfolio,
-  getNFTSPortfolio,
+  fetchNFTSPortfolio,
 } from './thunk';
 
 const initialState = {
@@ -51,16 +51,16 @@ const portfolioSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    [getNFTSPortfolio.pending]: (state) => {
+    [fetchNFTSPortfolio.pending]: (state) => {
       state.loading = true;
       state.error = null;
     },
-    [getNFTSPortfolio.fulfilled]: (state, action) => {
+    [fetchNFTSPortfolio.fulfilled]: (state, action) => {
       state.nfts = action.payload;
       state.loading = false;
       state.error = null;
     },
-    [getNFTSPortfolio.rejected]: (state, action) => {
+    [fetchNFTSPortfolio.rejected]: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },

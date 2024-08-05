@@ -62,17 +62,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     userPortfolioSummary?.blockchains?.all?.totalValue || 0;
   const loadingPortfolio = loaders?.userPortfolioSummary;
 
-
-
-  console.log("User potfolio summary:", userPortfolioSummary);
-
-  console.log("Loading Portfolio:", loadingPortfolio);
-
-
-  // console.log('portfolioData:', portfolioData);
-
   useEffect(() => {
-    // Mantén `selectedAddress` actualizado si `addressParams` cambia
     if (addressParams) {
       const matchedAddress = userPortfolioAddresses.find(
         (addr) => addr.address === addressParams,
@@ -84,27 +74,15 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     }
   }, [addressParams, userPortfolioAddresses]);
 
-  // const fetchUserWallets = async () => {
-  //   console.log('fetching user wallets');
-  //   setLoadingWallets(true);
-  //   try {
-  //     await dispatch(getUserWallets(userId)).unwrap();
-  //   } catch (error) {
-  //     console.log(error);
-  //   } finally {
-  //     setLoadingWallets(false);
-  //   }
-  // };
-
   const handleSelectAddress = (address) => {
     if (address === null) {
       setSelectedAddress(null);
-      setPrevAddress(''); // Reiniciar prevAddress si se selecciona null
+      setPrevAddress('');
     } else {
       const selected = userPortfolioAddresses.find(
         (addr) => addr.address === address,
       );
-      setPrevAddress(selected.address); // Actualizar prevAddress
+      setPrevAddress(selected.address);
       setSelectedAddress(selected);
     }
 
@@ -449,7 +427,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           )}
         </DropdownMenu>
       </DropdownMenuPortal>
-    </Dropdown >
+    </Dropdown>
   );
 };
 
