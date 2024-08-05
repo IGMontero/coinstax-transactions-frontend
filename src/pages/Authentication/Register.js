@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Row,
   Col,
@@ -18,9 +18,6 @@ import {
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
 // action
 import { register } from '../../slices/auth2/thunk';
 
@@ -35,6 +32,8 @@ import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -43,13 +42,13 @@ const Register = () => {
 
   const [error, setError] = useState();
 
+  const { user } = useSelector((state) => state.auth);
+
   const [loading, setLoading] = useState(false);
 
   const searchParams = new URLSearchParams(location.search);
   const code = searchParams.get('code');
   const type = searchParams.get('type');
-
-  console.log(code, type);
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -91,6 +90,9 @@ const Register = () => {
           timer: 2000,
           showConfirmButton: false,
         });
+        if (code && type) {
+          navigate(`/invite?code=${code}&type=${type}`);
+        }
       } else {
         setError(response.error.message);
         setLoading(false);
