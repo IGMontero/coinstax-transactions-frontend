@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   Row,
   Col,
@@ -18,16 +18,13 @@ import {
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-
 // action
 import { register } from '../../slices/auth2/thunk';
 
 //redux
 import { useDispatch } from 'react-redux';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 //import images
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
@@ -35,14 +32,23 @@ import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
 
 const Register = () => {
-  const history = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const [error, setError] = useState();
 
+  const { user } = useSelector((state) => state.auth);
+
   const [loading, setLoading] = useState(false);
+
+  const searchParams = new URLSearchParams(location.search);
+  const code = searchParams.get('code');
+  const type = searchParams.get('type');
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -84,6 +90,9 @@ const Register = () => {
           timer: 2000,
           showConfirmButton: false,
         });
+        if (code && type) {
+          navigate(`/invite?code=${code}&type=${type}`);
+        }
       } else {
         setError(response.error.message);
         setLoading(false);
@@ -310,7 +319,11 @@ const Register = () => {
                   <p className="mb-0">
                     Already have an account ?{' '}
                     <Link
-                      to="/login"
+                      to={
+                        code && type
+                          ? `/login?code=${code}&type=${type}`
+                          : '/login'
+                      }
                       className="fw-semibold text-primary text-decoration-underline"
                     >
                       {' '}

@@ -11,10 +11,11 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
+  const refreshUserPortfolio = useRefreshUserPortfolio();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
@@ -29,14 +30,14 @@ const DashboardConnectWallets = () => {
       icon: walletConnect,
       name: 'WalletConnect',
       link: '',
-      handler: () => { },
+      handler: () => {},
     },
 
     {
       icon: ledgerWallet,
       name: 'Ledger',
       link: '',
-      handler: () => { },
+      handler: () => {},
     },
   ];
 
@@ -58,6 +59,7 @@ const DashboardConnectWallets = () => {
 
       if (response && !response.error) {
         navigate(`/address/${address}`);
+        refreshUserPortfolio();
       } else {
         Swal.fire({
           title: 'Error',

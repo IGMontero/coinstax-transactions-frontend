@@ -132,26 +132,9 @@ const Navdata = () => {
         'user-addresses',
       ),
     );
+    allMenuItems.push(createMenuHeader('Manage'));
     allMenuItems.push(
-      createManageMenu(
-        'accountantUsers',
-        'Manage Clients',
-        'bx bx-user fs-3',
-        'clients',
-      ),
-    );
-  }
-
-
-  if (isUser || isAccountant) {
-    allMenuItems.push(createMenuHeader('Wallets'));
-    allMenuItems.push(
-      createManageMenu(
-        'connectWallet',
-        'Connect Wallet',
-        'bx bx-add-to-queue fs-3',
-        'wallets/connect',
-      ),
+      createManageMenu('users', 'Manage Users', 'bx bx-group fs-3', 'clients'),
     );
     allMenuItems.push(
       createManageMenu(
@@ -172,8 +155,47 @@ const Navdata = () => {
         'bx bx-user fs-3',
         'clients',
       ),
+    )
+    // allMenuItems.push(
+    //   createManageMenu(
+    //     'usersWallets',
+    //     'Manage Wallets',
+    //     'bx bx-wallet fs-3',
+    //     'wallets',
+    //   ),
+    // );
+  }
+  if (isUser || isAccountant) {
+    allMenuItems.push(createMenuHeader('Manage'));
+    allMenuItems.push(
+      createManageMenu(
+        'connectWallet',
+        'Connect Wallet',
+        'bx bx-add-to-queue fs-3',
+        'wallets/connect',
+      ),
+    );
+    allMenuItems.push(
+      createManageMenu(
+        'usersWallets',
+        'Manage Wallets',
+        'bx bx-wallet fs-3',
+        'wallets',
+      ),
     );
   }
+
+  // if (isAccountant) {
+  //   allMenuItems.push(createMenuHeader('Accountant'));
+  //   allMenuItems.push(
+  //     createManageMenu(
+  //       'accountantUsers',
+  //       'Manage Clients',
+  //       'bx bx-user fs-3',
+  //       'clients',
+  //     ),
+  //   );
+  // }
 
   const filteredMenuItems = filterMenuItems(allMenuItems);
 

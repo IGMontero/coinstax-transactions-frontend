@@ -24,9 +24,6 @@ import Skeleton from 'react-loading-skeleton';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
 
 const AddressesTable = ({
-  modalConnectWallet,
-  setModalConnectWallet,
-  userId,
   addresses,
   loading,
   onUpdateAddress,
@@ -43,7 +40,6 @@ const AddressesTable = ({
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
-
 
   const toggleCollapse = (collapseId) => {
     const newSet = new Set(openCollapse);
@@ -107,12 +103,12 @@ const AddressesTable = ({
 
   return (
     <>
-      <ConnectWalletModal
+      {/* <ConnectWalletModal
         isOpen={modalConnectWallet}
         setIsOpen={setModalConnectWallet}
         userId={userId}
         onRefresh={onRefresh}
-      />
+      /> */}
 
       <DragDropContext onDragEnd={onReorderAddress}>
         <Droppable droppableId="addresses">
@@ -127,7 +123,6 @@ const AddressesTable = ({
 
                   const isCompleted = address.complete;
                   const isLoading = !isCompleted;
-
 
                   const addressId = String(address.id || address.Id);
                   return (
@@ -152,8 +147,8 @@ const AddressesTable = ({
                             <div
                               onClick={() => handleItemClick(collapseId)}
                               className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
-                                ? 'border border-primary rounded px-2 mb-2'
-                                : 'bg-light'
+                                  ? 'border border-primary rounded px-2 mb-2'
+                                  : 'bg-light'
                                 }`}
                             >
                               <Row
@@ -260,8 +255,8 @@ const AddressesTable = ({
                               <Collapse isOpen={openCollapse.has(collapseId)}>
                                 <CardBody
                                   className={`cursor-pointer px-3 ${openCollapse.has(collapseId)
-                                    ? 'border-info'
-                                    : ''
+                                      ? 'border-info'
+                                      : ''
                                     }`}
                                 >
                                   <div className="d-flex flex-column">

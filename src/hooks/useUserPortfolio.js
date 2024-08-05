@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getCurrentUserPortfolioSummary } from '../slices/userWallets/thunk';
 import { setLoader } from '../slices/userWallets/reducer';
+import { getCurrentUserPortfolioSummary } from '../slices/userWallets/thunk';
 
 const usePortfolioData = (userId) => {
   const dispatch = useDispatch();
@@ -21,7 +21,6 @@ const usePortfolioData = (userId) => {
       setIsComplete(false);
     }
   }, [userPortfolioSummary]);
-
 
   useEffect(() => {
     if (isComplete) {
@@ -87,7 +86,7 @@ const usePortfolioData = (userId) => {
       }
 
       if (!isComplete) {
-        shortPollInterval.current = setInterval(fetchData, 5 * 1000); // 5 seconds
+        shortPollInterval.current = setInterval(fetchData, 3 * 1000); // 3 seconds
       }
     } else {
       hasFetched.current = false;
@@ -122,10 +121,14 @@ const usePortfolioData = (userId) => {
 export const useRefreshUserPortfolio = () => {
   const dispatch = useDispatch();
 
-  const refreshPortfolio = async (userId) => {
+  const { user } = useSelector((state) => state.auth);
+
+  const currentUserId = user?.id;
+
+  const refreshPortfolio = async () => {
     try {
       const response = await dispatch(
-        getCurrentUserPortfolioSummary({ userId }),
+        getCurrentUserPortfolioSummary({ userId: currentUserId }),
       ).unwrap();
       return response;
     } catch (error) {
@@ -135,6 +138,8 @@ export const useRefreshUserPortfolio = () => {
   };
 
   return refreshPortfolio;
-}
+};
+
+
 
 export default usePortfolioData;
