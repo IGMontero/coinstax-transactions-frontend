@@ -151,7 +151,15 @@ const Navdata = () => {
         'bx bx-user fs-3',
         'clients',
       ),
-    );
+    ),
+      allMenuItems.push(
+        createManageMenu(
+          'usersWallets',
+          'Manage Wallets',
+          'bx bx-wallet fs-3',
+          'wallets',
+        ),
+      );
   }
   if (isUser) {
     allMenuItems.push(createMenuHeader('Manage'));
