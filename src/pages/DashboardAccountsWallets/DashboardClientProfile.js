@@ -15,6 +15,7 @@ import {
 } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
 import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
+import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 
 const DashboardClientProfile = () => {
   const navigate = useNavigate();
@@ -277,6 +278,13 @@ const DashboardClientProfile = () => {
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
+      <ConnectWalletModal
+        isOpen={modalConnectWallet}
+        setIsOpen={setModalConnectWallet}
+        userId={client?.UserId}
+        onRefresh={fetchUserWallets}
+      />
+
       <div
         className="mt-5"
         // style={{ maxWidth: '610px' }}
@@ -331,12 +339,8 @@ const DashboardClientProfile = () => {
             </div>
 
             <AddressesTable
-              userId={client?.UserId}
-              modalConnectWallet={modalConnectWallet}
-              setModalConnectWallet={setModalConnectWallet}
               addresses={addresses}
               loading={loadingWallets}
-              onRefresh={fetchUserWallets}
               onDeleteAddress={handleDeleteUserAddress}
               onReorderAddress={onDragEnd}
               onUpdateAddress={handleUpdateAddress}
