@@ -116,7 +116,6 @@ const DashboardAccountantUsers = () => {
             <i className="ri-add-line me-2"></i>
             Add Client
           </Button>
-          {/* <Button color="primary">Connect Wallet</Button> */}
         </div>
       </div>
       <UsersTable
