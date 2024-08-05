@@ -24,6 +24,7 @@ import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
 //import images
 
 const Login = (props) => {
@@ -69,16 +70,16 @@ const Login = (props) => {
           timer: 2000,
           showConfirmButton: false,
         });
-
-        // Naviate to wallets page
         const authMeRes = await dispatch(authMe());
 
         const { role } = authMeRes.payload;
 
-        console.log('authMe response', role);
-
-        if (role === 'user') {
-          navigate('/wallets');
+        if (role === DASHBOARD_USER_ROLES.USER) {
+          if (code && type) {
+            navigate(`/invite?code=${code}&type=${type}`);
+          } else {
+            navigate('/wallets');
+          }
         } else {
           navigate('/clients');
         }
