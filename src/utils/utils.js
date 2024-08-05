@@ -1,5 +1,6 @@
 import moment from 'moment';
 import { fetchHistory } from '../slices/transactions/thunk';
+import { getCurrentThemeCookie } from '../helpers/cookies_helper';
 
 // #region Constants
 export const filtersChart = [
@@ -530,3 +531,8 @@ export const removeOptionsFromLocalStorage = (setOptions, value) => {
     currentOptions.filter((o) => o.value !== value),
   );
 };
+
+export const isDarkMode = () => {
+  const currentTheme = getCurrentThemeCookie();
+  return currentTheme === 'dark';
+}
