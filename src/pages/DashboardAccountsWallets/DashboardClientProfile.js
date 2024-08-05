@@ -126,7 +126,7 @@ const DashboardClientProfile = () => {
 
     const updatedItems = items.map((item, idx) => ({
       ...item,
-      Index: idx + 1,
+      index: idx + 1,
     }));
 
     updatePortfolioAddresses(updatedItems);
