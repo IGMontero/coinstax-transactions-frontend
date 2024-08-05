@@ -22,6 +22,7 @@ const AddressWithDropdown = ({
   incompleteBlockchains,
   loading,
   addressNickName,
+  isUnsupported,
 }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
@@ -260,7 +261,7 @@ const AddressWithDropdown = ({
                 <Spinner size="md" color="primary" />
               </div>
             )}
-            {!isOnlyAllNetwork && (
+            {!isOnlyAllNetwork && !isUnsupported && (
               <NetworkDropdown
                 isAdminPage={false}
                 filteredNetworks={filteredNetworks}
