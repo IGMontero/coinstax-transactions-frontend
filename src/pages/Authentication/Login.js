@@ -15,7 +15,7 @@ import {
 } from 'reactstrap';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -28,17 +28,20 @@ import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 
 const Login = (props) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
 
-  const { error, status, user } = useSelector((state) => state.auth);
+  const { error } = useSelector((state) => state.auth);
 
   const [errorMsg, setErrorMsg] = useState(error?.toString());
 
   const [passwordShow, setPasswordShow] = useState(false);
 
-  console.log('USER', user);
+  const searchParams = new URLSearchParams(location.search);
+  const code = searchParams.get('code');
+  const type = searchParams.get('type');
 
   const handleLogin = async (values) => {
     setLoading(true);
@@ -269,7 +272,11 @@ const Login = (props) => {
                   <p className="mb-0">
                     Don't have an account ?{' '}
                     <Link
-                      to="/register"
+                      to={
+                        code && type
+                          ? `/register?code=${code}&type=${type}`
+                          : '/register'
+                      }
                       className="fw-semibold text-primary text-decoration-underline"
                     >
                       {' '}
