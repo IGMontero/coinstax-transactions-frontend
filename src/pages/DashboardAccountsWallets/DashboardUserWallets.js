@@ -12,6 +12,7 @@ import {
 import Swal from 'sweetalert2';
 import useRefreshPortfolio from '../../Components/Hooks/PortfolioHook';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
+import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 
 const DashboardUserWallets = () => {
   const dispatch = useDispatch();
@@ -190,6 +191,12 @@ const DashboardUserWallets = () => {
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
+      <ConnectWalletModal
+        isOpen={modalConnectWallet}
+        setIsOpen={setModalConnectWallet}
+        userId={userId}
+        onRefresh={refreshUserPortfolio}
+      />
       <div style={{ maxWidth: '610px' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
           <h1>Manage Wallets</h1>
@@ -226,16 +233,11 @@ const DashboardUserWallets = () => {
         )} */}
 
         <AddressesTable
-          modalConnectWallet={modalConnectWallet}
-          setModalConnectWallet={setModalConnectWallet}
-          userId={userId}
           addresses={userPortfolioSummary?.addresses}
           loading={loaders.userPortfolioSummary}
           onUpdateAddress={handleUpdateAddress}
           onReorderAddress={onDragEnd}
           onDeleteAddress={handleDeleteUserAddress}
-          onRefresh={refreshUserPortfolio}
-          onAddAddress={refreshUserPortfolio}
         />
 
         {/* <div className="mt-4">
