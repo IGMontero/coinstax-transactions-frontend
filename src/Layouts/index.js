@@ -38,6 +38,7 @@ import { setAddressSummary } from '../slices/addresses/reducer';
 import UnsupportedPage from '../Components/UnsupportedPage/UnsupportedPage';
 import { setAddressName } from '../slices/addressName/reducer';
 import { pagesWithoutAddress } from '../common/constants';
+import { getCurrentUserPortfolioSummary } from '../slices/userWallets/thunk';
 const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
   const location = useLocation();
@@ -179,6 +180,14 @@ const Layout = (props) => {
 
   const [nickName, setNickName] = useState(null);
 
+  const isPortfolioPage = location.pathname.includes('portfolio');
+
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
+
+  const { user } = useSelector((state) => state.auth);
+
+  const userId = user?.id;
+
   const fetchAddressInfo = async () => {
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
@@ -186,8 +195,13 @@ const Layout = (props) => {
 
     try {
       setLoading(true);
-      const response = await dispatch(getAddressesInfo({ address, signal }));
-      const res = response.payload;
+
+      const request = isPortfolioPage
+        ? dispatch(getCurrentUserPortfolioSummary({ userId, signal })).unwrap()
+        : dispatch(getAddressesInfo({ address: address, signal }));
+
+      const response = await request;
+      const res = isPortfolioPage ? response : response.payload;
 
       if (res) {
         if (res.blockchains) {
@@ -282,7 +296,7 @@ const Layout = (props) => {
     if (token) {
       setIsUnsupported(false);
     }
-    if (address) {
+    if (address || isPortfolioPage) {
       const loadAddressInfo = async () => {
         if (fetchInterval.current) {
           clearInterval(fetchInterval.current);
@@ -325,7 +339,8 @@ const Layout = (props) => {
       !address &&
       !token &&
       !contractAddress &&
-      !isPageWithoutAddress(location.pathname)
+      !isPageWithoutAddress(location.pathname) &&
+      !isPortfolioPage
     ) {
       navigate('/');
     }
@@ -336,6 +351,7 @@ const Layout = (props) => {
     location.pathname,
     navigate,
     pagesNotToDisplayAddress,
+    isPortfolioPage,
   ]);
 
   return (

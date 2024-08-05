@@ -7,7 +7,7 @@ import {
   Spinner,
   UncontrolledDropdown,
 } from 'reactstrap';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import QrModal from '../Modals/QrModal';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
@@ -26,13 +26,14 @@ const AddressWithDropdown = ({
 }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
+  const location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
   const addresses = useSelector((state) => state.addressName.addresses);
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
 
-  console.log('user portfolio summary', userPortfolioSummary);
+  const isPortfolioPage = location.pathname.includes('portfolio');
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
@@ -187,58 +188,62 @@ const AddressWithDropdown = ({
     return (
       <div className="d-flex align-items-center ms-n3">
         <h4 className="mb-0 ms-3 text-custom-address-dropdown">
-          {formattedAddressLabel !== formatIdTransaction(address, 6, 8)
-            ? formattedAddressLabel
-            : addressNickName
-              ? addressNickName
-              : formattedAddressLabel}
+          {isPortfolioPage
+            ? 'Portfolio'
+            : formattedAddressLabel !== formatIdTransaction(address, 6, 8)
+              ? formattedAddressLabel
+              : addressNickName
+                ? addressNickName
+                : formattedAddressLabel}
         </h4>
-        <UncontrolledDropdown className="card-header-dropdown">
-          <DropdownToggle tag="a" className="text-reset" role="button">
-            <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
-          </DropdownToggle>
-          <DropdownMenu className="dropdown-menu-end ms-3">
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={toggleQrModal}
-            >
-              <i className="ri-qr-code-line fs-4 me-2"></i>
-              <span className="fw-normal">Show QR code</span>
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={(e) => handleCopy(e, address)}
-            >
-              {isCopied ? (
-                <i className="ri-check-line fs-4 me-2"></i>
-              ) : (
-                <i className="ri-file-copy-line fs-4 me-2"></i>
-              )}
-              <span className="fw-normal">Copy Address</span>
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={(e) => {
-                if (user) {
-                  const addr = userPortfolioSummary.addresses.find(
-                    (addr) => addr.address === address,
-                  );
+        {!isPortfolioPage && (
+          <UncontrolledDropdown className="card-header-dropdown">
+            <DropdownToggle tag="a" className="text-reset" role="button">
+              <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
+            </DropdownToggle>
+            <DropdownMenu className="dropdown-menu-end ms-3">
+              <DropdownItem
+                className="d-flex align-items-center"
+                onClick={toggleQrModal}
+              >
+                <i className="ri-qr-code-line fs-4 me-2"></i>
+                <span className="fw-normal">Show QR code</span>
+              </DropdownItem>
+              <DropdownItem
+                className="d-flex align-items-center"
+                onClick={(e) => handleCopy(e, address)}
+              >
+                {isCopied ? (
+                  <i className="ri-check-line fs-4 me-2"></i>
+                ) : (
+                  <i className="ri-file-copy-line fs-4 me-2"></i>
+                )}
+                <span className="fw-normal">Copy Address</span>
+              </DropdownItem>
+              <DropdownItem
+                className="d-flex align-items-center"
+                onClick={(e) => {
+                  if (user) {
+                    const addr = userPortfolioSummary.addresses.find(
+                      (addr) => addr.address === address,
+                    );
 
-                  console.log(addr);
-                  handleUpdateAddress(e, addr);
-                } else {
-                  handleOpenModalRename(e, {
-                    label: formattedAddressLabel,
-                    value: address,
-                  });
-                }
-              }}
-            >
-              <i className="ri-pencil-line fs-4 me-2"></i>
-              <span className="fw-normal">Rename</span>
-            </DropdownItem>
-          </DropdownMenu>
-        </UncontrolledDropdown>
+                    console.log(addr);
+                    handleUpdateAddress(e, addr);
+                  } else {
+                    handleOpenModalRename(e, {
+                      label: formattedAddressLabel,
+                      value: address,
+                    });
+                  }
+                }}
+              >
+                <i className="ri-pencil-line fs-4 me-2"></i>
+                <span className="fw-normal">Rename</span>
+              </DropdownItem>
+            </DropdownMenu>
+          </UncontrolledDropdown>
+        )}
       </div>
     );
   };
