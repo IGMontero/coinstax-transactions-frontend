@@ -41,6 +41,9 @@ const AddressWithDropdown = ({
   const [formattedValue, setFormattedValue] = useState('');
 
   useEffect(() => {
+    if (!userPortfolioSummary?.addresses)
+      return;
+
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
 
@@ -53,7 +56,7 @@ const AddressWithDropdown = ({
     }
 
     if (!matchingAddress) {
-      matchingAddress = addresses.find((addr) => addr.value === address);
+      matchingAddress = addresses?.find((addr) => addr.value === address);
     }
 
     if (matchingAddress) {

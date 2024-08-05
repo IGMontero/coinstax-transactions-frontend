@@ -115,6 +115,7 @@ const authProtectedRoutes = [
         allowedRoles={[
           DASHBOARD_USER_ROLES.USER,
           DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.ADMIN,
         ]}
       >
         <DashboardUserWallets />

@@ -87,9 +87,13 @@ const userWalletsSlice = createSlice({
       };
       state.loaders.userPortfolioSummary = false;
     },
+
+    addAddressToUserPortfolio: (state, action) => {
+      state.userPortfolioSummary.addresses.push(action.payload);
+    }
   },
 });
 
-export const { setLoader, setUserPortfolioSummary } = userWalletsSlice.actions;
+export const { setLoader, setUserPortfolioSummary, addAddressToUserPortfolio } = userWalletsSlice.actions;
 
 export default userWalletsSlice.reducer;

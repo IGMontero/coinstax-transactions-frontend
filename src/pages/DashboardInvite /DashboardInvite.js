@@ -158,7 +158,7 @@ const DashboardInvite = () => {
         <div className="text-center">
           <h4>Accept invite?</h4>
 
-          <p>John Doe invited you to manage their wallets in ChainGlance.</p>
+          <p>Somebody has invited you to manage their wallets on ChainGlance.</p>
 
           <div className="d-flex justify-content-center">
             <Button
@@ -184,7 +184,7 @@ const DashboardInvite = () => {
         <div className="text-center">
           <h4>Accept invite?</h4>
 
-          <p>John Doe wants to manage your wallets in ChainGlance.</p>
+          <p>Somebody wants to manage your wallets on ChainGlance.</p>
 
           <div className="d-flex justify-content-center">
             <Button
@@ -210,7 +210,7 @@ const DashboardInvite = () => {
         <div className="text-center">
           <h4>Accept invite?</h4>
 
-          <p>John Doe wants to invite you as an agent in ChainGlance.</p>
+          <p>Somebody invited you as an agent on ChainGlance.</p>
 
           <div className="d-flex justify-content-center">
             <Button

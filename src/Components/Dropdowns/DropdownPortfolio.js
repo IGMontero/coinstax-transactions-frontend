@@ -62,6 +62,15 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     userPortfolioSummary?.blockchains?.all?.totalValue || 0;
   const loadingPortfolio = loaders?.userPortfolioSummary;
 
+
+
+  console.log("User potfolio summary:", userPortfolioSummary);
+
+  console.log("Loading Portfolio:", loadingPortfolio);
+
+
+  // console.log('portfolioData:', portfolioData);
+
   useEffect(() => {
     // Mantén `selectedAddress` actualizado si `addressParams` cambia
     if (addressParams) {
@@ -374,7 +383,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       <DropdownMenuPortal>
         <DropdownMenu
           className={isInHeader ? '' : 'ms-5'}
-          style={{ zIndex: 1002 }}
+          style={{
+            zIndex: 1002,
+            width: '300px',
+          }}
         >
           {!userPortfolioAddresses.length ? null : (
             <>
@@ -437,7 +449,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           )}
         </DropdownMenu>
       </DropdownMenuPortal>
-    </Dropdown>
+    </Dropdown >
   );
 };
 

@@ -228,7 +228,8 @@ const Layout = (props) => {
 
         if (!res.blockchains) {
           setIsInInterval(false);
-          throw new Error('Invalid response structure');
+          return;
+
         }
 
         const availableNetworks = Object.keys(res.blockchains);
