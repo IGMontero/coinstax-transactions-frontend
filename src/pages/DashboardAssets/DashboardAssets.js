@@ -1,15 +1,22 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchAssets } from '../../slices/transactions/thunk';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import ActivesTable from '../DashboardInfo/components/ActivesTable';
 import Helmet from '../../Components/Helmet/Helmet';
+import { fetchAssetsPortfolio } from '../../slices/portfolio/thunk';
 
 const DashboardAssets = () => {
   const { address } = useParams();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+
+  const userId = user?.id;
+
   const networkType = useSelector(selectNetworkType);
+  const isPortfolioPage = location.pathname.includes('portfolio');
   const fetchControllerRef = useRef(new AbortController());
 
   const [assetsData, setAssetsData] = useState({});
@@ -38,13 +45,25 @@ const DashboardAssets = () => {
         [fecthId]: true,
       }));
 
-      const response = await dispatch(fetchAssets(params)).unwrap();
-      if (response?.unsupported === true) {
+      const request = isPortfolioPage
+        ? fetchAssetsPortfolio({
+            userId: userId,
+            blockchain: networkType,
+            signal,
+          })
+        : fetchAssets(params).unwrap();
+
+      const response = await dispatch(request);
+
+      const res = isPortfolioPage ? response.payload : response;
+
+      console.log('response assets ', response);
+      if (res?.unsupported === true) {
         setIsUnsupported(true);
       } else {
         setIsUnsupported(false);
       }
-      setAssetsData(response || {});
+      setAssetsData(res || {});
 
       setLoaderassets((prev) => ({
         ...prev,
@@ -67,7 +86,6 @@ const DashboardAssets = () => {
       fetchControllerRef.current.abort();
     };
   }, [networkType, address]);
-
 
   return (
     <div>

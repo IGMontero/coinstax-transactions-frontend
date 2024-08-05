@@ -14,16 +14,23 @@ import { selectNetworkType } from '../../slices/networkType/reducer';
 import { fetchAssets } from '../../slices/transactions/thunk';
 import { formatAddressToShortVersion } from '../../utils/utils';
 import Helmet from '../../Components/Helmet/Helmet';
+import { fetchAssetsPortfolio } from '../../slices/portfolio/thunk';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+  const userId = user?.id;
   const fetchControllerRef = useRef(new AbortController());
   const { fetchData } = useSelector((state) => state.fetchData);
   const networkType = useSelector(selectNetworkType);
   const { address, type } = useParams();
   const previousAddress = usePrevious(address);
+
+  const isPortfolioPage = location.pathname.includes('portfolio');
+
+  console.log(isPortfolioPage);
 
   const [customActiveTab, setCustomActiveTab] = useState('1');
 
@@ -54,16 +61,20 @@ const DashboardInfo = () => {
   }
 
   useEffect(() => {
-    if (fetchData && fetchData?.performance?.unsupported) {
-      setIsUnsupported(true);
-    } else {
-      setIsUnsupported(false);
+    if (!isPortfolioPage) {
+      if (fetchData && fetchData?.performance?.unsupported) {
+        setIsUnsupported(true);
+      } else {
+        setIsUnsupported(false);
+      }
     }
   }, [fetchData, networkType]);
 
   useEffect(() => {
-    if (address && previousAddress !== address && !type) {
-      navigate(`/address/${address}`);
+    if (!isPortfolioPage) {
+      if (address && previousAddress !== address && !type) {
+        navigate(`/address/${address}`);
+      }
     }
   }, [address, previousAddress, navigate, type]);
 
@@ -71,83 +82,74 @@ const DashboardInfo = () => {
     setShowQrModal(!showQrModal);
   };
 
-  const fetchDataAssets = () => {
-    // setLoadingAssets(true);
+  const fetchDataAssets = async () => {
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
 
-    const fetchId = Date.now();
+    const fecthId = Date.now();
+    const params = {
+      address,
+      networkType,
+      signal,
+    };
 
-    // Start loading for this fetch
-    setAssetsLoaders((prev) => ({
-      ...prev,
-      [fetchId]: true,
-    }));
+    try {
+      setAssetsLoaders((prev) => ({
+        ...prev,
+        [fecthId]: true,
+      }));
 
-    dispatch(fetchAssets({ address, networkType, signal }))
-      .unwrap()
-      .then((response) => {
-        if (response.unsupported == true) {
-          setIsUnsupported(true);
-          // setLoadingAssets(false);
-          // stop loading
-          setAssetsLoaders((prev) => ({
-            ...prev,
-            [fetchId]: false,
-          }));
-        } else {
-          setIsUnsupported(false);
-          handleSaveInCookiesAndGlobalState(
-            addressForSearch,
-            dispatch,
-            setAddressName,
-          );
-        }
-        setAssetsData(response);
-        // setLoadingAssets(false);
-        // stop loading
-        setAssetsLoaders((prev) => ({
-          ...prev,
-          [fetchId]: false,
-        }));
-      })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('Fetch aborted');
-          // setLoadingAssets(false);
+      const request = isPortfolioPage
+        ? fetchAssetsPortfolio({
+            userId: userId,
+            blockchain: networkType,
+            signal,
+          })
+        : fetchAssets(params).unwrap();
 
-          // stop loading
-          setAssetsLoaders((prev) => ({
-            ...prev,
-            [fetchId]: false,
-          }));
-        } else {
-          console.error('Error fetching performance data:', error);
-          // setLoadingAssets(false);
-          // stop loading
-          setAssetsLoaders((prev) => ({
-            ...prev,
-            [fetchId]: false,
-          }));
-        }
-      });
+      const response = await dispatch(request);
+
+      const res = isPortfolioPage ? response.payload : response;
+
+      console.log('response assets ', response);
+      if (res?.unsupported === true) {
+        setIsUnsupported(true);
+      } else {
+        setIsUnsupported(false);
+      }
+      setAssetsData(res || {});
+
+      setAssetsLoaders((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.log('Error fetching performance data:', error);
+      }
+      setAssetsLoaders((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
+    }
   };
 
   useEffect(() => {
-    if (addressForSearch) {
-      fetchDataAssets();
-    }
+    fetchDataAssets();
+
     return () => {
       fetchControllerRef.current.abort();
     };
   }, [addressForSearch, type, dispatch, isUnsupported, networkType]);
 
   useEffect(() => {
-    if (address) {
-      setIsUnsupported(false);
-      setAddressForSearch(address);
-      setAddressTitle(address);
+    if (!isPortfolioPage) {
+      if (address) {
+        setIsUnsupported(false);
+        setAddressForSearch(address);
+        setAddressTitle(address);
+      }
     }
   }, [address, location, networkType]);
 
@@ -176,7 +178,6 @@ const DashboardInfo = () => {
       </div>
     );
   };
-
 
   return (
     <React.Fragment>

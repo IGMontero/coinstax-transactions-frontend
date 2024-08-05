@@ -64,7 +64,6 @@ const publicRoutes = [
   { path: '/contract/:contractAddress', component: <DashboardNFT /> },
 
   { path: '/address/:address/assets', component: <DashboardAssets /> },
-  { path: '/address/:address/assets', component: <DashboardAssets /> },
   { path: '/address/:address/nfts', component: <NFTsPage /> },
   { path: '/address/:address/history', component: <DashboardTransactions /> },
   // PORTFOLIO
