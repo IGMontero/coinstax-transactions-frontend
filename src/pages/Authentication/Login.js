@@ -15,7 +15,7 @@ import {
 } from 'reactstrap';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
@@ -24,21 +24,25 @@ import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
 //import images
 
 const Login = (props) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
 
-  const { error, status, user } = useSelector((state) => state.auth);
+  const { error } = useSelector((state) => state.auth);
 
   const [errorMsg, setErrorMsg] = useState(error?.toString());
 
   const [passwordShow, setPasswordShow] = useState(false);
 
-  console.log('USER', user);
+  const searchParams = new URLSearchParams(location.search);
+  const code = searchParams.get('code');
+  const type = searchParams.get('type');
 
   const handleLogin = async (values) => {
     setLoading(true);
@@ -66,16 +70,16 @@ const Login = (props) => {
           timer: 2000,
           showConfirmButton: false,
         });
-
-        // Naviate to wallets page
         const authMeRes = await dispatch(authMe());
 
         const { role } = authMeRes.payload;
 
-        console.log('authMe response', role);
-
-        if (role === 'user') {
-          navigate('/wallets');
+        if (role === DASHBOARD_USER_ROLES.USER) {
+          if (code && type) {
+            navigate(`/invite?code=${code}&type=${type}`);
+          } else {
+            navigate('/wallets');
+          }
         } else {
           navigate('/clients');
         }
@@ -269,7 +273,11 @@ const Login = (props) => {
                   <p className="mb-0">
                     Don't have an account ?{' '}
                     <Link
-                      to="/register"
+                      to={
+                        code && type
+                          ? `/register?code=${code}&type=${type}`
+                          : '/register'
+                      }
                       className="fw-semibold text-primary text-decoration-underline"
                     >
                       {' '}

@@ -15,8 +15,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import Helmet from '../../Components/Helmet/Helmet';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { useSelector } from 'react-redux';
-import { verifyInviteCode } from '../../slices/userWallets/thunk';
-import { userInviteTypes } from '../../common/constants';
+import {
+  acceptInviteCode,
+  declineInviteCode,
+  verifyInviteCode,
+} from '../../slices/userWallets/thunk';
+import { DASHBOARD_USER_ROLES, userInviteTypes } from '../../common/constants';
+import Swal from 'sweetalert2';
 //import images
 
 const DashboardInvite = () => {
@@ -30,8 +35,7 @@ const DashboardInvite = () => {
 
   const queryParams = new URLSearchParams(location.search);
 
-
-  const inviteType = queryParams.get('type')
+  const inviteType = queryParams.get('type');
   const isValidInviteType = Object.values(userInviteTypes).includes(inviteType);
 
   if (!isValidInviteType) {
@@ -46,9 +50,10 @@ const DashboardInvite = () => {
 
       console.log('Verifying invite code', inviteCode);
 
-      const response = await dispatch(verifyInviteCode({ inviteCode: inviteCode }));
+      const response = await dispatch(
+        verifyInviteCode({ inviteCode: inviteCode }),
+      );
 
-      console.log(response);
       const res = response.payload;
       if (res && response.error) {
         setErrorMsg('Invite code is invalid');
@@ -78,15 +83,73 @@ const DashboardInvite = () => {
   }, [location.search]);
 
   const handleAcceptInvite = () => {
-    // Accept invite
-    console.log('Accepting invite');
-  }
+    try {
+      setLoading(true);
+      const response = dispatch(acceptInviteCode({ inviteCode: code }));
+
+      console.log('Accepting invite', response);
+
+      if (response.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong!',
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Invite accepted successfully!',
+        });
+        if (user?.role === DASHBOARD_USER_ROLES.USER) {
+          navigate('/wallets');
+        } else {
+          navigate('/dashboard');
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+      });
+      setLoading(false);
+    }
+  };
 
   const handleDeclineInvite = () => {
-    // Decline invite
-    console.log('Declining invite');
-  }
+    try {
+      setLoading(true);
+      const response = dispatch(declineInviteCode({ inviteCode: code }));
 
+      if (response.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong!',
+        });
+      }
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Invite declined successfully!',
+      });
+      if (user?.role === DASHBOARD_USER_ROLES.USER) {
+        navigate('/wallets');
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+      });
+      setLoading(false);
+    }
+  };
 
   const renderAcceptUserToAccountantInvite = () => {
     // Show something like.. user name invited you to manage their wallets. Accept or decline
@@ -111,8 +174,8 @@ const DashboardInvite = () => {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderAcceptAccountantToUserInvite = () => {
     // Show accountant name wants to manage your wallets. Accept or decline
@@ -137,8 +200,8 @@ const DashboardInvite = () => {
           </div>
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   const renderAcceptAccountantToAgentInvite = () => {
     // Show accountant name wants to invite you as an agent. Accept or decline
@@ -155,7 +218,6 @@ const DashboardInvite = () => {
               color="primary"
               className="me-2"
             >
-
               Accept
             </Button>
 
@@ -165,10 +227,8 @@ const DashboardInvite = () => {
           </div>
         </div>
       </div>
-    )
-  }
-
-
+    );
+  };
 
   const renderAcceptInvite = () => {
     // Render result based on invite type
@@ -184,26 +244,42 @@ const DashboardInvite = () => {
     }
   };
 
-  const renderLogInToAcceptInvite = () => {
+  const renderLogInOrRegisterToAcceptInvite = () => {
     return (
       // Render login button and text, if user is not authenticated
       <div className="d-flex justify-content-center">
         <div className="text-center">
-          <h4>Log in to accept invite</h4>
-          <Button
-            onClick={() => navigate('/login')}
-            color="primary"
-            className="me-2"
-          >
-            Log in
-          </Button>
+          <h4>Log in or Register to accept invite</h4>
+          <div className="d-flex align-items-center justify-content-around">
+            <Button
+              onClick={() => navigate(`/login?code=${code}&type=${inviteType}`)}
+              className="mt-3 d-flex btn-hover-light w-50 text-dark justify-content-center align-items-center"
+              color="soft-light"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+              }}
+            >
+              Log in
+            </Button>
+            <Button
+              onClick={() =>
+                navigate(`/register?code=${code}&type=${inviteType}`)
+              }
+              className="mt-3 d-flex btn-hover-light w-50 ms-2  text-dark justify-content-center align-items-center"
+              color="soft-light"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+              }}
+            >
+              Register
+            </Button>
+          </div>
         </div>
       </div>
     );
-  }
-
-
-
+  };
 
   return (
     <React.Fragment>
@@ -239,8 +315,12 @@ const DashboardInvite = () => {
                     ) : (
                       <div className="d-flex justify-content-center">
                         {errorMsg ? (
-                          <>
-                            <Alert className="mb-0" color="danger" isOpen={errorMsg !== ''}>
+                          <div className="d-flex flex-column">
+                            <Alert
+                              className="mb-0"
+                              color="danger"
+                              isOpen={errorMsg !== ''}
+                            >
                               {errorMsg}
                             </Alert>
                             <div className="mt-4 text-center">
@@ -248,28 +328,16 @@ const DashboardInvite = () => {
                                 Back to login
                               </Link>
                             </div>
-                          </>
-
+                          </div>
                         ) : (
                           <>
-
-                            {user ? renderAcceptInvite() : renderLogInToAcceptInvite()}
-
+                            {user
+                              ? renderAcceptInvite()
+                              : renderLogInOrRegisterToAcceptInvite()}
                           </>
-
                         )}
-
                       </div>
                     )}
-
-
-                    {/* // Back to login page */}
-                    {/* <div className="mt-4 text-center">
-                      <Link to="/login" className="text-muted">
-                        Back to login
-                      </Link>
-                    </div> */}
-
                   </CardBody>
                 </Card>
               </Col>

@@ -15,6 +15,7 @@ import {
 } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
 import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
+import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 
 const DashboardClientProfile = () => {
   const navigate = useNavigate();
@@ -30,7 +31,10 @@ const DashboardClientProfile = () => {
 
   const addresses = clientUserPortfolio?.addresses;
   const totalPortfolioValue = clientUserPortfolio?.totalValue;
-  const parsedTotalPortfolioValue = parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
+  const parsedTotalPortfolioValue = parseValuesToLocale(
+    totalPortfolioValue,
+    CurrencyUSD,
+  );
 
   const [loadingWallets, setLoadingWallets] = useState(false);
 
@@ -122,7 +126,7 @@ const DashboardClientProfile = () => {
 
     const updatedItems = items.map((item, idx) => ({
       ...item,
-      Index: idx + 1,
+      index: idx + 1,
     }));
 
     updatePortfolioAddresses(updatedItems);
@@ -133,7 +137,7 @@ const DashboardClientProfile = () => {
   const handleReorderAddresses = async (updatedAddresses) => {
     const payload = updatedAddresses.map((address) => ({
       Id: address.id,
-      Index: address.Index,
+      Index: address.index,
     }));
 
     try {
@@ -167,14 +171,14 @@ const DashboardClientProfile = () => {
     Swal.fire({
       title: 'Update Wallet Address',
       input: 'text',
-      inputValue: address.Name,
+      inputValue: address.name,
       showCancelButton: true,
       confirmButtonText: 'Save',
       inputValidator: (value) => {
         // Correcting the validation logic
         if (
           addresses.some(
-            (addr) => addr.Name === value && addr.Address !== address.Address,
+            (addr) => addr.name === value && addr.address !== address.address,
           )
         ) {
           return 'This name already exists!';
@@ -218,7 +222,7 @@ const DashboardClientProfile = () => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.Name ? address.Name : address.Address}?`,
+      text: `Are you sure to delete wallet ${address.name ? address.name : address.address}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -274,9 +278,14 @@ const DashboardClientProfile = () => {
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
-      <div className="mt-5"
-      // style={{ maxWidth: '610px' }}
-      >
+      <ConnectWalletModal
+        isOpen={modalConnectWallet}
+        setIsOpen={setModalConnectWallet}
+        userId={client?.UserId}
+        onRefresh={fetchUserWallets}
+      />
+
+      <div className="mt-5" style={{ maxWidth: '610px' }}>
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1>Client Profile</h1>
           <div className="d-flex">
@@ -315,35 +324,26 @@ const DashboardClientProfile = () => {
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
-        ) :
-          (addresses?.length === 0 || !addresses) ? (
-            <div className="d-flex my-3">
-              <h5>No wallets found</h5>
+        ) : addresses?.length === 0 || !addresses ? (
+          <div className="d-flex my-3">
+            <h5>No wallets found</h5>
+          </div>
+        ) : (
+          <>
+            {/* // toTAL POrtfolio value */}
+            <div className="d-flex justify-content-between align-items-center mb-2">
+              <h4>Portfolio Value: {parsedTotalPortfolioValue}</h4>
             </div>
-          ) : (
-            <>
-              {/* // toTAL POrtfolio value */}
-              <div className="d-flex justify-content-between align-items-center mb-2">
-                <h4>Portfolio Value: {parsedTotalPortfolioValue}</h4>
-              </div>
 
-              <AddressesTable
-                userId={client?.UserId}
-                modalConnectWallet={modalConnectWallet}
-                setModalConnectWallet={setModalConnectWallet}
-                addresses={addresses}
-                loading={loadingWallets}
-                onRefresh={fetchUserWallets}
-                onDeleteAddress={handleDeleteUserAddress}
-                onReorderAddress={onDragEnd}
-                onUpdateAddress={handleUpdateAddress}
-              />
-
-            </>
-
-          )
-        }
-
+            <AddressesTable
+              addresses={addresses}
+              loading={loadingWallets}
+              onDeleteAddress={handleDeleteUserAddress}
+              onReorderAddress={onDragEnd}
+              onUpdateAddress={handleUpdateAddress}
+            />
+          </>
+        )}
       </div>
     </React.Fragment>
   );

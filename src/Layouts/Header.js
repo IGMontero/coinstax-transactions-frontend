@@ -47,8 +47,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
   const currentUser = user;
-  console.log(currentUser);
-
   const { sidebarVisibilitytype } = useSelector((state) => ({
     sidebarVisibilitytype: state.Layout.sidebarVisibilitytype,
   }));

@@ -361,6 +361,7 @@ const Layout = (props) => {
               !token &&
               !contractAddress && (
                 <AddressWithDropdown
+                  isUnsupported={isUnsupported}
                   addressNickName={nickName}
                   isOnlyAllNetwork={isOnlyAllNetwork}
                   filteredNetworks={filteredNetworks}
