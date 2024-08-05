@@ -22,7 +22,6 @@ const usePortfolioData = (userId) => {
     }
   }, [userPortfolioSummary]);
 
-
   useEffect(() => {
     if (isComplete) {
       console.log('Portfolio data fetched.');
@@ -122,10 +121,14 @@ const usePortfolioData = (userId) => {
 export const useRefreshUserPortfolio = () => {
   const dispatch = useDispatch();
 
-  const refreshPortfolio = async (userId) => {
+  const { user } = useSelector((state) => state.auth);
+
+  const currentUserId = user?.id;
+
+  const refreshPortfolio = async () => {
     try {
       const response = await dispatch(
-        getCurrentUserPortfolioSummary({ userId }),
+        getCurrentUserPortfolioSummary({ userId: currentUserId }),
       ).unwrap();
       return response;
     } catch (error) {
@@ -135,6 +138,6 @@ export const useRefreshUserPortfolio = () => {
   };
 
   return refreshPortfolio;
-}
+};
 
 export default usePortfolioData;

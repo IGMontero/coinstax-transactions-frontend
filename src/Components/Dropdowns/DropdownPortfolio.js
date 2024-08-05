@@ -22,7 +22,7 @@ import {
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';
 import DropdownMenuPortal from './DropdownPortal';
-import useRefreshPortfolio from '../Hooks/PortfolioHook';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
@@ -32,7 +32,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
-  const { refreshPortfolio } = useRefreshPortfolio(userId);
+  const refreshUserPortfolio = useRefreshUserPortfolio();
 
   const { userPortfolioSummary, loaders } = useSelector(
     (state) => state.userWallets,
@@ -51,7 +51,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const [loadingWallets, setLoadingWallets] = useState(false);
   const [selectedAddress, setSelectedAddress] = useState(
     userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-    null,
+      null,
   );
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
@@ -144,7 +144,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             //   icon: 'success',
             // });
 
-            refreshPortfolio();
+            refreshUserPortfolio();
           } else {
             Swal.fire({
               title: 'Error',
@@ -168,8 +168,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.Name ? address.Name : address.Address
-        }?`,
+      text: `Are you sure to delete wallet ${
+        address.name ? address.name : address.address
+      }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -178,7 +179,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       if (result.isConfirmed) {
         try {
           const response = await dispatch(
-            deleteUserAddressWallet({ userId, addressId: address.Id }),
+            deleteUserAddressWallet({ userId, addressId: address.id }),
           ).unwrap();
 
           if (response && !response.error) {
@@ -187,7 +188,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
               text: 'Wallet address deleted successfully',
               icon: 'success',
             });
-            refreshPortfolio();
+            refreshUserPortfolio();
           } else {
             Swal.fire({
               title: 'Error',
@@ -321,7 +322,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           </div>
 
           {(selectedAddress && selectedAddress.address === address) ||
-            addressParams === address ? (
+          addressParams === address ? (
             <i className="ri-check-line text-muted fs-16 align-middle me-3"></i>
           ) : null}
           {renderOptionsSubDropdown(index, addressData)}
@@ -333,8 +334,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''
-          } border-1 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent ${
+          isInHeader ? 'py-1 ' : ''
+        } border-1 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
@@ -344,7 +346,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         <div className="d-flex flex-column align-items-start flex-grow-1">
           <span className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}>
             {selectedAddress &&
-              (selectedAddress.name || selectedAddress.address)
+            (selectedAddress.name || selectedAddress.address)
               ? selectedAddress.name
                 ? selectedAddress.name
                 : formatAddressToShortVersion(selectedAddress.address)
@@ -429,9 +431,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             >
               <div className="dropdown-item ps-0">
                 <i className="mdi mdi-wallet text-muted fs-16 align-middle me-3"></i>
-                <span className="align-middle">
-                  Manage Wallets
-                </span>
+                <span className="align-middle">Manage Wallets</span>
               </div>
             </DropdownItem>
           )}
