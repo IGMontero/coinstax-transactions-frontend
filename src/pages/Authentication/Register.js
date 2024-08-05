@@ -27,7 +27,7 @@ import { register } from '../../slices/auth2/thunk';
 //redux
 import { useDispatch } from 'react-redux';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 //import images
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
@@ -37,12 +37,19 @@ import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
 
 const Register = () => {
-  const history = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
 
   const [error, setError] = useState();
 
   const [loading, setLoading] = useState(false);
+
+  const searchParams = new URLSearchParams(location.search);
+  const code = searchParams.get('code');
+  const type = searchParams.get('type');
+
+  console.log(code, type);
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -310,7 +317,11 @@ const Register = () => {
                   <p className="mb-0">
                     Already have an account ?{' '}
                     <Link
-                      to="/login"
+                      to={
+                        code && type
+                          ? `/login?code=${code}&type=${type}`
+                          : '/login'
+                      }
                       className="fw-semibold text-primary text-decoration-underline"
                     >
                       {' '}
