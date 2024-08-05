@@ -15,8 +15,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import Helmet from '../../Components/Helmet/Helmet';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { useSelector } from 'react-redux';
-import { verifyInviteCode } from '../../slices/userWallets/thunk';
-import { userInviteTypes } from '../../common/constants';
+import {
+  acceptInviteCode,
+  declineInviteCode,
+  verifyInviteCode,
+} from '../../slices/userWallets/thunk';
+import { DASHBOARD_USER_ROLES, userInviteTypes } from '../../common/constants';
+import Swal from 'sweetalert2';
 //import images
 
 const DashboardInvite = () => {
@@ -78,13 +83,72 @@ const DashboardInvite = () => {
   }, [location.search]);
 
   const handleAcceptInvite = () => {
-    // Accept invite
-    console.log('Accepting invite');
+    try {
+      setLoading(true);
+      const response = dispatch(acceptInviteCode({ inviteCode: code }));
+
+      console.log('Accepting invite', response);
+
+      if (response.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong!',
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Invite accepted successfully!',
+        });
+        if (user?.role === DASHBOARD_USER_ROLES.USER) {
+          navigate('/wallets');
+        } else {
+          navigate('/dashboard');
+        }
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+      });
+      setLoading(false);
+    }
   };
 
   const handleDeclineInvite = () => {
-    // Decline invite
-    console.log('Declining invite');
+    try {
+      setLoading(true);
+      const response = dispatch(declineInviteCode({ inviteCode: code }));
+
+      if (response.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong!',
+        });
+      }
+      Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: 'Invite declined successfully!',
+      });
+      if (user?.role === DASHBOARD_USER_ROLES.USER) {
+        navigate('/wallets');
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong!',
+      });
+      setLoading(false);
+    }
   };
 
   const renderAcceptUserToAccountantInvite = () => {
@@ -251,7 +315,7 @@ const DashboardInvite = () => {
                     ) : (
                       <div className="d-flex justify-content-center">
                         {errorMsg ? (
-                          <>
+                          <div className="d-flex flex-column">
                             <Alert
                               className="mb-0"
                               color="danger"
@@ -264,7 +328,7 @@ const DashboardInvite = () => {
                                 Back to login
                               </Link>
                             </div>
-                          </>
+                          </div>
                         ) : (
                           <>
                             {user
@@ -274,13 +338,6 @@ const DashboardInvite = () => {
                         )}
                       </div>
                     )}
-
-                    {/* // Back to login page */}
-                    {/* <div className="mt-4 text-center">
-                      <Link to="/login" className="text-muted">
-                        Back to login
-                      </Link>
-                    </div> */}
                   </CardBody>
                 </Card>
               </Col>

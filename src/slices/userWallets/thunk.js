@@ -29,7 +29,6 @@ export const addCurrentUserWallet = createAsyncThunk(
   },
 );
 
-
 export const addUserWallet = createAsyncThunk(
   'clients/addClient',
   async ({ address, userId }, { rejectWithValue }) => {
@@ -196,6 +195,58 @@ export const verifyInviteCode = createAsyncThunk(
     try {
       const response = await fetch(
         `${API_BASE}/clients/invite-code/${inviteCode}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const acceptInviteCode = createAsyncThunk(
+  'clients/acceptInviteCode',
+  async ({ inviteCode }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/invite-code/${inviteCode}/accept`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+
+          method: 'POST',
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const declineInviteCode = createAsyncThunk(
+  'clients/declineInviteCode',
+  async ({ inviteCode }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/invite-code/${inviteCode}/decline`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+
+          method: 'POST',
+        },
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
