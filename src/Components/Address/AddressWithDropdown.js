@@ -41,8 +41,7 @@ const AddressWithDropdown = ({
   const [formattedValue, setFormattedValue] = useState('');
 
   useEffect(() => {
-    if (!userPortfolioSummary?.addresses)
-      return;
+    if (!userPortfolioSummary?.addresses) return;
 
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
@@ -120,8 +119,6 @@ const AddressWithDropdown = ({
   const handleRenameAddress = (value, newName) => {
     dispatch(setAddressName({ value, label: newName || null }));
   };
-
-  console.log('userPortfolioSummary', userPortfolioSummary);
 
   const handleUpdateAddress = (e, address) => {
     e.preventDefault();
@@ -230,8 +227,6 @@ const AddressWithDropdown = ({
                     const addr = userPortfolioSummary.addresses.find(
                       (addr) => addr.address === address,
                     );
-
-                    console.log(addr);
                     handleUpdateAddress(e, addr);
                   } else {
                     handleOpenModalRename(e, {
