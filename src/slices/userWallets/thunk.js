@@ -46,7 +46,8 @@ export const addUserWallet = createAsyncThunk(
         },
       );
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        const errorData = await response.json();
+        return rejectWithValue(errorData.message || 'Failed to connect wallet');
       }
       const data = await response.json();
       return data;
