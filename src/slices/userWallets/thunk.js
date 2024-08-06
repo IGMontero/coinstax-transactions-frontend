@@ -208,7 +208,7 @@ export const verifyInviteCode = createAsyncThunk(
   },
 );
 
-export const acceptInviteCode = createAsyncThunk(
+export const acceptInviteCodeAU = createAsyncThunk(
   'clients/acceptInviteCode',
   async ({ inviteCode }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
@@ -234,13 +234,65 @@ export const acceptInviteCode = createAsyncThunk(
   },
 );
 
-export const declineInviteCode = createAsyncThunk(
+export const declineInviteCodeAU = createAsyncThunk(
   'clients/declineInviteCode',
   async ({ inviteCode }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/clients/invite-code/${inviteCode}/decline`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+
+          method: 'POST',
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const acceptInviteCodeUA = createAsyncThunk(
+  'clients/acceptInviteCode',
+  async ({ inviteCode }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/accountants/invite-code/${inviteCode}/accept`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+
+          method: 'POST',
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const declineInviteCodeUA = createAsyncThunk(
+  'clients/declineInviteCode',
+  async ({ inviteCode }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/accountants/invite-code/${inviteCode}/decline`,
         {
           headers: {
             Authorization: `${token}`,
