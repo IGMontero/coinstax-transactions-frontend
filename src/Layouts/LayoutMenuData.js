@@ -138,6 +138,22 @@ const Navdata = () => {
     allMenuItems.push(
       createManageMenu('users', 'Users', 'bx bx-group fs-3', 'users'),
     );
+    allMenuItems.push(
+      createManageMenu(
+        'connectWallet',
+        'Connect Wallet',
+        'bx bx-add-to-queue fs-3',
+        'wallets/connect',
+      ),
+    );
+    allMenuItems.push(
+      createManageMenu(
+        'usersWallets',
+        'Manage Wallets',
+        'bx bx-wallet fs-3',
+        'wallets',
+      ),
+    );
   }
 
   if (isAccountant) {
