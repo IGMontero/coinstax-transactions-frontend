@@ -11,13 +11,15 @@ import {
 } from 'reactstrap';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import { useDispatch } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Helmet from '../../Components/Helmet/Helmet';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { useSelector } from 'react-redux';
 import {
-  acceptInviteCode,
-  declineInviteCode,
+  acceptInviteCodeAU,
+  acceptInviteCodeUA,
+  declineInviteCodeAU,
+  declineInviteCodeUA,
   verifyInviteCode,
 } from '../../slices/userWallets/thunk';
 import { DASHBOARD_USER_ROLES, userInviteTypes } from '../../common/constants';
@@ -85,7 +87,12 @@ const DashboardInvite = () => {
   const handleAcceptInvite = () => {
     try {
       setLoading(true);
-      const response = dispatch(acceptInviteCode({ inviteCode: code }));
+
+      const request =
+        inviteType === 'ua'
+          ? dispatch(acceptInviteCodeUA({ inviteCode: code }))
+          : dispatch(acceptInviteCodeAU({ inviteCode: code }));
+      const response = request;
 
       console.log('Accepting invite', response);
 
@@ -122,7 +129,12 @@ const DashboardInvite = () => {
   const handleDeclineInvite = () => {
     try {
       setLoading(true);
-      const response = dispatch(declineInviteCode({ inviteCode: code }));
+
+      const request =
+        inviteType === 'ua'
+          ? dispatch(declineInviteCodeUA({ inviteCode: code }))
+          : dispatch(declineInviteCodeAU({ inviteCode: code }));
+      const response = request;
 
       if (response.error) {
         Swal.fire({
@@ -158,7 +170,9 @@ const DashboardInvite = () => {
         <div className="text-center">
           <h4>Accept invite?</h4>
 
-          <p>Somebody has invited you to manage their wallets on ChainGlance.</p>
+          <p>
+            Somebody has invited you to manage their wallets on ChainGlance.
+          </p>
 
           <div className="d-flex justify-content-center">
             <Button
