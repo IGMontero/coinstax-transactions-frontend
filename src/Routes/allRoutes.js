@@ -28,6 +28,8 @@ import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/Dashboar
 import DashboardClientProfile from '../pages/DashboardAccountsWallets/DashboardClientProfile';
 import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWallets';
 import DashboardInvite from '../pages/DashboardInvite /DashboardInvite';
+import Clients from '../pages/DashboardAccountsWallets/Admin/Clients';
+import Users from '../pages/DashboardAccountsWallets/Admin/Users';
 
 // Auth protected routes
 const adminRoutes = [
@@ -104,7 +106,19 @@ const authProtectedRoutes = [
           DASHBOARD_USER_ROLES.ACCOUNTANT,
         ]}
       >
-        <DashboardAccountantUsers />
+        {DASHBOARD_USER_ROLES.ADMIN ? (
+          <Clients />
+        ) : (
+          <DashboardAccountantUsers />
+        )}
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/users',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <Users />
       </AuthProtectedRoutes>
     ),
   },

@@ -128,3 +128,45 @@ export const getInfoClientByAccountantId = createAsyncThunk(
     }
   },
 );
+
+// ADMIN ENDPOINTS
+export const getClientsByAdmin = createAsyncThunk(
+  'clients/getClientsByAdmin',
+  async ({ page }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(`${API_BASE}/admin/clients?page=${page}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+export const getUsersByAdmin = createAsyncThunk(
+  'clients/getUsersByAdmin',
+  async ({ page }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(`${API_BASE}/admin/users?page=${page}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
