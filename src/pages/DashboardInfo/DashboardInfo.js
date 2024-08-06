@@ -30,8 +30,6 @@ const DashboardInfo = () => {
 
   const isPortfolioPage = location.pathname.includes('portfolio');
 
-  console.log(isPortfolioPage);
-
   const [customActiveTab, setCustomActiveTab] = useState('1');
 
   const [addressTitle, setAddressTitle] = useState('');
@@ -101,18 +99,19 @@ const DashboardInfo = () => {
       }));
 
       const request = isPortfolioPage
-        ? fetchAssetsPortfolio({
-            userId: userId,
-            blockchain: networkType,
-            signal,
-          })
-        : fetchAssets(params).unwrap();
+        ? dispatch(
+            fetchAssetsPortfolio({
+              userId: userId,
+              blockchain: networkType,
+              signal,
+            }),
+          )
+        : dispatch(fetchAssets(params)).unwrap();
 
-      const response = await dispatch(request);
+      const response = await request;
 
       const res = isPortfolioPage ? response.payload : response;
 
-      console.log('response assets ', response);
       if (res?.unsupported === true) {
         setIsUnsupported(true);
       } else {

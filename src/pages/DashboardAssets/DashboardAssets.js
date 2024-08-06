@@ -46,14 +46,16 @@ const DashboardAssets = () => {
       }));
 
       const request = isPortfolioPage
-        ? fetchAssetsPortfolio({
-            userId: userId,
-            blockchain: networkType,
-            signal,
-          })
-        : fetchAssets(params).unwrap();
+        ? dispatch(
+            fetchAssetsPortfolio({
+              userId: userId,
+              blockchain: networkType,
+              signal,
+            }),
+          )
+        : dispatch(fetchAssets(params)).unwrap();
 
-      const response = await dispatch(request);
+      const response = await request;
 
       const res = isPortfolioPage ? response.payload : response;
 

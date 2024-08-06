@@ -75,9 +75,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   }, [addressParams, userPortfolioAddresses]);
 
   const handleSelectAddress = (address) => {
-    if (address === null) {
+    if (address === 'portfolio') {
       setSelectedAddress(null);
-      setPrevAddress('');
     } else {
       const selected = userPortfolioAddresses.find(
         (addr) => addr.address === address,
@@ -370,7 +369,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             <>
               <DropdownItem
                 onClick={() => {
-                  handleSelectAddress(null);
+                  handleSelectAddress('portfolio');
                   handleVisitAddress('/portfolio');
                 }}
                 className="d-flex align-items-center"
