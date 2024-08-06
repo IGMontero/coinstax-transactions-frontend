@@ -36,7 +36,7 @@ const DashboardAccountantUsers = () => {
         getClientsByAccountantId(userId),
       ).unwrap();
 
-      console.log(response);
+      console.log('response', response);
       if (response && !response.error) {
         setClients(response);
       } else {

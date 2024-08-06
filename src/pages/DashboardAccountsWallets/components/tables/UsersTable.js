@@ -15,8 +15,15 @@ import { useNavigate } from 'react-router-dom';
 import EditClientModal from '../../../../Components/Modals/EditClientModal';
 import DropdownMenuPortal from '../../../../Components/Dropdowns/DropdownPortal';
 import { formatDateToLocale } from '../../../../utils/utils';
+import TablePagination from '../../../../Components/Pagination/TablePagination';
 
-const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
+const UsersTable = ({
+  users,
+  loading,
+  onDeleteAddress,
+  onRefresh,
+  pagination,
+}) => {
   const navigate = useNavigate();
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -97,7 +104,8 @@ const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
     },
     {
       name: 'Last Date Viewed',
-      selector: (row) => row.LastViewedDate ? formatDateToLocale(row.LastViewedDate) : null,
+      selector: (row) =>
+        row.LastViewedDate ? formatDateToLocale(row.LastViewedDate) : null,
       sortable: false,
       grow: 2,
     },
@@ -193,6 +201,13 @@ const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
           },
         }}
       />
+      {users?.length > 0 && (
+        <TablePagination
+          onChangePage={pagination.handleChangePage}
+          currentPage={pagination.currentPage}
+          totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+        />
+      )}
     </div>
   );
 };
