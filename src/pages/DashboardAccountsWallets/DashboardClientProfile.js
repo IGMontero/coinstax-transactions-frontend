@@ -14,8 +14,9 @@ import {
   updateUserWalletAddress,
 } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
-import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
+import { CurrencyUSD, isDarkMode, parseValuesToLocale } from '../../utils/utils';
 import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
+import Skeleton from 'react-loading-skeleton';
 
 const DashboardClientProfile = () => {
   const navigate = useNavigate();
@@ -35,6 +36,8 @@ const DashboardClientProfile = () => {
     totalPortfolioValue,
     CurrencyUSD,
   );
+
+  const isClientUserPortfolioComplete = clientUserPortfolio?.complete;
 
   const [loadingWallets, setLoadingWallets] = useState(false);
 
@@ -69,7 +72,9 @@ const DashboardClientProfile = () => {
       await fetchClientInfo();
       setIsInitialized(true);
     };
-    initialize();
+
+    initialize()
+
   }, []);
 
   const fetchUserWallets = async () => {
@@ -88,6 +93,19 @@ const DashboardClientProfile = () => {
       setLoadingWallets(false);
     }
   };
+
+  useEffect(() => {
+    if (!clientUserPortfolio) return;
+
+    // If client user portfolio has complete: false, refetch again every 5 seconds until it's complete.
+    if (!clientUserPortfolio.complete) {
+      const interval = setInterval(() => {
+        fetchUserWallets();
+      }, 5000);
+
+      return () => clearInterval(interval);
+    }
+  }, [clientUserPortfolio]);
 
   // const fetchUserWallets = async () => {
   //   setLoadingWallets(true);
@@ -289,6 +307,19 @@ const DashboardClientProfile = () => {
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1>Client Profile</h1>
           <div className="d-flex">
+
+            <Button
+              onClick={handeGoToDashboard}
+              className=" d-flex btn-hover-light  text-dark justify-content-center align-items-center me-3"
+              color="soft-light"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+              }}
+            >
+              <i className="ri-arrow-left-s-line me-2"></i>
+              Back To Clients
+            </Button>
             <Button
               onClick={toggleModalConnectWallet}
               className="d-flex btn-hover-light text-dark justify-content-center align-items-center"
@@ -301,24 +332,12 @@ const DashboardClientProfile = () => {
               <i className="ri-add-line me-2"></i>
               Add Wallet
             </Button>
-            <Button
-              onClick={handeGoToDashboard}
-              className=" d-flex btn-hover-light  text-dark justify-content-center align-items-center ms-3"
-              color="soft-light"
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-              }}
-            >
-              <i className="ri-arrow-left-s-line me-2"></i>
-              Back To Clients
-            </Button>
           </div>
         </div>
         <div className="mb-5 mt-2">
           <ClientInfo client={client} />
         </div>
-        {loadingWallets ? (
+        {!isInitialized ? (
           <div className="d-flex my-3">
             <div className="spinner-border text-primary" role="status">
               <span className="visually-hidden">Loading...</span>
@@ -332,7 +351,13 @@ const DashboardClientProfile = () => {
           <>
             {/* // toTAL POrtfolio value */}
             <div className="d-flex justify-content-between align-items-center mb-2">
-              <h4>Portfolio Value: {parsedTotalPortfolioValue}</h4>
+              <h4>Portfolio Value: {!isClientUserPortfolioComplete ?
+                <Skeleton
+                  width={80}
+                  baseColor={isDarkMode() ? '#333' : '#f3f3f3'}
+                  highlightColor={isDarkMode() ? '#444' : '#e0e0e0'}
+                /> : parsedTotalPortfolioValue}
+              </h4>
             </div>
 
             <AddressesTable
