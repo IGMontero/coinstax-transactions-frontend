@@ -33,7 +33,8 @@ const AddressWithDropdown = ({
   const addresses = useSelector((state) => state.addressName.addresses);
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
 
-  const isPortfolioPage = location.pathname.includes('portfolio');
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
@@ -188,7 +189,7 @@ const AddressWithDropdown = ({
     return (
       <div className="d-flex align-items-center ms-n3">
         <h4 className="mb-0 ms-3 text-custom-address-dropdown">
-          {isPortfolioPage
+          {isCurrentUserPortfolioSelected
             ? 'Portfolio'
             : formattedAddressLabel !== formatIdTransaction(address, 6, 8)
               ? formattedAddressLabel
@@ -196,7 +197,7 @@ const AddressWithDropdown = ({
                 ? addressNickName
                 : formattedAddressLabel}
         </h4>
-        {!isPortfolioPage && (
+        {!isCurrentUserPortfolioSelected && (
           <UncontrolledDropdown className="card-header-dropdown">
             <DropdownToggle tag="a" className="text-reset" role="button">
               <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
