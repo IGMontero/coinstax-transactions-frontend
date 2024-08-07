@@ -6,7 +6,6 @@ import {
   ModalBody,
   Form,
   FormGroup,
-  Label,
   Input,
   InputGroup,
   Button,
