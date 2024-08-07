@@ -150,19 +150,26 @@ export const getClientsByAdmin = createAsyncThunk(
     }
   },
 );
+
 export const getUsersByAdmin = createAsyncThunk(
   'clients/getUsersByAdmin',
-  async ({ page }, { rejectWithValue }) => {
+  async ({ page, accountType }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await fetch(`${API_BASE}/admin/users?page=${page}`, {
+      const url = `${API_BASE}/admin/users?page=${page}${
+        accountType ? `&accountType=${accountType}` : ''
+      }`;
+
+      const response = await fetch(url, {
         headers: {
           Authorization: `${token}`,
         },
       });
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
+
       const data = await response.json();
       return data;
     } catch (error) {

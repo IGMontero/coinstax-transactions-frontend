@@ -5,6 +5,7 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Spinner,
 } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
@@ -134,61 +135,68 @@ const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
   ];
 
   return (
-    <div className="table-container">
-      <EditClientModal
-        isOpen={modalEditClient}
-        setIsOpen={setModalEditClient}
-        selectedUser={selectedUser}
-        onRefresh={onRefresh}
-      />
-
-      <DataTable
-        columns={columns}
-        data={users}
-        noDataComponent={<h4>Add a client to get started</h4>}
-        noHeader
-        responsive
-        onRowClicked={handleRowClick}
-        customStyles={{
-          rows: {
-            style: {
-              cursor: 'pointer',
-              border: 'none',
-              minHeight: '82px',
-            },
-          },
-          headCells: {
-            style: {
-              paddingLeft: '8px',
-              paddingRight: '8px',
-              backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
-              color: `${isDarkMode ? '#fff' : ''}`,
-            },
-          },
-          cells: {
-            style: {
-              paddingLeft: '8px',
-              paddingRight: '8px',
-              backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
-              color: `${isDarkMode ? '#fff' : ''}`,
-              border: 'none',
-            },
-          },
-          noData: {
-            style: {
-              backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
-            },
-          },
-        }}
-      />
-      {users?.length > 0 && (
+    <>
+      <div className="table-container">
+        <EditClientModal
+          isOpen={modalEditClient}
+          setIsOpen={setModalEditClient}
+          selectedUser={selectedUser}
+          onRefresh={onRefresh}
+        />
+        {loading ? (
+          <div className="d-flex justify-content-center align-items-center">
+            <Spinner color="primary" />{' '}
+          </div>
+        ) : (
+          <DataTable
+            columns={columns}
+            data={users}
+            noDataComponent={<h4>Add a client to get started</h4>}
+            noHeader
+            responsive
+            onRowClicked={handleRowClick}
+            customStyles={{
+              rows: {
+                style: {
+                  cursor: 'pointer',
+                  border: 'none',
+                  minHeight: '82px',
+                },
+              },
+              headCells: {
+                style: {
+                  paddingLeft: '8px',
+                  paddingRight: '8px',
+                  backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
+                  color: `${isDarkMode ? '#fff' : ''}`,
+                },
+              },
+              cells: {
+                style: {
+                  paddingLeft: '8px',
+                  paddingRight: '8px',
+                  backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
+                  color: `${isDarkMode ? '#fff' : ''}`,
+                  border: 'none',
+                },
+              },
+              noData: {
+                style: {
+                  backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
+                },
+              },
+            }}
+          />
+        )}
+      </div>
+      {users?.length > 0 && !loading ? (
         <TablePagination
           onChangePage={pagination.handleChangePage}
           currentPage={pagination.currentPage}
           totalPages={Math.ceil(pagination.total / pagination.pageSize)}
         />
-      )}
-    </div>
+      ) : null}
+    </>
   );
 };
 export default UserAdminTable;

@@ -30,6 +30,7 @@ import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWal
 import DashboardInvite from '../pages/DashboardInvite /DashboardInvite';
 import Clients from '../pages/DashboardAccountsWallets/Admin/Clients';
 import Users from '../pages/DashboardAccountsWallets/Admin/Users';
+import UsersProfile from '../pages/DashboardAccountsWallets/Admin/components/Profiles/UsersProfile';
 
 // Auth protected routes
 const adminRoutes = [
@@ -45,7 +46,39 @@ const adminRoutes = [
     path: '/user-addresses',
     component: (
       <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
-        <DashboardUserAddresses />,
+        <DashboardUserAddresses />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/clients',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <Clients />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/clients/:clientId',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardClientProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/users',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <Users />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/users/:userId',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <UsersProfile />
       </AuthProtectedRoutes>
     ),
   },
@@ -105,38 +138,7 @@ const authProtectedRoutes = [
       </AuthProtectedRoutes>
     ),
   },
-  {
-    path: '/admin/clients',
-    component: (
-      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
-        <Clients />
-      </AuthProtectedRoutes>
-    ),
-  },
-  {
-    path: '/admin/clients/:clientId',
-    component: (
-      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
-        <DashboardClientProfile />
-      </AuthProtectedRoutes>
-    ),
-  },
-  {
-    path: '/admin/users',
-    component: (
-      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
-        <Users />
-      </AuthProtectedRoutes>
-    ),
-  },
-  {
-    path: '/admin/users/:userId',
-    component: (
-      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
-        <DashboardUserWallets />
-      </AuthProtectedRoutes>
-    ),
-  },
+
   {
     path: '/wallets',
     component: (
