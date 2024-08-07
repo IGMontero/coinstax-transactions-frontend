@@ -114,6 +114,14 @@ const authProtectedRoutes = [
     ),
   },
   {
+    path: '/admin/clients/:clientId',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardClientProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
     path: '/admin/users',
     component: (
       <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>

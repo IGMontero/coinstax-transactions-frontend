@@ -229,7 +229,6 @@ const Layout = (props) => {
         if (!res.blockchains) {
           setIsInInterval(false);
           return;
-
         }
 
         const availableNetworks = Object.keys(res.blockchains);
@@ -325,7 +324,11 @@ const Layout = (props) => {
     if (pagesNotToDisplayAddress.includes(pathname)) {
       return true;
     }
-    const dynamicRoutes = ['/clients/:clientId'];
+    const dynamicRoutes = [
+      '/clients/:clientId',
+      '/users/:userId',
+      '/admin/clients/:clientId',
+    ];
     for (const route of dynamicRoutes) {
       const regex = new RegExp(`^${route.replace(':clientId', '[^/]+')}$`);
       if (regex.test(pathname)) {

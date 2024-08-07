@@ -14,14 +14,21 @@ import {
   updateUserWalletAddress,
 } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
-import { CurrencyUSD, isDarkMode, parseValuesToLocale } from '../../utils/utils';
+import {
+  CurrencyUSD,
+  isDarkMode,
+  parseValuesToLocale,
+} from '../../utils/utils';
 import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 import Skeleton from 'react-loading-skeleton';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
 
 const DashboardClientProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
+
+  const currentUserRole = user?.role;
   const { clientId } = useParams();
 
   const [client, setClient] = useState(null);
@@ -42,7 +49,11 @@ const DashboardClientProfile = () => {
   const [loadingWallets, setLoadingWallets] = useState(false);
 
   const handeGoToDashboard = () => {
-    navigate('/clients');
+    if (currentUserRole === DASHBOARD_USER_ROLES.ADMIN) {
+      navigate('/admin/clients');
+    } else {
+      navigate('/clients');
+    }
   };
 
   const toggleModalConnectWallet = () => {
@@ -73,8 +84,7 @@ const DashboardClientProfile = () => {
       setIsInitialized(true);
     };
 
-    initialize()
-
+    initialize();
   }, []);
 
   const fetchUserWallets = async () => {
@@ -307,7 +317,6 @@ const DashboardClientProfile = () => {
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h1>Client Profile</h1>
           <div className="d-flex">
-
             <Button
               onClick={handeGoToDashboard}
               className=" d-flex btn-hover-light  text-dark justify-content-center align-items-center me-3"
@@ -351,12 +360,17 @@ const DashboardClientProfile = () => {
           <>
             {/* // toTAL POrtfolio value */}
             <div className="d-flex justify-content-between align-items-center mb-2">
-              <h4>Portfolio Value: {!isClientUserPortfolioComplete ?
-                <Skeleton
-                  width={80}
-                  baseColor={isDarkMode() ? '#333' : '#f3f3f3'}
-                  highlightColor={isDarkMode() ? '#444' : '#e0e0e0'}
-                /> : parsedTotalPortfolioValue}
+              <h4>
+                Portfolio Value:{' '}
+                {!isClientUserPortfolioComplete ? (
+                  <Skeleton
+                    width={80}
+                    baseColor={isDarkMode() ? '#333' : '#f3f3f3'}
+                    highlightColor={isDarkMode() ? '#444' : '#e0e0e0'}
+                  />
+                ) : (
+                  parsedTotalPortfolioValue
+                )}
               </h4>
             </div>
 

@@ -26,7 +26,6 @@ const Clients = () => {
         getClientsByAdmin({ page: currentPage }),
       ).unwrap();
 
-      console.log('response', response);
       if (response && !response.error) {
         setClients(response.data);
         setTotal(response.total);
