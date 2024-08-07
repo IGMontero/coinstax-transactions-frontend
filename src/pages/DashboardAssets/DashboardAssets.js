@@ -16,7 +16,8 @@ const DashboardAssets = () => {
   const userId = user?.id;
 
   const networkType = useSelector(selectNetworkType);
-  const isPortfolioPage = location.pathname.includes('portfolio');
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
   const fetchControllerRef = useRef(new AbortController());
 
   const [assetsData, setAssetsData] = useState({});
@@ -45,7 +46,7 @@ const DashboardAssets = () => {
         [fecthId]: true,
       }));
 
-      const request = isPortfolioPage
+      const request = isCurrentUserPortfolioSelected
         ? dispatch(
             fetchAssetsPortfolio({
               userId: userId,
@@ -57,7 +58,7 @@ const DashboardAssets = () => {
 
       const response = await request;
 
-      const res = isPortfolioPage ? response.payload : response;
+      const res = isCurrentUserPortfolioSelected ? response.payload : response;
 
       console.log('response assets ', response);
       if (res?.unsupported === true) {

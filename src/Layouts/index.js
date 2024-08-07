@@ -180,7 +180,8 @@ const Layout = (props) => {
 
   const [nickName, setNickName] = useState(null);
 
-  const isPortfolioPage = location.pathname.includes('portfolio');
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
 
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
 
@@ -196,12 +197,12 @@ const Layout = (props) => {
     try {
       setLoading(true);
 
-      const request = isPortfolioPage
+      const request = isCurrentUserPortfolioSelected
         ? dispatch(getCurrentUserPortfolioSummary({ userId, signal })).unwrap()
         : dispatch(getAddressesInfo({ address: address, signal }));
 
       const response = await request;
-      const res = isPortfolioPage ? response : response.payload;
+      const res = isCurrentUserPortfolioSelected ? response : response.payload;
 
       if (res) {
         if (res.blockchains) {
@@ -296,7 +297,7 @@ const Layout = (props) => {
     if (token) {
       setIsUnsupported(false);
     }
-    if (address || isPortfolioPage) {
+    if (address || isCurrentUserPortfolioSelected) {
       const loadAddressInfo = async () => {
         if (fetchInterval.current) {
           clearInterval(fetchInterval.current);
@@ -346,7 +347,7 @@ const Layout = (props) => {
       !token &&
       !contractAddress &&
       !isPageWithoutAddress(location.pathname) &&
-      !isPortfolioPage
+      !isCurrentUserPortfolioSelected
     ) {
       navigate('/');
     }
@@ -357,7 +358,7 @@ const Layout = (props) => {
     location.pathname,
     navigate,
     pagesNotToDisplayAddress,
-    isPortfolioPage,
+    isCurrentUserPortfolioSelected,
   ]);
 
   return (
