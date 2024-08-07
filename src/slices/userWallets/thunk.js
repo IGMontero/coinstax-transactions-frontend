@@ -312,6 +312,61 @@ export const declineInviteCodeUA = createAsyncThunk(
   },
 );
 
+export const addAccountManager = createAsyncThunk(
+  'clients/useClientsInviteCode',
+  async ({ userId, email }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/accountants/invite`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({ email }),
+
+          method: 'POST',
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const createInviteCode = createAsyncThunk(
+  // /clients/invite-code/:inviteCode
+
+  'clients/createInviteCode',
+  async ({ inviteCode }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/invite-code/${inviteCode}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          body: JSON.stringify({}),
+          method: 'POST',
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const reorderUserWallets = createAsyncThunk(
   'clients/reorderUserWallets',
   async ({ userId, addresses }, { rejectWithValue }) => {

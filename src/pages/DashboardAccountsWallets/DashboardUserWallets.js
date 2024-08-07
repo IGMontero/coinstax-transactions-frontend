@@ -5,12 +5,13 @@ import AddressesTable from './components/tables/AddressesTable';
 import { useSelector, useDispatch } from 'react-redux';
 import { setUserPortfolioSummary } from '../../slices/userWallets/reducer';
 import {
+  addAccountManager,
+  addClientsInviteCode,
   deleteUserAddressWallet,
   reorderUserWallets,
   updateUserWalletAddress,
 } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
-import useRefreshPortfolio from '../../Components/Hooks/PortfolioHook';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 import {
@@ -29,7 +30,6 @@ const DashboardUserWallets = () => {
   );
   const navigate = useNavigate();
   const userId = user?.id;
-  // const { refreshPortfolio } = useRefreshPortfolio(userId);
   const userAddresses = userPortfolioSummary?.addresses;
   const refreshUserPortfolio = useRefreshUserPortfolio();
 
@@ -224,6 +224,57 @@ const DashboardUserWallets = () => {
     });
   };
 
+  const handleAddAccountManager = async () => {
+    const { value: email } = await Swal.fire({
+      title: 'Enter Email',
+      input: 'email',
+      inputPlaceholder: 'Enter the email address',
+      showCancelButton: true,
+      confirmButtonText: 'Send Invite',
+      cancelButtonText: 'Cancel',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to write an email address!';
+        }
+      },
+    });
+
+    if (email) {
+      try {
+        const response = await dispatch(
+          addAccountManager({
+            userId,
+            email,
+          }),
+        ).unwrap();
+
+        console.log(response);
+
+        if (response && !response.error) {
+          Swal.fire({
+            title: 'Success',
+            text: 'Invite code added successfully',
+            icon: 'success',
+          });
+        } else {
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to add invite code',
+            icon: 'error',
+          });
+        }
+      } catch (error) {
+        console.log(error);
+
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to add invite code',
+          icon: 'error',
+        });
+      }
+    }
+  };
+
   if (initialLoad) {
     return (
       <div className="d-flex justify-content-center my-3">
@@ -246,8 +297,9 @@ const DashboardUserWallets = () => {
       <div style={{ maxWidth: '610px' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
           <h1>Manage Wallets</h1>
-          <div className="d-flex ">
+          <div className="d-flex align-items-center">
             <Button
+              onClick={handleAddAccountManager}
               className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
               color="soft-light"
               style={{
@@ -255,7 +307,7 @@ const DashboardUserWallets = () => {
                 border: '.5px solid grey',
               }}
             >
-              Sync Addresses
+              Add Account Manager
             </Button>
             <Button
               onClick={toggleModalConnectWallet}

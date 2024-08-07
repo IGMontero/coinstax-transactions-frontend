@@ -108,7 +108,18 @@ const DashboardAccountantUsers = () => {
       <Helmet title="Clients" />
       <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
         <h1>Manage Clients</h1>
-        <div>
+        <div className="d-flex align-items-center">
+          <Button
+            onClick={() => {}}
+            className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
+            color="soft-light"
+            style={{
+              borderRadius: '10px',
+              border: '.5px solid grey',
+            }}
+          >
+            Create invite code
+          </Button>
           <Button
             onClick={handleOpenModalAddClient}
             className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
@@ -132,7 +143,7 @@ const DashboardAccountantUsers = () => {
           handleChangePage,
           currentPage,
           pageSize: 15,
-          total: 100,
+          total: 15,
           hasMore: false,
         }}
       />
