@@ -21,6 +21,7 @@ import {
 } from '../../utils/utils';
 import Skeleton from 'react-loading-skeleton';
 import { useNavigate } from 'react-router-dom';
+import AddAccManager from '../../Components/Modals/AddAccManager';
 
 const DashboardUserWallets = () => {
   const dispatch = useDispatch();
@@ -34,6 +35,9 @@ const DashboardUserWallets = () => {
   const refreshUserPortfolio = useRefreshUserPortfolio();
 
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
+
+  const [modalAddAccountManager, setModalAddAccountManager] = useState(false);
+
   const [initialLoad, setInitialLoad] = useState(true);
 
   // const addresses = userPortfolioSummary?.addresses;
@@ -61,6 +65,9 @@ const DashboardUserWallets = () => {
 
   const toggleModalConnectWallet = () =>
     setModalConnectWallet(!modalConnectWallet);
+
+  const toggleModalAddAccountManager = () =>
+    setModalAddAccountManager(!modalAddAccountManager);
 
   const handleSetAddresses = (updatedAddresses) => {
     dispatch(setUserPortfolioSummary(updatedAddresses));
@@ -224,57 +231,6 @@ const DashboardUserWallets = () => {
     });
   };
 
-  const handleAddAccountManager = async () => {
-    const { value: email } = await Swal.fire({
-      title: 'Enter Email',
-      input: 'email',
-      inputPlaceholder: 'Enter the email address',
-      showCancelButton: true,
-      confirmButtonText: 'Send Invite',
-      cancelButtonText: 'Cancel',
-      inputValidator: (value) => {
-        if (!value) {
-          return 'You need to write an email address!';
-        }
-      },
-    });
-
-    if (email) {
-      try {
-        const response = await dispatch(
-          addAccountManager({
-            userId,
-            email,
-          }),
-        ).unwrap();
-
-        console.log(response);
-
-        if (response && !response.error) {
-          Swal.fire({
-            title: 'Success',
-            text: 'Invite code added successfully',
-            icon: 'success',
-          });
-        } else {
-          Swal.fire({
-            title: 'Error',
-            text: 'Failed to add invite code',
-            icon: 'error',
-          });
-        }
-      } catch (error) {
-        console.log(error);
-
-        Swal.fire({
-          title: 'Error',
-          text: 'Failed to add invite code',
-          icon: 'error',
-        });
-      }
-    }
-  };
-
   if (initialLoad) {
     return (
       <div className="d-flex justify-content-center my-3">
@@ -294,12 +250,18 @@ const DashboardUserWallets = () => {
         userId={userId}
         onRefresh={refreshUserPortfolio}
       />
+
+      <AddAccManager
+        isOpen={modalAddAccountManager}
+        setIsOpen={setModalAddAccountManager}
+        userId={userId}
+      />
       <div style={{ maxWidth: '610px' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
           <h1>Manage Wallets</h1>
           <div className="d-flex align-items-center">
             <Button
-              onClick={handleAddAccountManager}
+              onClick={toggleModalAddAccountManager}
               className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
               color="soft-light"
               style={{
