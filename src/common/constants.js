@@ -92,7 +92,8 @@ export const pagesWithoutAddress = [
   '/wallets',
   '/wallets/connect',
   '/clients',
-  '/users',
+  '/admin/clients',
+  '/admin/users',
   '/invite',
 ];
 

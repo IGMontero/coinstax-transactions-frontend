@@ -133,10 +133,10 @@ const Navdata = () => {
       ),
     );
     allMenuItems.push(
-      createManageMenu('users', 'Clients', 'bx bx-group fs-3', 'clients'),
+      createManageMenu('users', 'Clients', 'bx bx-group fs-3', 'admin/clients'),
     );
     allMenuItems.push(
-      createManageMenu('users', 'Users', 'bx bx-group fs-3', 'users'),
+      createManageMenu('users', 'Users', 'bx bx-group fs-3', 'admin/users'),
     );
     allMenuItems.push(
       createManageMenu(

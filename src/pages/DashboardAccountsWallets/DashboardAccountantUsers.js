@@ -25,6 +25,11 @@ const DashboardAccountantUsers = () => {
 
   const [modalAddClient, setModalAddClient] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleOpenModalAddClient = () => {
     setModalAddClient(true);
   };
@@ -123,6 +128,13 @@ const DashboardAccountantUsers = () => {
         loading={loading}
         onDeleteAddress={handleDeleteClient}
         onRefresh={fetchClients}
+        pagination={{
+          handleChangePage,
+          currentPage,
+          pageSize: 15,
+          total: 100,
+          hasMore: false,
+        }}
       />
     </React.Fragment>
   );

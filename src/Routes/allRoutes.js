@@ -100,22 +100,21 @@ const authProtectedRoutes = [
   {
     path: '/clients',
     component: (
-      <AuthProtectedRoutes
-        allowedRoles={[
-          DASHBOARD_USER_ROLES.ADMIN,
-          DASHBOARD_USER_ROLES.ACCOUNTANT,
-        ]}
-      >
-        {DASHBOARD_USER_ROLES.ADMIN ? (
-          <Clients />
-        ) : (
-          <DashboardAccountantUsers />
-        )}
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ACCOUNTANT]}>
+        <DashboardAccountantUsers />
       </AuthProtectedRoutes>
     ),
   },
   {
-    path: '/users',
+    path: '/admin/clients',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <Clients />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/users',
     component: (
       <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
         <Users />
