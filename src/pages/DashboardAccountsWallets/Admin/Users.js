@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getUsersByAdmin } from '../../../slices/accountants/thunk';
 import { useDispatch } from 'react-redux';
-import UsersTable from '../components/tables/UsersTable';
+import UserAdminTable from './components/UsersAdminTable';
 
 const Users = () => {
   const dispatch = useDispatch();
@@ -20,6 +20,7 @@ const Users = () => {
   };
 
   const fetchUsers = async () => {
+    setLoading(true);
     try {
       const response = await dispatch(
         getUsersByAdmin({ page: currentPage }),
@@ -33,8 +34,10 @@ const Users = () => {
       } else {
         console.log('Failed to fetch users');
       }
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 
@@ -47,10 +50,9 @@ const Users = () => {
       <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
         <h1>Clients</h1>
       </div>
-      <UsersTable
+      <UserAdminTable
         users={users}
         loading={loading}
-        onDeleteAddress={() => {}}
         onRefresh={fetchUsers}
         pagination={{
           handleChangePage,

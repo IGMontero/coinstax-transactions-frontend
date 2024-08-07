@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
-import ReactDOM from 'react-dom';
 import {
-  Badge,
   Dropdown,
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
-  Spinner,
 } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
@@ -18,16 +15,8 @@ import { formatDateToLocale } from '../../../../utils/utils';
 import TablePagination from '../../../../Components/Pagination/TablePagination';
 import { DASHBOARD_USER_ROLES } from '../../../../common/constants';
 
-const UsersTable = ({
-  users,
-  loading,
-  onDeleteAddress,
-  onRefresh,
-  pagination,
-}) => {
+const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
-  const currentUserRole = user?.role;
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
@@ -66,56 +55,37 @@ const UsersTable = ({
     handleOpenModalEditClient();
   };
 
-  const handleDelete = (row) => {
-    onDeleteAddress(row.Id);
-  };
-
   const handleRowClick = (row) => {
-    if (currentUserRole === DASHBOARD_USER_ROLES.ADMIN) {
-      navigate(`/admin/clients/${row.id}`);
-    } else {
-      navigate(`${row.Id || row.id}`);
+    if (row.role === 'user') {
+      navigate(`/admin/users/${row.id}`);
+    } else if (row.role === 'accountant') {
+      navigate(`/admin/accountants/${row.id}`);
     }
   };
 
   const columns = [
-    {
-      name: 'Name',
-      selector: (row) => row.Name || row.name,
-      sortable: false,
-      grow: 2,
-    },
-    {
-      name: 'Email',
-      selector: (row) => row.Email || row.email,
-      sortable: false,
-      grow: 2,
-    },
-    // Account Type, Last Date Viewed,
     // {
-    //   name: 'Address',
-    //   selector: (row) => row.address,
+    //   name: 'Name',
+    //   selector: (row) => row.Name || row.name,
     //   sortable: false,
-    //   grow: 3,
-    //   cell: (row) => (
-    //     <div className="d-flex flex-column">
-    //       <span>{row.address}</span>
-    //     </div>
-    //   ),
+    //   grow: 2,
     // },
     {
-      name: 'Account Type',
-      selector: (row) => row.AccountType || row.accountType,
+      name: 'Email',
+      selector: (row) => row.email,
       sortable: false,
       grow: 2,
     },
     {
-      name: 'Last Date Viewed',
+      name: 'Account Type',
+      selector: (row) => row.role,
+      sortable: false,
+      grow: 2,
+    },
+    {
+      name: 'Last Date Logged In',
       selector: (row) =>
-        row.LastViewedDate || row.lastViewedDate
-          ? formatDateToLocale(row.LastViewedDate) ||
-            formatDateToLocale(row.lastViewedDate)
-          : null,
+        row.lastLogin ? formatDateToLocale(row.lastLogin) : null,
       sortable: false,
       grow: 2,
     },
@@ -147,12 +117,12 @@ const UsersTable = ({
                 {' '}
                 <i className="ri-edit-line pe-3"></i> Edit
               </DropdownItem>
-              <DropdownItem
+              {/* <DropdownItem
                 className="d-flex aling-items-center ps-3"
                 onClick={() => handleDelete(row)}
               >
                 <i className="ri-delete-bin-line  pe-3"></i> Delete
-              </DropdownItem>
+              </DropdownItem> */}
             </DropdownMenu>
           </DropdownMenuPortal>
         </Dropdown>
@@ -221,4 +191,4 @@ const UsersTable = ({
     </div>
   );
 };
-export default UsersTable;
+export default UserAdminTable;

@@ -26,6 +26,9 @@ const DashboardAccountantUsers = () => {
   const [modalAddClient, setModalAddClient] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
   const handleChangePage = (page) => {
     setCurrentPage(page);
   };
@@ -43,7 +46,10 @@ const DashboardAccountantUsers = () => {
 
       console.log('response', response);
       if (response && !response.error) {
-        setClients(response);
+        setClients(response.data);
+        setTotal(response.total);
+        setPageSize(response.pageSize);
+        setHasMore(response.hasMore);
       } else {
         console.log('Failed to fetch clients');
       }
@@ -142,9 +148,9 @@ const DashboardAccountantUsers = () => {
         pagination={{
           handleChangePage,
           currentPage,
-          pageSize: 15,
-          total: 15,
-          hasMore: false,
+          pageSize,
+          total,
+          hasMore,
         }}
       />
     </React.Fragment>

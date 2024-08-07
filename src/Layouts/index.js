@@ -326,11 +326,13 @@ const Layout = (props) => {
     }
     const dynamicRoutes = [
       '/clients/:clientId',
-      '/users/:userId',
+      '/admin/users/:userId',
       '/admin/clients/:clientId',
     ];
     for (const route of dynamicRoutes) {
-      const regex = new RegExp(`^${route.replace(':clientId', '[^/]+')}$`);
+      const regex = new RegExp(
+        `^${route.replace(/:(clientId|userId)/g, '[^/]+')}$`,
+      );
       if (regex.test(pathname)) {
         return true;
       }
