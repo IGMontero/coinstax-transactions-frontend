@@ -130,6 +130,14 @@ const authProtectedRoutes = [
     ),
   },
   {
+    path: '/admin/users/:userId',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardUserWallets />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
     path: '/wallets',
     component: (
       <AuthProtectedRoutes
