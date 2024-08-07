@@ -26,10 +26,10 @@ const Users = () => {
       ).unwrap();
 
       if (response && !response.error) {
-        setUsers(response.items);
+        setUsers(response.data);
         setTotal(response.total);
         setHasMore(response.hasMore);
-        setPageSize(15);
+        setPageSize(response.pageSize);
       } else {
         console.log('Failed to fetch users');
       }

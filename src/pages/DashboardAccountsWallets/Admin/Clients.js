@@ -28,10 +28,10 @@ const Clients = () => {
 
       console.log('response', response);
       if (response && !response.error) {
-        setClients(response.items);
+        setClients(response.data);
         setTotal(response.total);
         setHasMore(response.hasMore);
-        setPageSize(15);
+        setPageSize(response.pageSize);
       } else {
         console.log('Failed to fetch clients');
       }
