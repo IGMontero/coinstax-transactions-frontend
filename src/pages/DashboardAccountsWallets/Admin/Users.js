@@ -7,23 +7,29 @@ const Users = () => {
   const dispatch = useDispatch();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(0);
   const [total, setTotal] = useState(0);
-
   const [hasMore, setHasMore] = useState(false);
-
   const [pageSize, setPageSize] = useState(0);
+
+  // Add state for accountType
+  const [accountType, setAccountType] = useState('');
 
   const handleChangePage = (page) => {
     setCurrentPage(page);
+  };
+
+  // New handler for changing accountType
+  const handleAccountTypeChange = (event) => {
+    setAccountType(event.target.value);
+    setCurrentPage(0); // Reset to the first page when accountType changes
   };
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
       const response = await dispatch(
-        getUsersByAdmin({ page: currentPage }),
+        getUsersByAdmin({ page: currentPage, accountType }), // Pass accountType here
       ).unwrap();
 
       if (response && !response.error) {
@@ -43,12 +49,24 @@ const Users = () => {
 
   useEffect(() => {
     fetchUsers();
-  }, [currentPage]);
+  }, [currentPage, accountType]);
 
   return (
     <React.Fragment>
       <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
         <h1>Clients</h1>
+
+        <select
+          value={accountType}
+          onChange={handleAccountTypeChange}
+          className="form-select w-25"
+          aria-label="Select Account Type"
+        >
+          <option value="">All Types</option>
+          <option value="accountant">Accountant</option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
       </div>
       <UserAdminTable
         users={users}
