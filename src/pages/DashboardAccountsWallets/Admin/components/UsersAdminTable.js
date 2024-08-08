@@ -11,10 +11,9 @@ import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
 import { useNavigate } from 'react-router-dom';
 import EditClientModal from '../../../../Components/Modals/EditClientModal';
-import DropdownMenuPortal from '../../../../Components/Dropdowns/DropdownPortal';
 import { formatDateToLocale } from '../../../../utils/utils';
 import TablePagination from '../../../../Components/Pagination/TablePagination';
-import { DASHBOARD_USER_ROLES } from '../../../../common/constants';
+import DropdownMenuPortal from '../../../../Components/Dropdowns/DropdownPortal';
 
 const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
   const navigate = useNavigate();
@@ -24,8 +23,7 @@ const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 955);
-
-  const [dropdownOpen, setDropdownOpen] = useState(null);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [modalEditClient, setModalEditClient] = useState(false);
 
@@ -34,10 +32,10 @@ const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
   };
 
   const toggleDropdown = (id) => {
-    if (dropdownOpen === id) {
-      setDropdownOpen(null);
+    if (dropdownOpenId === id) {
+      setDropdownOpenId(null);
     } else {
-      setDropdownOpen(id);
+      setDropdownOpenId(id);
     }
   };
 
@@ -65,12 +63,6 @@ const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
   };
 
   const columns = [
-    // {
-    //   name: 'Name',
-    //   selector: (row) => row.Name || row.name,
-    //   sortable: false,
-    //   grow: 2,
-    // },
     {
       name: 'Email',
       selector: (row) => row.email,
@@ -94,8 +86,8 @@ const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
       name: 'Manage',
       cell: (row) => (
         <Dropdown
-          isOpen={dropdownOpen === row.Id}
-          toggle={() => toggleDropdown(row.Id)}
+          isOpen={dropdownOpenId === row.id}
+          toggle={() => toggleDropdown(row.id)}
         >
           <DropdownToggle
             caret={false}
@@ -104,26 +96,19 @@ const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
             <i className="ri-more-2-fill"></i>
           </DropdownToggle>
           <DropdownMenuPortal>
-            <DropdownMenu>
+            <DropdownMenu right>
               <DropdownItem
-                className="d-flex aling-items-center ps-3"
+                className="d-flex align-items-center ps-3"
                 onClick={() => handleRowClick(row)}
               >
                 <i className="ri-eye-fill pe-3"></i> View
               </DropdownItem>
               <DropdownItem
-                className="d-flex aling-items-center ps-3"
+                className="d-flex align-items-center ps-3"
                 onClick={() => handleEdit(row.Id)}
               >
-                {' '}
                 <i className="ri-edit-line pe-3"></i> Edit
               </DropdownItem>
-              {/* <DropdownItem
-                className="d-flex aling-items-center ps-3"
-                onClick={() => handleDelete(row)}
-              >
-                <i className="ri-delete-bin-line  pe-3"></i> Delete
-              </DropdownItem> */}
             </DropdownMenu>
           </DropdownMenuPortal>
         </Dropdown>
@@ -199,4 +184,5 @@ const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
     </>
   );
 };
+
 export default UserAdminTable;

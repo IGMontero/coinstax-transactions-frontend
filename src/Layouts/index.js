@@ -328,6 +328,7 @@ const Layout = (props) => {
     const dynamicRoutes = [
       '/clients/:clientId',
       '/admin/users/:userId',
+      '/admin/accountants/:userId',
       '/admin/clients/:clientId',
     ];
     for (const route of dynamicRoutes) {
@@ -349,6 +350,7 @@ const Layout = (props) => {
       !isPageWithoutAddress(location.pathname) &&
       !isCurrentUserPortfolioSelected
     ) {
+      alert('Error in address with dropdown');
       navigate('/');
     }
   }, [

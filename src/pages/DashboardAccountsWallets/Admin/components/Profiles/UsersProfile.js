@@ -24,8 +24,12 @@ import AddAccManager from '../../../../../Components/Modals/AddAccManager';
 
 const UsersProfile = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const { userId } = useParams();
+
+  const isAccountantProfile = location.pathname.includes('accountants');
 
   const [user, setUser] = useState(null);
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
@@ -132,7 +136,13 @@ const UsersProfile = () => {
           <h1>Profile</h1>
           <div className="d-flex align-items-center">
             <Button
-              onClick={toggleModalAddAccountManager}
+              onClick={() => {
+                isAccountantProfile
+                  ? navigate('/admin/users')
+                  : {
+                      toggleModalAddAccountManager,
+                    };
+              }}
               className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
               color="soft-light"
               style={{
@@ -140,7 +150,14 @@ const UsersProfile = () => {
                 border: '.5px solid grey',
               }}
             >
-              Add Account Manager
+              {isAccountantProfile ? (
+                <>
+                  <i className="ri-arrow-left-s-line me-2"></i>
+                  Back to Users
+                </>
+              ) : (
+                'Add Account Manager'
+              )}
             </Button>
             <Button
               onClick={toggleModalConnectWallet}

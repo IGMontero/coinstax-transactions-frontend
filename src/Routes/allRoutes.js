@@ -82,6 +82,14 @@ const adminRoutes = [
       </AuthProtectedRoutes>
     ),
   },
+  {
+    path: '/admin/accountants/:userId',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <UsersProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
 ];
 
 // Public routes
