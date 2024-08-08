@@ -100,6 +100,7 @@ export const pagesWithoutAddress = [
   '/clients',
   '/admin/clients',
   '/admin/users',
+  '/admin/accountants',
   '/invite',
 ];
 
