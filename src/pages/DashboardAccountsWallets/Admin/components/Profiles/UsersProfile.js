@@ -20,6 +20,7 @@ import {
 import { getClientUserPortfolioSummary } from '../../../../../slices/userWallets/thunk';
 import { useDispatch } from 'react-redux';
 import ClientInfo from '../../../components/ClientInfo';
+import AddAccManager from '../../../../../Components/Modals/AddAccManager';
 
 const UsersProfile = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,7 @@ const UsersProfile = () => {
 
   const [user, setUser] = useState(null);
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
+  const [modalAddAccountManager, setModalAddAccountManager] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
   const [userPortfolio, setUserPortfolio] = useState(null);
@@ -46,6 +48,9 @@ const UsersProfile = () => {
   const toggleModalConnectWallet = () => {
     setModalConnectWallet(!modalConnectWallet);
   };
+
+  const toggleModalAddAccountManager = () =>
+    setModalAddAccountManager(!modalAddAccountManager);
 
   const fetchClientInfo = async () => {
     setLoadingInfo(true);
@@ -117,13 +122,17 @@ const UsersProfile = () => {
         userId={userId}
         onRefresh={handleRefreshPortfolio}
       />
-
+      <AddAccManager
+        isOpen={modalAddAccountManager}
+        setIsOpen={setModalAddAccountManager}
+        userId={userId}
+      />
       <div style={{ maxWidth: '610px' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
-          <h1>User Profile</h1>
+          <h1>Profile</h1>
           <div className="d-flex align-items-center">
             <Button
-              onClick={() => {}}
+              onClick={toggleModalAddAccountManager}
               className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
               color="soft-light"
               style={{
