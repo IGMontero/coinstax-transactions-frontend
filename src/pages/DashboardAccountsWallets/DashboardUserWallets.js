@@ -69,166 +69,8 @@ const DashboardUserWallets = () => {
   const toggleModalAddAccountManager = () =>
     setModalAddAccountManager(!modalAddAccountManager);
 
-  const handleSetAddresses = (updatedAddresses) => {
-    dispatch(setUserPortfolioSummary(updatedAddresses));
-  };
-
-  const handleUpdateAddress = (e, address) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    Swal.fire({
-      title: 'Update Wallet Address',
-      input: 'text',
-      inputValue: address.name,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      inputValidator: (value) => {
-        if (
-          userAddresses?.some(
-            (addr) => addr.name === value && addr.address !== address.address,
-          )
-        ) {
-          return 'This name already exists!';
-        }
-      },
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const newName = result.value.trim() ? result.value : null;
-
-        try {
-          const response = await dispatch(
-            updateUserWalletAddress({
-              userId,
-              name: newName,
-              addressId: address.id,
-            }),
-          ).unwrap();
-
-          if (response && !response.error) {
-            // const updatedAddresses = userAddresses?.map((addr) => {
-            //   if (addr.id === address.id) {
-            //     return {
-            //       ...addr,
-            //       name: newName,
-            //     };
-            //   }
-            //   return addr;
-            // });
-
-            // handleSetAddresses(updatedAddresses);
-            refreshUserPortfolio(userId);
-          } else {
-            Swal.fire({
-              title: 'Error',
-              text: 'Failed to update address',
-              icon: 'error',
-            });
-          }
-        } catch (error) {
-          Swal.fire({
-            title: 'Error',
-            text: 'Failed to update address',
-            icon: 'error',
-          });
-
-          console.log(error);
-        }
-      }
-    });
-  };
-
-  const onDragEnd = async (result) => {
-    if (!result.destination) return;
-
-    const items = Array.from(userAddresses);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
-
-    const updatedItems = items.map((item, idx) => ({
-      ...item,
-      index: idx + 1,
-    }));
-
-    handleSetAddresses(updatedItems);
-
-    await handleReorderAddresses(updatedItems);
-  };
-
-  const handleReorderAddresses = async (updatedAddresses) => {
-    const payload = updatedAddresses.map((address) => ({
-      Id: address.id,
-      Index: address.index,
-    }));
-
-    try {
-      const response = await dispatch(
-        reorderUserWallets({ userId: userId, addresses: payload }),
-      ).unwrap();
-
-      if (response && !response.error) {
-        refreshUserPortfolio(userId);
-      } else {
-        Swal.fire({
-          title: 'Error',
-          text: 'Failed to reorder addresses',
-          icon: 'error',
-        });
-      }
-    } catch (error) {
-      console.error('Failed to reorder addresses:', error);
-      Swal.fire({
-        title: 'Error',
-        text: 'Failed to reorder addresses',
-        icon: 'error',
-      });
-    }
-  };
-
   const handleRefreshPortfolio = () => {
     refreshUserPortfolio(userId);
-  };
-
-  const handleDeleteUserAddress = (address) => {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.name ? address.name : address.address}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Cancel',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const response = await dispatch(
-            deleteUserAddressWallet({ userId, addressId: address.id }),
-          ).unwrap();
-
-          if (response && !response.error) {
-            Swal.fire({
-              title: 'Success',
-              text: 'Wallet address deleted successfully',
-              icon: 'success',
-            });
-
-            refreshUserPortfolio(userId);
-          } else {
-            Swal.fire({
-              title: 'Error',
-              text: 'Failed to delete address',
-              icon: 'error',
-            });
-          }
-        } catch (error) {
-          console.error('Failed to delete address:', error);
-          Swal.fire({
-            title: 'Error',
-            text: 'Failed to delete address',
-            icon: 'error',
-          });
-        }
-      }
-    });
   };
 
   if (initialLoad) {
@@ -309,11 +151,9 @@ const DashboardUserWallets = () => {
         )}
 
         <AddressesTable
+          userId={userId}
           addresses={userPortfolioSummary?.addresses}
           loading={loaders.userPortfolioSummary}
-          onUpdateAddress={handleUpdateAddress}
-          onReorderAddress={onDragEnd}
-          onDeleteAddress={handleDeleteUserAddress}
           onRefresh={handleRefreshPortfolio}
         />
 

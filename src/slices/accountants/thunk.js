@@ -177,3 +177,25 @@ export const getUsersByAdmin = createAsyncThunk(
     }
   },
 );
+
+export const getUserByIdAdmin = createAsyncThunk(
+  // /admin/users/:userId
+  'clients/getUserByIdAdmin',
+  async (userId, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);

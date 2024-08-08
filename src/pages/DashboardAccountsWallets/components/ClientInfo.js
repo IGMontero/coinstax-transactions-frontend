@@ -28,8 +28,8 @@ const ClientInfo = ({ client }) => {
       {/* // Client name, email and last viewed date */}
       <div className="d-flex justify-content-between align-items-center mt-3">
         <div>
-          <h4>{client?.Name}</h4>
-          <p className="text-muted">{client?.Email}</p>
+          <h4>{client?.Name || client?.name}</h4>
+          <p className="text-muted">{client?.Email || client?.email}</p>
         </div>
         {/* <p className="text-muted">
           Last viewed: {formatDateToLocale(client.LastViewedDate)}
