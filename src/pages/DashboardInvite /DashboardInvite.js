@@ -10,25 +10,29 @@ import {
   Button,
 } from 'reactstrap';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Helmet from '../../Components/Helmet/Helmet';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
-import { useSelector } from 'react-redux';
 import {
   acceptInviteCodeAU,
   acceptInviteCodeUA,
   declineInviteCodeAU,
   declineInviteCodeUA,
-  verifyInviteCode,
+  verifyInviteCodeUA,
+  verifyInviteCodeAU,
 } from '../../slices/userWallets/thunk';
-import { DASHBOARD_USER_ROLES, userInviteTypes } from '../../common/constants';
+import {
+  DASHBOARD_USER_ROLES,
+  INVITECODETYPE,
+  userInviteTypes,
+} from '../../common/constants';
 import Swal from 'sweetalert2';
-//import images
 
 const DashboardInvite = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const { user } = useSelector((state) => state.auth);
   const [code, setCode] = useState('');
@@ -36,12 +40,10 @@ const DashboardInvite = () => {
   const [loading, setLoading] = useState(false);
 
   const queryParams = new URLSearchParams(location.search);
-
   const inviteType = queryParams.get('type');
   const isValidInviteType = Object.values(userInviteTypes).includes(inviteType);
 
   if (!isValidInviteType) {
-    // Redirect to login page if invite type is invalid
     navigate('/login');
   }
 
@@ -49,21 +51,22 @@ const DashboardInvite = () => {
     try {
       setLoading(true);
       const inviteCode = queryParams.get('code');
-
       console.log('Verifying invite code', inviteCode);
 
-      const response = await dispatch(
-        verifyInviteCode({ inviteCode: inviteCode }),
-      );
+      const request =
+        inviteType === INVITECODETYPE.USER_TO_ACCOUNTANT
+          ? verifyInviteCodeUA({ inviteCode })
+          : verifyInviteCodeAU({ inviteCode });
 
-      const res = response.payload;
-      if (res && response.error) {
+      const response = await dispatch(request).unwrap();
+      if (response && response.error) {
         setErrorMsg('Invite code is invalid');
       } else {
         console.log('Invite code verified');
       }
     } catch (error) {
       console.log(error);
+      setErrorMsg('Invite code is invalid');
     } finally {
       setLoading(false);
     }
@@ -74,47 +77,30 @@ const DashboardInvite = () => {
     const queryParams = new URLSearchParams(location.search);
     const inviteCode = queryParams.get('code');
     setCode(inviteCode);
-    // if (!user) {
-    //   handleVerifyInvite();
-    //   const queryParams = new URLSearchParams(location.search);
-    //   const inviteCode = queryParams.get('code');
-    //   setCode(inviteCode);
-    // } else {
-    //   navigate(`/login?code=${code}`);
-    // }
   }, [location.search]);
 
-  const handleAcceptInvite = () => {
+  const handleAcceptInvite = async () => {
     try {
       setLoading(true);
-
       const request =
-        inviteType === 'ua'
-          ? dispatch(acceptInviteCodeUA({ inviteCode: code }))
-          : dispatch(acceptInviteCodeAU({ inviteCode: code }));
-      const response = request;
+        inviteType === INVITECODETYPE.USER_TO_ACCOUNTANT
+          ? acceptInviteCodeUA({ inviteCode: code })
+          : acceptInviteCodeAU({ inviteCode: code });
+      const response = await dispatch(request).unwrap();
 
-      console.log('Accepting invite', response);
-
-      if (response.error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong!',
-        });
-      } else {
+      if (response && !response.error) {
         Swal.fire({
           icon: 'success',
           title: 'Success',
           text: 'Invite accepted successfully!',
         });
+
         if (user?.role === DASHBOARD_USER_ROLES.USER) {
           navigate('/wallets');
         } else {
           navigate('/dashboard');
         }
       }
-      setLoading(false);
     } catch (error) {
       console.log(error);
       Swal.fire({
@@ -122,36 +108,40 @@ const DashboardInvite = () => {
         title: 'Oops...',
         text: 'Something went wrong!',
       });
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleDeclineInvite = () => {
+  const handleDeclineInvite = async () => {
     try {
       setLoading(true);
-
       const request =
-        inviteType === 'ua'
-          ? dispatch(declineInviteCodeUA({ inviteCode: code }))
-          : dispatch(declineInviteCodeAU({ inviteCode: code }));
-      const response = request;
+        inviteType === INVITECODETYPE.USER_TO_ACCOUNTANT
+          ? declineInviteCodeUA({ inviteCode: code })
+          : declineInviteCodeAU({ inviteCode: code });
+      const response = await dispatch(request).unwrap();
 
-      if (response.error) {
+      if (response && response.error) {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: 'Something went wrong!',
         });
+        return;
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Invite declined successfully!',
+        });
+
+        if (user?.role === DASHBOARD_USER_ROLES.USER) {
+          navigate('/wallets');
+        } else {
+          navigate('/dashboard');
+        }
       }
-      Swal.fire({
-        icon: 'success',
-        title: 'Success',
-        text: 'Invite declined successfully!',
-      });
-      if (user?.role === DASHBOARD_USER_ROLES.USER) {
-        navigate('/wallets');
-      }
-      setLoading(false);
     } catch (error) {
       console.log(error);
       Swal.fire({
@@ -159,93 +149,63 @@ const DashboardInvite = () => {
         title: 'Oops...',
         text: 'Something went wrong!',
       });
+    } finally {
       setLoading(false);
     }
   };
 
-  const renderAcceptUserToAccountantInvite = () => {
-    // Show something like.. user name invited you to manage their wallets. Accept or decline
-    return (
-      <div className="d-flex justify-content-center">
-        <div className="text-center">
-          <h4>Accept invite?</h4>
-
-          <p>
-            Somebody has invited you to manage their wallets on ChainGlance.
-          </p>
-
-          <div className="d-flex justify-content-center">
-            <Button
-              onClick={handleAcceptInvite}
-              color="primary"
-              className="me-2"
-            >
-              Accept
-            </Button>
-            <Button onClick={handleDeclineInvite} color="danger">
-              Decline
-            </Button>
-          </div>
+  const renderAcceptUserToAccountantInvite = () => (
+    <div className="d-flex justify-content-center">
+      <div className="text-center">
+        <h4>Accept invite?</h4>
+        <p>Somebody has invited you to manage their wallets on ChainGlance.</p>
+        <div className="d-flex justify-content-center">
+          <Button onClick={handleAcceptInvite} color="primary" className="me-2">
+            Accept
+          </Button>
+          <Button onClick={handleDeclineInvite} color="danger">
+            Decline
+          </Button>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
-  const renderAcceptAccountantToUserInvite = () => {
-    // Show accountant name wants to manage your wallets. Accept or decline
-    return (
-      <div className="d-flex justify-content-center">
-        <div className="text-center">
-          <h4>Accept invite?</h4>
-
-          <p>Somebody wants to manage your wallets on ChainGlance.</p>
-
-          <div className="d-flex justify-content-center">
-            <Button
-              onClick={handleAcceptInvite}
-              color="primary"
-              className="me-2"
-            >
-              Accept
-            </Button>
-            <Button onClick={handleDeclineInvite} color="danger">
-              Decline
-            </Button>
-          </div>
+  const renderAcceptAccountantToUserInvite = () => (
+    <div className="d-flex justify-content-center">
+      <div className="text-center">
+        <h4>Accept invite?</h4>
+        <p>Somebody wants to manage your wallets on ChainGlance.</p>
+        <div className="d-flex justify-content-center">
+          <Button onClick={handleAcceptInvite} color="primary" className="me-2">
+            Accept
+          </Button>
+          <Button onClick={handleDeclineInvite} color="danger">
+            Decline
+          </Button>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
-  const renderAcceptAccountantToAgentInvite = () => {
-    // Show accountant name wants to invite you as an agent. Accept or decline
-    return (
-      <div className="d-flex justify-content-center">
-        <div className="text-center">
-          <h4>Accept invite?</h4>
-
-          <p>Somebody invited you as an agent on ChainGlance.</p>
-
-          <div className="d-flex justify-content-center">
-            <Button
-              onClick={handleAcceptInvite}
-              color="primary"
-              className="me-2"
-            >
-              Accept
-            </Button>
-
-            <Button onClick={handleDeclineInvite} color="danger">
-              Decline
-            </Button>
-          </div>
+  const renderAcceptAccountantToAgentInvite = () => (
+    <div className="d-flex justify-content-center">
+      <div className="text-center">
+        <h4>Accept invite?</h4>
+        <p>Somebody invited you as an agent on ChainGlance.</p>
+        <div className="d-flex justify-content-center">
+          <Button onClick={handleAcceptInvite} color="primary" className="me-2">
+            Accept
+          </Button>
+          <Button onClick={handleDeclineInvite} color="danger">
+            Decline
+          </Button>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
   const renderAcceptInvite = () => {
-    // Render result based on invite type
     switch (inviteType) {
       case userInviteTypes.USER_TO_ACCOUNTANT:
         return renderAcceptUserToAccountantInvite();
@@ -258,42 +218,39 @@ const DashboardInvite = () => {
     }
   };
 
-  const renderLogInOrRegisterToAcceptInvite = () => {
-    return (
-      // Render login button and text, if user is not authenticated
-      <div className="d-flex justify-content-center">
-        <div className="text-center">
-          <h4>Log in or Register to accept invite</h4>
-          <div className="d-flex align-items-center justify-content-around">
-            <Button
-              onClick={() => navigate(`/login?code=${code}&type=${inviteType}`)}
-              className="mt-3 d-flex btn-hover-light w-50 text-dark justify-content-center align-items-center"
-              color="soft-light"
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-              }}
-            >
-              Log in
-            </Button>
-            <Button
-              onClick={() =>
-                navigate(`/register?code=${code}&type=${inviteType}`)
-              }
-              className="mt-3 d-flex btn-hover-light w-50 ms-2  text-dark justify-content-center align-items-center"
-              color="soft-light"
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-              }}
-            >
-              Register
-            </Button>
-          </div>
+  const renderLogInOrRegisterToAcceptInvite = () => (
+    <div className="d-flex justify-content-center">
+      <div className="text-center">
+        <h4>Log in or Register to accept invite</h4>
+        <div className="d-flex align-items-center justify-content-around">
+          <Button
+            onClick={() => navigate(`/login?code=${code}&type=${inviteType}`)}
+            className="mt-3 d-flex btn-hover-light w-50 text-dark justify-content-center align-items-center"
+            color="soft-light"
+            style={{
+              borderRadius: '10px',
+              border: '.5px solid grey',
+            }}
+          >
+            Log in
+          </Button>
+          <Button
+            onClick={() =>
+              navigate(`/register?code=${code}&type=${inviteType}`)
+            }
+            className="mt-3 d-flex btn-hover-light w-50 ms-2  text-dark justify-content-center align-items-center"
+            color="soft-light"
+            style={{
+              borderRadius: '10px',
+              border: '.5px solid grey',
+            }}
+          >
+            Register
+          </Button>
         </div>
       </div>
-    );
-  };
+    </div>
+  );
 
   return (
     <React.Fragment>
@@ -362,4 +319,5 @@ const DashboardInvite = () => {
     </React.Fragment>
   );
 };
+
 export default DashboardInvite;

@@ -249,8 +249,8 @@ const UsersProfile = () => {
         <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
           <h1>User Profile</h1>
           <div className="d-flex align-items-center">
-            {/* <Button
-              onClick={toggleModalAddAccountManager}
+            <Button
+              onClick={() => {}}
               className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
               color="soft-light"
               style={{
@@ -261,7 +261,7 @@ const UsersProfile = () => {
               Add Account Manager
             </Button>
             <Button
-              onClick={toggleModalConnectWallet}
+              onClick={() => {}}
               className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
               color="soft-light"
               style={{
@@ -270,7 +270,7 @@ const UsersProfile = () => {
               }}
             >
               Connect Wallet
-            </Button> */}
+            </Button>
           </div>
         </div>
         {/* {!loaders.userPortfolioSummary && (
