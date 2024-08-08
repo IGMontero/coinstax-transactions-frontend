@@ -190,12 +190,30 @@ export const updateUserWalletAddress = createAsyncThunk(
   },
 );
 
-export const verifyInviteCode = createAsyncThunk(
+export const verifyInviteCodeUA = createAsyncThunk(
   'clients/verifyInviteCode',
   async ({ inviteCode }, { rejectWithValue }) => {
     try {
       const response = await fetch(
         `${API_BASE}/clients/invite-code/${inviteCode}`,
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const verifyInviteCodeAU = createAsyncThunk(
+  'clients/verifyInviteCode',
+  async ({ inviteCode }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${API_BASE}/clients/accountants/invite-code/${inviteCode}`,
       );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
@@ -219,7 +237,6 @@ export const acceptInviteCodeAU = createAsyncThunk(
           headers: {
             Authorization: `${token}`,
           },
-
           method: 'POST',
         },
       );
@@ -271,7 +288,6 @@ export const acceptInviteCodeUA = createAsyncThunk(
           headers: {
             Authorization: `${token}`,
           },
-
           method: 'POST',
         },
       );
