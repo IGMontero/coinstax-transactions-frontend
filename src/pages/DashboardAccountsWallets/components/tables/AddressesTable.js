@@ -15,25 +15,24 @@ import {
   copyToClipboard,
   CurrencyUSD,
   formatAddressToShortVersion,
-  formatIdTransaction,
   parseValuesToLocale,
 } from '../../../../utils/utils';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import ConnectWalletModal from '../../../../Components/Modals/ConnectWalletModal';
 import Skeleton from 'react-loading-skeleton';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
+import {
+  deleteUserAddressWallet,
+  reorderUserWallets,
+  updateUserWalletAddress,
+} from '../../../../slices/userWallets/thunk';
+import Swal from 'sweetalert2';
+import { useDispatch } from 'react-redux';
+import { setUserPortfolioSummary } from '../../../../slices/userWallets/reducer';
 
-const AddressesTable = ({
-  addresses,
-  loading,
-  onUpdateAddress,
-  onReorderAddress,
-  onDeleteAddress,
-  onRefresh,
-}) => {
+const AddressesTable = ({ userId, addresses, loading, onRefresh }) => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { userPortfolioSummary, loaders } = useSelector((state) => state.userWallets);
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
@@ -75,12 +74,162 @@ const AddressesTable = ({
     copyToClipboard(text);
   };
 
+  const handleSetAddresses = (updatedAddresses) => {
+    dispatch(setUserPortfolioSummary(updatedAddresses));
+  };
+
   const handleUpdateAddress = (e, address) => {
-    onUpdateAddress(e, address);
+    e.preventDefault();
+    e.stopPropagation();
+
+    Swal.fire({
+      title: 'Update Wallet Address',
+      input: 'text',
+      inputValue: address.name,
+      showCancelButton: true,
+      confirmButtonText: 'Save',
+      inputValidator: (value) => {
+        if (
+          addresses?.some(
+            (addr) => addr.name === value && addr.address !== address.address,
+          )
+        ) {
+          return 'This name already exists!';
+        }
+      },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const newName = result.value.trim() ? result.value : null;
+
+        try {
+          const response = await dispatch(
+            updateUserWalletAddress({
+              userId,
+              name: newName,
+              addressId: address.id,
+            }),
+          ).unwrap();
+
+          if (response && !response.error) {
+            // const updatedAddresses = userAddresses?.map((addr) => {
+            //   if (addr.id === address.id) {
+            //     return {
+            //       ...addr,
+            //       name: newName,
+            //     };
+            //   }
+            //   return addr;
+            // });
+
+            // handleSetAddresses(updatedAddresses);
+            onRefresh(userId);
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to update address',
+              icon: 'error',
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to update address',
+            icon: 'error',
+          });
+
+          console.log(error);
+        }
+      }
+    });
   };
 
   const handleDeleteUserAddress = (address) => {
-    onDeleteAddress(address);
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Are you sure to delete wallet ${address.name ? address.name : address.address}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await dispatch(
+            deleteUserAddressWallet({ userId, addressId: address.id }),
+          ).unwrap();
+
+          if (response && !response.error) {
+            Swal.fire({
+              title: 'Success',
+              text: 'Wallet address deleted successfully',
+              icon: 'success',
+            });
+
+            onRefresh(userId);
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to delete address',
+              icon: 'error',
+            });
+          }
+        } catch (error) {
+          console.error('Failed to delete address:', error);
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to delete address',
+            icon: 'error',
+          });
+        }
+      }
+    });
+  };
+
+  const onDragEnd = async (result) => {
+    if (!result.destination) return;
+
+    const items = Array.from(addresses);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    const updatedItems = items.map((item, idx) => ({
+      ...item,
+      index: idx + 1,
+    }));
+
+    handleSetAddresses(updatedItems);
+
+    await handleReorderAddresses(updatedItems);
+  };
+
+  const handleReorderAddresses = async (updatedAddresses) => {
+    const payload = updatedAddresses.map((address) => ({
+      Id: address.id,
+      Index: address.index,
+    }));
+
+    try {
+      const response = await dispatch(
+        reorderUserWallets({ userId: userId, addresses: payload }),
+      ).unwrap();
+
+      if (response && !response.error) {
+        onRefresh(userId);
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Failed to reorder addresses',
+          icon: 'error',
+        });
+      }
+    } catch (error) {
+      console.error('Failed to reorder addresses:', error);
+      Swal.fire({
+        title: 'Error',
+        text: 'Failed to reorder addresses',
+        icon: 'error',
+      });
+    }
   };
 
   const getValueForAddress = (addressData) => {
@@ -110,7 +259,7 @@ const AddressesTable = ({
         onRefresh={onRefresh}
       /> */}
 
-      <DragDropContext onDragEnd={onReorderAddress}>
+      <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="addresses">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
@@ -146,10 +295,11 @@ const AddressesTable = ({
                           >
                             <div
                               onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
+                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${
+                                openCollapse.has(collapseId)
                                   ? 'border border-primary rounded px-2 mb-2'
                                   : 'bg-light'
-                                }`}
+                              }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
@@ -254,10 +404,11 @@ const AddressesTable = ({
 
                               <Collapse isOpen={openCollapse.has(collapseId)}>
                                 <CardBody
-                                  className={`cursor-pointer px-3 ${openCollapse.has(collapseId)
+                                  className={`cursor-pointer px-3 ${
+                                    openCollapse.has(collapseId)
                                       ? 'border-info'
                                       : ''
-                                    }`}
+                                  }`}
                                 >
                                   <div className="d-flex flex-column">
                                     <span
