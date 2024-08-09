@@ -18,13 +18,7 @@ import { formatDateToLocale } from '../../../../utils/utils';
 import TablePagination from '../../../../Components/Pagination/TablePagination';
 import { DASHBOARD_USER_ROLES } from '../../../../common/constants';
 
-const UsersTable = ({
-  users,
-  loading,
-  onDeleteAddress,
-  onRefresh,
-  pagination,
-}) => {
+const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const currentUserRole = user?.role;
@@ -67,7 +61,7 @@ const UsersTable = ({
   };
 
   const handleDelete = (row) => {
-    onDeleteAddress(row.Id);
+    onDelete(row.Id);
   };
 
   const handleRowClick = (row) => {
@@ -123,8 +117,8 @@ const UsersTable = ({
       name: 'Manage',
       cell: (row) => (
         <Dropdown
-          isOpen={dropdownOpen === row.Id}
-          toggle={() => toggleDropdown(row.Id)}
+          isOpen={dropdownOpen === row.id || row.Id}
+          toggle={() => toggleDropdown(row.id || row.Id)}
         >
           <DropdownToggle
             caret={false}
@@ -175,7 +169,7 @@ const UsersTable = ({
       <DataTable
         columns={columns}
         data={users}
-        noDataComponent={<h4>Add a client to get started</h4>}
+        noDataComponent={<h4>No clients found</h4>}
         noHeader
         responsive
         onRowClicked={handleRowClick}

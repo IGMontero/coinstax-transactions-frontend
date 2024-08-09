@@ -65,9 +65,12 @@ const DashboardClientProfile = () => {
       if (response && !response.error) {
         setClient(response);
         return response.UserId;
+      } else {
+        window.history.back();
       }
     } catch (error) {
       console.log(error);
+      window.history.back();
       return null;
     }
   };
@@ -90,6 +93,8 @@ const DashboardClientProfile = () => {
 
       if (response && !response.error) {
         setClientUserPortfolio(response);
+      } else {
+        // return back window
       }
     } catch (error) {
       console.log(error);

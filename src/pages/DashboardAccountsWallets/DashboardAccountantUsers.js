@@ -143,7 +143,7 @@ const DashboardAccountantUsers = () => {
       <UsersTable
         users={clients}
         loading={loading}
-        onDeleteAddress={handleDeleteClient}
+        onDelete={handleDeleteClient}
         onRefresh={fetchClients}
         pagination={{
           handleChangePage,
