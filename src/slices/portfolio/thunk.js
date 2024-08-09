@@ -83,3 +83,64 @@ export const getBalancesPortfolio = createAsyncThunk(
     }
   },
 );
+
+export const fetchTransactionsPortfolio = createAsyncThunk(
+  'portfolio/fetchTransactionsPortfolio',
+  async (
+    {
+      userId,
+      blockchain,
+      query = '',
+      filters = {},
+      page = 0,
+      assetsFilters,
+      signal,
+    },
+    { rejectWithValue },
+  ) => {
+    const token = getTokenFromCookies();
+    try {
+      let queryString = `page=${page}`;
+
+      if (query) {
+        queryString += `&query=${encodeURIComponent(query)}`;
+      }
+
+      if (assetsFilters) {
+        queryString += `&${assetsFilters}`;
+      }
+
+      for (const [key, value] of Object.entries(filters)) {
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
+          });
+        } else if (value) {
+          queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        }
+      }
+
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/portfolio/${blockchain}/transactions?${queryString}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          signal,
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted');
+        return { error: 'Fetch aborted' };
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  },
+);
