@@ -74,6 +74,12 @@ export const networks = [
   },
 ];
 
+export const INVITECODETYPE = {
+  USER_TO_ACCOUNTANT: 'ua',
+  ACCOUNTANT_TO_USER: 'au',
+  ACCOUNTANT_TO_AGENT: 'aa',
+};
+
 export const DASHBOARD_USER_ROLES = {
   USER: 'user',
   ACCOUNTANT: 'accountant',
@@ -92,6 +98,9 @@ export const pagesWithoutAddress = [
   '/wallets',
   '/wallets/connect',
   '/clients',
+  '/admin/clients',
+  '/admin/users',
+  '/admin/accountants',
   '/invite',
 ];
 

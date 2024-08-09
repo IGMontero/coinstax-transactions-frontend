@@ -56,7 +56,8 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
 
   const location = useLocation();
 
-  const isPortfolioPage = location.pathname.includes('portfolio');
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
 
   const networkType = useSelector(selectNetworkType);
   const fetchControllerRef = useRef(new AbortController());
@@ -117,7 +118,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
       }));
     }
 
-    const request = isPortfolioPage
+    const request = isCurrentUserPortfolioSelected
       ? dispatch(
           fetchNFTSPortfolio({ userId, blockchain: networkType, signal }),
         )
@@ -135,7 +136,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
     return request
 
       .then((res = {}) => {
-        const response = isPortfolioPage ? res.payload : res;
+        const response = isCurrentUserPortfolioSelected ? res.payload : res;
         setData((prevData) => ({
           ...response,
           items: [...(prevData.items || []), ...(response.items || [])],

@@ -16,7 +16,8 @@ const DashboardAssets = () => {
   const userId = user?.id;
 
   const networkType = useSelector(selectNetworkType);
-  const isPortfolioPage = location.pathname.includes('portfolio');
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
   const fetchControllerRef = useRef(new AbortController());
 
   const [assetsData, setAssetsData] = useState({});
@@ -45,17 +46,19 @@ const DashboardAssets = () => {
         [fecthId]: true,
       }));
 
-      const request = isPortfolioPage
-        ? fetchAssetsPortfolio({
-            userId: userId,
-            blockchain: networkType,
-            signal,
-          })
-        : fetchAssets(params).unwrap();
+      const request = isCurrentUserPortfolioSelected
+        ? dispatch(
+            fetchAssetsPortfolio({
+              userId: userId,
+              blockchain: networkType,
+              signal,
+            }),
+          )
+        : dispatch(fetchAssets(params)).unwrap();
 
-      const response = await dispatch(request);
+      const response = await request;
 
-      const res = isPortfolioPage ? response.payload : response;
+      const res = isCurrentUserPortfolioSelected ? response.payload : response;
 
       console.log('response assets ', response);
       if (res?.unsupported === true) {

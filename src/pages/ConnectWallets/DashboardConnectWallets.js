@@ -6,7 +6,7 @@ import walletConnect from '../../assets/images/wallets/WalletConnect.png';
 import zerionWallet from '../../assets/images/wallets/zerionWallet.svg';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
 import { useNavigate } from 'react-router-dom';
-import { Button } from 'reactstrap';
+import { Button, Spinner } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 import { addUserWallet } from '../../slices/userWallets/thunk';
@@ -18,6 +18,8 @@ const DashboardConnectWallets = () => {
   const refreshUserPortfolio = useRefreshUserPortfolio();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
+
+  const [loading, setLoading] = useState(false);
 
   const wallets = [
     // {
@@ -52,10 +54,13 @@ const DashboardConnectWallets = () => {
   };
 
   const handleConnectWallet = async (address) => {
+    setLoading(true);
     try {
       const response = await dispatch(
         addUserWallet({ address, userId }),
       ).unwrap();
+
+      console.log(response);
 
       if (response && !response.error) {
         navigate(`/address/${address}`);
@@ -63,17 +68,19 @@ const DashboardConnectWallets = () => {
       } else {
         Swal.fire({
           title: 'Error',
-          text: 'Failed to connect wallet',
+          text: response.message || 'Failed to connect wallet',
           icon: 'error',
         });
       }
+      setLoading(false);
     } catch (error) {
       console.error('Failed to connect wallet: ', error);
       Swal.fire({
         title: 'Error',
-        text: 'Failed to connect wallet',
+        text: error || 'Failed to connect wallet',
         icon: 'error',
       });
+      setLoading(false);
     }
   };
 
@@ -106,11 +113,13 @@ const DashboardConnectWallets = () => {
           <div className="d-flex align-items-center">
             <SearchBarWallets onSearch={handleSearch} />
             <Button
-              className="d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center"
+              className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
               color="soft-light"
+              disabled={loading}
               style={{
                 borderRadius: '10px',
                 border: '.5px solid grey',
+                cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
               }}
               onClick={() => {
                 if (!user) {
@@ -121,7 +130,13 @@ const DashboardConnectWallets = () => {
               }}
             >
               <i className="bx bx-plus me-2"></i>
-              Add
+              {loading ? (
+                <div>
+                  <Spinner size="sm" color="light" />
+                </div>
+              ) : (
+                <>Add</>
+              )}
             </Button>
           </div>
         </div>
