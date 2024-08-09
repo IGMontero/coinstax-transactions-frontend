@@ -350,7 +350,9 @@ const Layout = (props) => {
       !isPageWithoutAddress(location.pathname) &&
       !isCurrentUserPortfolioSelected
     ) {
-      alert('Error in address with dropdown');
+      if (process.env.NODE_ENV === 'development') {
+        alert('Error in address with dropdown');
+      }
       navigate('/');
     }
   }, [
