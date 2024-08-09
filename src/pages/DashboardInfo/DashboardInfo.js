@@ -171,7 +171,13 @@ const DashboardInfo = () => {
             borderRadius: '10px',
             border: '.5px solid grey',
           }}
-          onClick={() => navigate(`/address/${address}/${type}`)}
+          onClick={() => {
+            if (isCurrentUserPortfolioSelected) {
+              navigate(`/portfolio/${type}`);
+            } else {
+              navigate(`/address/${address}/${type}`);
+            }
+          }}
         >
           <h6 className="text-dark  fw-semibold my-2">See more {typeName}</h6>
         </Button>
