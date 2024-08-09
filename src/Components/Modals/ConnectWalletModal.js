@@ -43,7 +43,7 @@ const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh, userId }) => {
       } else {
         Swal.fire({
           title: 'Error',
-          text: 'Failed to connect wallet',
+          text: response.message || 'Failed to connect wallet',
           icon: 'error',
         });
       }
@@ -52,7 +52,7 @@ const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh, userId }) => {
       console.error('Failed to connect wallet: ', error);
       Swal.fire({
         title: 'Error',
-        text: 'Failed to connect wallet',
+        text: error || 'Failed to connect wallet',
         icon: 'error',
       });
       setLoading(false);

@@ -25,6 +25,14 @@ const DashboardAccountantUsers = () => {
 
   const [modalAddClient, setModalAddClient] = useState(false);
 
+  const [currentPage, setCurrentPage] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
   const handleOpenModalAddClient = () => {
     setModalAddClient(true);
   };
@@ -36,9 +44,12 @@ const DashboardAccountantUsers = () => {
         getClientsByAccountantId(userId),
       ).unwrap();
 
-      console.log(response);
+      console.log('response', response);
       if (response && !response.error) {
-        setClients(response);
+        setClients(response.data);
+        setTotal(response.total);
+        setPageSize(response.pageSize);
+        setHasMore(response.hasMore);
       } else {
         console.log('Failed to fetch clients');
       }
@@ -103,7 +114,18 @@ const DashboardAccountantUsers = () => {
       <Helmet title="Clients" />
       <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
         <h1>Manage Clients</h1>
-        <div>
+        <div className="d-flex align-items-center">
+          <Button
+            onClick={() => {}}
+            className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
+            color="soft-light"
+            style={{
+              borderRadius: '10px',
+              border: '.5px solid grey',
+            }}
+          >
+            Create invite code
+          </Button>
           <Button
             onClick={handleOpenModalAddClient}
             className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
@@ -123,6 +145,13 @@ const DashboardAccountantUsers = () => {
         loading={loading}
         onDeleteAddress={handleDeleteClient}
         onRefresh={fetchClients}
+        pagination={{
+          handleChangePage,
+          currentPage,
+          pageSize,
+          total,
+          hasMore,
+        }}
       />
     </React.Fragment>
   );

@@ -41,9 +41,9 @@ const Navdata = () => {
     const { assets, transactions, performance } = fetchData;
     setIsUnsupported(
       assets?.unsupported ||
-      transactions?.unsupported ||
-      performance?.unsupported ||
-      !addressSearched,
+        transactions?.unsupported ||
+        performance?.unsupported ||
+        !addressSearched,
     );
   }, [fetchData, addressSearched]);
 
@@ -132,9 +132,20 @@ const Navdata = () => {
         'user-addresses',
       ),
     );
-    allMenuItems.push(createMenuHeader('Manage'));
+    allMenuItems.push(createMenuHeader('Wallets'));
     allMenuItems.push(
-      createManageMenu('users', 'Manage Users', 'bx bx-group fs-3', 'clients'),
+      createManageMenu('users', 'Clients', 'bx bx-group fs-3', 'admin/clients'),
+    );
+    allMenuItems.push(
+      createManageMenu('users', 'Users', 'bx bx-group fs-3', 'admin/users'),
+    );
+    allMenuItems.push(
+      createManageMenu(
+        'connectWallet',
+        'Connect Wallet',
+        'bx bx-add-to-queue fs-3',
+        'wallets/connect',
+      ),
     );
     allMenuItems.push(
       createManageMenu(
@@ -155,7 +166,7 @@ const Navdata = () => {
         'bx bx-user fs-3',
         'clients',
       ),
-    )
+    );
     // allMenuItems.push(
     //   createManageMenu(
     //     'usersWallets',

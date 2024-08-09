@@ -128,3 +128,74 @@ export const getInfoClientByAccountantId = createAsyncThunk(
     }
   },
 );
+
+// ADMIN ENDPOINTS
+export const getClientsByAdmin = createAsyncThunk(
+  'clients/getClientsByAdmin',
+  async ({ page }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(`${API_BASE}/admin/clients?page=${page}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const getUsersByAdmin = createAsyncThunk(
+  'clients/getUsersByAdmin',
+  async ({ page, accountType }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const url = `${API_BASE}/admin/users?page=${page}${
+        accountType ? `&accountType=${accountType}` : ''
+      }`;
+
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const getUserByIdAdmin = createAsyncThunk(
+  // /admin/users/:userId
+  'clients/getUserByIdAdmin',
+  async (userId, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(`${API_BASE}/admin/users/${userId}`, {
+        headers: {
+          Authorization: `${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);

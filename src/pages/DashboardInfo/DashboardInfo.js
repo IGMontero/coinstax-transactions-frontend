@@ -28,9 +28,8 @@ const DashboardInfo = () => {
   const { address, type } = useParams();
   const previousAddress = usePrevious(address);
 
-  const isPortfolioPage = location.pathname.includes('portfolio');
-
-  console.log(isPortfolioPage);
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
 
   const [customActiveTab, setCustomActiveTab] = useState('1');
 
@@ -61,7 +60,7 @@ const DashboardInfo = () => {
   }
 
   useEffect(() => {
-    if (!isPortfolioPage) {
+    if (!isCurrentUserPortfolioSelected) {
       if (fetchData && fetchData?.performance?.unsupported) {
         setIsUnsupported(true);
       } else {
@@ -71,7 +70,7 @@ const DashboardInfo = () => {
   }, [fetchData, networkType]);
 
   useEffect(() => {
-    if (!isPortfolioPage) {
+    if (!isCurrentUserPortfolioSelected) {
       if (address && previousAddress !== address && !type) {
         navigate(`/address/${address}`);
       }
@@ -100,19 +99,20 @@ const DashboardInfo = () => {
         [fecthId]: true,
       }));
 
-      const request = isPortfolioPage
-        ? fetchAssetsPortfolio({
-            userId: userId,
-            blockchain: networkType,
-            signal,
-          })
-        : fetchAssets(params).unwrap();
+      const request = isCurrentUserPortfolioSelected
+        ? dispatch(
+            fetchAssetsPortfolio({
+              userId: userId,
+              blockchain: networkType,
+              signal,
+            }),
+          )
+        : dispatch(fetchAssets(params)).unwrap();
 
-      const response = await dispatch(request);
+      const response = await request;
 
-      const res = isPortfolioPage ? response.payload : response;
+      const res = isCurrentUserPortfolioSelected ? response.payload : response;
 
-      console.log('response assets ', response);
       if (res?.unsupported === true) {
         setIsUnsupported(true);
       } else {
@@ -144,7 +144,7 @@ const DashboardInfo = () => {
   }, [addressForSearch, type, dispatch, isUnsupported, networkType]);
 
   useEffect(() => {
-    if (!isPortfolioPage) {
+    if (!isCurrentUserPortfolioSelected) {
       if (address) {
         setIsUnsupported(false);
         setAddressForSearch(address);

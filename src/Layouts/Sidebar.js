@@ -64,9 +64,9 @@ const Sidebar = ({ layoutType }) => {
               ? '#1d1d21'
               : '#F1F2FA',
         }}
-      // style={{
-      //   background: '#23282C',
-      // }}
+        // style={{
+        //   background: '#23282C',
+        // }}
       >
         <div className="navbar-brand-box ">
           <button
@@ -94,7 +94,10 @@ const Sidebar = ({ layoutType }) => {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <SimpleBar id="scrollbar" className="h-100 ">
+            <SimpleBar
+              id="scrollbar"
+              //  className="h-100 "
+            >
               <Link
                 to={
                   process.env.NODE_ENV === 'development'

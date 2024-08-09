@@ -15,9 +15,19 @@ import { useNavigate } from 'react-router-dom';
 import EditClientModal from '../../../../Components/Modals/EditClientModal';
 import DropdownMenuPortal from '../../../../Components/Dropdowns/DropdownPortal';
 import { formatDateToLocale } from '../../../../utils/utils';
+import TablePagination from '../../../../Components/Pagination/TablePagination';
+import { DASHBOARD_USER_ROLES } from '../../../../common/constants';
 
-const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
+const UsersTable = ({
+  users,
+  loading,
+  onDeleteAddress,
+  onRefresh,
+  pagination,
+}) => {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+  const currentUserRole = user?.role;
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
@@ -61,19 +71,23 @@ const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
   };
 
   const handleRowClick = (row) => {
-    navigate(`${row.Id}`);
+    if (currentUserRole === DASHBOARD_USER_ROLES.ADMIN) {
+      navigate(`/admin/clients/${row.id}`);
+    } else {
+      navigate(`${row.Id || row.id}`);
+    }
   };
 
   const columns = [
     {
       name: 'Name',
-      selector: (row) => row.Name,
+      selector: (row) => row.Name || row.name,
       sortable: false,
       grow: 2,
     },
     {
       name: 'Email',
-      selector: (row) => row.Email,
+      selector: (row) => row.Email || row.email,
       sortable: false,
       grow: 2,
     },
@@ -91,13 +105,17 @@ const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
     // },
     {
       name: 'Account Type',
-      selector: (row) => row.AccountType,
+      selector: (row) => row.AccountType || row.accountType,
       sortable: false,
       grow: 2,
     },
     {
       name: 'Last Date Viewed',
-      selector: (row) => row.LastViewedDate ? formatDateToLocale(row.LastViewedDate) : null,
+      selector: (row) =>
+        row.LastViewedDate || row.lastViewedDate
+          ? formatDateToLocale(row.LastViewedDate) ||
+            formatDateToLocale(row.lastViewedDate)
+          : null,
       sortable: false,
       grow: 2,
     },
@@ -193,6 +211,13 @@ const UsersTable = ({ users, loading, onDeleteAddress, onRefresh }) => {
           },
         }}
       />
+      {users?.length > 0 && (
+        <TablePagination
+          onChangePage={pagination.handleChangePage}
+          currentPage={pagination.currentPage}
+          totalPages={Math.ceil(pagination.total / pagination.pageSize)}
+        />
+      )}
     </div>
   );
 };

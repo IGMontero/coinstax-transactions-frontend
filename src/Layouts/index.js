@@ -180,7 +180,8 @@ const Layout = (props) => {
 
   const [nickName, setNickName] = useState(null);
 
-  const isPortfolioPage = location.pathname.includes('portfolio');
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
 
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
 
@@ -196,12 +197,12 @@ const Layout = (props) => {
     try {
       setLoading(true);
 
-      const request = isPortfolioPage
+      const request = isCurrentUserPortfolioSelected
         ? dispatch(getCurrentUserPortfolioSummary({ userId, signal })).unwrap()
         : dispatch(getAddressesInfo({ address: address, signal }));
 
       const response = await request;
-      const res = isPortfolioPage ? response : response.payload;
+      const res = isCurrentUserPortfolioSelected ? response : response.payload;
 
       if (res) {
         if (res.blockchains) {
@@ -229,7 +230,6 @@ const Layout = (props) => {
         if (!res.blockchains) {
           setIsInInterval(false);
           return;
-
         }
 
         const availableNetworks = Object.keys(res.blockchains);
@@ -297,7 +297,7 @@ const Layout = (props) => {
     if (token) {
       setIsUnsupported(false);
     }
-    if (address || isPortfolioPage) {
+    if (address || isCurrentUserPortfolioSelected) {
       const loadAddressInfo = async () => {
         if (fetchInterval.current) {
           clearInterval(fetchInterval.current);
@@ -325,9 +325,16 @@ const Layout = (props) => {
     if (pagesNotToDisplayAddress.includes(pathname)) {
       return true;
     }
-    const dynamicRoutes = ['/clients/:clientId'];
+    const dynamicRoutes = [
+      '/clients/:clientId',
+      '/admin/users/:userId',
+      '/admin/accountants/:userId',
+      '/admin/clients/:clientId',
+    ];
     for (const route of dynamicRoutes) {
-      const regex = new RegExp(`^${route.replace(':clientId', '[^/]+')}$`);
+      const regex = new RegExp(
+        `^${route.replace(/:(clientId|userId)/g, '[^/]+')}$`,
+      );
       if (regex.test(pathname)) {
         return true;
       }
@@ -341,8 +348,9 @@ const Layout = (props) => {
       !token &&
       !contractAddress &&
       !isPageWithoutAddress(location.pathname) &&
-      !isPortfolioPage
+      !isCurrentUserPortfolioSelected
     ) {
+      alert('Error in address with dropdown');
       navigate('/');
     }
   }, [
@@ -352,7 +360,7 @@ const Layout = (props) => {
     location.pathname,
     navigate,
     pagesNotToDisplayAddress,
-    isPortfolioPage,
+    isCurrentUserPortfolioSelected,
   ]);
 
   return (
