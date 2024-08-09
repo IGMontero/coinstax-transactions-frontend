@@ -76,7 +76,7 @@ const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
       grow: 2,
     },
     {
-      name: 'Last Date Logged In',
+      name: 'Last Login Date',
       selector: (row) =>
         row.lastLogin ? formatDateToLocale(row.lastLogin) : null,
       sortable: false,

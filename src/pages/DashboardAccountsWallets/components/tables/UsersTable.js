@@ -165,6 +165,11 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
         selectedUser={selectedUser}
         onRefresh={onRefresh}
       />
+      {loading && (
+        <div className="d-flex justify-content-center align-items-center">
+          <Spinner color="primary" size="lg" />
+        </div>
+      )}
 
       <DataTable
         columns={columns}
