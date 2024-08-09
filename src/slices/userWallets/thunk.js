@@ -190,7 +190,7 @@ export const updateUserWalletAddress = createAsyncThunk(
   },
 );
 
-export const verifyInviteCodeUA = createAsyncThunk(
+export const verifyInviteCodeAU = createAsyncThunk(
   'clients/verifyInviteCode',
   async ({ inviteCode }, { rejectWithValue }) => {
     try {
@@ -208,7 +208,7 @@ export const verifyInviteCodeUA = createAsyncThunk(
   },
 );
 
-export const verifyInviteCodeAU = createAsyncThunk(
+export const verifyInviteCodeUA = createAsyncThunk(
   'clients/verifyInviteCode',
   async ({ inviteCode }, { rejectWithValue }) => {
     try {

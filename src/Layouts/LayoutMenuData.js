@@ -132,13 +132,14 @@ const Navdata = () => {
         'user-addresses',
       ),
     );
-    allMenuItems.push(createMenuHeader('Wallets'));
+
     allMenuItems.push(
       createManageMenu('users', 'Clients', 'bx bx-group fs-3', 'admin/clients'),
     );
     allMenuItems.push(
       createManageMenu('users', 'Users', 'bx bx-group fs-3', 'admin/users'),
     );
+    allMenuItems.push(createMenuHeader('Wallets'));
     allMenuItems.push(
       createManageMenu(
         'connectWallet',

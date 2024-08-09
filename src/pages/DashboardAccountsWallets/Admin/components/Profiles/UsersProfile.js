@@ -14,6 +14,7 @@ import Skeleton from 'react-loading-skeleton';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useRefreshUserPortfolio } from '../../../../../hooks/useUserPortfolio';
 import {
+  getClientsByAccountantId,
   getInfoClientByAccountantId,
   getUserByIdAdmin,
 } from '../../../../../slices/accountants/thunk';
@@ -21,6 +22,7 @@ import { getClientUserPortfolioSummary } from '../../../../../slices/userWallets
 import { useDispatch } from 'react-redux';
 import ClientInfo from '../../../components/ClientInfo';
 import AddAccManager from '../../../../../Components/Modals/AddAccManager';
+import UserInfo from '../../../components/UserInfo';
 
 const UsersProfile = () => {
   const dispatch = useDispatch();
@@ -30,6 +32,18 @@ const UsersProfile = () => {
   const { userId } = useParams();
 
   const isAccountantProfile = location.pathname.includes('accountants');
+
+  const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState(0);
+  const [pageSize, setPageSize] = useState(0);
+
+  const [hasMore, setHasMore] = useState(false);
+
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
 
   const [user, setUser] = useState(null);
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
@@ -56,7 +70,7 @@ const UsersProfile = () => {
   const toggleModalAddAccountManager = () =>
     setModalAddAccountManager(!modalAddAccountManager);
 
-  const fetchClientInfo = async () => {
+  const fetchUserInfo = async () => {
     setLoadingInfo(true);
     try {
       const response = await dispatch(getUserByIdAdmin(userId)).unwrap();
@@ -74,7 +88,8 @@ const UsersProfile = () => {
 
   useEffect(() => {
     const initialize = async () => {
-      await fetchClientInfo();
+      await fetchUserInfo();
+
       setIsInitialized(true);
     };
 
@@ -98,10 +113,36 @@ const UsersProfile = () => {
     }
   };
 
-  useEffect(() => {
-    if (userId) {
-      fetchUserWallets();
+  const fetchAccountantClients = async () => {
+    try {
+      setLoading(true);
+      const response = await dispatch(
+        getClientsByAccountantId(userId),
+      ).unwrap();
+
+      console.log('response', response);
+      if (response && !response.error) {
+        setUser(response.data);
+        setTotal(response.total);
+        setPageSize(response.pageSize);
+        setHasMore(response.hasMore);
+      } else {
+        console.log('Failed to fetch clients');
+      }
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+
+      setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    if (isAccountantProfile) {
+      fetchAccountantClients();
+    }
+    fetchUserWallets();
   }, [userId]);
 
   if (!isInitialized) {
@@ -114,6 +155,7 @@ const UsersProfile = () => {
   }
 
   const handleRefreshPortfolio = () => {
+    console.log('refresh ');
     fetchUserWallets(userId);
   };
 
@@ -133,7 +175,7 @@ const UsersProfile = () => {
       />
       <div style={{ maxWidth: '610px' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
-          <h1>Profile</h1>
+          <h1>User Profile</h1>
           <div className="d-flex align-items-center">
             <Button
               onClick={() => {
@@ -173,7 +215,11 @@ const UsersProfile = () => {
           </div>
         </div>
         <div className="mb-5 mt-2">
-          <ClientInfo client={user} />
+          {isAccountantProfile ? (
+            <UserInfo user={user} />
+          ) : (
+            <ClientInfo client={user} />
+          )}
         </div>
         {/* {!loaders.userPortfolioSummary && (
           <div className="d-flex justify-content-center my-3">

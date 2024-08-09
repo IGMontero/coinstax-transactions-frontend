@@ -74,9 +74,9 @@ const AddressesTable = ({ userId, addresses, loading, onRefresh }) => {
     copyToClipboard(text);
   };
 
-  const handleSetAddresses = (updatedAddresses) => {
-    dispatch(setUserPortfolioSummary(updatedAddresses));
-  };
+  // const handleSetAddresses = (updatedAddresses) => {
+  //   dispatch(setUserPortfolioSummary(updatedAddresses));
+  // };
 
   const handleUpdateAddress = (e, address) => {
     e.preventDefault();
@@ -197,7 +197,7 @@ const AddressesTable = ({ userId, addresses, loading, onRefresh }) => {
       index: idx + 1,
     }));
 
-    handleSetAddresses(updatedItems);
+    // handleSetAddresses(updatedItems);
 
     await handleReorderAddresses(updatedItems);
   };
