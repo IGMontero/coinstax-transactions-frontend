@@ -30,6 +30,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import { fetchTransactionsPortfolio } from '../../slices/portfolio/thunk';
 
 const internalPaginationPageSize = 10;
 
@@ -39,11 +40,15 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const pagesCheckedRef = useRef(new Set());
   const fetchControllerRef = useRef(new AbortController());
 
+  const location = useLocation();
   const { address } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const userId = user?.id;
   const networkType = useSelector(selectNetworkType);
 
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
   const isAdmin = user?.role === DASHBOARD_USER_ROLES.ADMIN;
 
   // #region STATES
@@ -133,6 +138,36 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     };
   }, [data]);
 
+  const buildParams = ({
+    address,
+    query,
+    filters,
+    selectAsset,
+    page,
+    networkType,
+    abortSignal,
+    userId,
+  }) => {
+    const params = {
+      address,
+      query,
+      filters: {
+        blockchainAction: filters.selectedFilters,
+        includeSpam: filters.includeSpam,
+      },
+      assetsFilters: selectAsset,
+      page: page || 0,
+      networkType,
+      signal: abortSignal,
+    };
+
+    if (filters.isCurrentUserPortfolioSelected) {
+      params.userId = userId;
+    }
+
+    return params;
+  };
+
   // #region FETCH DATA
   const fetchData = async ({ abortSignal }) => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
@@ -154,20 +189,25 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       }, 3000);
 
       console.log('currentPage fetch data', currentPage);
-      const response = await dispatch(
-        fetchHistory({
-          address,
-          query: debouncedSearchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
-          assetsFilters: selectAsset,
-          page: 0,
-          networkType,
-          signal: abortSignal,
-        }),
-      ).unwrap();
+      const request = isCurrentUserPortfolioSelected
+        ? fetchTransactionsPortfolio
+        : fetchHistory;
+
+      const params = buildParams({
+        address,
+        query: debouncedSearchTerm,
+        filters: {
+          selectedFilters,
+          includeSpam,
+          isCurrentUserPortfolioSelected,
+        },
+        selectAsset,
+        networkType,
+        abortSignal,
+        userId,
+      });
+
+      const response = await dispatch(request(params)).unwrap();
 
       clearTimeout(timerId);
 
@@ -462,21 +502,26 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       timerId = setTimeout(() => {
         setShowDownloadMessageInButton(true);
       }, 3000);
+      const request = isCurrentUserPortfolioSelected
+        ? fetchTransactionsPortfolio
+        : fetchHistory;
 
-      const response = await dispatch(
-        fetchHistory({
-          address,
-          query: searchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
-          assetsFilters: selectAsset,
-          page: nextPage,
-          networkType,
-          signal,
-        }),
-      ).unwrap();
+      const params = buildParams({
+        address,
+        query: searchTerm,
+        filters: {
+          selectedFilters,
+          includeSpam,
+          isCurrentUserPortfolioSelected,
+        },
+        selectAsset,
+        page: nextPage,
+        networkType,
+        abortSignal: signal,
+        userId,
+      });
+
+      const response = await dispatch(request(params)).unwrap();
 
       console.log('Fetching more transactions:', response);
 
@@ -695,8 +740,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         ...prev,
         [fecthId]: true,
       }));
+      const request = isCurrentUserPortfolioSelected
+        ? fetchTransactionsPortfolio
+        : fetchHistory;
       const response = await dispatch(
-        fetchHistory({
+        request({
           address,
           filters: { blockchainAction: updatedFilters },
           page: 0,
