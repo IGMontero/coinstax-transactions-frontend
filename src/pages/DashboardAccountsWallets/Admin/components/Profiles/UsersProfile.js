@@ -14,6 +14,7 @@ import Skeleton from 'react-loading-skeleton';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useRefreshUserPortfolio } from '../../../../../hooks/useUserPortfolio';
 import {
+  deleteClientByAccountantId,
   getClientsByAccountantId,
   getInfoClientByAccountantId,
   getUserByIdAdmin,
@@ -23,6 +24,8 @@ import { useDispatch } from 'react-redux';
 import ClientInfo from '../../../components/ClientInfo';
 import AddAccManager from '../../../../../Components/Modals/AddAccManager';
 import UserInfo from '../../../components/UserInfo';
+import UsersTable from '../../../components/tables/UsersTable';
+import Swal from 'sweetalert2';
 
 const UsersProfile = () => {
   const dispatch = useDispatch();
@@ -44,6 +47,8 @@ const UsersProfile = () => {
   const handleChangePage = (page) => {
     setCurrentPage(page);
   };
+
+  const [accountantClients, setAccountantClients] = useState([]);
 
   const [user, setUser] = useState(null);
   const [modalConnectWallet, setModalConnectWallet] = useState(false);
@@ -122,7 +127,7 @@ const UsersProfile = () => {
 
       console.log('response', response);
       if (response && !response.error) {
-        setUser(response.data);
+        setAccountantClients(response.data);
         setTotal(response.total);
         setPageSize(response.pageSize);
         setHasMore(response.hasMore);
@@ -136,6 +141,43 @@ const UsersProfile = () => {
 
       setLoading(false);
     }
+  };
+
+  const handleDeleteClient = (clientId) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Are you sure you want to delete client with ID ${clientId}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      cancelButtonText: 'Cancel',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await dispatch(
+            deleteClientByAccountantId({ clientId, accountantId: userId }),
+          ).unwrap();
+
+          if (response && !response.error) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: 'Client deleted successfully',
+            });
+            fetchAccountantClients();
+          }
+        } catch (error) {
+          console.error('Failed to delete client:', error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Failed to delete client',
+          });
+        }
+
+        console.log('Delete client', clientId);
+      }
+    });
   };
 
   useEffect(() => {
@@ -155,9 +197,27 @@ const UsersProfile = () => {
   }
 
   const handleRefreshPortfolio = () => {
-    console.log('refresh ');
     fetchUserWallets(userId);
   };
+
+  const handleBackButton = () => {
+    navigate('/admin/users');
+  };
+
+  const renderButton = (condition, onClick, icon, label) => (
+    <Button
+      onClick={onClick}
+      className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
+      color="soft-light"
+      style={{
+        borderRadius: '10px',
+        border: '.5px solid grey',
+      }}
+    >
+      {icon && <i className={`${icon} me-2`}></i>}
+      {label}
+    </Button>
+  );
 
   return (
     <React.Fragment>
@@ -173,45 +233,31 @@ const UsersProfile = () => {
         setIsOpen={setModalAddAccountManager}
         userId={userId}
       />
-      <div style={{ maxWidth: '610px' }}>
+      <div>
         <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
           <h1>User Profile</h1>
           <div className="d-flex align-items-center">
-            <Button
-              onClick={() => {
-                isAccountantProfile
-                  ? navigate('/admin/users')
-                  : {
-                      toggleModalAddAccountManager,
-                    };
-              }}
-              className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
-              color="soft-light"
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-              }}
-            >
-              {isAccountantProfile ? (
-                <>
-                  <i className="ri-arrow-left-s-line me-2"></i>
-                  Back to Users
-                </>
-              ) : (
-                'Add Account Manager'
+            {!isAccountantProfile &&
+              renderButton(
+                false,
+                handleBackButton,
+                'ri-arrow-left-s-line',
+                'Back to Users',
               )}
-            </Button>
-            <Button
-              onClick={toggleModalConnectWallet}
-              className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
-              color="soft-light"
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-              }}
-            >
-              Connect Wallet
-            </Button>
+            {renderButton(
+              false,
+              isAccountantProfile
+                ? handleBackButton
+                : toggleModalAddAccountManager,
+              isAccountantProfile ? 'ri-arrow-left-s-line' : null,
+              isAccountantProfile ? 'Back to Users' : 'Add Account Manager',
+            )}
+            {renderButton(
+              false,
+              toggleModalConnectWallet,
+              null,
+              'Connect Wallet',
+            )}
           </div>
         </div>
         <div className="mb-5 mt-2">
@@ -221,13 +267,6 @@ const UsersProfile = () => {
             <ClientInfo client={user} />
           )}
         </div>
-        {/* {!loaders.userPortfolioSummary && (
-          <div className="d-flex justify-content-center my-3">
-            <div className="spinner-border text-primary" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
-          </div>
-        )} */}
         {addresses && (
           <div className="d-flex justify-content-between align-items-center mb-2">
             <h4>
@@ -244,20 +283,37 @@ const UsersProfile = () => {
             </h4>
           </div>
         )}
-
-        <AddressesTable
-          userId={userId}
-          addresses={addresses}
-          loading={loadingWallets}
-          onRefresh={handleRefreshPortfolio}
-        />
-
-        {/* <div className="mt-4">
-            <h2>Watchlist</h2>
-            <div className="watchlist-placeholder">
-              <p>Drag your wallets here</p>
-            </div>
-          </div> */}
+        <div>
+          <AddressesTable
+            userId={userId}
+            addresses={addresses}
+            loading={loadingWallets}
+            onRefresh={handleRefreshPortfolio}
+          />
+        </div>
+        {isAccountantProfile && (
+          <div className="mt-4">
+            <h4>
+              Clients{' '}
+              <span className="text-muted">
+                ({accountantClients.length} out of {total})
+              </span>
+            </h4>
+            <UsersTable
+              users={accountantClients}
+              loading={loading}
+              onDelete={handleDeleteClient}
+              onRefresh={fetchAccountantClients}
+              pagination={{
+                handleChangePage,
+                currentPage,
+                pageSize,
+                total,
+                hasMore,
+              }}
+            />
+          </div>
+        )}
       </div>
     </React.Fragment>
   );

@@ -136,7 +136,7 @@ const UserAdminTable = ({ users, loading, onRefresh, pagination }) => {
           <DataTable
             columns={columns}
             data={users}
-            noDataComponent={<h4>Add a client to get started</h4>}
+            noDataComponent={<h4>No users found</h4>}
             noHeader
             responsive
             onRowClicked={handleRowClick}
