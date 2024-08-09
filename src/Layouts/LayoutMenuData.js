@@ -29,8 +29,10 @@ const Navdata = () => {
   const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
-    if (isCurrentUserPortfolioSelected) {
-      setPrevAddress('portfolio');
+    if (!prevAddress) {
+      if (isCurrentUserPortfolioSelected) {
+        setPrevAddress('portfolio');
+      }
     } else if (address && address !== addressSearched) {
       setAddressSearched(address);
       setPrevAddress(address);
