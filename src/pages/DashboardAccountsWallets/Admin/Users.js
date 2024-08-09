@@ -19,17 +19,16 @@ const Users = () => {
     setCurrentPage(page);
   };
 
-  // New handler for changing accountType
   const handleAccountTypeChange = (event) => {
     setAccountType(event.target.value);
-    setCurrentPage(0); // Reset to the first page when accountType changes
+    setCurrentPage(0);
   };
 
   const fetchUsers = async () => {
     setLoading(true);
     try {
       const response = await dispatch(
-        getUsersByAdmin({ page: currentPage, accountType }), // Pass accountType here
+        getUsersByAdmin({ page: currentPage, accountType }),
       ).unwrap();
 
       if (response && !response.error) {
@@ -54,7 +53,7 @@ const Users = () => {
   return (
     <React.Fragment>
       <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
-        <h1>Clients</h1>
+        <h1>Users</h1>
 
         <select
           value={accountType}

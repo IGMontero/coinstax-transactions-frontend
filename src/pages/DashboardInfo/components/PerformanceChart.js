@@ -3,7 +3,7 @@ import _ from 'lodash';
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { Col } from 'reactstrap';
 import FilterButtonsChart from '../../../Components/FilterButtons/FilterButtonsChart';
 import ChartSkeleton from '../../../Components/Skeletons/ChartSkeleton';
@@ -19,12 +19,19 @@ import {
   formatCalendarDateToLocale,
   formatPercentageChange,
   getMaxMinValues,
-  parseValuesToLocale
+  parseValuesToLocale,
 } from '../../../utils/utils';
+import { getBalancesPortfolio } from '../../../slices/portfolio/thunk';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
   const { token } = useParams();
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+
+  const userId = user?.id;
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const fetchControllerRef = useRef(new AbortController());
@@ -125,7 +132,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
             setSubtitle(percentageChangeFormatted);
 
-            const date = moment(data.labels[index]).format('YYYY-MM-DD')
+            const date = moment(data.labels[index]).format('YYYY-MM-DD');
             setActiveDate(formatCalendarDateToLocale(date));
           }
           return '';
@@ -138,7 +145,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
           const dataLabel = data.labels[tooltipItems[0].index];
 
-          const date = moment(dataLabel).format('YYYY-MM-DD')
+          const date = moment(dataLabel).format('YYYY-MM-DD');
 
           return formatCalendarDateToLocale(date, false);
         },
@@ -196,7 +203,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
     const fetchId = Date.now();
     let timer;
 
-    if (address) {
+    if (address || isCurrentUserPortfolioSelected) {
       const params = days
         ? { address, days, networkType, signal }
         : { address, networkType, signal };
@@ -213,12 +220,22 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
           [fetchId]: true,
         }));
       }
-      dispatch(fetchPerformance(params))
+
+      const request = isCurrentUserPortfolioSelected
+        ? getBalancesPortfolio({
+            userId,
+            blockchain: networkType,
+            days,
+            signal,
+          })
+        : fetchPerformance(params);
+
+      dispatch(request)
         .unwrap()
         .then((response) => {
           clearTimeout(timer);
-          const newLabels = response.total.map(
-            (item) => moment(item.calendarDate).format('YYYY-MM-DD'),
+          const newLabels = response.total.map((item) =>
+            moment(item.calendarDate).format('YYYY-MM-DD'),
           );
           const newData = response.total.map((item) => {
             const result = Math.max(0, item.value.quote);
@@ -475,7 +492,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
     const percentageChangeFormatted = formatPercentageChange(percentageChange);
 
     setSubtitle(percentageChangeFormatted);
-    const date = moment(chartData.labels[index]).format('YYYY-MM-DD')
+    const date = moment(chartData.labels[index]).format('YYYY-MM-DD');
     setActiveDate(formatCalendarDateToLocale(date));
   };
 

@@ -54,11 +54,74 @@ export const fetchNFTSPortfolio = createAsyncThunk(
 
 export const getBalancesPortfolio = createAsyncThunk(
   'portfolio/getBalancesPortfolio',
-  async ({ userId, blockchain, signal }, { rejectWithValue }) => {
+  async ({ userId, blockchain, days, signal }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    let url = `${API_BASE}/users/${userId}/portfolio/${blockchain}/balances`;
+
+    if (days) {
+      url += `?days=${days}`;
+    }
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          Authorization: `${token}`,
+        },
+        signal,
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted');
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  },
+);
+
+export const fetchTransactionsPortfolio = createAsyncThunk(
+  'portfolio/fetchTransactionsPortfolio',
+  async (
+    {
+      userId,
+      blockchain,
+      query = '',
+      filters = {},
+      page = 0,
+      assetsFilters,
+      signal,
+    },
+    { rejectWithValue },
+  ) => {
     const token = getTokenFromCookies();
     try {
+      let queryString = `page=${page}`;
+
+      if (query) {
+        queryString += `&query=${encodeURIComponent(query)}`;
+      }
+
+      if (assetsFilters) {
+        queryString += `&${assetsFilters}`;
+      }
+
+      for (const [key, value] of Object.entries(filters)) {
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
+          });
+        } else if (value) {
+          queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        }
+      }
+
       const response = await fetch(
-        `${API_BASE}/users/${userId}/portfolio/${blockchain}balances`,
+        `${API_BASE}/users/${userId}/portfolio/${blockchain}/transactions?${queryString}`,
         {
           headers: {
             Authorization: `${token}`,
@@ -72,7 +135,12 @@ export const getBalancesPortfolio = createAsyncThunk(
       const data = await response.json();
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      if (error.name === 'AbortError') {
+        console.log('Fetch aborted');
+        return { error: 'Fetch aborted' };
+      } else {
+        return rejectWithValue(error.message);
+      }
     }
   },
 );

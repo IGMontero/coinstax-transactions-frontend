@@ -77,6 +77,18 @@ const Register = () => {
     },
   });
 
+  const isSubmitDisabled = () => {
+    const { email, password, confirm_password, role } = validation.values;
+    return (
+      !email ||
+      !password ||
+      !role ||
+      password !== confirm_password ||
+      validation.errors.confirm_password ||
+      loading
+    );
+  };
+
   const handleSubmit = async (values) => {
     try {
       setLoading(true);
@@ -278,7 +290,7 @@ const Register = () => {
                         <div className="mt-4">
                           <Button
                             type="submit"
-                            disabled={loading}
+                            disabled={isSubmitDisabled()}
                             className="mt-3 d-flex btn-hover-light text-dark w-100 justify-content-center align-items-center"
                             color="soft-light"
                             style={{
