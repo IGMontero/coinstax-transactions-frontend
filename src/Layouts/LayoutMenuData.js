@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { DASHBOARD_USER_ROLES } from '../common/constants';
 
 const Navdata = () => {
+  const location = useLocation();
   const { address, token, contractAddress } = useParams();
 
   const navigate = useNavigate();
@@ -13,6 +14,9 @@ const Navdata = () => {
 
   const isAccountant = user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
   const isUser = user?.role === DASHBOARD_USER_ROLES.USER;
+
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
 
   // console.log('user', user);
   const { fetchData } = useSelector((state) => ({
@@ -25,11 +29,17 @@ const Navdata = () => {
   const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
-    if (address && address !== addressSearched) {
+    if (!prevAddress) {
+      if (isCurrentUserPortfolioSelected) {
+        setPrevAddress('portfolio');
+      }
+    } else if (address && address !== addressSearched) {
       setAddressSearched(address);
       setPrevAddress(address);
     }
-  }, [address]);
+
+    console.log(prevAddress);
+  }, [address, isCurrentUserPortfolioSelected]);
 
   useEffect(() => {
     if (!address && contractAddress) {
@@ -47,20 +57,25 @@ const Navdata = () => {
     );
   }, [fetchData, addressSearched]);
 
-  const createMenuItem = (id, label, icon, page) => ({
-    id,
-    label,
-    icon,
-    link:
-      contractAddress && !address
+  const createMenuItem = (id, label, icon, page) => {
+    const link = isCurrentUserPortfolioSelected
+      ? `/portfolio/${page}`
+      : contractAddress && !address
         ? `/address/${prevAddress}/${page}`
-        : `${token ? `/tokens/${token}` : `/address/${addressSearched}/${page}`}`,
-    click: function (e) {
-      e.preventDefault();
-      navigate(this.link);
-      setIscurrentState(label);
-    },
-  });
+        : `${token ? `/tokens/${token}` : `/address/${addressSearched}/${page}`}`;
+
+    return {
+      id,
+      label,
+      icon,
+      link,
+      click: function (e) {
+        e.preventDefault();
+        navigate(this.link);
+        setIscurrentState(label);
+      },
+    };
+  };
 
   const createManageMenu = (id, label, icon, page) => ({
     id,
@@ -93,8 +108,19 @@ const Navdata = () => {
   };
 
   let allMenuItems = [];
-
-  if (address || prevAddress) {
+  if (isCurrentUserPortfolioSelected) {
+    allMenuItems = [
+      createMenuItem('summary', 'Summary', 'bx bx-home', ''),
+      createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
+      createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
+      createMenuItem(
+        'transactions',
+        'Transactions',
+        'bx bx-transfer',
+        'history',
+      ),
+    ];
+  } else if (address || prevAddress) {
     allMenuItems = [
       createMenuItem('summary', 'Summary', 'bx bx-home', ''),
       createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
@@ -107,12 +133,6 @@ const Navdata = () => {
       ),
     ];
   }
-  // let allMenuItems = [
-  //   createMenuItem('summary', 'Summary', 'bx bx-home', ''),
-  //   createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
-  //   createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
-  //   createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),
-  // ];
 
   if (isAdmin) {
     allMenuItems.push(createMenuHeader('Admin'));
@@ -132,13 +152,14 @@ const Navdata = () => {
         'user-addresses',
       ),
     );
-    allMenuItems.push(createMenuHeader('Wallets'));
+
     allMenuItems.push(
       createManageMenu('users', 'Clients', 'bx bx-group fs-3', 'admin/clients'),
     );
     allMenuItems.push(
       createManageMenu('users', 'Users', 'bx bx-group fs-3', 'admin/users'),
     );
+    allMenuItems.push(createMenuHeader('Wallets'));
     allMenuItems.push(
       createManageMenu(
         'connectWallet',
@@ -167,14 +188,6 @@ const Navdata = () => {
         'clients',
       ),
     );
-    // allMenuItems.push(
-    //   createManageMenu(
-    //     'usersWallets',
-    //     'Manage Wallets',
-    //     'bx bx-wallet fs-3',
-    //     'wallets',
-    //   ),
-    // );
   }
   if (isUser || isAccountant) {
     allMenuItems.push(createMenuHeader('Manage'));
