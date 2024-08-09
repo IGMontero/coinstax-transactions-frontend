@@ -116,17 +116,6 @@ const DashboardAccountantUsers = () => {
         <h1>Manage Clients</h1>
         <div className="d-flex align-items-center">
           <Button
-            onClick={() => {}}
-            className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
-            color="soft-light"
-            style={{
-              borderRadius: '10px',
-              border: '.5px solid grey',
-            }}
-          >
-            Create invite code
-          </Button>
-          <Button
             onClick={handleOpenModalAddClient}
             className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
             color="soft-light"
