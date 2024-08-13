@@ -5,7 +5,7 @@ import { DASHBOARD_USER_ROLES } from '../common/constants';
 
 const Navdata = () => {
   const location = useLocation();
-  const { address, token, contractAddress } = useParams();
+  const { address, token, contractAddress, userId } = useParams();
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
@@ -31,7 +31,11 @@ const Navdata = () => {
   useEffect(() => {
     if (isCurrentUserPortfolioSelected) {
       if (!address && !token && !contractAddress) {
-        setPrevAddress('portfolio');
+        if (userId) {
+          setPrevAddress(`/users/${userId}/portfolio`);
+        } else {
+          setPrevAddress('portfolio');
+        }
       }
     } else if (address && address !== addressSearched) {
       setAddressSearched(address);
@@ -41,7 +45,7 @@ const Navdata = () => {
     }
 
     console.log(prevAddress);
-  }, [address, isCurrentUserPortfolioSelected, token, contractAddress]);
+  }, [address, isCurrentUserPortfolioSelected, token, contractAddress, user]);
 
   useEffect(() => {
     if (contractAddress && !address && !isCurrentUserPortfolioSelected) {
@@ -61,7 +65,9 @@ const Navdata = () => {
 
   const createMenuItem = (id, label, icon, page) => {
     const link = isCurrentUserPortfolioSelected
-      ? `/portfolio/${page}`
+      ? userId
+        ? `/users/${userId}/portfolio/${page}`
+        : `/portfolio/${page}`
       : contractAddress && !address
         ? `/address/${prevAddress}/${page}`
         : `${token ? `/tokens/${token}` : `/address/${addressSearched}/${page}`}`;

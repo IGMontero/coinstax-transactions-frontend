@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Dropdown,
   DropdownItem,
@@ -27,10 +27,11 @@ import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { address } = useParams();
+  const location = useLocation();
+  const { address, userId } = useParams();
   const addressParams = address;
   const { user } = useSelector((state) => state.auth);
-  const userId = user?.id;
+  const currentUserId = user?.id;
 
   const refreshUserPortfolio = useRefreshUserPortfolio();
 
@@ -117,7 +118,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         try {
           const response = await dispatch(
             updateUserWalletAddress({
-              userId,
+              currentUserId,
               name: newName,
               addressId: address.id,
             }),
@@ -165,7 +166,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       if (result.isConfirmed) {
         try {
           const response = await dispatch(
-            deleteUserAddressWallet({ userId, addressId: address.id }),
+            deleteUserAddressWallet({ currentUserId, addressId: address.id }),
           ).unwrap();
 
           if (response && !response.error) {
@@ -269,7 +270,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   //     ? parseValuesToLocale(addressValue, CurrencyUSD)
   //     : '$ 0';
   // };
-
   const handleVisitAddress = (link) => {
     navigate(`${link}`);
   };
@@ -336,7 +336,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
               ? selectedAddress.name
                 ? selectedAddress.name
                 : formatAddressToShortVersion(selectedAddress.address)
-              : 'Portfolio'}
+              : userId
+                ? `User Portfolio`
+                : 'Portfolio'}
           </span>
           {!isInHeader && (
             <div className="text-start text-muted">
@@ -348,7 +350,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
                   baseColor={isDarkMode ? '#333' : '#f3f3f3'}
                   highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
                 />
-              ) : (
+              ) : userId ? null : (
                 parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
               )}
             </div>

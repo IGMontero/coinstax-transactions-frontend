@@ -185,9 +185,11 @@ const Layout = (props) => {
 
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
 
+  const { userId } = useParams();
+
   const { user } = useSelector((state) => state.auth);
 
-  const userId = user?.id;
+  const currentPortfolioUserId = userId ? userId : user?.id;
 
   const fetchAddressInfo = async () => {
     fetchControllerRef.current.abort();
@@ -198,7 +200,12 @@ const Layout = (props) => {
       setLoading(true);
 
       const request = isCurrentUserPortfolioSelected
-        ? dispatch(getCurrentUserPortfolioSummary({ userId, signal })).unwrap()
+        ? dispatch(
+            getCurrentUserPortfolioSummary({
+              userId: currentPortfolioUserId,
+              signal,
+            }),
+          ).unwrap()
         : dispatch(getAddressesInfo({ address: address, signal }));
 
       const response = await request;
@@ -281,6 +288,7 @@ const Layout = (props) => {
       } else {
         console.error('Error fetching address info: ', error);
         setIsSuccessfullRequest(false);
+        setIsUnsupported(true);
       }
 
       console.log(error);
@@ -319,7 +327,7 @@ const Layout = (props) => {
         fetchControllerRef.current.abort();
       };
     }
-  }, [token, address]);
+  }, [token, address, isCurrentUserPortfolioSelected]);
 
   const isPageWithoutAddress = (pathname) => {
     if (pagesNotToDisplayAddress.includes(pathname)) {
@@ -327,7 +335,6 @@ const Layout = (props) => {
     }
     const dynamicRoutes = [
       '/clients/:clientId',
-      '/users/:userId/portfolio',
       '/admin/users/:userId',
       '/admin/accountants/:userId',
       '/admin/clients/:clientId',
