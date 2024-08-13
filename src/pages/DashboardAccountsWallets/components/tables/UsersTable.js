@@ -11,7 +11,7 @@ import {
 } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import EditClientModal from '../../../../Components/Modals/EditClientModal';
 import DropdownMenuPortal from '../../../../Components/Dropdowns/DropdownPortal';
 import { formatDateToLocale } from '../../../../utils/utils';
@@ -20,12 +20,15 @@ import { DASHBOARD_USER_ROLES } from '../../../../common/constants';
 
 const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const currentUserRole = user?.role;
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
+
+  const isClientsPage = location.pathname.includes('clients');
 
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 955);
 
@@ -185,7 +188,9 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
       <DataTable
         columns={columns}
         data={users}
-        noDataComponent={<h4>No clients found</h4>}
+        noDataComponent={
+          <h4>No {isClientsPage ? 'clients' : 'agents'} found</h4>
+        }
         noHeader
         responsive
         onRowClicked={handleRowClick}

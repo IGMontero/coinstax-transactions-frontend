@@ -196,6 +196,9 @@ const Navdata = () => {
         'clients',
       ),
     );
+    allMenuItems.push(
+      createManageMenu('agentUsers', 'Agents', 'bx bx-group fs-3', 'agents'),
+    );
   }
   if (isUser || isAccountant) {
     allMenuItems.push(createMenuHeader('Manage'));

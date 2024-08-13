@@ -24,13 +24,14 @@ import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUse
 import AuthProtectedRoutes from './AuthProtectedRoutes';
 import ResetPaswword from '../pages/Authentication/ResetPassword';
 import DashboardUserWallets from '../pages/DashboardAccountsWallets/DashboardUserWallets';
-import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/DashboardAccountantUsers';
+import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantUsers';
 import DashboardClientProfile from '../pages/DashboardAccountsWallets/DashboardClientProfile';
 import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWallets';
 import DashboardInvite from '../pages/DashboardInvite /DashboardInvite';
 import Clients from '../pages/DashboardAccountsWallets/Admin/Clients';
 import Users from '../pages/DashboardAccountsWallets/Admin/Users';
 import UsersProfile from '../pages/DashboardAccountsWallets/Admin/components/Profiles/UsersProfile';
+import DashboardAccountantAgents from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantAgents';
 
 // Auth protected routes
 const adminRoutes = [
@@ -186,6 +187,14 @@ const authProtectedRoutes = [
         ]}
       >
         <DashboardClientProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/agents',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ACCOUNTANT]}>
+        <DashboardAccountantAgents />
       </AuthProtectedRoutes>
     ),
   },
