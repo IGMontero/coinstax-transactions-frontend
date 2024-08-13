@@ -44,7 +44,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const userId = user?.id;
+  const { userId } = useParams();
+  const currentPortfolioUserId = userId ? userId : user?.id;
   const networkType = useSelector(selectNetworkType);
 
   const isCurrentUserPortfolioSelected =
@@ -204,7 +205,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         selectAsset,
         networkType,
         abortSignal,
-        userId,
+        userId: currentPortfolioUserId,
       });
 
       const response = await dispatch(request(params)).unwrap();
@@ -518,7 +519,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         page: nextPage,
         networkType,
         abortSignal: signal,
-        userId,
+        userId: currentPortfolioUserId,
       });
 
       const response = await dispatch(request(params)).unwrap();
