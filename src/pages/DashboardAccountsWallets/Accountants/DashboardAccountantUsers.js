@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import AddressTable from './components/tables/AddressesTable';
+import AddressTable from '../components/tables/AddressesTable';
 import { Button, Container } from 'reactstrap';
 import { useSelector } from 'react-redux';
-import UsersTable from './components/tables/UsersTable';
-import Helmet from '../../Components/Helmet/Helmet';
-import AddClientModal from '../../Components/Modals/AddClientModal';
+import UsersTable from '../components/tables/UsersTable';
+import Helmet from '../../../Components/Helmet/Helmet';
+import AddClientModal from '../../../Components/Modals/AddClientModal';
 
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
-import EditClientModal from '../../Components/Modals/EditClientModal';
+import EditClientModal from '../../../Components/Modals/EditClientModal';
 import {
   getClientsByAccountantId,
   deleteClientByAccountantId,
-} from '../../slices/accountants/thunk';
+} from '../../../slices/accountants/thunk';
 
 const DashboardAccountantUsers = () => {
   const dispatch = useDispatch();

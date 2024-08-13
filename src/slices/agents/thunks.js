@@ -3,7 +3,7 @@ const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const getAgentsByAccountantId = createAsyncThunk(
   'agents/getAgentsByAccountantId',
-  async (accountantId, { rejectWithValue }) => {
+  async ({ accountantId }, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_BASE}/accountants/${accountantId}`, {
         headers: {
@@ -23,18 +23,27 @@ export const getAgentsByAccountantId = createAsyncThunk(
 
 export const addAgentByAccountantId = createAsyncThunk(
   'agents/addAgentByAccountantId',
-  async ({ accountantId }, { rejectWithValue }) => {
+  async ({ accountantId, agentName, email, isShared }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/accountants/${accountantId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${API_BASE}/accountants/${accountantId}/agents`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: agentName,
+            email: email,
+            sharedAccount: isShared,
+          }),
         },
-        body: JSON.stringify({}),
-      });
+      );
+
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
+
       const data = await response.json();
       return data;
     } catch (error) {
