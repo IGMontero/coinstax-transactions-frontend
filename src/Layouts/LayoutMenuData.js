@@ -29,23 +29,27 @@ const Navdata = () => {
   const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
-    if (!prevAddress) {
-      if (isCurrentUserPortfolioSelected) {
+    if (isCurrentUserPortfolioSelected) {
+      // Si estamos en portfolio y no hay ningún address, token o contractAddress, prevAddress es portfolio
+      if (!address && !token && !contractAddress) {
         setPrevAddress('portfolio');
       }
     } else if (address && address !== addressSearched) {
       setAddressSearched(address);
       setPrevAddress(address);
+    } else if (!prevAddress && !token && !contractAddress && !address) {
+      // Caso cuando no hay ningún address, token o contractAddress y no estamos en portfolio
+      setPrevAddress('portfolio');
     }
 
     console.log(prevAddress);
-  }, [address, isCurrentUserPortfolioSelected]);
+  }, [address, isCurrentUserPortfolioSelected, token, contractAddress]);
 
   useEffect(() => {
-    if (!address && contractAddress) {
+    if (contractAddress && !address && !isCurrentUserPortfolioSelected) {
       setAddressSearched(prevAddress);
     }
-  }, [contractAddress, address]);
+  }, [contractAddress, address, isCurrentUserPortfolioSelected]);
 
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
