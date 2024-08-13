@@ -64,6 +64,10 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
     onDelete(row.Id);
   };
 
+  const handleViewPortfolio = (row) => {
+    navigate(`/users/${row.id}/portfolio`);
+  };
+
   const handleRowClick = (row) => {
     if (currentUserRole === DASHBOARD_USER_ROLES.ADMIN) {
       navigate(`/admin/clients/${row.id}`);
@@ -132,7 +136,14 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
                 className="d-flex aling-items-center ps-3"
                 onClick={() => handleRowClick(row)}
               >
-                <i className="ri-eye-fill pe-3"></i> View
+                <i className="ri-wallet-3-fill pe-3"></i>
+                View Wallets
+              </DropdownItem>
+              <DropdownItem
+                className="d-flex aling-items-center ps-3"
+                onClick={() => handleViewPortfolio(row)}
+              >
+                <i className="ri-eye-fill pe-3"></i> View Portfolio
               </DropdownItem>
               <DropdownItem
                 className="d-flex aling-items-center ps-3"

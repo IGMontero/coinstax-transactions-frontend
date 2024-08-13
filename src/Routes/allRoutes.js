@@ -114,6 +114,12 @@ const publicRoutes = [
   { path: '/portfolio/assets', component: <DashboardAssets /> },
   { path: '/portfolio/nfts', component: <NFTsPage /> },
   { path: '/portfolio/history', component: <DashboardTransactions /> },
+
+  // PORTFOLIO USERS
+  { path: '/users/:userId/portfolio', component: <DashboardInfo /> },
+  { path: '/users/:userId/portfolio/assets', component: <DashboardAssets /> },
+  { path: '/users/:userId/nfts', component: <NFTsPage /> },
+  { path: '/users/:userId/history', component: <DashboardTransactions /> },
 ];
 
 // Home page

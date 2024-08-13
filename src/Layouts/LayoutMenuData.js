@@ -30,7 +30,6 @@ const Navdata = () => {
 
   useEffect(() => {
     if (isCurrentUserPortfolioSelected) {
-      // Si estamos en portfolio y no hay ningún address, token o contractAddress, prevAddress es portfolio
       if (!address && !token && !contractAddress) {
         setPrevAddress('portfolio');
       }
@@ -38,7 +37,6 @@ const Navdata = () => {
       setAddressSearched(address);
       setPrevAddress(address);
     } else if (!prevAddress && !token && !contractAddress && !address) {
-      // Caso cuando no hay ningún address, token o contractAddress y no estamos en portfolio
       setPrevAddress('portfolio');
     }
 

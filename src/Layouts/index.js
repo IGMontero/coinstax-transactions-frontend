@@ -327,6 +327,7 @@ const Layout = (props) => {
     }
     const dynamicRoutes = [
       '/clients/:clientId',
+      '/users/:userId/portfolio',
       '/admin/users/:userId',
       '/admin/accountants/:userId',
       '/admin/clients/:clientId',
