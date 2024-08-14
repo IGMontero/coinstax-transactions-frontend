@@ -5,11 +5,14 @@ export const getAgentsByAccountantId = createAsyncThunk(
   'agents/getAgentsByAccountantId',
   async ({ accountantId }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/accountants/${accountantId}`, {
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${API_BASE}/agents/accountants/${accountantId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
@@ -26,7 +29,7 @@ export const addAgentByAccountantId = createAsyncThunk(
   async ({ accountantId, agentName, email, isShared }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/accountants/${accountantId}/agents`,
+        `${API_BASE}/agents/accountants/${accountantId}/agents`,
         {
           method: 'POST',
           headers: {
@@ -57,7 +60,7 @@ export const getAgentById = createAsyncThunk(
   async ({ accountantId, agentId }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/accountants/${accountantId}/${agentId}`,
+        `${API_BASE}/agents/accountants/${accountantId}/${agentId}`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -80,7 +83,7 @@ export const updateAgentById = createAsyncThunk(
   async ({ accountantId, agentId }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/accountants/${accountantId}/${agentId}`,
+        `${API_BASE}/agents/accountants/${accountantId}/${agentId}`,
         {
           method: 'PUT',
           headers: {
@@ -105,7 +108,7 @@ export const deleteAgentById = createAsyncThunk(
   async ({ accountantId, agentId }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/accountants/${accountantId}/${agentId}`,
+        `${API_BASE}/agents/accountants/${accountantId}/${agentId}`,
         {
           method: 'DELETE',
           headers: {
@@ -128,7 +131,7 @@ export const validateAgentInviteCode = createAsyncThunk(
   'agents/validateAgentInviteCode',
   async ({ inviteCode }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/invite/${inviteCode}`, {
+      const response = await fetch(`${API_BASE}/agents/invite/${inviteCode}`, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -148,13 +151,16 @@ export const acceptAgentInvite = createAsyncThunk(
   'agents/acceptAgentInvite',
   async ({ inviteCode }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/invite/${inviteCode}/accept`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${API_BASE}/agents/invite/${inviteCode}/accept`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
         },
-        body: JSON.stringify({}),
-      });
+      );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
@@ -170,12 +176,15 @@ export const declineAgentInvite = createAsyncThunk(
   'agents/declineAgentInvite',
   async ({ inviteCode }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/invite/${inviteCode}/decline`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${API_BASE}/agents/invite/${inviteCode}/decline`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
@@ -191,7 +200,7 @@ export const getAgentClients = createAsyncThunk(
   'agents/getAgentClients',
   async ({ agentId }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/${agentId}/clients`, {
+      const response = await fetch(`${API_BASE}/agents/${agentId}/clients`, {
         headers: {
           'Content-Type': 'application/json',
         },
