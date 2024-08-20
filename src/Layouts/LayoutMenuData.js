@@ -10,13 +10,13 @@ const Navdata = () => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  const isAdmin = user?.role === DASHBOARD_USER_ROLES.ADMIN;
+  const isAdminRole = user?.role === DASHBOARD_USER_ROLES.ADMIN;
 
-  const isAccountant = user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
-  const isUser = user?.role === DASHBOARD_USER_ROLES.USER;
+  const isAccountantRole = user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
+  const isUserRole = user?.role === DASHBOARD_USER_ROLES.USER;
+  const isAgentRole = user?.role === DASHBOARD_USER_ROLES.AGENT;
 
-  const isCurrentUserPortfolioSelected =
-    location.pathname.includes('portfolio');
+  const isUserRolePortfolioSelected = location.pathname.includes('portfolio');
 
   // console.log('user', user);
   const { fetchData } = useSelector((state) => ({
@@ -29,7 +29,7 @@ const Navdata = () => {
   const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
-    if (isCurrentUserPortfolioSelected) {
+    if (isUserRolePortfolioSelected) {
       if (!address && !token && !contractAddress) {
         if (userId) {
           setPrevAddress(`/users/${userId}/portfolio`);
@@ -43,15 +43,13 @@ const Navdata = () => {
     } else if (!prevAddress && !token && !contractAddress && !address) {
       setPrevAddress('portfolio');
     }
-
-    console.log(prevAddress);
-  }, [address, isCurrentUserPortfolioSelected, token, contractAddress, user]);
+  }, [address, isUserRolePortfolioSelected, token, contractAddress, user]);
 
   useEffect(() => {
-    if (contractAddress && !address && !isCurrentUserPortfolioSelected) {
+    if (contractAddress && !address && !isUserRolePortfolioSelected) {
       setAddressSearched(prevAddress);
     }
-  }, [contractAddress, address, isCurrentUserPortfolioSelected]);
+  }, [contractAddress, address, isUserRolePortfolioSelected]);
 
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
@@ -64,7 +62,7 @@ const Navdata = () => {
   }, [fetchData, addressSearched]);
 
   const createMenuItem = (id, label, icon, page) => {
-    const link = isCurrentUserPortfolioSelected
+    const link = isUserRolePortfolioSelected
       ? userId
         ? `/users/${userId}/portfolio/${page}`
         : `/portfolio/${page}`
@@ -116,7 +114,7 @@ const Navdata = () => {
   };
 
   let allMenuItems = [];
-  if (isCurrentUserPortfolioSelected) {
+  if (isUserRolePortfolioSelected) {
     allMenuItems = [
       createMenuItem('summary', 'Summary', 'bx bx-home', ''),
       createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
@@ -142,7 +140,7 @@ const Navdata = () => {
     ];
   }
 
-  if (isAdmin) {
+  if (isAdminRole) {
     allMenuItems.push(createMenuHeader('Admin'));
     allMenuItems.push(
       createManageMenu(
@@ -186,7 +184,7 @@ const Navdata = () => {
     );
   }
 
-  if (isAccountant) {
+  if (isAccountantRole) {
     allMenuItems.push(createMenuHeader('Accountant'));
     allMenuItems.push(
       createManageMenu(
@@ -200,7 +198,15 @@ const Navdata = () => {
       createManageMenu('agentUsers', 'Agents', 'bx bx-group fs-3', 'agents'),
     );
   }
-  if (isUser || isAccountant) {
+
+  if (isAgentRole) {
+    allMenuItems.push(createMenuHeader('Agent'));
+    allMenuItems.push(
+      createManageMenu('users', 'Clients', 'bx bx-group fs-3', 'clients'),
+    );
+  }
+
+  if (isUserRole || isAccountantRole || isAgentRole) {
     allMenuItems.push(createMenuHeader('Manage'));
     allMenuItems.push(
       createManageMenu(
@@ -219,18 +225,6 @@ const Navdata = () => {
       ),
     );
   }
-
-  // if (isAccountant) {
-  //   allMenuItems.push(createMenuHeader('Accountant'));
-  //   allMenuItems.push(
-  //     createManageMenu(
-  //       'accountantUsers',
-  //       'Manage Clients',
-  //       'bx bx-user fs-3',
-  //       'clients',
-  //     ),
-  //   );
-  // }
 
   const filteredMenuItems = filterMenuItems(allMenuItems);
 

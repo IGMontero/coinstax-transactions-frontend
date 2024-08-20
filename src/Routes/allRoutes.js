@@ -148,7 +148,12 @@ const authProtectedRoutes = [
   {
     path: '/clients',
     component: (
-      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ACCOUNTANT]}>
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
         <DashboardAccountantUsers />
       </AuthProtectedRoutes>
     ),
@@ -184,6 +189,7 @@ const authProtectedRoutes = [
         allowedRoles={[
           DASHBOARD_USER_ROLES.ADMIN,
           DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
         ]}
       >
         <DashboardClientProfile />
