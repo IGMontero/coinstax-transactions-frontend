@@ -42,7 +42,7 @@ const AddAgentModal = ({ isOpen, setIsOpen, onRefresh }) => {
       if (response && !response.error) {
         Swal.fire({
           title: 'Success',
-          text: 'Client added successfully',
+          text: 'Agent added successfully',
           icon: 'success',
         });
         onRefresh();
@@ -50,15 +50,15 @@ const AddAgentModal = ({ isOpen, setIsOpen, onRefresh }) => {
       } else {
         Swal.fire({
           title: 'Error',
-          text: 'Failed to add client',
+          text: 'Failed to add Agent',
           icon: 'error',
         });
       }
     } catch (error) {
-      console.error('Failed to add client: ', error);
+      console.error('Failed to add Agent: ', error);
       Swal.fire({
         title: 'Error',
-        text: 'Failed to add client',
+        text: 'Failed to add Agent',
         icon: 'error',
       });
     }

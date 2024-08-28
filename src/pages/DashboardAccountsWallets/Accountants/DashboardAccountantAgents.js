@@ -67,7 +67,7 @@ const DashboardAccountantAgents = () => {
       />
       <Helmet title="Agents" />
       <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
-        <h1>Manage Clients</h1>
+        <h1>Manage Agents</h1>
         <div className="d-flex align-items-center">
           <Button
             onClick={() => toggleModalAddAgent()}
