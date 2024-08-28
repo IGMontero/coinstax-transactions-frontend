@@ -1,15 +1,17 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { getTokenFromCookies } from '../../helpers/cookies_helper';
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const getAgentsByAccountantId = createAsyncThunk(
   'agents/getAgentsByAccountantId',
   async ({ accountantId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/agents/accountants/${accountantId}`,
         {
           headers: {
-            'Content-Type': 'application/json',
+            Authorization: `${token}`,
           },
         },
       );
@@ -26,7 +28,8 @@ export const getAgentsByAccountantId = createAsyncThunk(
 
 export const addAgentByAccountantId = createAsyncThunk(
   'agents/addAgentByAccountantId',
-  async ({ accountantId, agentName, email, isShared }, { rejectWithValue }) => {
+  async ({ accountantId, name, email }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/agents/accountants/${accountantId}`,
@@ -34,11 +37,11 @@ export const addAgentByAccountantId = createAsyncThunk(
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `${token}`,
           },
           body: JSON.stringify({
-            name: agentName,
-            email: email,
-            sharedAccount: isShared,
+            name,
+            email,
           }),
         },
       );
@@ -58,12 +61,13 @@ export const addAgentByAccountantId = createAsyncThunk(
 export const getAgentById = createAsyncThunk(
   'agents/getAgentById',
   async ({ accountantId, agentId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/agents/accountants/${accountantId}/${agentId}`,
         {
           headers: {
-            'Content-Type': 'application/json',
+            Authorization: `${token}`,
           },
         },
       );
@@ -81,13 +85,14 @@ export const getAgentById = createAsyncThunk(
 export const updateAgentById = createAsyncThunk(
   'agents/updateAgentById',
   async ({ accountantId, agentId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/agents/accountants/${accountantId}/${agentId}`,
         {
           method: 'PUT',
           headers: {
-            'Content-Type': 'application/json',
+            Authorization: `${token}`,
           },
           body: JSON.stringify({}),
         },
@@ -106,13 +111,14 @@ export const updateAgentById = createAsyncThunk(
 export const deleteAgentById = createAsyncThunk(
   'agents/deleteAgentById',
   async ({ accountantId, agentId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/agents/accountants/${accountantId}/${agentId}`,
         {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json',
+            Authorization: `${token}`,
           },
         },
       );
@@ -130,10 +136,11 @@ export const deleteAgentById = createAsyncThunk(
 export const validateAgentInviteCode = createAsyncThunk(
   'agents/validateAgentInviteCode',
   async ({ inviteCode }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(`${API_BASE}/agents/invite/${inviteCode}`, {
         headers: {
-          'Content-Type': 'application/json',
+          Authorization: `${token}`,
         },
       });
       if (!response.ok) {
@@ -150,13 +157,14 @@ export const validateAgentInviteCode = createAsyncThunk(
 export const acceptAgentInvite = createAsyncThunk(
   'agents/acceptAgentInvite',
   async ({ inviteCode }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/agents/invite/${inviteCode}/accept`,
         {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            Authorization: `${token}`,
           },
           body: JSON.stringify({}),
         },

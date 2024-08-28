@@ -24,7 +24,6 @@ const AddAgentModal = ({ isOpen, setIsOpen, onRefresh }) => {
 
   const [agentName, setAgentName] = useState('');
   const [email, setEmail] = useState('');
-  const [isShared, setIsShared] = useState(false);
 
   const toggleModal = () => setIsOpen(!isOpen);
 
@@ -34,7 +33,6 @@ const AddAgentModal = ({ isOpen, setIsOpen, onRefresh }) => {
         addAgentByAccountantId({
           name: agentName,
           email,
-          isShared,
           accountantId: userId,
         }),
       ).unwrap();
@@ -75,7 +73,7 @@ const AddAgentModal = ({ isOpen, setIsOpen, onRefresh }) => {
               id="agentName"
               value={agentName}
               onChange={(e) => setAgentName(e.target.value)}
-              placeholder="Enter client name"
+              placeholder="Enter agent name"
             />
           </FormGroup>
           <FormGroup>
@@ -87,16 +85,6 @@ const AddAgentModal = ({ isOpen, setIsOpen, onRefresh }) => {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter email"
             />
-          </FormGroup>
-          <FormGroup check>
-            <Label check>
-              <Input
-                type="checkbox"
-                checked={isShared}
-                onChange={(e) => setIsShared(e.target.checked)}
-              />{' '}
-              Shared Account
-            </Label>
           </FormGroup>
         </Form>
       </ModalBody>

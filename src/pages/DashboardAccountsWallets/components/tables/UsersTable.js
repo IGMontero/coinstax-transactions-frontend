@@ -22,6 +22,7 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
+
   const currentUserRole = user?.role;
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -148,7 +149,7 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
               >
                 <i className="ri-eye-fill pe-3"></i> View Portfolio
               </DropdownItem>
-              {isClientsPage && (
+              {currentUserRole === DASHBOARD_USER_ROLES.ADMIN && (
                 <>
                   <DropdownItem
                     className="d-flex aling-items-center ps-3"
