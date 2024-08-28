@@ -11,7 +11,6 @@ const Navdata = () => {
   const { user } = useSelector((state) => state.auth);
 
   const isAdminRole = user?.role === DASHBOARD_USER_ROLES.ADMIN;
-
   const isAccountantRole = user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
   const isUserRole = user?.role === DASHBOARD_USER_ROLES.USER;
   const isAgentRole = user?.role === DASHBOARD_USER_ROLES.AGENT;
@@ -40,16 +39,16 @@ const Navdata = () => {
     } else if (address && address !== addressSearched) {
       setAddressSearched(address);
       setPrevAddress(address);
-    } else if (!prevAddress && !token && !contractAddress && !address) {
-      setPrevAddress('portfolio');
     }
-  }, [address, isUserRolePortfolioSelected, token, contractAddress, user]);
+  }, [address, token, contractAddress, user]);
 
-  useEffect(() => {
-    if (contractAddress && !address && !isUserRolePortfolioSelected) {
-      setAddressSearched(prevAddress);
-    }
-  }, [contractAddress, address, isUserRolePortfolioSelected]);
+  console.log('prev Address', prevAddress);
+
+  // useEffect(() => {
+  //   if (contractAddress && !address ) {
+  //     setAddressSearched(prevAddress);
+  //   }
+  // }, [contractAddress, address, isUserRolePortfolioSelected]);
 
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
@@ -59,7 +58,7 @@ const Navdata = () => {
         performance?.unsupported ||
         !addressSearched,
     );
-  }, [fetchData, addressSearched]);
+  }, [fetchData, addressSearched, isUserRolePortfolioSelected]);
 
   const createMenuItem = (id, label, icon, page) => {
     const link = isUserRolePortfolioSelected
@@ -105,6 +104,7 @@ const Navdata = () => {
     if (isUnsupported || token) {
       return menuItems.filter(
         (item) =>
+          item.id !== 'summary' &&
           item.id !== 'assets' &&
           item.id !== 'nfts' &&
           item.id !== 'transactions',
@@ -113,32 +113,12 @@ const Navdata = () => {
     return menuItems;
   };
 
-  let allMenuItems = [];
-  if (isUserRolePortfolioSelected) {
-    allMenuItems = [
-      createMenuItem('summary', 'Summary', 'bx bx-home', ''),
-      createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
-      createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
-      createMenuItem(
-        'transactions',
-        'Transactions',
-        'bx bx-transfer',
-        'history',
-      ),
-    ];
-  } else if (address || prevAddress) {
-    allMenuItems = [
-      createMenuItem('summary', 'Summary', 'bx bx-home', ''),
-      createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
-      createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
-      createMenuItem(
-        'transactions',
-        'Transactions',
-        'bx bx-transfer',
-        'history',
-      ),
-    ];
-  }
+  let allMenuItems = [
+    createMenuItem('summary', 'Summary', 'bx bx-home', ''),
+    createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
+    createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
+    createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),
+  ];
 
   if (isAdminRole) {
     allMenuItems.push(createMenuHeader('Admin'));
