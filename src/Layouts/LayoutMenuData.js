@@ -28,13 +28,11 @@ const Navdata = () => {
   const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
-    if (isUserRolePortfolioSelected) {
-      if (!address && !token && !contractAddress) {
-        if (userId) {
-          setPrevAddress(`/users/${userId}/portfolio`);
-        } else {
-          setPrevAddress('portfolio');
-        }
+    if (!address && !token && !contractAddress) {
+      if (userId) {
+        setPrevAddress(`/users/${userId}/portfolio`);
+      } else {
+        setPrevAddress('portfolio');
       }
     } else if (address && address !== addressSearched) {
       setAddressSearched(address);
