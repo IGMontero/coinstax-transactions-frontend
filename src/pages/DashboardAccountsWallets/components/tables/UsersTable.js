@@ -148,19 +148,23 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
               >
                 <i className="ri-eye-fill pe-3"></i> View Portfolio
               </DropdownItem>
-              <DropdownItem
-                className="d-flex aling-items-center ps-3"
-                onClick={() => handleEdit(row.Id)}
-              >
-                {' '}
-                <i className="ri-edit-line pe-3"></i> Edit
-              </DropdownItem>
-              <DropdownItem
-                className="d-flex aling-items-center ps-3"
-                onClick={() => handleDelete(row)}
-              >
-                <i className="ri-delete-bin-line  pe-3"></i> Delete
-              </DropdownItem>
+              {isClientsPage && (
+                <>
+                  <DropdownItem
+                    className="d-flex aling-items-center ps-3"
+                    onClick={() => handleEdit(row.Id)}
+                  >
+                    {' '}
+                    <i className="ri-edit-line pe-3"></i> Edit
+                  </DropdownItem>
+                  <DropdownItem
+                    className="d-flex aling-items-center ps-3"
+                    onClick={() => handleDelete(row)}
+                  >
+                    <i className="ri-delete-bin-line  pe-3"></i> Delete
+                  </DropdownItem>
+                </>
+              )}
             </DropdownMenu>
           </DropdownMenuPortal>
         </Dropdown>
