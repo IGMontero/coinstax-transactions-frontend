@@ -29,7 +29,7 @@ export const addAgentByAccountantId = createAsyncThunk(
   async ({ accountantId, agentName, email, isShared }, { rejectWithValue }) => {
     try {
       const response = await fetch(
-        `${API_BASE}/agents/accountants/${accountantId}/agents`,
+        `${API_BASE}/agents/accountants/${accountantId}`,
         {
           method: 'POST',
           headers: {
