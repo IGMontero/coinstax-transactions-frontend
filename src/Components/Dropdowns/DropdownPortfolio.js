@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -43,13 +43,11 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
-  const isUserOrNoUser = user?.role === DASHBOARD_USER_ROLES.USER || !user;
-  const isAdminOrAccountant =
-    user?.role === DASHBOARD_USER_ROLES.ADMIN ||
-    user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
 
-  const userPortfolioAddresses = userPortfolioSummary?.addresses || [];
-  const [loadingWallets, setLoadingWallets] = useState(false);
+  const userPortfolioAddresses = useMemo(
+    () => userPortfolioSummary?.addresses || [],
+    [userPortfolioSummary],
+  );
   const [selectedAddress, setSelectedAddress] = useState(
     userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
       null,
@@ -73,11 +71,11 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         setPrevAddress(matchedAddress.address);
       }
     }
-  }, [addressParams, userPortfolioAddresses]);
+  }, [addressParams, userPortfolioAddresses, selectedAddress]);
 
   const handleSelectAddress = (address) => {
     if (address === 'portfolio') {
-      setSelectedAddress(null);
+      setSelectedAddress(`portfolio`);
     } else {
       const selected = userPortfolioAddresses.find(
         (addr) => addr.address === address,
@@ -85,6 +83,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       setPrevAddress(selected.address);
       setSelectedAddress(selected);
     }
+    console.log('Select address', selectedAddress);
 
     toggleDropdown();
   };
@@ -317,6 +316,21 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     );
   };
 
+  const getDisplayText = (selectedAddress, userId) => {
+    if (selectedAddress) {
+      if (selectedAddress.name) {
+        return selectedAddress.name;
+      }
+      if (selectedAddress.address) {
+        return formatAddressToShortVersion(selectedAddress.address);
+      }
+      if (selectedAddress === 'portfolio') {
+        return 'Portfolio';
+      }
+    }
+    return userId ? 'User Portfolio' : 'Select Wallet';
+  };
+
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
@@ -331,30 +345,34 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         )}
         <div className="d-flex flex-column align-items-start flex-grow-1">
           <span className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}>
-            {selectedAddress &&
-            (selectedAddress.name || selectedAddress.address)
-              ? selectedAddress.name
-                ? selectedAddress.name
-                : formatAddressToShortVersion(selectedAddress.address)
-              : userId
-                ? `User Portfolio`
-                : 'Portfolio'}
+            {getDisplayText(selectedAddress, userId)}
           </span>
-          {!isInHeader && (
-            <div className="text-start text-muted">
-              {selectedAddress ? (
-                parseValuesToLocale(selectedAddress.value, CurrencyUSD)
-              ) : loadingPortfolio ? (
-                <Skeleton
-                  width={80}
-                  baseColor={isDarkMode ? '#333' : '#f3f3f3'}
-                  highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
-                />
-              ) : userId ? null : (
-                parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
-              )}
-            </div>
-          )}
+
+          <div className="text-start text-muted">
+            {!selectedAddress || userId ? null : loadingPortfolio ? (
+              <Skeleton
+                width={80}
+                baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+                highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+              />
+            ) : selectedAddress === 'portfolio' ? (
+              parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
+            ) : (
+              parseValuesToLocale(selectedAddress.value, CurrencyUSD)
+            )}
+            {/* {selectedAddress ? (
+              parseValuesToLocale(selectedAddress.value, CurrencyUSD)
+            ) : loadingPortfolio ? (
+              <Skeleton
+                width={80}
+                baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+                highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+              />
+            ) 
+            : userId ? null : (
+              parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
+            )} */}
+          </div>
         </div>
         <i className="ri-arrow-down-s-line fs-4 text-dark"></i>
       </DropdownToggle>
