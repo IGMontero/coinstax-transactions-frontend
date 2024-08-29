@@ -316,7 +316,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     );
   };
 
-  const getDisplayText = () => {
+  const getDisplayTextDropdown = () => {
     if (selectedAddress) {
       if (selectedAddress.name) {
         return selectedAddress.name;
@@ -345,7 +345,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         )}
         <div className="d-flex flex-column align-items-start flex-grow-1">
           <span className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}>
-            {getDisplayText()}
+            {getDisplayTextDropdown()}
           </span>
 
           <div className="text-start text-muted">

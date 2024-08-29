@@ -31,13 +31,21 @@ const DashboardAccountantAgents = () => {
 
   const fetchAgents = async () => {
     try {
+      setLoading(true);
       const response = await dispatch(
         getAgentsByAccountantId({ accountantId: userId }),
       ).unwrap();
 
-      console.log(response);
+      if (!response.error) {
+        setAgents(response.data);
+        setPageSize(response.pageSize);
+        setTotal(response.total);
+        setHasMore(response.hasMore);
+      }
+      setLoading(false);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
 

@@ -137,17 +137,20 @@ export const deleteAgentById = createAsyncThunk(
   },
 );
 
-export const validateAgentInviteCode = createAsyncThunk(
-  'agents/validateAgentInviteCode',
+export const verifyInviteCodeAA = createAsyncThunk(
+  'agents/verifyInviteCodeAA',
   async ({ inviteCode }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await fetch(`${API_BASE}/agents/invite/${inviteCode}`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${token}`,
+      const response = await fetch(
+        `${API_BASE}/agents/invite-code/${inviteCode}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
         },
-      });
+      );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
@@ -159,13 +162,13 @@ export const validateAgentInviteCode = createAsyncThunk(
   },
 );
 
-export const acceptAgentInvite = createAsyncThunk(
-  'agents/acceptAgentInvite',
+export const acceptInviteCodeAA = createAsyncThunk(
+  'agents/acceptInviteCodeAA',
   async ({ inviteCode }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
-        `${API_BASE}/agents/invite/${inviteCode}/accept`,
+        `${API_BASE}/agents/invite-code/${inviteCode}/accept`,
         {
           method: 'POST',
           headers: {
@@ -186,13 +189,13 @@ export const acceptAgentInvite = createAsyncThunk(
   },
 );
 
-export const declineAgentInvite = createAsyncThunk(
+export const declineInviteCodeAA = createAsyncThunk(
   'agents/declineAgentInvite',
   async ({ inviteCode }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
-        `${API_BASE}/agents/invite/${inviteCode}/decline`,
+        `${API_BASE}/agents/invite-code/${inviteCode}/decline`,
         {
           method: 'POST',
           headers: {

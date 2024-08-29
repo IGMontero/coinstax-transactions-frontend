@@ -232,9 +232,9 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   />
                   {/* {commentedCode()} */}
 
-                  {currentUser &&
+                  {/* {currentUser &&
                     currentUser?.role === DASHBOARD_USER_ROLES.USER && (
-                      // <WalletDropdown />
+                    
                       <div className="me-2">
                         <DropdownPortfolio
                           dropdownOpen={dropdownOpen}
@@ -242,7 +242,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                           isInHeader={true}
                         />
                       </div>
-                    )}
+                    )} */}
                   {currentUser ? (
                     <ProfileDropdown currentUser={currentUser} />
                   ) : (
