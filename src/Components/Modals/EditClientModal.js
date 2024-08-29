@@ -12,7 +12,6 @@ import {
   Input,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
-import { updateUserWalletAddress } from '../../slices/userWallets/thunk';
 import { updateClientByAccountantId } from '../../slices/accountants/thunk';
 import { useSelector } from 'react-redux';
 
@@ -27,8 +26,8 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser, onRefresh }) => {
 
   useEffect(() => {
     if (selectedUser) {
-      setName(selectedUser.Name);
-      setEmail(selectedUser.Email);
+      setName(selectedUser.name);
+      setEmail(selectedUser.email);
       setIsShared(selectedUser.isShared);
     }
   }, [selectedUser]);
@@ -39,7 +38,7 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser, onRefresh }) => {
     try {
       const response = await dispatch(
         updateClientByAccountantId({
-          clientId: selectedUser.Id,
+          clientId: selectedUser.id,
           accountantId: userId,
           name,
           email,

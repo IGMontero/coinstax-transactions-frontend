@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import Helmet from '../../../Components/Helmet/Helmet';
 import { Button } from 'reactstrap';
 import AddAgentModal from '../../../Components/Modals/ModalAddAgent.js';
+import Swal from 'sweetalert2';
 
 const DashboardAccountantAgents = () => {
   const dispatch = useDispatch();
@@ -49,12 +50,37 @@ const DashboardAccountantAgents = () => {
     }
   };
 
-  const handleDeleteAgent = async (id) => {
-    try {
-      await dispatch(deleteAgentById({ accountantId: userId, agentId: id }));
-      fetchAgents();
-    } catch (error) {
-      console.log(error);
+  const handleDeleteAgent = async (agent) => {
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: `Are you sure you want to delete ${agent.email}?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await dispatch(
+          deleteAgentById({ accountantId: userId, agentId: agent.id }),
+        ).unwrap();
+
+        if (response && !response.error) {
+          Swal.fire('Deleted!', 'The agent has been deleted.', 'success');
+          fetchAgents();
+        } else {
+          Swal.fire(
+            'Error!',
+            response.error || 'Something went wrong!',
+            'error',
+          );
+        }
+      } catch (error) {
+        console.log(error);
+        Swal.fire('Error!', 'Something went wrong!', 'error');
+      }
     }
   };
 

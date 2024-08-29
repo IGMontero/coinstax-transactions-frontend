@@ -59,13 +59,16 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
   }, []);
 
   const handleEdit = (id) => {
+    console.log(id);
     const user = users.find((user) => user.Id || user.id === id);
+
+    console.log(user);
     setSelectedUser(user);
     handleOpenModalEditClient();
   };
 
   const handleDelete = (row) => {
-    onDelete(row.Id);
+    onDelete(row);
   };
 
   const handleViewPortfolio = (row) => {
