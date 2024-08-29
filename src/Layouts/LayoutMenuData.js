@@ -183,7 +183,7 @@ const Navdata = () => {
   if (isAgentRole) {
     allMenuItems.push(createMenuHeader('Agent'));
     allMenuItems.push(
-      createManageMenu('users', 'Clients', 'bx bx-group fs-3', 'clients'),
+      createManageMenu('users', 'Clients', 'bx bx-group fs-3', 'agent/clients'),
     );
   }
 

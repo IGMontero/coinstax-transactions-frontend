@@ -114,7 +114,7 @@ const DashboardAccountantUsers = () => {
       <Helmet title="Clients" />
       <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
         <h1>Manage Clients</h1>
-        {/* <div className="d-flex align-items-center">
+        <div className="d-flex align-items-center">
           <Button
             onClick={handleOpenModalAddClient}
             className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
@@ -127,7 +127,7 @@ const DashboardAccountantUsers = () => {
             <i className="ri-add-line me-2"></i>
             Add Client
           </Button>
-        </div> */}
+        </div>
       </div>
       <UsersTable
         users={clients}

@@ -186,24 +186,7 @@ const DashboardInvite = () => {
     }
   };
 
-  const renderAcceptUserToAccountantInvite = () => (
-    <div className="d-flex justify-content-center">
-      <div className="text-center">
-        <h4>Accept invite?</h4>
-        <p>Somebody has invited you to manage their wallets on ChainGlance.</p>
-        <div className="d-flex justify-content-center">
-          <Button onClick={handleAcceptInvite} color="primary" className="me-2">
-            Accept
-          </Button>
-          <Button onClick={handleDeclineInvite} color="danger">
-            Decline
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderAcceptAccountantToUserInvite = () => (
+  const renderAcceptInvite = () => (
     <div className="d-flex justify-content-center">
       <div className="text-center">
         <h4>Accept invite?</h4>
@@ -219,36 +202,6 @@ const DashboardInvite = () => {
       </div>
     </div>
   );
-
-  const renderAcceptAccountantToAgentInvite = () => (
-    <div className="d-flex justify-content-center">
-      <div className="text-center">
-        <h4>Accept invite?</h4>
-        <p>Somebody invited you as an agent on ChainGlance.</p>
-        <div className="d-flex justify-content-center">
-          <Button onClick={handleAcceptInvite} color="primary" className="me-2">
-            Accept
-          </Button>
-          <Button onClick={handleDeclineInvite} color="danger">
-            Decline
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderAcceptInvite = () => {
-    switch (inviteType) {
-      case userInviteTypes.USER_TO_ACCOUNTANT:
-        return renderAcceptUserToAccountantInvite();
-      case userInviteTypes.ACCOUNTANT_TO_USER:
-        return renderAcceptAccountantToUserInvite();
-      case userInviteTypes.ACCOUNTANT_TO_AGENT:
-        return renderAcceptAccountantToAgentInvite();
-      default:
-        return null;
-    }
-  };
 
   const renderLogInOrRegisterToAcceptInvite = () => (
     <div className="d-flex justify-content-center">
