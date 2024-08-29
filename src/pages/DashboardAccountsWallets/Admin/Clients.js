@@ -55,7 +55,7 @@ const Clients = () => {
       <UsersTable
         users={clients}
         loading={loading}
-        onDeleteAddress={() => {}}
+        onDelete={() => {}}
         onRefresh={fetchClients}
         pagination={{
           handleChangePage,

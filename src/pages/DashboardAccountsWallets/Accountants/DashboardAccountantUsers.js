@@ -62,10 +62,10 @@ const DashboardAccountantUsers = () => {
     }
   };
 
-  const handleDeleteClient = (clientId) => {
+  const handleDeleteClient = (client) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure you want to delete client with ID ${clientId}?`,
+      text: `Are you sure you want to delete client with ID ${client.id}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -74,7 +74,10 @@ const DashboardAccountantUsers = () => {
       if (result.isConfirmed) {
         try {
           const response = await dispatch(
-            deleteClientByAccountantId({ clientId, accountantId: userId }),
+            deleteClientByAccountantId({
+              clientId: client.id,
+              accountantId: userId,
+            }),
           ).unwrap();
 
           if (response && !response.error) {
@@ -94,7 +97,7 @@ const DashboardAccountantUsers = () => {
           });
         }
 
-        console.log('Delete client', clientId);
+        console.log('Delete client', client.id);
       }
     });
   };
