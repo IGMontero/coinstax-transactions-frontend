@@ -11,6 +11,7 @@ export const getAgentsByAccountantId = createAsyncThunk(
         `${API_BASE}/agents/accountants/${accountantId}`,
         {
           headers: {
+            'Content-Type': 'application/json',
             Authorization: `${token}`,
           },
         },
@@ -67,6 +68,7 @@ export const getAgentById = createAsyncThunk(
         `${API_BASE}/agents/accountants/${accountantId}/${agentId}`,
         {
           headers: {
+            'Content-Type': 'application/json',
             Authorization: `${token}`,
           },
         },
@@ -92,6 +94,7 @@ export const updateAgentById = createAsyncThunk(
         {
           method: 'PUT',
           headers: {
+            'Content-Type': 'application/json',
             Authorization: `${token}`,
           },
           body: JSON.stringify({}),
@@ -118,6 +121,7 @@ export const deleteAgentById = createAsyncThunk(
         {
           method: 'DELETE',
           headers: {
+            'Content-Type': 'application/json',
             Authorization: `${token}`,
           },
         },
@@ -140,6 +144,7 @@ export const validateAgentInviteCode = createAsyncThunk(
     try {
       const response = await fetch(`${API_BASE}/agents/invite/${inviteCode}`, {
         headers: {
+          'Content-Type': 'application/json',
           Authorization: `${token}`,
         },
       });
@@ -164,6 +169,7 @@ export const acceptAgentInvite = createAsyncThunk(
         {
           method: 'POST',
           headers: {
+            'Content-Type': 'application/json',
             Authorization: `${token}`,
           },
           body: JSON.stringify({}),
@@ -183,6 +189,7 @@ export const acceptAgentInvite = createAsyncThunk(
 export const declineAgentInvite = createAsyncThunk(
   'agents/declineAgentInvite',
   async ({ inviteCode }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(
         `${API_BASE}/agents/invite/${inviteCode}/decline`,
@@ -190,6 +197,7 @@ export const declineAgentInvite = createAsyncThunk(
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: `${token}`,
           },
         },
       );
@@ -207,10 +215,12 @@ export const declineAgentInvite = createAsyncThunk(
 export const getAgentClients = createAsyncThunk(
   'agents/getAgentClients',
   async ({ agentId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
     try {
       const response = await fetch(`${API_BASE}/agents/${agentId}/clients`, {
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `${token}`,
         },
       });
       if (!response.ok) {

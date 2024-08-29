@@ -107,7 +107,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   }, [isProcessing]);
 
   useEffect(() => {
-    console.log('refresh intervals changed!', refreshPreviewIntervals);
+    // console.log('refresh intervals changed!', refreshPreviewIntervals);
 
     // Check if any interval is running.
     const hasAnyIntervalRunning = Object.values(refreshPreviewIntervals).some(
@@ -124,10 +124,10 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         (transaction) => transaction.preview === true,
       );
 
-      console.log(
-        'Preview txs:',
-        data?.filter((tx) => tx.preview === true).length,
-      );
+      // console.log(
+      //   'Preview txs:',
+      //   data?.filter((tx) => tx.preview === true).length,
+      // );
 
       setHasPreview(hasPreview);
     } else {
