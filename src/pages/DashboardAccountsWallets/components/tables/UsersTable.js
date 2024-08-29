@@ -19,6 +19,7 @@ import TablePagination from '../../../../Components/Pagination/TablePagination';
 import { DASHBOARD_USER_ROLES } from '../../../../common/constants';
 
 const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
+  console.log('users', users);
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
@@ -59,7 +60,7 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
   }, []);
 
   const handleEdit = (id) => {
-    const user = users.find((user) => user.Id === id);
+    const user = users.find((user) => user.Id || user.id === id);
     setSelectedUser(user);
     handleOpenModalEditClient();
   };
@@ -69,7 +70,11 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
   };
 
   const handleViewPortfolio = (row) => {
-    navigate(`/users/${row.id}/portfolio`);
+    if (currentUserRole === DASHBOARD_USER_ROLES.AGENT) {
+      navigate(`/users/${row.userId}/portfolio`);
+    } else {
+      navigate(`/users/${row.id}/portfolio`);
+    }
   };
 
   const handleRowClick = (row) => {
@@ -89,7 +94,7 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
     },
     {
       name: 'Email',
-      selector: (row) => row.Email || row.email,
+      selector: (row) => row.email,
       sortable: false,
       grow: 2,
     },
@@ -149,11 +154,11 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
               >
                 <i className="ri-eye-fill pe-3"></i> View Portfolio
               </DropdownItem>
-              {currentUserRole === DASHBOARD_USER_ROLES.ADMIN && (
+              {currentUserRole === DASHBOARD_USER_ROLES.ACCOUNTANT && (
                 <>
                   <DropdownItem
                     className="d-flex aling-items-center ps-3"
-                    onClick={() => handleEdit(row.Id)}
+                    onClick={() => handleEdit(row.Id || row.id)}
                   >
                     {' '}
                     <i className="ri-edit-line pe-3"></i> Edit
