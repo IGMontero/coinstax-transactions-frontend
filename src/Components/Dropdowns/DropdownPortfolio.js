@@ -316,7 +316,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     );
   };
 
-  const getDisplayText = (selectedAddress, userId) => {
+  const getDisplayText = () => {
     if (selectedAddress) {
       if (selectedAddress.name) {
         return selectedAddress.name;
@@ -324,7 +324,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       if (selectedAddress.address) {
         return formatAddressToShortVersion(selectedAddress.address);
       }
-      if (selectedAddress === 'portfolio') {
+      if (selectedAddress === 'portfolio' && !userId) {
         return 'Portfolio';
       }
     }
@@ -345,7 +345,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         )}
         <div className="d-flex flex-column align-items-start flex-grow-1">
           <span className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}>
-            {getDisplayText(selectedAddress, userId)}
+            {getDisplayText()}
           </span>
 
           <div className="text-start text-muted">

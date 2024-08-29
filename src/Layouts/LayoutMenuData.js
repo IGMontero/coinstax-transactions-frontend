@@ -15,7 +15,10 @@ const Navdata = () => {
   const isUserRole = user?.role === DASHBOARD_USER_ROLES.USER;
   const isAgentRole = user?.role === DASHBOARD_USER_ROLES.AGENT;
 
-  const isUserRolePortfolioSelected = location.pathname.includes('portfolio');
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
+
+  const isUserPortfolio = location.pathname.includes('portfolio') && userId;
 
   // console.log('user', user);
   const { fetchData } = useSelector((state) => ({
@@ -29,7 +32,7 @@ const Navdata = () => {
 
   useEffect(() => {
     if (!address && !token && !contractAddress) {
-      if (userId) {
+      if (isUserPortfolio) {
         setPrevAddress(`/users/${userId}/portfolio`);
       } else {
         setPrevAddress('portfolio');
@@ -38,7 +41,7 @@ const Navdata = () => {
       setAddressSearched(address);
       setPrevAddress(address);
     }
-  }, [address, token, contractAddress, user]);
+  }, [address, token, contractAddress, user, prevAddress]);
 
   console.log('prev Address', prevAddress);
 
@@ -46,7 +49,7 @@ const Navdata = () => {
   //   if (contractAddress && !address ) {
   //     setAddressSearched(prevAddress);
   //   }
-  // }, [contractAddress, address, isUserRolePortfolioSelected]);
+  // }, [contractAddress, address, isCurrentUserPortfolioSelected]);
 
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
@@ -56,11 +59,11 @@ const Navdata = () => {
         performance?.unsupported ||
         !addressSearched,
     );
-  }, [fetchData, addressSearched, isUserRolePortfolioSelected]);
+  }, [fetchData, addressSearched, isCurrentUserPortfolioSelected]);
 
   const createMenuItem = (id, label, icon, page) => {
-    const link = isUserRolePortfolioSelected
-      ? userId
+    const link = isCurrentUserPortfolioSelected
+      ? isUserPortfolio
         ? `/users/${userId}/portfolio/${page}`
         : `/portfolio/${page}`
       : contractAddress && !address
