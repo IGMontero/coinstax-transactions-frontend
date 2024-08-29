@@ -26,7 +26,27 @@ export const getAgentsByAccountantId = createAsyncThunk(
     }
   },
 );
-
+export const getAgentsClients = createAsyncThunk(
+  'agents/getAgentsClients',
+  async ({ agentId }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await fetch(`${API_BASE}/agents/${agentId}/clients`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${token}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
 export const addAgentByAccountantId = createAsyncThunk(
   'agents/addAgentByAccountantId',
   async ({ accountantId, name, email }, { rejectWithValue }) => {

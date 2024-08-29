@@ -32,6 +32,7 @@ import Clients from '../pages/DashboardAccountsWallets/Admin/Clients';
 import Users from '../pages/DashboardAccountsWallets/Admin/Users';
 import UsersProfile from '../pages/DashboardAccountsWallets/Admin/components/Profiles/UsersProfile';
 import DashboardAccountantAgents from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantAgents';
+import DashboardClientsAgent from '../pages/DashboardAccountsWallets/Agent/DashboardClientsAgent';
 
 // Auth protected routes
 const adminRoutes = [
@@ -148,13 +149,16 @@ const authProtectedRoutes = [
   {
     path: '/clients',
     component: (
-      <AuthProtectedRoutes
-        allowedRoles={[
-          DASHBOARD_USER_ROLES.ACCOUNTANT,
-          DASHBOARD_USER_ROLES.AGENT,
-        ]}
-      >
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ACCOUNTANT]}>
         <DashboardAccountantUsers />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/agent/clients',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.AGENT]}>
+        <DashboardClientsAgent />
       </AuthProtectedRoutes>
     ),
   },
