@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import AddressTable from '../components/tables/AddressesTable';
-import { Button, Container } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import UsersTable from '../components/tables/UsersTable';
 import Helmet from '../../../Components/Helmet/Helmet';
-import AddClientModal from '../../../Components/Modals/AddClientModal';
 
 import { useDispatch } from 'react-redux';
-import Swal from 'sweetalert2';
 import { getAgentsClients } from '../../../slices/agents/thunks';
 
 const DashboardClientsAgent = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-
-  const userId = user.id;
+  const agentId = user?.agentId;
 
   const [loading, setLoading] = useState(false);
   const [clients, setClients] = useState([]);
@@ -31,7 +26,7 @@ const DashboardClientsAgent = () => {
     try {
       setLoading(true);
       const response = await dispatch(
-        getAgentsClients({ agentId: userId }),
+        getAgentsClients({ agentId, page: currentPage }),
       ).unwrap();
 
       console.log('response', response);

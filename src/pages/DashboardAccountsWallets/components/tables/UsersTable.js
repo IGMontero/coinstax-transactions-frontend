@@ -19,7 +19,6 @@ import TablePagination from '../../../../Components/Pagination/TablePagination';
 import { DASHBOARD_USER_ROLES } from '../../../../common/constants';
 
 const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
-  console.log('users', users);
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
@@ -189,53 +188,54 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
         selectedUser={selectedUser}
         onRefresh={onRefresh}
       />
-      {loading && (
+      {loading ? (
         <div className="d-flex justify-content-center align-items-center">
           <Spinner color="primary" size="lg" />
         </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={users}
+          noDataComponent={
+            <h4>No {isClientsPage ? 'clients' : 'agents'} found</h4>
+          }
+          noHeader
+          responsive
+          onRowClicked={handleRowClick}
+          customStyles={{
+            rows: {
+              style: {
+                cursor: 'pointer',
+                border: 'none',
+                minHeight: '82px',
+              },
+            },
+            headCells: {
+              style: {
+                paddingLeft: '8px',
+                paddingRight: '8px',
+                backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
+                color: `${isDarkMode ? '#fff' : ''}`,
+              },
+            },
+            cells: {
+              style: {
+                paddingLeft: '8px',
+                paddingRight: '8px',
+                backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
+                color: `${isDarkMode ? '#fff' : ''}`,
+                border: 'none',
+              },
+            },
+            noData: {
+              style: {
+                backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
+              },
+            },
+          }}
+        />
       )}
 
-      <DataTable
-        columns={columns}
-        data={users}
-        noDataComponent={
-          <h4>No {isClientsPage ? 'clients' : 'agents'} found</h4>
-        }
-        noHeader
-        responsive
-        onRowClicked={handleRowClick}
-        customStyles={{
-          rows: {
-            style: {
-              cursor: 'pointer',
-              border: 'none',
-              minHeight: '82px',
-            },
-          },
-          headCells: {
-            style: {
-              paddingLeft: '8px',
-              paddingRight: '8px',
-              backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
-              color: `${isDarkMode ? '#fff' : ''}`,
-            },
-          },
-          cells: {
-            style: {
-              paddingLeft: '8px',
-              paddingRight: '8px',
-              backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
-              color: `${isDarkMode ? '#fff' : ''}`,
-              border: 'none',
-            },
-          },
-          noData: {
-            style: {
-              backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
-            },
-          },
-        }}
-      />
       {users?.length > 0 && (
         <TablePagination
           onChangePage={pagination.handleChangePage}
