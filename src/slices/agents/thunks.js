@@ -28,15 +28,18 @@ export const getAgentsByAccountantId = createAsyncThunk(
 );
 export const getAgentsClients = createAsyncThunk(
   'agents/getAgentsClients',
-  async ({ agentId }, { rejectWithValue }) => {
+  async ({ agentId, page }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await fetch(`${API_BASE}/agents/${agentId}/clients`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${token}`,
+      const response = await fetch(
+        `${API_BASE}/agents/${agentId}/clients?page=${page}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `${token}`,
+          },
         },
-      });
+      );
       if (!response.ok) {
         throw new Error(`Error: ${response.status}`);
       }
