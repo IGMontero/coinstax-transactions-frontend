@@ -11,7 +11,7 @@ import {
 } from 'reactstrap';
 import { useSelector } from 'react-redux';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import EditClientModal from '../../../../Components/Modals/EditClientModal';
 import DropdownMenuPortal from '../../../../Components/Dropdowns/DropdownPortal';
 import { formatDateToLocale } from '../../../../utils/utils';
@@ -20,12 +20,16 @@ import { DASHBOARD_USER_ROLES } from '../../../../common/constants';
 
 const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useSelector((state) => state.auth);
+
   const currentUserRole = user?.role;
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
+
+  const isClientsPage = location.pathname.includes('clients');
 
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 955);
 
@@ -55,13 +59,24 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
   }, []);
 
   const handleEdit = (id) => {
-    const user = users.find((user) => user.Id === id);
+    console.log(id);
+    const user = users.find((user) => user.Id || user.id === id);
+
+    console.log(user);
     setSelectedUser(user);
     handleOpenModalEditClient();
   };
 
   const handleDelete = (row) => {
-    onDelete(row.Id);
+    onDelete(row);
+  };
+
+  const handleViewPortfolio = (row) => {
+    if (currentUserRole === DASHBOARD_USER_ROLES.AGENT) {
+      navigate(`/users/${row.userId}/portfolio`);
+    } else {
+      navigate(`/users/${row.id}/portfolio`);
+    }
   };
 
   const handleRowClick = (row) => {
@@ -81,7 +96,7 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
     },
     {
       name: 'Email',
-      selector: (row) => row.Email || row.email,
+      selector: (row) => row.email,
       sortable: false,
       grow: 2,
     },
@@ -132,21 +147,32 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
                 className="d-flex aling-items-center ps-3"
                 onClick={() => handleRowClick(row)}
               >
-                <i className="ri-eye-fill pe-3"></i> View
+                <i className="ri-wallet-3-fill pe-3"></i>
+                View Wallets
               </DropdownItem>
               <DropdownItem
                 className="d-flex aling-items-center ps-3"
-                onClick={() => handleEdit(row.Id)}
+                onClick={() => handleViewPortfolio(row)}
               >
-                {' '}
-                <i className="ri-edit-line pe-3"></i> Edit
+                <i className="ri-eye-fill pe-3"></i> View Portfolio
               </DropdownItem>
-              <DropdownItem
-                className="d-flex aling-items-center ps-3"
-                onClick={() => handleDelete(row)}
-              >
-                <i className="ri-delete-bin-line  pe-3"></i> Delete
-              </DropdownItem>
+              {currentUserRole === DASHBOARD_USER_ROLES.ACCOUNTANT && (
+                <>
+                  <DropdownItem
+                    className="d-flex aling-items-center ps-3"
+                    onClick={() => handleEdit(row.Id || row.id)}
+                  >
+                    {' '}
+                    <i className="ri-edit-line pe-3"></i> Edit
+                  </DropdownItem>
+                  <DropdownItem
+                    className="d-flex aling-items-center ps-3"
+                    onClick={() => handleDelete(row)}
+                  >
+                    <i className="ri-delete-bin-line  pe-3"></i> Delete
+                  </DropdownItem>
+                </>
+              )}
             </DropdownMenu>
           </DropdownMenuPortal>
         </Dropdown>
@@ -165,51 +191,54 @@ const UsersTable = ({ users, loading, onDelete, onRefresh, pagination }) => {
         selectedUser={selectedUser}
         onRefresh={onRefresh}
       />
-      {loading && (
+      {loading ? (
         <div className="d-flex justify-content-center align-items-center">
           <Spinner color="primary" size="lg" />
         </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={users}
+          noDataComponent={
+            <h4>No {isClientsPage ? 'clients' : 'agents'} found</h4>
+          }
+          noHeader
+          responsive
+          onRowClicked={handleRowClick}
+          customStyles={{
+            rows: {
+              style: {
+                cursor: 'pointer',
+                border: 'none',
+                minHeight: '82px',
+              },
+            },
+            headCells: {
+              style: {
+                paddingLeft: '8px',
+                paddingRight: '8px',
+                backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
+                color: `${isDarkMode ? '#fff' : ''}`,
+              },
+            },
+            cells: {
+              style: {
+                paddingLeft: '8px',
+                paddingRight: '8px',
+                backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
+                color: `${isDarkMode ? '#fff' : ''}`,
+                border: 'none',
+              },
+            },
+            noData: {
+              style: {
+                backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
+              },
+            },
+          }}
+        />
       )}
 
-      <DataTable
-        columns={columns}
-        data={users}
-        noDataComponent={<h4>No clients found</h4>}
-        noHeader
-        responsive
-        onRowClicked={handleRowClick}
-        customStyles={{
-          rows: {
-            style: {
-              cursor: 'pointer',
-              border: 'none',
-              minHeight: '82px',
-            },
-          },
-          headCells: {
-            style: {
-              paddingLeft: '8px',
-              paddingRight: '8px',
-              backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
-              color: `${isDarkMode ? '#fff' : ''}`,
-            },
-          },
-          cells: {
-            style: {
-              paddingLeft: '8px',
-              paddingRight: '8px',
-              backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
-              color: `${isDarkMode ? '#fff' : ''}`,
-              border: 'none',
-            },
-          },
-          noData: {
-            style: {
-              backgroundColor: `${isDarkMode ? '#16161a' : ''}`,
-            },
-          },
-        }}
-      />
       {users?.length > 0 && (
         <TablePagination
           onChangePage={pagination.handleChangePage}

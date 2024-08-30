@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import AddressTable from './components/tables/AddressesTable';
+import AddressTable from '../components/tables/AddressesTable';
 import { Button, Container } from 'reactstrap';
 import { useSelector } from 'react-redux';
-import UsersTable from './components/tables/UsersTable';
-import Helmet from '../../Components/Helmet/Helmet';
-import AddClientModal from '../../Components/Modals/AddClientModal';
+import UsersTable from '../components/tables/UsersTable';
+import Helmet from '../../../Components/Helmet/Helmet';
+import AddClientModal from '../../../Components/Modals/AddClientModal';
 
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
-import EditClientModal from '../../Components/Modals/EditClientModal';
+import EditClientModal from '../../../Components/Modals/EditClientModal';
 import {
   getClientsByAccountantId,
   deleteClientByAccountantId,
-} from '../../slices/accountants/thunk';
+} from '../../../slices/accountants/thunk';
 
 const DashboardAccountantUsers = () => {
   const dispatch = useDispatch();
@@ -62,10 +62,10 @@ const DashboardAccountantUsers = () => {
     }
   };
 
-  const handleDeleteClient = (clientId) => {
+  const handleDeleteClient = (client) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure you want to delete client with ID ${clientId}?`,
+      text: `Are you sure you want to delete client with ID ${client.id}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -74,7 +74,10 @@ const DashboardAccountantUsers = () => {
       if (result.isConfirmed) {
         try {
           const response = await dispatch(
-            deleteClientByAccountantId({ clientId, accountantId: userId }),
+            deleteClientByAccountantId({
+              clientId: client.id,
+              accountantId: userId,
+            }),
           ).unwrap();
 
           if (response && !response.error) {
@@ -94,7 +97,7 @@ const DashboardAccountantUsers = () => {
           });
         }
 
-        console.log('Delete client', clientId);
+        console.log('Delete client', client.id);
       }
     });
   };

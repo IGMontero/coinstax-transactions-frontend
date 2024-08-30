@@ -1,36 +1,40 @@
 import React, { useEffect, useState } from 'react';
-import { getClientsByAdmin } from '../../../slices/accountants/thunk';
-import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import UsersTable from '../components/tables/UsersTable';
-import { Button } from 'reactstrap';
+import Helmet from '../../../Components/Helmet/Helmet';
 
-const Clients = () => {
+import { useDispatch } from 'react-redux';
+import { getAgentsClients } from '../../../slices/agents/thunks';
+
+const DashboardClientsAgent = () => {
   const dispatch = useDispatch();
-  const [clients, setClients] = useState([]);
+  const { user } = useSelector((state) => state.auth);
+  const agentId = user?.agentId;
+
   const [loading, setLoading] = useState(false);
+  const [clients, setClients] = useState([]);
+
   const [currentPage, setCurrentPage] = useState(0);
   const [total, setTotal] = useState(0);
-
-  const [hasMore, setHasMore] = useState(false);
-
   const [pageSize, setPageSize] = useState(0);
-
+  const [hasMore, setHasMore] = useState(false);
   const handleChangePage = (page) => {
     setCurrentPage(page);
   };
 
-  const fetchClients = async () => {
+  const fetchAgentClients = async () => {
     try {
       setLoading(true);
       const response = await dispatch(
-        getClientsByAdmin({ page: currentPage }),
+        getAgentsClients({ agentId, page: currentPage }),
       ).unwrap();
 
+      console.log('response', response);
       if (response && !response.error) {
         setClients(response.data);
         setTotal(response.total);
-        setHasMore(response.hasMore);
         setPageSize(response.pageSize);
+        setHasMore(response.hasMore);
       } else {
         console.log('Failed to fetch clients');
       }
@@ -44,19 +48,20 @@ const Clients = () => {
   };
 
   useEffect(() => {
-    fetchClients();
-  }, [currentPage]);
+    fetchAgentClients();
+  }, []);
 
   return (
     <React.Fragment>
+      <Helmet title="Clients" />
       <div className="d-flex justify-content-between align-items-center mt-5 mb-4">
-        <h1>Clients</h1>
+        <h1>Manage Clients</h1>
       </div>
       <UsersTable
         users={clients}
         loading={loading}
         onDelete={() => {}}
-        onRefresh={fetchClients}
+        onRefresh={fetchAgentClients}
         pagination={{
           handleChangePage,
           currentPage,
@@ -69,4 +74,4 @@ const Clients = () => {
   );
 };
 
-export default Clients;
+export default DashboardClientsAgent;

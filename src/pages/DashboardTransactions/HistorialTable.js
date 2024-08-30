@@ -44,7 +44,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const userId = user?.id;
+  const { userId } = useParams();
+  const currentPortfolioUserId = userId ? userId : user?.id;
   const networkType = useSelector(selectNetworkType);
 
   const isCurrentUserPortfolioSelected =
@@ -106,7 +107,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   }, [isProcessing]);
 
   useEffect(() => {
-    console.log('refresh intervals changed!', refreshPreviewIntervals);
+    // console.log('refresh intervals changed!', refreshPreviewIntervals);
 
     // Check if any interval is running.
     const hasAnyIntervalRunning = Object.values(refreshPreviewIntervals).some(
@@ -123,10 +124,10 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         (transaction) => transaction.preview === true,
       );
 
-      console.log(
-        'Preview txs:',
-        data?.filter((tx) => tx.preview === true).length,
-      );
+      // console.log(
+      //   'Preview txs:',
+      //   data?.filter((tx) => tx.preview === true).length,
+      // );
 
       setHasPreview(hasPreview);
     } else {
@@ -204,7 +205,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         selectAsset,
         networkType,
         abortSignal,
-        userId,
+        userId: currentPortfolioUserId,
       });
 
       const response = await dispatch(request(params)).unwrap();
@@ -518,7 +519,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         page: nextPage,
         networkType,
         abortSignal: signal,
-        userId,
+        userId: currentPortfolioUserId,
       });
 
       const response = await dispatch(request(params)).unwrap();
