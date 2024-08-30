@@ -28,6 +28,11 @@ import {
   userInviteTypes,
 } from '../../common/constants';
 import Swal from 'sweetalert2';
+import {
+  acceptInviteCodeAA,
+  declineInviteCodeAA,
+  verifyInviteCodeAA,
+} from '../../slices/agents/thunks';
 
 const DashboardInvite = () => {
   const dispatch = useDispatch();
@@ -46,6 +51,18 @@ const DashboardInvite = () => {
   if (!isValidInviteType) {
     navigate('/login');
   }
+  const handleInviteAction = (inviteType, actions, inviteCode) => {
+    switch (inviteType) {
+      case INVITECODETYPE.USER_TO_ACCOUNTANT:
+        return actions.ua({ inviteCode });
+      case INVITECODETYPE.ACCOUNTANT_TO_USER:
+        return actions.au({ inviteCode });
+      case INVITECODETYPE.ACCOUNTANT_TO_AGENT:
+        return actions.aa({ inviteCode });
+      default:
+        throw new Error('Invalid invite type');
+    }
+  };
 
   const handleVerifyInvite = async () => {
     try {
@@ -53,10 +70,15 @@ const DashboardInvite = () => {
       const inviteCode = queryParams.get('code');
       console.log('Verifying invite code', inviteCode);
 
-      const request =
-        inviteType === INVITECODETYPE.USER_TO_ACCOUNTANT
-          ? verifyInviteCodeUA({ inviteCode })
-          : verifyInviteCodeAU({ inviteCode });
+      const request = handleInviteAction(
+        inviteType,
+        {
+          ua: verifyInviteCodeUA,
+          au: verifyInviteCodeAU,
+          aa: verifyInviteCodeAA,
+        },
+        code,
+      );
 
       const response = await dispatch(request).unwrap();
       if (response && response.error) {
@@ -82,10 +104,15 @@ const DashboardInvite = () => {
   const handleAcceptInvite = async () => {
     try {
       setLoading(true);
-      const request =
-        inviteType === INVITECODETYPE.USER_TO_ACCOUNTANT
-          ? acceptInviteCodeUA({ inviteCode: code })
-          : acceptInviteCodeAU({ inviteCode: code });
+      const request = handleInviteAction(
+        inviteType,
+        {
+          ua: acceptInviteCodeUA,
+          au: acceptInviteCodeAU,
+          aa: acceptInviteCodeAA,
+        },
+        code,
+      );
       const response = await dispatch(request).unwrap();
 
       if (response && !response.error) {
@@ -116,10 +143,15 @@ const DashboardInvite = () => {
   const handleDeclineInvite = async () => {
     try {
       setLoading(true);
-      const request =
-        inviteType === INVITECODETYPE.USER_TO_ACCOUNTANT
-          ? declineInviteCodeUA({ inviteCode: code })
-          : declineInviteCodeAU({ inviteCode: code });
+      const request = handleInviteAction(
+        inviteType,
+        {
+          ua: declineInviteCodeUA,
+          au: declineInviteCodeAU,
+          aa: declineInviteCodeAA,
+        },
+        code,
+      );
       const response = await dispatch(request).unwrap();
 
       if (response && response.error) {
@@ -154,24 +186,7 @@ const DashboardInvite = () => {
     }
   };
 
-  const renderAcceptUserToAccountantInvite = () => (
-    <div className="d-flex justify-content-center">
-      <div className="text-center">
-        <h4>Accept invite?</h4>
-        <p>Somebody has invited you to manage their wallets on ChainGlance.</p>
-        <div className="d-flex justify-content-center">
-          <Button onClick={handleAcceptInvite} color="primary" className="me-2">
-            Accept
-          </Button>
-          <Button onClick={handleDeclineInvite} color="danger">
-            Decline
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderAcceptAccountantToUserInvite = () => (
+  const renderAcceptInvite = () => (
     <div className="d-flex justify-content-center">
       <div className="text-center">
         <h4>Accept invite?</h4>
@@ -187,36 +202,6 @@ const DashboardInvite = () => {
       </div>
     </div>
   );
-
-  const renderAcceptAccountantToAgentInvite = () => (
-    <div className="d-flex justify-content-center">
-      <div className="text-center">
-        <h4>Accept invite?</h4>
-        <p>Somebody invited you as an agent on ChainGlance.</p>
-        <div className="d-flex justify-content-center">
-          <Button onClick={handleAcceptInvite} color="primary" className="me-2">
-            Accept
-          </Button>
-          <Button onClick={handleDeclineInvite} color="danger">
-            Decline
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderAcceptInvite = () => {
-    switch (inviteType) {
-      case userInviteTypes.USER_TO_ACCOUNTANT:
-        return renderAcceptUserToAccountantInvite();
-      case userInviteTypes.ACCOUNTANT_TO_USER:
-        return renderAcceptAccountantToUserInvite();
-      case userInviteTypes.ACCOUNTANT_TO_AGENT:
-        return renderAcceptAccountantToAgentInvite();
-      default:
-        return null;
-    }
-  };
 
   const renderLogInOrRegisterToAcceptInvite = () => (
     <div className="d-flex justify-content-center">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   Modal,
@@ -11,78 +11,69 @@ import {
   Label,
   Input,
 } from 'reactstrap';
+import { addClientByAccountantId } from '../../slices/accountants/thunk';
 import Swal from 'sweetalert2';
-import { updateClientByAccountantId } from '../../slices/accountants/thunk';
 import { useSelector } from 'react-redux';
+import { addAgentByAccountantId } from '../../slices/agents/thunks';
 
-const EditClientModal = ({ isOpen, setIsOpen, selectedUser, onRefresh }) => {
+const AddAgentModal = ({ isOpen, setIsOpen, onRefresh }) => {
   const dispatch = useDispatch();
+
   const { user } = useSelector((state) => state.auth);
-
   const userId = user?.id;
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [isShared, setIsShared] = useState(false);
 
-  useEffect(() => {
-    if (selectedUser) {
-      setName(selectedUser.name);
-      setEmail(selectedUser.email);
-      setIsShared(selectedUser.isShared);
-    }
-  }, [selectedUser]);
+  const [agentName, setAgentName] = useState('');
+  const [email, setEmail] = useState('');
 
   const toggleModal = () => setIsOpen(!isOpen);
 
   const handleSubmit = async () => {
     try {
       const response = await dispatch(
-        updateClientByAccountantId({
-          clientId: selectedUser.id,
-          accountantId: userId,
-          name,
+        addAgentByAccountantId({
+          name: agentName,
           email,
+          accountantId: userId,
         }),
       ).unwrap();
 
       if (response && !response.error) {
         Swal.fire({
           title: 'Success',
-          text: 'User updated successfully',
+          text: 'Agent added successfully',
           icon: 'success',
         });
-        onRefresh?.();
+        onRefresh();
         toggleModal();
       } else {
         Swal.fire({
           title: 'Error',
-          text: 'Failed to update user',
+          text: 'Failed to add Agent',
           icon: 'error',
         });
       }
     } catch (error) {
-      console.error('Failed to update user: ', error);
+      console.error('Failed to add Agent: ', error);
       Swal.fire({
         title: 'Error',
-        text: 'Failed to update user',
+        text: 'Failed to add Agent',
         icon: 'error',
       });
     }
   };
-
   return (
     <Modal isOpen={isOpen} toggle={toggleModal}>
-      <ModalHeader toggle={toggleModal}>Edit User</ModalHeader>
+      <ModalHeader toggle={toggleModal}>Add New Agent</ModalHeader>
       <ModalBody>
         <Form>
           <FormGroup>
-            <Label for="name">Name</Label>
+            <Label for="agentName">Agent Name</Label>
             <Input
               type="text"
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Enter client name"
+              id="agentName"
+              value={agentName}
+              onChange={(e) => setAgentName(e.target.value)}
+              placeholder="Enter agent name"
             />
           </FormGroup>
           <FormGroup>
@@ -95,21 +86,11 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser, onRefresh }) => {
               placeholder="Enter email"
             />
           </FormGroup>
-          <FormGroup check>
-            <Label check>
-              <Input
-                type="checkbox"
-                checked={isShared}
-                onChange={(e) => setIsShared(e.target.checked)}
-              />{' '}
-              Shared Account
-            </Label>
-          </FormGroup>
         </Form>
       </ModalBody>
       <ModalFooter>
         <Button color="primary" onClick={handleSubmit}>
-          Save Changes
+          Add Agent
         </Button>
         <Button color="secondary" onClick={toggleModal}>
           Cancel
@@ -119,4 +100,4 @@ const EditClientModal = ({ isOpen, setIsOpen, selectedUser, onRefresh }) => {
   );
 };
 
-export default EditClientModal;
+export default AddAgentModal;

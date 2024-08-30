@@ -89,7 +89,7 @@ export const fetchTransactionsPortfolio = createAsyncThunk(
   async (
     {
       userId,
-      blockchain,
+      networkType,
       query = '',
       filters = {},
       page = 0,
@@ -121,7 +121,7 @@ export const fetchTransactionsPortfolio = createAsyncThunk(
       }
 
       const response = await fetch(
-        `${API_BASE}/users/${userId}/portfolio/${blockchain}/transactions?${queryString}`,
+        `${API_BASE}/users/${userId}/portfolio/${networkType}/transactions?${queryString}`,
         {
           headers: {
             Authorization: `${token}`,

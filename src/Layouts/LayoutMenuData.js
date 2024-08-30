@@ -5,18 +5,20 @@ import { DASHBOARD_USER_ROLES } from '../common/constants';
 
 const Navdata = () => {
   const location = useLocation();
-  const { address, token, contractAddress } = useParams();
+  const { address, token, contractAddress, userId } = useParams();
 
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  const isAdmin = user?.role === DASHBOARD_USER_ROLES.ADMIN;
-
-  const isAccountant = user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
-  const isUser = user?.role === DASHBOARD_USER_ROLES.USER;
+  const isAdminRole = user?.role === DASHBOARD_USER_ROLES.ADMIN;
+  const isAccountantRole = user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
+  const isUserRole = user?.role === DASHBOARD_USER_ROLES.USER;
+  const isAgentRole = user?.role === DASHBOARD_USER_ROLES.AGENT;
 
   const isCurrentUserPortfolioSelected =
     location.pathname.includes('portfolio');
+
+  const isUserPortfolio = location.pathname.includes('portfolio') && userId;
 
   // console.log('user', user);
   const { fetchData } = useSelector((state) => ({
@@ -29,23 +31,25 @@ const Navdata = () => {
   const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
-    if (!prevAddress) {
-      if (isCurrentUserPortfolioSelected) {
+    if (!address && !token && !contractAddress) {
+      if (isUserPortfolio) {
+        setPrevAddress(`/users/${userId}/portfolio`);
+      } else {
         setPrevAddress('portfolio');
       }
     } else if (address && address !== addressSearched) {
       setAddressSearched(address);
       setPrevAddress(address);
     }
+  }, [address, token, contractAddress, user, prevAddress]);
 
-    console.log(prevAddress);
-  }, [address, isCurrentUserPortfolioSelected]);
+  console.log('prev Address', prevAddress);
 
-  useEffect(() => {
-    if (!address && contractAddress) {
-      setAddressSearched(prevAddress);
-    }
-  }, [contractAddress, address]);
+  // useEffect(() => {
+  //   if (contractAddress && !address ) {
+  //     setAddressSearched(prevAddress);
+  //   }
+  // }, [contractAddress, address, isCurrentUserPortfolioSelected]);
 
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
@@ -55,11 +59,13 @@ const Navdata = () => {
         performance?.unsupported ||
         !addressSearched,
     );
-  }, [fetchData, addressSearched]);
+  }, [fetchData, addressSearched, isCurrentUserPortfolioSelected]);
 
   const createMenuItem = (id, label, icon, page) => {
     const link = isCurrentUserPortfolioSelected
-      ? `/portfolio/${page}`
+      ? isUserPortfolio
+        ? `/users/${userId}/portfolio/${page}`
+        : `/portfolio/${page}`
       : contractAddress && !address
         ? `/address/${prevAddress}/${page}`
         : `${token ? `/tokens/${token}` : `/address/${addressSearched}/${page}`}`;
@@ -99,6 +105,7 @@ const Navdata = () => {
     if (isUnsupported || token) {
       return menuItems.filter(
         (item) =>
+          item.id !== 'summary' &&
           item.id !== 'assets' &&
           item.id !== 'nfts' &&
           item.id !== 'transactions',
@@ -107,34 +114,14 @@ const Navdata = () => {
     return menuItems;
   };
 
-  let allMenuItems = [];
-  if (isCurrentUserPortfolioSelected) {
-    allMenuItems = [
-      createMenuItem('summary', 'Summary', 'bx bx-home', ''),
-      createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
-      createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
-      createMenuItem(
-        'transactions',
-        'Transactions',
-        'bx bx-transfer',
-        'history',
-      ),
-    ];
-  } else if (address || prevAddress) {
-    allMenuItems = [
-      createMenuItem('summary', 'Summary', 'bx bx-home', ''),
-      createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
-      createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
-      createMenuItem(
-        'transactions',
-        'Transactions',
-        'bx bx-transfer',
-        'history',
-      ),
-    ];
-  }
+  let allMenuItems = [
+    createMenuItem('summary', 'Summary', 'bx bx-home', ''),
+    createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
+    createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
+    createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),
+  ];
 
-  if (isAdmin) {
+  if (isAdminRole) {
     allMenuItems.push(createMenuHeader('Admin'));
     allMenuItems.push(
       createManageMenu(
@@ -178,7 +165,7 @@ const Navdata = () => {
     );
   }
 
-  if (isAccountant) {
+  if (isAccountantRole) {
     allMenuItems.push(createMenuHeader('Accountant'));
     allMenuItems.push(
       createManageMenu(
@@ -188,8 +175,19 @@ const Navdata = () => {
         'clients',
       ),
     );
+    allMenuItems.push(
+      createManageMenu('agentUsers', 'Agents', 'bx bx-group fs-3', 'agents'),
+    );
   }
-  if (isUser || isAccountant) {
+
+  if (isAgentRole) {
+    allMenuItems.push(createMenuHeader('Agent'));
+    allMenuItems.push(
+      createManageMenu('users', 'Clients', 'bx bx-group fs-3', 'agent/clients'),
+    );
+  }
+
+  if (isUserRole || isAccountantRole || isAgentRole) {
     allMenuItems.push(createMenuHeader('Manage'));
     allMenuItems.push(
       createManageMenu(
@@ -208,18 +206,6 @@ const Navdata = () => {
       ),
     );
   }
-
-  // if (isAccountant) {
-  //   allMenuItems.push(createMenuHeader('Accountant'));
-  //   allMenuItems.push(
-  //     createManageMenu(
-  //       'accountantUsers',
-  //       'Manage Clients',
-  //       'bx bx-user fs-3',
-  //       'clients',
-  //     ),
-  //   );
-  // }
 
   const filteredMenuItems = filterMenuItems(allMenuItems);
 

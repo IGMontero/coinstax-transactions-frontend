@@ -25,11 +25,10 @@ import { getBalancesPortfolio } from '../../../slices/portfolio/thunk';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
-  const { token } = useParams();
+  const { token, userId } = useParams();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
-
-  const userId = user?.id;
+  const currentPortfolioUserId = userId ? userId : user?.id;
   const isCurrentUserPortfolioSelected =
     location.pathname.includes('portfolio');
   const chartContainerRef = useRef(null);
@@ -223,7 +222,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
       const request = isCurrentUserPortfolioSelected
         ? getBalancesPortfolio({
-            userId,
+            userId: currentPortfolioUserId,
             blockchain: networkType,
             days,
             signal,
