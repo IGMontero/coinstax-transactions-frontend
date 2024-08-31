@@ -1,23 +1,26 @@
+import { useWalletInfo, useWeb3Modal } from '@web3modal/wagmi/react';
 import React, { useState } from 'react';
-import Helmet from '../../Components/Helmet/Helmet';
-import SearchBar from '../../Components/SearchBar/SearchBar';
-import ledgerWallet from '../../assets/images/wallets/ledgerWallet.svg';
-import walletConnect from '../../assets/images/wallets/WalletConnect.png';
-import zerionWallet from '../../assets/images/wallets/zerionWallet.svg';
-import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Spinner } from 'reactstrap';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { addUserWallet } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
+import ledgerWallet from '../../assets/images/wallets/ledgerWallet.svg';
+import walletConnect from '../../assets/images/wallets/WalletConnect.png';
+import Helmet from '../../Components/Helmet/Helmet';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
+import { addUserWallet } from '../../slices/userWallets/thunk';
+import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const refreshUserPortfolio = useRefreshUserPortfolio();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
+
+  const { walletInfo } = useWalletInfo()
+  const { open, close } = useWeb3Modal()
+
+  console.log('WALLET INFO:', walletInfo)
 
   const [loading, setLoading] = useState(false);
 
@@ -32,14 +35,16 @@ const DashboardConnectWallets = () => {
       icon: walletConnect,
       name: 'WalletConnect',
       link: '',
-      handler: () => {},
+      handler: () => {
+        open()
+      },
     },
 
     {
       icon: ledgerWallet,
       name: 'Ledger',
       link: '',
-      handler: () => {},
+      handler: () => { },
     },
   ];
 
@@ -92,12 +97,15 @@ const DashboardConnectWallets = () => {
           <h1>Connect to ChainGlance</h1>
         </div>
         <div className="d-flex mt-4 mb-5">
+
+          {/* <WalletConnectButton /> */}
+
           {wallets.map((wallet, index) => (
             <div
               key={index}
               className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center
-            
             "
+              onClick={wallet.handler}
             >
               <img
                 className="img-fluid avatar-md mb-2"
