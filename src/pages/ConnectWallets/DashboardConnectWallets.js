@@ -1,13 +1,14 @@
-import { useWalletInfo, useWeb3Modal } from '@web3modal/wagmi/react';
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Spinner } from 'reactstrap';
 import Swal from 'sweetalert2';
-import ledgerWallet from '../../assets/images/wallets/ledgerWallet.svg';
+import { useChainId, useConnect } from 'wagmi';
+import metamaskLogo from '../../assets/images/wallets/metamask.svg';
 import walletConnect from '../../assets/images/wallets/WalletConnect.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
+import { validConnectorIds } from '../../Providers/ConnectWalletProvider';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
 const DashboardConnectWallets = () => {
@@ -17,34 +18,54 @@ const DashboardConnectWallets = () => {
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
-  const { walletInfo } = useWalletInfo()
-  const { open, close } = useWeb3Modal()
+  // const { walletInfo } = useWalletInfo();
 
-  console.log('WALLET INFO:', walletInfo)
+  const chainId = useChainId();
+  const { connectors, connect } = useConnect();
+
+  const validConnectors = connectors.filter((connector) =>
+    validConnectorIds.includes(connector.id),
+  );
 
   const [loading, setLoading] = useState(false);
 
   const wallets = [
-    // {
-    //   icon: zerionWallet,
-    //   name: 'Zerion Wallet',
-    //   link: '',
-    //   handler: () => {},
-    // },
     {
       icon: walletConnect,
       name: 'WalletConnect',
       link: '',
       handler: () => {
-        open()
+        const walletConnectConnector = validConnectors.find(
+          (connector) => connector.id === 'walletConnect',
+        );
+
+        console.log('WalletConnect Connector:', walletConnectConnector);
+
+        if (walletConnectConnector) {
+          connect({
+            connector: walletConnectConnector,
+            chainId,
+          });
+        }
       },
     },
 
     {
-      icon: ledgerWallet,
-      name: 'Ledger',
+      icon: metamaskLogo,
+      name: 'MetaMask',
       link: '',
-      handler: () => { },
+      handler: () => {
+        const metamaskConnector = validConnectors.find(
+          (connector) => connector.id === 'io.metamask',
+        );
+
+        if (metamaskConnector) {
+          connect({
+            connector: metamaskConnector,
+            chainId,
+          });
+        }
+      },
     },
   ];
 
@@ -64,8 +85,6 @@ const DashboardConnectWallets = () => {
       const response = await dispatch(
         addUserWallet({ address, userId }),
       ).unwrap();
-
-      console.log(response);
 
       if (response && !response.error) {
         navigate(`/address/${address}`);
@@ -97,23 +116,12 @@ const DashboardConnectWallets = () => {
           <h1>Connect to ChainGlance</h1>
         </div>
         <div className="d-flex mt-4 mb-5">
-
-          {/* <WalletConnectButton /> */}
-
-          {wallets.map((wallet, index) => (
-            <div
-              key={index}
-              className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center
-            "
-              onClick={wallet.handler}
-            >
-              <img
-                className="img-fluid avatar-md mb-2"
-                src={wallet.icon}
-                alt={wallet.name}
-              />
-              {wallet.name}
-            </div>
+          {validConnectors.map((connector) => (
+            <ConnectorButton
+              key={connector.uid}
+              connector={connector}
+              onClick={() => connect({ connector, chainId })}
+            />
           ))}
         </div>
         <div className="w-50 py-3">
@@ -152,5 +160,34 @@ const DashboardConnectWallets = () => {
     </div>
   );
 };
+
+function ConnectorButton({ connector, onClick }) {
+  const [ready, setReady] = React.useState(false);
+  React.useEffect(() => {
+    (async () => {
+      const provider = await connector.getProvider();
+      setReady(!!provider);
+    })();
+  }, [connector, setReady]);
+
+  // Get logo based on connector id
+
+  const logo = connector.id === 'walletConnect' ? walletConnect : metamaskLogo;
+
+  return (
+    <div
+      className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center
+            "
+      onClick={ready && !connector.active ? () => onClick() : () => { }}
+    >
+      <img
+        className="img-fluid avatar-md mb-2"
+        src={logo}
+        alt={connector.name}
+      />
+      {connector.name}
+    </div>
+  );
+}
 
 export default DashboardConnectWallets;
