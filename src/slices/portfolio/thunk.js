@@ -29,11 +29,11 @@ export const fetchAssetsPortfolio = createAsyncThunk(
 
 export const fetchNFTSPortfolio = createAsyncThunk(
   'portfolio/fetchNFTSPortfolio',
-  async ({ userId, blockchain, signal }, { rejectWithValue }) => {
+  async ({ userId, blockchain, page, signal }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
       const response = await fetch(
-        `${API_BASE}/users/${userId}/portfolio/${blockchain}/nfts`,
+        `${API_BASE}/users/${userId}/portfolio/${blockchain}/nfts?page=${page}`,
         {
           headers: {
             Authorization: `${token}`,
