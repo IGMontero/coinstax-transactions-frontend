@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { fetchHistory } from '../slices/transactions/thunk';
 import { getCurrentThemeCookie } from '../helpers/cookies_helper';
+import { fetchTransactionsPortfolio } from '../slices/portfolio/thunk';
 
 // #region Constants
 export const filtersChart = [
@@ -53,7 +54,7 @@ export const formatIdTransaction = (address, prefixLength, suffixLength) => {
 
 export const formatAddressToShortVersion = (address) => {
   return formatIdTransaction(address, 6, 6);
-}
+};
 
 export const formatNumber = (number) => {
   if (typeof number !== 'number' || isNaN(number)) {
@@ -87,8 +88,18 @@ export const formatNumber = (number) => {
 export const formatCalendarDateToLocale = (date, showTime) => {
   const dateObj = new Date(date);
 
-  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-  const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
+  const dateOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  };
+  const timeOptions = {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'UTC',
+  };
 
   const dateString = dateObj.toLocaleDateString(undefined, dateOptions);
   const timeString = showTime
@@ -332,38 +343,90 @@ export const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+export const buildParamsForTransactions = ({
+  address,
+  query,
+  filters,
+  selectAsset,
+  page,
+  networkType,
+  abortSignal,
+  userId,
+}) => {
+  const params = {
+    address,
+    query,
+    filters: {
+      blockchainAction: filters.selectedFilters,
+      includeSpam: filters.includeSpam,
+    },
+    assetsFilters: selectAsset,
+    page: page || 0,
+    networkType,
+    signal: abortSignal,
+  };
+
+  if (filters.isCurrentUserPortfolioSelected) {
+    params.userId = userId;
+  }
+
+  return params;
+};
+
 export const updateTransactionsPreview = async ({
   address,
   debouncedSearchTerm,
   selectedFilters,
   includeSpam,
-  selectedAssets,
+  selectAsset,
   currentPage,
   setData,
   dispatch,
   networkType,
   onEnd,
-  signal,
+  abortSignal,
   onError,
+  isCurrentUserPortfolioSelected,
+  currentPortfolioUserId,
 }) => {
   // Pges checked
   try {
     const updatePage = async (page) => {
       try {
-        const response = await dispatch(
-          fetchHistory({
-            address,
-            query: debouncedSearchTerm,
-            filters: {
-              blockchainAction: selectedFilters,
-              includeSpam: includeSpam,
-            },
-            assetsFilters: getSelectedAssetFilters(selectedAssets),
-            page: page,
-            networkType,
-            signal,
-          }),
-        ).unwrap();
+        const request = isCurrentUserPortfolioSelected
+          ? fetchTransactionsPortfolio
+          : fetchHistory;
+        const params = buildParamsForTransactions({
+          address,
+          query: debouncedSearchTerm,
+          filters: {
+            selectedFilters,
+            includeSpam,
+            isCurrentUserPortfolioSelected,
+          },
+          selectAsset,
+          page,
+          networkType,
+          abortSignal,
+          userId: currentPortfolioUserId,
+        });
+
+        const response = await dispatch(request(params)).unwrap();
+
+        // const response = await dispatch(
+        //   fetchHistory({
+        //     address,
+        //     query: debouncedSearchTerm,
+        //     filters: {
+        //       blockchainAction: selectedFilters,
+        //       includeSpam: includeSpam,
+        //     },
+        //     assetsFilters: getSelectedAssetFilters(selectedAssets),
+        //     page: page,
+        //     networkType,
+        //     signal,
+        //   }),
+        // ).unwrap();
 
         const parsed = response?.parsed;
 
@@ -372,7 +435,7 @@ export const updateTransactionsPreview = async ({
           if (onEnd) {
             onEnd();
           }
-          return
+          return;
         }
 
         // Verify if all transactions are not in preview mode
@@ -535,4 +598,4 @@ export const removeOptionsFromLocalStorage = (setOptions, value) => {
 export const isDarkMode = () => {
   const currentTheme = getCurrentThemeCookie();
   return currentTheme === 'dark';
-}
+};
