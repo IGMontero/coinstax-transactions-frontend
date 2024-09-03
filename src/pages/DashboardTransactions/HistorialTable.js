@@ -13,6 +13,7 @@ import {
   Badge,
 } from 'reactstrap';
 import {
+  buildParamsForTransactions,
   formatDateToLocale,
   formatTransactionNotFoundMessage,
   getSelectedAssetFilters,
@@ -139,36 +140,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     };
   }, [data]);
 
-  const buildParams = ({
-    address,
-    query,
-    filters,
-    selectAsset,
-    page,
-    networkType,
-    abortSignal,
-    userId,
-  }) => {
-    const params = {
-      address,
-      query,
-      filters: {
-        blockchainAction: filters.selectedFilters,
-        includeSpam: filters.includeSpam,
-      },
-      assetsFilters: selectAsset,
-      page: page || 0,
-      networkType,
-      signal: abortSignal,
-    };
-
-    if (filters.isCurrentUserPortfolioSelected) {
-      params.userId = userId;
-    }
-
-    return params;
-  };
-
   // #region FETCH DATA
   const fetchData = async ({ abortSignal }) => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
@@ -194,7 +165,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         ? fetchTransactionsPortfolio
         : fetchHistory;
 
-      const params = buildParams({
+      const params = buildParamsForTransactions({
         address,
         query: debouncedSearchTerm,
         filters: {
@@ -295,12 +266,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           debouncedSearchTerm,
           selectedFilters,
           includeSpam,
-          selectedAssets,
+          selectAsset: getSelectedAssetFilters(selectedAssets),
           currentPage: pageIndex,
           setData,
           networkType,
           data,
-          signal,
+          abortSignal: signal,
           dispatch,
           pagesChecked: pagesCheckedRef.current,
           onEnd: () => {
@@ -324,6 +295,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               err,
             );
           },
+          isCurrentUserPortfolioSelected,
+          currentPortfolioUserId,
         });
       } catch (error) {
         console.error('Error during updateTransactionsPreview call:', error);
@@ -507,7 +480,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         ? fetchTransactionsPortfolio
         : fetchHistory;
 
-      const params = buildParams({
+      const params = buildParamsForTransactions({
         address,
         query: searchTerm,
         filters: {

@@ -123,6 +123,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
           fetchNFTSPortfolio({
             userId: currentPortfolioUserId,
             blockchain: networkType,
+            page: page,
             signal,
           }),
         )
