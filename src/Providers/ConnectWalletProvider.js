@@ -13,7 +13,7 @@ const projectId = 'f3ec191ff1a02016249d76c9de7ad02b';
 
 const chains = [mainnet];
 
-const config = createConfig({
+export const wagmiConfig = createConfig({
     chains,
     connectors: [walletConnect({ projectId }), metaMask()],
     transports: {
@@ -25,7 +25,7 @@ export const validConnectorIds = ['walletConnect', 'io.metamask'];
 
 export function ConnectWalletProvider({ children }) {
     return (
-        <WagmiProvider config={config}>
+        <WagmiProvider config={wagmiConfig}>
             <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
         </WagmiProvider>
     );
