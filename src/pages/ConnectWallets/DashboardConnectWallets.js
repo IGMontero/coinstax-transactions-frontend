@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Spinner } from 'reactstrap';
 import Swal from 'sweetalert2';
-import { useChainId, useConnect } from 'wagmi';
+import {
+  useAccount,
+  useBalance,
+  useChainId,
+  useConnect,
+  useConnections,
+  useWalletClient,
+} from 'wagmi';
 import metamaskLogo from '../../assets/images/wallets/metamask.svg';
 import walletConnect from '../../assets/images/wallets/WalletConnect.png';
 import Helmet from '../../Components/Helmet/Helmet';
-import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
+import {
+  useRefreshUserPortfolio,
+  useUserPortfolioSummary,
+} from '../../hooks/useUserPortfolio';
 import { validConnectorIds } from '../../Providers/ConnectWalletProvider';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
@@ -15,63 +25,39 @@ const DashboardConnectWallets = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const refreshUserPortfolio = useRefreshUserPortfolio();
+  const userPortfolioSummary = useUserPortfolioSummary();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
+  console.log('userPortfolio', userPortfolioSummary);
   // const { walletInfo } = useWalletInfo();
 
   const chainId = useChainId();
   const { connectors, connect } = useConnect();
+  const connections = useConnections();
+  console.log('Connections:', connections);
 
   const validConnectors = connectors.filter((connector) =>
     validConnectorIds.includes(connector.id),
   );
 
+  const metamaskConnector = validConnectors.find(
+    (connector) => connector.id === 'io.metamask',
+  );
+
+  metamaskConnector.onAccountsChanged = (accounts) => {
+    console.log('Metamask accounts changed:', accounts);
+  };
+
+  metamaskConnector.onConnect = (data) => {
+    console.log('MetaMask connected', data);
+  };
+
   const [loading, setLoading] = useState(false);
-
-  const wallets = [
-    {
-      icon: walletConnect,
-      name: 'WalletConnect',
-      link: '',
-      handler: () => {
-        const walletConnectConnector = validConnectors.find(
-          (connector) => connector.id === 'walletConnect',
-        );
-
-        console.log('WalletConnect Connector:', walletConnectConnector);
-
-        if (walletConnectConnector) {
-          connect({
-            connector: walletConnectConnector,
-            chainId,
-          });
-        }
-      },
-    },
-
-    {
-      icon: metamaskLogo,
-      name: 'MetaMask',
-      link: '',
-      handler: () => {
-        const metamaskConnector = validConnectors.find(
-          (connector) => connector.id === 'io.metamask',
-        );
-
-        if (metamaskConnector) {
-          connect({
-            connector: metamaskConnector,
-            chainId,
-          });
-        }
-      },
-    },
-  ];
 
   const [searchValue, setSearchValue] = useState('');
 
-  const handleAddWallet = (value) => {
+  const handleSearchWallet = (value) => {
     navigate(`/address/${value}`);
   };
 
@@ -108,6 +94,50 @@ const DashboardConnectWallets = () => {
     }
   };
 
+  const handleConnect = (connector) => {
+    connect(
+      { connector, chainId, onSuccess: handleConnectedAccount },
+      {
+        onSuccess: handleConnectedAccount,
+      },
+    );
+
+    async function handleConnectedAccount() {
+      const accounts = await connector.getAccounts();
+
+      // For each account do the same. Only navigate to the first one.
+
+      const mainAddress = accounts[0];
+
+      if (!mainAddress) return;
+
+      for (let i = 0; i < accounts.length; i++) {
+        const accountAddress = accounts[i];
+        const isAddressAlreadyInPortfolio =
+          userPortfolioSummary?.addresses?.find(
+            (address) =>
+              address.address.toLowerCase() === accountAddress.toLowerCase(),
+          );
+
+        if (isAddressAlreadyInPortfolio) continue;
+        // Add address to user wallet
+        await dispatch(
+          addUserWallet({
+            address: accountAddress,
+            userId,
+          }),
+        );
+      }
+
+      // navigate to the first account
+      navigate(`/address/${mainAddress}`);
+
+      refreshUserPortfolio();
+    }
+
+    handleConnectedAccount();
+  };
+
   return (
     <div className="page-content ">
       <Helmet title="Connect Wallet" />
@@ -120,7 +150,7 @@ const DashboardConnectWallets = () => {
             <ConnectorButton
               key={connector.uid}
               connector={connector}
-              onClick={() => connect({ connector, chainId })}
+              onClick={() => handleConnect(connector)}
             />
           ))}
         </div>
@@ -139,7 +169,7 @@ const DashboardConnectWallets = () => {
               }}
               onClick={() => {
                 if (!user) {
-                  handleAddWallet(searchValue);
+                  handleSearchWallet(searchValue);
                 } else {
                   handleConnectWallet(searchValue);
                 }
@@ -163,7 +193,7 @@ const DashboardConnectWallets = () => {
 
 function ConnectorButton({ connector, onClick }) {
   const [ready, setReady] = React.useState(false);
-  React.useEffect(() => {
+  useEffect(() => {
     (async () => {
       const provider = await connector.getProvider();
       setReady(!!provider);
