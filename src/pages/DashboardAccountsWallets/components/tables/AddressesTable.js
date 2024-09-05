@@ -124,6 +124,18 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
             // });
 
             // handleSetAddresses(updatedAddresses);
+            setAddresses(
+              addresses.map((addr) => {
+                if (addr.id === address.id) {
+                  return {
+                    ...addr,
+                    name: newName,
+                  };
+                }
+                return addr;
+              }),
+            );
+
             onRefresh(userId);
           } else {
             Swal.fire({
@@ -166,6 +178,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
               text: 'Wallet address deleted successfully',
               icon: 'success',
             });
+            setAddresses(addresses.filter((addr) => addr.id !== address.id));
 
             onRefresh(userId);
           } else {
@@ -186,17 +199,16 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
       }
     });
   };
+
   const onDragEnd = (result) => {
     if (!result.destination) return;
 
-    const items = Array.from(addresses); // Clona el arreglo de direcciones
-    const [reorderedItem] = items.splice(result.source.index, 1); // Elimina el ítem de su posición original
-    items.splice(result.destination.index, 0, reorderedItem); // Inserta el ítem en la nueva posición
+    const items = Array.from(addresses);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
 
-    // Actualiza el estado local inmediatamente para reflejar el nuevo orden
     setAddresses(items);
 
-    // Luego de actualizar el estado, envía la actualización al backend
     handleReorderAddresses(items);
   };
 
