@@ -119,7 +119,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         try {
           const response = await dispatch(
             updateUserWalletAddress({
-              currentUserId,
+              userId: currentUserId,
               name: newName,
               addressId: address.id,
             }),
