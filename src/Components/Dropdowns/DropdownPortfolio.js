@@ -33,6 +33,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const { user } = useSelector((state) => state.auth);
   const currentUserId = user?.id;
 
+  console.log('user', user);
+
   const refreshUserPortfolio = useRefreshUserPortfolio();
 
   const { userPortfolioSummary, loaders } = useSelector(
@@ -165,7 +167,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       if (result.isConfirmed) {
         try {
           const response = await dispatch(
-            deleteUserAddressWallet({ currentUserId, addressId: address.id }),
+            deleteUserAddressWallet({
+              userId: currentUserId,
+              addressId: address.id,
+            }),
           ).unwrap();
 
           if (response && !response.error) {
