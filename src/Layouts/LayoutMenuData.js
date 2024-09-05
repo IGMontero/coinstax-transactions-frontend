@@ -18,6 +18,8 @@ const Navdata = () => {
   const isCurrentUserPortfolioSelected =
     location.pathname.includes('portfolio');
 
+  console.log('isCurrentUserPortfolioSelected', isCurrentUserPortfolioSelected);
+
   const isUserPortfolio = location.pathname.includes('portfolio') && userId;
 
   // console.log('user', user);
@@ -25,25 +27,42 @@ const Navdata = () => {
     fetchData: state.fetchData,
   }));
 
-  const [prevAddress, setPrevAddress] = useState('');
-  const [addressSearched, setAddressSearched] = useState('');
+  const [prevAddress, setPrevAddress] = useState(null);
+  const [addressSearched, setAddressSearched] = useState(null);
   const [isUnsupported, setIsUnsupported] = useState(false);
   const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
-    if (!address && !token && !contractAddress) {
-      if (isUserPortfolio) {
-        setPrevAddress(`/users/${userId}/portfolio`);
-      } else {
-        setPrevAddress('portfolio');
-      }
+    if (isUserPortfolio) {
+      // If a user's portfolio is selected, set prevAddress to that portfolio
+      setPrevAddress(`/users/${userId}/portfolio`);
+    } else if (isCurrentUserPortfolioSelected) {
+      // If only "portfolio" is selected, set it as prevAddress
+      setPrevAddress('portfolio');
+      setAddressSearched('portfolio');
+    } else if (!address && !token && !contractAddress && !isUserPortfolio) {
+      // If nothing is selected (neither address nor portfolio), clear the values
+      setAddressSearched('');
+      setPrevAddress('');
     } else if (address && address !== addressSearched) {
+      // If an address is selected, update the values
       setAddressSearched(address);
       setPrevAddress(address);
     }
-  }, [address, token, contractAddress, user, prevAddress]);
+  }, [
+    address,
+    token,
+    contractAddress,
+    user,
+    prevAddress,
+    isCurrentUserPortfolioSelected,
+    isUserPortfolio,
+    addressSearched,
+    userId,
+  ]);
 
   console.log('prev Address', prevAddress);
+  console.log('Address searched', addressSearched);
 
   // useEffect(() => {
   //   if (contractAddress && !address ) {
@@ -114,12 +133,21 @@ const Navdata = () => {
     return menuItems;
   };
 
-  let allMenuItems = [
-    createMenuItem('summary', 'Summary', 'bx bx-home', ''),
-    createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
-    createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
-    createMenuItem('transactions', 'Transactions', 'bx bx-transfer', 'history'),
-  ];
+  let allMenuItems = [];
+
+  if (addressSearched || prevAddress) {
+    allMenuItems.push(
+      createMenuItem('summary', 'Summary', 'bx bx-home', ''),
+      createMenuItem('assets', 'Assets', 'bx bx-coin-stack', 'assets'),
+      createMenuItem('nfts', 'NFTs', 'bx bx-coin', 'nfts'),
+      createMenuItem(
+        'transactions',
+        'Transactions',
+        'bx bx-transfer',
+        'history',
+      ),
+    );
+  }
 
   if (isAdminRole) {
     allMenuItems.push(createMenuHeader('Admin'));
