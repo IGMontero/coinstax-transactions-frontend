@@ -171,10 +171,30 @@ export const downloadTransactionsPortfolio = createAsyncThunk(
           },
         },
       );
+
+      // Check if response is a readable stream
+
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        return response.json();
       }
-      const data = await response.blob();
+
+      // Check the Content-Type header to determine the type of response
+      const contentType = response.headers.get('Content-Type');
+
+      if (contentType.includes('application/json')) {
+        console.log('Response is JSON');
+        // Response is JSON
+        const data = await response.json();
+        return data;
+      } else if (contentType.includes('text/csv')) {
+        console.log('Response is CSV');
+        // Response is a blob
+        const blob = await response.blob();
+        // Do something with the blob
+        return blob;
+      }
+
+      const data = await response.json();
       return data;
     } catch (error) {
       return rejectWithValue(error.message);
