@@ -144,3 +144,40 @@ export const fetchTransactionsPortfolio = createAsyncThunk(
     }
   },
 );
+
+export const downloadTransactionsPortfolio = createAsyncThunk(
+  // GET /users/:userId/portfolio/:blockchain/transactions/export
+  'portfolio/downloadTransactionsPortfolio',
+  async ({ userId, blockchain, filters = {} }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      let queryString = '';
+
+      for (const [key, value] of Object.entries(filters)) {
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
+          });
+        } else if (value) {
+          queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        }
+      }
+
+      const response = await fetch(
+        `${API_BASE}/users/${userId}/portfolio/${blockchain}/transactions/export?${queryString}`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+        },
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.blob();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
