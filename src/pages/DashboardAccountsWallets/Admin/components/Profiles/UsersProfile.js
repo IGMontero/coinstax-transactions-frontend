@@ -289,7 +289,7 @@ const UsersProfile = () => {
         <div>
           <AddressesTable
             userId={userId}
-            addresses={addresses}
+            initialAddresses={addresses}
             loading={loadingWallets}
             onRefresh={handleRefreshPortfolio}
           />

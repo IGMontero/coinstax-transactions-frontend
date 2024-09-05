@@ -29,9 +29,11 @@ import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 import { setUserPortfolioSummary } from '../../../../slices/userWallets/reducer';
 
-const AddressesTable = ({ userId, addresses, loading, onRefresh }) => {
+const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [addresses, setAddresses] = useState(initialAddresses);
 
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -184,22 +186,18 @@ const AddressesTable = ({ userId, addresses, loading, onRefresh }) => {
       }
     });
   };
-
-  const onDragEnd = async (result) => {
+  const onDragEnd = (result) => {
     if (!result.destination) return;
 
-    const items = Array.from(addresses);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    const items = Array.from(addresses); // Clona el arreglo de direcciones
+    const [reorderedItem] = items.splice(result.source.index, 1); // Elimina el ítem de su posición original
+    items.splice(result.destination.index, 0, reorderedItem); // Inserta el ítem en la nueva posición
 
-    const updatedItems = items.map((item, idx) => ({
-      ...item,
-      index: idx + 1,
-    }));
+    // Actualiza el estado local inmediatamente para reflejar el nuevo orden
+    setAddresses(items);
 
-    // handleSetAddresses(updatedItems);
-
-    await handleReorderAddresses(updatedItems);
+    // Luego de actualizar el estado, envía la actualización al backend
+    handleReorderAddresses(items);
   };
 
   const handleReorderAddresses = async (updatedAddresses) => {

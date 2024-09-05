@@ -219,7 +219,7 @@ const DashboardClientProfile = () => {
 
             <AddressesTable
               userId={client.UserId}
-              addresses={addresses}
+              initialAddresses={addresses}
               loading={loadingWallets}
               onRefresh={fetchUserWallets}
             />
