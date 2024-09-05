@@ -31,7 +31,10 @@ import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
-import { fetchTransactionsPortfolio } from '../../slices/portfolio/thunk';
+import {
+  downloadTransactionsPortfolio,
+  fetchTransactionsPortfolio,
+} from '../../slices/portfolio/thunk';
 
 const internalPaginationPageSize = 10;
 
@@ -631,18 +634,27 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           Swal.showLoading();
         },
       });
-      const response = await dispatch(
-        downloadTransactions({
-          blockchain: networkType,
-          address: address,
-          query: debouncedSearchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
-          assetsFilters: selectAsset,
-        }),
-      ).unwrap();
+      const downloadParams = {
+        blockchain: networkType,
+        filters: {
+          blockchainAction: selectedFilters,
+          includeSpam: includeSpam,
+        },
+      };
+
+      const downloadAction = isCurrentUserPortfolioSelected
+        ? downloadTransactionsPortfolio({
+            ...downloadParams,
+            userId: currentPortfolioUserId,
+          })
+        : downloadTransactions({
+            ...downloadParams,
+            address: address,
+            query: debouncedSearchTerm,
+            assetsFilters: selectAsset,
+          });
+
+      const response = await dispatch(downloadAction).unwrap();
 
       console.log(response, response.data, response.size);
       const isResponseBlob = response instanceof Blob;
