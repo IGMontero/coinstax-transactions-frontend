@@ -3,14 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Spinner } from 'reactstrap';
 import Swal from 'sweetalert2';
-import {
-  useAccount,
-  useBalance,
-  useChainId,
-  useConnect,
-  useConnections,
-  useWalletClient,
-} from 'wagmi';
+import { useChainId, useConnect, useConnections } from 'wagmi';
 import metamaskLogo from '../../assets/images/wallets/metamask.svg';
 import walletConnect from '../../assets/images/wallets/WalletConnect.png';
 import Helmet from '../../Components/Helmet/Helmet';
@@ -32,7 +25,7 @@ const DashboardConnectWallets = () => {
   console.log('userPortfolio', userPortfolioSummary);
   // const { walletInfo } = useWalletInfo();
 
-  const chainId = useChainId();
+  // const chainId = useChainId();
   const { connectors, connect } = useConnect();
   const connections = useConnections();
   console.log('Connections:', connections);
@@ -40,18 +33,6 @@ const DashboardConnectWallets = () => {
   const validConnectors = connectors.filter((connector) =>
     validConnectorIds.includes(connector.id),
   );
-
-  const metamaskConnector = validConnectors.find(
-    (connector) => connector.id === 'io.metamask',
-  );
-
-  metamaskConnector.onAccountsChanged = (accounts) => {
-    console.log('Metamask accounts changed:', accounts);
-  };
-
-  metamaskConnector.onConnect = (data) => {
-    console.log('MetaMask connected', data);
-  };
 
   const [loading, setLoading] = useState(false);
 
@@ -96,9 +77,18 @@ const DashboardConnectWallets = () => {
 
   const handleConnect = (connector) => {
     connect(
-      { connector, chainId, onSuccess: handleConnectedAccount },
+      { connector },
       {
         onSuccess: handleConnectedAccount,
+        onError: (error) => {
+          console.error('Failed to connect wallet: ', error);
+          console.log(error.code, error.data, error.name);
+          const errorName = error.name;
+
+          if (errorName === 'ConnectorAlreadyConnectedError') {
+            console.log('Connector was already connected');
+          }
+        },
       },
     );
 
@@ -202,7 +192,18 @@ function ConnectorButton({ connector, onClick }) {
 
   // Get logo based on connector id
 
-  const logo = connector.id === 'walletConnect' ? walletConnect : metamaskLogo;
+  let logo;
+
+  switch (connector.id) {
+    case 'walletConnect':
+      logo = walletConnect;
+      break;
+    case 'io.metamask':
+      logo = metamaskLogo;
+      break;
+    default:
+      logo = '';
+  }
 
   return (
     <div
@@ -210,11 +211,16 @@ function ConnectorButton({ connector, onClick }) {
             "
       onClick={ready && !connector.active ? () => onClick() : () => { }}
     >
-      <img
-        className="img-fluid avatar-md mb-2"
-        src={logo}
-        alt={connector.name}
-      />
+      {logo ? (
+        <img
+          className="img-fluid avatar-md mb-2"
+          src={logo}
+          alt={connector.name}
+        />
+      ) : (
+        <div className="avatar-md mb-2">{/* {connector.name} */}</div>
+      )}
+
       {connector.name}
     </div>
   );
