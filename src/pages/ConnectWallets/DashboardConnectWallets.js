@@ -11,6 +11,7 @@ import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 import { validConnectorIds } from '../../Providers/ConnectWalletProvider';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
+import ModalLoader from '../../Components/Modals/ModalLoader';
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -165,6 +166,8 @@ const DashboardConnectWallets = () => {
 
 function ConnectorButton({ connector, onClick }) {
   const [ready, setReady] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+
   React.useEffect(() => {
     (async () => {
       const provider = await connector.getProvider();
@@ -172,23 +175,35 @@ function ConnectorButton({ connector, onClick }) {
     })();
   }, [connector, setReady]);
 
+  const handleClick = () => {
+    setLoading(true);
+    onClick();
+  };
+
+  const handleCloseLoader = () => {
+    setLoading(false);
+  };
+
   // Get logo based on connector id
 
   const logo = connector.id === 'walletConnect' ? walletConnect : metamaskLogo;
 
   return (
-    <div
-      className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center
-            "
-      onClick={ready && !connector.active ? () => onClick() : () => {}}
-    >
-      <img
-        className="img-fluid avatar-md mb-2"
-        src={logo}
-        alt={connector.name}
-      />
-      {connector.name}
-    </div>
+    <>
+      <div
+        className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center
+      "
+        onClick={ready && !connector.active && !loading ? handleClick : null}
+      >
+        <img
+          className="img-fluid avatar-md mb-2"
+          src={logo}
+          alt={connector.name}
+        />
+        {connector.name}
+      </div>
+      <ModalLoader isOpen={loading} onClose={handleCloseLoader} />
+    </>
   );
 }
 
