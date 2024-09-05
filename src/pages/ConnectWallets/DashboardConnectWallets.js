@@ -119,8 +119,9 @@ const DashboardConnectWallets = () => {
         );
       }
 
+      const addressToNavigate = mainAddress?.toLowerCase();
       // navigate to the first account
-      navigate(`/address/${mainAddress}`);
+      navigate(`/address/${addressToNavigate}`);
 
       refreshUserPortfolio();
     }
