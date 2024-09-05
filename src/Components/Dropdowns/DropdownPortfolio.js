@@ -274,6 +274,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   //     ? parseValuesToLocale(addressValue, CurrencyUSD)
   //     : '$ 0';
   // };
+
   const handleVisitAddress = (link) => {
     navigate(`${link}`);
   };
