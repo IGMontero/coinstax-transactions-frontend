@@ -128,32 +128,34 @@ const DashboardConnectWallets = () => {
           <span>Track any wallet</span>
           <div className="d-flex align-items-center">
             <SearchBarWallets onSearch={handleSearch} />
-            <Button
-              className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
-              color="soft-light"
-              disabled={loading}
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-                cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
-              }}
-              onClick={() => {
-                if (!user) {
-                  handleAddWallet(searchValue);
-                } else {
-                  handleConnectWallet(searchValue);
-                }
-              }}
-            >
-              <i className="bx bx-plus me-2"></i>
-              {loading ? (
-                <div>
-                  <Spinner size="sm" color="light" />
-                </div>
-              ) : (
-                <>Add</>
-              )}
-            </Button>
+            {searchValue && (
+              <Button
+                className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
+                color="soft-light"
+                disabled={loading}
+                style={{
+                  borderRadius: '10px',
+                  border: '.5px solid grey',
+                  cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
+                }}
+                onClick={() => {
+                  if (!user) {
+                    handleAddWallet(searchValue);
+                  } else {
+                    handleConnectWallet(searchValue);
+                  }
+                }}
+              >
+                <i className="bx bx-plus me-2"></i>
+                {loading ? (
+                  <div>
+                    <Spinner size="sm" color="light" />
+                  </div>
+                ) : (
+                  <>Add</>
+                )}
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -178,7 +180,7 @@ function ConnectorButton({ connector, onClick }) {
     <div
       className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center
             "
-      onClick={ready && !connector.active ? () => onClick() : () => { }}
+      onClick={ready && !connector.active ? () => onClick() : () => {}}
     >
       <img
         className="img-fluid avatar-md mb-2"
