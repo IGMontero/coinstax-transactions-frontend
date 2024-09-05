@@ -129,34 +129,32 @@ const DashboardConnectWallets = () => {
           <span>Track any wallet</span>
           <div className="d-flex align-items-center">
             <SearchBarWallets onSearch={handleSearch} />
-            {searchValue && (
-              <Button
-                className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
-                color="soft-light"
-                disabled={loading}
-                style={{
-                  borderRadius: '10px',
-                  border: '.5px solid grey',
-                  cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
-                }}
-                onClick={() => {
-                  if (!user) {
-                    handleAddWallet(searchValue);
-                  } else {
-                    handleConnectWallet(searchValue);
-                  }
-                }}
-              >
-                <i className="bx bx-plus me-2"></i>
-                {loading ? (
-                  <div>
-                    <Spinner size="sm" color="light" />
-                  </div>
-                ) : (
-                  <>Add</>
-                )}
-              </Button>
-            )}
+            <Button
+              className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
+              color="soft-light"
+              disabled={loading || !searchValue}
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+                cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
+              }}
+              onClick={() => {
+                if (!user) {
+                  handleAddWallet(searchValue);
+                } else {
+                  handleConnectWallet(searchValue);
+                }
+              }}
+            >
+              <i className="bx bx-plus me-2"></i>
+              {loading ? (
+                <div>
+                  <Spinner size="sm" color="light" />
+                </div>
+              ) : (
+                <>Add</>
+              )}
+            </Button>
           </div>
         </div>
       </div>

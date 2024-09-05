@@ -18,8 +18,6 @@ const Navdata = () => {
   const isCurrentUserPortfolioSelected =
     location.pathname.includes('portfolio');
 
-  console.log('isCurrentUserPortfolioSelected', isCurrentUserPortfolioSelected);
-
   const isUserPortfolio = location.pathname.includes('portfolio') && userId;
 
   // console.log('user', user);
@@ -40,7 +38,13 @@ const Navdata = () => {
       // If only "portfolio" is selected, set it as prevAddress
       setPrevAddress('portfolio');
       setAddressSearched('portfolio');
-    } else if (!address && !token && !contractAddress && !isUserPortfolio) {
+    } else if (
+      !address &&
+      !token &&
+      !contractAddress &&
+      !isUserPortfolio &&
+      !prevAddress
+    ) {
       // If nothing is selected (neither address nor portfolio), clear the values
       setAddressSearched('');
       setPrevAddress('');
@@ -61,8 +65,7 @@ const Navdata = () => {
     userId,
   ]);
 
-  console.log('prev Address', prevAddress);
-  console.log('Address searched', addressSearched);
+  console.log('prevaddress', prevAddress);
 
   // useEffect(() => {
   //   if (contractAddress && !address ) {
