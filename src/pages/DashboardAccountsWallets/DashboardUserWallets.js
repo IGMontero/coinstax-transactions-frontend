@@ -3,17 +3,8 @@ import { Button } from 'reactstrap';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddressesTable from './components/tables/AddressesTable';
 import { useSelector, useDispatch } from 'react-redux';
-import { setUserPortfolioSummary } from '../../slices/userWallets/reducer';
-import {
-  addAccountManager,
-  addClientsInviteCode,
-  deleteUserAddressWallet,
-  reorderUserWallets,
-  updateUserWalletAddress,
-} from '../../slices/userWallets/thunk';
-import Swal from 'sweetalert2';
+
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
-import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 import {
   CurrencyUSD,
   isDarkMode,
@@ -34,7 +25,7 @@ const DashboardUserWallets = () => {
   const userAddresses = userPortfolioSummary?.addresses;
   const refreshUserPortfolio = useRefreshUserPortfolio();
 
-  const [modalConnectWallet, setModalConnectWallet] = useState(false);
+  // const [modalConnectWallet, setModalConnectWallet] = useState(false);
 
   const [modalAddAccountManager, setModalAddAccountManager] = useState(false);
 
@@ -63,8 +54,12 @@ const DashboardUserWallets = () => {
     }
   }, []);
 
-  const toggleModalConnectWallet = () =>
-    setModalConnectWallet(!modalConnectWallet);
+  // const toggleModalConnectWallet = () =>
+  //   setModalConnectWallet(!modalConnectWallet);
+
+  const handleConnectWallet = () => {
+    navigate('/wallets/connect');
+  };
 
   const toggleModalAddAccountManager = () =>
     setModalAddAccountManager(!modalAddAccountManager);
@@ -86,12 +81,12 @@ const DashboardUserWallets = () => {
   return (
     <React.Fragment>
       <Helmet title="Wallets" />
-      <ConnectWalletModal
+      {/* <ConnectWalletModal
         isOpen={modalConnectWallet}
         setIsOpen={setModalConnectWallet}
         userId={userId}
         onRefresh={refreshUserPortfolio}
-      />
+      /> */}
 
       <AddAccManager
         isOpen={modalAddAccountManager}
@@ -100,9 +95,9 @@ const DashboardUserWallets = () => {
       />
       <div style={{ maxWidth: '610px' }}>
         <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
-          <h1>Manage Wallets</h1>
+          <h1>Manage Wallets </h1>
           <div className="d-flex align-items-center">
-            <Button
+            {/* <Button
               onClick={toggleModalAddAccountManager}
               className="d-flex btn-hover-light text-dark justify-content-center align-items-center me-2"
               color="soft-light"
@@ -112,9 +107,9 @@ const DashboardUserWallets = () => {
               }}
             >
               Add Account Manager
-            </Button>
+            </Button> */}
             <Button
-              onClick={toggleModalConnectWallet}
+              onClick={handleConnectWallet}
               className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
               color="soft-light"
               style={{
@@ -152,7 +147,7 @@ const DashboardUserWallets = () => {
 
         <AddressesTable
           userId={userId}
-          addresses={userPortfolioSummary?.addresses}
+          initialAddresses={userPortfolioSummary?.addresses}
           loading={loaders.userPortfolioSummary}
           onRefresh={handleRefreshPortfolio}
         />

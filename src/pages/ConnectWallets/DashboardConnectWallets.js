@@ -14,6 +14,7 @@ import {
 import { validConnectorIds } from '../../Providers/ConnectWalletProvider';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
+import ModalLoader from '../../Components/Modals/ModalLoader';
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -152,7 +153,7 @@ const DashboardConnectWallets = () => {
             <Button
               className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
               color="soft-light"
-              disabled={loading}
+              disabled={loading || !searchValue}
               style={{
                 borderRadius: '10px',
                 border: '.5px solid grey',
@@ -190,6 +191,15 @@ function ConnectorButton({ connector, onClick }) {
       setReady(!!provider);
     })();
   }, [connector, setReady]);
+
+  const handleClick = () => {
+    setLoading(true);
+    onClick();
+  };
+
+  const handleCloseLoader = () => {
+    setLoading(false);
+  };
 
   // Get logo based on connector id
 

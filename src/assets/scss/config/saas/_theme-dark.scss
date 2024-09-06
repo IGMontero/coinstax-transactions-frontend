@@ -908,3 +908,12 @@
 .address-card:hover {
   border-color: #007bff !important;
 }
+
+// Modal connect wallet
+.wcm-overlay.wcm-active {
+  z-index: 2000; 
+}
+
+.wcm-container {
+  z-index: 2000; 
+}
