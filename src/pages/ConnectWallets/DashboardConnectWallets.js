@@ -182,15 +182,14 @@ function ConnectorButton({ connector, onClick }) {
     setLoading(false);
   };
 
-  // Get logo based on connector id
+  // Get logo based on connector id asd
 
   const logo = connector.id === 'walletConnect' ? walletConnect : metamaskLogo;
 
   return (
     <>
       <div
-        className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center
-      "
+        className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center"
         onClick={ready && !connector.active && !loading ? handleClick : null}
       >
         <img
