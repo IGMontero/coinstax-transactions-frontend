@@ -80,6 +80,8 @@ const Login = (props) => {
           } else {
             navigate('/wallets');
           }
+        } else if (role === DASHBOARD_USER_ROLES.ADMIN) {
+          navigate('/admin/clients');
         } else {
           navigate('/clients');
         }
