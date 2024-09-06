@@ -185,55 +185,49 @@ const DashboardConnectWallets = () => {
 
 function ConnectorButton({ connector, onClick }) {
   const [ready, setReady] = React.useState(false);
-  useEffect(() => {
+  const [loading, setLoading] = React.useState(false);
+  React.useEffect(() => {
     (async () => {
       const provider = await connector.getProvider();
       setReady(!!provider);
     })();
   }, [connector, setReady]);
-
   const handleClick = () => {
     setLoading(true);
     onClick();
   };
-
   const handleCloseLoader = () => {
     setLoading(false);
   };
-
-  // Get logo based on connector id
-
-  let logo;
-
-  switch (connector.id) {
-    case 'walletConnect':
-      logo = walletConnect;
-      break;
-    case 'io.metamask':
-      logo = metamaskLogo;
-      break;
-    default:
-      logo = '';
-  }
-
+  // Get logo based on connector id asd
+  const logo =
+    connector.id === 'walletConnect'
+      ? walletConnect
+      : connector.id === 'io.metamask'
+        ? metamaskLogo
+        : null;
   return (
-    <div
-      className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center
-            "
-      onClick={ready && !connector.active ? () => onClick() : () => { }}
-    >
-      {logo ? (
-        <img
-          className="img-fluid avatar-md mb-2"
-          src={logo}
-          alt={connector.name}
-        />
-      ) : (
-        <div className="avatar-md mb-2">{/* {connector.name} */}</div>
-      )}
+    <>
+      <div
+        className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center"
+        onClick={ready && !connector.active && !loading ? handleClick : null}
+      >
+        {logo ? (
+          <img
+            className="img-fluid avatar-md mb-2"
+            src={logo}
+            alt={connector.name}
+          />
+        ) : (
+          <div className="avatar-md mb-2">
+            {/* <i className="bx bx-wallet"></i> */}
+          </div>
+        )}
 
-      {connector.name}
-    </div>
+        {connector.name}
+      </div>
+      <ModalLoader isOpen={loading} onClose={handleCloseLoader} />
+    </>
   );
 }
 
