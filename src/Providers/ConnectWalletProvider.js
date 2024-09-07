@@ -9,7 +9,9 @@ import { coinbaseWallet, metaMask, walletConnect } from 'wagmi/connectors';
 const queryClient = new QueryClient();
 
 // 1. Get projectId from https://cloud.walletconnect.com
-const projectId = 'f3ec191ff1a02016249d76c9de7ad02b';
+const projectId =
+    process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID ||
+    'f3ec191ff1a02016249d76c9de7ad02b';
 
 const chains = [mainnet];
 
