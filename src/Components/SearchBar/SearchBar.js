@@ -2,16 +2,28 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Select, { components } from 'react-select';
-import { Col } from 'reactstrap';
+import { Button, Col, Spinner } from 'reactstrap';
 import { getAddressesSuggestions } from '../../slices/addresses/thunk';
 import { layoutModeTypes } from '../constants/layout';
 import CustomOptions from './components/CustomOptions';
 import { setAddressName } from '../../slices/addressName/reducer';
 import { trackGAEvent } from '../../helpers/GAHelper';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
+import { addUserWallet } from '../../slices/userWallets/thunk';
+import Swal from 'sweetalert2';
 
-const SearchBar = ({ selectedOption }) => {
+const SearchBar = ({
+  selectedOption,
+  searchInput,
+  setSearchInput,
+  isConnectWalletsPage,
+}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+  const userId = user?.id;
+  const refreshUserPortfolio = useRefreshUserPortfolio();
+  // const userPortfolioSummary = useUserPortfolioSummary();
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
@@ -22,7 +34,7 @@ const SearchBar = ({ selectedOption }) => {
   // #region STATES
   const [isUnsupported, setIsUnsupported] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [searchInput, setSearchInput] = useState('');
+  // const [searchInput, setSearchInput] = useState('');
   const [options, setOptions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -184,13 +196,12 @@ const SearchBar = ({ selectedOption }) => {
     const action = 'address_search';
     const label = address;
 
-
     trackGAEvent({
       category,
       action,
       label,
-    })
-  }
+    });
+  };
 
   const handleChange = (selectedOption) => {
     if (selectedOption && selectedOption.value) {
@@ -224,6 +235,35 @@ const SearchBar = ({ selectedOption }) => {
       } else {
         navigate(`/address/${searchInput}`);
       }
+    }
+  };
+
+  const handleAddWallet = async (address) => {
+    setLoading(true);
+    try {
+      const response = await dispatch(
+        addUserWallet({ address, userId }),
+      ).unwrap();
+
+      if (response && !response.error) {
+        navigate(`/address/${address}`);
+        refreshUserPortfolio();
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: response.message || 'Failed to connect wallet',
+          icon: 'error',
+        });
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error('Failed to connect wallet: ', error);
+      Swal.fire({
+        title: 'Error',
+        text: error || 'Failed to connect wallet',
+        icon: 'error',
+      });
+      setLoading(false);
     }
   };
 
@@ -361,15 +401,47 @@ const SearchBar = ({ selectedOption }) => {
             : () => 'We were unable to find any results for your search'
         }
         onKeyDown={(e) => {
-          if (e.key === 'Enter' && searchInput.length >= 3) {
-            setSearchInput('');
-            // Close dropdown
-            setIsMenuOpen(false);
-            navigate(`/address/${searchInput}`);
-            handleTrackAddressSearchAnalytics(searchInput);
+          if (user && e.key === 'Enter' && searchInput.length >= 3) {
+            handleAddWallet(searchInput);
+          } else {
+            if (e.key === 'Enter' && searchInput.length >= 3) {
+              setSearchInput('');
+              // Close dropdown
+              setIsMenuOpen(false);
+              navigate(`/address/${searchInput}`);
+              handleTrackAddressSearchAnalytics(searchInput);
+            }
           }
         }}
       />
+      {isConnectWalletsPage && (
+        <Button
+          className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
+          color="soft-light"
+          disabled={loading || !searchInput}
+          style={{
+            borderRadius: '10px',
+            border: '.5px solid grey',
+            cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
+          }}
+          onClick={() => {
+            if (!user) {
+              navigate(`/address/${searchInput}`);
+            } else {
+              handleAddWallet(searchInput);
+            }
+          }}
+        >
+          <i className="bx bx-plus me-2"></i>
+          {loading ? (
+            <div>
+              <Spinner size="sm" color="light" />
+            </div>
+          ) : (
+            <>Add</>
+          )}
+        </Button>
+      )}
       {/* <DropdownAddresses
         optionDropdown={optionDropdown}
         isUnsupported={isUnsupported}
