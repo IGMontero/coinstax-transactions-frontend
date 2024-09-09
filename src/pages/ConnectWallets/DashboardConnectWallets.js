@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button, Spinner } from 'reactstrap';
+import { Button, Modal, Spinner } from 'reactstrap';
 import Swal from 'sweetalert2';
-import { useChainId, useConnect, useConnections } from 'wagmi';
+import { useConnect, useConnections } from 'wagmi';
+import coinbaseLogo from '../../assets/images/wallets/coinbase.png';
 import metamaskLogo from '../../assets/images/wallets/metamask.svg';
-import walletConnect from '../../assets/images/wallets/WalletConnect.png';
+import walletConnectLogo from '../../assets/images/wallets/walletConnect.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import {
   useRefreshUserPortfolio,
   useUserPortfolioSummary,
 } from '../../hooks/useUserPortfolio';
-import { validConnectorIds } from '../../Providers/ConnectWalletProvider';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
 import ModalLoader from '../../Components/Modals/ModalLoader';
+
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -30,14 +31,37 @@ const DashboardConnectWallets = () => {
   const { connectors, connect } = useConnect();
   const connections = useConnections();
   console.log('Connections:', connections);
-
-  const validConnectors = connectors.filter((connector) =>
-    validConnectorIds.includes(connector.id),
-  );
+  console.log('Connectors: ', connectors);
 
   const [loading, setLoading] = useState(false);
-
+  const [loadingConnectInfo, setLoadingConnectInfo] = useState({
+    loading: false,
+    error: null,
+    name: '',
+    message: '',
+  });
   const [searchValue, setSearchValue] = useState('');
+
+  const allConnectors = [
+    {
+      name: 'Metamask',
+      id: 'io.metamask',
+      uid: 'metamask',
+      logo: metamaskLogo,
+    },
+    {
+      name: 'WalletConnect',
+      id: 'walletConnect',
+      uid: 'walletConnect',
+      logo: walletConnectLogo,
+    },
+    {
+      name: 'Coinbase Wallet',
+      id: 'coinbaseWalletSDK',
+      uid: 'coinbaseWallet',
+      logo: coinbaseLogo,
+    },
+  ];
 
   const handleSearchWallet = (value) => {
     navigate(`/address/${value}`);
@@ -77,6 +101,12 @@ const DashboardConnectWallets = () => {
   };
 
   const handleConnect = (connector) => {
+    setLoadingConnectInfo({
+      loading: true,
+      error: null,
+      name: connector.name,
+      message: '',
+    });
     connect(
       { connector },
       {
@@ -85,16 +115,34 @@ const DashboardConnectWallets = () => {
           console.error('Failed to connect wallet: ', error);
           console.log(error.code, error.data, error.name);
           const errorName = error.name;
+          const errorCode = error.code;
 
           if (errorName === 'ConnectorAlreadyConnectedError') {
             console.log('Connector was already connected');
+          } else if (errorCode === -32002) {
+            console.log('Err name: ', errorName);
+            console.log('err code: ', error.code);
+            Swal.fire({
+              // title: 'Error',
+              text: 'Permission to connect already requested. Please check your wallet to approve the connection.',
+              icon: 'error',
+            });
           }
+
+          setLoadingConnectInfo({
+            loading: false,
+            error: error,
+            name: connector.name,
+            message: error.message,
+          });
         },
       },
     );
 
     async function handleConnectedAccount() {
       const accounts = await connector.getAccounts();
+
+      console.log('Accounts: ', accounts);
 
       // For each account do the same. Only navigate to the first one.
 
@@ -125,10 +173,30 @@ const DashboardConnectWallets = () => {
       navigate(`/address/${addressToNavigate}`);
 
       refreshUserPortfolio();
+      setLoadingConnectInfo({
+        loading: false,
+        error: null,
+        name: '',
+        message: '',
+      });
     }
 
     handleConnectedAccount();
   };
+
+  const renderConnectors = () =>
+    allConnectors.map((connector) => {
+      // Get connector from the list of connectors
+      return (
+        <ConnectorButton
+          key={connector.uid}
+          id={connector.id}
+          name={connector.name}
+          logo={connector.logo}
+          handleConnect={handleConnect}
+        />
+      );
+    });
 
   return (
     <div className="page-content ">
@@ -137,15 +205,7 @@ const DashboardConnectWallets = () => {
         <div>
           <h1>Connect to ChainGlance</h1>
         </div>
-        <div className="d-flex mt-4 mb-5">
-          {validConnectors.map((connector) => (
-            <ConnectorButton
-              key={connector.uid}
-              connector={connector}
-              onClick={() => handleConnect(connector)}
-            />
-          ))}
-        </div>
+        <div className="d-flex mt-4 mb-5">{renderConnectors()}</div>
         <div className="w-50 py-3">
           <span>Track any wallet</span>
           <div className="d-flex align-items-center">
@@ -179,54 +239,75 @@ const DashboardConnectWallets = () => {
           </div>
         </div>
       </div>
+
+      <ModalLoader
+        isOpen={loadingConnectInfo.loading}
+        details={loadingConnectInfo}
+        onClose={() => {
+          setLoadingConnectInfo({
+            loading: false,
+            error: null,
+            name: '',
+            message: '',
+          });
+        }}
+      />
     </div>
   );
 };
 
-function ConnectorButton({ connector, onClick }) {
-  const [ready, setReady] = React.useState(false);
-  const [loading, setLoading] = React.useState(false);
-  React.useEffect(() => {
-    (async () => {
-      const provider = await connector.getProvider();
-      setReady(!!provider);
-    })();
-  }, [connector, setReady]);
+function ConnectorButton({ id, name, logo, handleConnect }) {
+  // const [ready, setReady] = React.useState(false);
+  const { connectors } = useConnect();
+
+  const [connector, setConnector] = React.useState(null);
+
+  useEffect(() => {
+    const connector = connectors.find((c) => c.id === id);
+    setConnector(connector);
+  }, [connectors, id]);
+
+  // React.useEffect(() => {
+  //   if (!connector) return;
+
+  //   (async () => {
+  //     const provider = await connector.getProvider();
+  //     setReady(!!provider);
+  //   })();
+  // }, [connector, setReady]);
+
   const handleClick = () => {
-    setLoading(true);
-    onClick();
+    // Get connector from the list of connectors
+
+    if (!connector) {
+      return Swal.fire({
+        // title: 'Error',
+        text: `${name} extension not found. Please install the extension and try again.`,
+        icon: 'error',
+      });
+    }
+
+    if (handleConnect) {
+      handleConnect(connector);
+    }
   };
-  const handleCloseLoader = () => {
-    setLoading(false);
-  };
-  // Get logo based on connector id asd
-  const logo =
-    connector.id === 'walletConnect'
-      ? walletConnect
-      : connector.id === 'io.metamask'
-        ? metamaskLogo
-        : null;
+
   return (
     <>
       <div
         className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center"
-        onClick={ready && !connector.active && !loading ? handleClick : null}
+        onClick={handleClick}
       >
         {logo ? (
-          <img
-            className="img-fluid avatar-md mb-2"
-            src={logo}
-            alt={connector.name}
-          />
+          <img className="img-fluid avatar-md mb-2" src={logo} alt={name} />
         ) : (
           <div className="avatar-md mb-2">
             {/* <i className="bx bx-wallet"></i> */}
           </div>
         )}
 
-        {connector.name}
+        {name}
       </div>
-      <ModalLoader isOpen={loading} onClose={handleCloseLoader} />
     </>
   );
 }
