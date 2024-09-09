@@ -15,6 +15,7 @@ import {
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
 import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
+import DashboardUserWallets from '../DashboardAccountsWallets/DashboardUserWallets';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -22,16 +23,20 @@ const DashboardConnectWallets = () => {
   const refreshUserPortfolio = useRefreshUserPortfolio();
   const userPortfolioSummary = useUserPortfolioSummary();
   const { user } = useSelector((state) => state.auth);
+  const { loaders } = useSelector((state) => state.userWallets);
   const userId = user?.id;
+  const userAddresses = userPortfolioSummary?.addresses;
 
-  console.log('userPortfolio', userPortfolioSummary);
+  console.log('User portfolio summary:', userPortfolioSummary);
+
+  console.log('user addresses:', userAddresses);
   // const { walletInfo } = useWalletInfo();
 
   // const chainId = useChainId();
   const { connectors, connect } = useConnect();
   const connections = useConnections();
-  console.log('Connections:', connections);
-  console.log('Connectors: ', connectors);
+  // console.log('Connections:', connections);
+  // console.log('Connectors: ', connectors);
 
   const [loading, setLoading] = useState(false);
   const [loadingConnectInfo, setLoadingConnectInfo] = useState({
@@ -62,6 +67,22 @@ const DashboardConnectWallets = () => {
       logo: coinbaseLogo,
     },
   ];
+
+  const [initialLoad, setInitialLoad] = useState(true);
+  const loadingPortoflioAddresses = loaders.userPortfolioSummary;
+
+  useEffect(() => {
+    // Initialize: if there are no collected wallets, send user to connect wallet page.
+    // if (!hasConnectedWallets) {
+    //   console.log('No connected wallets');
+    //   navigate('/wallets/connect');
+    // }
+
+    if (initialLoad) {
+      setInitialLoad(false);
+      refreshUserPortfolio();
+    }
+  }, [initialLoad, refreshUserPortfolio, userAddresses, userPortfolioSummary]);
 
   const handleSearchWallet = (value) => {
     navigate(`/address/${value}`);
@@ -232,61 +253,73 @@ const DashboardConnectWallets = () => {
     });
 
   return (
-    <div className="page-content ">
-      <Helmet title="Connect Wallet" />
-      <div className="d-flex justify-content-center flex-column align-items-center">
-        <div>
-          <h1>Connect to ChainGlance</h1>
-        </div>
-        <div className="d-flex mt-4 mb-5">{renderConnectors()}</div>
-        <div className="w-50 py-3">
-          <span>Track any wallet</span>
-          <div className="d-flex align-items-center">
-            <SearchBarWallets onSearch={handleSearch} />
-            <Button
-              className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
-              color="soft-light"
-              disabled={loading || !searchValue}
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-                cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
-              }}
-              onClick={() => {
-                if (!user) {
-                  handleSearchWallet(searchValue);
-                } else {
-                  handleConnectWallet(searchValue);
-                }
-              }}
-            >
-              <i className="bx bx-plus me-2"></i>
-              {loading ? (
-                <div>
-                  <Spinner size="sm" color="light" />
-                </div>
-              ) : (
-                <>Add</>
-              )}
-            </Button>
+    <>
+      <div className="page-content ">
+        <Helmet title="Connect Wallet" />
+        <div className="d-flex justify-content-center flex-column align-items-center">
+          <div>
+            <h1>Connect to ChainGlance</h1>
           </div>
-        </div>
-      </div>
+          <div className="d-flex mt-4 mb-5">{renderConnectors()}</div>
+          <div className="w-50 py-3">
+            <span>Track any wallet</span>
+            <div className="d-flex align-items-center">
+              <SearchBarWallets onSearch={handleSearch} />
+              <Button
+                className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
+                color="soft-light"
+                disabled={loading || !searchValue}
+                style={{
+                  borderRadius: '10px',
+                  border: '.5px solid grey',
+                  cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
+                }}
+                onClick={() => {
+                  if (!user) {
+                    handleSearchWallet(searchValue);
+                  } else {
+                    handleConnectWallet(searchValue);
+                  }
+                }}
+              >
+                <i className="bx bx-plus me-2"></i>
+                {loading ? (
+                  <div>
+                    <Spinner size="sm" color="light" />
+                  </div>
+                ) : (
+                  <>Add</>
+                )}
+              </Button>
+            </div>
+          </div>
 
-      <ConnectWalletModal
-        isOpen={loadingConnectInfo.open}
-        details={loadingConnectInfo}
-        onClose={() => {
-          setLoadingConnectInfo({
-            open: false,
-            loading: false,
-            error: null,
-            name: '',
-            message: '',
-          });
-        }}
-      />
-    </div>
+          {userAddresses?.length > 0 && (
+            <DashboardUserWallets
+              userPortfolioSummary={userPortfolioSummary}
+              userAddresses={userAddresses}
+              user={user}
+              loading={loadingPortoflioAddresses}
+              initialLoad={initialLoad}
+            />
+          )}
+        </div>
+
+        <ConnectWalletModal
+          isOpen={loadingConnectInfo.open}
+          details={loadingConnectInfo}
+          onClose={() => {
+            setLoadingConnectInfo({
+              open: false,
+              loading: false,
+              error: null,
+              name: '',
+              message: '',
+            });
+          }}
+        />
+      </div>
+    </>
   );
 };
 

@@ -51,7 +51,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   );
   const [selectedAddress, setSelectedAddress] = useState(
     userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-    null,
+      null,
   );
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
@@ -155,8 +155,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.name ? address.name : address.address
-        }?`,
+      text: `Are you sure to delete wallet ${
+        address.name ? address.name : address.address
+      }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -340,8 +341,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''
-          } border-1 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent ${
+          isInHeader ? 'py-1 ' : ''
+        } border-1 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
@@ -428,7 +430,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           )}
           <DropdownItem
             onClick={() => {
-              handleVisitAddress('/wallets/connect');
+              handleVisitAddress('/wallets');
             }}
           >
             <div className="dropdown-item ps-0">

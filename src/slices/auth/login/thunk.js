@@ -12,6 +12,7 @@ import {
   reset_login_flag,
 } from './reducer';
 import { profileSuccess } from '../profile/reducer';
+import { cleanUserWallets } from '../../userWallets/reducer';
 
 export const loginUser = (user, history) => async (dispatch) => {
   try {
@@ -61,6 +62,10 @@ export const logoutUser = () => async (dispatch) => {
     const fireBaseBackend = getFirebaseBackend();
 
     fireBaseBackend.logout();
+
+    // cleanUserWallets
+    dispatch(logoutUserSuccess());
+    dispatch(cleanUserWallets());
   } catch (error) {
     console.log(error);
     dispatch(apiError(error));

@@ -285,8 +285,15 @@ const Layout = (props) => {
     } catch (error) {
       if (error.name === 'AbortError') {
         setIsSuccessfullRequest(true);
+      } else if (error === 'Error: 401') {
+        if (process.env.NODE_ENV === 'development') {
+          alert('You are not authorized to access this page');
+        }
+        window.location.href = '/wallets';
+        setIsSuccessfullRequest(false);
+        setIsUnsupported(true);
       } else {
-        console.error('Error fetching address info: ', error);
+        console.log('Error fetching address info: ', error);
         setIsSuccessfullRequest(false);
         setIsUnsupported(true);
       }

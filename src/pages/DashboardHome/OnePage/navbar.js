@@ -16,12 +16,15 @@ import logo from '../../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../../slices/auth2/reducer';
 import Swal from 'sweetalert2';
+import { cleanUserWallets } from '../../../slices/userWallets/reducer';
+import { useLogOut } from '../../../hooks/useAuth';
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const [isOpenMenu, setisOpenMenu] = useState(false);
   const [navClass, setnavClass] = useState('');
   const { user } = useSelector((state) => state.auth);
+  const logout = useLogOut();
 
   const toggle = () => setisOpenMenu(!isOpenMenu);
 
@@ -40,14 +43,7 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await dispatch(logout());
-      // Swal.fire({
-      //   title: 'Logged Out!',
-      //   text: 'You have been logged out successfully!',
-      //   icon: 'success',
-      //   timer: 2000,
-      //   showConfirmButton: false,
-      // });
+      await logout();
     } catch (error) {
       console.log(error);
     }

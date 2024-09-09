@@ -90,10 +90,23 @@ const userWalletsSlice = createSlice({
 
     addAddressToUserPortfolio: (state, action) => {
       state.userPortfolioSummary.addresses.push(action.payload);
-    }
+    },
+
+    cleanUserWallets: (state) => {
+      console.log('cleanUserWallets');
+      state.userPortfolio = [];
+      state.userPortfolioSummary = {
+        addresses: [],
+      };
+    },
   },
 });
 
-export const { setLoader, setUserPortfolioSummary, addAddressToUserPortfolio } = userWalletsSlice.actions;
+export const {
+  setLoader,
+  setUserPortfolioSummary,
+  addAddressToUserPortfolio,
+  cleanUserWallets,
+} = userWalletsSlice.actions;
 
 export default userWalletsSlice.reducer;

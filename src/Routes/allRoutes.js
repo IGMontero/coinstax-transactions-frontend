@@ -111,17 +111,12 @@ const publicRoutes = [
   { path: '/address/:address/assets', component: <DashboardAssets /> },
   { path: '/address/:address/nfts', component: <NFTsPage /> },
   { path: '/address/:address/history', component: <DashboardTransactions /> },
-  // PORTFOLIO
-  { path: '/portfolio', component: <DashboardInfo /> },
-  { path: '/portfolio/assets', component: <DashboardAssets /> },
-  { path: '/portfolio/nfts', component: <NFTsPage /> },
-  { path: '/portfolio/history', component: <DashboardTransactions /> },
 
-  // PORTFOLIO USERS
-  { path: '/users/:userId/portfolio', component: <DashboardInfo /> },
-  { path: '/users/:userId/portfolio/assets', component: <DashboardAssets /> },
-  { path: '/users/:userId/nfts', component: <NFTsPage /> },
-  { path: '/users/:userId/history', component: <DashboardTransactions /> },
+  // Default to wallets page
+  {
+    path: '/wallets',
+    component: <DashboardConnectWallets />,
+  },
 ];
 
 // Home page
@@ -133,7 +128,6 @@ const noVerticalLayoutRoutes = [
 const authProtectedRoutes = [
   {
     path: '/profile',
-
     component: (
       <AuthProtectedRoutes
         allowedRoles={[
@@ -163,24 +157,24 @@ const authProtectedRoutes = [
     ),
   },
 
-  {
-    path: '/wallets',
-    component: (
-      <AuthProtectedRoutes
-        allowedRoles={[
-          DASHBOARD_USER_ROLES.ADMIN,
-          DASHBOARD_USER_ROLES.USER,
-          DASHBOARD_USER_ROLES.ACCOUNTANT,
-          DASHBOARD_USER_ROLES.AGENT,
-        ]}
-      >
-        <DashboardUserWallets />
-      </AuthProtectedRoutes>
-    ),
-  },
+  // {
+  //   path: '/wallets',
+  //   component: (
+  //     <AuthProtectedRoutes
+  //       allowedRoles={[
+  //         DASHBOARD_USER_ROLES.ADMIN,
+  //         DASHBOARD_USER_ROLES.USER,
+  //         DASHBOARD_USER_ROLES.ACCOUNTANT,
+  //         DASHBOARD_USER_ROLES.AGENT,
+  //       ]}
+  //     >
+  //       <DashboardUserWallets />
+  //     </AuthProtectedRoutes>
+  //   ),
+  // },
 
   {
-    path: '/wallets/connect',
+    path: '/wallets',
     component: (
       // <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER]}>
       <DashboardConnectWallets />
@@ -209,6 +203,131 @@ const authProtectedRoutes = [
       </AuthProtectedRoutes>
     ),
   },
+  // PORTFOLIO
+  {
+    path: '/portfolio',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardInfo />
+      </AuthProtectedRoutes>
+    ),
+  },
+
+  {
+    path: '/portfolio/assets',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        {' '}
+        <DashboardAssets />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/portfolio/nfts',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <NFTsPage />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/portfolio/history',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardTransactions />
+      </AuthProtectedRoutes>
+    ),
+  },
+
+  // PORTFOLIO USERS
+  {
+    path: '/users/:userId/portfolio',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardInfo />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/users/:userId/portfolio/assets',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardAssets />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/users/:userId/nfts',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <NFTsPage />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/users/:userId/history',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardTransactions />
+      </AuthProtectedRoutes>
+    ),
+  },
 ];
 
 // Combine all routes
@@ -219,7 +338,7 @@ const allRoutes = [
   // ...homePage,
 
   // this route should be at the end of all other routes
-  { path: '*', component: <Navigate to="/" /> },
+  { path: '*', component: <Navigate to="/wallets" /> },
 ];
 
 export { allRoutes, authProtectedRoutes, noVerticalLayoutRoutes, publicRoutes };
