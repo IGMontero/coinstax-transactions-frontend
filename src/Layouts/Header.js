@@ -221,7 +221,11 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               </Col>
               <Col className="d-flex align-items-center  ms-lg-4  ms-md-4  ms-1  col-8">
                 <div className="col-sm-12 col-md-12 col-lg-7 col-xs-12 col-12 ">
-                  <ParentComponentSearchBar />
+                  <ParentComponentSearchBar
+                    isConnectWalletsPage={false}
+                    searchInput={searchInput}
+                    setSearchInput={setSearchInput}
+                  />
                 </div>
               </Col>
               <Col lg={3}>

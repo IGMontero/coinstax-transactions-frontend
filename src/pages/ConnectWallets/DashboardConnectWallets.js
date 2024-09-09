@@ -16,6 +16,7 @@ import { addUserWallet } from '../../slices/userWallets/thunk';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
 import ModalLoader from '../../Components/Modals/ModalLoader';
 import DashboardUserWallets from '../DashboardAccountsWallets/DashboardUserWallets';
+import ParentComponentSearchBar from '../../Components/SearchBar/ParentComponent';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -228,8 +229,14 @@ const DashboardConnectWallets = () => {
           <div className="w-50 py-3">
             <span>Track any wallet</span>
             <div className="d-flex align-items-center">
-              <SearchBarWallets onSearch={handleSearch} />
-              <Button
+              {/* <SearchBarWallets onSearch={handleSearch} /> */}
+              <ParentComponentSearchBar
+                isConnectWalletsPage={true}
+                searchInput={searchValue}
+                setSearchInput={setSearchValue}
+              />
+
+              {/* <Button
                 className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
                 color="soft-light"
                 disabled={loading || !searchValue}
@@ -254,11 +261,18 @@ const DashboardConnectWallets = () => {
                 ) : (
                   <>Add</>
                 )}
-              </Button>
+              </Button> */}
             </div>
           </div>
         </div>
 
+        <DashboardUserWallets
+          userPortfolioSummary={userPortfolioSummary}
+          userAddresses={userAddresses}
+          user={user}
+          loading={loadingPortoflioAddresses}
+          initialLoad={initialLoad}
+        />
         <ModalLoader
           isOpen={loadingConnectInfo.loading}
           details={loadingConnectInfo}
@@ -272,13 +286,6 @@ const DashboardConnectWallets = () => {
           }}
         />
       </div>
-      <DashboardUserWallets
-        userPortfolioSummary={userPortfolioSummary}
-        userAddresses={userAddresses}
-        user={user}
-        loading={loadingPortoflioAddresses}
-        initialLoad={initialLoad}
-      />
     </>
   );
 };
