@@ -377,11 +377,11 @@ const SearchBar = ({
 
   // #region RENDER
   return (
-    <Col className="d-flex col-12 w-100 align-items-center">
+    <div className="d-flex w-100 align-items-center">
       <Select
         name="address"
         placeholder="Assets, wallet, domain, or identity"
-        className="col-12 w-100"
+        className="w-100"
         classNamePrefix="select-custom-menu"
         value={selectedOption}
         inputValue={searchInput}
@@ -447,7 +447,7 @@ const SearchBar = ({
         isUnsupported={isUnsupported}
         onSelect={handleDropdownSelect}
       /> */}
-    </Col>
+    </div>
   );
 };
 
