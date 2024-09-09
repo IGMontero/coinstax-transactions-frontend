@@ -262,9 +262,14 @@ const DashboardConnectWallets = () => {
             <h1>Connect to ChainGlance</h1>
           </div>
           <div className="d-flex mt-4 mb-5">{renderConnectors()}</div>
-          <div className="w-50 py-3">
+          <div
+            style={{
+              maxWidth: 610,
+            }}
+            className="w-100 py-3"
+          >
             <span>Track any wallet</span>
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center justify-content-center">
               {/* <SearchBarWallets onSearch={handleSearch} /> */}
               <ParentComponentSearchBar
                 isConnectWalletsPage={true}
@@ -380,7 +385,7 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
         onClick={handleClick}
       >
         {logo ? (
-          <img className="img-fluid avatar-md mb-2" src={logo} alt={name} />
+          <img className=" avatar-md mb-2" src={logo} alt={name} />
         ) : (
           <div className="avatar-md mb-2">
             {/* <i className="bx bx-wallet"></i> */}
