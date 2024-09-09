@@ -8,12 +8,12 @@ import Helmet from '../../Components/Helmet/Helmet';
 import { fetchAssetsPortfolio } from '../../slices/portfolio/thunk';
 
 const DashboardAssets = () => {
-  const { address } = useParams();
+  const { address, userId } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
 
-  const userId = user?.id;
+  const currentPortfolioUserId = userId ? userId : user?.id;
 
   const networkType = useSelector(selectNetworkType);
   const isCurrentUserPortfolioSelected =
@@ -49,7 +49,7 @@ const DashboardAssets = () => {
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
             fetchAssetsPortfolio({
-              userId: userId,
+              userId: currentPortfolioUserId,
               blockchain: networkType,
               signal,
             }),

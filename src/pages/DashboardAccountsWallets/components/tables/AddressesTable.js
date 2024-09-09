@@ -29,9 +29,11 @@ import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 import { setUserPortfolioSummary } from '../../../../slices/userWallets/reducer';
 
-const AddressesTable = ({ userId, addresses, loading, onRefresh }) => {
+const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const [addresses, setAddresses] = useState(initialAddresses);
 
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -122,6 +124,18 @@ const AddressesTable = ({ userId, addresses, loading, onRefresh }) => {
             // });
 
             // handleSetAddresses(updatedAddresses);
+            setAddresses(
+              addresses.map((addr) => {
+                if (addr.id === address.id) {
+                  return {
+                    ...addr,
+                    name: newName,
+                  };
+                }
+                return addr;
+              }),
+            );
+
             onRefresh(userId);
           } else {
             Swal.fire({
@@ -164,6 +178,7 @@ const AddressesTable = ({ userId, addresses, loading, onRefresh }) => {
               text: 'Wallet address deleted successfully',
               icon: 'success',
             });
+            setAddresses(addresses.filter((addr) => addr.id !== address.id));
 
             onRefresh(userId);
           } else {
@@ -185,21 +200,16 @@ const AddressesTable = ({ userId, addresses, loading, onRefresh }) => {
     });
   };
 
-  const onDragEnd = async (result) => {
+  const onDragEnd = (result) => {
     if (!result.destination) return;
 
     const items = Array.from(addresses);
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
-    const updatedItems = items.map((item, idx) => ({
-      ...item,
-      index: idx + 1,
-    }));
+    setAddresses(items);
 
-    // handleSetAddresses(updatedItems);
-
-    await handleReorderAddresses(updatedItems);
+    handleReorderAddresses(items);
   };
 
   const handleReorderAddresses = async (updatedAddresses) => {

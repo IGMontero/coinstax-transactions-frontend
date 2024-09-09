@@ -1,13 +1,14 @@
 import React, { useEffect } from 'react';
 
 //import Scss
-import './assets/scss/themes.scss';
 import 'react-loading-skeleton/dist/skeleton.css';
+import './assets/scss/themes.scss';
 
 //import Route
-import Route from './Routes';
 import ReactGA from 'react-ga4';
 import { useLocation } from 'react-router-dom';
+import { ConnectWalletProvider } from './Providers/ConnectWalletProvider';
+import Route from './Routes';
 
 ReactGA.initialize(process.env.REACT_APP_GA_MEASUREMENT_ID || '');
 
@@ -16,14 +17,17 @@ function App() {
 
   useEffect(() => {
     ReactGA.send({
-      hitType: 'pageview', page: location.pathname + location.search,
-      title: document.title
+      hitType: 'pageview',
+      page: location.pathname + location.search,
+      title: document.title,
     });
   }, [location]);
 
   return (
     <React.Fragment>
-      <Route />
+      <ConnectWalletProvider>
+        <Route />
+      </ConnectWalletProvider>
     </React.Fragment>
   );
 }

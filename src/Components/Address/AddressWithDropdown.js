@@ -24,11 +24,11 @@ const AddressWithDropdown = ({
   addressNickName,
   isUnsupported,
 }) => {
-  const { address } = useParams();
+  const { address, userId } = useParams();
   const dispatch = useDispatch();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
-  const userId = user?.id;
+  const currentUserId = user?.id;
 
   const addresses = useSelector((state) => state.addressName.addresses);
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
@@ -66,7 +66,7 @@ const AddressWithDropdown = ({
     } else {
       setFormattedAddressLabel(currentFormattedValue);
     }
-  }, [address, user, userPortfolioSummary, addresses]);
+  }, [address, user, userPortfolioSummary, addresses, userId]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -152,7 +152,7 @@ const AddressWithDropdown = ({
         try {
           const response = await dispatch(
             updateUserWalletAddress({
-              userId,
+              userI: currentUserId,
               name: newName,
               addressId: address.Id,
             }),
@@ -185,17 +185,21 @@ const AddressWithDropdown = ({
     });
   };
 
+  const getAddressLabel = () => {
+    if (isCurrentUserPortfolioSelected) {
+      return userId ? 'User Portfolio' : 'Portfolio';
+    }
+
+    return formattedAddressLabel !== formatIdTransaction(address, 6, 8)
+      ? formattedAddressLabel
+      : addressNickName || formattedAddressLabel;
+  };
+
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
         <h4 className="mb-0 ms-3 text-custom-address-dropdown">
-          {isCurrentUserPortfolioSelected
-            ? 'Portfolio'
-            : formattedAddressLabel !== formatIdTransaction(address, 6, 8)
-              ? formattedAddressLabel
-              : addressNickName
-                ? addressNickName
-                : formattedAddressLabel}
+          {getAddressLabel()}
         </h4>
         {!isCurrentUserPortfolioSelected && (
           <UncontrolledDropdown className="card-header-dropdown">

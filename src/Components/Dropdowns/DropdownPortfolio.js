@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Dropdown,
   DropdownItem,
@@ -9,7 +9,7 @@ import {
   DropdownToggle,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
-import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 import {
   deleteUserAddressWallet,
   updateUserWalletAddress,
@@ -22,15 +22,17 @@ import {
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';
 import DropdownMenuPortal from './DropdownPortal';
-import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { address } = useParams();
-  const addressParams = address;
+  const location = useLocation();
+  const { address, userId } = useParams();
+  const addressParams = address?.toLowerCase();
   const { user } = useSelector((state) => state.auth);
-  const userId = user?.id;
+  const currentUserId = user?.id;
+
+  console.log('user', user);
 
   const refreshUserPortfolio = useRefreshUserPortfolio();
 
@@ -42,16 +44,14 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
-  const isUserOrNoUser = user?.role === DASHBOARD_USER_ROLES.USER || !user;
-  const isAdminOrAccountant =
-    user?.role === DASHBOARD_USER_ROLES.ADMIN ||
-    user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
 
-  const userPortfolioAddresses = userPortfolioSummary?.addresses || [];
-  const [loadingWallets, setLoadingWallets] = useState(false);
+  const userPortfolioAddresses = useMemo(
+    () => userPortfolioSummary?.addresses || [],
+    [userPortfolioSummary],
+  );
   const [selectedAddress, setSelectedAddress] = useState(
     userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-      null,
+    null,
   );
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
@@ -72,11 +72,11 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         setPrevAddress(matchedAddress.address);
       }
     }
-  }, [addressParams, userPortfolioAddresses]);
+  }, [addressParams, userPortfolioAddresses, selectedAddress]);
 
   const handleSelectAddress = (address) => {
     if (address === 'portfolio') {
-      setSelectedAddress(null);
+      setSelectedAddress(`portfolio`);
     } else {
       const selected = userPortfolioAddresses.find(
         (addr) => addr.address === address,
@@ -84,6 +84,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       setPrevAddress(selected.address);
       setSelectedAddress(selected);
     }
+    console.log('Select address', selectedAddress);
 
     toggleDropdown();
   };
@@ -117,7 +118,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         try {
           const response = await dispatch(
             updateUserWalletAddress({
-              userId,
+              userId: currentUserId,
               name: newName,
               addressId: address.id,
             }),
@@ -154,9 +155,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${
-        address.name ? address.name : address.address
-      }?`,
+      text: `Are you sure to delete wallet ${address.name ? address.name : address.address
+        }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -165,7 +165,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       if (result.isConfirmed) {
         try {
           const response = await dispatch(
-            deleteUserAddressWallet({ userId, addressId: address.id }),
+            deleteUserAddressWallet({
+              userId: currentUserId,
+              addressId: address.id,
+            }),
           ).unwrap();
 
           if (response && !response.error) {
@@ -278,6 +281,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     const { name, address, value, complete } = addressData;
     const addressValue = value ? parseValuesToLocale(value, CurrencyUSD) : '$0';
     const loadingAddressValue = !complete;
+    const isSelected =
+      selectedAddress?.address?.toLowerCase() === address?.toLowerCase() ||
+      addressParams === address;
 
     return (
       <>
@@ -307,8 +313,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             </div>
           </div>
 
-          {(selectedAddress && selectedAddress.address === address) ||
-          addressParams === address ? (
+          {isSelected ? (
             <i className="ri-check-line text-muted fs-16 align-middle me-3"></i>
           ) : null}
           {renderOptionsSubDropdown(index, addressData)}
@@ -317,12 +322,26 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     );
   };
 
+  const getDisplayTextDropdown = () => {
+    if (selectedAddress) {
+      if (selectedAddress.name) {
+        return selectedAddress.name;
+      }
+      if (selectedAddress.address) {
+        return formatAddressToShortVersion(selectedAddress.address);
+      }
+      if (selectedAddress === 'portfolio' && !userId) {
+        return 'Portfolio';
+      }
+    }
+    return userId ? 'User Portfolio' : 'Select Wallet';
+  };
+
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className={`w-100 bg-transparent ${
-          isInHeader ? 'py-1 ' : ''
-        } border-1 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''
+          } border-1 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
@@ -331,28 +350,34 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         )}
         <div className="d-flex flex-column align-items-start flex-grow-1">
           <span className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}>
-            {selectedAddress &&
-            (selectedAddress.name || selectedAddress.address)
-              ? selectedAddress.name
-                ? selectedAddress.name
-                : formatAddressToShortVersion(selectedAddress.address)
-              : 'Portfolio'}
+            {getDisplayTextDropdown()}
           </span>
-          {!isInHeader && (
-            <div className="text-start text-muted">
-              {selectedAddress ? (
-                parseValuesToLocale(selectedAddress.value, CurrencyUSD)
-              ) : loadingPortfolio ? (
-                <Skeleton
-                  width={80}
-                  baseColor={isDarkMode ? '#333' : '#f3f3f3'}
-                  highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
-                />
-              ) : (
-                parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
-              )}
-            </div>
-          )}
+
+          <div className="text-start text-muted">
+            {!selectedAddress || userId ? null : loadingPortfolio ? (
+              <Skeleton
+                width={80}
+                baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+                highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+              />
+            ) : selectedAddress === 'portfolio' ? (
+              parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
+            ) : (
+              parseValuesToLocale(selectedAddress.value, CurrencyUSD)
+            )}
+            {/* {selectedAddress ? (
+              parseValuesToLocale(selectedAddress.value, CurrencyUSD)
+            ) : loadingPortfolio ? (
+              <Skeleton
+                width={80}
+                baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+                highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+              />
+            ) 
+            : userId ? null : (
+              parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
+            )} */}
+          </div>
         </div>
         <i className="ri-arrow-down-s-line fs-4 text-dark"></i>
       </DropdownToggle>

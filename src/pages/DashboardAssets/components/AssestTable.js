@@ -30,7 +30,8 @@ const AssetsTable = ({
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 955);
 
   const addressTotalValue = addressInfo?.blockchains?.all?.totalValue || 0;
-  const isLoadingAddressSummary = !addressInfo?.complete;
+  const isLoadingAddressSummary = false;
+  // !addressInfo?.complete;
 
   useEffect(() => {
     const handleResize = () => {
@@ -46,9 +47,11 @@ const AssetsTable = ({
       name: 'ASSETS',
       selector: (row) => {
         // Calculate per position percent based on address total value. If it's laoding, show like it's loading the percent, or show the item percent.
-        const perPositionPercent = isLoadingAddressSummary
-          ? row.percentage
-          : (row.value / addressTotalValue) * 100;
+        const perPositionPercent =
+          // isLoadingAddressSummary
+          //   ? row.percentage
+          //   : (row.value / addressTotalValue) * 100;
+          row.percentage;
 
         const finalPerPositionPercent =
           perPositionPercent < 0.01 ? '<0.01' : perPositionPercent.toFixed(2);
@@ -168,18 +171,17 @@ const AssetsTable = ({
                 : parseValuesToLocale(0, CurrencyUSD)}
             </span>
             <small
-              className={`${
-                row.prettyDeltaValuePercent === '0.00%'
-                  ? 'text-primary'
-                  : row.prettyDeltaValuePercent[0] === '-'
-                    ? 'text-danger'
-                    : 'text-success'
-              }`}
+              className={`${row.prettyDeltaValuePercent === '0.00%'
+                ? 'text-primary'
+                : row.prettyDeltaValuePercent[0] === '-'
+                  ? 'text-danger'
+                  : 'text-success'
+                }`}
             >
               {row.prettyDeltaValuePercent === '0.00%'
                 ? parseValuesToLocale(row.deltaValuePercent, '')
                 : (row.prettyDeltaValuePercent[0] === '-' ? '' : '+') +
-                  parseValuesToLocale(row.deltaValuePercent, '')}
+                parseValuesToLocale(row.deltaValuePercent, '')}
               {row.deltaValue
                 ? ' (' + parseValuesToLocale(row.deltaValue, CurrencyUSD) + ')'
                 : null}
