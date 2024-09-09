@@ -6,7 +6,7 @@ import Swal from 'sweetalert2';
 import { useConnect, useConnections } from 'wagmi';
 import coinbaseLogo from '../../assets/images/wallets/coinbase.png';
 import metamaskLogo from '../../assets/images/wallets/metamask.svg';
-import walletConnectLogo from '../../assets/images/wallets/walletConnect.png';
+import walletConnectLogo from '../../assets/images/wallets/WalletConnect.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import {
   useRefreshUserPortfolio,
@@ -102,6 +102,7 @@ const DashboardConnectWallets = () => {
 
   const handleConnect = (connector) => {
     setLoadingConnectInfo({
+      open: true,
       loading: true,
       error: null,
       name: connector.name,
@@ -122,19 +123,30 @@ const DashboardConnectWallets = () => {
           } else if (errorCode === -32002) {
             console.log('Err name: ', errorName);
             console.log('err code: ', error.code);
-            Swal.fire({
-              // title: 'Error',
-              text: 'Permission to connect already requested. Please check your wallet to approve the connection.',
-              icon: 'error',
+
+            return setLoadingConnectInfo({
+              loading: false,
+              open: true,
+              error: error,
+              name: connector.name,
+              message: `Permission to connect already requested. Please check your wallet to approve the connection.`,
+            });
+          } else if (errorName === 'UserRejectedRequestError') {
+            return setLoadingConnectInfo({
+              loading: false,
+              open: true,
+              error: error,
+              name: connector.name,
+              message: `Unfortunately, we could not connect to your wallet. Please try again.`,
             });
           }
 
-          setLoadingConnectInfo({
-            loading: false,
-            error: error,
-            name: connector.name,
-            message: error.message,
-          });
+          // setLoadingConnectInfo({
+          //   loading: false,
+          //   error: error,
+          //   name: connector.name,
+          //   message: error.message,
+          // });
         },
       },
     );
@@ -241,10 +253,11 @@ const DashboardConnectWallets = () => {
       </div>
 
       <ModalLoader
-        isOpen={loadingConnectInfo.loading}
+        isOpen={loadingConnectInfo.open}
         details={loadingConnectInfo}
         onClose={() => {
           setLoadingConnectInfo({
+            open: false,
             loading: false,
             error: null,
             name: '',
