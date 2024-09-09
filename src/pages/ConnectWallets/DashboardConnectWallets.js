@@ -14,7 +14,7 @@ import {
 } from '../../hooks/useUserPortfolio';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
-import ModalLoader from '../../Components/Modals/ModalLoader';
+import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -101,13 +101,34 @@ const DashboardConnectWallets = () => {
   };
 
   const handleConnect = (connector) => {
-    setLoadingConnectInfo({
-      open: true,
-      loading: true,
-      error: null,
-      name: connector.name,
-      message: '',
-    });
+    if (connector.missing) {
+      return setLoadingConnectInfo({
+        open: true,
+        loading: false,
+        error: null,
+        name: connector?.name,
+        message: `${connector?.name} extension not found. Please install the extension and try again.`,
+      });
+    }
+
+    if (!connector) {
+      return setLoadingConnectInfo({
+        loading: false,
+        open: true,
+        error: null,
+        name: '',
+        message: `Could not connect to ${connector?.name}. Please try again.`,
+      });
+    } else {
+      setLoadingConnectInfo({
+        loading: true,
+        open: true,
+        error: null,
+        name: connector.name,
+        message: `Connecting to ${connector.name}`,
+      });
+    }
+
     connect(
       { connector },
       {
@@ -252,7 +273,7 @@ const DashboardConnectWallets = () => {
         </div>
       </div>
 
-      <ModalLoader
+      <ConnectWalletModal
         isOpen={loadingConnectInfo.open}
         details={loadingConnectInfo}
         onClose={() => {
@@ -292,16 +313,23 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
   const handleClick = () => {
     // Get connector from the list of connectors
 
-    if (!connector) {
-      return Swal.fire({
-        // title: 'Error',
-        text: `${name} extension not found. Please install the extension and try again.`,
-        icon: 'error',
-      });
-    }
+    // if (!connector) {
+    //   return Swal.fire({
+    //     // title: 'Error',
+    //     text: `${name} extension not found. Please install the extension and try again.`,
+    //     icon: 'error',
+    //   });
+    // }
 
     if (handleConnect) {
-      handleConnect(connector);
+      if (connector) {
+        handleConnect(connector);
+      } else {
+        handleConnect({
+          name,
+          missing: true,
+        });
+      }
     }
   };
 
