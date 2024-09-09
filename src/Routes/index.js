@@ -43,7 +43,7 @@ const Index = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (user && (isLoginPage || isRegisterPage || isDashboardPage)) {
+    if (user && (isLoginPage || isRegisterPage)) {
       navigate('/wallets');
     }
   }, [user, isLoginPage, navigate, isRegisterPage, isDashboardPage]);

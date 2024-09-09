@@ -43,10 +43,10 @@ const DashboardUserWallets = () => {
 
   useEffect(() => {
     // Initialize: if there are no collected wallets, send user to connect wallet page.
-    if (!hasConnectedWallets) {
-      console.log('No connected wallets');
-      navigate('/wallets/connect');
-    }
+    // if (!hasConnectedWallets) {
+    //   console.log('No connected wallets');
+    //   navigate('/wallets/connect');
+    // }
 
     if (initialLoad) {
       setInitialLoad(false);
@@ -108,7 +108,7 @@ const DashboardUserWallets = () => {
             >
               Add Account Manager
             </Button> */}
-            <Button
+            {/* <Button
               onClick={handleConnectWallet}
               className="d-flex btn-hover-light  text-dark justify-content-center align-items-center"
               color="soft-light"
@@ -118,7 +118,7 @@ const DashboardUserWallets = () => {
               }}
             >
               Connect Wallet
-            </Button>
+            </Button> */}
           </div>
         </div>
         {/* {!loaders.userPortfolioSummary && (

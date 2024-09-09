@@ -136,14 +136,7 @@ const Navdata = () => {
     return menuItems;
   };
 
-  let allMenuItems = [
-    createManageMenu(
-      'usersWallets',
-      'Manage Wallets',
-      'bx bx-wallet fs-3',
-      'wallets',
-    ),
-  ];
+  let allMenuItems = [];
 
   if (addressSearched || prevAddress) {
     allMenuItems.push(
@@ -185,14 +178,6 @@ const Navdata = () => {
       createManageMenu('users', 'Users', 'bx bx-group fs-3', 'admin/users'),
     );
     allMenuItems.push(createMenuHeader('Wallets'));
-    allMenuItems.push(
-      createManageMenu(
-        'connectWallet',
-        'Connect Wallet',
-        'bx bx-add-to-queue fs-3',
-        'wallets/connect',
-      ),
-    );
   }
 
   if (isAccountantRole) {
@@ -217,17 +202,10 @@ const Navdata = () => {
     );
   }
 
-  if (isUserRole || isAccountantRole || isAgentRole) {
-    allMenuItems.push(createMenuHeader('Manage'));
-    allMenuItems.push(
-      createManageMenu(
-        'connectWallet',
-        'Connect Wallet',
-        'bx bx-add-to-queue fs-3',
-        'wallets/connect',
-      ),
-    );
-  }
+  allMenuItems.push(createMenuHeader('Manage'));
+  allMenuItems.push(
+    createManageMenu('usersWallets', 'Wallets', 'bx bx-wallet fs-3', 'wallets'),
+  );
 
   const filteredMenuItems = filterMenuItems(allMenuItems);
 

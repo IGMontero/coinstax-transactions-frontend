@@ -15,6 +15,7 @@ import {
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
 import ModalLoader from '../../Components/Modals/ModalLoader';
+import DashboardUserWallets from '../DashboardAccountsWallets/DashboardUserWallets';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -199,60 +200,63 @@ const DashboardConnectWallets = () => {
     });
 
   return (
-    <div className="page-content ">
-      <Helmet title="Connect Wallet" />
-      <div className="d-flex justify-content-center flex-column align-items-center">
-        <div>
-          <h1>Connect to ChainGlance</h1>
-        </div>
-        <div className="d-flex mt-4 mb-5">{renderConnectors()}</div>
-        <div className="w-50 py-3">
-          <span>Track any wallet</span>
-          <div className="d-flex align-items-center">
-            <SearchBarWallets onSearch={handleSearch} />
-            <Button
-              className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
-              color="soft-light"
-              disabled={loading || !searchValue}
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-                cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
-              }}
-              onClick={() => {
-                if (!user) {
-                  handleSearchWallet(searchValue);
-                } else {
-                  handleConnectWallet(searchValue);
-                }
-              }}
-            >
-              <i className="bx bx-plus me-2"></i>
-              {loading ? (
-                <div>
-                  <Spinner size="sm" color="light" />
-                </div>
-              ) : (
-                <>Add</>
-              )}
-            </Button>
+    <>
+      <div className="page-content ">
+        <Helmet title="Connect Wallet" />
+        <div className="d-flex justify-content-center flex-column align-items-center">
+          <div>
+            <h1>Connect to ChainGlance</h1>
+          </div>
+          <div className="d-flex mt-4 mb-5">{renderConnectors()}</div>
+          <div className="w-50 py-3">
+            <span>Track any wallet</span>
+            <div className="d-flex align-items-center">
+              <SearchBarWallets onSearch={handleSearch} />
+              <Button
+                className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
+                color="soft-light"
+                disabled={loading || !searchValue}
+                style={{
+                  borderRadius: '10px',
+                  border: '.5px solid grey',
+                  cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
+                }}
+                onClick={() => {
+                  if (!user) {
+                    handleSearchWallet(searchValue);
+                  } else {
+                    handleConnectWallet(searchValue);
+                  }
+                }}
+              >
+                <i className="bx bx-plus me-2"></i>
+                {loading ? (
+                  <div>
+                    <Spinner size="sm" color="light" />
+                  </div>
+                ) : (
+                  <>Add</>
+                )}
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <ModalLoader
-        isOpen={loadingConnectInfo.loading}
-        details={loadingConnectInfo}
-        onClose={() => {
-          setLoadingConnectInfo({
-            loading: false,
-            error: null,
-            name: '',
-            message: '',
-          });
-        }}
-      />
-    </div>
+        <ModalLoader
+          isOpen={loadingConnectInfo.loading}
+          details={loadingConnectInfo}
+          onClose={() => {
+            setLoadingConnectInfo({
+              loading: false,
+              error: null,
+              name: '',
+              message: '',
+            });
+          }}
+        />
+      </div>
+      <DashboardUserWallets />
+    </>
   );
 };
 
