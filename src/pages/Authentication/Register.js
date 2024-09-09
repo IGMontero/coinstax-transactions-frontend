@@ -127,7 +127,7 @@ const Register = () => {
           <Container>
             <Row className="justify-content-center">
               <div className="d-flex justify-content-center align-items-center">
-                <Link to={'/'}>
+                <Link to={'/wallets'}>
                   <img
                     src={logo}
                     className="card-logo"

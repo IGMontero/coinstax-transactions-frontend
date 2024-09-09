@@ -151,24 +151,24 @@ const authProtectedRoutes = [
     ),
   },
 
-  {
-    path: '/wallets',
-    component: (
-      <AuthProtectedRoutes
-        allowedRoles={[
-          DASHBOARD_USER_ROLES.ADMIN,
-          DASHBOARD_USER_ROLES.USER,
-          DASHBOARD_USER_ROLES.ACCOUNTANT,
-          DASHBOARD_USER_ROLES.AGENT,
-        ]}
-      >
-        <DashboardUserWallets />
-      </AuthProtectedRoutes>
-    ),
-  },
+  // {
+  //   path: '/wallets',
+  //   component: (
+  //     <AuthProtectedRoutes
+  //       allowedRoles={[
+  //         DASHBOARD_USER_ROLES.ADMIN,
+  //         DASHBOARD_USER_ROLES.USER,
+  //         DASHBOARD_USER_ROLES.ACCOUNTANT,
+  //         DASHBOARD_USER_ROLES.AGENT,
+  //       ]}
+  //     >
+  //       <DashboardUserWallets />
+  //     </AuthProtectedRoutes>
+  //   ),
+  // },
 
   {
-    path: '/wallets/connect',
+    path: '/wallets',
     component: (
       // <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER]}>
       <DashboardConnectWallets />
