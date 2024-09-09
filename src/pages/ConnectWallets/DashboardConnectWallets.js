@@ -23,16 +23,17 @@ const DashboardConnectWallets = () => {
   const refreshUserPortfolio = useRefreshUserPortfolio();
   const userPortfolioSummary = useUserPortfolioSummary();
   const { user } = useSelector((state) => state.auth);
+  const { loaders } = useSelector((state) => state.userWallets);
   const userId = user?.id;
+  const userAddresses = userPortfolioSummary?.addresses;
 
-  console.log('userPortfolio', userPortfolioSummary);
   // const { walletInfo } = useWalletInfo();
 
   // const chainId = useChainId();
   const { connectors, connect } = useConnect();
   const connections = useConnections();
-  console.log('Connections:', connections);
-  console.log('Connectors: ', connectors);
+  // console.log('Connections:', connections);
+  // console.log('Connectors: ', connectors);
 
   const [loading, setLoading] = useState(false);
   const [loadingConnectInfo, setLoadingConnectInfo] = useState({
@@ -63,6 +64,22 @@ const DashboardConnectWallets = () => {
       logo: coinbaseLogo,
     },
   ];
+
+  const [initialLoad, setInitialLoad] = useState(true);
+  const loadingPortoflioAddresses = loaders.userPortfolioSummary;
+
+  useEffect(() => {
+    // Initialize: if there are no collected wallets, send user to connect wallet page.
+    // if (!hasConnectedWallets) {
+    //   console.log('No connected wallets');
+    //   navigate('/wallets/connect');
+    // }
+
+    if (initialLoad) {
+      setInitialLoad(false);
+      refreshUserPortfolio();
+    }
+  }, [initialLoad, refreshUserPortfolio, userAddresses, userPortfolioSummary]);
 
   const handleSearchWallet = (value) => {
     navigate(`/address/${value}`);
@@ -255,7 +272,13 @@ const DashboardConnectWallets = () => {
           }}
         />
       </div>
-      <DashboardUserWallets />
+      <DashboardUserWallets
+        userPortfolioSummary={userPortfolioSummary}
+        userAddresses={userAddresses}
+        user={user}
+        loading={loadingPortoflioAddresses}
+        initialLoad={initialLoad}
+      />
     </>
   );
 };
