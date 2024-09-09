@@ -289,7 +289,7 @@ const Layout = (props) => {
         if (process.env.NODE_ENV === 'development') {
           alert('You are not authorized to access this page');
         }
-        window.history.back();
+        window.location.href = '/wallets';
         setIsSuccessfullRequest(false);
         setIsUnsupported(true);
       } else {
