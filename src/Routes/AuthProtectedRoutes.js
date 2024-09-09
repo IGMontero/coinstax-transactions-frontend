@@ -7,7 +7,10 @@ const AuthProtectedRoutes = ({ allowedRoles, children }) => {
   const role = user?.role;
 
   if (!allowedRoles.includes(role)) {
-    // alert('You are not authorized to access this page');
+    if (process.env.NODE_ENV === 'development') {
+      alert('You are not authorized to access this page');
+    }
+
     window.history.back();
     return null;
   }
