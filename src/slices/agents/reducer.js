@@ -6,9 +6,9 @@ import {
   getAgentById,
   updateAgentById,
   deleteAgentById,
-  validateAgentInviteCode,
-  acceptAgentInvite,
-  declineAgentInvite,
+  verifyInviteCodeAA,
+  acceptInviteCodeAA,
+  declineInviteCodeAA,
   getAgentClients,
 } from './thunks';
 
@@ -86,39 +86,39 @@ const agentsSlice = createSlice({
       state.status = 'failed';
       state.error = action.error.message;
     },
-    [validateAgentInviteCode.pending]: (state) => {
+    [verifyInviteCodeAA.pending]: (state) => {
       state.status = 'loading';
     },
-    [validateAgentInviteCode.fulfilled]: (state, action) => {
+    [verifyInviteCodeAA.fulfilled]: (state, action) => {
       state.status = 'succeeded';
       state.agent = action.payload;
     },
-    [validateAgentInviteCode.rejected]: (state, action) => {
+    [verifyInviteCodeAA.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
     },
 
-    [acceptAgentInvite.pending]: (state) => {
+    [acceptInviteCodeAA.pending]: (state) => {
       state.status = 'loading';
     },
-    [acceptAgentInvite.fulfilled]: (state, action) => {
+    [acceptInviteCodeAA.fulfilled]: (state, action) => {
       state.status = 'succeeded';
       state.agent = action.payload;
     },
-    [acceptAgentInvite.rejected]: (state, action) => {
+    [acceptInviteCodeAA.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
     },
 
-    [declineAgentInvite.pending]: (state) => {
+    [declineInviteCodeAA.pending]: (state) => {
       state.status = 'loading';
     },
 
-    [declineAgentInvite.fulfilled]: (state, action) => {
+    [declineInviteCodeAA.fulfilled]: (state, action) => {
       state.status = 'succeeded';
       state.agent = action.payload;
     },
-    [declineAgentInvite.rejected]: (state, action) => {
+    [declineInviteCodeAA.rejected]: (state, action) => {
       state.status = 'failed';
       state.error = action.error.message;
     },

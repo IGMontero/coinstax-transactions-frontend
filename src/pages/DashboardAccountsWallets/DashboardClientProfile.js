@@ -195,7 +195,7 @@ const DashboardClientProfile = () => {
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>
-        ) : addresses?.length === 0 || !addresses ? (
+        ) : (addresses?.length === 0 || !addresses) && !loadingWallets ? (
           <div className="d-flex my-3">
             <h5>No wallets found</h5>
           </div>
@@ -219,7 +219,7 @@ const DashboardClientProfile = () => {
 
             <AddressesTable
               userId={client.UserId}
-              addresses={addresses}
+              initialAddresses={addresses}
               loading={loadingWallets}
               onRefresh={fetchUserWallets}
             />

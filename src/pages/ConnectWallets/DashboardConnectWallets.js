@@ -1,51 +1,45 @@
-import React, { useState } from 'react';
-import Helmet from '../../Components/Helmet/Helmet';
-import SearchBar from '../../Components/SearchBar/SearchBar';
-import ledgerWallet from '../../assets/images/wallets/ledgerWallet.svg';
-import walletConnect from '../../assets/images/wallets/WalletConnect.png';
-import zerionWallet from '../../assets/images/wallets/zerionWallet.svg';
-import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Button, Spinner } from 'reactstrap';
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-import { addUserWallet } from '../../slices/userWallets/thunk';
 import Swal from 'sweetalert2';
-import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
+import { useChainId, useConnect, useConnections } from 'wagmi';
+import metamaskLogo from '../../assets/images/wallets/metamask.svg';
+import walletConnect from '../../assets/images/wallets/WalletConnect.png';
+import Helmet from '../../Components/Helmet/Helmet';
+import {
+  useRefreshUserPortfolio,
+  useUserPortfolioSummary,
+} from '../../hooks/useUserPortfolio';
+import { validConnectorIds } from '../../Providers/ConnectWalletProvider';
+import { addUserWallet } from '../../slices/userWallets/thunk';
+import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
+import ModalLoader from '../../Components/Modals/ModalLoader';
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const refreshUserPortfolio = useRefreshUserPortfolio();
+  const userPortfolioSummary = useUserPortfolioSummary();
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
 
+  console.log('userPortfolio', userPortfolioSummary);
+  // const { walletInfo } = useWalletInfo();
+
+  // const chainId = useChainId();
+  const { connectors, connect } = useConnect();
+  const connections = useConnections();
+  console.log('Connections:', connections);
+
+  const validConnectors = connectors.filter((connector) =>
+    validConnectorIds.includes(connector.id),
+  );
+
   const [loading, setLoading] = useState(false);
-
-  const wallets = [
-    // {
-    //   icon: zerionWallet,
-    //   name: 'Zerion Wallet',
-    //   link: '',
-    //   handler: () => {},
-    // },
-    {
-      icon: walletConnect,
-      name: 'WalletConnect',
-      link: '',
-      handler: () => {},
-    },
-
-    {
-      icon: ledgerWallet,
-      name: 'Ledger',
-      link: '',
-      handler: () => {},
-    },
-  ];
 
   const [searchValue, setSearchValue] = useState('');
 
-  const handleAddWallet = (value) => {
+  const handleSearchWallet = (value) => {
     navigate(`/address/${value}`);
   };
 
@@ -59,8 +53,6 @@ const DashboardConnectWallets = () => {
       const response = await dispatch(
         addUserWallet({ address, userId }),
       ).unwrap();
-
-      console.log(response);
 
       if (response && !response.error) {
         navigate(`/address/${address}`);
@@ -84,6 +76,60 @@ const DashboardConnectWallets = () => {
     }
   };
 
+  const handleConnect = (connector) => {
+    connect(
+      { connector },
+      {
+        onSuccess: handleConnectedAccount,
+        onError: (error) => {
+          console.error('Failed to connect wallet: ', error);
+          console.log(error.code, error.data, error.name);
+          const errorName = error.name;
+
+          if (errorName === 'ConnectorAlreadyConnectedError') {
+            console.log('Connector was already connected');
+          }
+        },
+      },
+    );
+
+    async function handleConnectedAccount() {
+      const accounts = await connector.getAccounts();
+
+      // For each account do the same. Only navigate to the first one.
+
+      const mainAddress = accounts[0];
+
+      if (!mainAddress) return;
+
+      for (let i = 0; i < accounts.length; i++) {
+        const accountAddress = accounts[i];
+        const isAddressAlreadyInPortfolio =
+          userPortfolioSummary?.addresses?.find(
+            (address) =>
+              address.address.toLowerCase() === accountAddress.toLowerCase(),
+          );
+
+        if (isAddressAlreadyInPortfolio) continue;
+        // Add address to user wallet
+        await dispatch(
+          addUserWallet({
+            address: accountAddress,
+            userId,
+          }),
+        );
+      }
+
+      const addressToNavigate = mainAddress?.toLowerCase();
+      // navigate to the first account
+      navigate(`/address/${addressToNavigate}`);
+
+      refreshUserPortfolio();
+    }
+
+    handleConnectedAccount();
+  };
+
   return (
     <div className="page-content ">
       <Helmet title="Connect Wallet" />
@@ -92,20 +138,12 @@ const DashboardConnectWallets = () => {
           <h1>Connect to ChainGlance</h1>
         </div>
         <div className="d-flex mt-4 mb-5">
-          {wallets.map((wallet, index) => (
-            <div
-              key={index}
-              className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center
-            
-            "
-            >
-              <img
-                className="img-fluid avatar-md mb-2"
-                src={wallet.icon}
-                alt={wallet.name}
-              />
-              {wallet.name}
-            </div>
+          {validConnectors.map((connector) => (
+            <ConnectorButton
+              key={connector.uid}
+              connector={connector}
+              onClick={() => handleConnect(connector)}
+            />
           ))}
         </div>
         <div className="w-50 py-3">
@@ -115,7 +153,7 @@ const DashboardConnectWallets = () => {
             <Button
               className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
               color="soft-light"
-              disabled={loading}
+              disabled={loading || !searchValue}
               style={{
                 borderRadius: '10px',
                 border: '.5px solid grey',
@@ -123,7 +161,7 @@ const DashboardConnectWallets = () => {
               }}
               onClick={() => {
                 if (!user) {
-                  handleAddWallet(searchValue);
+                  handleSearchWallet(searchValue);
                 } else {
                   handleConnectWallet(searchValue);
                 }
@@ -144,5 +182,53 @@ const DashboardConnectWallets = () => {
     </div>
   );
 };
+
+function ConnectorButton({ connector, onClick }) {
+  const [ready, setReady] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  React.useEffect(() => {
+    (async () => {
+      const provider = await connector.getProvider();
+      setReady(!!provider);
+    })();
+  }, [connector, setReady]);
+  const handleClick = () => {
+    setLoading(true);
+    onClick();
+  };
+  const handleCloseLoader = () => {
+    setLoading(false);
+  };
+  // Get logo based on connector id asd
+  const logo =
+    connector.id === 'walletConnect'
+      ? walletConnect
+      : connector.id === 'io.metamask'
+        ? metamaskLogo
+        : null;
+  return (
+    <>
+      <div
+        className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center"
+        onClick={ready && !connector.active && !loading ? handleClick : null}
+      >
+        {logo ? (
+          <img
+            className="img-fluid avatar-md mb-2"
+            src={logo}
+            alt={connector.name}
+          />
+        ) : (
+          <div className="avatar-md mb-2">
+            {/* <i className="bx bx-wallet"></i> */}
+          </div>
+        )}
+
+        {connector.name}
+      </div>
+      <ModalLoader isOpen={loading} onClose={handleCloseLoader} />
+    </>
+  );
+}
 
 export default DashboardConnectWallets;

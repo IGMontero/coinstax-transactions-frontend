@@ -58,7 +58,7 @@ const Register = () => {
       email: '',
       password: '',
       confirm_password: '',
-      role: '',
+      role: 'user',
     },
     validationSchema: Yup.object({
       email: Yup.string().required('Please Enter Your Email'),
@@ -78,11 +78,11 @@ const Register = () => {
   });
 
   const isSubmitDisabled = () => {
-    const { email, password, confirm_password, role } = validation.values;
+    const { email, password, confirm_password } = validation.values;
     return (
       !email ||
       !password ||
-      !role ||
+      // !role ||
       password !== confirm_password ||
       validation.errors.confirm_password ||
       loading
@@ -95,6 +95,7 @@ const Register = () => {
       const response = await dispatch(register(values));
 
       if (response && !response.error) {
+        // navigate('/wallets/connect');
         Swal.fire({
           // title: 'Success',
           text: 'Welcome to ChainGlance!',
@@ -104,6 +105,8 @@ const Register = () => {
         });
         if (code && type) {
           navigate(`/invite?code=${code}&type=${type}`);
+        } else {
+          navigate('/wallets/connect');
         }
       } else {
         setError(response.error.message);
@@ -204,7 +207,7 @@ const Register = () => {
                           ) : null}
                         </div>
 
-                        <div className="mb-3">
+                        {/* <div className="mb-3">
                           <Label htmlFor="role" className="form-label">
                             Account Type <span className="text-danger">*</span>
                           </Label>
@@ -229,7 +232,7 @@ const Register = () => {
                               <div>{validation.errors.role}</div>
                             </FormFeedback>
                           ) : null}
-                        </div>
+                        </div> */}
 
                         <div className="mb-2">
                           <Label htmlFor="userpassword" className="form-label">

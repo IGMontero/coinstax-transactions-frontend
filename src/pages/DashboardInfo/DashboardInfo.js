@@ -21,7 +21,8 @@ const DashboardInfo = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
-  const userId = user?.id;
+  const { userId } = useParams();
+  const currentPortfolioUserId = userId ? userId : user?.id;
   const fetchControllerRef = useRef(new AbortController());
   const { fetchData } = useSelector((state) => state.fetchData);
   const networkType = useSelector(selectNetworkType);
@@ -102,7 +103,7 @@ const DashboardInfo = () => {
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
             fetchAssetsPortfolio({
-              userId: userId,
+              userId: currentPortfolioUserId,
               blockchain: networkType,
               signal,
             }),

@@ -50,7 +50,7 @@ const ProfileDropdown = ({ currentUser }) => {
       <Dropdown
         isOpen={isProfileDropdown}
         toggle={toggleProfileDropdown}
-        className={`${currentUser?.role !== DASHBOARD_USER_ROLES.USER ? 'ms-3' : ''} bg bg-transparent`}
+        className={`ms-3 bg bg-transparent`}
       >
         <DropdownToggle tag="button" type="button" className="btn ps-0">
           <span className="d-flex align-items-center">

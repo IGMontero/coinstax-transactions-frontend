@@ -49,10 +49,10 @@ const ethIcon = (
 
 const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
   const dispatch = useDispatch();
-  const { address } = useParams();
+  const { address, userId } = useParams();
   const { user } = useSelector((state) => state.auth);
 
-  const userId = user?.id;
+  const currentPortfolioUserId = userId ? userId : user?.id;
 
   const location = useLocation();
 
@@ -120,7 +120,12 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
 
     const request = isCurrentUserPortfolioSelected
       ? dispatch(
-          fetchNFTSPortfolio({ userId, blockchain: networkType, signal }),
+          fetchNFTSPortfolio({
+            userId: currentPortfolioUserId,
+            blockchain: networkType,
+            page: page,
+            signal,
+          }),
         )
       : dispatch(
           fetchNFTS({

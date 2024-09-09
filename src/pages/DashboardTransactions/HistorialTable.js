@@ -13,6 +13,7 @@ import {
   Badge,
 } from 'reactstrap';
 import {
+  buildParamsForTransactions,
   formatDateToLocale,
   formatTransactionNotFoundMessage,
   getSelectedAssetFilters,
@@ -30,7 +31,10 @@ import { useLocation, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
-import { fetchTransactionsPortfolio } from '../../slices/portfolio/thunk';
+import {
+  downloadTransactionsPortfolio,
+  fetchTransactionsPortfolio,
+} from '../../slices/portfolio/thunk';
 
 const internalPaginationPageSize = 10;
 
@@ -44,7 +48,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const userId = user?.id;
+  const { userId } = useParams();
+  const currentPortfolioUserId = userId ? userId : user?.id;
   const networkType = useSelector(selectNetworkType);
 
   const isCurrentUserPortfolioSelected =
@@ -106,7 +111,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   }, [isProcessing]);
 
   useEffect(() => {
-    console.log('refresh intervals changed!', refreshPreviewIntervals);
+    // console.log('refresh intervals changed!', refreshPreviewIntervals);
 
     // Check if any interval is running.
     const hasAnyIntervalRunning = Object.values(refreshPreviewIntervals).some(
@@ -123,10 +128,10 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         (transaction) => transaction.preview === true,
       );
 
-      console.log(
-        'Preview txs:',
-        data?.filter((tx) => tx.preview === true).length,
-      );
+      // console.log(
+      //   'Preview txs:',
+      //   data?.filter((tx) => tx.preview === true).length,
+      // );
 
       setHasPreview(hasPreview);
     } else {
@@ -137,36 +142,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       setHasPreview(false);
     };
   }, [data]);
-
-  const buildParams = ({
-    address,
-    query,
-    filters,
-    selectAsset,
-    page,
-    networkType,
-    abortSignal,
-    userId,
-  }) => {
-    const params = {
-      address,
-      query,
-      filters: {
-        blockchainAction: filters.selectedFilters,
-        includeSpam: filters.includeSpam,
-      },
-      assetsFilters: selectAsset,
-      page: page || 0,
-      networkType,
-      signal: abortSignal,
-    };
-
-    if (filters.isCurrentUserPortfolioSelected) {
-      params.userId = userId;
-    }
-
-    return params;
-  };
 
   // #region FETCH DATA
   const fetchData = async ({ abortSignal }) => {
@@ -193,7 +168,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         ? fetchTransactionsPortfolio
         : fetchHistory;
 
-      const params = buildParams({
+      const params = buildParamsForTransactions({
         address,
         query: debouncedSearchTerm,
         filters: {
@@ -204,7 +179,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         selectAsset,
         networkType,
         abortSignal,
-        userId,
+        userId: currentPortfolioUserId,
       });
 
       const response = await dispatch(request(params)).unwrap();
@@ -294,12 +269,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           debouncedSearchTerm,
           selectedFilters,
           includeSpam,
-          selectedAssets,
+          selectAsset: getSelectedAssetFilters(selectedAssets),
           currentPage: pageIndex,
           setData,
           networkType,
           data,
-          signal,
+          abortSignal: signal,
           dispatch,
           pagesChecked: pagesCheckedRef.current,
           onEnd: () => {
@@ -323,6 +298,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               err,
             );
           },
+          isCurrentUserPortfolioSelected,
+          currentPortfolioUserId,
         });
       } catch (error) {
         console.error('Error during updateTransactionsPreview call:', error);
@@ -506,7 +483,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         ? fetchTransactionsPortfolio
         : fetchHistory;
 
-      const params = buildParams({
+      const params = buildParamsForTransactions({
         address,
         query: searchTerm,
         filters: {
@@ -518,7 +495,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         page: nextPage,
         networkType,
         abortSignal: signal,
-        userId,
+        userId: currentPortfolioUserId,
       });
 
       const response = await dispatch(request(params)).unwrap();
@@ -657,18 +634,28 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           Swal.showLoading();
         },
       });
-      const response = await dispatch(
-        downloadTransactions({
-          blockchain: networkType,
+      const downloadParams = {
+        blockchain: networkType,
+        filters: {
+          blockchainAction: selectedFilters,
+          includeSpam: includeSpam,
+        },
+      };
+
+      const downloadAction = isCurrentUserPortfolioSelected
+        ? downloadTransactionsPortfolio({
+          ...downloadParams,
+          userId: currentPortfolioUserId,
+          assetsFilters: selectAsset,
+        })
+        : downloadTransactions({
+          ...downloadParams,
           address: address,
           query: debouncedSearchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
           assetsFilters: selectAsset,
-        }),
-      ).unwrap();
+        });
+
+      const response = await dispatch(downloadAction).unwrap();
 
       console.log(response, response.data, response.size);
       const isResponseBlob = response instanceof Blob;
@@ -695,7 +682,17 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         const url = window.URL.createObjectURL(response);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `txs_${networkType}_${address}.csv`);
+
+        // For portfolio downloads, name will reflect user id, portfolio, network type and date in unix.
+        let filename;
+
+        if (isCurrentUserPortfolioSelected) {
+          filename = `portfolio_${currentPortfolioUserId}_${networkType}_${Date.now()}.csv`;
+        } else {
+          filename = `txs_${networkType}_${address}.csv`;
+        }
+
+        link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link);
@@ -846,7 +843,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -864,9 +861,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -1140,7 +1136,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-          // style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1233,7 +1229,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-          // style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions

@@ -24,13 +24,15 @@ import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUse
 import AuthProtectedRoutes from './AuthProtectedRoutes';
 import ResetPaswword from '../pages/Authentication/ResetPassword';
 import DashboardUserWallets from '../pages/DashboardAccountsWallets/DashboardUserWallets';
-import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/DashboardAccountantUsers';
+import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantUsers';
 import DashboardClientProfile from '../pages/DashboardAccountsWallets/DashboardClientProfile';
 import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWallets';
 import DashboardInvite from '../pages/DashboardInvite /DashboardInvite';
 import Clients from '../pages/DashboardAccountsWallets/Admin/Clients';
 import Users from '../pages/DashboardAccountsWallets/Admin/Users';
 import UsersProfile from '../pages/DashboardAccountsWallets/Admin/components/Profiles/UsersProfile';
+import DashboardAccountantAgents from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantAgents';
+import DashboardClientsAgent from '../pages/DashboardAccountsWallets/Agent/DashboardClientsAgent';
 
 // Auth protected routes
 const adminRoutes = [
@@ -114,6 +116,12 @@ const publicRoutes = [
   { path: '/portfolio/assets', component: <DashboardAssets /> },
   { path: '/portfolio/nfts', component: <NFTsPage /> },
   { path: '/portfolio/history', component: <DashboardTransactions /> },
+
+  // PORTFOLIO USERS
+  { path: '/users/:userId/portfolio', component: <DashboardInfo /> },
+  { path: '/users/:userId/portfolio/assets', component: <DashboardAssets /> },
+  { path: '/users/:userId/nfts', component: <NFTsPage /> },
+  { path: '/users/:userId/history', component: <DashboardTransactions /> },
 ];
 
 // Home page
@@ -146,6 +154,14 @@ const authProtectedRoutes = [
       </AuthProtectedRoutes>
     ),
   },
+  {
+    path: '/agent/clients',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.AGENT]}>
+        <DashboardClientsAgent />
+      </AuthProtectedRoutes>
+    ),
+  },
 
   {
     path: '/wallets',
@@ -155,6 +171,7 @@ const authProtectedRoutes = [
           DASHBOARD_USER_ROLES.ADMIN,
           DASHBOARD_USER_ROLES.USER,
           DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
         ]}
       >
         <DashboardUserWallets />
@@ -177,9 +194,18 @@ const authProtectedRoutes = [
         allowedRoles={[
           DASHBOARD_USER_ROLES.ADMIN,
           DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
         ]}
       >
         <DashboardClientProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/agents',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ACCOUNTANT]}>
+        <DashboardAccountantAgents />
       </AuthProtectedRoutes>
     ),
   },
