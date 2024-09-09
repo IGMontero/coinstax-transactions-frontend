@@ -822,7 +822,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1 d-flex align-items-center
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'}
+              ${!isInitialLoad ? ' btn-soft-primary mb-1' : 'btn-muted mb-1 border'}
               ${showTransactionFilterMenu ? 'active' : ''} `}
               role="button"
             >
