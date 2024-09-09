@@ -80,6 +80,8 @@ const Login = (props) => {
           } else {
             navigate('/wallets');
           }
+        } else if (role === DASHBOARD_USER_ROLES.ADMIN) {
+          navigate('/admin/clients');
         } else {
           navigate('/clients');
         }
@@ -124,7 +126,7 @@ const Login = (props) => {
           <Container>
             <Row className=" justify-content-center">
               <div className="d-flex justify-content-center align-items-center">
-                <Link to={'/'}>
+                <Link to={'/wallets'}>
                   <img
                     src={logo}
                     className="card-logo "

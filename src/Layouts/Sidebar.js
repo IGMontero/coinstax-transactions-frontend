@@ -101,8 +101,8 @@ const Sidebar = ({ layoutType }) => {
               <Link
                 to={
                   process.env.NODE_ENV === 'development'
-                    ? '/'
-                    : 'https://chainglance.com/'
+                    ? '/wallets'
+                    : 'https://chainglance.com/wallets'
                 }
               >
                 <span className="logo-lg d-flex align-items-center justify-content-center">

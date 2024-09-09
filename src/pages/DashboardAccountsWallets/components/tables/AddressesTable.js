@@ -207,9 +207,14 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     const [reorderedItem] = items.splice(result.source.index, 1);
     items.splice(result.destination.index, 0, reorderedItem);
 
+    const updateItems = items.map((item, idx) => ({
+      ...item,
+      index: idx + 1,
+    }));
+
     setAddresses(items);
 
-    handleReorderAddresses(items);
+    handleReorderAddresses(updateItems);
   };
 
   const handleReorderAddresses = async (updatedAddresses) => {

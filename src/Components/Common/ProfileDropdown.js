@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -9,29 +9,19 @@ import {
 } from 'reactstrap';
 //import images
 import avatar1 from '../../assets/images/users/avatar-1.jpg';
-import { logoutUser } from '../../slices/thunks';
 
-import { logout } from '../../slices/auth2/reducer';
-import Swal from 'sweetalert2';
-import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import { useLogOut } from '../../hooks/useAuth';
 const ProfileDropdown = ({ currentUser }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const logout = useLogOut();
 
   const handleLogout = () => {
     try {
-      dispatch(logout());
+      logout();
 
-      // Swal.fire({
-      //   title: 'Logged Out!',
-      //   text: 'You have been logged out successfully!',
-      //   icon: 'success',
-      //   timer: 2000,
-      //   showConfirmButton: false,
-      // });
-
-      navigate('/login');
+      navigate('/wallets');
     } catch (error) {
       console.log(error);
     }
@@ -50,7 +40,7 @@ const ProfileDropdown = ({ currentUser }) => {
       <Dropdown
         isOpen={isProfileDropdown}
         toggle={toggleProfileDropdown}
-        className={`ms-3 bg bg-transparent`}
+        className={`ms-1 bg bg-transparent`}
       >
         <DropdownToggle tag="button" type="button" className="btn ps-0">
           <span className="d-flex align-items-center">
