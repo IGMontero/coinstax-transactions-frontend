@@ -5,7 +5,7 @@ import { Button, Modal, Spinner } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useConnect, useConnections } from 'wagmi';
 import coinbaseLogo from '../../assets/images/wallets/coinbase.png';
-import metamaskLogo from '../../assets/images/wallets/metamask.svg';
+import metamaskLogo from '../../assets/images/wallets/metamask.png';
 import walletConnectLogo from '../../assets/images/wallets/WalletConnect.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import {
