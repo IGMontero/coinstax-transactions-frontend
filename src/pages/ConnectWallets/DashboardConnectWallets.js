@@ -28,16 +28,10 @@ const DashboardConnectWallets = () => {
   const userId = user?.id;
   const userAddresses = userPortfolioSummary?.addresses;
 
-  console.log('User portfolio summary:', userPortfolioSummary);
-
-  console.log('user addresses:', userAddresses);
   // const { walletInfo } = useWalletInfo();
 
   // const chainId = useChainId();
-  const { connectors, connect } = useConnect();
-  const connections = useConnections();
-  // console.log('Connections:', connections);
-  // console.log('Connectors: ', connectors);
+  const { connect } = useConnect();
 
   const [loading, setLoading] = useState(false);
   const [loadingConnectInfo, setLoadingConnectInfo] = useState({
@@ -197,8 +191,6 @@ const DashboardConnectWallets = () => {
     async function handleConnectedAccount() {
       const accounts = await connector.getAccounts();
 
-      console.log('Accounts: ', accounts);
-
       // For each account do the same. Only navigate to the first one.
 
       const mainAddress = accounts[0];
@@ -258,13 +250,21 @@ const DashboardConnectWallets = () => {
       <div className="page-content ">
         <Helmet title="Connect Wallet" />
         <div className="d-flex justify-content-center flex-column align-items-center">
-          <div>
+          <div className="text-center">
             <h1>Connect to ChainGlance</h1>
           </div>
-          <div className="d-flex mt-4 mb-5">{renderConnectors()}</div>
           <div
             style={{
-              maxWidth: 610,
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+            }}
+            className="d-flex mt-4 mb-5"
+          >
+            {renderConnectors()}
+          </div>
+          <div
+            style={{
+              maxWidth: 450,
             }}
             className="w-100 py-3"
           >
@@ -276,33 +276,6 @@ const DashboardConnectWallets = () => {
                 searchInput={searchValue}
                 setSearchInput={setSearchValue}
               />
-
-              {/* <Button
-                className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
-                color="soft-light"
-                disabled={loading || !searchValue}
-                style={{
-                  borderRadius: '10px',
-                  border: '.5px solid grey',
-                  cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
-                }}
-                onClick={() => {
-                  if (!user) {
-                    handleSearchWallet(searchValue);
-                  } else {
-                    handleConnectWallet(searchValue);
-                  }
-                }}
-              >
-                <i className="bx bx-plus me-2"></i>
-                {loading ? (
-                  <div>
-                    <Spinner size="sm" color="light" />
-                  </div>
-                ) : (
-                  <>Add</>
-                )}
-              </Button> */}
             </div>
           </div>
 
@@ -381,13 +354,17 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
   return (
     <>
       <div
-        className="d-flex btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center"
+        style={{
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+        }}
+        className="d-flex justify-content-center btn-hover-light p-2 rounded cursor-pointer flex-column mx-4 align-items-center"
         onClick={handleClick}
       >
         {logo ? (
-          <img className=" avatar-md mb-2" src={logo} alt={name} />
+          <img className="avatar-md avatar-sm mb-2" src={logo} alt={name} />
         ) : (
-          <div className="avatar-md mb-2">
+          <div className="avatar-md avatar-sm mb-2">
             {/* <i className="bx bx-wallet"></i> */}
           </div>
         )}
