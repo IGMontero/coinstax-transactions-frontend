@@ -140,6 +140,9 @@ export const useRefreshUserPortfolio = () => {
   return refreshPortfolio;
 };
 
-
+export const useUserPortfolioSummary = () => {
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
+  return userPortfolioSummary;
+};
 
 export default usePortfolioData;

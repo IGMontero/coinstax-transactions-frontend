@@ -1,8 +1,14 @@
 import React from 'react';
-import { Modal, ModalBody, Button, Spinner } from 'reactstrap';
+import { Button, Spinner } from 'reactstrap';
 
-function ModalLoader({ isOpen, onClose }) {
+function ModalLoader({ isOpen, details, onClose }) {
   if (!isOpen) return null;
+
+  console.log('Details: ', details);
+
+  const loadingMessage = details?.name
+    ? `Connecting to ${details.name}`
+    : 'Connecting to wallet';
 
   return (
     <div
@@ -18,11 +24,12 @@ function ModalLoader({ isOpen, onClose }) {
         style={{
           backgroundColor: 'rgba(51, 51, 51, 0.8)',
 
-          padding: '40px',
+          padding: '10px 20px',
           borderRadius: '0.5rem',
           position: 'relative',
           width: '300px',
           height: '300px',
+          textAlign: 'center',
         }}
       >
         <Button
@@ -42,7 +49,19 @@ function ModalLoader({ isOpen, onClose }) {
           style={{ width: '3rem', height: '3rem' }}
           className="mb-3"
         />
-        <h5 className="text-dark">Please wait </h5>
+        <h5 className="text-dark">{loadingMessage}</h5>
+
+        {/* // Please wait */}
+
+        <p className="" style={{ fontSize: '0.8rem' }}>
+          Please wait...
+        </p>
+
+        {details?.message && (
+          <p className="text-light" style={{ fontSize: '0.8rem' }}>
+            {details.message}
+          </p>
+        )}
       </div>
     </div>
   );

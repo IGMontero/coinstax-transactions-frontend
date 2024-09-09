@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Dropdown,
   DropdownItem,
@@ -9,7 +9,7 @@ import {
   DropdownToggle,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
-import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 import {
   deleteUserAddressWallet,
   updateUserWalletAddress,
@@ -22,14 +22,13 @@ import {
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';
 import DropdownMenuPortal from './DropdownPortal';
-import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { address, userId } = useParams();
-  const addressParams = address;
+  const addressParams = address?.toLowerCase();
   const { user } = useSelector((state) => state.auth);
   const currentUserId = user?.id;
 
@@ -52,7 +51,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   );
   const [selectedAddress, setSelectedAddress] = useState(
     userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-      null,
+    null,
   );
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
@@ -156,9 +155,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${
-        address.name ? address.name : address.address
-      }?`,
+      text: `Are you sure to delete wallet ${address.name ? address.name : address.address
+        }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -283,6 +281,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     const { name, address, value, complete } = addressData;
     const addressValue = value ? parseValuesToLocale(value, CurrencyUSD) : '$0';
     const loadingAddressValue = !complete;
+    const isSelected =
+      selectedAddress?.address?.toLowerCase() === address?.toLowerCase() ||
+      addressParams === address;
 
     return (
       <>
@@ -312,8 +313,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             </div>
           </div>
 
-          {(selectedAddress && selectedAddress.address === address) ||
-          addressParams === address ? (
+          {isSelected ? (
             <i className="ri-check-line text-muted fs-16 align-middle me-3"></i>
           ) : null}
           {renderOptionsSubDropdown(index, addressData)}
@@ -340,9 +340,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className={`w-100 bg-transparent ${
-          isInHeader ? 'py-1 ' : ''
-        } border-1 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''
+          } border-1 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
