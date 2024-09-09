@@ -1,17 +1,25 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import SearchBar from './SearchBar';
 
-const ParentComponentSearchBar = () => {
+const ParentComponentSearchBar = ({
+  isConnectWalletsPage,
+  searchInput,
+  setSearchInput,
+}) => {
   const [selectedOption, setSelectedOption] = useState(null);
 
   const handleDropdownSelect = (option) => {
     setSelectedOption(option);
   };
 
+  // const handleSearch
+
   return (
     <SearchBar
-      onDropdownSelect={handleDropdownSelect}
+      isConnectWalletsPage={isConnectWalletsPage}
       selectedOption={selectedOption}
+      searchInput={searchInput}
+      setSearchInput={setSearchInput}
     />
   );
 };
