@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from 'reactstrap';
+import React, { useState } from 'react';
 import Helmet from '../../Components/Helmet/Helmet';
 import AddressesTable from './components/tables/AddressesTable';
-import { useSelector, useDispatch } from 'react-redux';
-
+import { useSelector } from 'react-redux';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 import {
   CurrencyUSD,
@@ -11,25 +9,22 @@ import {
   parseValuesToLocale,
 } from '../../utils/utils';
 import Skeleton from 'react-loading-skeleton';
-import { useNavigate } from 'react-router-dom';
 import AddAccManager from '../../Components/Modals/AddAccManager';
 
-const DashboardUserWallets = () => {
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
-  const { userPortfolioSummary, loaders } = useSelector(
-    (state) => state.userWallets,
-  );
-  const navigate = useNavigate();
+const DashboardUserWallets = ({
+  userAddresses,
+  userPortfolioSummary,
+  user,
+  initialLoad,
+  loading,
+}) => {
+  const { loaders } = useSelector((state) => state.userWallets);
   const userId = user?.id;
-  const userAddresses = userPortfolioSummary?.addresses;
   const refreshUserPortfolio = useRefreshUserPortfolio();
 
   // const [modalConnectWallet, setModalConnectWallet] = useState(false);
 
   const [modalAddAccountManager, setModalAddAccountManager] = useState(false);
-
-  const [initialLoad, setInitialLoad] = useState(true);
 
   // const addresses = userPortfolioSummary?.addresses;
   const totalPortfolioValue = userPortfolioSummary?.totalValue;
@@ -37,29 +32,11 @@ const DashboardUserWallets = () => {
     totalPortfolioValue,
     CurrencyUSD,
   );
-  const loading = loaders.userPortfolioSummary;
 
   const hasConnectedWallets = userAddresses?.length > 0;
 
-  useEffect(() => {
-    // Initialize: if there are no collected wallets, send user to connect wallet page.
-    // if (!hasConnectedWallets) {
-    //   console.log('No connected wallets');
-    //   navigate('/wallets/connect');
-    // }
-
-    if (initialLoad) {
-      setInitialLoad(false);
-      refreshUserPortfolio();
-    }
-  }, []);
-
   // const toggleModalConnectWallet = () =>
   //   setModalConnectWallet(!modalConnectWallet);
-
-  const handleConnectWallet = () => {
-    navigate('/wallets/connect');
-  };
 
   const toggleModalAddAccountManager = () =>
     setModalAddAccountManager(!modalAddAccountManager);
@@ -144,13 +121,14 @@ const DashboardUserWallets = () => {
             </h4>
           </div>
         )}
-
-        <AddressesTable
-          userId={userId}
-          initialAddresses={userPortfolioSummary?.addresses}
-          loading={loaders.userPortfolioSummary}
-          onRefresh={handleRefreshPortfolio}
-        />
+        {!loading && (
+          <AddressesTable
+            userId={userId}
+            initialAddresses={userPortfolioSummary?.addresses}
+            loading={loaders.userPortfolioSummary}
+            onRefresh={handleRefreshPortfolio}
+          />
+        )}
 
         {/* <div className="mt-4">
             <h2>Watchlist</h2>
