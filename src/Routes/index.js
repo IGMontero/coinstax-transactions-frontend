@@ -24,7 +24,7 @@ const Index = () => {
 
   const isLoginPage = location.pathname.includes('/login');
   const isRegisterPage = location.pathname.includes('/register');
-  const isDashboardPage = location.pathname.includes('/');
+  const isDashboardPage = location.pathname === '/';
 
   const token = getTokenFromCookies();
 
@@ -43,7 +43,7 @@ const Index = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (user && (isLoginPage || isRegisterPage)) {
+    if (user && (isLoginPage || isRegisterPage || isDashboardPage)) {
       navigate('/wallets');
     }
   }, [user, isLoginPage, navigate, isRegisterPage, isDashboardPage]);
