@@ -10,7 +10,6 @@ import { useGetJob } from '../../slices/jobs/hooks';
 function JobsManager() {
     const { jobsList } = useSelector((state) => state.jobs);
 
-    console.log('Jobs list:', jobsList);
 
     const getJob = useGetJob();
 
@@ -32,7 +31,7 @@ function JobsManager() {
                 if (job?.isCompleted || job?.isFailed) {
                     clearInterval(interval);
                 }
-            }, 5000);
+            }, 1000);
             newIntervals.push(interval);
         });
 
@@ -48,7 +47,6 @@ function JobsManager() {
     useEffect(() => {
         if (jobsList.length > 0) {
             jobsList.forEach((job) => {
-                console.log('Job:', job);
                 //   if (task.status === 'New' || task.status === 'Started' || task.status === 'Running') {
                 toast.loading(job, {
                     toastId: job,
