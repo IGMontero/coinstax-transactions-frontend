@@ -65,21 +65,15 @@ const Navdata = () => {
     userId,
   ]);
 
-  console.log('prevaddress', prevAddress);
 
-  // useEffect(() => {
-  //   if (contractAddress && !address ) {
-  //     setAddressSearched(prevAddress);
-  //   }
-  // }, [contractAddress, address, isCurrentUserPortfolioSelected]);
 
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
     setIsUnsupported(
       assets?.unsupported ||
-        transactions?.unsupported ||
-        performance?.unsupported ||
-        !addressSearched,
+      transactions?.unsupported ||
+      performance?.unsupported ||
+      !addressSearched,
     );
   }, [fetchData, addressSearched, isCurrentUserPortfolioSelected]);
 

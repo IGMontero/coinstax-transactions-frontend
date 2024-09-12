@@ -9,6 +9,7 @@ import ReactGA from 'react-ga4';
 import { useLocation } from 'react-router-dom';
 import { ConnectWalletProvider } from './Providers/ConnectWalletProvider';
 import Route from './Routes';
+import JobsManager from './Components/JobsManager/JobsManager';
 
 ReactGA.initialize(process.env.REACT_APP_GA_MEASUREMENT_ID || '');
 
@@ -26,6 +27,7 @@ function App() {
   return (
     <React.Fragment>
       <ConnectWalletProvider>
+        <JobsManager />
         <Route />
       </ConnectWalletProvider>
     </React.Fragment>

@@ -19,7 +19,7 @@
   "plugins": ["react", "react-hooks", "prettier", "eslint-plugin-prettier"],
   "rules": {
     //add customize rules here as per your project's needs
-    "prettier/prettier": "warn",
+    // "prettier/prettier": "warn",
     "no-unused-vars": "warn",
     "react/prop-types": "off",
     "react/no-unknown-property": "warn",

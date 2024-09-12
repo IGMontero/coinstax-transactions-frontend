@@ -35,6 +35,7 @@ import {
   downloadTransactionsPortfolio,
   fetchTransactionsPortfolio,
 } from '../../slices/portfolio/thunk';
+import { addJobToList } from '../../slices/jobs/reducer';
 
 const internalPaginationPageSize = 10;
 
@@ -163,7 +164,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         setShowDownloadMessage(true);
       }, 3000);
 
-      console.log('currentPage fetch data', currentPage);
+
       const request = isCurrentUserPortfolioSelected
         ? fetchTransactionsPortfolio
         : fetchHistory;
@@ -621,6 +622,91 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     setHasAppliedFilters(true);
   };
 
+  const handleDownloadTransactionsNew = async () => {
+    // Do the same but now the response will not be something to download.
+    // Instead, it will be a response with a fileUrl or a pending state.
+
+    try {
+      setLoadingDownload(true);
+
+      const assetsFilters = getSelectedAssetFilters(selectedAssets);
+
+      // Show processing
+      // Swal.fire({
+      //   title: 'Processing',
+      //   html: 'Your file is being prepared for download.',
+      //   timerProgressBar: true,
+      //   didOpen: () => {
+      //     Swal.showLoading();
+      //   },
+      // });
+
+      const requestParams = {
+        blockchain: networkType,
+        filters: {
+          blockchainAction: selectedFilters,
+          includeSpam: includeSpam,
+        },
+        address: address,
+      };
+
+      const exportAction = isCurrentUserPortfolioSelected
+        ? downloadTransactionsPortfolio({
+          ...requestParams,
+          userId: currentPortfolioUserId,
+          assetsFilters,
+        })
+        : downloadTransactions({
+          ...requestParams,
+          query: debouncedSearchTerm,
+          assetsFilters,
+        });
+
+      const response = await dispatch(exportAction).unwrap();
+
+      if (response.completed && response.fileUrl) {
+        // Handle file url here. Open in new tab or trigger download.
+        const link = document.createElement('a');
+        link.href = response.fileUrl;
+        link.setAttribute('download', 'transactions.csv');
+        document.body.appendChild(link);
+        link.click();
+
+        // Close the modal and reset loading state
+        Swal.close();
+
+        return;
+      } else if (response.isProcessing) {
+        // Check if it's processing.
+        // Get job id.
+
+        const { jobId } = response;
+
+        // Add job to jobs list and start polling
+        dispatch(addJobToList(jobId));
+
+        Swal.fire({
+          title: 'Processing',
+          html: 'Your file is being prepared for download. Please wait until it is ready.',
+          timer: 2000,
+        });
+      }
+
+      console.log('Response:', response);
+    } catch (error) {
+      console.error(error);
+      console.log(error.response);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong. Please try again later.',
+      });
+      setLoadingDownload(false);
+    } finally {
+      setLoadingDownload(false);
+    }
+  };
+
   const handleDownloadTransactions = async () => {
     try {
       setLoadingDownload(true);
@@ -644,16 +730,16 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const downloadAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-            ...downloadParams,
-            userId: currentPortfolioUserId,
-            assetsFilters: selectAsset,
-          })
+          ...downloadParams,
+          userId: currentPortfolioUserId,
+          assetsFilters: selectAsset,
+        })
         : downloadTransactions({
-            ...downloadParams,
-            address: address,
-            query: debouncedSearchTerm,
-            assetsFilters: selectAsset,
-          });
+          ...downloadParams,
+          address: address,
+          query: debouncedSearchTerm,
+          assetsFilters: selectAsset,
+        });
 
       const response = await dispatch(downloadAction).unwrap();
 
@@ -843,7 +929,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -861,9 +947,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -1137,7 +1222,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-          // style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1210,14 +1295,26 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                 style={{
                   borderRadius: '10px',
                   border: '.5px solid grey',
+                  height: 35,
                 }}
-                onClick={handleDownloadTransactions}
+                onClick={handleDownloadTransactionsNew}
                 size="sm"
-                disabled={isInitialLoad}
+                disabled={isInitialLoad || loadingDownload}
               >
                 {' '}
-                <i className="ri-file-download-line fs-5 me-2 text-dark"></i>
-                <span className="text-dark"> Download CSV</span>
+                {loadingDownload ? (
+                  <>
+                    {/* // SHOW spinner and Building CSV... */}
+                    <Spinner size="sm" />
+
+                    <span className="ms-2">Building CSV...</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="ri-file-download-line fs-5 me-2 text-dark"></i>
+                    <span>Download CSV</span>
+                  </>
+                )}
               </Button>
             )}
           </div>
@@ -1230,7 +1327,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-          // style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions

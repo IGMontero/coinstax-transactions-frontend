@@ -44,8 +44,5 @@ export * from './dashboardNFT/thunk';
 // File Manager
 export * from './fileManager/thunk';
 
-// Jobs
-export * from './jobs/thunk';
-
 // API Key
 export * from './apiKey/thunk';

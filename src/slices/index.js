@@ -23,6 +23,8 @@ import userWalletsReducer from './userWallets/reducer';
 // Selected Network
 import NetworkTypeReducer from './networkType/reducer';
 
+import JobsReducer from './jobs/reducer';
+
 const rootReducer = combineReducers({
   Layout: LayoutReducer,
   Login: LoginReducer,
@@ -37,6 +39,7 @@ const rootReducer = combineReducers({
   addressName: AddressNameReducer,
   networkType: NetworkTypeReducer,
   userWallets: userWalletsReducer,
+  jobs: JobsReducer,
 });
 
 export default rootReducer;
