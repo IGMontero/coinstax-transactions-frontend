@@ -69,7 +69,7 @@ const DashboardUserWallets = ({
         setIsOpen={setModalAddAccountManager}
         userId={userId}
       /> */}
-      <div style={{ maxWidth: '610px' }}>
+      <div style={{ maxWidth: '610px' }} className="w-100">
         <div className="d-flex justify-content-between text-center align-items-center mb-4 mt-5">
           <h3>Manage Your Wallets </h3>
           <div className="d-flex align-items-center">
