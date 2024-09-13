@@ -228,16 +228,6 @@ const SearchBar = ({
     }
   };
 
-  const handleSearchIconClick = () => {
-    if (searchInput) {
-      if (selectedOption.coingeckoId) {
-        navigate(`/tokens/${selectedOption.coingeckoId}`);
-      } else {
-        navigate(`/address/${searchInput}`);
-      }
-    }
-  };
-
   const handleAddWallet = async (address) => {
     setLoading(true);
     try {
@@ -265,20 +255,6 @@ const SearchBar = ({
         icon: 'error',
       });
       setLoading(false);
-    }
-  };
-
-  const handleKeyDown = (e, searchInput) => {
-    if (user && e.key === 'Enter' && searchInput.length >= 3) {
-      handleAddWallet(searchInput);
-    } else {
-      if (e.key === 'Enter' && searchInput.length >= 3) {
-        setSearchInput('');
-        // Close dropdown
-        setIsMenuOpen(false);
-        navigate(`/address/${searchInput}`);
-        handleTrackAddressSearchAnalytics(searchInput);
-      }
     }
   };
 
@@ -317,14 +293,14 @@ const SearchBar = ({
     }
   };
 
-  const handleDropdownSelect = useCallback(
-    (option) => {
-      setSearchInput(option.label);
-      setOptions([option]);
-      navigate(`/address/${option.value}`);
-    },
-    [navigate],
-  );
+  // const handleDropdownSelect = useCallback(
+  //   (option) => {
+  //     setSearchInput(option.label);
+  //     setOptions([option]);
+  //     navigate(`/address/${option.value}`);
+  //   },
+  //   [navigate],
+  // );
 
   // #region STYLES
   const customStyles = {
