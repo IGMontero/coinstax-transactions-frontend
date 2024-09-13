@@ -247,6 +247,7 @@ const SearchBar = ({
 
       if (response && !response.error) {
         navigate(`/address/${address}`);
+        dispatch(setAddressName({ value: address, label: null }));
         refreshUserPortfolio();
       } else {
         Swal.fire({
@@ -264,6 +265,55 @@ const SearchBar = ({
         icon: 'error',
       });
       setLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e, searchInput) => {
+    if (user && e.key === 'Enter' && searchInput.length >= 3) {
+      handleAddWallet(searchInput);
+    } else {
+      if (e.key === 'Enter' && searchInput.length >= 3) {
+        setSearchInput('');
+        // Close dropdown
+        setIsMenuOpen(false);
+        navigate(`/address/${searchInput}`);
+        handleTrackAddressSearchAnalytics(searchInput);
+      }
+    }
+  };
+
+  const handleSearch = (
+    e,
+    { pressEnter = false, pressIcon = false, pressButtonAdd = false } = {},
+  ) => {
+    if (pressEnter) {
+      if (user && e.key === 'Enter' && searchInput.length >= 3) {
+        handleAddWallet(searchInput);
+      } else {
+        if (e.key === 'Enter' && searchInput.length >= 3) {
+          setSearchInput('');
+          // Close dropdown
+          setIsMenuOpen(false);
+          navigate(`/address/${searchInput}`);
+          handleTrackAddressSearchAnalytics(searchInput);
+        }
+      }
+    }
+    if (pressIcon) {
+      if (searchInput) {
+        if (selectedOption.coingeckoId) {
+          navigate(`/tokens/${selectedOption.coingeckoId}`);
+        } else {
+          navigate(`/address/${searchInput}`);
+        }
+      }
+    }
+    if (pressButtonAdd) {
+      if (!user) {
+        navigate(`/address/${searchInput}`);
+      } else {
+        handleAddWallet(searchInput);
+      }
     }
   };
 
@@ -367,7 +417,15 @@ const SearchBar = ({
 
   const DropdownIndicator = (props) => (
     <components.DropdownIndicator {...props}>
-      <div onClick={handleSearchIconClick}>
+      <div
+        onClick={(e) =>
+          handleSearch(e, {
+            pressEnter: false,
+            pressIcon: true,
+            pressButtonAdd: false,
+          })
+        }
+      >
         <i
           className={`ri-search-line align-middle text-${layoutModeType === layoutModeTypes['DARKMODE'] ? 'white' : 'dark'} ${searchInput ? 'cursor-pointer' : ''}`}
         ></i>
@@ -400,19 +458,13 @@ const SearchBar = ({
             ? () => 'Type at least 3 characters to search'
             : () => 'We were unable to find any results for your search'
         }
-        onKeyDown={(e) => {
-          if (user && e.key === 'Enter' && searchInput.length >= 3) {
-            handleAddWallet(searchInput);
-          } else {
-            if (e.key === 'Enter' && searchInput.length >= 3) {
-              setSearchInput('');
-              // Close dropdown
-              setIsMenuOpen(false);
-              navigate(`/address/${searchInput}`);
-              handleTrackAddressSearchAnalytics(searchInput);
-            }
-          }
-        }}
+        onClick={(e) =>
+          handleSearch(e, {
+            pressEnter: true,
+            pressIcon: false,
+            pressButtonAdd: false,
+          })
+        }
       />
       {isConnectWalletsPage && (
         <Button
@@ -424,13 +476,13 @@ const SearchBar = ({
             border: '.5px solid grey',
             cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
           }}
-          onClick={() => {
-            if (!user) {
-              navigate(`/address/${searchInput}`);
-            } else {
-              handleAddWallet(searchInput);
-            }
-          }}
+          onClick={(e) =>
+            handleSearch(e, {
+              pressEnter: false,
+              pressIcon: false,
+              pressButtonAdd: true,
+            })
+          }
         >
           <i className="bx bx-plus me-2"></i>
           {loading ? (
