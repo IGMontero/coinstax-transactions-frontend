@@ -599,3 +599,19 @@ export const isDarkMode = () => {
   const currentTheme = getCurrentThemeCookie();
   return currentTheme === 'dark';
 };
+
+
+export const downloadFileByURL = async (url, fileName) => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const urlBlob = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = urlBlob;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(urlBlob);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+  }
+}
