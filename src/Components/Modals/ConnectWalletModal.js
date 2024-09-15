@@ -1,7 +1,14 @@
 import React from 'react';
 import { Button, Spinner } from 'reactstrap';
+import { layoutModeTypes } from '../constants/layout';
+import { useSelector } from 'react-redux';
 
 function ConnectWalletModal({ isOpen, details, onClose }) {
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
+
   if (!isOpen) return null;
 
   console.log('Details: ', details);
@@ -91,14 +98,18 @@ function ConnectWalletModal({ isOpen, details, onClose }) {
       <div
         className="d-flex flex-column justify-content-start align-items-center"
         style={{
-          backgroundColor: 'rgba(51, 51, 51, 1)',
+          backgroundColor: isDarkMode
+            ? 'rgba(51, 51, 51, 0.5)'
+            : 'rgba(128, 128, 128, 0.5)',
           padding: '20px',
+          backdropFilter: 'blur(10px)',
           borderRadius: '0.5rem',
           position: 'relative',
           width: '450px',
-          maxWidth: '90vw', // Adjust the max-width if needed
-          maxHeight: '90vh', // Adjust the max-height if needed
+          maxWidth: '90vw',
+          maxHeight: '90vh',
           textAlign: 'center',
+          color: isDarkMode ? '#fff' : '#333',
         }}
       >
         {/* Modal Header */}
@@ -110,7 +121,10 @@ function ConnectWalletModal({ isOpen, details, onClose }) {
             marginBottom: '10px',
           }}
         >
-          <h3 className="text mb-0" style={{ flex: 1 }}>
+          <h3
+            className="text mb-0"
+            style={{ flex: 1, color: isDarkMode ? '#fff' : '#333' }}
+          >
             {modalTitle}
           </h3>
 
@@ -123,7 +137,7 @@ function ConnectWalletModal({ isOpen, details, onClose }) {
                 top: '10px',
                 right: '10px',
                 fontSize: '1rem',
-                color: '#fff',
+                color: isDarkMode ? '#fff' : '#333',
               }}
             />
           )}
@@ -142,8 +156,20 @@ function ConnectWalletModal({ isOpen, details, onClose }) {
                 style={{ width: '1rem', height: '1rem' }}
                 className="mb-3"
               />
-              <h5 className="text">{loadingMessage}</h5>
-              <p style={{ fontSize: '0.8rem' }}>Please wait...</p>
+              <h5
+                className="text"
+                style={{ color: isDarkMode ? '#fff' : '#333' }}
+              >
+                {loadingMessage}
+              </h5>
+              <p
+                style={{
+                  fontSize: '0.8rem',
+                  color: isDarkMode ? '#fff' : '#333',
+                }}
+              >
+                Please wait...
+              </p>
             </>
           ) : (
             <>{details?.message && <p>{details.message}</p>}</>
