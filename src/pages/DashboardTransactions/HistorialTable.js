@@ -690,9 +690,16 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           html: 'Your file is being prepared for download. Please wait until it is ready.',
           timer: 2000,
         });
+      } else {
+        // No response or error. Consideer showing an error message.
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong. Please try again later.',
+        });
       }
 
-      console.log('Response:', response);
+      console.log('Respons2e:', response);
     } catch (error) {
       console.error(error);
       console.log(error.response);
