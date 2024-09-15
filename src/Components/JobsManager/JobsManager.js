@@ -23,15 +23,21 @@ function JobsManager() {
 
         const newIntervals = [];
 
-        jobsList.forEach((jobId) => {
+        jobsList.forEach((job) => {
+            const { id } = job;
             // Check if task is already in the list
             const interval = setInterval(async () => {
-                const job = await getJob(jobId);
+                const updatedJob = await getJob(id);
 
-                if (job?.isCompleted || job?.isFailed) {
+
+                if (updatedJob?.isCompleted || updatedJob?.isFailed) {
                     clearInterval(interval);
                 }
-            }, 1000);
+
+                if (!updatedJob) {
+                    clearInterval(interval);
+                }
+            }, 2500);
             newIntervals.push(interval);
         });
 
@@ -47,15 +53,18 @@ function JobsManager() {
     useEffect(() => {
         if (jobsList.length > 0) {
             jobsList.forEach((job) => {
+                const { message } = job;
                 //   if (task.status === 'New' || task.status === 'Started' || task.status === 'Running') {
-                toast.loading(job, {
-                    toastId: job,
-                    autoClose: false,
-                    closeOnClick: false,
-                    draggable: false,
-                    // progress: task.percent ? task.percent / 100 : undefined,
-                    position: 'bottom-right',
-                });
+                toast.loading(message
+                    || `Job ${job.id} is running.`
+                    , {
+                        toastId: job.id,
+                        autoClose: false,
+                        closeOnClick: false,
+                        draggable: false,
+                        // progress: task.percent ? task.percent / 100 : undefined,
+                        position: 'bottom-right',
+                    });
             });
         }
     }, [jobsList]);

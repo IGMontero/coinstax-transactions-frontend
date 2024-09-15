@@ -680,10 +680,10 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         // Check if it's processing.
         // Get job id.
 
-        const { jobId } = response;
+        const { job } = response;
 
         // Add job to jobs list and start polling
-        dispatch(addJobToList(jobId));
+        dispatch(addJobToList(job));
 
         Swal.fire({
           title: 'Processing',

@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios'; // Assuming you'll use axios for API calls
 import { API_BASE } from '../../common/constants';
+import { downloadFileByURL } from '../../utils/utils';
+import { JOB_NAMES } from './constants';
 
 // Initial state
 export const initialState = {
@@ -34,9 +36,31 @@ const jobsSlice = createSlice({
 
         removeJobFromList: (state, action) => {
             state.jobsList = state.jobsList.filter(
-                (job) => job !== action.payload,
+                (job) => job.id !== action.payload,
             );
         },
+        handleCompletedJob: (state, action) => {
+            const completedJobData = action.payload;
+
+            // Handle completed job based on job name/id
+            if (completedJobData.name ===
+                JOB_NAMES.EXPORT_ADDRESS_TRANSACTIONS) {
+                // Handle completed
+                const { data } = completedJobData;
+
+                const fileUrl = data?.fileUrl;
+                const fileName = data?.fileName;
+
+                if (fileUrl) {
+                    // Download file
+                    downloadFileByURL(fileUrl,
+                        fileName || 'exported_transactions.csv'
+                    );
+                }
+            }
+
+        }
+        // Handle completed}
     },
     extraReducers: (builder) => {
         builder
@@ -55,6 +79,6 @@ const jobsSlice = createSlice({
     },
 });
 
-export const { addJobToList, removeJobFromList } = jobsSlice.actions;
+export const { addJobToList, removeJobFromList, handleCompletedJob } = jobsSlice.actions;
 
 export default jobsSlice.reducer;
