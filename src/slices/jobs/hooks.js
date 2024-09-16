@@ -9,12 +9,21 @@ export const useGetJob = () => {
     return useCallback(async (id) => {
         try {
             const response = await dispatch(fetchJobById(id));
+            const data = response?.payload;
 
-            if (response?.error) {
+            if (response?.error || !data) {
+                toast.error(`There was a problem. Please try again`, {
+                    autoClose: 3000,
+                    closeOnClick: true,
+                    position: 'bottom-right',
+                });
+
+                // Remove job from list if it fails
+                dispatch(removeJobFromList(id));
+
                 return response;
             }
 
-            const data = response.payload;
 
 
             if (data.isCompleted) {
@@ -61,6 +70,16 @@ export const useGetJob = () => {
 
             return data
         } catch (error) {
+            // Remove job from list if it fails
+            dispatch(removeJobFromList(id));
+
+            // Show error message
+            toast.error(`There was a problem. Please try again`, {
+                autoClose: 3000,
+                closeOnClick: true,
+                position: 'bottom-right',
+            });
+
             return { error: error.message };
         }
     }, []);
