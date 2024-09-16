@@ -59,6 +59,27 @@ const jobsSlice = createSlice({
                 }
             }
 
+            if (completedJobData.name === JOB_NAMES.EXPORT_USER_PORTFOLIO) {
+                // Handle completed
+                const { data } = completedJobData;
+
+                const files = data?.files;
+
+                if (files) {
+                    files.forEach((file) => {
+                        const fileUrl = file?.fileUrl;
+                        const fileName = file?.fileName;
+
+                        if (fileUrl) {
+                            // Download file
+                            downloadFileByURL(fileUrl,
+                                fileName || 'exported_portfolio.csv'
+                            );
+                        }
+                    });
+                }
+            }
+
         }
         // Handle completed}
     },

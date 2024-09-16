@@ -14,6 +14,7 @@ import {
 } from 'reactstrap';
 import {
   buildParamsForTransactions,
+  downloadFileByURL,
   formatDateToLocale,
   formatTransactionNotFoundMessage,
   getSelectedAssetFilters,
@@ -665,18 +666,54 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       const response = await dispatch(exportAction).unwrap();
 
       if (response.completed && response.fileUrl) {
+
+        // Show swal downloading for 2 seconds
+        Swal.fire({
+          title: 'Downloading',
+          html: 'Your file is being prepared for download.',
+          // timerProgressBar: true,
+          timer: 2500,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
         // Handle file url here. Open in new tab or trigger download.
-        const link = document.createElement('a');
-        link.href = response.fileUrl;
-        link.setAttribute('download', 'transactions.csv');
-        document.body.appendChild(link);
-        link.click();
+        // const link = document.createElement('a');
+        // link.href = response.fileUrl;
+        // link.setAttribute('download', 'transactions.csv');
+        // document.body.appendChild(link);
+        // link.click();
+
+        downloadFileByURL(response.fileUrl, 'transactions.csv');
 
         // Close the modal and reset loading state
-        Swal.close();
+        // Swal.close();
 
         return;
-      } else if (response.isProcessing) {
+      }
+      else if (response.completed && response.files) {
+        // Download all
+        // Show swal downloading for 2 seconds
+
+        Swal.fire({
+          title: 'Downloading',
+          html: 'Your files are being prepared for download.',
+          // timerProgressBar: true,
+          timer: 2500,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        response.files.forEach((file) => {
+          downloadFileByURL(file.fileUrl, file.fileName);
+        });
+        // Close the modal and reset loading state
+        // Swal.close();
+        return;
+      }
+      else if (response.isProcessing) {
         // Check if it's processing.
         // Get job id.
 
