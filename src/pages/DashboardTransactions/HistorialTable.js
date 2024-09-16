@@ -682,6 +682,17 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
         const { job } = response;
 
+        if (!job) {
+          // No job id. Consider showing an error message.
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong. Please try again later.',
+          });
+          setLoadingDownload(false);
+          return;
+        }
+
         // Add job to jobs list and start polling
         dispatch(addJobToList(job));
 
