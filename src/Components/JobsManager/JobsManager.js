@@ -29,12 +29,11 @@ function JobsManager() {
             const interval = setInterval(async () => {
                 const updatedJob = await getJob(id);
 
-
                 if (updatedJob?.isCompleted || updatedJob?.isFailed) {
                     clearInterval(interval);
                 }
 
-                if (!updatedJob) {
+                if (!updatedJob || !updatedJob?.id) {
                     clearInterval(interval);
                 }
             }, 2500);
