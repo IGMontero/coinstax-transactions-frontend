@@ -128,7 +128,7 @@ function ConnectWalletModal({ isOpen, details, onClose }) {
             {modalTitle}
           </h3>
 
-          {!isLoading && (
+          {/* {!isLoading && (
             <Button
               close
               onClick={onClose}
@@ -140,7 +140,18 @@ function ConnectWalletModal({ isOpen, details, onClose }) {
                 color: isDarkMode ? '#fff' : '#333',
               }}
             />
-          )}
+          )} */}
+          <Button
+            close
+            onClick={onClose}
+            style={{
+              position: 'absolute',
+              top: '10px',
+              right: '10px',
+              fontSize: '1rem',
+              color: isDarkMode ? '#fff' : '#333',
+            }}
+          />
         </div>
 
         {/* Modal Content */}
