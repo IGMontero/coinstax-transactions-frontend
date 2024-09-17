@@ -20,6 +20,7 @@ export const useGetJob = () => {
 
                 // Remove job from list if it fails
                 dispatch(removeJobFromList(id));
+                toast.dismiss(id);
 
                 return response;
             }
@@ -39,8 +40,6 @@ export const useGetJob = () => {
 
                 // * Handle completed job action based on job name/id
                 dispatch(handleCompletedJob(data));
-
-
                 dispatch(removeJobFromList(id));
 
                 return response.payload;
@@ -55,6 +54,7 @@ export const useGetJob = () => {
                     });
 
                 dispatch(removeJobFromList(id));
+
             }
             // else if (data.isPending) {
             //     toast.info(data.message ||
@@ -72,6 +72,7 @@ export const useGetJob = () => {
         } catch (error) {
             // Remove job from list if it fails
             dispatch(removeJobFromList(id));
+            toast.dismiss(id);
 
             // Show error message
             toast.error(`There was a problem. Please try again`, {

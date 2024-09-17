@@ -1345,8 +1345,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
             </div>
             {isAdmin && (
               <Button
-                className="d-flex btn-hover-light  justify-content-center align-items-center "
-                color="soft-light"
+                className="d-flex justify-content-center align-items-center "
+                color="primary"
                 style={{
                   borderRadius: '10px',
                   border: '.5px solid grey',
@@ -1366,7 +1366,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                   </>
                 ) : (
                   <>
-                    <i className="ri-file-download-line fs-5 me-2 text-dark"></i>
+                    <i className="ri-file-download-line fs-5 me-2"></i>
                     <span>Download CSV</span>
                   </>
                 )}

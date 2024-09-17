@@ -63,13 +63,13 @@ const Login = (props) => {
           showConfirmButton: false,
         });
       } else {
-        Swal.fire({
-          // title: 'Success',
-          text: 'Welcome back!',
-          icon: 'success',
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // Swal.fire({
+        //   // title: 'Success',
+        //   text: 'Welcome back!',
+        //   icon: 'success',
+        //   timer: 2000,
+        //   showConfirmButton: false,
+        // });
         const authMeRes = await dispatch(authMe());
 
         const { role } = authMeRes.payload;
@@ -162,13 +162,13 @@ const Login = (props) => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                              validation.errors.email
+                                validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                          validation.errors.email ? (
+                            validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -202,13 +202,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                validation.errors.password
+                                  validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                            validation.errors.password ? (
+                              validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>
