@@ -20,6 +20,10 @@ import {
   Button,
 } from 'reactstrap';
 import { capitalizeFirstLetter } from '../../utils/utils';
+import Access from './Profile/Access';
+import Plan from './Profile/Plan';
+import CloseAccount from './Profile/CloseAccount';
+import Data from './Profile/Data';
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('2');
@@ -31,9 +35,9 @@ const UserProfile = () => {
   };
   return (
     <React.Fragment>
-      <div className="pt-5 mt-5">
+      <div className="pt-5 mt-1">
         <Row className=" justify-content-center">
-          <Col xxl={3}>
+          {/* <Col xxl={3}>
             <div className="py-3 border rounded">
               <div className="text-center">
                 <h5 className="fs-16 mb-1">
@@ -44,10 +48,9 @@ const UserProfile = () => {
               </div>
             </div>
 
-            {/* CardInfo Profile */}
 
             <Info currentUser={currentUser} />
-          </Col>
+          </Col> */}
 
           <Col>
             <Card className="border shadow-md">
@@ -63,26 +66,17 @@ const UserProfile = () => {
               <CardBody className="p-4">
                 <TabContent activeTab={activeTab}>
                   {/* Details Page */}
-                  {/* <Details
-                    currentUser={currentUser}
-                  
-                  /> */}
-
+                  <Details currentUser={currentUser} />
                   {/* Change Email and password  */}
-                  <ChangeEmail currentUser={currentUser} />
 
-                  <ChangePassword currentUser={currentUser} />
-
-                  {/* Plan Page  <PaymentInfo />*/}
-
+                  {/* Plan Page */}
+                  <Plan />
                   {/* Access Page  */}
-                  {/* <Access /> */}
-
+                  <Access />
                   {/* Data Page  */}
-                  {/* <Data /> */}
-
+                  <Data />
                   {/* Close account Page  */}
-                  {/* <CloseAccount /> */}
+                  <CloseAccount />
                 </TabContent>
               </CardBody>
             </Card>
