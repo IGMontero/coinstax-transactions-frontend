@@ -61,11 +61,13 @@ function JobsManager() {
                         autoClose: false,
                         closeOnClick: false,
                         draggable: false,
+                        closeButton: <CustomCloseButton />,
                         // progress: task.percent ? task.percent / 100 : undefined,
                         position: 'bottom-right',
                     });
             });
         }
+
     }, [jobsList]);
 
     return (
@@ -74,5 +76,23 @@ function JobsManager() {
         </div>
     );
 }
+
+const CustomCloseButton = ({ closeToast }) => (
+    <button
+        onClick={closeToast}
+        style={{
+            padding: '0px 10px',
+            fontSize: '12px',
+            // backgroundColor: '#f0f0f0', // Light grey background for light mode
+            border: '1px solid #ccc',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            alignSelf: 'center',
+            height: 20
+        }}
+    >
+        Hide
+    </button>
+);
 
 export default JobsManager;
