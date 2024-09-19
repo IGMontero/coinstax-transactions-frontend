@@ -33,6 +33,7 @@ import ParentComponentSearchBar from '../Components/SearchBar/ParentComponent';
 import WalletDropdown from '../Components/Common/WalletDropdown';
 import { DASHBOARD_USER_ROLES } from '../common/constants';
 import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
+import WalletsConnectDropdown from '../Components/Common/WalletsConnectDropdown';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
@@ -115,31 +116,42 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const commentedCode = () => {
     return (
       <>
-        {/* <Dropdown isOpen={search} toggle={toogleSearch} className="d-md-none topbar-head-dropdown header-item">
-                                <DropdownToggle type="button" tag="button" className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle">
-                                    <i className="bx bx-search fs-22"></i>
-                                </DropdownToggle>
-                                <DropdownMenu className="dropdown-menu-lg dropdown-menu-end p-0">
-                                    <Form className="p-3">
-                                        <div className="form-group m-0">
-                                            <div className="input-group">
-                                                <input type="text" className="form-control" placeholder="Search ..."
-                                                    aria-label="Recipient's username" />
-                                                <button className="btn btn-primary" type="submit"><i
-                                                    className="mdi mdi-magnify"></i></button>
-                                            </div>
-                                        </div>
-                                    </Form>
-                                </DropdownMenu>
-                            </Dropdown> */}
+        <Dropdown
+          isOpen={search}
+          toggle={toogleSearch}
+          className="d-md-none topbar-head-dropdown header-item"
+        >
+          <DropdownToggle
+            type="button"
+            tag="button"
+            className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
+          >
+            <i className="bx bx-search fs-22"></i>
+          </DropdownToggle>
+          <DropdownMenu className="dropdown-menu-lg dropdown-menu-end p-0">
+            <Form className="p-3">
+              <div className="form-group m-0">
+                <div className="input-group">
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Search ..."
+                    aria-label="Recipient's username"
+                  />
+                  <button className="btn btn-primary" type="submit">
+                    <i className="mdi mdi-magnify"></i>
+                  </button>
+                </div>
+              </div>
+            </Form>
+          </DropdownMenu>
+        </Dropdown>
 
-        {/* <LightDark
-                layoutMode={layoutModeType}
-                onChangeLayoutMode={onChangeLayoutMode}
-              /> */}
+        <LightDark
+          layoutMode={layoutModeType}
+          onChangeLayoutMode={onChangeLayoutMode}
+        />
 
-        {/* NotificationDropdown */}
-        {/* <NotificationDropdown /> */}
         {/* <div>
                 <Button
                   onClick={() => navigate('/')}
@@ -230,6 +242,8 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               </Col>
               <Col lg={3}>
                 <div className="d-flex align-items-center justify-content-end">
+                  <NotificationDropdown />
+                  <WalletsConnectDropdown />
                   <LightDark
                     layoutMode={layoutModeType}
                     onChangeLayoutMode={onChangeLayoutMode}
@@ -238,7 +252,6 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
 
                   {/* {currentUser &&
                     currentUser?.role === DASHBOARD_USER_ROLES.USER && (
-                    
                       <div className="me-2">
                         <DropdownPortfolio
                           dropdownOpen={dropdownOpen}
