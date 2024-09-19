@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button, Modal, Spinner } from 'reactstrap';
+import { Button, Modal, Spinner, Tooltip } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useConnect, useConnections } from 'wagmi';
 import coinbaseLogo from '../../assets/images/wallets/coinbase.png';
@@ -28,10 +28,14 @@ const DashboardConnectWallets = () => {
   const userId = user?.id;
   const userAddresses = userPortfolioSummary?.addresses;
 
+  const connections = useConnections();
+
+  console.log('Connections: ', connections);
+
   // const { walletInfo } = useWalletInfo();
 
   // const chainId = useChainId();
-  const { connect } = useConnect();
+  const { connect, reset } = useConnect();
 
   const [loading, setLoading] = useState(false);
   const [loadingConnectInfo, setLoadingConnectInfo] = useState({
@@ -41,6 +45,8 @@ const DashboardConnectWallets = () => {
     message: '',
   });
   const [searchValue, setSearchValue] = useState('');
+
+
 
   const allConnectors = [
     {
@@ -233,17 +239,62 @@ const DashboardConnectWallets = () => {
 
   const renderConnectors = () =>
     allConnectors.map((connector) => {
+      // Find connector in connections. If it's connected, show a disconnect button. Just a symbol in red background.
+      const isConnected = connections.find(
+        (connection) => connection.connector.id === connector.id,
+      );
+      const connectorConnected = isConnected?.connector;
+
       // Get connector from the list of connectors
       return (
-        <ConnectorButton
+        <div
           key={connector.uid}
-          id={connector.id}
-          name={connector.name}
-          logo={connector.logo}
-          handleConnect={handleConnect}
-        />
+          className='d-flex flex-column'>
+          <ConnectorButton
+            key={connector.uid}
+            id={connector.id}
+            name={connector.name}
+            logo={connector.logo}
+            handleConnect={handleConnect}
+          />
+
+          {isConnected && connectorConnected && (
+            <>
+              <DisconnectButton
+                connector={connectorConnected}
+                onDisconnect={() => {
+                  // Disconnect the connector
+                  connectorConnected
+                    .disconnect(connectorConnected)
+                    .then(() => {
+                      // Reload page
+                      window.location.reload();
+
+                      // Remove the connector from the list of connections
+                      // setConnections((prev) =>
+                      //   prev.filter(
+                      //     (connection) =>
+                      //       connection.connector.id !== connectorConnected.id,
+                      //   ),
+                      // );
+                    })
+                    .catch((error) => {
+                      console.error('Failed to disconnect wallet: ', error);
+                      Swal.fire({
+                        title: 'Error',
+                        text: error.message || 'Failed to disconnect wallet',
+                        icon: 'error',
+                      });
+                    });
+                }}
+              />
+            </>
+          )}
+        </div>
+
       );
     });
+
 
   return (
     <>
@@ -261,7 +312,11 @@ const DashboardConnectWallets = () => {
             className="d-flex mt-4 mb-5"
           >
             {renderConnectors()}
+
           </div>
+
+
+
           <div
             style={{
               maxWidth: 450,
@@ -374,5 +429,45 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
     </>
   );
 }
+
+const DisconnectButton = ({ connector, onDisconnect }) => {
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const buttonRef = useRef(null); // Reference to the disconnect button
+
+  const toggleTooltip = () => setTooltipOpen(!tooltipOpen);
+
+  // Ensure the tooltip is only shown if the button is rendered
+  useEffect(() => {
+    if (!buttonRef.current) {
+      setTooltipOpen(false); // Close tooltip if the button is no longer in DOM
+    }
+  }, [buttonRef.current]);
+
+  return (
+    <>
+      <div
+        ref={buttonRef}
+        id={`disconnectButton-${connector.uid}`}
+        onClick={onDisconnect}
+        className="d-flex justify-content-center align-items-center cursor-pointer"
+      >
+        <div className="text-danger">
+          <i className="bx bx-x-circle"></i>
+        </div>
+      </div>
+
+      {buttonRef.current && (
+        <Tooltip
+          placement="top"
+          isOpen={tooltipOpen}
+          target={`disconnectButton-${connector.uid}`}
+          toggle={toggleTooltip}
+        >
+          Disconnect {connector.name}
+        </Tooltip>
+      )}
+    </>
+  );
+};
 
 export default DashboardConnectWallets;
