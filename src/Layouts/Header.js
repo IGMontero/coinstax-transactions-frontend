@@ -34,11 +34,16 @@ import WalletDropdown from '../Components/Common/WalletDropdown';
 import { DASHBOARD_USER_ROLES } from '../common/constants';
 import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
 import WalletsConnectDropdown from '../Components/Common/WalletsConnectDropdown';
+import { fetchNotifications } from '../slices/notifications/thunk';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [notifications, setNotifications] = useState();
+  const [totalNotifications, setTotalNotifications] = useState(0);
+  const [currentPageNotifications, setCurrentPageNotifications] = useState(0);
 
   const [searchInput, setSearchInput] = useState('');
   const { user } = useSelector((state) => state.auth);
@@ -176,6 +181,27 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
 
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
 
+  const handleGetNotifications = async () => {
+    try {
+      const response = await dispatch(
+        fetchNotifications({ page: currentPageNotifications }),
+      );
+      const res = response.payload;
+      if (res && !response.error) {
+        setNotifications(res.notifications);
+        setTotalNotifications(res.total);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    if (currentUser) {
+      handleGetNotifications();
+    }
+  }, [currentUser, location.pathname]);
+
   return (
     <React.Fragment>
       <header
@@ -242,7 +268,13 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               </Col>
               <Col lg={3}>
                 <div className="d-flex align-items-center justify-content-end">
-                  <NotificationDropdown />
+                  {currentUser && (
+                    <NotificationDropdown
+                      total={totalNotifications}
+                      notifications={notifications}
+                      onRefresh={handleGetNotifications}
+                    />
+                  )}
                   <WalletsConnectDropdown />
                   <LightDark
                     layoutMode={layoutModeType}

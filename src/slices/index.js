@@ -25,6 +25,8 @@ import NetworkTypeReducer from './networkType/reducer';
 
 import JobsReducer from './jobs/reducer';
 
+import NotificationsReducer from './notifications/reducer';
+
 const rootReducer = combineReducers({
   Layout: LayoutReducer,
   Login: LoginReducer,
@@ -40,6 +42,7 @@ const rootReducer = combineReducers({
   networkType: NetworkTypeReducer,
   userWallets: userWalletsReducer,
   jobs: JobsReducer,
+  notifications: NotificationsReducer,
 });
 
 export default rootReducer;
