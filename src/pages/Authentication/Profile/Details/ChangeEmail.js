@@ -1,60 +1,49 @@
-import React from "react";
-import { TabPane, Row, Col, Label, Button } from "reactstrap";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { useDispatch } from "react-redux";
+import React from 'react';
+import { TabPane, Col, Label, Button } from 'reactstrap';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { useDispatch } from 'react-redux';
+import { changeEmail } from '../../../../slices/auth2/thunk';
+import Swal from 'sweetalert2';
 
 const ChangeEmail = ({ currentUser }) => {
   const dispatch = useDispatch();
+  const [loadingUpdate, setLoadingUpdate] = React.useState(false);
 
   const initialValues = {
-    email: "",
-    password: "",
-    confirmPassword: "",
+    email: '',
   };
 
   const validationSchema = Yup.object({
     email: Yup.string()
-      .email("Invalid email address")
-      .required("Email is Required"),
-    password: Yup.string().required("Required"),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref("password"), null], "Passwords must match")
-      .required("Required"),
+      .email('Invalid email address')
+      .required('Email is Required'),
   });
 
-  const onSubmit = async (values, { setSubmitting, resetForm }) => {
-    // try {
-    //   const success = await dispatch(
-    //     changeEmail(values.email, values.password)
-    //   );
-    //   if (success) {
-    //     Swal.fire({
-    //       title: "Success!",
-    //       text: "Please check your email for verification",
-    //       icon: "success",
-    //       confirmButtonText: "Ok",
-    //     });
-    //     resetForm();
-    //   } else {
-    //     Swal.fire({
-    //       title: "Error!",
-    //       text: "Failed to change email",
-    //       icon: "error",
-    //       confirmButtonText: "Ok",
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   Swal.fire({
-    //     title: "Error!",
-    //     text: "An error occurred",
-    //     icon: "error",
-    //     confirmButtonText: "Ok",
-    //   });
-    // } finally {
-    //   setSubmitting(false);
-    // }
+  const handleChangeEmail = async (values) => {
+    try {
+      setLoadingUpdate(true);
+      const res = await dispatch(changeEmail(values));
+      const response = res.payload;
+      console.log(response);
+      if (res.error || response.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: response.error || 'An error occurred',
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Email has been updated',
+        });
+      }
+    } catch (error) {
+      // Handle exception
+    } finally {
+      setLoadingUpdate(false);
+    }
   };
 
   return (
@@ -62,7 +51,7 @@ const ChangeEmail = ({ currentUser }) => {
       <Col lg={12} className="mb-4">
         <div className="">
           <div className="mb-2">
-            <div className="d-flex justify-content-between algin-items-center mb-n2">
+            <div className="d-flex justify-content-between align-items-center mb-n2">
               <h3 className="text-muted">Change Email</h3>
             </div>
             <hr />
@@ -70,7 +59,7 @@ const ChangeEmail = ({ currentUser }) => {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={onSubmit}
+            onSubmit={handleChangeEmail}
           >
             {({ isSubmitting, dirty, isValid }) => (
               <Form>
@@ -85,38 +74,6 @@ const ChangeEmail = ({ currentUser }) => {
                     className="text-danger"
                   />
                 </div>
-                <Row>
-                  <div className="col-6">
-                    <Label htmlFor="password" className="form-label">
-                      Password
-                    </Label>
-                    <Field
-                      name="password"
-                      type="password"
-                      className="form-control"
-                    />
-                    <ErrorMessage
-                      name="password"
-                      component="div"
-                      className="text-danger"
-                    />
-                  </div>
-                  <div className="col-6">
-                    <Label htmlFor="confirmPassword" className="form-label">
-                      Confirm Password
-                    </Label>
-                    <Field
-                      name="confirmPassword"
-                      type="password"
-                      className="form-control"
-                    />
-                    <ErrorMessage
-                      name="confirmPassword"
-                      component="div"
-                      className="text-danger"
-                    />
-                  </div>
-                </Row>
                 <div className="d-flex justify-content-start mt-4">
                   <Button
                     type="submit"
@@ -124,11 +81,11 @@ const ChangeEmail = ({ currentUser }) => {
                     disabled={isSubmitting || !dirty || !isValid}
                     className={`btn btn-soft-primary mb-0 ${
                       isSubmitting || !dirty || !isValid
-                        ? "bg bg-soft-primary border border-0 text-primary cursor-not-allowed"
-                        : ""
+                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                        : ''
                     }`}
                   >
-                    {isSubmitting ? "Changing ..." : "Change Email"}
+                    {isSubmitting ? 'Changing ...' : 'Change Email'}
                   </Button>
                 </div>
               </Form>

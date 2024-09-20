@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { removeTokenFromCookies } from '../../helpers/cookies_helper';
-import { authMe, login, register } from './thunk';
+import { authMe, login, register, changePassword, changeEmail } from './thunk';
 
 const initialState = {
   user: null,
@@ -42,6 +42,20 @@ const auth2Slice = createSlice({
         state.status = 'succeeded';
       })
       .addCase(authMe.rejected, (state, action) => {
+        state.error = action.payload;
+        state.status = 'failed';
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+      })
+      .addCase(changePassword.rejected, (state, action) => {
+        state.error = action.payload;
+        state.status = 'failed';
+      })
+      .addCase(changeEmail.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+      })
+      .addCase(changeEmail.rejected, (state, action) => {
         state.error = action.payload;
         state.status = 'failed';
       });

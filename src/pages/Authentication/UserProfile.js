@@ -5,28 +5,14 @@ import ChangePassword from './Profile/Details/ChangePassword';
 import Details from './Profile/Details/Details';
 import NavProfile from './Profile/NavProfile';
 import { useSelector, useDispatch } from 'react-redux';
-import {
-  Card,
-  CardBody,
-  Container,
-  Row,
-  Col,
-  TabContent,
-  Alert,
-  Form,
-  FormFeedback,
-  Input,
-  Label,
-  Button,
-} from 'reactstrap';
-import { capitalizeFirstLetter } from '../../utils/utils';
+import { Card, CardBody, Row, Col, TabContent } from 'reactstrap';
 import Access from './Profile/Access';
 import Plan from './Profile/Plan';
 import CloseAccount from './Profile/CloseAccount';
 import Data from './Profile/Data';
 
 const UserProfile = () => {
-  const [activeTab, setActiveTab] = useState('2');
+  const [activeTab, setActiveTab] = useState('1');
   const { user } = useSelector((state) => state.auth);
   const currentUser = user;
 

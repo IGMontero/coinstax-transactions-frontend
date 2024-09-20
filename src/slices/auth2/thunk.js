@@ -117,3 +117,54 @@ export const forgotPassword = createAsyncThunk(
     }
   },
 );
+
+//POST /auth/change-email { newEmail }
+export const changeEmail = createAsyncThunk(
+  'auth2/changeEmail',
+  async (newEmail, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/change-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getTokenFromCookies()}`,
+        },
+        body: JSON.stringify({ newEmail }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+// POST /auth/change-password { oldPassword, newPassword }
+export const changePassword = createAsyncThunk(
+  'auth2/changePassword',
+  async ({ oldPassword, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/change-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getTokenFromCookies()}`,
+        },
+        body: JSON.stringify({ oldPassword, newPassword }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);

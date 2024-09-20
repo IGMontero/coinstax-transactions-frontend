@@ -2,7 +2,8 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, Button, Col, Input, Row, TabPane } from 'reactstrap';
-
+import { changeEmail, changePassword } from '../../../../slices/auth2/thunk';
+import Swal from 'sweetalert2';
 // Formk validation
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -23,6 +24,26 @@ const Details = (props) => {
     setEmail(currentUser?.email);
   }, [currentUser]);
 
+  const handleChangePassword = async (values) => {
+    try {
+      setLoadingUpdate(true);
+      const response = await changePassword(values);
+      if (response.error) {
+        setErrorMessage(response.error);
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Password has been updated',
+        });
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setLoadingUpdate(false);
+    }
+  };
+
   return (
     <TabPane tabId="1">
       <Row>
@@ -36,16 +57,10 @@ const Details = (props) => {
                   You can change your email address that is also used as your
                   login
                 </p> */}
-                <ChangeEmail
-                  onChangeEmail={() => {}}
-                  currentUser={currentUser}
-                />
+                <ChangeEmail currentUser={currentUser} />
 
                 {/* CHANGE PASSWORD  */}
-                <ChangePassword
-                  onChangePassword={() => {}}
-                  currentUser={currentUser}
-                />
+                <ChangePassword currentUser={currentUser} />
 
                 {/* <Col lg={6}>
                   <h3 className="text-muted mb-2">Security Code (2FA)</h3> */}
