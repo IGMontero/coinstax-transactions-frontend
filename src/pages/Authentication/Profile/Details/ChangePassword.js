@@ -1,58 +1,60 @@
-import React from "react";
-import { TabPane, Row, Col, Label, Button } from "reactstrap";
-import { useDispatch } from "react-redux";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import React from 'react';
+import { TabPane, Row, Col, Label, Button } from 'reactstrap';
+import { useDispatch } from 'react-redux';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { changePassword } from '../../../../slices/auth2/thunk';
+import Swal from 'sweetalert2';
 
-const ChangePassword = ({ currentUser }) => {
+const ChangePassword = () => {
   const dispatch = useDispatch();
 
   const initialValues = {
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   };
 
   const validationSchema = Yup.object({
-    currentPassword: Yup.string().required("Current Password is required"),
-    newPassword: Yup.string().required("New Password is required"),
+    currentPassword: Yup.string().required('Current Password is required'),
+    newPassword: Yup.string().required('New Password is required'),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
-      .required("Confirm Password is required"),
+      .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
+      .required('Confirm Password is required'),
   });
 
-  const onSubmit = async (values, { setSubmitting, resetForm }) => {
-    // try {
-    //   const success = await dispatch(
-    //     changePassword(values.newPassword, values.currentPassword)
-    //   );
-    //   if (success) {
-    //     Swal.fire({
-    //       title: "Success!",
-    //       text: "Password changed successfully",
-    //       icon: "success",
-    //       confirmButtonText: "Ok",
-    //     });
-    //     resetForm();
-    //   } else {
-    //     Swal.fire({
-    //       title: "Error!",
-    //       text: "Failed to change password. Please try again",
-    //       icon: "error",
-    //       confirmButtonText: "Ok",
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   Swal.fire({
-    //     title: "Error!",
-    //     text: "An error occurred",
-    //     icon: "error",
-    //     confirmButtonText: "Ok",
-    //   });
-    // } finally {
-    //   setSubmitting(false);
-    // }
+  const handleChangePassword = async (values, { setSubmitting, resetForm }) => {
+    try {
+      const { currentPassword, newPassword } = values;
+      const resultAction = await dispatch(
+        changePassword({ oldPassword: currentPassword, newPassword }),
+      );
+
+      if (changePassword.fulfilled.match(resultAction)) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Password Changed',
+          text: 'Your password has been successfully changed.',
+        });
+        resetForm();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text:
+            resultAction.payload ||
+            'An error occurred while changing password.',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred while changing password.',
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -69,7 +71,7 @@ const ChangePassword = ({ currentUser }) => {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={onSubmit}
+            onSubmit={handleChangePassword}
           >
             {({ isSubmitting, dirty, isValid }) => (
               <Form>
@@ -129,11 +131,11 @@ const ChangePassword = ({ currentUser }) => {
                     disabled={isSubmitting || !dirty || !isValid}
                     className={`btn btn-soft-primary mb-0 ${
                       isSubmitting || !dirty || !isValid
-                        ? "bg bg-soft-primary border border-0 text-primary cursor-not-allowed"
-                        : ""
+                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                        : ''
                     }`}
                   >
-                    {isSubmitting ? "Changing ..." : "Change Password"}
+                    {isSubmitting ? 'Changing ...' : 'Change Password'}
                   </Button>
                 </div>
               </Form>
