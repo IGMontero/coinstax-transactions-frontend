@@ -27,6 +27,8 @@ import JobsReducer from './jobs/reducer';
 
 import NotificationsReducer from './notifications/reducer';
 
+import CommonReducer from './fixedData/reducer';
+
 const rootReducer = combineReducers({
   Layout: LayoutReducer,
   Login: LoginReducer,
@@ -43,6 +45,7 @@ const rootReducer = combineReducers({
   userWallets: userWalletsReducer,
   jobs: JobsReducer,
   notifications: NotificationsReducer,
+  Common: CommonReducer,
 });
 
 export default rootReducer;

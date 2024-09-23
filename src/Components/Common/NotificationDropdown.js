@@ -78,7 +78,10 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
                   </h6>
                 </Col>
                 <div className="col-auto dropdown-tabs">
-                  <span className="badge badge-soft-light fs-13"> 0 New</span>
+                  <span className="badge badge-soft-light fs-13">
+                    {' '}
+                    {total || 0} New
+                  </span>
                 </div>
               </Row>
             </div>
@@ -122,110 +125,86 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
             </div> */}
           </div>
 
-          <TabContent activeTab={activeTab}>
-            <TabPane tabId="1" className="p-0">
-              {total < 1 ? (
-                <>
-                  <div className="w-25 w-sm-50 pt-3 mx-auto">
-                    <img src={bell} className="img-fluid" alt="user-pic" />
-                  </div>
-                  <div className="text-center pb-5 mt-2">
-                    <h6 className="fs-18 fw-semibold lh-base">
-                      Hey! You have no notifications{' '}
-                    </h6>
-                  </div>
-                </>
-              ) : (
-                <SimpleBar
-                  style={{
-                    width: '100%',
-                    maxWidth: '100%',
-                    maxHeight: '300px',
-                    overflowY: 'auto',
-                  }}
-                  className=""
-                >
-                  {notifications.map((notification, index) => {
-                    console.log(notification);
-                    return (
-                      <div
-                        key={notification.Id}
-                        className="text-reset notification-item mt-1 d-flex dropdown-item position-relative align-items-start"
-                        style={{ marginBottom: '10px' }}
-                      >
-                        <div className="avatar-xs me-3">
-                          <span className="avatar-title bg-soft-info text-info rounded-circle fs-16">
-                            <i className="bx bx-bell"></i>
-                          </span>
-                        </div>
-                        <div className="flex-1">
-                          <a
-                            href={notification.Other.fileUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="stretched-link text-decoration-none"
+          <div className="p-0">
+            {total < 1 ? (
+              <>
+                <div className="w-25 w-sm-50 pt-3 mx-auto">
+                  <img src={bell} className="img-fluid" alt="user-pic" />
+                </div>
+                <div className="text-center pb-5 mt-2">
+                  <h6 className="fs-18 fw-semibold lh-base">
+                    Hey! You have no notifications{' '}
+                  </h6>
+                </div>
+              </>
+            ) : (
+              <SimpleBar
+                style={{
+                  width: '100%',
+                  maxWidth: '100%',
+                  maxHeight: '300px',
+                  overflowY: 'auto',
+                }}
+                className=""
+              >
+                {notifications.map((notification, index) => {
+                  console.log(notification);
+                  return (
+                    <div
+                      key={notification.Id}
+                      className="text-reset notification-item mt-1 d-flex dropdown-item position-relative align-items-start"
+                      style={{ marginBottom: '10px' }}
+                    >
+                      <div className="avatar-xs me-3">
+                        <span className="avatar-title bg-soft-info text-info rounded-circle fs-16">
+                          <i className="bx bx-bell"></i>
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <a
+                          href={notification.Other.fileUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="stretched-link text-decoration-none"
+                        >
+                          <h6
+                            className="mt-0 mb-2 lh-base"
+                            style={{ wordBreak: 'break-word' }}
                           >
-                            <h6
-                              className="mt-0 mb-2 lh-base"
-                              style={{ wordBreak: 'break-word' }}
-                            >
-                              {notification.Text}
-                            </h6>
-                          </a>
-                          <p className="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                            <span>
-                              <i className="mdi mdi-clock-outline"></i>{' '}
-                              {new Date(
-                                notification.createdAt,
-                              ).toLocaleTimeString()}
-                            </span>
-                          </p>
-                        </div>
-                        <div className="px-2 fs-15">
-                          <div className="form-check notification-check">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id={`notification-check-${index}`}
-                              checked={notification.Seen}
-                              onChange={() => handleMarkAsRead(notification.Id)}
-                            />
-                            <label
-                              className="form-check-label"
-                              htmlFor={`notification-check-${index}`}
-                            ></label>
-                          </div>
+                            {notification.Text}
+                          </h6>
+                        </a>
+                        <p className="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                          <span>
+                            <i className="mdi mdi-clock-outline"></i>{' '}
+                            {new Date(
+                              notification.createdAt,
+                            ).toLocaleTimeString()}
+                          </span>
+                        </p>
+                      </div>
+                      <div className="px-2 fs-15">
+                        <div className="form-check notification-check">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            value=""
+                            id={`notification-check-${index}`}
+                            checked={notification.Seen}
+                            onChange={() => handleMarkAsRead(notification.Id)}
+                          />
+                          <label
+                            className="form-check-label"
+                            htmlFor={`notification-check-${index}`}
+                          ></label>
                         </div>
                       </div>
-                    );
-                  })}
-                </SimpleBar>
-              )}
-            </TabPane>
-
-            <TabPane tabId="2" className="py-2 ps-2">
-              <div className="w-25 w-sm-50 pt-3 mx-auto">
-                <img src={bell} className="img-fluid" alt="user-pic" />
-              </div>
-              <div className="text-center pb-5 mt-2">
-                <h6 className="fs-18 fw-semibold lh-base">
-                  Hey! You have no notifications{' '}
-                </h6>
-              </div>
-            </TabPane>
-
-            <TabPane tabId="3" className="py-2 ps-2">
-              <div className="w-25 w-sm-50 pt-3 mx-auto">
-                <img src={bell} className="img-fluid" alt="user-pic" />
-              </div>
-              <div className="text-center pb-5 mt-2">
-                <h6 className="fs-18 fw-semibold lh-base">
-                  Hey! You have no notifications{' '}
-                </h6>
-              </div>
-            </TabPane>
-          </TabContent>
+                    </div>
+                  );
+                })}
+              </SimpleBar>
+            )}
+          </div>
         </DropdownMenu>
       </Dropdown>
     </React.Fragment>
