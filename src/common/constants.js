@@ -9,6 +9,10 @@ import bnb from '../assets/images/svg/crypto-icons/binanceLogo.png';
 import optimism from '../assets/images/svg/crypto-icons/optimism-seeklogo.png';
 import baseMainnet from '../assets/images/svg/crypto-icons/base-mainnet.png';
 
+import coinbaseLogo from '../assets/images/wallets/coinbase.png';
+import metamaskLogo from '../assets/images/wallets/metamask.png';
+import walletConnectLogo from '../assets/images/wallets/WalletConnect.png';
+
 export const networks = [
   {
     key: 'all',
@@ -114,3 +118,24 @@ export const userInviteTypes = {
   ACCOUNTANT_TO_USER: 'au',
   ACCOUNTANT_TO_AGENT: 'aa',
 };
+
+export const walletConnectConnectorsData = [
+  {
+    name: 'Metamask',
+    id: 'io.metamask',
+    uid: 'metamask',
+    logo: metamaskLogo,
+  },
+  {
+    name: 'WalletConnect',
+    id: 'walletConnect',
+    uid: 'walletConnect',
+    logo: walletConnectLogo,
+  },
+  {
+    name: 'Coinbase Wallet',
+    id: 'coinbaseWalletSDK',
+    uid: 'coinbaseWallet',
+    logo: coinbaseLogo,
+  },
+];

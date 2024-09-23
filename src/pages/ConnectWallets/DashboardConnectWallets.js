@@ -1,22 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { Button, Modal, Spinner, Tooltip } from 'reactstrap';
+import { Tooltip } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useConnect, useConnections } from 'wagmi';
-import coinbaseLogo from '../../assets/images/wallets/coinbase.png';
-import metamaskLogo from '../../assets/images/wallets/metamask.png';
-import walletConnectLogo from '../../assets/images/wallets/WalletConnect.png';
+import { walletConnectConnectorsData } from '../../common/constants';
 import Helmet from '../../Components/Helmet/Helmet';
+import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
+import ParentComponentSearchBar from '../../Components/SearchBar/ParentComponent';
 import {
   useRefreshUserPortfolio,
   useUserPortfolioSummary,
 } from '../../hooks/useUserPortfolio';
 import { addUserWallet } from '../../slices/userWallets/thunk';
-import SearchBarWallets from '../DashboardAccountsWallets/components/SearchBarWallets';
-import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 import DashboardUserWallets from '../DashboardAccountsWallets/DashboardUserWallets';
-import ParentComponentSearchBar from '../../Components/SearchBar/ParentComponent';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -47,27 +44,6 @@ const DashboardConnectWallets = () => {
   const [searchValue, setSearchValue] = useState('');
 
 
-
-  const allConnectors = [
-    {
-      name: 'Metamask',
-      id: 'io.metamask',
-      uid: 'metamask',
-      logo: metamaskLogo,
-    },
-    {
-      name: 'WalletConnect',
-      id: 'walletConnect',
-      uid: 'walletConnect',
-      logo: walletConnectLogo,
-    },
-    {
-      name: 'Coinbase Wallet',
-      id: 'coinbaseWalletSDK',
-      uid: 'coinbaseWallet',
-      logo: coinbaseLogo,
-    },
-  ];
 
   const [initialLoad, setInitialLoad] = useState(true);
   const loadingPortoflioAddresses = loaders.userPortfolioSummary;
@@ -238,7 +214,7 @@ const DashboardConnectWallets = () => {
   };
 
   const renderConnectors = () =>
-    allConnectors.map((connector) => {
+    walletConnectConnectorsData.map((connector) => {
       // Find connector in connections. If it's connected, show a disconnect button. Just a symbol in red background.
       const isConnected = connections.find(
         (connection) => connection.connector.id === connector.id,
