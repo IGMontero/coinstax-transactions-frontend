@@ -4,21 +4,14 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownToggle,
-  Nav,
-  NavItem,
-  NavLink,
-  Row,
-  TabContent,
-  TabPane,
+  Row
 } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import classnames from 'classnames';
-import { markNotificationAsRead } from '../../slices/notifications/thunk';
 import bell from '../../assets/images/svg/bell.svg';
+import { markNotificationAsRead } from '../../slices/notifications/thunk';
 
 //SimpleBar
-import SimpleBar from 'simplebar-react';
 import { useDispatch } from 'react-redux';
+import SimpleBar from 'simplebar-react';
 
 const NotificationDropdown = ({ notifications, total, onRefresh }) => {
   //Dropdown Toggle
@@ -148,7 +141,6 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
                 className=""
               >
                 {notifications.map((notification, index) => {
-                  console.log(notification);
                   return (
                     <div
                       key={notification.Id}
@@ -162,7 +154,7 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
                       </div>
                       <div className="flex-1">
                         <a
-                          href={notification.Other.fileUrl}
+                          href={notification?.other?.fileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="stretched-link text-decoration-none"
@@ -171,7 +163,7 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
                             className="mt-0 mb-2 lh-base"
                             style={{ wordBreak: 'break-word' }}
                           >
-                            {notification.Text}
+                            {notification.text}
                           </h6>
                         </a>
                         <p className="mb-0 fs-11 fw-medium text-uppercase text-muted">
