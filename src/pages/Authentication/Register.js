@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Row,
   Col,
@@ -34,17 +34,21 @@ import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import { timezonesArray } from '../../helpers/timeZones';
 
 const Register = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const location = useLocation();
 
+  const { fixedData } = useSelector((state) => state.Common);
+
   const [error, setError] = useState();
 
   const { user } = useSelector((state) => state.auth);
 
   const [loading, setLoading] = useState(false);
+  const [timezone, setTimezone] = useState('');
 
   const searchParams = new URLSearchParams(location.search);
   const code = searchParams.get('code');
@@ -58,7 +62,9 @@ const Register = () => {
       email: '',
       password: '',
       confirm_password: '',
+      country: 'US',
       role: 'user',
+      timezone: timezone,
     },
     validationSchema: Yup.object({
       email: Yup.string().required('Please Enter Your Email'),
@@ -118,6 +124,20 @@ const Register = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    // Find user timezone in fixedData?.timezones
+    const timezone = fixedData?.timezones.find(
+      (item) => item.item1 === userTimezone,
+    );
+
+    if (timezone) {
+      validation.setFieldValue('timezone', timezone.item1);
+    } else {
+      validation.setFieldValue('timezone', '');
+    }
+  }, []);
 
   return (
     <React.Fragment>
@@ -179,7 +199,7 @@ const Register = () => {
                           </Alert>
                         ) : null}
 
-                        <div className="mb-3">
+                        <div className="mb-2">
                           <Label htmlFor="useremail" className="form-label">
                             Email <span className="text-danger">*</span>
                           </Label>
@@ -233,6 +253,46 @@ const Register = () => {
                             </FormFeedback>
                           ) : null}
                         </div> */}
+                        <div className="mb-2">
+                          <Label htmlFor="useremail" className="form-label">
+                            TimeZone <span className="text-danger">*</span>
+                          </Label>
+                          <select
+                            name="timezone"
+                            value={validation.values.timezone || ''}
+                            onChange={validation.handleChange}
+                            className="form-control"
+                          >
+                            <option value="">Select a Timezone</option>{' '}
+                            {/* Opción por defecto */}
+                            {timezonesArray.map((item) => (
+                              <option key={item.key} value={item.key}>
+                                {item.label}{' '}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="mb-2 mt-3 ">
+                          <Label className="form-label">
+                            <h5 className="mb-0 mt-2">Country</h5>
+                          </Label>
+                          <select
+                            name="country"
+                            value={validation.values.country || ''}
+                            onChange={(e) => {
+                              validation.handleChange(e);
+                            }}
+                            className="form-control"
+                          >
+                            {/* {fixedData?.countries.map((item) => (
+                          <option key={item.code} value={item.code}>
+                            {item.name}
+                          </option>
+                        ))} */}
+                            <option value="">Other</option>
+                          </select>
+                        </div>
 
                         <div className="mb-2">
                           <Label htmlFor="userpassword" className="form-label">
