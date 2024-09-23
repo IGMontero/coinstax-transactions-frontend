@@ -237,7 +237,7 @@ const Details = (props) => {
           </Col>
         </Col>
 
-        <h3 className="text-muted">Crypto Pricing</h3>
+        {/* <h3 className="text-muted">Crypto Pricing</h3>
         <Col lg={12} className="mx-1">
           <div className="form-check mb-3">
             <input
@@ -290,7 +290,7 @@ const Details = (props) => {
               1 BUSD always equals 1 USD
             </label>
           </div>
-        </Col>
+        </Col> */}
         <h3 className="text-muted mb-3">Communication</h3>
         <Col lg={12} className="mx-1">
           <div className="form-check mb-3">
