@@ -4,25 +4,16 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownToggle,
-  Nav,
-  NavItem,
-  NavLink,
   Row,
   TabContent,
-  TabPane,
+  TabPane
 } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import classnames from 'classnames';
+import { useConnections } from 'wagmi';
+import { walletConnectConnectorsData } from '../../common/constants';
 
 //import images
-import avatar2 from '../../assets/images/users/avatar-2.jpg';
-import avatar8 from '../../assets/images/users/avatar-8.jpg';
-import avatar3 from '../../assets/images/users/avatar-3.jpg';
-import avatar6 from '../../assets/images/users/avatar-6.jpg';
-import bell from '../../assets/images/svg/bell.svg';
 
 //SimpleBar
-import SimpleBar from 'simplebar-react';
 
 const WalletsConnectDropdown = () => {
   //Dropdown Toggle
@@ -32,6 +23,10 @@ const WalletsConnectDropdown = () => {
     setIsWalletsConnectDropdown(!isWalletsConnectDropdown);
   };
 
+  const connections = useConnections();
+
+  const hasConnections = connections.length > 0;
+
   //Tab
   const [activeTab, setActiveTab] = useState('1');
   const toggleTab = (tab) => {
@@ -39,6 +34,28 @@ const WalletsConnectDropdown = () => {
       setActiveTab(tab);
     }
   };
+
+  const renderConnectors = () => walletConnectConnectorsData.map((connector) => {
+    const isConnected = connections.find(
+      (connection) => connection.connector.id === connector.id,
+    );
+    const connectorConnected = isConnected?.connector;
+
+    if (!connectorConnected) return;
+
+
+    // TODO: Implement logo, and disconnect button functionality.
+
+    return (<div className="text-reset notification-item d-block dropdown-item position-relative">
+      {connectorConnected.name}
+    </div>)
+
+  });
+
+  // if (!hasConnections) {
+  //   return null;
+  // }
+
   return (
     <React.Fragment>
       <Dropdown
@@ -63,7 +80,6 @@ const WalletsConnectDropdown = () => {
               <Row className="align-items-center">
                 <Col>
                   <h6 className="m-0 fs-16 fw-semibold text-white">
-                    {' '}
                     Wallets Connected
                   </h6>
                 </Col>
@@ -111,11 +127,17 @@ const WalletsConnectDropdown = () => {
 
           <TabContent activeTab={activeTab}>
             <TabPane tabId="1" className="py-2 ps-2">
-              <div className="text-center pb-5 mt-5">
-                <h6 className="fs-18 fw-semibold lh-base">
-                  You have no wallet connected{' '}
-                </h6>
-              </div>
+              {
+                !hasConnections ? (
+                  <div className="text-center pb-5 mt-5">
+                    <h6 className="fs-18 fw-semibold lh-base">
+                      You have no wallets connected{' '}
+                    </h6>
+                  </div>
+                ) : renderConnectors()
+              }
+
+
               {/* <SimpleBar style={{ maxHeight: '300px' }} className="pe-2">
                 <div className="text-reset notification-item d-block dropdown-item position-relative">
                   <div className="d-flex">
