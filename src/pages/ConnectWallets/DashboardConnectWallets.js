@@ -151,6 +151,7 @@ const DashboardConnectWallets = () => {
                 loading: false,
                 open: true,
                 error: error,
+
                 name: connector.name,
                 message: `Permission to connect already requested. Please check your wallet to approve the connection.`,
               });
@@ -161,6 +162,14 @@ const DashboardConnectWallets = () => {
                 error: error,
                 name: connector.name,
                 message: `Unfortunately, we could not connect to your wallet. Please try again.`,
+              });
+            } else {
+              return setLoadingConnectInfo({
+                loading: false,
+                open: true,
+                error: error,
+                name: connector.name,
+                message: error.message,
               });
             }
 
@@ -211,15 +220,29 @@ const DashboardConnectWallets = () => {
 
       const addressToNavigate = mainAddress?.toLowerCase();
       // navigate to the first account
-      navigate(`/address/${addressToNavigate}`);
 
-      refreshUserPortfolio();
+      // Before navigation, show a message saying that it's connecting and load it. then navigate after 2 seconds.
       setLoadingConnectInfo({
-        loading: false,
+        loading: true,
         error: null,
-        name: '',
-        message: '',
+        open: true,
+        name: connector.name,
+        message: `Address ${addressToNavigate} connected.`,
       });
+
+
+      setTimeout(() => {
+        setLoadingConnectInfo({
+          loading: false,
+          error: null,
+          name: '',
+          message: '',
+        });
+
+        refreshUserPortfolio();
+        navigate(`/address/${addressToNavigate}`);
+      }, 2000);
+
     }
 
     handleConnectedAccount();
