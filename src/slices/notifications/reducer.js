@@ -1,9 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 import { fetchNotifications, markNotificationAsRead } from './thunk';
+import { t } from 'i18next';
 
 const initialState = {
   notifications: [],
+  notificationsInfo: {
+    total: 0,
+    hasMore: true,
+    unreadCount: 0,
+    notifications: [],
+  },
   loading: false,
   error: null,
 };
@@ -15,6 +22,38 @@ const notificationsSlice = createSlice({
     clearNotifications: (state) => {
       state.notifications = [];
     },
+    setNotifications: (state, action) => {
+      state.notifications = action.payload;
+    },
+    setNotificationsInfo: (state, action) => {
+      state.notificationsInfo = action.payload;
+    },
+    markNotificationAsReadAction: (state, action) => {
+      state.notifications = state.notifications.map((notification) => {
+        if (notification.id === action.payload.id) {
+          return { ...notification, seen: true };
+        }
+        return notification;
+      });
+
+      // Update notificationsInfo notifications too 
+      let notifSetAsRead = false
+      state.notificationsInfo.notifications = state.notifications.map((notification) => {
+        if (notification.id === action.payload.id) {
+          notifSetAsRead = true
+          return { ...notification, seen: true };
+        }
+        return notification;
+      });
+
+      // Update unreadCount
+      if (notifSetAsRead) {
+        state.notificationsInfo.unreadCount = state.notificationsInfo.unreadCount - 1;
+      }
+
+    }
+
+
   },
   extraReducers: {
     [fetchNotifications.pending]: (state) => {
@@ -22,7 +61,10 @@ const notificationsSlice = createSlice({
       state.error = null;
     },
     [fetchNotifications.fulfilled]: (state, action) => {
-      state.notifications = action.payload;
+      state.notifications = [
+        ...state.notifications,
+        ...action.payload.notifications,
+      ];
       state.loading = false;
       state.error = null;
     },
@@ -51,6 +93,7 @@ const notificationsSlice = createSlice({
   },
 });
 
-export const { clearNotifications } = notificationsSlice.actions;
+export const { clearNotifications, setNotifications, setNotificationsInfo, markNotificationAsReadAction } =
+  notificationsSlice.actions;
 
 export default notificationsSlice.reducer;

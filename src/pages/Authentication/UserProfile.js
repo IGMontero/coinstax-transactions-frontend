@@ -10,6 +10,7 @@ import Access from './Profile/Access';
 import Plan from './Profile/Plan';
 import CloseAccount from './Profile/CloseAccount';
 import Data from './Profile/Data';
+import LoginDetails from './Profile/LoginDetails';
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -54,13 +55,14 @@ const UserProfile = () => {
                   {/* Details Page */}
                   <Details currentUser={currentUser} />
                   {/* Change Email and password  */}
+                  <LoginDetails currentUser={currentUser} />
 
                   {/* Plan Page */}
                   <Plan />
                   {/* Access Page  */}
                   <Access />
                   {/* Data Page  */}
-                  <Data />
+                  {/* <Data /> */}
                   {/* Close account Page  */}
                   <CloseAccount />
                 </TabContent>

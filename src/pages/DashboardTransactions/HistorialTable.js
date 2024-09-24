@@ -165,7 +165,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         setShowDownloadMessage(true);
       }, 3000);
 
-
       const request = isCurrentUserPortfolioSelected
         ? fetchTransactionsPortfolio
         : fetchHistory;
@@ -653,30 +652,29 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const exportAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-          ...requestParams,
-          userId: currentPortfolioUserId,
-          assetsFilters,
-        })
+            ...requestParams,
+            userId: currentPortfolioUserId,
+            assetsFilters,
+          })
         : downloadTransactions({
-          ...requestParams,
-          query: debouncedSearchTerm,
-          assetsFilters,
-        });
+            ...requestParams,
+            query: debouncedSearchTerm,
+            assetsFilters,
+          });
 
       const response = await dispatch(exportAction).unwrap();
 
       if (response.completed && response.fileUrl) {
-
         // Show swal downloading for 2 seconds
-        Swal.fire({
-          title: 'Downloading',
-          html: 'Your file is being prepared for download.',
-          // timerProgressBar: true,
-          timer: 2500,
-          didOpen: () => {
-            Swal.showLoading();
-          },
-        });
+        // Swal.fire({
+        //   title: 'Downloading',
+        //   html: 'Your file is being prepared for download.',
+        //   // timerProgressBar: true,
+        //   timer: 2500,
+        //   didOpen: () => {
+        //     Swal.showLoading();
+        //   },
+        // });
 
         // Handle file url here. Open in new tab or trigger download.
         // const link = document.createElement('a');
@@ -691,8 +689,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         // Swal.close();
 
         return;
-      }
-      else if (response.completed && response.files) {
+      } else if (response.completed && response.files) {
         // Download all
         // Show swal downloading for 2 seconds
 
@@ -712,8 +709,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         // Close the modal and reset loading state
         // Swal.close();
         return;
-      }
-      else if (response.isProcessing) {
+      } else if (response.isProcessing) {
         // Check if it's processing.
         // Get job id.
 
@@ -733,11 +729,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         // Add job to jobs list and start polling
         dispatch(addJobToList(job));
 
-        Swal.fire({
-          title: 'Processing',
-          html: 'Your file is being prepared for download. Please wait until it is ready.',
-          timer: 2000,
-        });
+        // Swal.fire({
+        //   title: 'Processing',
+        //   html: 'Your file is being prepared for download. Please wait until it is ready.',
+        //   timer: 2000,
+        // });
       } else {
         // No response or error. Consideer showing an error message.
         Swal.fire({
@@ -785,16 +781,16 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const downloadAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-          ...downloadParams,
-          userId: currentPortfolioUserId,
-          assetsFilters: selectAsset,
-        })
+            ...downloadParams,
+            userId: currentPortfolioUserId,
+            assetsFilters: selectAsset,
+          })
         : downloadTransactions({
-          ...downloadParams,
-          address: address,
-          query: debouncedSearchTerm,
-          assetsFilters: selectAsset,
-        });
+            ...downloadParams,
+            address: address,
+            query: debouncedSearchTerm,
+            assetsFilters: selectAsset,
+          });
 
       const response = await dispatch(downloadAction).unwrap();
 
@@ -984,7 +980,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -1002,8 +998,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -1277,7 +1274,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-        // style={{ minHeight: '50vh' }}
+          // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1382,7 +1379,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-        // style={{ minHeight: '50vh' }}
+          // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions
