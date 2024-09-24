@@ -23,7 +23,6 @@ const NotificationDropdown = ({
   handleLoadMoreNotifications,
 }) => {
   const dispatch = useDispatch();
-
   const [isNotificationDropdown, setIsNotificationDropdown] = useState(false);
 
   const markAllAsRead = async () => {
@@ -36,9 +35,8 @@ const NotificationDropdown = ({
           markNotificationAsRead({ notificationId: notification.id }),
         );
       }
-
-      console.log('notifications marked as seen: ', unreadNotifications);
-      onRefresh();
+      console.log('Notificatinos marked as read:', unreadNotifications);
+      onRefresh(); // Para refrescar la lista de notificaciones
     } catch (error) {
       console.log(error);
     }
@@ -69,12 +67,10 @@ const NotificationDropdown = ({
         >
           <i className="bx bx-bell fs-22"></i>
           {unreadCount > 0 && (
-            <>
-              <span className="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">
-                {unreadCount}
-                <span className="visually-hidden">unread messages</span>
-              </span>
-            </>
+            <span className="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">
+              {unreadCount}
+              <span className="visually-hidden">unread messages</span>
+            </span>
           )}
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-lg dropdown-menu-end p-0">
@@ -83,13 +79,11 @@ const NotificationDropdown = ({
               <Row className="align-items-center">
                 <Col>
                   <h6 className="m-0 fs-16 fw-semibold text-white">
-                    {' '}
-                    Notifications{' '}
+                    Notifications
                   </h6>
                 </Col>
                 <div className="col-auto dropdown-tabs">
                   <span className="badge badge-soft-light fs-13">
-                    {' '}
                     {total || 0} New
                   </span>
                 </div>
@@ -99,83 +93,66 @@ const NotificationDropdown = ({
 
           <div className="p-0">
             {total < 1 ? (
-              <>
-                <div className="w-25 w-sm-50 pt-3 mx-auto">
-                  <img src={bell} className="img-fluid" alt="user-pic" />
-                </div>
+              <div className="w-25 w-sm-50 pt-3 mx-auto">
+                <img src={bell} className="img-fluid" alt="no-notifications" />
                 <div className="text-center pb-5 mt-2">
                   <h6 className="fs-18 fw-semibold lh-base">
-                    Hey! You have no notifications{' '}
+                    Hey! You have no notifications
                   </h6>
                 </div>
-              </>
+              </div>
             ) : (
               <SimpleBar
-                style={{
-                  width: '100%',
-                  maxWidth: '100%',
-                  maxHeight: '300px',
-                  overflowY: 'auto',
-                }}
-                className=""
+                style={{ width: '100%', maxWidth: '100%', maxHeight: '300px' }}
               >
-                {notifications.map((notification, index) => {
-                  return (
-                    <div
-                      key={index}
-                      className="text-reset notification-item mt-1 d-flex dropdown-item position-relative align-items-start"
-                      style={{ marginBottom: '10px' }}
-                    >
-                      <div className="avatar-xs me-3">
-                        <span className="avatar-title bg-soft-info text-info rounded-circle fs-16">
-                          <i className="bx bx-bell"></i>
-                        </span>
-                      </div>
-                      <div className="flex-1">
-                        <a
-                          href={notification?.other?.fileUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="stretched-link text-decoration-none"
-                        >
-                          <h6
-                            className="mt-0 mb-2 lh-base"
-                            style={{ wordBreak: 'break-word' }}
-                          >
-                            {notification.text}
-                          </h6>
-                        </a>
-                        <p className="mb-0 fs-11 fw-medium text-uppercase text-muted">
-                          <span>
-                            <i className="mdi mdi-clock-outline"></i>{' '}
-                            {new Date(
-                              notification.createdAt,
-                            ).toLocaleTimeString()}
-                          </span>
-                        </p>
-                      </div>
-                      <div className="px-2 fs-15">
-                        <div className="notification-check">
-                          <i
-                            className={`mdi ${
-                              notification.seen
-                                ? 'mdi-eye-outline'
-                                : 'mdi-eye-off-outline'
-                            }`}
-                            style={{ cursor: 'pointer' }}
-                          ></i>
-                        </div>
-                      </div>
+                {notifications.map((notification, index) => (
+                  <div
+                    key={index}
+                    className="notification-item mt-1 d-flex dropdown-item position-relative align-items-start"
+                    style={{ marginBottom: '10px' }}
+                  >
+                    <div className="avatar-xs me-3">
+                      <span className="avatar-title bg-soft-info text-info rounded-circle fs-16">
+                        <i className="bx bx-bell"></i>
+                      </span>
                     </div>
-                  );
-                })}
+                    <div className="flex-1">
+                      <a
+                        href={notification?.other?.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="stretched-link text-decoration-none"
+                      >
+                        <h6
+                          className="mt-0 mb-2 lh-base"
+                          style={{ wordBreak: 'break-word' }}
+                        >
+                          {notification.text}
+                        </h6>
+                      </a>
+                      <p className="mb-0 fs-11 fw-medium text-uppercase text-muted">
+                        <i className="mdi mdi-clock-outline"></i>{' '}
+                        {new Date(notification.createdAt).toLocaleTimeString()}
+                      </p>
+                    </div>
+                    <div className="px-2 fs-15">
+                      <i
+                        className={`mdi ${
+                          notification.seen
+                            ? 'mdi-eye-outline'
+                            : 'mdi-eye-off-outline'
+                        }`}
+                        style={{ cursor: 'pointer' }}
+                      ></i>
+                    </div>
+                  </div>
+                ))}
               </SimpleBar>
             )}
             <div className="d-flex justify-content-center">
               {hasMore && (
                 <Button onClick={loadMoreNotifications}>
-                  <i className="bx bx-refresh"></i>
-                  View More
+                  <i className="bx bx-refresh"></i> View More
                 </Button>
               )}
             </div>
