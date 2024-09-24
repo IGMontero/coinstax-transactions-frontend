@@ -1,14 +1,12 @@
 import React from 'react';
 import { Button, Card, CardBody, Col, Row, TabPane } from 'reactstrap';
 import { pricing1 } from '../../../common/data';
-import {useTranslation} from 'react-i18next';
-
-
+import { useTranslation } from 'react-i18next';
 
 const Plan = () => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   return (
-    <TabPane tabId="2">
+    <TabPane tabId="3">
       <Row>
         {(pricing1 || []).map((price1, key) => (
           <Col lg={6} key={key}>
@@ -23,14 +21,18 @@ const Plan = () => {
               <CardBody className="m-2 p-4">
                 <div className="d-flex align-items-center mb-3">
                   <div className="flex-grow-1">
-                  <h5 className="mb-0 fw-semibold">{t(price1.type)}</h5>
+                    <h5 className="mb-0 fw-semibold">{t(price1.type)}</h5>
                   </div>
                   <h3>${price1.rate}</h3>
                   <p>{price1.rate2 ? price1.rate2 : '00'}</p>
                 </div>
 
                 <div className="d-flex justify-content-center my-4">
-                  <h6 style={{ fontStyle: 'italic' }}>{"("}{t(price1.description)}{")"}</h6>
+                  <h6 style={{ fontStyle: 'italic' }}>
+                    {'('}
+                    {t(price1.description)}
+                    {')'}
+                  </h6>
                 </div>
                 {/* <div className="m-2 p-4 justify-content-center mt-n2"> */}
                 {/* <div className="d-flex justify-content-center me-5 ms-5 text-center"> */}
@@ -79,7 +81,9 @@ const Plan = () => {
                 </ul>
                 {/* </div> */}
                 <div className="mt-3 pt-2">
-                  <Button className="btn btn-success w-100">{t("Continue")}</Button>
+                  <Button className="btn btn-success w-100">
+                    {t('Continue')}
+                  </Button>
                 </div>
                 {/* </div> */}
               </CardBody>

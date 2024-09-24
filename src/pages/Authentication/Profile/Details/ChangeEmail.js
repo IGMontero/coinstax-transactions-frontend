@@ -50,12 +50,7 @@ const ChangeEmail = ({ currentUser }) => {
     <TabPane tabId="2">
       <Col lg={12} className="mb-4">
         <div className="">
-          <div className="mb-2">
-            <div className="d-flex justify-content-between align-items-center mb-n2">
-              <h3 className="text-muted">Change Email</h3>
-            </div>
-            <hr />
-          </div>
+          <hr />
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}

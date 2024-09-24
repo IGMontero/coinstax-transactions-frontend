@@ -33,8 +33,8 @@ const NavProfile = ({ activeTab, tabChange }) => {
             }}
             type="button"
           >
-            <i className="far fa-user"></i>
-            Plan
+            <i className="far fa-envelope"></i>
+            Login Deatils
           </NavLink>
         </NavItem>
         <NavItem>
@@ -46,8 +46,8 @@ const NavProfile = ({ activeTab, tabChange }) => {
             }}
             type="button"
           >
-            <i className="far fa-envelope"></i>
-            {t('Access')}
+            <i className="far fa-user"></i>
+            Plan
           </NavLink>
         </NavItem>
         <NavItem>
@@ -60,9 +60,10 @@ const NavProfile = ({ activeTab, tabChange }) => {
             type="button"
           >
             <i className="far fa-envelope"></i>
-            {t('Data')}
+            {t('Access')}
           </NavLink>
         </NavItem>
+
         <NavItem>
           <NavLink
             to="#"
