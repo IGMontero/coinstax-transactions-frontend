@@ -4,24 +4,26 @@ import { useTranslation } from 'react-i18next';
 import { TabPane, Col, Table, Button } from 'reactstrap';
 
 const Access = () => {
-  const {t}= useTranslation()
+  const { t } = useTranslation();
   return (
-    <TabPane tabId="3">
+    <TabPane tabId="4">
       <Col lg={12} className="mb-5">
-        <h4 className="text-muted">{t("Accountant Access")}</h4>
-        <p>{t("Invite your accountant, or third-party, to view your account.")}</p>
+        <h4 className="text-muted">{t('Accountant Access')}</h4>
+        <p>
+          {t('Invite your accountant, or third-party, to view your account.')}
+        </p>
         <Table className="table  mb-3" striped>
           <thead>
             <tr>
-              <th scope="col">{t("Name")}</th>
+              <th scope="col">{t('Name')}</th>
               <th scope="col">Email</th>
-              <th scope="col">{t("Last Viewed")}</th>
-              <th scope="col">{t("Access")}</th>
+              <th scope="col">{t('Last Viewed')}</th>
+              <th scope="col">{t('Access')}</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td>{t("No body has access")}</td>
+              <td>{t('No body has access')}</td>
               <td></td>
               <td></td>
               <td></td>
@@ -29,10 +31,10 @@ const Access = () => {
           </tbody>
         </Table>
 
-        <button className="btn btn-primary">{t("Invite")}</button>
+        <button className="btn btn-primary">{t('Invite')}</button>
       </Col>
 
-      <Col lg={12}>
+      {/* <Col lg={12}>
         <h4 className="text-muted">API KEY</h4>
         <p>
           {t("Allow third-party applications, such as exchanges and wallets, add transactions directly into your account.")}
@@ -59,7 +61,7 @@ const Access = () => {
             {t("Add an API Key")}
           </button>
         </div>
-      </Col>
+      </Col> */}
     </TabPane>
   );
 };
