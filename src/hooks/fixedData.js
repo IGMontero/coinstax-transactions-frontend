@@ -1,40 +1,43 @@
 import { useDispatch } from 'react-redux';
-import { getFixedData } from './_requests';
 import { useCallback } from 'react';
 import { setFixedData } from '../slices/fixedData/reducer';
+import { getFixedData } from '../slices/fixedData/thunk';
 
 export const useGetFixedData = () => {
   const dispatch = useDispatch();
 
   return useCallback(async () => {
     try {
-      // Attempt to get from cache
+      // Intentar obtener datos del cache
       const cachedData = JSON.parse(localStorage.getItem('ct_fixed_data'));
 
       if (cachedData && cachedData.expires > Date.now()) {
         dispatch(setFixedData(cachedData.data));
-
         return cachedData.data;
       }
 
-      const response = await getFixedData();
+      // Usar getFixedData para obtener los datos
+      const resultAction = await dispatch(getFixedData());
 
-      if (response?.error) {
-        return response;
+      if (getFixedData.fulfilled.match(resultAction)) {
+        const data = resultAction.payload;
+
+        dispatch(setFixedData(data));
+
+        // Almacenar datos en localStorage
+        localStorage.setItem(
+          'ct_fixed_data',
+          JSON.stringify({
+            data: data,
+            expires: Date.now() + 1000 * 60 * 60 * 24 * 1, // 1 día
+          }),
+        );
+
+        return data;
+      } else {
+        console.error('Failed to fetch fixed data:', resultAction.error);
+        return { error: resultAction.error };
       }
-
-      dispatch(setFixedData(response));
-
-      // Cache data
-      localStorage.setItem(
-        'ct_fixed_data',
-        JSON.stringify({
-          data: response,
-          expires: Date.now() + 1000 * 60 * 60 * 24 * 1, // 1 day
-        }),
-      );
-
-      return response;
     } catch (error) {
       return { error: error.message };
     }
