@@ -21,13 +21,16 @@ import { layoutModeTypes } from '../Components/constants/layout';
 import ParentComponentSearchBar from '../Components/SearchBar/ParentComponent';
 import WalletsConnectDropdown from '../Components/Common/WalletsConnectDropdown';
 import { fetchNotifications } from '../slices/notifications/thunk';
+import { setNotifications } from '../slices/notifications/reducer';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const notifications = useSelector(
+    (state) => state.notifications.notifications,
+  );
 
-  const [notifications, setNotifications] = useState([]);
   const [totalNotifications, setTotalNotifications] = useState(0);
   const [currentPageNotifications, setCurrentPageNotifications] = useState(0);
 

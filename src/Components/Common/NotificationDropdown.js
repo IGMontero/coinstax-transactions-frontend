@@ -10,7 +10,7 @@ import {
 import { markNotificationAsRead } from '../../slices/notifications/thunk';
 import bell from '../../assets/images/svg/bell.svg';
 
-//SimpleBar
+// SimpleBar
 import SimpleBar from 'simplebar-react';
 import { useDispatch } from 'react-redux';
 
@@ -22,27 +22,32 @@ const NotificationDropdown = ({
   unreadCount,
   handleLoadMoreNotifications,
 }) => {
-  //Dropdown Toggle
   const dispatch = useDispatch();
+
   const [isNotificationDropdown, setIsNotificationDropdown] = useState(false);
-  const toggleNotificationDropdown = () => {
-    setIsNotificationDropdown(!isNotificationDropdown);
-  };
 
-  //Tab
-  const [activeTab, setActiveTab] = useState('1');
-  const toggleTab = (tab) => {
-    if (activeTab !== tab) {
-      setActiveTab(tab);
-    }
-  };
-
-  const handleMarkAsRead = async (notificationId) => {
+  const markAllAsRead = async () => {
     try {
-      await dispatch(markNotificationAsRead({ notificationId }));
+      const unreadNotifications = notifications.filter(
+        (notification) => !notification.seen,
+      );
+      for (const notification of unreadNotifications) {
+        await dispatch(
+          markNotificationAsRead({ notificationId: notification.id }),
+        );
+      }
+
+      console.log('notifications marked as seen: ', unreadNotifications);
       onRefresh();
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const toggleNotificationDropdown = () => {
+    setIsNotificationDropdown(!isNotificationDropdown);
+    if (!isNotificationDropdown) {
+      markAllAsRead();
     }
   };
 
@@ -90,44 +95,6 @@ const NotificationDropdown = ({
                 </div>
               </Row>
             </div>
-
-            {/* <div className="px-2 pt-2">
-              <Nav className="nav-tabs dropdown-tabs nav-tabs-custom">
-                <NavItem>
-                  <NavLink
-                    href="#"
-                    className={classnames({ active: activeTab === '1' })}
-                    onClick={() => {
-                      toggleTab('1');
-                    }}
-                  >
-                    All (0)
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    href="#"
-                    className={classnames({ active: activeTab === '2' })}
-                    onClick={() => {
-                      toggleTab('2');
-                    }}
-                  >
-                    Messages
-                  </NavLink>
-                </NavItem>
-                <NavItem>
-                  <NavLink
-                    href="#"
-                    className={classnames({ active: activeTab === '3' })}
-                    onClick={() => {
-                      toggleTab('3');
-                    }}
-                  >
-                    Alerts
-                  </NavLink>
-                </NavItem>
-              </Nav>
-            </div> */}
           </div>
 
           <div className="p-0">
@@ -153,10 +120,9 @@ const NotificationDropdown = ({
                 className=""
               >
                 {notifications.map((notification, index) => {
-                  console.log(notification);
                   return (
                     <div
-                      key={notification.id}
+                      key={index}
                       className="text-reset notification-item mt-1 d-flex dropdown-item position-relative align-items-start"
                       style={{ marginBottom: '10px' }}
                     >
@@ -189,19 +155,15 @@ const NotificationDropdown = ({
                         </p>
                       </div>
                       <div className="px-2 fs-15">
-                        <div className="form-check notification-check">
-                          <input
-                            className="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id={`notification-check-${index}`}
-                            checked={notification.seen}
-                            onChange={() => handleMarkAsRead(notification.Id)}
-                          />
-                          <label
-                            className="form-check-label"
-                            htmlFor={`notification-check-${index}`}
-                          ></label>
+                        <div className="notification-check">
+                          <i
+                            className={`mdi ${
+                              notification.seen
+                                ? 'mdi-eye-outline'
+                                : 'mdi-eye-off-outline'
+                            }`}
+                            style={{ cursor: 'pointer' }}
+                          ></i>
                         </div>
                       </div>
                     </div>

@@ -15,6 +15,9 @@ const notificationsSlice = createSlice({
     clearNotifications: (state) => {
       state.notifications = [];
     },
+    setNotifications: (state, action) => {
+      state.notifications = action.payload;
+    },
   },
   extraReducers: {
     [fetchNotifications.pending]: (state) => {
@@ -22,7 +25,10 @@ const notificationsSlice = createSlice({
       state.error = null;
     },
     [fetchNotifications.fulfilled]: (state, action) => {
-      state.notifications = action.payload;
+      state.notifications = [
+        ...state.notifications,
+        ...action.payload.notifications,
+      ];
       state.loading = false;
       state.error = null;
     },
@@ -51,6 +57,7 @@ const notificationsSlice = createSlice({
   },
 });
 
-export const { clearNotifications } = notificationsSlice.actions;
+export const { clearNotifications, setNotifications } =
+  notificationsSlice.actions;
 
 export default notificationsSlice.reducer;
