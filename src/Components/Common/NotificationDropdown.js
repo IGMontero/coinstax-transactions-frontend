@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
 import {
+  Button,
   Col,
   Dropdown,
   DropdownMenu,
   DropdownToggle,
-  Nav,
-  NavItem,
-  NavLink,
   Row,
-  TabContent,
-  TabPane,
 } from 'reactstrap';
-import { Link } from 'react-router-dom';
-import classnames from 'classnames';
 import { markNotificationAsRead } from '../../slices/notifications/thunk';
 import bell from '../../assets/images/svg/bell.svg';
 
@@ -20,7 +14,14 @@ import bell from '../../assets/images/svg/bell.svg';
 import SimpleBar from 'simplebar-react';
 import { useDispatch } from 'react-redux';
 
-const NotificationDropdown = ({ notifications, total, onRefresh }) => {
+const NotificationDropdown = ({
+  notifications,
+  total,
+  onRefresh,
+  hasMore,
+  unreadCount,
+  handleLoadMoreNotifications,
+}) => {
   //Dropdown Toggle
   const dispatch = useDispatch();
   const [isNotificationDropdown, setIsNotificationDropdown] = useState(false);
@@ -45,6 +46,10 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
     }
   };
 
+  const loadMoreNotifications = () => {
+    handleLoadMoreNotifications();
+  };
+
   return (
     <React.Fragment>
       <Dropdown
@@ -58,10 +63,10 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
           className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
         >
           <i className="bx bx-bell fs-22"></i>
-          {total > 0 && (
+          {unreadCount > 0 && (
             <>
               <span className="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">
-                {total}
+                {unreadCount}
                 <span className="visually-hidden">unread messages</span>
               </span>
             </>
@@ -151,7 +156,7 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
                   console.log(notification);
                   return (
                     <div
-                      key={notification.Id}
+                      key={notification.id}
                       className="text-reset notification-item mt-1 d-flex dropdown-item position-relative align-items-start"
                       style={{ marginBottom: '10px' }}
                     >
@@ -162,7 +167,7 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
                       </div>
                       <div className="flex-1">
                         <a
-                          href={notification.Other.fileUrl}
+                          href={notification?.other?.fileUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="stretched-link text-decoration-none"
@@ -171,7 +176,7 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
                             className="mt-0 mb-2 lh-base"
                             style={{ wordBreak: 'break-word' }}
                           >
-                            {notification.Text}
+                            {notification.text}
                           </h6>
                         </a>
                         <p className="mb-0 fs-11 fw-medium text-uppercase text-muted">
@@ -190,7 +195,7 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
                             type="checkbox"
                             value=""
                             id={`notification-check-${index}`}
-                            checked={notification.Seen}
+                            checked={notification.seen}
                             onChange={() => handleMarkAsRead(notification.Id)}
                           />
                           <label
@@ -204,6 +209,14 @@ const NotificationDropdown = ({ notifications, total, onRefresh }) => {
                 })}
               </SimpleBar>
             )}
+            <div className="d-flex justify-content-center">
+              {hasMore && (
+                <Button onClick={loadMoreNotifications}>
+                  <i className="bx bx-refresh"></i>
+                  View More
+                </Button>
+              )}
+            </div>
           </div>
         </DropdownMenu>
       </Dropdown>

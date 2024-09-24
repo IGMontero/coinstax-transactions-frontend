@@ -41,7 +41,9 @@ const Register = () => {
   const dispatch = useDispatch();
   const location = useLocation();
 
-  const { fixedData } = useSelector((state) => state.Common);
+  const fixedData = useSelector((state) => state.Common.fixedData);
+
+  console.log('fixedData', fixedData);
 
   const [error, setError] = useState();
 
@@ -255,7 +257,7 @@ const Register = () => {
                         </div> */}
                         <div className="mb-2">
                           <Label htmlFor="useremail" className="form-label">
-                            TimeZone <span className="text-danger">*</span>
+                            Time Zone <span className="text-danger">*</span>
                           </Label>
                           <select
                             name="timezone"
@@ -264,18 +266,22 @@ const Register = () => {
                             className="form-control"
                           >
                             <option value="">Select a Timezone</option>{' '}
-                            {/* Opción por defecto */}
                             {timezonesArray.map((item) => (
                               <option key={item.key} value={item.key}>
                                 {item.label}{' '}
                               </option>
                             ))}
+                            {/* {fixedData?.timezones.map((item) => (
+                          <option key={item.item1} value={item.item1}>
+                            <span dangerouslySetInnerHTML={{ __html: item.item2 }} />
+                          </option>
+                        ))} */}
                           </select>
                         </div>
 
                         <div className="mb-2 mt-3 ">
                           <Label className="form-label">
-                            <h5 className="mb-0 mt-2">Country</h5>
+                            Country <span className="text-danger">*</span>
                           </Label>
                           <select
                             name="country"
@@ -285,11 +291,11 @@ const Register = () => {
                             }}
                             className="form-control"
                           >
-                            {/* {fixedData?.countries.map((item) => (
-                          <option key={item.code} value={item.code}>
-                            {item.name}
-                          </option>
-                        ))} */}
+                            {fixedData?.countries.map((item) => (
+                              <option key={item.code} value={item.code}>
+                                {item.name}
+                              </option>
+                            ))}
                             <option value="">Other</option>
                           </select>
                         </div>

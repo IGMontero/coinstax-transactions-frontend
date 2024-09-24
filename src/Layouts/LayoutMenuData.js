@@ -204,7 +204,7 @@ const Navdata = () => {
     );
   }
 
-  allMenuItems.push(createMenuHeader('Manage'));
+  // allMenuItems.push(createMenuHeader('Manage'));
   allMenuItems.push(
     createManageMenu('usersWallets', 'Wallets', 'bx bx-wallet fs-3', 'wallets'),
   );
