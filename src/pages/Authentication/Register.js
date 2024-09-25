@@ -266,16 +266,20 @@ const Register = () => {
                             className="form-control"
                           >
                             <option value="">Select a Timezone</option>{' '}
-                            {timezonesArray.map((item) => (
+                            {/* {timezonesArray.map((item) => (
                               <option key={item.key} value={item.key}>
                                 {item.label}{' '}
                               </option>
+                            ))} */}
+                            {fixedData?.timezones.map((item) => (
+                              <option key={item.id} value={item.id}>
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html: item.name,
+                                  }}
+                                />
+                              </option>
                             ))}
-                            {/* {fixedData?.timezones.map((item) => (
-                          <option key={item.item1} value={item.item1}>
-                            <span dangerouslySetInnerHTML={{ __html: item.item2 }} />
-                          </option>
-                        ))} */}
                           </select>
                         </div>
 
