@@ -5,7 +5,7 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownToggle,
-  Row
+  Row,
 } from 'reactstrap';
 import bell from '../../assets/images/svg/bell.svg';
 import { markNotificationAsRead } from '../../slices/notifications/thunk';
@@ -17,15 +17,11 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { markNotificationAsReadAction } from '../../slices/notifications/reducer';
 
-const NotificationDropdown = ({
-  onRefresh,
-  handleLoadMoreNotifications,
-}) => {
+const NotificationDropdown = ({ onRefresh, handleLoadMoreNotifications }) => {
   const dispatch = useDispatch();
   const [isNotificationDropdown, setIsNotificationDropdown] = useState(false);
   const { notificationsInfo } = useSelector((state) => state.notifications);
   const { notifications, total, hasMore, unreadCount } = notificationsInfo;
-
 
   const markAllAsRead = async () => {
     try {
@@ -39,7 +35,7 @@ const NotificationDropdown = ({
 
         await dispatch(markNotificationAsReadAction({ id: notification.id }));
       }
-      // onRefresh(); 
+      // onRefresh();
     } catch (error) {
       console.log(error);
     }
@@ -66,7 +62,8 @@ const NotificationDropdown = ({
         <DropdownToggle
           type="button"
           tag="button"
-          className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
+          className="btn btn-icon 
+         btn-ghost-dark me-1  rounded-circle light-dark-mode"
         >
           <i className="bx bx-bell fs-22"></i>
           {unreadCount > 0 && (
@@ -140,18 +137,18 @@ const NotificationDropdown = ({
                     </div>
                     <div className="px-2 fs-15">
                       <i
-                        className={`mdi ${notification.seen
-                          ? 'mdi-eye-outline'
-                          : 'mdi-eye-off-outline'
-                          }`}
+                        className={`mdi ${
+                          notification.seen
+                            ? 'mdi-eye-outline'
+                            : 'mdi-eye-off-outline'
+                        }`}
                         style={{ cursor: 'pointer' }}
                       ></i>
                     </div>
                   </div>
                 ))}
               </SimpleBar>
-            )
-            }
+            )}
             <div className="d-flex justify-content-center">
               {hasMore && (
                 <Button
@@ -167,10 +164,10 @@ const NotificationDropdown = ({
                 </Button>
               )}
             </div>
-          </div >
-        </DropdownMenu >
-      </Dropdown >
-    </React.Fragment >
+          </div>
+        </DropdownMenu>
+      </Dropdown>
+    </React.Fragment>
   );
 };
 

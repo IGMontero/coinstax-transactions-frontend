@@ -50,11 +50,7 @@ const WalletsConnectDropdown = () => {
 
       return (
         <div className="text-reset notification-item d-block dropdown-item position-relative">
-          <img
-            className="avatar-xs  mb-2"
-            src={connector.logo}
-            alt={name}
-          />
+          <img className="avatar-xs  mb-2" src={connector.logo} alt={name} />
           {connectorConnected.name}
 
           <button
@@ -68,7 +64,6 @@ const WalletsConnectDropdown = () => {
           >
             Disconnect
           </button>
-
         </div>
       );
     });
@@ -87,7 +82,8 @@ const WalletsConnectDropdown = () => {
         <DropdownToggle
           type="button"
           tag="button"
-          className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
+          className="btn btn-icon 
+         btn-ghost-dark rounded-circle light-dark-mode"
         >
           <i className="bx bx-wallet fs-22"></i>
         </DropdownToggle>
