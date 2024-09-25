@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Col,
   Dropdown,
@@ -23,9 +23,27 @@ const WalletsConnectDropdown = () => {
     setIsWalletsConnectDropdown(!isWalletsConnectDropdown);
   };
 
+  const [accountsByConnector, setAccountsByConnector] = useState({});
+
+
   const connections = useConnections();
 
   const hasConnections = connections.length > 0;
+
+  const populateAccountsByConnector = async () => {
+    const accountsByConnector = {};
+
+    for (const connection of connections) {
+      const accounts = await connection.connector.getAccounts();
+      accountsByConnector[connection.connector.id] = accounts;
+    }
+    setAccountsByConnector(accountsByConnector);
+  }
+
+
+  useEffect(() => {
+    populateAccountsByConnector();
+  }, [connections]);
 
   //Tab
   const [activeTab, setActiveTab] = useState('1');
@@ -35,7 +53,6 @@ const WalletsConnectDropdown = () => {
     }
   };
 
-  console.log(walletConnectConnectorsData);
 
   const renderConnectors = () =>
     walletConnectConnectorsData.map((connector) => {
@@ -44,25 +61,39 @@ const WalletsConnectDropdown = () => {
       );
       const connectorConnected = isConnected?.connector;
 
+
       if (!connectorConnected) return;
+
+      const accounts = accountsByConnector[connectorConnected.id];
 
       // TODO: Implement logo, and disconnect button functionality.
 
       return (
         <div
           key={connectorConnected.id}
-          className="text-reset notification-item d-block dropdown-item position-relative"
+          className="d-flex align-items-start justify-content-between notification-item dropdown-item position-relative"
         >
-          <img
-            className="avatar-xs  mb-2 ms-3 "
-            src={connector.logo}
-            alt={connectorConnected.name}
-          />
-          {connectorConnected.name}
+          <div className="d-flex align-items-start">
+            <img
+              className="avatar-xs me-3"
+              src={connector.logo}
+              alt={connectorConnected.name}
+            />
+            <div>
+              <h6 className="mb-1">{connectorConnected.name}</h6>
+              <span className="mb-0 text-muted">
+                {accounts && accounts.length > 0 && (
+                  <small className="fs-6 me-1">
+                    {accounts.length} address{accounts.length > 1 && 'es'}
+                  </small>
+                )}
+              </span>
+            </div>
+          </div>
 
           <button
             type="button"
-            className="btn btn-sm btn-ghost-primary"
+            className="btn btn-sm btn-ghost-primary align-self-center"
             onClick={() => {
               connectorConnected.disconnect();
               // refresh page
