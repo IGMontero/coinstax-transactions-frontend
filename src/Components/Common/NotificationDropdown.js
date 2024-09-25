@@ -151,8 +151,16 @@ const NotificationDropdown = ({
             )}
             <div className="d-flex justify-content-center">
               {hasMore && (
-                <Button onClick={loadMoreNotifications}>
-                  <i className="bx bx-refresh"></i> View More
+                <Button
+                  className=" mb-3 d-flex btn-hover-light justify-content-center align-items-center"
+                  color="soft-light"
+                  style={{
+                    borderRadius: '10px',
+                    border: '.5px solid grey',
+                  }}
+                  onClick={loadMoreNotifications}
+                >
+                  <i className="bx bx-eye"></i> View More Notifications
                 </Button>
               )}
             </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useConnect, useConnections } from 'wagmi';
@@ -18,6 +18,7 @@ import DashboardUserWallets from '../DashboardAccountsWallets/DashboardUserWalle
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
   const refreshUserPortfolio = useRefreshUserPortfolio();
   const userPortfolioSummary = useUserPortfolioSummary();
   const { user } = useSelector((state) => state.auth);
@@ -42,8 +43,6 @@ const DashboardConnectWallets = () => {
     message: '',
   });
   const [searchValue, setSearchValue] = useState('');
-
-
 
   const [initialLoad, setInitialLoad] = useState(true);
   const loadingPortoflioAddresses = loaders.userPortfolioSummary;
@@ -223,9 +222,7 @@ const DashboardConnectWallets = () => {
 
       // Get connector from the list of connectors
       return (
-        <div
-          key={connector.uid}
-          className='d-flex flex-column'>
+        <div key={connector.uid} className="d-flex flex-column">
           <ConnectorButton
             key={connector.uid}
             id={connector.id}
@@ -267,10 +264,8 @@ const DashboardConnectWallets = () => {
             </>
           )}
         </div>
-
       );
     });
-
 
   return (
     <>
@@ -288,10 +283,7 @@ const DashboardConnectWallets = () => {
             className="d-flex mt-4 mb-5"
           >
             {renderConnectors()}
-
           </div>
-
-
 
           <div
             style={{
@@ -341,14 +333,37 @@ const DashboardConnectWallets = () => {
 
 function ConnectorButton({ id, name, logo, handleConnect }) {
   // const [ready, setReady] = React.useState(false);
+  const location = useLocation();
   const { connectors } = useConnect();
 
   const [connector, setConnector] = React.useState(null);
-
   useEffect(() => {
     const connector = connectors.find((c) => c.id === id);
     setConnector(connector);
   }, [connectors, id]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const connectorToSelect = searchParams.get('connect');
+
+    console.log('Connector to select from URL:', connectorToSelect);
+
+    if (connectorToSelect) {
+      const connector = connectors.find((c) => c.id === connectorToSelect);
+
+      console.log('Connector found:', connector);
+
+      if (connector) {
+        handleConnect(connector);
+      } else {
+        console.warn('No connector matches the selected ID.');
+      }
+    } else if (connector) {
+      handleConnect(connector);
+    }
+  }, [location.search, connector]);
+
+  console.log(walletConnectConnectorsData);
 
   // React.useEffect(() => {
   //   if (!connector) return;
