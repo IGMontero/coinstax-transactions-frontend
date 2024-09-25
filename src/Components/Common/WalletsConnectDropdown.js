@@ -101,7 +101,7 @@ const WalletsConnectDropdown = () => {
             }}
           >
             <div className="text-danger">
-              <i className="bx bx-x-circle"></i>
+              Disconnect
             </div>
           </button>
         </div>
@@ -127,7 +127,17 @@ const WalletsConnectDropdown = () => {
         >
           <i className="bx bx-wallet fs-22"></i>
           {hasConnections && (
-            <span className="position-absolute topbar-badge fs-10 translate-middle badge rounded-circle bg-success">
+            <span
+              className="position-absolute bottom-0 end-0 translate-middle badge rounded-circle bg-success"
+              style={{
+                width: "6px",  // Adjust the width for the size of the dot
+                height: "6px", // Adjust the height for the size of the dot
+                padding: "0",  // Remove any extra padding
+                borderRadius: "50%", // Ensure it's a perfect circle
+                top: 'auto'
+                // border: "2px solid white" // Optional: Add a small border for clarity
+              }}
+            >
               &nbsp;
             </span>
           )}
