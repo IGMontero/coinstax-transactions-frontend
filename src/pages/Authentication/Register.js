@@ -64,7 +64,7 @@ const Register = () => {
       email: '',
       password: '',
       confirm_password: '',
-      country: 'US',
+      country: '',
       role: 'user',
       timezone: timezone,
     },
@@ -129,13 +129,26 @@ const Register = () => {
 
   useEffect(() => {
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    // Find user timezone in fixedData?.timezones
+
+    console.log('user time zone', userTimezone);
+
+    const countryCode = userTimezone.split('/')[1];
+
+    const country = fixedData?.countries.find(
+      (item) => item.name == countryCode,
+    );
+    if (country) {
+      validation.setFieldValue('country', country.code);
+    } else {
+      validation.setFieldValue('country', '');
+    }
+
     const timezone = fixedData?.timezones.find(
-      (item) => item.item1 === userTimezone,
+      (item) => item.id === userTimezone,
     );
 
     if (timezone) {
-      validation.setFieldValue('timezone', timezone.item1);
+      validation.setFieldValue('timezone', timezone.id);
     } else {
       validation.setFieldValue('timezone', '');
     }
@@ -289,7 +302,7 @@ const Register = () => {
                           </Label>
                           <select
                             name="country"
-                            value={validation.values.country || ''}
+                            value={validation.values.country}
                             onChange={(e) => {
                               validation.handleChange(e);
                             }}
