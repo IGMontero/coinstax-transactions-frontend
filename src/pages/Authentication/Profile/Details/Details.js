@@ -28,6 +28,15 @@ const Details = (props) => {
     <TabPane tabId="1">
       <Row>
         <Col lg={12}>
+          <Col lg={6} className="mb-3">
+            <Label className="form-label"> Email</Label>
+            <Input
+              className="form-control cursor-not-allowed text-muted"
+              style={{ cursor: 'not-allowed' }}
+              value={currentUser?.email}
+              readOnly
+            />
+          </Col>
           <h3 className="text-muted">Preferences</h3>
           <hr />
           <Row>
@@ -87,13 +96,6 @@ const Details = (props) => {
           </Row>
           <Col lg={12} className="mb-4">
             <>
-              <p>
-                Your login details are provided by{' '}
-                {authProvider === 'google'
-                  ? 'Google'
-                  : authProvider === 'coinbase' && 'Coinbase'}{' '}
-                and cannot be changed here
-              </p>
               {authProvider === 'google' && (
                 <p>
                   Please visit your Google account to manage{' '}
@@ -106,14 +108,6 @@ const Details = (props) => {
                   .
                 </p>
               )}
-              <Col lg={6}>
-                <Input
-                  className="form-control cursor-not-allowed"
-                  style={{ cursor: 'not-allowed' }}
-                  value={currentUser?.email}
-                  readOnly
-                />
-              </Col>
             </>
             {/* )} */}
           </Col>
@@ -176,7 +170,7 @@ const Details = (props) => {
         <hr />
         <h3 className="text-muted mb-3">Communication</h3>
         <Col lg={12} className="mx-1">
-          <div className="form-check mb-3">
+          <div className="form-check mb-4">
             <input
               className="form-check-input"
               type="checkbox"
@@ -187,12 +181,17 @@ const Details = (props) => {
             </label>
           </div>
         </Col>
-        <Col lg={12} className="mb-4">
+        <Col lg={12} className="">
           {/* {console.log(errorMessage)} */}
           <Button
+            type="submit"
+            color="soft-primary"
             disabled={loadingUpdate}
-            onClick={() => {}}
-            className="btn btn-success mb-3"
+            className={`btn btn-soft-primary mb-0 ${
+              loadingUpdate
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
           >
             Update
           </Button>
