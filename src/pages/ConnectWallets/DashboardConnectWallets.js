@@ -188,13 +188,14 @@ const DashboardConnectWallets = () => {
     async function handleConnectedAccount() {
       const accounts = await connector.getAccounts();
 
-      connect(connector);
+      // connect(connector);
 
       // Open connector again
 
       // For each account do the same. Only navigate to the first one.
 
       const mainAddress = accounts[0];
+
 
       if (!mainAddress) return;
 
@@ -247,10 +248,10 @@ const DashboardConnectWallets = () => {
   const renderConnectors = () =>
     walletConnectConnectorsData.map((connector) => {
       // Find connector in connections. If it's connected, show a disconnect button. Just a symbol in red background.
-      const isConnected = connections.find(
-        (connection) => connection.connector.id === connector.id,
-      );
-      const connectorConnected = isConnected?.connector;
+      // const isConnected = connections.find(
+      //   (connection) => connection.connector.id === connector.id,
+      // );
+      // const connectorConnected = isConnected?.connector;
 
       // Get connector from the list of connectors
       return (
@@ -263,7 +264,7 @@ const DashboardConnectWallets = () => {
             handleConnect={handleConnect}
           />
 
-          {isConnected && connectorConnected && (
+          {/* {isConnected && connectorConnected && (
             <>
               <DisconnectButton
                 connector={connectorConnected}
@@ -294,7 +295,7 @@ const DashboardConnectWallets = () => {
                 }}
               />
             </>
-          )}
+          )} */}
         </div>
       );
     });
