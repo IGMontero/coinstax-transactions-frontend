@@ -381,33 +381,19 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
     const searchParams = new URLSearchParams(location.search);
     const connectorToSelect = searchParams.get('connect');
 
-    console.log('Connector to select from URL:', connectorToSelect);
-
     if (connectorToSelect) {
       const connector = connectors.find((c) => c.id === connectorToSelect);
 
-      console.log('Connector found:', connector);
 
       if (connector) {
         handleConnect(connector);
       } else {
         console.warn('No connector matches the selected ID.');
       }
-    } else if (connector) {
-      handleConnect(connector);
     }
   }, [location.search, connector]);
 
-  console.log(walletConnectConnectorsData);
 
-  // React.useEffect(() => {
-  //   if (!connector) return;
-
-  //   (async () => {
-  //     const provider = await connector.getProvider();
-  //     setReady(!!provider);
-  //   })();
-  // }, [connector, setReady]);
 
   const handleClick = () => {
     // Get connector from the list of connectors

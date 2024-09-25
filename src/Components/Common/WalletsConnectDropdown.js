@@ -52,10 +52,23 @@ const WalletsConnectDropdown = () => {
         <div className="text-reset notification-item d-block dropdown-item position-relative">
           <img
             className="avatar-xs  mb-2"
-            src={connectorConnected.logo}
+            src={connector.logo}
             alt={name}
           />
           {connectorConnected.name}
+
+          <button
+            type="button"
+            className="btn btn-sm btn-ghost-primary"
+            onClick={() => {
+              connectorConnected.disconnect();
+              // refresh page
+              window.location.reload();
+            }}
+          >
+            Disconnect
+          </button>
+
         </div>
       );
     });
