@@ -135,35 +135,25 @@ const NotificationDropdown = ({ onRefresh, handleLoadMoreNotifications }) => {
                         {moment(notification.createdAt).fromNow()}
                       </p>
                     </div>
-                    <div className="px-2 fs-15">
-                      <i
-                        className={`mdi ${
-                          notification.seen
-                            ? 'mdi-eye-outline'
-                            : 'mdi-eye-off-outline'
-                        }`}
-                        style={{ cursor: 'pointer' }}
-                      ></i>
-                    </div>
                   </div>
                 ))}
+                <div className="d-flex justify-content-center">
+                  {hasMore && (
+                    <Button
+                      className=" mb-3 d-flex btn-hover-light justify-content-center align-items-center"
+                      color="soft-light"
+                      style={{
+                        borderRadius: '10px',
+                        border: '.5px solid grey',
+                      }}
+                      onClick={loadMoreNotifications}
+                    >
+                      <i className="bx bx-eye"></i> View More
+                    </Button>
+                  )}
+                </div>
               </SimpleBar>
             )}
-            <div className="d-flex justify-content-center">
-              {hasMore && (
-                <Button
-                  className=" mb-3 d-flex btn-hover-light justify-content-center align-items-center"
-                  color="soft-light"
-                  style={{
-                    borderRadius: '10px',
-                    border: '.5px solid grey',
-                  }}
-                  onClick={loadMoreNotifications}
-                >
-                  <i className="bx bx-eye"></i> View More Notifications
-                </Button>
-              )}
-            </div>
           </div>
         </DropdownMenu>
       </Dropdown>
