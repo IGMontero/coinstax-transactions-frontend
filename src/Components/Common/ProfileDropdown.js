@@ -42,13 +42,14 @@ const ProfileDropdown = ({ currentUser }) => {
         toggle={toggleProfileDropdown}
         className={`ms-1 bg bg-transparent`}
       >
-        <DropdownToggle tag="button" type="button" className="btn ps-0">
+        <DropdownToggle
+          tag="button"
+          type="button"
+          className="btn btn-icon 
+         btn-ghost-dark me-1  rounded-circle light-dark-mode"
+        >
           <span className="d-flex align-items-center">
-            <img
-              className="rounded-circle header-profile-user"
-              src={userAvatar || avatar1}
-              alt="Header Avatar"
-            />
+            <i className="bx bx-user-circle fs-2"></i>
             {/* <span className="text-start ms-xl-2">
               <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
                 {userName}
