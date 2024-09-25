@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { fetchJobById, handleCompletedJob, removeJobFromList } from './reducer';
 import { toast } from 'react-toastify';
+import { setNotificationsInfo } from '../notifications/reducer';
+import { fetchNotifications } from '../notifications/thunk';
+import { fetchJobById, handleCompletedJob, removeJobFromList } from './reducer';
 
 export const useGetJob = () => {
     const dispatch = useDispatch();
@@ -41,6 +43,18 @@ export const useGetJob = () => {
                 // * Handle completed job action based on job name/id
                 dispatch(handleCompletedJob(data));
                 dispatch(removeJobFromList(id));
+
+
+                if (data?.data?.refreshNotifications) {
+                    // Refresh notifications
+                    const notificationsResponse = await dispatch(fetchNotifications({
+                        page: 0
+                    }));
+
+                    if (!notificationsResponse.error) {
+                        dispatch(setNotificationsInfo(notificationsResponse.payload));
+                    }
+                }
 
                 return response.payload;
             } else if (data.isFailed) {

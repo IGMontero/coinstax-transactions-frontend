@@ -14,6 +14,7 @@ import {
 } from '../../hooks/useUserPortfolio';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import DashboardUserWallets from '../DashboardAccountsWallets/DashboardUserWallets';
+import moment from 'moment';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -126,51 +127,71 @@ const DashboardConnectWallets = () => {
       });
     }
 
-    connect(
-      { connector },
-      {
-        onSuccess: handleConnectedAccount,
-        onError: (error) => {
-          console.error('Failed to connect wallet: ', error);
-          console.log(error.code, error.data, error.name);
-          const errorName = error.name;
-          const errorCode = error.code;
-
-          if (errorName === 'ConnectorAlreadyConnectedError') {
-            console.log('Connector was already connected');
-          } else if (errorCode === -32002) {
-            console.log('Err name: ', errorName);
-            console.log('err code: ', error.code);
-
-            return setLoadingConnectInfo({
-              loading: false,
-              open: true,
-              error: error,
-              name: connector.name,
-              message: `Permission to connect already requested. Please check your wallet to approve the connection.`,
-            });
-          } else if (errorName === 'UserRejectedRequestError') {
-            return setLoadingConnectInfo({
-              loading: false,
-              open: true,
-              error: error,
-              name: connector.name,
-              message: `Unfortunately, we could not connect to your wallet. Please try again.`,
-            });
-          }
-
-          // setLoadingConnectInfo({
-          //   loading: false,
-          //   error: error,
-          //   name: connector.name,
-          //   message: error.message,
-          // });
+    try {
+      connect(
+        {
+          connector,
         },
-      },
-    );
+        {
+          onSuccess: handleConnectedAccount,
+          onError: (error) => {
+            console.error('Failed to connect wallet: ', error);
+            console.log(error.code, error.data, error.name);
+            const errorName = error.name;
+            const errorCode = error.code;
+
+            if (errorName === 'ConnectorAlreadyConnectedError') {
+              console.log('Connector was already connected');
+            } else if (errorCode === -32002) {
+              console.log('Err name: ', errorName);
+              console.log('err code: ', error.code);
+
+              return setLoadingConnectInfo({
+                loading: false,
+                open: true,
+                error: error,
+
+                name: connector.name,
+                message: `Permission to connect already requested. Please check your wallet to approve the connection.`,
+              });
+            } else if (errorName === 'UserRejectedRequestError') {
+              return setLoadingConnectInfo({
+                loading: false,
+                open: true,
+                error: error,
+                name: connector.name,
+                message: `Unfortunately, we could not connect to your wallet. Please try again.`,
+              });
+            } else {
+              return setLoadingConnectInfo({
+                loading: false,
+                open: true,
+                error: error,
+                name: connector.name,
+                message: error.message,
+              });
+            }
+
+            // setLoadingConnectInfo({
+            //   loading: false,
+            //   error: error,
+            //   name: connector.name,
+            //   message: error.message,
+            // });
+          },
+        },
+      )
+    } catch (error) {
+      console.error('Failed to connect wallet: ', error);
+    }
+
 
     async function handleConnectedAccount() {
       const accounts = await connector.getAccounts();
+
+      connect(connector);
+
+      // Open connector again
 
       // For each account do the same. Only navigate to the first one.
 
@@ -198,15 +219,29 @@ const DashboardConnectWallets = () => {
 
       const addressToNavigate = mainAddress?.toLowerCase();
       // navigate to the first account
-      navigate(`/address/${addressToNavigate}`);
 
-      refreshUserPortfolio();
+      // Before navigation, show a message saying that it's connecting and load it. then navigate after 2 seconds.
       setLoadingConnectInfo({
-        loading: false,
+        loading: true,
         error: null,
-        name: '',
-        message: '',
+        open: true,
+        name: connector.name,
+        message: `Address ${addressToNavigate} connected.`,
       });
+
+
+      setTimeout(() => {
+        setLoadingConnectInfo({
+          loading: false,
+          error: null,
+          name: '',
+          message: '',
+        });
+
+        refreshUserPortfolio();
+        navigate(`/address/${addressToNavigate}`);
+      }, 2000);
+
     }
 
     handleConnectedAccount();

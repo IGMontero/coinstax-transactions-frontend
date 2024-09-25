@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Col,
   Dropdown,
@@ -16,32 +16,28 @@ import NotificationDropdown from '../Components/Common/NotificationDropdown';
 import ProfileDropdown from '../Components/Common/ProfileDropdown';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { changeSidebarVisibility } from '../slices/thunks';
+import WalletsConnectDropdown from '../Components/Common/WalletsConnectDropdown';
 import { layoutModeTypes } from '../Components/constants/layout';
 import ParentComponentSearchBar from '../Components/SearchBar/ParentComponent';
-import WalletsConnectDropdown from '../Components/Common/WalletsConnectDropdown';
+import { setNotificationsInfo } from '../slices/notifications/reducer';
 import { fetchNotifications } from '../slices/notifications/thunk';
-import { setNotifications } from '../slices/notifications/reducer';
+import { changeSidebarVisibility } from '../slices/thunks';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const location = useLocation();
   const notifications = useSelector(
     (state) => state.notifications.notifications,
   );
 
-  const [totalNotifications, setTotalNotifications] = useState(0);
   const [currentPageNotifications, setCurrentPageNotifications] = useState(0);
 
-  const [hasMoreNotifications, setHasMoreNotifications] = useState(false);
-
-  const [unreadCount, setUnreadCount] = useState(0);
 
   const [searchInput, setSearchInput] = useState('');
   const { user } = useSelector((state) => state.auth);
 
   const [windowSize, setWindowSize] = useState(window.innerWidth);
+  const [initializedNotifications, setInitializedNotifications] = useState(false);
 
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
@@ -178,13 +174,16 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       );
       const res = response.payload;
       if (res && !response.error) {
-        setNotifications((prevNotifications) => [
-          ...prevNotifications,
-          ...res.notifications,
-        ]);
-        setTotalNotifications(res.total);
-        setHasMoreNotifications(res.hasMore);
-        setUnreadCount(res.unreadCount);
+        const newNotifications = res.notifications;
+
+        dispatch(setNotificationsInfo({
+          hasMore: res.hasMore,
+          unreadCount: res.unreadCount,
+          total: res.total,
+          notifications: newNotifications
+        }));
+
+
       }
     } catch (error) {
       console.log(error);
@@ -198,13 +197,16 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       );
       const res = response.payload;
       if (res && !response.error) {
-        setNotifications((prevNotifications) => [
-          ...prevNotifications,
-          ...res.notifications,
-        ]);
-        setTotalNotifications(res.total);
-        setHasMoreNotifications(res.hasMore);
-        setUnreadCount(res.unreadCount);
+
+        const newNotifications = [...notifications, ...res.notifications];
+
+        dispatch(setNotificationsInfo({
+          hasMore: res.hasMore,
+          unreadCount: res.unreadCount,
+          total: res.total,
+          notifications: newNotifications
+        }));
+
         setCurrentPageNotifications(currentPageNotifications + 1);
       }
     } catch (error) {
@@ -213,10 +215,13 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   };
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser
+      && !initializedNotifications
+    ) {
+      setInitializedNotifications(true);
       handleGetNotifications();
     }
-  }, [currentUser, location.pathname, currentPageNotifications]);
+  }, [currentUser]);
 
   return (
     <React.Fragment>
@@ -286,11 +291,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 <div className="d-flex align-items-center justify-content-end">
                   {currentUser && (
                     <NotificationDropdown
-                      total={totalNotifications}
-                      notifications={notifications}
                       onRefresh={handleGetNotifications}
-                      hasMore={hasMoreNotifications}
-                      unreadCount={unreadCount}
                       handleLoadMoreNotifications={handleLoadMoreNotifications}
                     />
                   )}

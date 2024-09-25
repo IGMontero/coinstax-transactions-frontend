@@ -5,25 +5,27 @@ import {
   Dropdown,
   DropdownMenu,
   DropdownToggle,
-  Row,
+  Row
 } from 'reactstrap';
-import { markNotificationAsRead } from '../../slices/notifications/thunk';
 import bell from '../../assets/images/svg/bell.svg';
+import { markNotificationAsRead } from '../../slices/notifications/thunk';
 
-// SimpleBar
-import SimpleBar from 'simplebar-react';
+//SimpleBar
 import { useDispatch } from 'react-redux';
+import SimpleBar from 'simplebar-react';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
+import { markNotificationAsReadAction } from '../../slices/notifications/reducer';
 
 const NotificationDropdown = ({
-  notifications,
-  total,
   onRefresh,
-  hasMore,
-  unreadCount,
   handleLoadMoreNotifications,
 }) => {
   const dispatch = useDispatch();
   const [isNotificationDropdown, setIsNotificationDropdown] = useState(false);
+  const { notificationsInfo } = useSelector((state) => state.notifications);
+  const { notifications, total, hasMore, unreadCount } = notificationsInfo;
+
 
   const markAllAsRead = async () => {
     try {
@@ -34,9 +36,10 @@ const NotificationDropdown = ({
         await dispatch(
           markNotificationAsRead({ notificationId: notification.id }),
         );
+
+        await dispatch(markNotificationAsReadAction({ id: notification.id }));
       }
-      console.log('Notificatinos marked as read:', unreadNotifications);
-      onRefresh(); // Para refrescar la lista de notificaciones
+      // onRefresh(); 
     } catch (error) {
       console.log(error);
     }
@@ -84,7 +87,7 @@ const NotificationDropdown = ({
                 </Col>
                 <div className="col-auto dropdown-tabs">
                   <span className="badge badge-soft-light fs-13">
-                    {total || 0} New
+                    {unreadCount || 0} New
                   </span>
                 </div>
               </Row>
@@ -132,23 +135,23 @@ const NotificationDropdown = ({
                       </a>
                       <p className="mb-0 fs-11 fw-medium text-uppercase text-muted">
                         <i className="mdi mdi-clock-outline"></i>{' '}
-                        {new Date(notification.createdAt).toLocaleTimeString()}
+                        {moment(notification.createdAt).fromNow()}
                       </p>
                     </div>
                     <div className="px-2 fs-15">
                       <i
-                        className={`mdi ${
-                          notification.seen
-                            ? 'mdi-eye-outline'
-                            : 'mdi-eye-off-outline'
-                        }`}
+                        className={`mdi ${notification.seen
+                          ? 'mdi-eye-outline'
+                          : 'mdi-eye-off-outline'
+                          }`}
                         style={{ cursor: 'pointer' }}
                       ></i>
                     </div>
                   </div>
                 ))}
               </SimpleBar>
-            )}
+            )
+            }
             <div className="d-flex justify-content-center">
               {hasMore && (
                 <Button
@@ -164,10 +167,10 @@ const NotificationDropdown = ({
                 </Button>
               )}
             </div>
-          </div>
-        </DropdownMenu>
-      </Dropdown>
-    </React.Fragment>
+          </div >
+        </DropdownMenu >
+      </Dropdown >
+    </React.Fragment >
   );
 };
 
