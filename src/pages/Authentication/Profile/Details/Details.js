@@ -2,13 +2,6 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, Button, Col, Input, Label, Row, TabPane } from 'reactstrap';
-import { changeEmail, changePassword } from '../../../../slices/auth2/thunk';
-import Swal from 'sweetalert2';
-// Formk validation
-import { useFormik } from 'formik';
-import * as Yup from 'yup';
-import ChangeEmail from './ChangeEmail';
-import ChangePassword from './ChangePassword';
 
 const Details = (props) => {
   const { user } = useSelector((state) => state.auth);
@@ -28,6 +21,8 @@ const Details = (props) => {
     setTimezone(currentUser?.timezone);
     setCountry(currentUser?.country);
   }, [currentUser]);
+
+  console.log(currentUser.country);
 
   return (
     <TabPane tabId="1">
@@ -69,12 +64,25 @@ const Details = (props) => {
               </div>
             </Col>
             <Col lg={6}>
-              <Label className="form-label">Country</Label>
-              <Input
-                className="form-control mb-2"
-                value={currentUser?.country || 'United States'}
-                readOnly
-              />
+              <div className="mb-2 mt-3 ">
+                <Label className="form-label">Country</Label>
+                <select
+                  name="country"
+                  id="countryInput"
+                  value={country || ''}
+                  onChange={(e) => {
+                    setCountry(e.target.value);
+                  }}
+                  className="form-control"
+                >
+                  {fixedData?.countries.map((item) => (
+                    <option key={item.code} value={item.code}>
+                      {item.name}
+                    </option>
+                  ))}
+                  <option value="">Other</option>
+                </select>
+              </div>
             </Col>
           </Row>
           <Col lg={12} className="mb-4">
