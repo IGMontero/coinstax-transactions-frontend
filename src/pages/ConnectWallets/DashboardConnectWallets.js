@@ -180,11 +180,10 @@ const DashboardConnectWallets = () => {
             // });
           },
         },
-      )
+      );
     } catch (error) {
       console.error('Failed to connect wallet: ', error);
     }
-
 
     async function handleConnectedAccount() {
       const accounts = await connector.getAccounts();
@@ -229,7 +228,6 @@ const DashboardConnectWallets = () => {
         message: `Address ${addressToNavigate} connected.`,
       });
 
-
       setTimeout(() => {
         setLoadingConnectInfo({
           loading: false,
@@ -241,7 +239,6 @@ const DashboardConnectWallets = () => {
         refreshUserPortfolio();
         navigate(`/address/${addressToNavigate}`);
       }, 2000);
-
     }
 
     handleConnectedAccount();
@@ -384,7 +381,6 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
     if (connectorToSelect) {
       const connector = connectors.find((c) => c.id === connectorToSelect);
 
-
       if (connector) {
         handleConnect(connector);
       } else {
@@ -392,8 +388,6 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
       }
     }
   }, [location.search, connector]);
-
-
 
   const handleClick = () => {
     // Get connector from the list of connectors
