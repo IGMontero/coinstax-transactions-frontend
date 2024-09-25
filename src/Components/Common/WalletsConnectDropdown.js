@@ -49,8 +49,15 @@ const WalletsConnectDropdown = () => {
       // TODO: Implement logo, and disconnect button functionality.
 
       return (
-        <div className="text-reset notification-item d-block dropdown-item position-relative">
-          <img className="avatar-xs  mb-2" src={connector.logo} alt={name} />
+        <div
+          key={connectorConnected.id}
+          className="text-reset notification-item d-block dropdown-item position-relative"
+        >
+          <img
+            className="avatar-xs  mb-2 ms-3 "
+            src={connector.logo}
+            alt={connectorConnected.name}
+          />
           {connectorConnected.name}
 
           <button
@@ -62,7 +69,9 @@ const WalletsConnectDropdown = () => {
               window.location.reload();
             }}
           >
-            Disconnect
+            <div className="text-danger">
+              <i className="bx bx-x-circle"></i>
+            </div>
           </button>
         </div>
       );
@@ -86,6 +95,11 @@ const WalletsConnectDropdown = () => {
          btn-ghost-dark rounded-circle light-dark-mode"
         >
           <i className="bx bx-wallet fs-22"></i>
+          {hasConnections && (
+            <span className="position-absolute topbar-badge fs-10 translate-middle badge rounded-circle bg-success">
+              &nbsp;
+            </span>
+          )}
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-lg dropdown-menu-end p-0">
           <div className="dropdown-head bg-primary bg-pattern rounded-top">
