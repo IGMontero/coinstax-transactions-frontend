@@ -179,7 +179,7 @@ function ConnectWalletModal({ isOpen, details, onClose }) {
                   color: isDarkMode ? '#fff' : '#333',
                 }}
               >
-                Please wait...
+                {details?.message || 'Please wait...'}
               </p>
             </>
           ) : (

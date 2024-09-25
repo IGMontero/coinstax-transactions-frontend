@@ -40,26 +40,27 @@ const jobsSlice = createSlice({
             );
         },
         handleCompletedJob: (state, action) => {
-            const completedJobData = action.payload;
+            // * Do not trigger download anymore.
+            // const completedJobData = action.payload;
 
             // Handle completed job based on job name/id
-            if (completedJobData.name ===
-                JOB_NAMES.EXPORT_ADDRESS_TRANSACTIONS ||
-                completedJobData.name === JOB_NAMES.EXPORT_USER_PORTFOLIO
-            ) {
-                // Handle completed
-                const { data } = completedJobData;
+            // if (completedJobData.name ===
+            //     JOB_NAMES.EXPORT_ADDRESS_TRANSACTIONS ||
+            //     completedJobData.name === JOB_NAMES.EXPORT_USER_PORTFOLIO
+            // ) {
+            //     // Handle completed
+            //     const { data } = completedJobData;
 
-                const fileUrl = data?.fileUrl;
-                const fileName = data?.fileName;
+            //     const fileUrl = data?.fileUrl;
+            //     const fileName = data?.fileName;
 
-                if (fileUrl) {
-                    // Download file
-                    downloadFileByURL(fileUrl,
-                        fileName || 'export.csv'
-                    );
-                }
-            }
+            //     if (fileUrl) {
+            //         // Download file
+            //         downloadFileByURL(fileUrl,
+            //             fileName || 'export.csv'
+            //         );
+            //     }
+            // }
 
         }
         // Handle completed}
