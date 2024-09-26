@@ -1,5 +1,5 @@
 import React from 'react';
-import { TabPane, Col, Label, Button } from 'reactstrap';
+import { TabPane, Col, Label, Button, Row } from 'reactstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { useDispatch } from 'react-redux';
@@ -12,18 +12,21 @@ const ChangeEmail = ({ currentUser }) => {
 
   const initialValues = {
     email: '',
+    password: '',
   };
 
   const validationSchema = Yup.object({
     email: Yup.string()
       .email('Invalid email address')
       .required('Email is Required'),
+    password: Yup.string().required('Password is Required'),
   });
 
-  const handleChangeEmail = async (values) => {
+  const handleChangeEmail = async (values, { resetForm }) => {
+    const { email: newEmail, password } = values;
     try {
       setLoadingUpdate(true);
-      const res = await dispatch(changeEmail(values));
+      const res = await dispatch(changeEmail({ newEmail, password }));
       const response = res.payload;
       console.log(response);
       if (res.error || response.error) {
@@ -36,11 +39,18 @@ const ChangeEmail = ({ currentUser }) => {
         Swal.fire({
           icon: 'success',
           title: 'Success',
-          text: 'Email has been updated',
+          text: 'Please, check your email to verify your new email',
         });
+        resetForm();
       }
     } catch (error) {
-      // Handle exception
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'An error occurred',
+      });
+
+      console.log(error);
     } finally {
       setLoadingUpdate(false);
     }
@@ -58,17 +68,35 @@ const ChangeEmail = ({ currentUser }) => {
           >
             {({ isSubmitting, dirty, isValid }) => (
               <Form>
-                <div className="col-6 mt-4 mb-4">
-                  <Label htmlFor="email" className="form-label">
-                    New Email
-                  </Label>
-                  <Field type="text" name="email" className="form-control" />
-                  <ErrorMessage
-                    name="email"
-                    component="div"
-                    className="text-danger"
-                  />
-                </div>
+                <Row>
+                  <div className="col-6 mt-4 mb-4">
+                    <Label htmlFor="email" className="form-label">
+                      New Email
+                    </Label>
+                    <Field type="text" name="email" className="form-control" />
+                    <ErrorMessage
+                      name="email"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </div>
+                  <div className="col-6 mt-4 mb-4">
+                    <Label htmlFor="password" className="form-label">
+                      Password
+                    </Label>
+                    <Field
+                      type="password"
+                      name="password"
+                      className="form-control"
+                    />
+                    <ErrorMessage
+                      name="password"
+                      component="div"
+                      className="text-danger"
+                    />
+                  </div>
+                </Row>
+
                 <div className="d-flex justify-content-start mt-4">
                   <Button
                     type="submit"

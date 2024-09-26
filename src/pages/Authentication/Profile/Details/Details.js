@@ -15,11 +15,13 @@ const Details = (props) => {
   const [loadingUpdate, setLoadingUpdate] = React.useState(false);
   const [timezone, setTimezone] = React.useState(currentUser?.timezone);
   const [country, setCountry] = React.useState(currentUser?.country);
+  const [currency, setCurrency] = React.useState(currentUser?.currency);
 
   useEffect(() => {
     setEmail(currentUser?.email);
     setTimezone(currentUser?.timezone);
     setCountry(currentUser?.country);
+    setCurrency(currentUser?.currency);
   }, [currentUser]);
 
   console.log(currentUser.country);
@@ -42,16 +44,31 @@ const Details = (props) => {
           <Row>
             <Col lg={6}>
               <Label className="form-label">Your Currency</Label>
-              {/* <SelectSymbol value={currency} onChange={(value) => setCurrency(value)} /> */}
-              <Input
-                className="form-control mb-2"
-                value={currentUser?.currency || 'USD'}
-                readOnly
-              />
+              <select
+                name="currency"
+                id="currencyInput"
+                value={currency || ''}
+                onChange={(e) => {
+                  setCurrency(e.target.value);
+                }}
+                className="form-control"
+              >
+                <option value="">Select Currency</option>
+                {fixedData?.currencies.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: `${item.symbol} - ${item.name}`,
+                      }}
+                    />
+                  </option>
+                ))}
+                <option value="">Other</option>
+              </select>
             </Col>
           </Row>
-          <Row>
-            <Col lg={6} className="mb-4">
+          <Row className="mb-4 ">
+            <Col lg={6} className="mt-3">
               <div>
                 <Label htmlFor="timezoneInput" className="form-label">
                   Time Zone
@@ -65,15 +82,15 @@ const Details = (props) => {
                 >
                   <option value="">Auto</option>
                   {fixedData?.timezones.map((item) => (
-                    <option key={item.item1} value={item.item1}>
-                      <span dangerouslySetInnerHTML={{ __html: item.item2 }} />
+                    <option key={item.id} value={item.id}>
+                      <span dangerouslySetInnerHTML={{ __html: item.name }} />
                     </option>
                   ))}
                 </select>
               </div>
             </Col>
             <Col lg={6}>
-              <div className="mb-2 mt-3 ">
+              <div className="mt-3">
                 <Label className="form-label">Country</Label>
                 <select
                   name="country"
