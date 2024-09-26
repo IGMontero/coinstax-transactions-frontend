@@ -2,8 +2,12 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, Button, Col, Input, Label, Row, TabPane } from 'reactstrap';
+import { updateUserInfo } from '../../../../slices/auth2/thunk';
+import { useDispatch } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const Details = (props) => {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const currentUser = user;
 
@@ -13,6 +17,7 @@ const Details = (props) => {
   const [errorMessage, setErrorMessage] = React.useState('');
   const [email, setEmail] = React.useState(currentUser?.email);
   const [loadingUpdate, setLoadingUpdate] = React.useState(false);
+  const [loadingUpdateInfo, setLoadingUpdateInfo] = React.useState(false);
   const [timezone, setTimezone] = React.useState(currentUser?.timezone);
   const [country, setCountry] = React.useState(currentUser?.country);
   const [currency, setCurrency] = React.useState(currentUser?.currency);
@@ -24,14 +29,40 @@ const Details = (props) => {
     setCurrency(currentUser?.currency);
   }, [currentUser]);
 
-  console.log(currentUser.country);
+  const handleUpdate = async () => {
+    try {
+      setLoadingUpdateInfo(true);
+      const res = await dispatch(
+        updateUserInfo({
+          country,
+          timezone,
+          currency,
+        }),
+      );
+      const response = res.payload;
+      if (res.error || response.error) {
+        setErrorMessage(response.error || 'An error occurred');
+      } else {
+        setErrorMessage('');
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'User info updated successfully',
+        });
+      }
+      setLoadingUpdateInfo(false);
+    } catch (error) {
+      setErrorMessage(error.message || 'An error occurred');
+      setLoadingUpdate(false);
+    }
+  };
 
   return (
     <TabPane tabId="1">
       <Row>
         <Col lg={12}>
           <Col lg={6} className="mb-3">
-            <Label className="form-label"> Email</Label>
+            <Label className="form-label">Email</Label>
             <Input
               className="form-control cursor-not-allowed text-muted"
               style={{ cursor: 'not-allowed' }}
@@ -51,7 +82,7 @@ const Details = (props) => {
                 onChange={(e) => {
                   setCurrency(e.target.value);
                 }}
-                className="form-control"
+                className="form-select"
               >
                 <option value="">Select Currency</option>
                 {fixedData?.currencies.map((item) => (
@@ -63,7 +94,6 @@ const Details = (props) => {
                     />
                   </option>
                 ))}
-                <option value="">Other</option>
               </select>
             </Col>
           </Row>
@@ -78,7 +108,7 @@ const Details = (props) => {
                   onChange={(e) => setTimezone(e.target.value)}
                   className="form-select"
                   id="timezoneInput"
-                  name="timezone"
+                  name="timeZone"
                 >
                   <option value="">Auto</option>
                   {fixedData?.timezones.map((item) => (
@@ -95,18 +125,18 @@ const Details = (props) => {
                 <select
                   name="country"
                   id="countryInput"
+                  className="form-select"
                   value={country || ''}
                   onChange={(e) => {
                     setCountry(e.target.value);
                   }}
-                  className="form-control"
                 >
+                  <option value="">Select Country</option>
                   {fixedData?.countries.map((item) => (
                     <option key={item.code} value={item.code}>
                       {item.name}
                     </option>
                   ))}
-                  <option value="">Other</option>
                 </select>
               </div>
             </Col>
@@ -128,8 +158,20 @@ const Details = (props) => {
             </>
             {/* )} */}
           </Col>
+          <Button
+            type="submit"
+            color="soft-primary"
+            onClick={handleUpdate}
+            disabled={loadingUpdateInfo}
+            className={`btn btn-soft-primary mb-3 ${
+              loadingUpdateInfo
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
+          >
+            Update Info
+          </Button>
         </Col>
-
         {/* <h3 className="text-muted">Crypto Pricing</h3>
         <Col lg={12} className="mx-1">
           <div className="form-check mb-3">

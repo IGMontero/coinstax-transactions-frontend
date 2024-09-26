@@ -177,3 +177,28 @@ export const changePassword = createAsyncThunk(
     }
   },
 );
+
+export const updateUserInfo = createAsyncThunk(
+  'auth2/updateUserInfo',
+  async ({ country, timezone, currency }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/user-info`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${getTokenFromCookies()}`,
+        },
+        body: JSON.stringify({ country, timezone, currency }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
