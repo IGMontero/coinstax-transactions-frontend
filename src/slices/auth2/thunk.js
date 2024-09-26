@@ -128,6 +128,57 @@ export const forgotPassword = createAsyncThunk(
   },
 );
 
+export const verifyResetPasswordToken = createAsyncThunk(
+  'auth2/verifyResetPasswordToken',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${API_BASE}/auth/validate-reset-password-token`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ token }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const resetPassword = createAsyncThunk(
+  'auth2/resetPassword',
+  async ({ token, newPassword }, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/reset-password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token, newPassword }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const changeEmail = createAsyncThunk(
   'auth2/changeEmail',
   async ({ newEmail, password }, { rejectWithValue }) => {
