@@ -310,12 +310,16 @@ const SearchBar = ({
         layoutModeType === layoutModeTypes['DARKMODE'] ? ' #1d1d21' : '#fff',
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
       cursor: 'text',
-      maxHeight: 35,
+      maxHeight: '58px',
       textAlign: 'left',
-      border:
-        layoutModeType === layoutModeTypes['DARKMODE']
-          ? '1px solid #32383e'
-          : '1px solid #ddd',
+      // border:
+      //   layoutModeType === layoutModeTypes['DARKMODE']
+      //     ? '1px solid #32383e'
+      //     : '1px solid #ddd',
+      border: '1px solid #6b6464',
+      borderRadius: '16px',
+      // padding: '18px 146px 18px 20px',
+      fontSize: '16px',
       outline: 'none !important',
       boxShadow: 'none !important',
       '&:hover': {
@@ -334,16 +338,23 @@ const SearchBar = ({
       textAlign: 'left',
       alignItems: 'left',
       cursor: 'pointer',
-      borderRadius: '5px',
+      borderRadius: '16px',
+      border: '1px solid #6b6464',
+      transition: '1s all ease-in-out',
+      transform: 'translateY(0px)',
     }),
     option: (provided, state) => ({
       ...provided,
       cursor: 'pointer',
+      borderRadius: '16px',
+
       backgroundColor: state.isFocused
         ? layoutModeType === layoutModeTypes['DARKMODE']
-          ? '#1d1d21'
-          : '#e2e2e2'
-        : state.isSelected
+          ? 'transparent'
+          : // '#1d1d21'
+            'transparent'
+        : // '#e2e2e2'
+          state.isSelected
           ? layoutModeType === layoutModeTypes['DARKMODE']
             ? '#212529'
             : '#ddd'
@@ -358,19 +369,22 @@ const SearchBar = ({
         ...provided[':active'],
         backgroundColor: state.isFocused
           ? layoutModeType === layoutModeTypes['DARKMODE']
-            ? '#2a2f34'
-            : '#e2e2e2'
-          : state.isSelected
+            ? 'transparent'
+            : // '#2a2f34'
+              'transparent'
+          : // '#e2e2e2'
+            state.isSelected
             ? layoutModeType === layoutModeTypes['DARKMODE']
               ? '#212529'
               : '#ddd'
             : 'transparent',
       },
       '&:hover': {
-        backgroundColor:
-          layoutModeType === layoutModeTypes['DARKMODE']
-            ? '#1f252b'
-            : '#e2e2e2',
+        // backgroundColor:
+        //   layoutModeType === layoutModeTypes['DARKMODE']
+        //     ? '#1f252b'
+        //     : '#e2e2e2',
+        backgroundColor: 'transparent',
         color:
           layoutModeType === layoutModeTypes['DARKMODE']
             ? '#4B8EE0'
@@ -379,6 +393,7 @@ const SearchBar = ({
     }),
     input: (provided) => ({
       ...provided,
+
       color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
     }),
     singleValue: (provided) => ({
