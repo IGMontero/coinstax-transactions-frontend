@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import {
   Button,
   Card,
@@ -11,18 +11,32 @@ import {
   Input,
   Label,
   FormFeedback,
+  Spinner,
 } from 'reactstrap';
 
 //formik
 import { useFormik } from 'formik';
+import {
+  verifyResetPasswordToken,
+  resetPassword,
+} from '../../slices/auth2/thunk';
 import * as Yup from 'yup';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import Helmet from '../../Components/Helmet/Helmet';
+import { useDispatch } from 'react-redux';
+import Swal from 'sweetalert2';
 
 const ResetPaswword = () => {
+  const location = useLocation();
+  const dispatch = useDispatch();
   const [passwordShow, setPasswordShow] = useState(false);
   const [confrimPasswordShow, setConfrimPasswordShow] = useState(false);
+
+  const [loadingVerifyToken, setLoadingVerifyToken] = useState(false);
+
+  const tokenParams = new URLSearchParams(location.search);
+  const token = tokenParams.get('token');
 
   const validation = useFormik({
     enableReinitialize: true,
@@ -34,9 +48,7 @@ const ResetPaswword = () => {
     validationSchema: Yup.object({
       password: Yup.string()
         .min(8, 'Password must be at least 8 characters')
-        .matches(RegExp('(.*[a-z].*)'), 'At least lowercase letter')
-        .matches(RegExp('(.*[A-Z].*)'), 'At least uppercase letter')
-        .matches(RegExp('(.*[0-9].*)'), 'At least one number')
+
         .required('This field is required'),
       confrim_password: Yup.string()
         .when('password', {
@@ -49,9 +61,82 @@ const ResetPaswword = () => {
         .required('Confirm Password Required'),
     }),
     onSubmit: (values) => {
-      // console.log(values);
+      handleResetPassword(values.password);
     },
   });
+
+  const handleVerifyToken = async () => {
+    setLoadingVerifyToken(true);
+    try {
+      const response = await dispatch(verifyResetPasswordToken(token));
+      const res = response.payload;
+      console.log(response);
+      if (response && !response.error) {
+        return setLoadingVerifyToken(false);
+      } else {
+        // window.location.href = '/login';
+        setLoadingVerifyToken(false);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    handleVerifyToken();
+  }, []);
+
+  if (loadingVerifyToken) {
+    return (
+      <div className="d-flex mt-5 align-items-center justify-content-center flex-column">
+        <Spinner color="primary" />
+        <div className="mt-5">
+          <h1>Verifying Token...</h1>
+        </div>
+      </div>
+    );
+  }
+
+  const handleResetPassword = async (newPassword) => {
+    try {
+      const response = await dispatch(
+        resetPassword({
+          token,
+          password: newPassword,
+        }),
+      );
+
+      if (response && !response.error) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Password reset successfully',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+
+        window.location.href = '/login';
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error while resetting password',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  };
 
   return (
     <ParticlesAuth>
@@ -179,30 +264,6 @@ const ResetPaswword = () => {
                         <p id="pass-length" className="invalid fs-12 mb-2">
                           Minimum <b>8 characters</b>
                         </p>
-                        <p id="pass-lower" className="invalid fs-12 mb-2">
-                          At <b>lowercase</b> letter (a-z)
-                        </p>
-                        <p id="pass-upper" className="invalid fs-12 mb-2">
-                          At least <b>uppercase</b> letter (A-Z)
-                        </p>
-                        <p id="pass-number" className="invalid fs-12 mb-0">
-                          A least <b>number</b> (0-9)
-                        </p>
-                      </div>
-
-                      <div className="form-check">
-                        <Input
-                          className="form-check-input"
-                          type="checkbox"
-                          value=""
-                          id="auth-remember-check"
-                        />
-                        <Label
-                          className="form-check-label"
-                          htmlFor="auth-remember-check"
-                        >
-                          Remember me
-                        </Label>
                       </div>
 
                       <div className="mt-4">
