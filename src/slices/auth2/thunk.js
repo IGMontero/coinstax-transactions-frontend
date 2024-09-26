@@ -128,10 +128,9 @@ export const forgotPassword = createAsyncThunk(
   },
 );
 
-//POST /auth/change-email { newEmail }
 export const changeEmail = createAsyncThunk(
   'auth2/changeEmail',
-  async (newEmail, { rejectWithValue }) => {
+  async ({ newEmail, password }, { rejectWithValue }) => {
     try {
       const response = await fetch(`${API_BASE}/auth/change-email`, {
         method: 'POST',
@@ -139,7 +138,7 @@ export const changeEmail = createAsyncThunk(
           'Content-Type': 'application/json',
           Authorization: `Bearer ${getTokenFromCookies()}`,
         },
-        body: JSON.stringify({ newEmail }),
+        body: JSON.stringify({ newEmail, password }),
       });
 
       if (!response.ok) {
@@ -153,7 +152,7 @@ export const changeEmail = createAsyncThunk(
     }
   },
 );
-// POST /auth/change-password { oldPassword, newPassword }
+
 export const changePassword = createAsyncThunk(
   'auth2/changePassword',
   async ({ oldPassword, newPassword }, { rejectWithValue }) => {
