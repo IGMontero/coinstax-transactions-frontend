@@ -43,14 +43,9 @@ const Register = () => {
 
   const fixedData = useSelector((state) => state.Common.fixedData);
 
-  console.log('fixedData', fixedData);
-
   const [error, setError] = useState();
 
-  const { user } = useSelector((state) => state.auth);
-
   const [loading, setLoading] = useState(false);
-  const [timezone, setTimezone] = useState('');
 
   const searchParams = new URLSearchParams(location.search);
   const code = searchParams.get('code');
@@ -64,9 +59,10 @@ const Register = () => {
       email: '',
       password: '',
       confirm_password: '',
+      currency: '',
       country: '',
       role: 'user',
-      timezone: timezone,
+      timezone: '',
     },
     validationSchema: Yup.object({
       email: Yup.string().required('Please Enter Your Email'),
@@ -98,6 +94,7 @@ const Register = () => {
   };
 
   const handleSubmit = async (values) => {
+    console.log('values', values);
     try {
       setLoading(true);
       const response = await dispatch(register(values));
@@ -191,23 +188,6 @@ const Register = () => {
                         className="needs-validation"
                         action="#"
                       >
-                        {/* {success && success ? (
-                          <>
-                            {toast('Your Redirect To Login Page...', {
-                              position: 'top-right',
-                              hideProgressBar: false,
-                              className: 'bg-success text-white',
-                              progress: undefined,
-                              toastId: '',
-                            })}
-                            <ToastContainer autoClose={2000} limit={1} />
-                            <Alert color="success">
-                              Register User Successfully and Your Redirect To
-                              Login Page...
-                            </Alert>
-                          </>
-                        ) : null} */}
-
                         {error && error ? (
                           <Alert color="danger">
                             <div>{error}</div>
@@ -268,8 +248,33 @@ const Register = () => {
                             </FormFeedback>
                           ) : null}
                         </div> */}
+                        {/* currency */}
+
                         <div className="mb-2">
-                          <Label htmlFor="useremail" className="form-label">
+                          <Label htmlFor="currency" className="form-label">
+                            Currency <span className="text-danger">*</span>
+                          </Label>
+                          <select
+                            name="currency"
+                            value={validation.values.currency || ''}
+                            onChange={validation.handleChange}
+                            className="form-control"
+                          >
+                            <option value="">Select a Currency</option>{' '}
+                            {fixedData?.currencies.map((item) => (
+                              <option key={item.id} value={item.id}>
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html: `${item.symbol} - ${item.name}`,
+                                  }}
+                                />
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="mb-2">
+                          <Label htmlFor="timezone" className="form-label">
                             Time Zone <span className="text-danger">*</span>
                           </Label>
                           <select
@@ -279,11 +284,6 @@ const Register = () => {
                             className="form-control"
                           >
                             <option value="">Select a Timezone</option>{' '}
-                            {/* {timezonesArray.map((item) => (
-                              <option key={item.key} value={item.key}>
-                                {item.label}{' '}
-                              </option>
-                            ))} */}
                             {fixedData?.timezones.map((item) => (
                               <option key={item.id} value={item.id}>
                                 <span
@@ -308,12 +308,12 @@ const Register = () => {
                             }}
                             className="form-control"
                           >
+                            <option value="">Select Country</option>
                             {fixedData?.countries.map((item) => (
                               <option key={item.code} value={item.code}>
                                 {item.name}
                               </option>
                             ))}
-                            <option value="">Other</option>
                           </select>
                         </div>
 

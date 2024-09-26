@@ -67,14 +67,24 @@ export const login = createAsyncThunk(
 
 export const register = createAsyncThunk(
   'auth2/register',
-  async ({ email, password, role }, { rejectWithValue, dispatch }) => {
+  async (
+    { email, password, role, country, timezone, currency },
+    { rejectWithValue, dispatch },
+  ) => {
     try {
       const response = await fetch(`${API_BASE}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password, role }),
+        body: JSON.stringify({
+          email,
+          password,
+          role,
+          country,
+          timezone,
+          currency,
+        }),
       });
 
       if (!response.ok) {
