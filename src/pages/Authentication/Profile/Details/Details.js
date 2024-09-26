@@ -2,7 +2,10 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Alert, Button, Col, Input, Label, Row, TabPane } from 'reactstrap';
-import { updateUserInfo } from '../../../../slices/auth2/thunk';
+import {
+  updateUserInfo,
+  updateNotificationsPreferences,
+} from '../../../../slices/auth2/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 
@@ -16,7 +19,13 @@ const Details = (props) => {
 
   const [errorMessage, setErrorMessage] = React.useState('');
   const [email, setEmail] = React.useState(currentUser?.email);
-  const [loadingUpdate, setLoadingUpdate] = React.useState(false);
+  const [loadingNotificationsPreference, setLoadingNotificationsPreference] =
+    React.useState(false);
+
+  const [notificationPreference, setNotificationPreference] = React.useState(
+    currentUser?.notificationPreference,
+  );
+
   const [loadingUpdateInfo, setLoadingUpdateInfo] = React.useState(false);
   const [timezone, setTimezone] = React.useState(currentUser?.timezone);
   const [country, setCountry] = React.useState(currentUser?.country);
@@ -27,6 +36,7 @@ const Details = (props) => {
     setTimezone(currentUser?.timezone);
     setCountry(currentUser?.country);
     setCurrency(currentUser?.currency);
+    setNotificationPreference(currentUser?.notificationPreference);
   }, [currentUser]);
 
   const handleUpdate = async () => {
@@ -54,6 +64,32 @@ const Details = (props) => {
     } catch (error) {
       setErrorMessage(error.message || 'An error occurred');
       setLoadingUpdate(false);
+    }
+  };
+
+  const handleUpdateNotificationsPreference = async () => {
+    try {
+      setLoadingNotificationsPreference(true);
+      const res = await dispatch(
+        updateNotificationsPreferences({
+          emailMarketing: true,
+        }),
+      );
+      const response = res.payload;
+      if (res.error || response.error) {
+        setErrorMessage(response.error || 'An error occurred');
+      } else {
+        setErrorMessage('');
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Notifications preferences updated successfully',
+        });
+      }
+      setLoadingNotificationsPreference(false);
+    } catch (error) {
+      setErrorMessage(error.message || 'An error occurred');
+      setLoadingNotificationsPreference(false);
     }
   };
 
@@ -234,6 +270,13 @@ const Details = (props) => {
               className="form-check-input"
               type="checkbox"
               id="formCheck6"
+              checked={notificationPreference?.emailMarketing}
+              onChange={(e) =>
+                setNotificationPreference({
+                  ...notificationPreference,
+                  emailMarketing: e.target.checked,
+                })
+              }
             />
             <label className="form-check-label" htmlFor="formCheck6">
               Keep me up to date about this website
@@ -241,13 +284,13 @@ const Details = (props) => {
           </div>
         </Col>
         <Col lg={12} className="">
-          {/* {console.log(errorMessage)} */}
           <Button
             type="submit"
             color="soft-primary"
-            disabled={loadingUpdate}
+            onClick={handleUpdateNotificationsPreference}
+            disabled={loadingNotificationsPreference}
             className={`btn btn-soft-primary mb-0 ${
-              loadingUpdate
+              loadingNotificationsPreference
                 ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
                 : ''
             }`}
