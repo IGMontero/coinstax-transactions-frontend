@@ -15,6 +15,10 @@ import {
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import DashboardUserWallets from '../DashboardAccountsWallets/DashboardUserWallets';
 import moment from 'moment';
+import binannceLogo from '../../assets/images/connctor/binance_light.png';
+import metamaskLogo from '../../assets/images/connctor/metamask_light.png';
+import coinbaseLogo from '../../assets/images/connctor/coinbase_light.png';
+import otherLogo from '../../assets/images/connctor/connect-other-portfolio.svg';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -196,7 +200,6 @@ const DashboardConnectWallets = () => {
 
       const mainAddress = accounts[0];
 
-
       if (!mainAddress) return;
 
       for (let i = 0; i < accounts.length; i++) {
@@ -300,6 +303,37 @@ const DashboardConnectWallets = () => {
       );
     });
 
+  const renderConnectorsItems = () => {
+    return (
+      <>
+        <ConnectorButton
+          id="metamask"
+          name="Metamask"
+          logo={metamaskLogo}
+          handleConnect={handleConnect}
+        />
+        <ConnectorButton
+          id="binance"
+          name="Binance"
+          logo={binannceLogo}
+          handleConnect={handleConnect}
+        />
+        <ConnectorButton
+          id="coinbase"
+          name="Coinbase"
+          logo={coinbaseLogo}
+          handleConnect={handleConnect}
+        />
+        <ConnectorButton
+          id="other"
+          name="Other"
+          logo={otherLogo}
+          handleConnect={handleConnect}
+        />
+      </>
+    );
+  };
+
   return (
     <>
       <div className="page-content ">
@@ -307,6 +341,9 @@ const DashboardConnectWallets = () => {
         <div className="d-flex justify-content-center flex-column align-items-center">
           <div className="text-center">
             <h1>Connect to ChainGlance</h1>
+            {/* HTML   */}
+
+            {/* END HTML  */}
           </div>
           <div
             style={{
@@ -368,6 +405,7 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
   // const [ready, setReady] = React.useState(false);
   const location = useLocation();
   const { connectors } = useConnect();
+  const connections = useConnections();
 
   const [connector, setConnector] = React.useState(null);
   useEffect(() => {
@@ -412,10 +450,166 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
       }
     }
   };
+  const isConnected = connections.find(
+    (connection) => connection?.connector?.id === connector?.id,
+  );
+  const connectorConnected = isConnected?.connector;
 
+  console.log('First connected: ', connectorConnected);
+
+  // const renderConnectorsItems = () => {
+  //   return (
+  //     <div className="connector-container">
+  //       <div className="connector-item">
+  //       <a
+  //         className="connector-item-inner"
+  //         href="//##appDomain##/wallets?connect=binance"
+  //       >
+  //         <div className="more-card">
+  //           <div className="icon-wrapper">
+  //             <img
+  //               src={binannceLogo}
+  //               alt="binnace"
+  //               className="card-image"
+  //             />
+  //           </div>
+  //         </div>
+  //         <div className="description-wrapper">
+  //           <span className="name">Binance</span>
+  //           <span className="button-with-arrow">
+  //             Connect
+  //             <i className="icon-Arrow-More">
+  //               <svg
+  //                 width="100%"
+  //                 height="100%"
+  //                 viewBox="0 0 24 24"
+  //                 fill="none"
+  //                 xmlns="http://www.w3.org/2000/svg"
+  //               >
+  //                 <path
+  //                   d="M4 12H20M20 12L14 6M20 12L14 18"
+  //                   stroke="currentColor"
+  //                   strokeWidth={2}
+  //                   strokeLinecap="round"
+  //                   strokeLinejoin="round"
+  //                 />
+  //               </svg>
+  //             </i>
+  //           </span>
+  //         </div>
+  //       </a>
+  //     </div>
+  //       <div className="connector-item">
+  //         <a
+  //           className="connector-item-inner"
+  //           href="//##appDomain##/wallets?connect=metamask"
+  //         >
+  //           <div className="more-card">
+  //             <div className="icon-wrapper">
+  //               <img src={metamaskLogo} alt="binnace" className="card-image" />
+  //             </div>
+  //           </div>
+  //           <div className="description-wrapper">
+  //             <span className="name">MetaMask</span>
+  //             <span className="button-with-arrow">
+  //               Connect
+  //               <i className="icon-Arrow-More">
+  //                 <svg
+  //                   width="100%"
+  //                   height="100%"
+  //                   viewBox="0 0 24 24"
+  //                   fill="none"
+  //                   xmlns="http://www.w3.org/2000/svg"
+  //                 >
+  //                   <path
+  //                     d="M4 12H20M20 12L14 6M20 12L14 18"
+  //                     stroke="currentColor"
+  //                     strokeWidth={2}
+  //                     strokeLinecap="round"
+  //                     strokeLinejoin="round"
+  //                   />
+  //                 </svg>
+  //               </i>
+  //             </span>
+  //           </div>
+  //         </a>
+  //       </div>
+  //       <div className="connector-item">
+  //         <a
+  //           className="connector-item-inner"
+  //           href="//##appDomain##/wallets?connect=coinbase"
+  //         >
+  //           <div className="more-card">
+  //             <div className="icon-wrapper">
+  //               <img src={coinbaseLogo} alt="binnace" className="card-image" />
+  //             </div>
+  //           </div>
+  //           <div className="description-wrapper">
+  //             <span className="name">Coinbase</span>
+  //             <span className="button-with-arrow">
+  //               Connect
+  //               <i className="icon-Arrow-More">
+  //                 <svg
+  //                   width="100%"
+  //                   height="100%"
+  //                   viewBox="0 0 24 24"
+  //                   fill="none"
+  //                   xmlns="http://www.w3.org/2000/svg"
+  //                 >
+  //                   <path
+  //                     d="M4 12H20M20 12L14 6M20 12L14 18"
+  //                     stroke="currentColor"
+  //                     strokeWidth={2}
+  //                     strokeLinecap="round"
+  //                     strokeLinejoin="round"
+  //                   />
+  //                 </svg>
+  //               </i>
+  //             </span>
+  //           </div>
+  //         </a>
+  //       </div>
+  //       <div className="connector-item">
+  //         <a
+  //           className="connector-item-inner"
+  //           href="//##appDomain##/wallets?connect=walletconnect"
+  //         >
+  //           <div className="more-card">
+  //             <div className="icon-wrapper">
+  //               <img src={otherLogo} alt="binnace" className="card-image" />
+  //             </div>
+  //           </div>
+  //           <div className="description-wrapper">
+  //             <span className="name">Other</span>
+  //             <span className="button-with-arrow">
+  //               Connect
+  //               <i className="icon-Arrow-More">
+  //                 <svg
+  //                   width="100%"
+  //                   height="100%"
+  //                   viewBox="0 0 24 24"
+  //                   fill="none"
+  //                   xmlns="http://www.w3.org/2000/svg"
+  //                 >
+  //                   <path
+  //                     d="M4 12H20M20 12L14 6M20 12L14 18"
+  //                     stroke="currentColor"
+  //                     strokeWidth={2}
+  //                     strokeLinecap="round"
+  //                     strokeLinejoin="round"
+  //                   />
+  //                 </svg>
+  //               </i>
+  //             </span>
+  //           </div>
+  //         </a>
+  //       </div>
+  //     </div>
+  //   );
+  // };
   return (
     <>
-      <div
+      {/* <div
         style={{
           flexWrap: 'wrap',
           justifyContent: 'center',
@@ -426,12 +620,80 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
         {logo ? (
           <img className="avatar-md avatar-sm mb-2" src={logo} alt={name} />
         ) : (
-          <div className="avatar-md avatar-sm mb-2">
-            {/* <i className="bx bx-wallet"></i> */}
-          </div>
+          <div className="avatar-md avatar-sm mb-2"></div>
         )}
 
         {name}
+      </div> */}
+      <div className="connector-container">
+        <div className="connector-item mx-3 cursor-pointer">
+          <div
+            onClick={() => {
+              if (connectorConnected) {
+                return;
+              } else {
+                handleClick();
+              }
+            }}
+            className="connector-item-inner bg bg-light"
+          >
+            <div className="more-card">
+              <div className="icon-wrapper">
+                <img src={logo} alt="binnace" className="card-image" />
+              </div>
+            </div>
+            <div className="description-wrapper">
+              <span className="name text-dark">{name}</span>
+              <span className="button-with-arrow">
+                {connectorConnected ? (
+                  <span className="text-dark">Connected</span>
+                ) : (
+                  'Connect'
+                )}
+
+                {connectorConnected ? (
+                  <i className="bx bx-check-circle text-success"></i>
+                ) : (
+                  <i className="icon-Arrow-More">
+                    <svg
+                      width="100%"
+                      height="100%"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M4 12H20M20 12L14 6M20 12L14 18"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </i>
+                )}
+
+                {/* <i className="icon-Arrow-More">
+                  <svg
+                    width="100%"
+                    height="100%"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4 12H20M20 12L14 6M20 12L14 18"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </i> */}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
