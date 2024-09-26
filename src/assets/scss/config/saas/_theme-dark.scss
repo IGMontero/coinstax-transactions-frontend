@@ -917,3 +917,114 @@
 .wcm-container {
   z-index: 2000; 
 }
+
+// Connectors Cards 
+.connector-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 26px;
+
+  .connector-item {
+      transition: transform 0.4s;
+      z-index: 2;
+
+      .connector-item-inner {
+          width: 126px;
+          height: 168px;
+          display: flex;
+          position: relative;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          justify-content: flex-start;
+          padding: 18px 6px;
+          background: #f9fafc;
+          box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
+          border-radius: 16px;
+          border: 1px solid transparent;
+
+          .more-card {
+              width: 108px;
+              height: 108px;
+              position: relative;
+              top: 0;
+              left: 0;
+              bottom: 0;
+              right: 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+
+              .icon-wrapper {
+                  display: flex;
+                  flex: 0 0 auto;
+                  width: 72px;
+                  height: 72px;
+              }
+
+              .card-image {
+                  object-fit: contain;
+                  width: 100% !important;
+                  position: relative !important;
+                  height: unset !important;
+              }
+          }
+
+          .description-wrapper {
+              flex: 1;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+
+              .name {
+                  overflow: hidden;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 1;
+                  -webkit-box-orient: vertical;
+                  word-break: break-all;
+                  white-space: normal;
+                  font-size: 13px;
+                  line-height: 18px;
+                  letter-spacing: 0;
+                  font-weight: 400;
+                  margin-top: 16px;
+                  text-transform: capitalize;
+                  color: #464343;
+              }
+
+              .button-with-arrow {
+                  font-size: 14px;
+                  line-height: 20px;
+                  letter-spacing: 0;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 4px;
+                  font-weight: 500;
+                  margin-top: 6px;
+                  color: #424141;
+              }
+
+              .icon-Arrow-More {
+                  font-size: 20px;
+                  width: 20px;
+                  height: 20px;
+              }
+          }
+      }
+
+      .connector-item-inner:hover {
+          border: 1px solid #ffb347;
+          box-shadow: 0 12px 12px 0 rgba(255, 147, 50, 0.15);
+
+          .button-with-arrow {
+              color: #ffb347;
+          }
+      }
+  }
+
+
+}
