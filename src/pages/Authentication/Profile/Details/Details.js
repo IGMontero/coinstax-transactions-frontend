@@ -22,8 +22,8 @@ const Details = (props) => {
   const [loadingNotificationsPreference, setLoadingNotificationsPreference] =
     React.useState(false);
 
-  const [notificationPreference, setNotificationPreference] = React.useState(
-    currentUser?.notificationPreference,
+  const [notificationPreferences, setNotificationPreference] = React.useState(
+    currentUser?.notificationsPreferences,
   );
 
   const [loadingUpdateInfo, setLoadingUpdateInfo] = React.useState(false);
@@ -31,12 +31,13 @@ const Details = (props) => {
   const [country, setCountry] = React.useState(currentUser?.country);
   const [currency, setCurrency] = React.useState(currentUser?.currency);
 
+
   useEffect(() => {
     setEmail(currentUser?.email);
     setTimezone(currentUser?.timezone);
     setCountry(currentUser?.country);
     setCurrency(currentUser?.currency);
-    setNotificationPreference(currentUser?.notificationPreference);
+    setNotificationPreference(currentUser?.notificationPreferences);
   }, [currentUser]);
 
   const handleUpdate = async () => {
@@ -72,7 +73,7 @@ const Details = (props) => {
       setLoadingNotificationsPreference(true);
       const res = await dispatch(
         updateNotificationsPreferences({
-          emailMarketing: true,
+          emailMarketing: notificationPreferences.emailMarketing,
         }),
       );
       const response = res.payload;
@@ -199,13 +200,12 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${
-              loadingUpdateInfo
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
-            }`}
+            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
+              }`}
           >
-            Update Info
+            Update
           </Button>
         </Col>
         {/* <h3 className="text-muted">Crypto Pricing</h3>
@@ -270,10 +270,10 @@ const Details = (props) => {
               className="form-check-input"
               type="checkbox"
               id="formCheck6"
-              checked={notificationPreference?.emailMarketing}
+              checked={notificationPreferences?.emailMarketing}
               onChange={(e) =>
                 setNotificationPreference({
-                  ...notificationPreference,
+                  ...notificationPreferences,
                   emailMarketing: e.target.checked,
                 })
               }
@@ -289,11 +289,10 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${
-              loadingNotificationsPreference
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
-            }`}
+            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
+              }`}
           >
             Update
           </Button>

@@ -127,7 +127,6 @@ const Register = () => {
   useEffect(() => {
     const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    console.log('user time zone', userTimezone);
 
     const countryCode = userTimezone.split('/')[1];
 
@@ -209,69 +208,19 @@ const Register = () => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                              validation.errors.email
+                                validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                          validation.errors.email ? (
+                            validation.errors.email ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.email}</div>
                             </FormFeedback>
                           ) : null}
                         </div>
 
-                        {/* <div className="mb-3">
-                          <Label htmlFor="role" className="form-label">
-                            Account Type <span className="text-danger">*</span>
-                          </Label>
-                          <Input
-                            type="select"
-                            name="role"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.role || ''}
-                            invalid={
-                              validation.touched.role && validation.errors.role
-                                ? true
-                                : false
-                            }
-                          >
-                            <option value="">Select Account Type</option>
-                            <option value="user">User</option>
-                            <option value="accountant">Accountant</option>
-                          </Input>
-                          {validation.touched.role && validation.errors.role ? (
-                            <FormFeedback type="invalid">
-                              <div>{validation.errors.role}</div>
-                            </FormFeedback>
-                          ) : null}
-                        </div> */}
-                        {/* currency */}
-
-                        <div className="mb-2">
-                          <Label htmlFor="currency" className="form-label">
-                            Currency <span className="text-danger">*</span>
-                          </Label>
-                          <select
-                            name="currency"
-                            value={validation.values.currency || ''}
-                            onChange={validation.handleChange}
-                            className="form-control"
-                          >
-                            <option value="">Select a Currency</option>{' '}
-                            {fixedData?.currencies.map((item) => (
-                              <option key={item.id} value={item.id}>
-                                <span
-                                  dangerouslySetInnerHTML={{
-                                    __html: `${item.symbol} - ${item.name}`,
-                                  }}
-                                />
-                              </option>
-                            ))}
-                          </select>
-                        </div>
 
                         <div className="mb-2">
                           <Label htmlFor="timezone" className="form-label">
@@ -317,6 +266,32 @@ const Register = () => {
                           </select>
                         </div>
 
+
+                        <div className="mb-2">
+                          <Label htmlFor="currency" className="form-label">
+                            Currency <span className="text-danger">*</span>
+                          </Label>
+                          <select
+                            name="currency"
+                            value={validation.values.currency || ''}
+                            onChange={validation.handleChange}
+                            className="form-control"
+                          >
+                            <option value="">Select a Currency</option>{' '}
+                            {fixedData?.currencies.map((item) => (
+                              <option key={item.id} value={item.id}>
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html: `${item.symbol} - ${item.name}`,
+                                  }}
+                                />
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+
+
                         <div className="mb-2">
                           <Label htmlFor="userpassword" className="form-label">
                             Password <span className="text-danger">*</span>
@@ -330,13 +305,13 @@ const Register = () => {
                             value={validation.values.password || ''}
                             invalid={
                               validation.touched.password &&
-                              validation.errors.password
+                                validation.errors.password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.password &&
-                          validation.errors.password ? (
+                            validation.errors.password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.password}</div>
                             </FormFeedback>
@@ -360,13 +335,13 @@ const Register = () => {
                             value={validation.values.confirm_password || ''}
                             invalid={
                               validation.touched.confirm_password &&
-                              validation.errors.confirm_password
+                                validation.errors.confirm_password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.confirm_password &&
-                          validation.errors.confirm_password ? (
+                            validation.errors.confirm_password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.confirm_password}</div>
                             </FormFeedback>

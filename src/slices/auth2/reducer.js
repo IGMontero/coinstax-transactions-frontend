@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { removeTokenFromCookies } from '../../helpers/cookies_helper';
 import { authMe, login, register, changePassword, changeEmail } from './thunk';
 
+
 const initialState = {
   user: null,
   token: null,

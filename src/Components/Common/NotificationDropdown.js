@@ -93,11 +93,11 @@ const NotificationDropdown = ({ onRefresh, handleLoadMoreNotifications }) => {
 
           <div className="p-0">
             {total < 1 ? (
-              <div className="w-25 w-sm-50 pt-3 mx-auto">
-                <img src={bell} className="img-fluid" alt="no-notifications" />
+              <div className="w-50 text-center w-sm-50 pt-3 mx-auto">
+                <img style={{ maxWidth: 80 }} src={bell} className="img-fluid" alt="no-notifications" />
                 <div className="text-center pb-5 mt-2">
                   <h6 className="fs-18 fw-semibold lh-base">
-                    Hey! You have no notifications
+                    You have no new notifications
                   </h6>
                 </div>
               </div>
