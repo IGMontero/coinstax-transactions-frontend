@@ -16,6 +16,13 @@ export const saveTokenInCookies = (token) => {
   localStorage.setItem('accessToken', token);
 };
 
+export const saveCountryInCookies = (country) => {
+  Cookies.set('country', country, {
+    expires: 365,
+    domain: cookiesDomain,
+  });
+};
+
 export const getTokenFromCookies = () => {
   const cookieToken = Cookies.get('token', {
     domain: cookiesDomain,
