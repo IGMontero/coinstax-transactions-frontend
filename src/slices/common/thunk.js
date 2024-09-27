@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { saveCountryInCookies, saveTokenInCookies } from "../../helpers/cookies_helper";
 const API_BASE = process.env.REACT_APP_API_URL_BASE;
 
 export const fetchApiVersion = createAsyncThunk(
@@ -12,7 +13,18 @@ export const fetchApiVersion = createAsyncThunk(
                 throw new Error(`Error: ${response.status}`);
             }
             const data = await response.json();
-            return data;
+
+            const headers = response.headers;
+
+
+            // Handle CF-IPCountry header and save int ocookies if present.
+            if (headers.has("CF-IPCountry")) {
+                const ipCountry = headers.get("CF-IPCountry");
+
+                saveCountryInCookies(ipCountry);
+            }
+
+            return { ...data, headers };
         } catch (error) {
             return rejectWithValue(error.message);
         }
