@@ -201,11 +201,11 @@ const Layout = (props) => {
 
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
-            getCurrentUserPortfolioSummary({
-              userId: currentPortfolioUserId,
-              signal,
-            }),
-          ).unwrap()
+          getCurrentUserPortfolioSummary({
+            userId: currentPortfolioUserId,
+            signal,
+          }),
+        ).unwrap()
         : dispatch(getAddressesInfo({ address: address, signal }));
 
       const response = await request;
@@ -365,9 +365,6 @@ const Layout = (props) => {
       !isPageWithoutAddress(location.pathname) &&
       !isCurrentUserPortfolioSelected
     ) {
-      if (process.env.NODE_ENV === 'development') {
-        alert('Error in address with dropdown');
-      }
       navigate('/');
     }
   }, [

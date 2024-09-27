@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
-import Info from './Profile/Info';
-import ChangeEmail from './Profile/Details/ChangeEmail';
-import ChangePassword from './Profile/Details/ChangePassword';
-import Details from './Profile/Details/Details';
-import NavProfile from './Profile/NavProfile';
-import { useSelector, useDispatch } from 'react-redux';
-import { Card, CardBody, Row, Col, TabContent } from 'reactstrap';
+import { useSelector } from 'react-redux';
+import { Card, CardBody, Col, Row, TabContent } from 'reactstrap';
 import Access from './Profile/Access';
-import Plan from './Profile/Plan';
 import CloseAccount from './Profile/CloseAccount';
-import Data from './Profile/Data';
+import Details from './Profile/Details/Details';
 import LoginDetails from './Profile/LoginDetails';
+import NavProfile from './Profile/NavProfile';
+import Plan from './Profile/Plan';
+import Helmet from '../../Components/Helmet/Helmet';
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('1');
@@ -22,6 +19,8 @@ const UserProfile = () => {
   };
   return (
     <React.Fragment>
+      <Helmet title="Profile" />
+
       <div className="pt-5 mt-1">
         <Row className=" justify-content-center">
           {/* <Col xxl={3}>
@@ -46,9 +45,9 @@ const UserProfile = () => {
                 activeTab={activeTab}
                 tabChange={tabChange}
                 currentUser={currentUser}
-                // onInviteCode={handlePostInviteCode}
-                // openModalInviteCode={openModalInviteCode}
-                // setOpenModalInviteCode={setOpenModalInviteCode}
+              // onInviteCode={handlePostInviteCode}
+              // openModalInviteCode={openModalInviteCode}
+              // setOpenModalInviteCode={setOpenModalInviteCode}
               />
               <CardBody className="p-4">
                 <TabContent activeTab={activeTab}>
