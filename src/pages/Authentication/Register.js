@@ -35,6 +35,7 @@ import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
 import { timezonesArray } from '../../helpers/timeZones';
+import { fetchApiVersion } from '../../slices/common/thunk';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -50,6 +51,7 @@ const Register = () => {
   const searchParams = new URLSearchParams(location.search);
   const code = searchParams.get('code');
   const type = searchParams.get('type');
+
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -125,30 +127,63 @@ const Register = () => {
   };
 
   useEffect(() => {
-    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const initialize = async () => {
+
+      // Make a request to the server api version, just to get the headers of response.
+      const response = await dispatch(fetchApiVersion());
+
+      console.log("Response headers of api version: ", response.headers);
 
 
-    const countryCode = userTimezone.split('/')[1];
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-    const country = fixedData?.countries.find(
-      (item) => item.name == countryCode,
-    );
-    if (country) {
-      validation.setFieldValue('country', country.code);
-    } else {
-      validation.setFieldValue('country', '');
+      const countryCode = response.headers?.get('CP-IPCountry');
+
+      console.log("Resolved country code: ", countryCode);
+
+      const country = fixedData?.countries.find(
+        (item) => item.name == countryCode,
+      );
+      if (country) {
+        validation.setFieldValue('country', country.code);
+      } else {
+        validation.setFieldValue('country', '');
+      }
+
+      const timezone = fixedData?.timezones.find(
+        (item) => item.id === userTimezone,
+      );
+
+      if (timezone) {
+        validation.setFieldValue('timezone', timezone.id);
+      } else {
+        validation.setFieldValue('timezone', '');
+      }
     }
 
-    const timezone = fixedData?.timezones.find(
-      (item) => item.id === userTimezone,
-    );
-
-    if (timezone) {
-      validation.setFieldValue('timezone', timezone.id);
-    } else {
-      validation.setFieldValue('timezone', '');
-    }
+    initialize();
   }, []);
+
+  // Effect when country is changed
+  useEffect(() => {
+    if (validation.values.country) {
+      const country = fixedData?.countries.find(
+        (item) => item.code === validation.values.country,
+      );
+
+      const countryCurrency = country?.currency;
+
+      // Find currency in fixed data
+      const currency = fixedData?.currencies.find(
+        (item) => item.symbol === countryCurrency,
+      );
+
+      if (currency) {
+        validation.setFieldValue('currency', currency.id);
+      }
+
+    }
+  }, [validation.values.country]);
 
   return (
     <React.Fragment>

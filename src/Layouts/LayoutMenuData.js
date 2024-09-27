@@ -65,15 +65,13 @@ const Navdata = () => {
     userId,
   ]);
 
-  console.log('contract address', contractAddress);
-
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;
     setIsUnsupported(
       assets?.unsupported ||
-        transactions?.unsupported ||
-        performance?.unsupported ||
-        !addressSearched,
+      transactions?.unsupported ||
+      performance?.unsupported ||
+      !addressSearched,
     );
   }, [fetchData, addressSearched, isCurrentUserPortfolioSelected]);
 
@@ -86,13 +84,12 @@ const Navdata = () => {
         : `/portfolio/${page}`
       : contractAddress && !address
         ? `/address/${prevAddress}/${page}`
-        : `${
-            token
-              ? `/tokens/${token}`
-              : prevAddressPortfolio
-                ? `/${addressSearched}/${page}`
-                : `/address/${addressSearched}/${page}`
-          }`;
+        : `${token
+          ? `/tokens/${token}`
+          : prevAddressPortfolio
+            ? `/${addressSearched}/${page}`
+            : `/address/${addressSearched}/${page}`
+        }`;
 
     return {
       id,

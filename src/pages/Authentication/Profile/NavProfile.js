@@ -37,7 +37,7 @@ const NavProfile = ({ activeTab, tabChange }) => {
             Login Details
           </NavLink>
         </NavItem>
-        <NavItem>
+        {/* <NavItem>
           <NavLink
             to="#"
             className={classnames({ active: activeTab === '3' })}
@@ -49,8 +49,8 @@ const NavProfile = ({ activeTab, tabChange }) => {
             <i className="far fa-user"></i>
             Plan
           </NavLink>
-        </NavItem>
-        <NavItem>
+        </NavItem> */}
+        {/* <NavItem>
           <NavLink
             to="#"
             className={classnames({ active: activeTab === '4' })}
@@ -62,7 +62,7 @@ const NavProfile = ({ activeTab, tabChange }) => {
             <i className="far fa-envelope"></i>
             {t('Access')}
           </NavLink>
-        </NavItem>
+        </NavItem> */}
 
         <NavItem>
           <NavLink

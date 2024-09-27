@@ -72,21 +72,20 @@ const ProfileDropdown = ({ currentUser }) => {
             </Link>
           </DropdownItem>
 
-          <DropdownItem className="p-0">
+          {/* <DropdownItem className="p-0">
             <Link to={process.env.PUBLIC_URL + '#'} className="dropdown-item">
               <i className="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>{' '}
               <span className="align-middle">Help</span>
             </Link>
-          </DropdownItem>
+          </DropdownItem> */}
           <div className="dropdown-divider"></div>
-          <DropdownItem className="p-0">
+          {/* <DropdownItem className="p-0">
             <Link to={process.env.PUBLIC_URL + '#'} className="dropdown-item">
-              {/* <span
-                                className="badge bg-soft-success text-success mt-1 float-end">New</span> */}
+              
               <i className="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>{' '}
               <span className="align-middle">Settings</span>
             </Link>
-          </DropdownItem>
+          </DropdownItem> */}
 
           <DropdownItem onClick={handleLogout} className="p-0">
             <div className="dropdown-item">
