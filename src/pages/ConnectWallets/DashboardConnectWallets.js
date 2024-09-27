@@ -131,6 +131,9 @@ const DashboardConnectWallets = () => {
       });
     }
 
+    // // If it's loading reutrn
+    // if (loadingConnectInfo.loading) return;
+
     try {
       connect(
         {
@@ -150,14 +153,15 @@ const DashboardConnectWallets = () => {
               console.log('Err name: ', errorName);
               console.log('err code: ', error.code);
 
-              return setLoadingConnectInfo({
-                loading: false,
-                open: true,
-                error: error,
+              return
+              // setLoadingConnectInfo({
+              //   loading: false,
+              //   open: true,
+              //   error: error,
 
-                name: connector.name,
-                message: `Permission to connect already requested. Please check your wallet to approve the connection.`,
-              });
+              //   name: connector.name,
+              //   message: `Permission to connect already requested. Please check your wallet to approve the connection.`,
+              // });
             } else if (errorName === 'UserRejectedRequestError') {
               return setLoadingConnectInfo({
                 loading: false,
@@ -190,6 +194,16 @@ const DashboardConnectWallets = () => {
     }
 
     async function handleConnectedAccount() {
+      if (!connector || !connector?.getAccounts) {
+        setLoadingConnectInfo({
+          loading: false,
+          open: true,
+          error: null,
+          name: '',
+          message: `Could not connect to ${connector?.name}. Please try again.`,
+        });
+      }
+
       const accounts = await connector.getAccounts();
 
       // connect(connector);
@@ -402,10 +416,11 @@ const DashboardConnectWallets = () => {
 };
 
 function ConnectorButton({ id, name, logo, handleConnect }) {
-  // const [ready, setReady] = React.useState(false);
+  const [ready, setReady] = React.useState(false);
   const location = useLocation();
   const { connectors } = useConnect();
   const connections = useConnections();
+
 
   const [connector, setConnector] = React.useState(null);
   useEffect(() => {
@@ -417,11 +432,29 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
     const searchParams = new URLSearchParams(location.search);
     const connectorToSelect = searchParams.get('connect');
 
-    if (connectorToSelect) {
-      const connector = connectors.find((c) => c.id === connectorToSelect);
+    // Flag to track if the effect has already been executed
+    let hasRun = false;
+
+    if (connectorToSelect && !hasRun) {
+      // Map connector to select key.
+      const connectorKey = walletConnectConnectorsData.find(i => i.urlId === connectorToSelect)?.id;
+
+      if (!connectorKey) {
+        console.warn('No connector key matches the selected ID.');
+        return;
+      }
+
+      // Check if connector exists and has the id of the connector to select
+      const isThisConnector = connector?.id === connectorKey;
+
+
+      if (!isThisConnector) {
+        return;
+      }
 
       if (connector) {
         handleConnect(connector);
+        hasRun = true; // Mark the effect as having run
       } else {
         console.warn('No connector matches the selected ID.');
       }
@@ -454,8 +487,6 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
     (connection) => connection?.connector?.id === connector?.id,
   );
   const connectorConnected = isConnected?.connector;
-
-  console.log('First connected: ', connectorConnected);
 
   // const renderConnectorsItems = () => {
   //   return (

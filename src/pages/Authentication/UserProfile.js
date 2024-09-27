@@ -57,9 +57,9 @@ const UserProfile = () => {
                   <LoginDetails currentUser={currentUser} />
 
                   {/* Plan Page */}
-                  <Plan />
+                  {/* <Plan /> */}
                   {/* Access Page  */}
-                  <Access />
+                  {/* <Access /> */}
                   {/* Data Page  */}
                   {/* <Data /> */}
                   {/* Close account Page  */}

@@ -200,11 +200,26 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
 
         const newNotifications = [...notifications, ...res.notifications];
 
+        // Remove duplicates
+        const uniqueNotifications = newNotifications.filter(
+          (notification, index, self) =>
+            index ===
+            self.findIndex(
+              (t) =>
+                t.id === notification.id,
+            ),
+        );
+
+        // Sort by createdAt
+        uniqueNotifications.sort((a, b) => {
+          return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+
         dispatch(setNotificationsInfo({
           hasMore: res.hasMore,
           unreadCount: res.unreadCount,
           total: res.total,
-          notifications: newNotifications
+          notifications: uniqueNotifications
         }));
 
         setCurrentPageNotifications(currentPageNotifications + 1);

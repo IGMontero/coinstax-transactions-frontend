@@ -123,18 +123,21 @@ export const walletConnectConnectorsData = [
   {
     name: 'Metamask',
     id: 'io.metamask',
+    urlId: 'metamask',
     uid: 'metamask',
     logo: metamaskLogo,
   },
   {
     name: 'WalletConnect',
     id: 'walletConnect',
+    urlId: 'walletconnect',
     uid: 'walletConnect',
     logo: walletConnectLogo,
   },
   {
     name: 'Coinbase Wallet',
     id: 'coinbaseWalletSDK',
+    urlId: 'coinbase',
     uid: 'coinbaseWallet',
     logo: coinbaseLogo,
   },

@@ -26,21 +26,18 @@ const notificationsSlice = createSlice({
       state.notifications = action.payload;
     },
     setNotificationsInfo: (state, action) => {
+      console.log("SETTING NOTIFICATIONS INFO. NEW NOTIFICATIONS INFO: ", action.payload)
+
       state.notificationsInfo = action.payload;
     },
     markNotificationAsReadAction: (state, action) => {
-      state.notifications = state.notifications.map((notification) => {
-        if (notification.id === action.payload.id) {
-          return { ...notification, seen: true };
-        }
-        return notification;
-      });
+      const notificationId = action.payload.id;
 
-      // Update notificationsInfo notifications too 
-      let notifSetAsRead = false
-      state.notificationsInfo.notifications = state.notifications.map((notification) => {
-        if (notification.id === action.payload.id) {
-          notifSetAsRead = true
+      // Update notificationsInfo notifications too
+      let notifSetAsRead = false;
+      state.notificationsInfo.notifications = state.notificationsInfo?.notifications?.map((notification) => {
+        if (notification.id === notificationId) {
+          notifSetAsRead = true;
           return { ...notification, seen: true };
         }
         return notification;
@@ -50,6 +47,28 @@ const notificationsSlice = createSlice({
       if (notifSetAsRead) {
         state.notificationsInfo.unreadCount = state.notificationsInfo.unreadCount - 1;
       }
+
+      // state.notifications = state.notifications.map((notification) => {
+      //   if (notification.id === action.payload.id) {
+      //     return { ...notification, seen: true };
+      //   }
+      //   return notification;
+      // });
+
+      // // Update notificationsInfo notifications too 
+      // let notifSetAsRead = false
+      // state.notificationsInfo.notifications = state.notifications.map((notification) => {
+      //   if (notification.id === action.payload.id) {
+      //     notifSetAsRead = true
+      //     return { ...notification, seen: true };
+      //   }
+      //   return notification;
+      // });
+
+      // // Update unreadCount
+      // if (notifSetAsRead) {
+      //   state.notificationsInfo.unreadCount = state.notificationsInfo.unreadCount - 1;
+      // }
 
     }
 

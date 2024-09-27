@@ -17,7 +17,7 @@ import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { markNotificationAsReadAction } from '../../slices/notifications/reducer';
 
-const NotificationDropdown = ({ onRefresh, handleLoadMoreNotifications }) => {
+const NotificationDropdown = ({ handleLoadMoreNotifications }) => {
   const dispatch = useDispatch();
   const [isNotificationDropdown, setIsNotificationDropdown] = useState(false);
   const { notificationsInfo } = useSelector((state) => state.notifications);
@@ -117,19 +117,24 @@ const NotificationDropdown = ({ onRefresh, handleLoadMoreNotifications }) => {
                       </span>
                     </div>
                     <div className="flex-1">
-                      <a
-                        href={notification?.other?.fileUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="stretched-link text-decoration-none"
+                      <div
+                      // href={notification?.other?.fileUrl}
+                      // target="_blank"
+                      // rel="noopener noreferrer"
+                      // className="stretched-link text-decoration-none"
                       >
                         <h6
                           className="mt-0 mb-2 lh-base"
                           style={{ wordBreak: 'break-word' }}
+                          dangerouslySetInnerHTML={
+                            {
+                              __html: notification.html,
+                            }
+                          }
                         >
-                          {notification.text}
+                          {/* {notification.text} */}
                         </h6>
-                      </a>
+                      </div>
                       <p className="mb-0 fs-11 fw-medium text-uppercase text-muted">
                         <i className="mdi mdi-clock-outline"></i>{' '}
                         {moment(notification.createdAt).fromNow()}
