@@ -28,7 +28,7 @@ import {
 import { capitalizeFirstLetter, FILTER_NAMES } from '../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
@@ -53,6 +53,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const { userId } = useParams();
   const currentPortfolioUserId = userId ? userId : user?.id;
   const networkType = useSelector(selectNetworkType);
+  const navigate = useNavigate();
 
   const isCurrentUserPortfolioSelected =
     location.pathname.includes('portfolio');
@@ -625,6 +626,25 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const handleDownloadTransactionsNew = async () => {
     // Do the same but now the response will not be something to download.
     // Instead, it will be a response with a fileUrl or a pending state.
+
+    // If user is not authenticated, show a message to login and send to login page.
+    if (!user) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Login Required',
+        text: 'Please login to download transactions.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Navigate to login page
+          navigate('/login');
+        }
+      });
+      return;
+    }
+
 
     try {
       setLoadingDownload(true);
@@ -1337,35 +1357,33 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                 Include Spam Transactions
               </label>
             </div>
-            {isAdmin && (
-              <Button
-                className="d-flex justify-content-center align-items-center "
-                color="primary"
-                style={{
-                  borderRadius: '10px',
-                  border: '.5px solid grey',
-                  height: 35,
-                }}
-                onClick={handleDownloadTransactionsNew}
-                size="sm"
-                disabled={isInitialLoad || loadingDownload}
-              >
-                {' '}
-                {loadingDownload ? (
-                  <>
-                    {/* // SHOW spinner and Building CSV... */}
-                    <Spinner size="sm" />
+            <Button
+              className="d-flex justify-content-center align-items-center "
+              color="primary"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+                height: 35,
+              }}
+              onClick={handleDownloadTransactionsNew}
+              size="sm"
+              disabled={isInitialLoad || loadingDownload}
+            >
+              {' '}
+              {loadingDownload ? (
+                <>
+                  {/* // SHOW spinner and Building CSV... */}
+                  <Spinner size="sm" />
 
-                    <span className="ms-2">Building CSV...</span>
-                  </>
-                ) : (
-                  <>
-                    <i className="ri-file-download-line fs-5 me-2"></i>
-                    <span>Download CSV</span>
-                  </>
-                )}
-              </Button>
-            )}
+                  <span className="ms-2">Building CSV...</span>
+                </>
+              ) : (
+                <>
+                  <i className="ri-file-download-line fs-5 me-2"></i>
+                  <span>Download CSV</span>
+                </>
+              )}
+            </Button>
           </div>
         </Row>
       </div>
