@@ -350,7 +350,7 @@ const DashboardConnectWallets = () => {
               flexWrap: 'wrap',
               justifyContent: 'center',
             }}
-            className="d-flex mt-4 mb-5"
+            className="connector-container mt-4 mb-5"
           >
             {renderConnectors()}
           </div>
@@ -625,55 +625,50 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
 
         {name}
       </div> */}
-      <div className="connector-container">
-        <div className="connector-item mx-3 cursor-pointer">
-          <div
-            onClick={() => {
-              if (connectorConnected) {
-                return;
-              } else {
-                handleClick();
-              }
-            }}
-            className="connector-item-inner bg bg-light"
-          >
-            <div className="more-card">
-              <div className="icon-wrapper">
-                <img src={logo} alt="binnace" className="card-image" />
-              </div>
+      <div className="connector-item mx-3 cursor-pointer">
+        <div
+          onClick={() => {
+            handleClick();
+          }}
+          className="connector-item-inner bg bg-light"
+        >
+          <div className="more-card">
+            <div className="icon-wrapper">
+              <img src={logo} alt="binnace" className="card-image" />
             </div>
-            <div className="description-wrapper">
-              <span className="name text-dark">{name}</span>
-              <span className="button-with-arrow">
-                {connectorConnected ? (
-                  <span className="text-dark">Connected</span>
-                ) : (
-                  'Connect'
-                )}
+          </div>
+          <div className="description-wrapper">
+            <span className="name text-dark">{name}</span>
+            <span className="button-with-arrow">
+              {connectorConnected ? (
+                <span className="text-dark">Connected</span>
+              ) : (
+                'Connect'
+              )}
 
-                {connectorConnected ? (
-                  <i className="bx bx-check-circle text-success"></i>
-                ) : (
-                  <i className="icon-Arrow-More">
-                    <svg
-                      width="100%"
-                      height="100%"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M4 12H20M20 12L14 6M20 12L14 18"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </i>
-                )}
+              {connectorConnected ? (
+                <i className="bx bx-check-circle text-success"></i>
+              ) : (
+                <i className="icon-Arrow-More">
+                  <svg
+                    width="100%"
+                    height="100%"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M4 12H20M20 12L14 6M20 12L14 18"
+                      stroke="currentColor"
+                      strokeWidth={2}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </i>
+              )}
 
-                {/* <i className="icon-Arrow-More">
+              {/* <i className="icon-Arrow-More">
                   <svg
                     width="100%"
                     height="100%"
@@ -690,8 +685,7 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
                     />
                   </svg>
                 </i> */}
-              </span>
-            </div>
+            </span>
           </div>
         </div>
       </div>

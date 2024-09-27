@@ -22,6 +22,7 @@ export const wagmiConfig = createConfig({
         metaMask(),
         coinbaseWallet({
             appName: 'ChainGlance',
+            headlessMode: false
             // appLogoUrl: 'https://coin.tax/logo.png',
         }),
     ],

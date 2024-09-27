@@ -73,7 +73,7 @@ const Details = (props) => {
       setLoadingNotificationsPreference(true);
       const res = await dispatch(
         updateNotificationsPreferences({
-          emailMarketing: notificationPreferences.emailMarketing,
+          emailMarketing: notificationPreferences?.emailMarketing,
         }),
       );
       const response = res.payload;
