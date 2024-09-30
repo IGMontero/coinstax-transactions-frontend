@@ -5,6 +5,7 @@ import { Alert, Button, Col, Input, Label, Row, TabPane } from 'reactstrap';
 import {
   updateUserInfo,
   updateNotificationsPreferences,
+  resendVerificationEmail,
 } from '../../../../slices/auth2/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
@@ -27,10 +28,11 @@ const Details = (props) => {
   );
 
   const [loadingUpdateInfo, setLoadingUpdateInfo] = React.useState(false);
+  const [loadingResendVerificationEmail, setLoadingResendVerificationEmail] =
+    React.useState(false);
   const [timezone, setTimezone] = React.useState(currentUser?.timezone);
   const [country, setCountry] = React.useState(currentUser?.country);
   const [currency, setCurrency] = React.useState(currentUser?.currency);
-
 
   useEffect(() => {
     setEmail(currentUser?.email);
@@ -64,7 +66,7 @@ const Details = (props) => {
       setLoadingUpdateInfo(false);
     } catch (error) {
       setErrorMessage(error.message || 'An error occurred');
-      setLoadingUpdate(false);
+      setLoadingUpdateInfo(false);
     }
   };
 
@@ -94,11 +96,33 @@ const Details = (props) => {
     }
   };
 
+  const handleResendVerificationEmail = async () => {
+    try {
+      setLoadingResendVerificationEmail(true);
+      const res = await dispatch(resendVerificationEmail());
+      const response = res.payload;
+      if (res.error || response.error) {
+        setErrorMessage(response.error || 'An error occurred');
+      } else {
+        setErrorMessage('');
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'Verification email sent successfully',
+        });
+      }
+      setLoadingResendVerificationEmail(false);
+    } catch (error) {
+      setErrorMessage(error.message || 'An error occurred');
+      setLoadingResendVerificationEmail(false);
+    }
+  };
+
   return (
     <TabPane tabId="1">
       <Row>
         <Col lg={12}>
-          <Col lg={6} className="mb-3">
+          <Col lg={6} className="mb-2">
             <Label className="form-label">Email</Label>
             <Input
               className="form-control cursor-not-allowed text-muted"
@@ -106,7 +130,28 @@ const Details = (props) => {
               value={currentUser?.email}
               readOnly
             />
+            {currentUser?.emailVerified ? (
+              <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
+            ) : (
+              <div>
+                <span className="badge bg-soft-danger fs-8 mt-2">
+                  Not Verified
+                </span>
+                {loadingResendVerificationEmail ? (
+                  <span className="spinner-border spinner-border-sm ms-2"></span>
+                ) : (
+                  <Button
+                    color="link"
+                    className="text-primary text-decoration-none"
+                    onClick={handleResendVerificationEmail}
+                  >
+                    Resend Verification Email
+                  </Button>
+                )}
+              </div>
+            )}
           </Col>
+
           <h3 className="text-muted">Preferences</h3>
           <hr />
           <Row>
@@ -200,10 +245,11 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-              : ''
-              }`}
+            className={`btn btn-soft-primary mb-3 ${
+              loadingUpdateInfo
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
           >
             Update
           </Button>
@@ -289,14 +335,15 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-              : ''
-              }`}
+            className={`btn btn-soft-primary mb-0 ${
+              loadingNotificationsPreference
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
           >
             Update
           </Button>
-          <Col lg={3}>
+          <Col lg={3} className="mt-4">
             {errorMessage ? (
               <Alert color="danger"> {errorMessage} </Alert>
             ) : null}
