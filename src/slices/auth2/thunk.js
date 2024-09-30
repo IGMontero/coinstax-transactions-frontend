@@ -253,9 +253,6 @@ export const updateUserInfo = createAsyncThunk(
     }
   },
 );
-// Update notifications preferences
-// POST /auth/notifications-preferences
-// {emailMarketing: true/false }
 
 export const updateNotificationsPreferences = createAsyncThunk(
   'auth2/updateNotificationsPreferences',
@@ -270,6 +267,34 @@ export const updateNotificationsPreferences = createAsyncThunk(
             Authorization: `Bearer ${getTokenFromCookies()}`,
           },
           body: JSON.stringify({ emailMarketing }),
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const resendVerificationEmail = createAsyncThunk(
+  'auth2/resendVerificationEmail',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(
+        `${API_BASE}/auth/resend-verification-email`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${getTokenFromCookies()}`,
+          },
+          body: JSON.stringify({}),
         },
       );
 
