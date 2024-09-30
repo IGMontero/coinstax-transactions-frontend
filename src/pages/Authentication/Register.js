@@ -35,7 +35,7 @@ import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
 import { timezonesArray } from '../../helpers/timeZones';
-import { fetchApiVersion } from '../../slices/common/thunk';
+import { fetchApiVersion, fetchUserCountry } from '../../slices/common/thunk';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -130,24 +130,41 @@ const Register = () => {
     const initialize = async () => {
 
       // Make a request to the server api version, just to get the headers of response.
-      const response = await dispatch(fetchApiVersion());
+      const response = await dispatch(fetchUserCountry());
 
-      console.log("Response headers of api version: ", response.headers);
+      const userCountry = response.country || null;
 
 
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      const countryCode = response.headers?.get('CP-IPCountry');
+      const countryCode = userCountry;
 
-      console.log("Resolved country code: ", countryCode);
 
-      const country = fixedData?.countries.find(
-        (item) => item.name == countryCode,
-      );
-      if (country) {
-        validation.setFieldValue('country', country.code);
-      } else {
+      if (countryCode === 'XX' || !countryCode) {
         validation.setFieldValue('country', '');
+      } else if (countryCode) {
+        const country = fixedData?.countries.find(
+          (item) => item.code == countryCode,
+        );
+
+        if (country) {
+          validation.setFieldValue('country', country.code);
+
+          const countryCurrency = country.currency;
+
+          // Find currency in fixed data
+          const currency = fixedData?.currencies.find(
+            (item) => item.symbol === countryCurrency,
+          );
+
+          if (currency) {
+            validation.setFieldValue('currency', currency.id);
+          } else {
+            validation.setFieldValue('currency', '');
+          }
+        } else {
+          validation.setFieldValue('country', '');
+        }
       }
 
       const timezone = fixedData?.timezones.find(
