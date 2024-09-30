@@ -309,3 +309,28 @@ export const resendVerificationEmail = createAsyncThunk(
     }
   },
 );
+
+// DELETE /auth/close-account
+
+export const closeAccount = createAsyncThunk(
+  'auth2/closeAccount',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/close-account`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${getTokenFromCookies()}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
