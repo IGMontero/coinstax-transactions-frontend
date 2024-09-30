@@ -19,6 +19,8 @@ import binannceLogo from '../../assets/images/connctor/binance_light.png';
 import metamaskLogo from '../../assets/images/connctor/metamask_light.png';
 import coinbaseLogo from '../../assets/images/connctor/coinbase_light.png';
 import otherLogo from '../../assets/images/connctor/connect-other-portfolio.svg';
+import { layoutModeTypes } from '../../Components/constants/layout';
+import { isDarkMode } from '../../utils/utils';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -32,6 +34,11 @@ const DashboardConnectWallets = () => {
   const userAddresses = userPortfolioSummary?.addresses;
 
   const connections = useConnections();
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   console.log('Connections: ', connections);
 
@@ -153,7 +160,7 @@ const DashboardConnectWallets = () => {
               console.log('Err name: ', errorName);
               console.log('err code: ', error.code);
 
-              return
+              return;
               // setLoadingConnectInfo({
               //   loading: false,
               //   open: true,
@@ -421,7 +428,6 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
   const { connectors } = useConnect();
   const connections = useConnections();
 
-
   const [connector, setConnector] = React.useState(null);
   useEffect(() => {
     const connector = connectors.find((c) => c.id === id);
@@ -437,7 +443,9 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
 
     if (connectorToSelect && !hasRun) {
       // Map connector to select key.
-      const connectorKey = walletConnectConnectorsData.find(i => i.urlId === connectorToSelect)?.id;
+      const connectorKey = walletConnectConnectorsData.find(
+        (i) => i.urlId === connectorToSelect,
+      )?.id;
 
       if (!connectorKey) {
         console.warn('No connector key matches the selected ID.');
@@ -446,7 +454,6 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
 
       // Check if connector exists and has the id of the connector to select
       const isThisConnector = connector?.id === connectorKey;
-
 
       if (!isThisConnector) {
         return;
@@ -656,12 +663,12 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
 
         {name}
       </div> */}
-      <div className="connector-item mx-3 cursor-pointer">
+      <div className="connector-item cursor-pointer">
         <div
           onClick={() => {
             handleClick();
           }}
-          className="connector-item-inner bg bg-light"
+          className="connector-item-inner"
         >
           <div className="more-card">
             <div className="icon-wrapper">
@@ -669,13 +676,9 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
             </div>
           </div>
           <div className="description-wrapper">
-            <span className="name text-dark">{name}</span>
+            <span className="name">{name}</span>
             <span className="button-with-arrow">
-              {connectorConnected ? (
-                <span className="text-dark">Connected</span>
-              ) : (
-                'Connect'
-              )}
+              {connectorConnected ? 'Connected' : 'Connect'}
 
               {connectorConnected ? (
                 <i className="bx bx-check-circle text-success"></i>
