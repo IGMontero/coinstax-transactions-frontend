@@ -1,3 +1,4 @@
+import React from 'react';
 export const isDevelopment = process.env.NODE_ENV === 'development';
 export const isProduction = process.env.NODE_ENV === 'production';
 
@@ -12,6 +13,7 @@ import baseMainnet from '../assets/images/svg/crypto-icons/base-mainnet.png';
 import coinbaseLogo from '../assets/images/wallets/coinbase.png';
 import metamaskLogo from '../assets/images/wallets/metamask.png';
 import walletConnectLogo from '../assets/images/wallets/WalletConnect.png';
+import cronosLogo from '../assets/images/wallets/cronos.png';
 
 export const networks = [
   {
@@ -75,6 +77,15 @@ export const networks = [
     icon: baseMainnet,
     blockchain: 'base',
     iconAlt: 'base-mainnet',
+    width: 30,
+    height: 30,
+  },
+  {
+    key: 'cronos',
+    label: 'Cronos',
+    blockchain: 'cronos',
+    icon: cronosLogo,
+    iconAlt: 'cronos',
     width: 30,
     height: 30,
   },
