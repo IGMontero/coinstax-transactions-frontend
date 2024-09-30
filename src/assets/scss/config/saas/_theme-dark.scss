@@ -987,6 +987,7 @@
                   word-break: break-all;
                   white-space: normal;
                   font-size: 13px;
+                  font-family: 'Poppins', sans-serif;
                   line-height: 18px;
                   letter-spacing: 0;
                   font-weight: 400;
@@ -1004,6 +1005,7 @@
                   justify-content: center;
                   gap: 4px;
                   font-weight: 500;
+                  font-family: 'Poppins', sans-serif;
                   margin-top: 6px;
                   color: #424141;
               }
@@ -1028,6 +1030,25 @@
 
 
 }
+
+[data-layout-mode='dark'] .connector-container {
+  .connector-item {
+      .connector-item-inner {
+          background: #24282b;
+
+          .description-wrapper {
+              .button-with-arrow {
+                  color: white;
+              }
+
+              .name {
+                  color: #bfbfbf
+              }
+          }
+      }
+  }
+}
+
 
 
 // Search bar 
