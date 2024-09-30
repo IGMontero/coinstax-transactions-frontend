@@ -30,3 +30,26 @@ export const fetchApiVersion = createAsyncThunk(
         }
     }
 );
+
+export const fetchUserCountry = createAsyncThunk(
+    "common/userCountry",
+    async (address, { rejectWithValue }) => {
+        try {
+            const response = await fetch(
+                `${API_BASE}/common/country`
+            );
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            const data = await response.json();
+
+            if (data.country) {
+                saveCountryInCookies(data.country);
+            }
+
+            return data;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
