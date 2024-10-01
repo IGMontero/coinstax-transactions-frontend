@@ -33,6 +33,7 @@ import Users from '../pages/DashboardAccountsWallets/Admin/Users';
 import UsersProfile from '../pages/DashboardAccountsWallets/Admin/components/Profiles/UsersProfile';
 import DashboardAccountantAgents from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantAgents';
 import DashboardClientsAgent from '../pages/DashboardAccountsWallets/Agent/DashboardClientsAgent';
+import VerifyEmail from '../pages/Authentication/VerifyEmail';
 
 // Auth protected routes
 const adminRoutes = [
@@ -104,6 +105,7 @@ const publicRoutes = [
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
   { path: '/address/:address', component: <DashboardInfo /> },
+  { path: '/confirm-email', component: <VerifyEmail /> },
 
   { path: '/tokens/:token', component: <DashboardTokens /> },
   { path: '/contract/:contractAddress', component: <DashboardNFT /> },
