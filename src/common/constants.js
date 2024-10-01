@@ -111,6 +111,7 @@ export const pagesWithoutAddress = [
   '/forgot-password',
   '/reset-password',
   '/confirm-email',
+  '/confirm-email-change',
   '/404',
   '/blockchain-contracts',
   '/user-addresses',

@@ -4,7 +4,7 @@ import Helmet from '../../Components/Helmet/Helmet';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, Card, CardBody, Col, Container, Input, Row } from 'reactstrap';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
-import { verifyEmail } from '../../slices/auth2/thunk';
+import { confirmEmailChange } from '../../slices/auth2/thunk';
 import { useDispatch } from 'react-redux';
 
 const ConfirmEmail = () => {
@@ -15,6 +15,30 @@ const ConfirmEmail = () => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  const handleConfirmEmailChange = async () => {
+    setLoading(true);
+    try {
+      const response = await dispatch(confirmEmailChange(token));
+      console.log(response);
+      if (response.error) {
+        setErrorMessage('Error Changing Email');
+      } else {
+        setSuccessMessage('Email changed successfully');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 3000);
+      }
+    } catch (error) {
+      setErrorMessage(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    handleConfirmEmailChange();
+  }, []);
 
   return (
     <ParticlesAuth>
@@ -39,9 +63,9 @@ const ConfirmEmail = () => {
                   <div className="text-center mt-2">
                     <h3 className="text-primary">
                       {loading
-                        ? 'Verifying Email...'
+                        ? 'Changing Email...'
                         : errorMessage
-                          ? 'Error verifying email'
+                          ? errorMessage
                           : successMessage}
                     </h3>
                   </div>
@@ -54,7 +78,7 @@ const ConfirmEmail = () => {
                     {successMessage && (
                       <>
                         <div className="text-success text-center mt-3">
-                          Your email has been verified successfully
+                          Your email has been changed successfully
                         </div>
                         <h3> Redirecting to Chainglance ... </h3>
                       </>

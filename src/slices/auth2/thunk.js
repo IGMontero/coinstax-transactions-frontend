@@ -360,3 +360,27 @@ export const verifyEmail = createAsyncThunk(
     }
   },
 );
+
+export const confirmEmailChange = createAsyncThunk(
+  'auth2/confirmEmailChange',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/confirm-email-change`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
