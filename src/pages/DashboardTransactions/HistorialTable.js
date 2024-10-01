@@ -50,6 +50,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const { address } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+
+  console.log(user);
   const { userId } = useParams();
   const currentPortfolioUserId = userId ? userId : user?.id;
   const networkType = useSelector(selectNetworkType);
@@ -643,8 +645,23 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         }
       });
       return;
+    } else {
+      if (!user.emailVerified) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Email Verification Required',
+          text: 'Please verify your email to download your transactions.',
+          confirmButtonText: 'Ok',
+          showCancelButton: true,
+          cancelButtonText: 'Cancel',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate('/profile');
+          }
+        });
+        return;
+      }
     }
-
 
     try {
       setLoadingDownload(true);
@@ -672,15 +689,15 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const exportAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-          ...requestParams,
-          userId: currentPortfolioUserId,
-          assetsFilters,
-        })
+            ...requestParams,
+            userId: currentPortfolioUserId,
+            assetsFilters,
+          })
         : downloadTransactions({
-          ...requestParams,
-          query: debouncedSearchTerm,
-          assetsFilters,
-        });
+            ...requestParams,
+            query: debouncedSearchTerm,
+            assetsFilters,
+          });
 
       const response = await dispatch(exportAction).unwrap();
 
@@ -799,16 +816,16 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const downloadAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-          ...downloadParams,
-          userId: currentPortfolioUserId,
-          assetsFilters: selectAsset,
-        })
+            ...downloadParams,
+            userId: currentPortfolioUserId,
+            assetsFilters: selectAsset,
+          })
         : downloadTransactions({
-          ...downloadParams,
-          address: address,
-          query: debouncedSearchTerm,
-          assetsFilters: selectAsset,
-        });
+            ...downloadParams,
+            address: address,
+            query: debouncedSearchTerm,
+            assetsFilters: selectAsset,
+          });
 
       const response = await dispatch(downloadAction).unwrap();
 
@@ -998,7 +1015,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -1016,8 +1033,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -1291,7 +1309,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-        // style={{ minHeight: '50vh' }}
+          // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1394,7 +1412,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-        // style={{ minHeight: '50vh' }}
+          // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions
