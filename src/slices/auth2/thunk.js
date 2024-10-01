@@ -365,7 +365,7 @@ export const confirmEmailChange = createAsyncThunk(
   'auth2/confirmEmailChange',
   async (token, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/auth/confirm-email-change`, {
+      const response = await fetch(`${API_BASE}/auth/confirm-change-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
