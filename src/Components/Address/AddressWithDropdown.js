@@ -25,6 +25,8 @@ const AddressWithDropdown = ({
   isUnsupported,
 }) => {
   const { address, userId } = useParams();
+
+  console.log(address);
   const dispatch = useDispatch();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
@@ -228,10 +230,10 @@ const AddressWithDropdown = ({
               <DropdownItem
                 className="d-flex align-items-center"
                 onClick={(e) => {
-                  if (user) {
-                    const addr = userPortfolioSummary.addresses.find(
-                      (addr) => addr.address === address,
-                    );
+                  const addr = userPortfolioSummary.addresses.find(
+                    (addr) => addr.address === address,
+                  );
+                  if (user && addr) {
                     handleUpdateAddress(e, addr);
                   } else {
                     handleOpenModalRename(e, {
