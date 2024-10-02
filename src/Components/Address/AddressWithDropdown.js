@@ -25,8 +25,6 @@ const AddressWithDropdown = ({
   isUnsupported,
 }) => {
   const { address, userId } = useParams();
-
-  console.log(address);
   const dispatch = useDispatch();
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
@@ -92,6 +90,8 @@ const AddressWithDropdown = ({
     e.preventDefault();
     e.stopPropagation();
 
+    console.log('option', option);
+
     const optionLabel = addresses.find(
       (addr) => addr.value === option.value,
     )?.label;
@@ -154,19 +154,17 @@ const AddressWithDropdown = ({
         try {
           const response = await dispatch(
             updateUserWalletAddress({
-              userI: currentUserId,
+              userId: currentUserId,
               name: newName,
-              addressId: address.Id,
+              addressId: address.id,
             }),
           ).unwrap();
 
           if (response && !response.error) {
-            // Actualizar el estado global si es necesario
-            // Swal.fire({
-            //   title: 'Success',
-            //   text: 'Wallet address updated successfully',
-            //   icon: 'success',
-            // });
+            setFormattedAddressLabel(newName || address.address);
+            dispatch(
+              setAddressName({ value: address.address, label: newName }),
+            );
           } else {
             Swal.fire({
               title: 'Error',
@@ -188,6 +186,13 @@ const AddressWithDropdown = ({
   };
 
   const getAddressLabel = () => {
+    const addressCustomName = addresses.find(
+      (addr) => addr.value?.toLowerCase() === address?.toLowerCase(),
+    )?.label;
+
+    if (addressCustomName) {
+      return addressCustomName;
+    }
     if (isCurrentUserPortfolioSelected) {
       return userId ? 'User Portfolio' : 'Portfolio';
     }

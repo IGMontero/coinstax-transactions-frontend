@@ -23,11 +23,14 @@ import {
 } from '../../../slices/addressName/reducer';
 import { useParams } from 'react-router-dom';
 import DropdownMenuPortal from '../../Dropdowns/DropdownPortal';
+import { deleteUserAddressWallet } from '../../../slices/userWallets/thunk';
 
 const CustomOptions = (props) => {
   const dispatch = useDispatch();
   const { address } = useParams();
   const addresses = useSelector((state) => state.addressName.addresses);
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
+  const { user } = useSelector((state) => state.auth);
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
@@ -148,14 +151,32 @@ const CustomOptions = (props) => {
       showCancelButton: true,
       confirmButtonText: 'Delete',
       cancelButtonText: 'Close',
-    }).then((result) => {
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        // Remove from cookies
-        const updatedOptions = removeAddressFromCookies(option.value);
-        setUserSavedAddresses(updatedOptions);
-        dispatch(removeAddressName({ value: option.value }));
+        try {
+          // find the address in userPortfolio
+          const userPortfolioAddress = userPortfolioSummary?.addresses?.find(
+            (addr) => addr.address === option.value,
+          );
 
-        Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
+          if (user && userPortfolioAddress) {
+            await dispatch(
+              deleteUserAddressWallet({
+                userId: user.id,
+                addressId: userPortfolioAddress.id,
+              }),
+            ).unwrap();
+          }
+          // Remove from cookies
+          const updatedOptions = removeAddressFromCookies(option.value);
+          setUserSavedAddresses(updatedOptions);
+          dispatch(removeAddressName({ value: option.value }));
+
+          Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
+        } catch (err) {
+          console.log(err);
+          Swal.fire('Error!', 'Failed to delete address.', 'error');
+        }
       }
     });
   };
