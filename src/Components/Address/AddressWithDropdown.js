@@ -188,6 +188,14 @@ const AddressWithDropdown = ({
   };
 
   const getAddressLabel = () => {
+    const addressCustomName = addresses.find(
+      (addr) => addr.value?.toLowerCase() === address?.toLowerCase(),
+    )?.label;
+
+    if (addressCustomName) {
+      return addressCustomName;
+    }
+
     if (isCurrentUserPortfolioSelected) {
       return userId ? 'User Portfolio' : 'Portfolio';
     }
