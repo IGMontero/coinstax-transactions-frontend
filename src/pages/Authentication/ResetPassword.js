@@ -70,11 +70,20 @@ const ResetPaswword = () => {
     try {
       const response = await dispatch(verifyResetPasswordToken(token));
       const res = response.payload;
-      console.log(response);
       if (response && !response.error) {
         return setLoadingVerifyToken(false);
       } else {
-        // window.location.href = '/login';
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Invalid Token',
+          showConfirmButton: true,
+          confirmButtonText: 'OK',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = '/login';
+          }
+        });
         setLoadingVerifyToken(false);
       }
     } catch (error) {
@@ -102,7 +111,7 @@ const ResetPaswword = () => {
       const response = await dispatch(
         resetPassword({
           token,
-          password: newPassword,
+          newPassword,
         }),
       );
 
