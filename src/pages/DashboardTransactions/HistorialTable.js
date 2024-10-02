@@ -51,7 +51,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
-  console.log(user);
   const { userId } = useParams();
   const currentPortfolioUserId = userId ? userId : user?.id;
   const networkType = useSelector(selectNetworkType);
