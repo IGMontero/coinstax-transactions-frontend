@@ -159,7 +159,8 @@ const Layout = (props) => {
     location.pathname.includes('/login') ||
     location.pathname.includes('/register') ||
     location.pathname.includes('/forgot-password') ||
-    location.pathname.includes('/reset-password');
+    location.pathname.includes('/reset-password') ||
+    location.pathname.includes('/confirm-email');
 
   const isAdminPages =
     location.pathname.includes('blockchain-contracts') ||
@@ -201,11 +202,11 @@ const Layout = (props) => {
 
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
-          getCurrentUserPortfolioSummary({
-            userId: currentPortfolioUserId,
-            signal,
-          }),
-        ).unwrap()
+            getCurrentUserPortfolioSummary({
+              userId: currentPortfolioUserId,
+              signal,
+            }),
+          ).unwrap()
         : dispatch(getAddressesInfo({ address: address, signal }));
 
       const response = await request;

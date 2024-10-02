@@ -310,8 +310,6 @@ export const resendVerificationEmail = createAsyncThunk(
   },
 );
 
-// DELETE /auth/close-account
-
 export const closeAccount = createAsyncThunk(
   'auth2/closeAccount',
   async (_, { rejectWithValue }) => {
@@ -321,6 +319,58 @@ export const closeAccount = createAsyncThunk(
         headers: {
           Authorization: `Bearer ${getTokenFromCookies()}`,
         },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+// Verify email
+// POST /auth/verify-email
+// { token }
+
+export const verifyEmail = createAsyncThunk(
+  'auth2/verifyEmail',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/verify-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
+export const confirmEmailChange = createAsyncThunk(
+  'auth2/confirmEmailChange',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/confirm-change-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ token }),
       });
 
       if (!response.ok) {
