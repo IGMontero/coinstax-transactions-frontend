@@ -22,9 +22,9 @@ const VerifyEmail = () => {
       const response = await dispatch(verifyEmail(token));
       console.log(response);
       if (response.error) {
-        setErrorMessage('Error Verifying Email');
+        setErrorMessage('Please try again or request a new link in your profile.');
       } else {
-        setSuccessMessage('Email verified successfully');
+        setSuccessMessage('Your email is now verified');
         setTimeout(() => {
           window.location.href = '/';
         }, 3000);
@@ -59,28 +59,28 @@ const VerifyEmail = () => {
             </div>
             <Col md={8} lg={6} xl={5}>
               <Card className="mt-4">
-                <CardBody className="p-4">
+                <CardBody className="p-4 text-center">
                   <div className="text-center mt-2">
-                    <h3 className="text-primary">
+                    <h3 className="">
                       {loading
                         ? 'Verifying Email...'
                         : errorMessage
-                          ? 'Error verifying email'
+                          ? 'There was a problem'
                           : successMessage}
                     </h3>
                   </div>
                   <div>
                     {errorMessage && (
                       <div className="text-danger text-center mt-3">
-                        Please try again
+                        {errorMessage}
                       </div>
                     )}
                     {successMessage && (
                       <>
-                        <div className="text-success text-center mt-3">
-                          Your email has been verified successfully
+                        <div className="text-center mt-3">
+                          Your email was verified. Redirecting to Chainglance...
                         </div>
-                        <h3> Redirecting to Chainglance ... </h3>
+
                       </>
                     )}
                   </div>
