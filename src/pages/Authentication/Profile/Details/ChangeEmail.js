@@ -37,9 +37,9 @@ const ChangeEmail = ({ currentUser }) => {
         });
       } else {
         Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Please, check your email to verify your new email',
+          icon: 'info',
+          title: 'Verification Needed',
+          text: 'An email has been sent to your new email address. Please verify your email.',
         });
         resetForm();
       }
@@ -102,11 +102,10 @@ const ChangeEmail = ({ currentUser }) => {
                     type="submit"
                     color="soft-primary"
                     disabled={isSubmitting || !dirty || !isValid}
-                    className={`btn btn-soft-primary mb-0 ${
-                      isSubmitting || !dirty || !isValid
-                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                        : ''
-                    }`}
+                    className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
+                      ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                      : ''
+                      }`}
                   >
                     {isSubmitting ? 'Changing ...' : 'Change Email'}
                   </Button>

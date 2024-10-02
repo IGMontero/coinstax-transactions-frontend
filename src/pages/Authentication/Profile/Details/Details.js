@@ -131,7 +131,8 @@ const Details = (props) => {
               readOnly
             />
             {currentUser?.emailVerified ? (
-              <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
+              // <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
+              null
             ) : (
               <div>
                 <span className="badge bg-soft-danger fs-8 mt-2">
@@ -245,11 +246,10 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${
-              loadingUpdateInfo
+            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
                 ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
                 : ''
-            }`}
+              }`}
           >
             Update
           </Button>
@@ -335,11 +335,10 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${
-              loadingNotificationsPreference
+            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
                 ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
                 : ''
-            }`}
+              }`}
           >
             Update
           </Button>

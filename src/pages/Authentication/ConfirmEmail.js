@@ -22,7 +22,7 @@ const ConfirmEmail = () => {
       const response = await dispatch(confirmEmailChange(token));
       console.log(response);
       if (response.error) {
-        setErrorMessage('Error Changing Email');
+        setErrorMessage('Please try again or request a new email change link in your profile.');
       } else {
         setSuccessMessage('Email changed successfully');
         setTimeout(() => {
@@ -61,26 +61,27 @@ const ConfirmEmail = () => {
               <Card className="mt-4">
                 <CardBody className="p-4">
                   <div className="text-center mt-2">
-                    <h3 className="text-primary">
+                    <h3 className="">
                       {loading
                         ? 'Changing Email...'
                         : errorMessage
-                          ? errorMessage
+                          ? 'There was a problem'
                           : successMessage}
                     </h3>
                   </div>
                   <div>
                     {errorMessage && (
                       <div className="text-danger text-center mt-3">
-                        Please try again
+                        {errorMessage}
                       </div>
                     )}
                     {successMessage && (
                       <>
-                        <div className="text-success text-center mt-3">
-                          Your email has been changed successfully
+                        <div className="text-center mt-3">
+                          Your email has been changed successfully.
+                          Redirecting to Chainglance...
                         </div>
-                        <h3> Redirecting to Chainglance ... </h3>
+
                       </>
                     )}
                   </div>
