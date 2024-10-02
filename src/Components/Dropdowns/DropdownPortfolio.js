@@ -22,6 +22,7 @@ import {
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';
 import DropdownMenuPortal from './DropdownPortal';
+import { getUserSavedAddresses } from '../../helpers/cookies_helper';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
@@ -31,6 +32,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const addressParams = address?.toLowerCase();
   const { user } = useSelector((state) => state.auth);
   const currentUserId = user?.id;
+
+  const addresses = useSelector((state) => state.addressName.addresses);
 
   const refreshUserPortfolio = useRefreshUserPortfolio();
 
@@ -49,7 +52,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   );
   const [selectedAddress, setSelectedAddress] = useState(
     userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-      null,
+    null,
   );
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
@@ -151,9 +154,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${
-        address.name ? address.name : address.address
-      }?`,
+      text: `Are you sure to delete wallet ${address.name ? address.name : address.address
+        }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -275,12 +277,14 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   };
 
   const renderPortfolioAddress = (addressData, index) => {
-    const { name, address, value, complete } = addressData;
+    const { address, value, complete } = addressData;
     const addressValue = value ? parseValuesToLocale(value, CurrencyUSD) : '$0';
     const loadingAddressValue = !complete;
     const isSelected =
       selectedAddress?.address?.toLowerCase() === address?.toLowerCase() ||
       addressParams === address;
+
+    const customName = addresses?.find((addr) => addr.value?.toLowerCase() === address?.toLowerCase())?.label
 
     return (
       <>
@@ -296,7 +300,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             <i className="ri-link text-muted fs-3 align-middle me-3"></i>
             <div className="d-flex flex-column">
               <span className="align-middle">
-                {name ? name : formatAddressToShortVersion(address)}
+                {customName || formatAddressToShortVersion(address)}
               </span>
               {loadingAddressValue ? (
                 <Skeleton
@@ -321,6 +325,14 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
   const getDisplayTextDropdown = () => {
     if (selectedAddress) {
+      const selectedAddressCustomName = addresses?.find(
+        (addr) => addr.value?.toLowerCase() === selectedAddress.address?.toLowerCase(),
+      )?.label
+
+      if (selectedAddressCustomName) {
+        return selectedAddressCustomName;
+      }
+
       if (selectedAddress.name) {
         return selectedAddress.name;
       }
@@ -337,9 +349,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className={`w-100 bg-transparent ${
-          isInHeader ? 'py-1 ' : ''
-        } border-1 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''
+          } border-1 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
