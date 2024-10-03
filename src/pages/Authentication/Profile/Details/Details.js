@@ -162,9 +162,7 @@ const Details = (props) => {
                   </Button>
                 )}{' '}
                 {errorMessageVerifyEmail ? (
-                  <Col lg={3} className="mt-1">
-                    <Alert color="danger"> {errorMessageVerifyEmail} </Alert>
-                  </Col>
+                  <Alert color="danger"> {errorMessageVerifyEmail}</Alert>
                 ) : null}
               </div>
             )}
@@ -264,8 +262,8 @@ const Details = (props) => {
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
             className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
               }`}
           >
             Update
@@ -353,8 +351,8 @@ const Details = (props) => {
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
             className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
               }`}
           >
             Update
