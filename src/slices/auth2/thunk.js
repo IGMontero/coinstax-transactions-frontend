@@ -345,6 +345,7 @@ export const verifyEmail = createAsyncThunk(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getTokenFromCookies()}`,
         },
         body: JSON.stringify({ token }),
       });
@@ -369,6 +370,7 @@ export const confirmEmailChange = createAsyncThunk(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${getTokenFromCookies()}`,
         },
         body: JSON.stringify({ token }),
       });

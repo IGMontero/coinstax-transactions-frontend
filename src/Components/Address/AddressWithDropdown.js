@@ -47,7 +47,7 @@ const AddressWithDropdown = ({
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
 
-    let matchinsgAddress;
+    let matchingAddress;
 
     if (user) {
       matchingAddress = userPortfolioSummary?.addresses?.find(
