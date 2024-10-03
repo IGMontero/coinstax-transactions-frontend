@@ -155,22 +155,28 @@ const CustomOptions = (props) => {
       if (result.isConfirmed) {
         try {
           // find the address in userPortfolio
-          const userPortfolioAddress = userPortfolioSummary?.addresses?.find(
-            (addr) => addr.address === option.value,
-          );
+          // const userPortfolioAddress = userPortfolioSummary?.addresses?.find(
+          //   (addr) => addr.address === option.value,
+          // );
 
-          if (user && userPortfolioAddress) {
-            await dispatch(
-              deleteUserAddressWallet({
-                userId: user.id,
-                addressId: userPortfolioAddress.id,
-              }),
-            ).unwrap();
-          }
+          // if (user && userPortfolioAddress) {
+          //   await dispatch(
+          //     deleteUserAddressWallet({
+          //       userId: user.id,
+          //       addressId: userPortfolioAddress.id,
+          //     }),
+          //   ).unwrap();
+          // }
           // Remove from cookies
           const updatedOptions = removeAddressFromCookies(option.value);
           setUserSavedAddresses(updatedOptions);
           dispatch(removeAddressName({ value: option.value }));
+          dispatch(
+            setAddressName({
+              value: option.value,
+              label: null,
+            }),
+          );
 
           Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
         } catch (err) {

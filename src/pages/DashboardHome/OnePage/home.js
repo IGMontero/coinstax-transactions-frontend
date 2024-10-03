@@ -42,7 +42,7 @@ const Home = () => {
                 <div className="d-flex align-items-center justify-content-center">
                   <Col className="col-7 mt-2 ">
                     <ParentComponentSearchBar
-                      isConnectWalletsPage={false}
+                      trackWallets={false}
                       searchInput={searchInput}
                       setSearchInput={setSearchInput}
                     />
