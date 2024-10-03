@@ -19,6 +19,8 @@ const Details = (props) => {
   const fixedData = useSelector((state) => state.Common.fixedData);
 
   const [errorMessage, setErrorMessage] = React.useState('');
+  const [errorMessageVerifyEmail, setErrorMessageVerifyEmail] =
+    React.useState('');
   const [email, setEmail] = React.useState(currentUser?.email);
   const [loadingNotificationsPreference, setLoadingNotificationsPreference] =
     React.useState(false);
@@ -101,10 +103,12 @@ const Details = (props) => {
       setLoadingResendVerificationEmail(true);
       const res = await dispatch(resendVerificationEmail());
       const response = res.payload;
-      if (res.error || response.error) {
-        setErrorMessage(response.error || 'An error occurred');
+
+      console.log('response', response);
+      if (response.error) {
+        setErrorMessageVerifyEmail(response.message || 'An error occurred');
       } else {
-        setErrorMessage('');
+        setErrorMessageVerifyEmail('');
         Swal.fire({
           icon: 'success',
           title: 'Success',
@@ -113,10 +117,18 @@ const Details = (props) => {
       }
       setLoadingResendVerificationEmail(false);
     } catch (error) {
-      setErrorMessage(error.message || 'An error occurred');
+      setErrorMessageVerifyEmail(error.message || 'An error occurred');
       setLoadingResendVerificationEmail(false);
     }
   };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setErrorMessage('');
+      setErrorMessageVerifyEmail('');
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [errorMessage, errorMessageVerifyEmail]);
 
   return (
     <TabPane tabId="1">
@@ -148,7 +160,12 @@ const Details = (props) => {
                   >
                     Resend Verification Email
                   </Button>
-                )}
+                )}{' '}
+                {errorMessageVerifyEmail ? (
+                  <Col lg={3} className="mt-1">
+                    <Alert color="danger"> {errorMessageVerifyEmail} </Alert>
+                  </Col>
+                ) : null}
               </div>
             )}
           </Col>

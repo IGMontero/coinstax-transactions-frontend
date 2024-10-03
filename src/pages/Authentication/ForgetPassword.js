@@ -55,11 +55,11 @@ const ForgetPasswordPage = (props) => {
       console.log(res);
       console.log(response);
 
-      if (res && (res.error || response.error)) {
+      if (res.error) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: 'Error while sending reset link to your email',
+          text: res.message,
           showConfirmButton: false,
           timer: 1500,
         });
