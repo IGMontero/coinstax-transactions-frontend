@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Row,
   Col,
@@ -28,12 +28,22 @@ import {
 import Swal from 'sweetalert2';
 import { useDispatch } from 'react-redux';
 import { setUserPortfolioSummary } from '../../../../slices/userWallets/reducer';
+import {
+  removeAddressName,
+  setAddressName,
+} from '../../../../slices/addressName/reducer';
+import {
+  removeAddressFromCookies,
+  setUserSavedAddresses,
+} from '../../../../helpers/cookies_helper';
 
 const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const [addresses, setAddresses] = useState(initialAddresses);
+
+  const addressesCookies = useSelector((state) => state.addressName.addresses);
 
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -113,17 +123,9 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
           ).unwrap();
 
           if (response && !response.error) {
-            // const updatedAddresses = userAddresses?.map((addr) => {
-            //   if (addr.id === address.id) {
-            //     return {
-            //       ...addr,
-            //       name: newName,
-            //     };
-            //   }
-            //   return addr;
-            // });
-
-            // handleSetAddresses(updatedAddresses);
+            dispatch(
+              setAddressName({ value: address.address, label: newName }),
+            );
             setAddresses(
               addresses.map((addr) => {
                 if (addr.id === address.id) {
@@ -158,6 +160,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   };
 
   const handleDeleteUserAddress = (address) => {
+    console.log('address:', address);
     Swal.fire({
       title: 'Are you sure?',
       text: `Are you sure to delete wallet ${address.name ? address.name : address.address}?`,
@@ -179,6 +182,17 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
               icon: 'success',
             });
             setAddresses(addresses.filter((addr) => addr.id !== address.id));
+
+            const addressToDeleteFromCookies = addressesCookies.find(
+              (addr) => addr.value === address.address,
+            );
+            if (addressToDeleteFromCookies) {
+              dispatch(removeAddressName(addressToDeleteFromCookies));
+              setUserSavedAddresses(
+                removeAddressFromCookies(addressToDeleteFromCookies.value),
+              );
+              dispatch(removeAddressName({ value: address.id }));
+            }
 
             onRefresh(userId);
           } else {
@@ -265,6 +279,17 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     return parseValuesToLocale(addressData.value, CurrencyUSD);
   };
 
+  const getDisplayText = (address) => {
+    const addressCustomName = addressesCookies.find(
+      (addr) => addr.value?.toLowerCase() === address?.toLowerCase(),
+    )?.label;
+    if (addressCustomName) {
+      return addressCustomName;
+    } else {
+      return null;
+    }
+  };
+
   return (
     <>
       {/* <ConnectWalletModal
@@ -333,7 +358,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                 >
                                   <div className="d-flex justify-content-between align-items-center w-100">
                                     <div className="d-flex flex-column">
-                                      {addressName && <h5>{addressName}</h5>}
+                                      <h5>{getDisplayText(itemAddress)}</h5>
                                       <span className="text-muted">
                                         {formatAddressToShortVersion(
                                           itemAddress,
