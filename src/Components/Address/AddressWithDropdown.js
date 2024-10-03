@@ -47,7 +47,7 @@ const AddressWithDropdown = ({
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
 
-    let matchingAddress;
+    let matchinsgAddress;
 
     if (user) {
       matchingAddress = userPortfolioSummary?.addresses?.find(
@@ -193,10 +193,6 @@ const AddressWithDropdown = ({
     if (addressCustomName) {
       return addressCustomName;
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> dev/balta
     if (isCurrentUserPortfolioSelected) {
       return userId ? 'User Portfolio' : 'Portfolio';
     }
