@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import SearchBar from './SearchBar';
 
 const ParentComponentSearchBar = ({
-  isConnectWalletsPage,
+  trackWallets,
   searchInput,
   setSearchInput,
 }) => {
@@ -16,7 +16,7 @@ const ParentComponentSearchBar = ({
 
   return (
     <SearchBar
-      isConnectWalletsPage={isConnectWalletsPage}
+      trackWallets={trackWallets}
       selectedOption={selectedOption}
       searchInput={searchInput}
       setSearchInput={setSearchInput}
