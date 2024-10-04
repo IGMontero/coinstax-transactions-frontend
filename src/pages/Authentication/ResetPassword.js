@@ -244,7 +244,7 @@ const ResetPaswword = () => {
                             </Button>
                           </div>
                           <div id="passwordInput" className="form-text">
-                            Must be at least 8 characters.
+                            Must be at least 6 characters.
                           </div>
                         </div>
 
