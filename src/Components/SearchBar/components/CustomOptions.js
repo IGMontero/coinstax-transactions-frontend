@@ -18,6 +18,8 @@ const CustomOptions = (props) => {
   const addresses = useSelector((state) => state.addressName.addresses);
   const addressesCookies = useSelector((state) => state.addressName.addresses);
 
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
+
   const [displayLabel, setDisplayLabel] = useState('');
   // Window size states
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1221);
@@ -46,18 +48,23 @@ const CustomOptions = (props) => {
     };
   }, []);
 
+  const addressWithNames = userPortfolioSummary.addresses?.find(
+    (addr) => addr.address === props.data.value,
+  );
+  const addressName = addressWithNames?.name;
+
   useEffect(() => {
-    const { label, value } = props.data;
-    let formattedLabel = label || value;
+    const { value } = props.data;
+    let formattedLabel = addressName || value;
 
     if (isVerySmallScreen) {
-      formattedLabel = label || formatIdTransaction(value, 8, 6);
+      formattedLabel = addressName || formatIdTransaction(value, 8, 6);
     } else if (isMediumScreen) {
-      formattedLabel = label || formatIdTransaction(value, 8, 12);
+      formattedLabel = addressName || formatIdTransaction(value, 8, 12);
     } else if (isSmallScreen) {
-      formattedLabel = label || formatIdTransaction(value, 8, 15);
+      formattedLabel = addressName || formatIdTransaction(value, 8, 15);
     } else {
-      formattedLabel = label || formatIdTransaction(value, 12, 20);
+      formattedLabel = addressName || formatIdTransaction(value, 12, 20);
     }
 
     setDisplayLabel(formattedLabel);
@@ -67,6 +74,7 @@ const CustomOptions = (props) => {
     isMediumScreen,
     isMoreSmallScreen,
     isVerySmallScreen,
+    addressName,
   ]);
 
   const handleDelete = (e, option) => {
@@ -167,18 +175,14 @@ const CustomOptions = (props) => {
                 )}
                 <div className="d-flex flex-column">
                   <div className="d-flex align-items-center">
-                    {!props.data.label ? (
-                      displayLabel
-                    ) : (
-                      <span className="text-custom-menu-suggestions">
-                        {displayLabel}
-                      </span>
-                    )}
+                    <span className="text-custom-menu-suggestions">
+                      {displayLabel}
+                    </span>
                     {address === props.data.value && (
                       <i className="ri-checkbox-blank-circle-fill fs-10 text-success ms-2"></i>
                     )}{' '}
                   </div>
-                  {props.data.label && (
+                  {addressName && (
                     <span className="text-muted">
                       {formatIdTransaction(props.data.value, 6, 8)}
                     </span>
