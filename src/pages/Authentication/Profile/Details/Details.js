@@ -6,9 +6,11 @@ import {
   updateUserInfo,
   updateNotificationsPreferences,
   resendVerificationEmail,
+  changeEmail,
 } from '../../../../slices/auth2/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
+import ChangeEmail from './ChangeEmail';
 
 const Details = (props) => {
   const dispatch = useDispatch();
@@ -130,11 +132,17 @@ const Details = (props) => {
     return () => clearTimeout(timer);
   }, [errorMessage, errorMessageVerifyEmail]);
 
+  const [showChangeEmail, setShowChangeEmail] = React.useState(false);
+
+  const toggleChangeEmail = () => {
+    setShowChangeEmail(!showChangeEmail);
+  };
+
   return (
     <TabPane tabId="1">
       <Row>
         <Col lg={12}>
-          <Col lg={6} className="mb-2">
+          <Col lg={6} className="mb-4">
             <Label className="form-label">Email</Label>
             <Input
               className="form-control cursor-not-allowed text-muted"
@@ -142,10 +150,7 @@ const Details = (props) => {
               value={currentUser?.email}
               readOnly
             />
-            {currentUser?.emailVerified ? (
-              // <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
-              null
-            ) : (
+            {currentUser?.emailVerified ? null : ( // <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
               <div>
                 <span className="badge bg-soft-danger fs-8 mt-2">
                   Not Verified
@@ -167,9 +172,24 @@ const Details = (props) => {
               </div>
             )}
           </Col>
-
-          <h3 className="text-muted">Preferences</h3>
           <hr />
+
+          <Button
+            color="soft-primary"
+            className={`btn btn-soft-primary  
+           }`}
+            onClick={toggleChangeEmail}
+          >
+            {showChangeEmail ? 'Hide' : 'Email Preferences'}
+          </Button>
+          {showChangeEmail && (
+            <Col>
+              <ChangeEmail currentUser={currentUser} />
+            </Col>
+          )}
+          <hr />
+          <h3 className="text-muted mb-3">Preferences</h3>
+
           <Row>
             <Col lg={6}>
               <Label className="form-label">Your Currency</Label>
@@ -261,10 +281,11 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-              : ''
-              }`}
+            className={`btn btn-soft-primary mb-3 ${
+              loadingUpdateInfo
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
           >
             Update
           </Button>
@@ -350,10 +371,11 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-              : ''
-              }`}
+            className={`btn btn-soft-primary mb-0 ${
+              loadingNotificationsPreference
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
           >
             Update
           </Button>

@@ -61,7 +61,6 @@ const ChangePassword = () => {
     <TabPane tabId="3">
       <div className="mb-4">
         <div className="">
-          <hr />
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -69,7 +68,7 @@ const ChangePassword = () => {
           >
             {({ isSubmitting, dirty, isValid }) => (
               <Form>
-                <Row className="col-12 mb-4 mt-4">
+                <Row className="col-12 mb-4">
                   <div className="col-6">
                     <Label htmlFor="currentPassword" className="form-label">
                       Current Password

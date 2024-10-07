@@ -34,7 +34,7 @@ const NavProfile = ({ activeTab, tabChange }) => {
             type="button"
           >
             <i className="far fa-envelope"></i>
-            Login Details
+            Security
           </NavLink>
         </NavItem>
         {/* <NavItem>
