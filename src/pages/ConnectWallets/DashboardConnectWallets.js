@@ -386,7 +386,7 @@ const DashboardConnectWallets = () => {
             <div className="d-flex align-items-center justify-content-center">
               {/* <SearchBarWallets onSearch={handleSearch} /> */}
               <ParentComponentSearchBar
-                isConnectWalletsPage={true}
+                trackWallets={true}
                 searchInput={searchValue}
                 setSearchInput={setSearchValue}
               />
