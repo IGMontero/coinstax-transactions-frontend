@@ -86,42 +86,42 @@ const AddressWithDropdown = ({
     }
   };
 
-  const handleOpenModalRename = (e, option) => {
-    e.preventDefault();
-    e.stopPropagation();
+  // const handleOpenModalRename = (e, option) => {
+  //   e.preventDefault();
+  //   e.stopPropagation();
 
-    console.log('option', option);
+  //   console.log('option', option);
 
-    const optionLabel = addresses.find(
-      (addr) => addr.value === option.value,
-    )?.label;
+  //   const optionLabel = addresses.find(
+  //     (addr) => addr.value === option.value,
+  //   )?.label;
 
-    Swal.fire({
-      title: 'Rename Wallet',
-      input: 'text',
-      inputValue: optionLabel,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      inputValidator: (value) => {
-        if (
-          addresses.some(
-            (addr) => addr.label === value && addr.value !== option.value,
-          )
-        ) {
-          return 'This name already exists!';
-        }
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const newName = result.value.trim() ? result.value : null;
-        handleRenameAddress(option.value, newName);
-      }
-    });
-  };
+  //   Swal.fire({
+  //     title: 'Rename Wallet',
+  //     input: 'text',
+  //     inputValue: optionLabel,
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Save',
+  //     inputValidator: (value) => {
+  //       if (
+  //         addresses.some(
+  //           (addr) => addr.label === value && addr.value !== option.value,
+  //         )
+  //       ) {
+  //         return 'This name already exists!';
+  //       }
+  //     },
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       const newName = result.value.trim() ? result.value : null;
+  //       handleRenameAddress(option.value, newName);
+  //     }
+  //   });
+  // };
 
-  const handleRenameAddress = (value, newName) => {
-    dispatch(setAddressName({ value, label: newName || null }));
-  };
+  // const handleRenameAddress = (value, newName) => {
+  //   dispatch(setAddressName({ value, label: newName || null }));
+  // };
 
   const handleUpdateAddress = (e, address) => {
     e.preventDefault();
@@ -232,25 +232,28 @@ const AddressWithDropdown = ({
                 )}
                 <span className="fw-normal">Copy Address</span>
               </DropdownItem>
-              <DropdownItem
-                className="d-flex align-items-center"
-                onClick={(e) => {
-                  const addr = userPortfolioSummary.addresses.find(
-                    (addr) => addr.address === address,
-                  );
-                  if (user && addr) {
-                    handleUpdateAddress(e, addr);
-                  } else {
-                    handleOpenModalRename(e, {
-                      label: formattedAddressLabel,
-                      value: address,
-                    });
-                  }
-                }}
-              >
-                <i className="ri-pencil-line fs-4 me-2"></i>
-                <span className="fw-normal">Rename</span>
-              </DropdownItem>
+              {user && (
+                <DropdownItem
+                  className="d-flex align-items-center"
+                  onClick={(e) => {
+                    const addr = userPortfolioSummary.addresses.find(
+                      (addr) => addr.address === address,
+                    );
+                    if (user && addr) {
+                      handleUpdateAddress(e, addr);
+                    }
+                    //  else {
+                    //   handleOpenModalRename(e, {
+                    //     label: formattedAddressLabel,
+                    //     value: address,
+                    //   });
+                    // }
+                  }}
+                >
+                  <i className="ri-pencil-line fs-4 me-2"></i>
+                  <span className="fw-normal">Rename</span>
+                </DropdownItem>
+              )}
             </DropdownMenu>
           </UncontrolledDropdown>
         )}
