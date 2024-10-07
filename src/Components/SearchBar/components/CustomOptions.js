@@ -107,6 +107,15 @@ const CustomOptions = (props) => {
       }
     });
   };
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
 
   const renderDeleteAddress = () => {
     return (
@@ -117,16 +126,20 @@ const CustomOptions = (props) => {
             value: props.data.value,
           })
         }
+        style={{
+          height: 12,
+          width: 12,
+        }}
         color="transparent"
-        className="p-0"
+        className="p-0 m-0"
       >
-        <i className="ri-close-circle-line me-2 text-dark"></i>
+        <i className="ri-close-circle-line me-2 text-danger"></i>
       </Button>
     );
   };
 
   return (
-    <>
+    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <components.Option {...props}>
         <div>
           <Row className="d-flex justify-content-between align-items-center">
@@ -173,15 +186,16 @@ const CustomOptions = (props) => {
                 </div>
               </div>
             </Col>
-            <Col className="col-2 d-flex justify-content-end align-items-center">
-              {addresses.some((addr) => addr.value === props.data.value) && (
-                <>{renderDeleteAddress()}</>
-              )}
+            <Col className="col-2 d-flex justify-content-center pb-2 align-items-center">
+              {isHovered &&
+                addresses.some((addr) => addr.value === props.data.value) && (
+                  <>{renderDeleteAddress()}</>
+                )}
             </Col>
           </Row>
         </div>
       </components.Option>
-    </>
+    </div>
   );
 };
 
