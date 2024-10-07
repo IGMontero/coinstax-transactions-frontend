@@ -22,7 +22,10 @@ import {
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';
 import DropdownMenuPortal from './DropdownPortal';
-import { getUserSavedAddresses } from '../../helpers/cookies_helper';
+import {
+  getUserSavedAddresses,
+  setUserSavedAddresses,
+} from '../../helpers/cookies_helper';
 import { setAddressName } from '../../slices/addressName/reducer';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
@@ -102,15 +105,15 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     `,
       showCancelButton: true,
       confirmButtonText: 'Save',
-      inputValidator: (value) => {
-        // if (
-        //   userPortfolio.some(
-        //     (addr) => addr.Name === value && addr.Address !== address.Address,
-        //   )
-        // ) {
-        //   return 'This name already exists!';
-        // }
-      },
+      // inputValidator: (value) => {
+      // if (
+      //   userPortfolio.some(
+      //     (addr) => addr.Name === value && addr.Address !== address.Address,
+      //   )
+      // ) {
+      //   return 'This name already exists!';
+      // }
+      // },
     }).then(async (result) => {
       if (result.isConfirmed) {
         const newName = result.value.trim() ? result.value : null;
@@ -266,16 +269,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       </Dropdown>
     );
   };
-
-  // const getValueForAddress = (address) => {
-  //   const addressValue = userPortfolioSummary?.addressesValues?.[address];
-
-  //   console.log('addressValue', addressValue);
-
-  //   return addressValue
-  //     ? parseValuesToLocale(addressValue, CurrencyUSD)
-  //     : '$ 0';
-  // };
 
   const handleVisitAddress = (link) => {
     navigate(`${link}`);

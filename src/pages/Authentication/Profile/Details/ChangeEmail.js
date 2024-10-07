@@ -60,7 +60,6 @@ const ChangeEmail = ({ currentUser }) => {
     <TabPane tabId="2">
       <Col lg={12} className="mb-4">
         <div className="">
-          <hr />
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -102,10 +101,11 @@ const ChangeEmail = ({ currentUser }) => {
                     type="submit"
                     color="soft-primary"
                     disabled={isSubmitting || !dirty || !isValid}
-                    className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
-                      ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                      : ''
-                      }`}
+                    className={`btn btn-soft-primary mb-0 ${
+                      isSubmitting || !dirty || !isValid
+                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                        : ''
+                    }`}
                   >
                     {isSubmitting ? 'Changing ...' : 'Change Email'}
                   </Button>

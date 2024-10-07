@@ -7,15 +7,14 @@ const LoginDetails = ({ currentUser }) => {
   return (
     <TabPane tabId="2">
       <Col lg={12}>
-        <h3 className="text-muted">Login Details</h3>
+        {/* <h3 className="text-muted">Login Details</h3> */}
         {/* {authProvider === 'credentials' || */}
         {/* authProvider === 'jwt' || */}
         {/* !authProvider ? ( */}
         {/* <> */}
-        <p>
+        {/* <p>
           You can change your email address that is also used as your login
-        </p>{' '}
-        <ChangeEmail currentUser={currentUser} />
+        </p>{' '} */}
         {/* CHANGE PASSWORD  */}
         <ChangePassword currentUser={currentUser} />
         {/* <Col lg={6}>
