@@ -56,13 +56,23 @@ const SearchBar = ({
       setSearchInput(selectedOption.label);
       setOptions((currentOptions) => [
         selectedOption,
-        ...currentOptions.filter((o) => o.value !== selectedOption.value),
+        ...currentOptions.filter(
+          (o) => o.value.toLowerCase() !== selectedOption.value.toLowerCase(),
+        ),
         ...addresses.filter(
-          (o) => !currentOptions.some((opt) => opt.value === o.value),
+          (o) =>
+            !currentOptions.some(
+              (opt) => opt.value.toLowerCase() === o.value.toLowerCase(),
+            ),
         ),
       ]);
     } else {
-      setOptions(addresses);
+      setOptions(
+        addresses.map((addr) => ({
+          ...addr,
+          value: addr.value.toLowerCase(),
+        })),
+      );
     }
   }, [selectedOption, addresses]);
 
