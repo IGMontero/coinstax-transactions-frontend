@@ -1,39 +1,23 @@
 import React, { useEffect, useState } from 'react';
-import Select, { components } from 'react-select';
+import { components } from 'react-select';
 import ReactDOM from 'react-dom';
-import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
+import { formatIdTransaction } from '../../../utils/utils';
 import {
   setUserSavedAddresses,
-  renameAddressInCookies,
   removeAddressFromCookies,
 } from '../../../helpers/cookies_helper';
-import {
-  Col,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Row,
-} from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  removeAddressName,
-  setAddressName,
-} from '../../../slices/addressName/reducer';
+import { removeAddressName } from '../../../slices/addressName/reducer';
 import { useParams } from 'react-router-dom';
-import DropdownMenuPortal from '../../Dropdowns/DropdownPortal';
-import { deleteUserAddressWallet } from '../../../slices/userWallets/thunk';
 
 const CustomOptions = (props) => {
   const dispatch = useDispatch();
   const { address } = useParams();
   const addresses = useSelector((state) => state.addressName.addresses);
-  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
-  const { user } = useSelector((state) => state.auth);
+  const addressesCookies = useSelector((state) => state.addressName.addresses);
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(null);
   const [displayLabel, setDisplayLabel] = useState('');
   // Window size states
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1221);
@@ -85,68 +69,12 @@ const CustomOptions = (props) => {
     isVerySmallScreen,
   ]);
 
-  const toggleDropdown = (e) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleOpenModalRename = (e, option) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    console.log('Option:', option);
-
-    const optionLabel = addresses.find(
-      (addr) => addr.value === option.value,
-    )?.label;
-
-    Swal.fire({
-      title: 'Rename Wallet',
-      input: 'text',
-      inputValue: optionLabel,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      inputValidator: (value) => {
-        // if (!value) {
-        //   return 'You need to write something!';
-        // }
-        if (
-          addresses.some(
-            (addr) => addr.label === value && addr.value !== option.value,
-          )
-        ) {
-          return 'This name already exists!';
-        }
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const newName = result.value.trim() ? result.value : null;
-        handleRenameAddress(option.value, newName);
-      }
-    });
-  };
-
-  const handleCopy = async (e, text) => {
-    e.stopPropagation();
-    e.preventDefault();
-    try {
-      copyToClipboard(text);
-      setIsCopied(true);
-      setTimeout(() => {
-        setIsCopied(null);
-      }, 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-    }
-  };
-
   const handleDelete = (e, option) => {
     e.preventDefault();
     e.stopPropagation();
 
     Swal.fire({
       title: `Are you sure you want to remove ${option.label}?`,
-      // text: 'You cannot undo this action!',
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -154,101 +82,48 @@ const CustomOptions = (props) => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // find the address in userPortfolio
-          // const userPortfolioAddress = userPortfolioSummary?.addresses?.find(
-          //   (addr) => addr.address === option.value,
-          // );
-
-          // if (user && userPortfolioAddress) {
-          //   await dispatch(
-          //     deleteUserAddressWallet({
-          //       userId: user.id,
-          //       addressId: userPortfolioAddress.id,
-          //     }),
-          //   ).unwrap();
-          // }
-          // Remove from cookies
-          const updatedOptions = removeAddressFromCookies(option.value);
-          setUserSavedAddresses(updatedOptions);
-          dispatch(removeAddressName({ value: option.value }));
-          dispatch(
-            setAddressName({
-              value: option.value,
-              label: null,
-            }),
+          // Find the address to delete from cookies
+          const addressToDeleteFromCookies = addressesCookies.find(
+            (addr) => addr.value === option.value,
           );
 
-          Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
+          if (addressToDeleteFromCookies) {
+            // Remove address from Redux state
+            dispatch(removeAddressName(addressToDeleteFromCookies));
+
+            // Remove address from cookies
+            const updatedOptions = removeAddressFromCookies(
+              addressToDeleteFromCookies.value,
+            );
+            setUserSavedAddresses(updatedOptions);
+            Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
+          } else {
+            Swal.fire('Error!', 'Address not found in cookies.', 'error');
+          }
         } catch (err) {
-          console.log(err);
+          console.error('Failed to delete address:', err);
           Swal.fire('Error!', 'Failed to delete address.', 'error');
         }
       }
     });
   };
 
-  const handleRenameAddress = (valueToFind, newName) => {
-    dispatch(setAddressName({ value: valueToFind, label: newName }));
-    const updatedAddresses = renameAddressInCookies(valueToFind, newName);
-    setUserSavedAddresses(updatedAddresses);
-    setDisplayLabel(newName);
-    // Swal.fire('Updated!', 'Your address has been renamed.', 'success');
-  };
-
-  const renderDropdownMenu = () => {
+  const renderDeleteAddress = () => {
     return (
-      <Dropdown isOpen={isMenuOpen} toggle={toggleDropdown}>
-        <DropdownToggle
-          style={{ zIndex: 10000 }}
-          tag="span"
-          className="dropdown-toggle"
-        ></DropdownToggle>
-        <DropdownMenuPortal>
-          <DropdownMenu
-            style={{
-              zIndex: 10000,
-            }}
-          >
-            <DropdownItem
-              onClick={(e) => handleCopy(e, props.data.value)}
-              className="d-flex align-items-center"
-            >
-              {isCopied ? (
-                <i className="ri-check-line me-2 "></i>
-              ) : (
-                <i className="ri-file-copy-line me-2"></i>
-              )}
-              Copy Address
-            </DropdownItem>
-
-            <DropdownItem
-              onClick={(e) =>
-                handleOpenModalRename(e, {
-                  label: displayLabel,
-                  value: props.data.value,
-                })
-              }
-            >
-              <i className="ri-edit-line me-2"></i> Rename
-            </DropdownItem>
-
-            <DropdownItem
-              onClick={(e) =>
-                handleDelete(e, {
-                  label: displayLabel,
-                  value: props.data.value,
-                })
-              }
-            >
-              <i className="ri-delete-bin-line me-2"></i>
-              Delete
-            </DropdownItem>
-          </DropdownMenu>
-        </DropdownMenuPortal>
-      </Dropdown>
+      <Button
+        onClick={(e) =>
+          handleDelete(e, {
+            label: displayLabel,
+            value: props.data.value,
+          })
+        }
+        color="transparent"
+        className="p-0"
+      >
+        <i className="ri-close-circle-line me-2 text-dark"></i>
+      </Button>
     );
   };
-
   return (
     <>
       <components.Option {...props}>
@@ -299,7 +174,7 @@ const CustomOptions = (props) => {
             </Col>
             <Col className="col-2 d-flex justify-content-end align-items-center">
               {addresses.some((addr) => addr.value === props.data.value) && (
-                <>{renderDropdownMenu()}</>
+                <>{renderDeleteAddress()}</>
               )}
             </Col>
           </Row>
