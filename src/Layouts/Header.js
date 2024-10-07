@@ -32,12 +32,12 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
 
   const [currentPageNotifications, setCurrentPageNotifications] = useState(0);
 
-
   const [searchInput, setSearchInput] = useState('');
   const { user } = useSelector((state) => state.auth);
 
   const [windowSize, setWindowSize] = useState(window.innerWidth);
-  const [initializedNotifications, setInitializedNotifications] = useState(false);
+  const [initializedNotifications, setInitializedNotifications] =
+    useState(false);
 
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
@@ -176,14 +176,14 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       if (res && !response.error) {
         const newNotifications = res.notifications;
 
-        dispatch(setNotificationsInfo({
-          hasMore: res.hasMore,
-          unreadCount: res.unreadCount,
-          total: res.total,
-          notifications: newNotifications
-        }));
-
-
+        dispatch(
+          setNotificationsInfo({
+            hasMore: res.hasMore,
+            unreadCount: res.unreadCount,
+            total: res.total,
+            notifications: newNotifications,
+          }),
+        );
       }
     } catch (error) {
       console.log(error);
@@ -197,17 +197,12 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       );
       const res = response.payload;
       if (res && !response.error) {
-
         const newNotifications = [...notifications, ...res.notifications];
 
         // Remove duplicates
         const uniqueNotifications = newNotifications.filter(
           (notification, index, self) =>
-            index ===
-            self.findIndex(
-              (t) =>
-                t.id === notification.id,
-            ),
+            index === self.findIndex((t) => t.id === notification.id),
         );
 
         // Sort by createdAt
@@ -215,12 +210,14 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
           return new Date(b.createdAt) - new Date(a.createdAt);
         });
 
-        dispatch(setNotificationsInfo({
-          hasMore: res.hasMore,
-          unreadCount: res.unreadCount,
-          total: res.total,
-          notifications: uniqueNotifications
-        }));
+        dispatch(
+          setNotificationsInfo({
+            hasMore: res.hasMore,
+            unreadCount: res.unreadCount,
+            total: res.total,
+            notifications: uniqueNotifications,
+          }),
+        );
 
         setCurrentPageNotifications(currentPageNotifications + 1);
       }
@@ -230,9 +227,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   };
 
   useEffect(() => {
-    if (currentUser
-      && !initializedNotifications
-    ) {
+    if (currentUser && !initializedNotifications) {
       setInitializedNotifications(true);
       handleGetNotifications();
     }
@@ -296,7 +291,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               <Col className="d-flex align-items-center  ms-lg-4  ms-md-4  ms-1  col-8">
                 <div className="col-sm-12 col-md-12 col-lg-7 col-xs-12 col-12 ">
                   <ParentComponentSearchBar
-                    isConnectWalletsPage={false}
+                    trackWallets={false}
                     searchInput={searchInput}
                     setSearchInput={setSearchInput}
                   />

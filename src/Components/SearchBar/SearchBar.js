@@ -16,7 +16,7 @@ const SearchBar = ({
   selectedOption,
   searchInput,
   setSearchInput,
-  isConnectWalletsPage,
+  trackWallets,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -263,7 +263,12 @@ const SearchBar = ({
     { pressEnter = false, pressIcon = false, pressButtonAdd = false } = {},
   ) => {
     if (pressEnter) {
-      if (user && e.key === 'Enter' && searchInput.length >= 3) {
+      if (
+        trackWallets &&
+        user &&
+        e.key === 'Enter' &&
+        searchInput.length >= 3
+      ) {
         handleAddWallet(searchInput);
       } else {
         if (e.key === 'Enter' && searchInput.length >= 3) {
@@ -449,15 +454,22 @@ const SearchBar = ({
             ? () => 'Type at least 3 characters to search'
             : () => 'We were unable to find any results for your search'
         }
-        onClick={(e) =>
+        onKeyDown={(e) =>
           handleSearch(e, {
             pressEnter: true,
             pressIcon: false,
             pressButtonAdd: false,
           })
         }
+        // onClick={(e) =>
+        //   handleSearch(e, {
+        //     pressEnter: true,
+        //     pressIcon: false,
+        //     pressButtonAdd: false,
+        //   })
+        // }
       />
-      {isConnectWalletsPage && (
+      {trackWallets && (
         <Button
           className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
           color="soft-light"

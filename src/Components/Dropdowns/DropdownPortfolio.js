@@ -23,6 +23,7 @@ import {
 import { layoutModeTypes } from '../constants/layout';
 import DropdownMenuPortal from './DropdownPortal';
 import { getUserSavedAddresses } from '../../helpers/cookies_helper';
+import { setAddressName } from '../../slices/addressName/reducer';
 
 const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const dispatch = useDispatch();
@@ -129,6 +130,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             //   text: 'Wallet address updated successfully',
             //   icon: 'success',
             // });
+            dispatch(
+              setAddressName({ value: address.address, label: newName }),
+            );
 
             refreshUserPortfolio();
           } else {
