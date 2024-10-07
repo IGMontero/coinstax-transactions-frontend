@@ -479,7 +479,7 @@ const SearchBar = ({
         //   })
         // }
       />
-      {trackWallets && (
+      {trackWallets && user && (
         <Button
           className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
           color="soft-light"

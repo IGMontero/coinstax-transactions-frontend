@@ -69,9 +69,9 @@ const Navdata = () => {
     const { assets, transactions, performance } = fetchData;
     setIsUnsupported(
       assets?.unsupported ||
-      transactions?.unsupported ||
-      performance?.unsupported ||
-      !addressSearched,
+        transactions?.unsupported ||
+        performance?.unsupported ||
+        !addressSearched,
     );
   }, [fetchData, addressSearched, isCurrentUserPortfolioSelected]);
 
@@ -84,12 +84,13 @@ const Navdata = () => {
         : `/portfolio/${page}`
       : contractAddress && !address
         ? `/address/${prevAddress}/${page}`
-        : `${token
-          ? `/tokens/${token}`
-          : prevAddressPortfolio
-            ? `/${addressSearched}/${page}`
-            : `/address/${addressSearched}/${page}`
-        }`;
+        : `${
+            token
+              ? `/tokens/${token}`
+              : prevAddressPortfolio
+                ? `/${addressSearched}/${page}`
+                : `/address/${addressSearched}/${page}`
+          }`;
 
     return {
       id,
@@ -176,7 +177,7 @@ const Navdata = () => {
     allMenuItems.push(
       createManageMenu('users', 'Users', 'bx bx-group fs-3', 'admin/users'),
     );
-    allMenuItems.push(createMenuHeader('Wallets'));
+    // allMenuItems.push(createMenuHeader('Wallets'));
   }
 
   if (isAccountantRole) {
@@ -202,9 +203,9 @@ const Navdata = () => {
   }
 
   // allMenuItems.push(createMenuHeader('Manage'));
-  allMenuItems.push(
-    createManageMenu('usersWallets', 'Wallets', 'bx bx-wallet fs-3', 'wallets'),
-  );
+  // allMenuItems.push(
+  //   createManageMenu('usersWallets', 'Wallets', 'bx bx-wallet fs-3', 'wallets'),
+  // );
 
   const filteredMenuItems = filterMenuItems(allMenuItems);
 

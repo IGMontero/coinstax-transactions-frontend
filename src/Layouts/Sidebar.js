@@ -119,12 +119,12 @@ const Sidebar = ({ layoutType }) => {
                 </span>
                 {/* // dropdwpn  */}
               </Link>
-              {user && (
-                <DropdownPortfolio
-                  dropdownOpen={dropdownOpen}
-                  toggleDropdown={toggleDropdown}
-                />
-              )}
+
+              <DropdownPortfolio
+                dropdownOpen={dropdownOpen}
+                toggleDropdown={toggleDropdown}
+              />
+
               <Container fluid>
                 <div id="two-column-menu"></div>
                 <ul className="navbar-nav" id="navbar-nav">

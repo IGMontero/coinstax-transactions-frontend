@@ -53,7 +53,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   );
   const [selectedAddress, setSelectedAddress] = useState(
     userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-    null,
+      null,
   );
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
@@ -158,8 +158,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.name ? address.name : address.address
-        }?`,
+      text: `Are you sure to delete wallet ${
+        address.name ? address.name : address.address
+      }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -288,7 +289,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       selectedAddress?.address?.toLowerCase() === address?.toLowerCase() ||
       addressParams === address;
 
-    const customName = addresses?.find((addr) => addr.value?.toLowerCase() === address?.toLowerCase())?.label
+    const customName = addresses?.find(
+      (addr) => addr.value?.toLowerCase() === address?.toLowerCase(),
+    )?.label;
 
     return (
       <>
@@ -330,8 +333,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const getDisplayTextDropdown = () => {
     if (selectedAddress) {
       const selectedAddressCustomName = addresses?.find(
-        (addr) => addr.value?.toLowerCase() === selectedAddress.address?.toLowerCase(),
-      )?.label
+        (addr) =>
+          addr.value?.toLowerCase() === selectedAddress.address?.toLowerCase(),
+      )?.label;
 
       if (selectedAddressCustomName) {
         return selectedAddressCustomName;
@@ -353,8 +357,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className={`w-100 bg-transparent ${isInHeader ? 'py-1 ' : ''
-          } border-1 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent ${
+          isInHeader ? 'py-1 ' : ''
+        } border-1 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
@@ -439,7 +444,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           {userPortfolioAddresses.length > 0 && (
             <div className="dropdown-divider"></div>
           )}
-          <DropdownItem
+          {/* <DropdownItem
             onClick={() => {
               handleVisitAddress('/wallets');
             }}
@@ -448,20 +453,18 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
               <i className="ri-add-line text-muted fs-16 align-middle me-3"></i>
               <span className="align-middle">Connect another Wallet</span>
             </div>
-          </DropdownItem>
+          </DropdownItem> */}
 
-          {user && (
-            <DropdownItem
-              onClick={() => {
-                handleVisitAddress('/wallets');
-              }}
-            >
-              <div className="dropdown-item ps-0">
-                <i className="mdi mdi-wallet text-muted fs-16 align-middle me-3"></i>
-                <span className="align-middle">Manage Wallets</span>
-              </div>
-            </DropdownItem>
-          )}
+          <DropdownItem
+            onClick={() => {
+              handleVisitAddress('/wallets');
+            }}
+          >
+            <div className="dropdown-item ps-0">
+              <i className="mdi mdi-wallet text-muted fs-16 align-middle me-3"></i>
+              <span className="align-middle">Manage Wallets</span>
+            </div>
+          </DropdownItem>
         </DropdownMenu>
       </DropdownMenuPortal>
     </Dropdown>
