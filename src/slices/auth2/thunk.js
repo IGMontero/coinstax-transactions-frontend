@@ -204,6 +204,32 @@ export const changeEmail = createAsyncThunk(
   },
 );
 
+// POST /auth/change-email/resend
+
+export const resendChangeEmail = createAsyncThunk(
+  'auth2/resendChangeEmail',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/change-email/resend`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${getTokenFromCookies()}`,
+        },
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const changePassword = createAsyncThunk(
   'auth2/changePassword',
   async ({ oldPassword, newPassword }, { rejectWithValue }) => {
@@ -310,6 +336,28 @@ export const resendVerificationEmail = createAsyncThunk(
   },
 );
 
+export const changeEmailPending = createAsyncThunk(
+  'auth2/changeEmailPending',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_BASE}/auth/change-email/pending`, {
+        headers: {
+          Authorization: `Bearer ${getTokenFromCookies()}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  },
+);
+
 export const closeAccount = createAsyncThunk(
   'auth2/closeAccount',
   async (_, { rejectWithValue }) => {
@@ -345,7 +393,7 @@ export const verifyEmail = createAsyncThunk(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${getTokenFromCookies()}`,
+          Authorization: `Bearer ${getTokenFromCookies()}`,
         },
         body: JSON.stringify({ token }),
       });
@@ -370,7 +418,7 @@ export const confirmEmailChange = createAsyncThunk(
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${getTokenFromCookies()}`,
+          Authorization: `Bearer ${getTokenFromCookies()}`,
         },
         body: JSON.stringify({ token }),
       });
