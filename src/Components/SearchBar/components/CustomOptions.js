@@ -81,39 +81,56 @@ const CustomOptions = (props) => {
     e.preventDefault();
     e.stopPropagation();
 
-    Swal.fire({
-      title: `Are you sure you want to remove ${option.label}?`,
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Close',
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          // Find the address to delete from cookies
-          const addressToDeleteFromCookies = addressesCookies.find(
-            (addr) => addr.value === option.value,
-          );
+    // Find the address to delete from cookies
+    const addressToDeleteFromCookies = addressesCookies.find(
+      (addr) => addr.value === option.value,
+    );
 
-          if (addressToDeleteFromCookies) {
-            // Remove address from Redux state
-            dispatch(removeAddressName(addressToDeleteFromCookies));
+    if (addressToDeleteFromCookies) {
+      // Remove address from Redux state
+      dispatch(removeAddressName(addressToDeleteFromCookies));
 
-            // Remove address from cookies
-            const updatedOptions = removeAddressFromCookies(
-              addressToDeleteFromCookies.value,
-            );
-            setUserSavedAddresses(updatedOptions);
-            Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
-          } else {
-            Swal.fire('Error!', 'Address not found in cookies.', 'error');
-          }
-        } catch (err) {
-          console.error('Failed to delete address:', err);
-          Swal.fire('Error!', 'Failed to delete address.', 'error');
-        }
-      }
-    });
+      // Remove address from cookies
+      const updatedOptions = removeAddressFromCookies(
+        addressToDeleteFromCookies.value,
+      );
+      setUserSavedAddresses(updatedOptions);
+      // Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
+    }
+
+    // Swal.fire({
+    //   title: `Are you sure you want to remove ${option.label}?`,
+    //   icon: 'warning',
+    //   showCancelButton: true,
+    //   confirmButtonText: 'Delete',
+    //   cancelButtonText: 'Close',
+    // }).then(async (result) => {
+    //   if (result.isConfirmed) {
+    //     try {
+    //       // Find the address to delete from cookies
+    //       const addressToDeleteFromCookies = addressesCookies.find(
+    //         (addr) => addr.value === option.value,
+    //       );
+
+    //       if (addressToDeleteFromCookies) {
+    //         // Remove address from Redux state
+    //         dispatch(removeAddressName(addressToDeleteFromCookies));
+
+    //         // Remove address from cookies
+    //         const updatedOptions = removeAddressFromCookies(
+    //           addressToDeleteFromCookies.value,
+    //         );
+    //         setUserSavedAddresses(updatedOptions);
+    //         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
+    //       } else {
+    //         Swal.fire('Error!', 'Address not found in cookies.', 'error');
+    //       }
+    //     } catch (err) {
+    //       console.error('Failed to delete address:', err);
+    //       Swal.fire('Error!', 'Failed to delete address.', 'error');
+    //     }
+    //   }
+    // });
   };
   const [isHovered, setIsHovered] = useState(false);
 
@@ -141,7 +158,7 @@ const CustomOptions = (props) => {
         color="transparent"
         className="p-0 m-0"
       >
-        <i className="ri-close-circle-line me-2 text-danger"></i>
+        <i className="ri-close-fill me-2 text-light"></i>
       </Button>
     );
   };

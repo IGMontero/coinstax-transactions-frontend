@@ -172,7 +172,7 @@ const Details = (props) => {
               </div>
             )}
           </Col>
-          <hr />
+          {/* <hr /> */}
 
           <Button
             color="soft-primary"
@@ -180,7 +180,7 @@ const Details = (props) => {
            }`}
             onClick={toggleChangeEmail}
           >
-            {showChangeEmail ? 'Hide' : 'Email Preferences'}
+            {showChangeEmail ? 'Hide' : 'Change Email'}
           </Button>
           {showChangeEmail && (
             <Col>
@@ -281,11 +281,10 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${
-              loadingUpdateInfo
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
-            }`}
+            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
+              }`}
           >
             Update
           </Button>
@@ -371,11 +370,10 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${
-              loadingNotificationsPreference
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
-            }`}
+            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
+              }`}
           >
             Update
           </Button>
