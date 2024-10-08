@@ -85,6 +85,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       } else {
         setPrevAddress(addressParams);
       }
+    } else {
+      if (isPortoflioPage) {
+        setPrevAddress('portfolio');
+      }
     }
   }, [addressParams, userPortfolioAddresses, selectedAddress]);
 
