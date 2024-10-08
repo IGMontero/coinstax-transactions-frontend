@@ -23,7 +23,7 @@ const SearchBar = ({
   const { user } = useSelector((state) => state.auth);
   const userId = user?.id;
   const refreshUserPortfolio = useRefreshUserPortfolio();
-  // const userPortfolioSummary = useUserPortfolioSummary();
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
@@ -483,7 +483,13 @@ const SearchBar = ({
         <Button
           className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
           color="soft-light"
-          disabled={loading || !searchInput}
+          disabled={
+            userPortfolioSummary.addresses.some(
+              (addr) => addr.address === searchInput,
+            ) ||
+            loading ||
+            !searchInput
+          }
           style={{
             borderRadius: '10px',
             border: '.5px solid grey',
