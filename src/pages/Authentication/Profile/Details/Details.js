@@ -7,6 +7,7 @@ import {
   updateNotificationsPreferences,
   resendVerificationEmail,
   changeEmail,
+  changeEmailPending,
 } from '../../../../slices/auth2/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
@@ -30,6 +31,10 @@ const Details = (props) => {
   const [notificationPreferences, setNotificationPreference] = React.useState(
     currentUser?.notificationsPreferences,
   );
+
+  const [loadingEmailConfirmed, setLoadingEmailConfirmed] =
+    React.useState(false);
+  const [emailConfirmed, setEmailConfirmed] = React.useState(false);
 
   const [loadingUpdateInfo, setLoadingUpdateInfo] = React.useState(false);
   const [loadingResendVerificationEmail, setLoadingResendVerificationEmail] =
@@ -116,11 +121,29 @@ const Details = (props) => {
           title: 'Success',
           text: 'Verification email sent successfully',
         });
+        setEmailConfirmed(true);
       }
       setLoadingResendVerificationEmail(false);
     } catch (error) {
       setErrorMessageVerifyEmail(error.message || 'An error occurred');
       setLoadingResendVerificationEmail(false);
+    }
+  };
+
+  const handleConfirmEmailPending = async () => {
+    try {
+      setLoadingEmailConfirmed(true);
+      const res = await dispatch(changeEmailPending());
+      const response = res.payload;
+      if (res.error || response.error) {
+        setEmailConfirmed(false);
+      } else {
+        setEmailConfirmed(true);
+      }
+      setLoadingEmailConfirmed(false);
+    } catch (error) {
+      setLoadingEmailConfirmed(false);
+      setErrorMessage(error.message || 'An error occurred');
     }
   };
 
@@ -135,6 +158,9 @@ const Details = (props) => {
   const [showChangeEmail, setShowChangeEmail] = React.useState(false);
 
   const toggleChangeEmail = () => {
+    if (!showChangeEmail) {
+      handleConfirmEmailPending();
+    }
     setShowChangeEmail(!showChangeEmail);
   };
 
@@ -184,7 +210,16 @@ const Details = (props) => {
           </Button>
           {showChangeEmail && (
             <Col>
-              <ChangeEmail currentUser={currentUser} />
+              {loadingEmailConfirmed ? (
+                <div className="d-flex mt-4">
+                  <span className="spinner-border spinner-border-sm ms-2"></span>
+                </div>
+              ) : (
+                <ChangeEmail
+                  currentUser={currentUser}
+                  emailConfirmed={emailConfirmed}
+                />
+              )}
             </Col>
           )}
           <hr />
@@ -281,10 +316,11 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-              : ''
-              }`}
+            className={`btn btn-soft-primary mb-3 ${
+              loadingUpdateInfo
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
           >
             Update
           </Button>
@@ -370,10 +406,11 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-              : ''
-              }`}
+            className={`btn btn-soft-primary mb-0 ${
+              loadingNotificationsPreference
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
           >
             Update
           </Button>

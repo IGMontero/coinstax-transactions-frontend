@@ -86,43 +86,6 @@ const AddressWithDropdown = ({
     }
   };
 
-  // const handleOpenModalRename = (e, option) => {
-  //   e.preventDefault();
-  //   e.stopPropagation();
-
-  //   console.log('option', option);
-
-  //   const optionLabel = addresses.find(
-  //     (addr) => addr.value === option.value,
-  //   )?.label;
-
-  //   Swal.fire({
-  //     title: 'Rename Wallet',
-  //     input: 'text',
-  //     inputValue: optionLabel,
-  //     showCancelButton: true,
-  //     confirmButtonText: 'Save',
-  //     inputValidator: (value) => {
-  //       if (
-  //         addresses.some(
-  //           (addr) => addr.label === value && addr.value !== option.value,
-  //         )
-  //       ) {
-  //         return 'This name already exists!';
-  //       }
-  //     },
-  //   }).then((result) => {
-  //     if (result.isConfirmed) {
-  //       const newName = result.value.trim() ? result.value : null;
-  //       handleRenameAddress(option.value, newName);
-  //     }
-  //   });
-  // };
-
-  // const handleRenameAddress = (value, newName) => {
-  //   dispatch(setAddressName({ value, label: newName || null }));
-  // };
-
   const handleUpdateAddress = (e, address) => {
     e.preventDefault();
     e.stopPropagation();
@@ -202,6 +165,10 @@ const AddressWithDropdown = ({
       : addressNickName || formattedAddressLabel;
   };
 
+  const isAddressInPortfolio = userPortfolioSummary?.addresses?.find(
+    (addr) => addr.address === address,
+  );
+
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
@@ -232,7 +199,7 @@ const AddressWithDropdown = ({
                 )}
                 <span className="fw-normal">Copy Address</span>
               </DropdownItem>
-              {user && (
+              {isAddressInPortfolio && user && (
                 <DropdownItem
                   className="d-flex align-items-center"
                   onClick={(e) => {
@@ -242,12 +209,6 @@ const AddressWithDropdown = ({
                     if (user && addr) {
                       handleUpdateAddress(e, addr);
                     }
-                    //  else {
-                    //   handleOpenModalRename(e, {
-                    //     label: formattedAddressLabel,
-                    //     value: address,
-                    //   });
-                    // }
                   }}
                 >
                   <i className="ri-pencil-line fs-4 me-2"></i>
