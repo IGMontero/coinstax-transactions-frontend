@@ -30,12 +30,12 @@ const ChangeEmail = ({ currentUser, emailConfirmed }) => {
       setLoadingUpdate(true);
       const res = await dispatch(changeEmail({ newEmail, password }));
       const response = res.payload;
-      console.log(response);
+      console.log('RESPONSE ', response);
       if (res.error || response.error) {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: response.error || 'An error occurred',
+          text: response.message || 'An error occurred',
         });
       } else {
         Swal.fire({
@@ -69,7 +69,7 @@ const ChangeEmail = ({ currentUser, emailConfirmed }) => {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: response.error || 'An error occurred',
+          text: response.message || 'An error occurred',
         });
       } else {
         Swal.fire({
@@ -98,7 +98,7 @@ const ChangeEmail = ({ currentUser, emailConfirmed }) => {
           {emailConfirmed ? (
             <>
               <p className="mt-3 mb-0 ps-1 text-muted">
-                An email was sent to {newEmail}. Please click the link inside to
+                An email was sent to {emailConfirmed}. Please click the link inside to
                 change your email
               </p>
               <Button
@@ -156,11 +156,10 @@ const ChangeEmail = ({ currentUser, emailConfirmed }) => {
                       type="submit"
                       color="soft-primary"
                       disabled={isSubmitting || !dirty || !isValid}
-                      className={`btn btn-soft-primary mb-0 ${
-                        isSubmitting || !dirty || !isValid
-                          ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                          : ''
-                      }`}
+                      className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
+                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                        : ''
+                        }`}
                     >
                       {isSubmitting ? 'Changing ...' : 'Submit'}
                     </Button>
