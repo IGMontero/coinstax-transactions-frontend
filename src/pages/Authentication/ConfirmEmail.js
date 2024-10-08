@@ -22,8 +22,11 @@ const ConfirmEmail = () => {
       const response = await dispatch(confirmEmailChange(token));
       console.log(response);
       if (response.error) {
-        setErrorMessage('Please try again or request a new email change link in your profile.');
+        setErrorMessage(
+          'Please try again or request a new email change link in your profile.',
+        );
       } else {
+        // logout
         setSuccessMessage('Email changed successfully');
         setTimeout(() => {
           window.location.href = '/';
@@ -78,10 +81,9 @@ const ConfirmEmail = () => {
                     {successMessage && (
                       <>
                         <div className="text-center mt-3">
-                          Your email has been changed successfully.
-                          Redirecting to Chainglance...
+                          Your email has been changed successfully. Redirecting
+                          to Chainglance...
                         </div>
-
                       </>
                     )}
                   </div>

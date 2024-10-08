@@ -149,7 +149,7 @@ const AddressWithDropdown = ({
       // },
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const newName = result.value.trim() ? result.value : null;
+        const newName = result.value.trim() ? result.value : '';
 
         try {
           const response = await dispatch(

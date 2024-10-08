@@ -37,6 +37,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const { user } = useSelector((state) => state.auth);
   const currentUserId = user?.id;
 
+  const isPortoflioPage = location.pathname.includes('portfolio');
+
   const addresses = useSelector((state) => state.addressName.addresses);
 
   const refreshUserPortfolio = useRefreshUserPortfolio();
@@ -54,10 +56,15 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     () => userPortfolioSummary?.addresses || [],
     [userPortfolioSummary],
   );
-  const [selectedAddress, setSelectedAddress] = useState(
-    userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-      null,
-  );
+  // const [selectedAddress, setSelectedAddress] = useState(
+  //   userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
+  //     null,
+  // );
+
+  const selectedAddress = isPortoflioPage
+    ? 'portfolio'
+    : userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
+      addressParams;
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
@@ -70,25 +77,21 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   useEffect(() => {
     if (addressParams) {
       const matchedAddress = userPortfolioAddresses.find(
-        (addr) => addr.address === addressParams,
+        (addr) =>
+          addr.address.toLowerCase() === addressParams.toLocaleLowerCase(),
       );
       if (matchedAddress) {
-        setSelectedAddress(matchedAddress);
-        setPrevAddress(matchedAddress.address);
+        setPrevAddress(matchedAddress);
+      } else {
+        setPrevAddress(addressParams);
       }
     }
   }, [addressParams, userPortfolioAddresses, selectedAddress]);
 
-  const handleSelectAddress = (address) => {
-    if (address === 'portfolio') {
-      setSelectedAddress(`portfolio`);
-    } else {
-      const selected = userPortfolioAddresses.find(
-        (addr) => addr.address === address,
-      );
-      setPrevAddress(selected.address);
-      setSelectedAddress(selected);
-    }
+  console.log('prev address: ', prevAddress);
+
+  const handleSelectAddress = () => {
+    setPrevAddress(selectedAddress);
     toggleDropdown();
   };
 
@@ -116,7 +119,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       // },
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const newName = result.value.trim() ? result.value : null;
+        const newName = result.value.trim() ? result.value : '';
 
         try {
           const response = await dispatch(
@@ -290,7 +293,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       <>
         <DropdownItem
           className="d-flex align-items-center "
-          key={address}
+          key={index}
           onClick={() => {
             handleSelectAddress(address);
             handleVisitAddress(`/address/${address}`);
@@ -323,27 +326,45 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     );
   };
 
+  const addressToShow = selectedAddress || prevAddress;
+
+  const getSelectedAddressName = () => {
+    if (addressToShow === 'portfolio') {
+      return 'Portfolio';
+    }
+
+    const address = addresses?.find(
+      (addr) =>
+        addr.value?.toLowerCase() === addressToShow.address?.toLowerCase(),
+    );
+    return address?.label || null;
+  };
+
+  const getDefaultAddressName = () => {
+    if (addressToShow.name) {
+      return addressToShow.name;
+    }
+    if (addressToShow.address) {
+      return formatAddressToShortVersion(addressToShow.address);
+    }
+    return formatAddressToShortVersion(addressToShow);
+  };
+
   const getDisplayTextDropdown = () => {
-    if (selectedAddress) {
-      const selectedAddressCustomName = addresses?.find(
-        (addr) =>
-          addr.value?.toLowerCase() === selectedAddress.address?.toLowerCase(),
-      )?.label;
+    if (addressToShow) {
+      const selectedAddressCustomName = getSelectedAddressName();
 
       if (selectedAddressCustomName) {
         return selectedAddressCustomName;
       }
 
-      if (selectedAddress.name) {
-        return selectedAddress.name;
-      }
-      if (selectedAddress.address) {
-        return formatAddressToShortVersion(selectedAddress.address);
-      }
-      if (selectedAddress === 'portfolio' && !userId) {
+      if (addressToShow === 'portfolio' && !userId) {
         return 'Portfolio';
       }
+
+      return getDefaultAddressName();
     }
+
     return userId ? 'User Portfolio' : 'Select Wallet';
   };
 
@@ -374,7 +395,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             ) : selectedAddress === 'portfolio' ? (
               parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
             ) : (
-              parseValuesToLocale(selectedAddress.value, CurrencyUSD)
+              parseValuesToLocale(addressToShow.value, CurrencyUSD)
             )}
             {/* {selectedAddress ? (
               parseValuesToLocale(selectedAddress.value, CurrencyUSD)
