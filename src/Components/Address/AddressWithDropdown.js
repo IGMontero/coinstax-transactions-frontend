@@ -15,6 +15,7 @@ import { setAddressName } from '../../slices/addressName/reducer';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
 import { updateUserWalletAddress } from '../../slices/userWallets/thunk';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 
 const AddressWithDropdown = ({
   filteredNetworks,
@@ -29,6 +30,8 @@ const AddressWithDropdown = ({
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const currentUserId = user?.id;
+
+  const refreshUserPortfolio = useRefreshUserPortfolio();
 
   const addresses = useSelector((state) => state.addressName.addresses);
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
@@ -59,10 +62,8 @@ const AddressWithDropdown = ({
       matchingAddress = addresses?.find((addr) => addr.value === address);
     }
 
-    if (matchingAddress) {
-      setFormattedAddressLabel(
-        matchingAddress.name || matchingAddress.label || currentFormattedValue,
-      );
+    if (user && matchingAddress) {
+      setFormattedAddressLabel(currentFormattedValue);
     } else {
       setFormattedAddressLabel(currentFormattedValue);
     }
@@ -128,6 +129,7 @@ const AddressWithDropdown = ({
             dispatch(
               setAddressName({ value: address.address, label: newName }),
             );
+            refreshUserPortfolio();
           } else {
             Swal.fire({
               title: 'Error',
@@ -149,11 +151,11 @@ const AddressWithDropdown = ({
   };
 
   const getAddressLabel = () => {
-    const addressCustomName = addresses.find(
-      (addr) => addr.value?.toLowerCase() === address?.toLowerCase(),
-    )?.label;
+    const addressCustomName = userPortfolioSummary?.addresses?.find(
+      (addr) => addr.address?.toLowerCase() === address?.toLowerCase(),
+    )?.name;
 
-    if (addressCustomName) {
+    if (user && addressCustomName) {
       return addressCustomName;
     }
     if (isCurrentUserPortfolioSelected) {

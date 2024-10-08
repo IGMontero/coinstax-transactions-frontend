@@ -5,7 +5,7 @@ import {
 } from '../../helpers/cookies_helper';
 
 const initialState = {
-  addresses: getUserSavedAddresses(),
+  addresses: [],
 };
 
 const addressNameSlice = createSlice({
@@ -22,14 +22,14 @@ const addressNameSlice = createSlice({
       } else {
         state.addresses.unshift(action.payload);
       }
-      setUserSavedAddresses(state.addresses);
+      // setUserSavedAddresses(state.addresses);
     },
     removeAddressName: (state, action) => {
       const updatedAddresses = state.addresses.filter(
         (address) => address.value !== action.payload.value,
       );
       state.addresses = updatedAddresses;
-      setUserSavedAddresses(updatedAddresses);
+      // setUserSavedAddresses(updatedAddresses);
     },
   },
 });
