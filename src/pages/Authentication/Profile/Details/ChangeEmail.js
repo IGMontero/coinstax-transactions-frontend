@@ -101,13 +101,12 @@ const ChangeEmail = ({ currentUser }) => {
                     type="submit"
                     color="soft-primary"
                     disabled={isSubmitting || !dirty || !isValid}
-                    className={`btn btn-soft-primary mb-0 ${
-                      isSubmitting || !dirty || !isValid
+                    className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
                         ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
                         : ''
-                    }`}
+                      }`}
                   >
-                    {isSubmitting ? 'Changing ...' : 'Change Email'}
+                    {isSubmitting ? 'Changing ...' : 'Submit'}
                   </Button>
                 </div>
               </Form>
