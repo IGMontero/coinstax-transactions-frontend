@@ -419,9 +419,13 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
     let filteredTxs = txs;
 
-    if (selectedFilters.length > 0) {
+    // Only applky if selected filters is not 'OTHERS'
+    const filterSelectedFilters = selectedFilters.filter(
+      (filter) => filter !== 'OTHERS',
+    );
+    if (filterSelectedFilters.length > 0) {
       filteredTxs = txs.filter((tx) =>
-        selectedFilters.includes(tx.blockchainAction),
+        filterSelectedFilters.includes(tx.blockchainAction),
       );
     }
 
@@ -688,15 +692,15 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const exportAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-            ...requestParams,
-            userId: currentPortfolioUserId,
-            assetsFilters,
-          })
+          ...requestParams,
+          userId: currentPortfolioUserId,
+          assetsFilters,
+        })
         : downloadTransactions({
-            ...requestParams,
-            query: debouncedSearchTerm,
-            assetsFilters,
-          });
+          ...requestParams,
+          query: debouncedSearchTerm,
+          assetsFilters,
+        });
 
       const response = await dispatch(exportAction).unwrap();
 
@@ -815,16 +819,16 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const downloadAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-            ...downloadParams,
-            userId: currentPortfolioUserId,
-            assetsFilters: selectAsset,
-          })
+          ...downloadParams,
+          userId: currentPortfolioUserId,
+          assetsFilters: selectAsset,
+        })
         : downloadTransactions({
-            ...downloadParams,
-            address: address,
-            query: debouncedSearchTerm,
-            assetsFilters: selectAsset,
-          });
+          ...downloadParams,
+          address: address,
+          query: debouncedSearchTerm,
+          assetsFilters: selectAsset,
+        });
 
       const response = await dispatch(downloadAction).unwrap();
 
@@ -1014,7 +1018,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -1032,9 +1036,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -1308,7 +1311,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-          // style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1411,7 +1414,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-          // style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions
