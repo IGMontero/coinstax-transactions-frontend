@@ -8,7 +8,7 @@ const SocialAuth = () => {
   };
 
   return (
-    <Row className="d-flex align-items-center">
+    <Row className="d-flex align-items-center justify-content-center">
       <Col className="col-5">
         <Button
           onClick={handleGoogleLogin}
@@ -18,7 +18,7 @@ const SocialAuth = () => {
           <i className="ri-google-fill fs-16 me-2"></i> Google
         </Button>
       </Col>
-      <Col className="col-2 ">or</Col>
+      {/* <Col className="col-2 ">or</Col>
       <Col className="col-5">
         <Button
           color="dark"
@@ -27,7 +27,7 @@ const SocialAuth = () => {
           <i className="ri-apple-fill fs-16 me-2"></i>
           Apple
         </Button>
-      </Col>
+      </Col> */}
     </Row>
   );
 };
