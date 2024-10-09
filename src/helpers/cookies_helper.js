@@ -34,7 +34,6 @@ export const getTokenFromCookies = () => {
 
   // Fallback to local storage
   return localStorage.getItem('accessToken');
-
 };
 
 export const removeTokenFromCookies = () => {
@@ -70,10 +69,10 @@ export const getUserSavedAddresses = () => {
     domain: cookiesDomain,
   })
     ? JSON.parse(
-      Cookies.get('addresses', {
-        domain: cookiesDomain,
-      }),
-    )
+        Cookies.get('addresses', {
+          domain: cookiesDomain,
+        }),
+      )
     : [];
 };
 
@@ -105,7 +104,7 @@ export const renameAddressInCookies = (valueToFind, newName) => {
   const storedOptions = getUserSavedAddresses();
   const newOptions = storedOptions.map((storedOption) => {
     if (storedOption.value === valueToFind) {
-      return { ...storedOption, label: newName };
+      return { ...storedOption, label: null };
     }
     return storedOption;
   });
