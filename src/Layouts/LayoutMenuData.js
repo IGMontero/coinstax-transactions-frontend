@@ -32,10 +32,8 @@ const Navdata = () => {
 
   useEffect(() => {
     if (isUserPortfolio) {
-      // If a user's portfolio is selected, set prevAddress to that portfolio
       setPrevAddress(`/users/${userId}/portfolio`);
     } else if (isCurrentUserPortfolioSelected) {
-      // If only "portfolio" is selected, set it as prevAddress
       setPrevAddress('portfolio');
       setAddressSearched('portfolio');
     } else if (
@@ -45,7 +43,6 @@ const Navdata = () => {
       !isUserPortfolio &&
       !prevAddress
     ) {
-      // If nothing is selected (neither address nor portfolio), clear the values
       setAddressSearched('');
       setPrevAddress('');
     } else if (address && address !== addressSearched) {
