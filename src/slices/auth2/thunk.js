@@ -193,7 +193,10 @@ export const changeEmail = createAsyncThunk(
       });
 
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        const errorData = await response.json();
+        return rejectWithValue(
+          errorData.message || `Error: ${response.status}`,
+        );
       }
 
       const data = await response.json();
