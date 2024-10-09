@@ -63,6 +63,14 @@ const Navdata = () => {
   ]);
 
   useEffect(() => {
+    if (!user) {
+      setPrevAddress(null);
+      setAddressSearched(null);
+      setIscurrentState('');
+    }
+  }, [user]);
+
+  useEffect(() => {
     const { assets, transactions, performance } = fetchData;
     setIsUnsupported(
       assets?.unsupported ||
