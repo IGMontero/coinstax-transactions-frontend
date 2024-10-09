@@ -62,11 +62,7 @@ const AddressWithDropdown = ({
       matchingAddress = addresses?.find((addr) => addr.value === address);
     }
 
-    if (user && matchingAddress) {
-      setFormattedAddressLabel(currentFormattedValue);
-    } else {
-      setFormattedAddressLabel(currentFormattedValue);
-    }
+    setFormattedAddressLabel(currentFormattedValue);
   }, [address, user, userPortfolioSummary, addresses, userId]);
 
   const toggleQrModal = () => {
