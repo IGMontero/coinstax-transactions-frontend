@@ -131,24 +131,22 @@ const Details = (props) => {
       setLoadingResendVerificationEmail(false);
     }
   };
-
   const handlePendingChangeEmail = async () => {
     try {
       setLoadingPendingChangeEmail(true);
       const res = await dispatch(changeEmailPending());
       const response = res.payload;
-      console.log(response);
-      if (res.error || response.error) {
+
+      if (res.error || !response || response.error) {
         setPendingChangeEmail(false);
       } else {
         setPendingChangeEmail(true);
+        setPendingEmailChangeSent(response?.newEmail || '');
       }
-      setLoadingPendingChangeEmail(false);
-      setPendingEmailChangeSent(response.newEmail);
     } catch (error) {
+      setErrorMessage(error.message || 'An error occurred');
+    } finally {
       setLoadingPendingChangeEmail(false);
-
-      setErrorMessage(error || 'An error occurred');
     }
   };
 
