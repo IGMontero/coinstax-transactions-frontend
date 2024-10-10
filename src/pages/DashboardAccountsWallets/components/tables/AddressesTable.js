@@ -183,16 +183,16 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
             });
             setAddresses(addresses.filter((addr) => addr.id !== address.id));
 
-            const addressToDeleteFromCookies = addressesCookies.find(
-              (addr) => addr.value === address.address,
-            );
-            if (addressToDeleteFromCookies) {
-              dispatch(removeAddressName(addressToDeleteFromCookies));
-              setUserSavedAddresses(
-                removeAddressFromCookies(addressToDeleteFromCookies.value),
-              );
-              dispatch(removeAddressName({ value: address.id }));
-            }
+            // const addressToDeleteFromCookies = addressesCookies.find(
+            //   (addr) => addr.value === address.address,
+            // );
+            // if (addressToDeleteFromCookies) {
+            // dispatch(removeAddressName(addressToDeleteFromCookies));
+            // setUserSavedAddresses(
+            //   removeAddressFromCookies(addressToDeleteFromCookies.value),
+            // );
+            // dispatch(removeAddressName({ value: address.id }));
+            // }
 
             onRefresh(userId);
           } else {

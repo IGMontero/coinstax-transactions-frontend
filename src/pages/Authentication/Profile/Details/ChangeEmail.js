@@ -71,7 +71,7 @@ const ChangeEmail = ({
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: response.error || 'An error occurred',
+          text: response.message || 'An error occurred',
         });
       } else {
         Swal.fire({
@@ -138,11 +138,10 @@ const ChangeEmail = ({
                     type="submit"
                     color="soft-primary"
                     disabled={isSubmitting || !dirty || !isValid}
-                    className={`btn btn-soft-primary mb-0 ${
-                      isSubmitting || !dirty || !isValid
-                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                        : ''
-                    }`}
+                    className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
+                      ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                      : ''
+                      }`}
                   >
                     {isSubmitting ? 'Changing ...' : 'Submit'}
                   </Button>
@@ -155,7 +154,7 @@ const ChangeEmail = ({
               <p className="mt-3 mb-0 ps-1 text-muted">
                 An email was sent to {pendingEmailChangeSent}. Please click the
                 link inside to change your email
-              </p>
+              </p >
               <Button
                 color="link"
                 disabled={loadingResend}
@@ -166,9 +165,9 @@ const ChangeEmail = ({
               </Button>
             </>
           )}
-        </div>
-      </Col>
-    </TabPane>
+        </div >
+      </Col >
+    </TabPane >
   );
 };
 
