@@ -29,7 +29,7 @@ const addressNameSlice = createSlice({
         (address) => address.value !== action.payload.value,
       );
       state.addresses = updatedAddresses;
-      // setUserSavedAddresses(updatedAddresses);
+      setUserSavedAddresses(updatedAddresses);
     },
   },
 });
