@@ -4,7 +4,7 @@ import { Button, Col, Row, Spinner } from 'reactstrap';
 
 const SocialAuth = () => {
   const handleGoogleLogin = () => {
-    window.location.href = 'http://[::1]:8034/api/v1/auth/google';
+    window.location.href = `${process.env.REACT_APP_API_URL_BASE}/auth/google`;
   };
 
   return (

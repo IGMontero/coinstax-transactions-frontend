@@ -75,6 +75,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const loadingPortfolio = loaders?.userPortfolioSummary;
 
   useEffect(() => {
+    if (!user) {
+      setPrevAddress('');
+    }
     if (addressParams) {
       const matchedAddress = userPortfolioAddresses.find(
         (addr) =>
@@ -135,11 +138,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           ).unwrap();
 
           if (response && !response.error) {
-            // Swal.fire({
-            //   title: 'Success',
-            //   text: 'Wallet address updated successfully',
-            //   icon: 'success',
-            // });
             dispatch(
               setAddressName({ value: address.address, label: newName }),
             );
@@ -289,9 +287,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
       selectedAddress?.address?.toLowerCase() === address?.toLowerCase() ||
       addressParams === address;
 
-    const customName = addresses?.find(
-      (addr) => addr.value?.toLowerCase() === address?.toLowerCase(),
-    )?.label;
+    const customName = userPortfolioSummary.addresses?.find(
+      (addr) => addr.address?.toLowerCase() === address?.toLowerCase(),
+    )?.name;
 
     return (
       <>
@@ -332,31 +330,31 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
   const addressToShow = selectedAddress || prevAddress;
 
-  const getSelectedAddressName = () => {
-    if (addressToShow === 'portfolio') {
+  const getSelectedAddressName = (addressName) => {
+    if (addressName === 'portfolio') {
       return 'Portfolio';
     }
 
     const address = addresses?.find(
       (addr) =>
-        addr.value?.toLowerCase() === addressToShow.address?.toLowerCase(),
+        addr.value?.toLowerCase() === addressName.address?.toLowerCase(),
     );
     return address?.label || null;
   };
 
-  const getDefaultAddressName = () => {
-    if (addressToShow.name) {
-      return addressToShow.name;
+  const getDefaultAddressName = (address) => {
+    if (address.name) {
+      return address.name;
     }
-    if (addressToShow.address) {
-      return formatAddressToShortVersion(addressToShow.address);
+    if (address.address) {
+      return formatAddressToShortVersion(address.address);
     }
-    return formatAddressToShortVersion(addressToShow);
+    return formatAddressToShortVersion(address);
   };
 
   const getDisplayTextDropdown = () => {
     if (addressToShow) {
-      const selectedAddressCustomName = getSelectedAddressName();
+      const selectedAddressCustomName = getSelectedAddressName(addressToShow);
 
       if (selectedAddressCustomName) {
         return selectedAddressCustomName;
@@ -366,7 +364,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         return 'Portfolio';
       }
 
-      return getDefaultAddressName();
+      return getDefaultAddressName(addressToShow);
     }
 
     return userId ? 'User Portfolio' : 'Select Wallet';

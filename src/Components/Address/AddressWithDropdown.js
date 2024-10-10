@@ -14,7 +14,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAddressName } from '../../slices/addressName/reducer';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
 import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
-import { updateUserWalletAddress } from '../../slices/userWallets/thunk';
+import {
+  addUserWallet,
+  updateUserWalletAddress,
+} from '../../slices/userWallets/thunk';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 
 const AddressWithDropdown = ({
   filteredNetworks,
@@ -29,6 +33,10 @@ const AddressWithDropdown = ({
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
   const currentUserId = user?.id;
+
+  const [loadingAddWallet, setLoadingAddWallet] = useState(false);
+
+  const refreshUserPortfolio = useRefreshUserPortfolio();
 
   const addresses = useSelector((state) => state.addressName.addresses);
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
@@ -59,13 +67,7 @@ const AddressWithDropdown = ({
       matchingAddress = addresses?.find((addr) => addr.value === address);
     }
 
-    if (matchingAddress) {
-      setFormattedAddressLabel(
-        matchingAddress.name || matchingAddress.label || currentFormattedValue,
-      );
-    } else {
-      setFormattedAddressLabel(currentFormattedValue);
-    }
+    setFormattedAddressLabel(currentFormattedValue);
   }, [address, user, userPortfolioSummary, addresses, userId]);
 
   const toggleQrModal = () => {
@@ -128,6 +130,7 @@ const AddressWithDropdown = ({
             dispatch(
               setAddressName({ value: address.address, label: newName }),
             );
+            refreshUserPortfolio();
           } else {
             Swal.fire({
               title: 'Error',
@@ -148,12 +151,41 @@ const AddressWithDropdown = ({
     });
   };
 
-  const getAddressLabel = () => {
-    const addressCustomName = addresses.find(
-      (addr) => addr.value?.toLowerCase() === address?.toLowerCase(),
-    )?.label;
+  const handleAddWallet = async (address) => {
+    try {
+      setLoadingAddWallet(true);
+      const response = await dispatch(
+        addUserWallet({ address, userId: currentUserId }),
+      ).unwrap();
 
-    if (addressCustomName) {
+      if (response && !response.error) {
+        dispatch(setAddressName({ value: address, label: null }));
+        refreshUserPortfolio();
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: response.message || 'Failed to connect wallet',
+          icon: 'error',
+        });
+      }
+      setLoadingAddWallet(false);
+    } catch (error) {
+      console.error('Failed to connect wallet: ', error);
+      Swal.fire({
+        title: 'Error',
+        text: error || 'Failed to connect wallet',
+        icon: 'error',
+      });
+      setLoadingAddWallet(false);
+    }
+  };
+
+  const getAddressLabel = () => {
+    const addressCustomName = userPortfolioSummary?.addresses?.find(
+      (addr) => addr.address?.toLowerCase() === address?.toLowerCase(),
+    )?.name;
+
+    if (user && addressCustomName) {
       return addressCustomName;
     }
     if (isCurrentUserPortfolioSelected) {
@@ -213,6 +245,21 @@ const AddressWithDropdown = ({
                 >
                   <i className="ri-pencil-line fs-4 me-2"></i>
                   <span className="fw-normal">Rename</span>
+                </DropdownItem>
+              )}
+              {!isAddressInPortfolio && user && (
+                <DropdownItem
+                  className="d-flex align-items-center"
+                  onClick={() => {
+                    if (loadingAddWallet) {
+                      return;
+                    } else {
+                      handleAddWallet(address);
+                    }
+                  }}
+                >
+                  <i className="bx bx-plus fs-4 me-2"></i>
+                  <span className="fw-normal">Add To Wallets</span>
                 </DropdownItem>
               )}
             </DropdownMenu>

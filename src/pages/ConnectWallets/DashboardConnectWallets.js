@@ -21,6 +21,7 @@ import coinbaseLogo from '../../assets/images/connctor/coinbase_light.png';
 import otherLogo from '../../assets/images/connctor/connect-other-portfolio.svg';
 import { layoutModeTypes } from '../../Components/constants/layout';
 import { isDarkMode } from '../../utils/utils';
+import { saveTokenInCookies } from '../../helpers/cookies_helper';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -35,12 +36,38 @@ const DashboardConnectWallets = () => {
 
   const connections = useConnections();
 
+  const accessTokenParams = new URLSearchParams(location.search);
+
+  const accessToken = accessTokenParams.get('access_token');
+
+  const errorParam = accessTokenParams.get('error');
+
+  useEffect(() => {
+    if (accessToken) {
+      saveTokenInCookies(accessToken);
+
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('access_token');
+      window.history.replaceState({}, document.title, newUrl);
+
+      window.location.reload();
+    }
+    if (errorParam) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred to login. Please try again.',
+      });
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('error');
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  }, []);
+
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
-
-  console.log('Connections: ', connections);
 
   // const { walletInfo } = useWalletInfo();
 

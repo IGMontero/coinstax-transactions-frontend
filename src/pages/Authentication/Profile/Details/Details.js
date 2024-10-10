@@ -32,9 +32,9 @@ const Details = (props) => {
     currentUser?.notificationsPreferences,
   );
 
-  const [loadingEmailConfirmed, setLoadingEmailConfirmed] =
+  const [loadingEmailConfirmed, setLoadingPendingChangeEmail] =
     React.useState(false);
-  const [emailConfirmed, setEmailConfirmed] = React.useState(false);
+  const [pendingChangeEmail, setPendingChangeEmail] = React.useState(false);
 
   const [loadingUpdateInfo, setLoadingUpdateInfo] = React.useState(false);
   const [loadingResendVerificationEmail, setLoadingResendVerificationEmail] =
@@ -42,6 +42,8 @@ const Details = (props) => {
   const [timezone, setTimezone] = React.useState(currentUser?.timezone);
   const [country, setCountry] = React.useState(currentUser?.country);
   const [currency, setCurrency] = React.useState(currentUser?.currency);
+
+  const [pendingEmailChangeSent, setPendingEmailChangeSent] = React.useState();
 
   useEffect(() => {
     setEmail(currentUser?.email);
@@ -121,7 +123,7 @@ const Details = (props) => {
           title: 'Success',
           text: 'Verification email sent successfully',
         });
-        setEmailConfirmed(true);
+        setPendingChangeEmail(true);
       }
       setLoadingResendVerificationEmail(false);
     } catch (error) {
@@ -129,21 +131,22 @@ const Details = (props) => {
       setLoadingResendVerificationEmail(false);
     }
   };
-
-  const handleConfirmEmailPending = async () => {
+  const handlePendingChangeEmail = async () => {
     try {
-      setLoadingEmailConfirmed(true);
+      setLoadingPendingChangeEmail(true);
       const res = await dispatch(changeEmailPending());
       const response = res.payload;
-      if (res.error || response.error) {
-        setEmailConfirmed(false);
+
+      if (res.error || !response || response.error) {
+        setPendingChangeEmail(false);
       } else {
-        setEmailConfirmed(true);
+        setPendingChangeEmail(true);
+        setPendingEmailChangeSent(response?.newEmail || '');
       }
-      setLoadingEmailConfirmed(false);
     } catch (error) {
-      setLoadingEmailConfirmed(false);
       setErrorMessage(error.message || 'An error occurred');
+    } finally {
+      setLoadingPendingChangeEmail(false);
     }
   };
 
@@ -159,7 +162,7 @@ const Details = (props) => {
 
   const toggleChangeEmail = () => {
     if (!showChangeEmail) {
-      handleConfirmEmailPending();
+      handlePendingChangeEmail();
     }
     setShowChangeEmail(!showChangeEmail);
   };
@@ -216,8 +219,9 @@ const Details = (props) => {
                 </div>
               ) : (
                 <ChangeEmail
-                  currentUser={currentUser}
-                  emailConfirmed={emailConfirmed}
+                  onRefresh={handlePendingChangeEmail}
+                  pendingChangeEmail={pendingChangeEmail}
+                  pendingEmailChangeSent={pendingEmailChangeSent}
                 />
               )}
             </Col>
