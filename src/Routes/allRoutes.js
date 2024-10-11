@@ -35,6 +35,7 @@ import DashboardAccountantAgents from '../pages/DashboardAccountsWallets/Account
 import DashboardClientsAgent from '../pages/DashboardAccountsWallets/Agent/DashboardClientsAgent';
 import VerifyEmail from '../pages/Authentication/VerifyEmail';
 import ConfirmEmail from '../pages/Authentication/ConfirmEmail';
+import DashboardCompleteInfo from '../pages/CompleteInfo/DashboardCompleteInfo';
 
 // Auth protected routes
 const adminRoutes = [
@@ -115,7 +116,10 @@ const publicRoutes = [
   { path: '/address/:address/assets', component: <DashboardAssets /> },
   { path: '/address/:address/nfts', component: <NFTsPage /> },
   { path: '/address/:address/history', component: <DashboardTransactions /> },
-
+  {
+    path: '/complete-profile',
+    component: <DashboardCompleteInfo />,
+  },
   // Default to wallets page
   {
     path: '/wallets',
@@ -144,6 +148,7 @@ const authProtectedRoutes = [
       </AuthProtectedRoutes>
     ),
   },
+
   {
     path: '/clients',
     component: (
