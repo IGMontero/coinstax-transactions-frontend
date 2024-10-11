@@ -17,7 +17,6 @@ import Footer from './footer';
 import Helmet from '../../../Components/Helmet/Helmet';
 
 const Index = () => {
-
   window.onscroll = function () {
     scrollFunction();
   };
