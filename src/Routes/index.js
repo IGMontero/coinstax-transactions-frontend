@@ -51,11 +51,13 @@ const Index = () => {
     }
   }, [user, isLoginPage, navigate, isRegisterPage, isDashboardPage]);
 
-  // useEffect(() => {
-  //   if (user && !isProfileComplete) {
-  //     navigate('/complete-profile');
-  //   }
-  // }, [user, navigate, isProfileComplete]);
+  console.log('isProfile complete', isProfileComplete);
+
+  useEffect(() => {
+    if (user && !isProfileComplete) {
+      navigate('/complete-profile');
+    }
+  }, [user, navigate, isProfileComplete]);
 
   useEffect(() => {
     const isRoot = location.pathname === '/';
