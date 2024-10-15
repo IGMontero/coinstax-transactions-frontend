@@ -31,6 +31,7 @@ import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
+import { authMe } from '../../slices/auth2/thunk';
 
 import { fetchUserCountry } from '../../slices/common/thunk';
 
@@ -69,6 +70,12 @@ const DashboardCompleteInfo = () => {
     return !country || !currency || !timezone || loading;
   };
 
+  const authenticate = async () => {
+    await dispatch(authMe());
+
+    setLoading(false);
+  };
+
   const handleSubmit = async (values) => {
     console.log('values', values);
     try {
@@ -89,6 +96,7 @@ const DashboardCompleteInfo = () => {
           title: 'Success',
           text: 'User info updated successfully',
         });
+        authenticate();
       }
       navigate('/wallets');
       setLoading(false);
