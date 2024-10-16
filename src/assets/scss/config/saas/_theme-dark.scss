@@ -643,9 +643,22 @@
  margin-left: 0;
 }
 
-@media (min-width: 768px) and (max-width: 1040px) {
+// @media (min-width: 768px) and (max-width: 1040px) {
+//   .header-container {
+//       // margin-left: 235px;
+//       margin-left: 180px;
+//   }
+// }
+@media (min-width: 768px) and (max-width: 900px) {
+  .header-container {
+      // margin-left: 235px;
+      margin-left: 195px;
+  }
+}
+@media (min-width: 900px) and (max-width: 1040px) {
   .header-container {
       margin-left: 235px;
+      // margin-left: 180px;
   }
 }
 

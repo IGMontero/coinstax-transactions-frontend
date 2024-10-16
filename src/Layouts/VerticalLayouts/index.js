@@ -339,13 +339,13 @@ const VerticalLayout = (props) => {
               <li className="nav-item mt-2" style={{ marginLeft: '-.5rem' }}>
                 <Link
                   id={item.id}
-                  className={`menu-link nav-link
-                  ${isActive && !isLightMode ? 'nav-link-active-dark' : ''}
-                   ${isActive && isLightMode ? 'nav-link-active text-light' : 'text-dark'} 
+                  className={`menu-link nav-link 
+                  ${isActive && !isLightMode ? 'nav-link-active-dark ' : ''}
+                   ${isActive && isLightMode ? 'nav-link-active ' : ''} 
                    d-flex  ps-3 `}
                   to={item.link ? item.link : '/'}
                 >
-                  <i className={item.icon}></i>{' '}
+                  <i className={`${item.icon} ms-1`}></i>{' '}
                   <span className="ms-1" style={{ whiteSpace: 'nowrap' }}>
                     {props.t(item.label)}
                   </span>
