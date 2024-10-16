@@ -12,6 +12,8 @@ const ChangePassword = () => {
   const { user } = useSelector((state) => state.auth);
 
   const authProvider = user?.authProvider;
+  const isEmailAuth = authProvider === 'email';
+  const isGoogleAuth = authProvider === 'google';
 
   const initialValues = {
     currentPassword: '',
@@ -64,9 +66,9 @@ const ChangePassword = () => {
   return (
     <TabPane tabId="3">
       <h3 className="text-muted mb-3">Change Password</h3>
-      {authProvider === 'google' ? (
+      {isGoogleAuth ? (
         <Col lg={12} className="my-4">
-          <p>Your account uses Google to authenticate.</p>
+          <p>Your account is connected with Google. You can't change your password.</p>
         </Col>
       ) : (
         <div className="mb-4">
@@ -132,11 +134,10 @@ const ChangePassword = () => {
                       type="submit"
                       color="soft-primary"
                       disabled={isSubmitting || !dirty || !isValid}
-                      className={`btn btn-soft-primary mb-0 ${
-                        isSubmitting || !dirty || !isValid
-                          ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                          : ''
-                      }`}
+                      className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
+                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                        : ''
+                        }`}
                     >
                       {isSubmitting ? 'Changing ...' : 'Change Password'}
                     </Button>
