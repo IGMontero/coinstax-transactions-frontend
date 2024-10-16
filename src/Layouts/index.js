@@ -382,52 +382,62 @@ const Layout = (props) => {
   return (
     <React.Fragment>
       <div id="layout-wrapper">
-        {!isAuthPage && (
-          <>
-            <Header
-              headerClass={headerClass}
-              layoutModeType={layoutModeType}
-              onChangeLayoutMode={onChangeLayoutMode}
-            />
-            <Sidebar layoutType={layoutType} />
-          </>
-        )}
         <div
           className={isAuthPage ? '' : 'main-content'}
           style={{ height: '100vh' }}
         >
-          <div className="page-content">
-            {!isPageWithoutAddress(location.pathname) &&
-              !token &&
-              !contractAddress && (
-                <AddressWithDropdown
-                  isUnsupported={isUnsupported}
-                  addressNickName={nickName}
-                  isOnlyAllNetwork={isOnlyAllNetwork}
-                  filteredNetworks={filteredNetworks}
-                  incompleteBlockchains={incompleteBlockchains}
-                  loading={loading && !isInInterval}
+          <div
+            className=""
+            style={{
+              maxWidth: '1920px',
+              // width: '1920px',
+              left: '0px',
+              margin: 'auto',
+            }}
+          >
+            {!isAuthPage && (
+              <>
+                <Header
+                  headerClass={headerClass}
+                  layoutModeType={layoutModeType}
+                  onChangeLayoutMode={onChangeLayoutMode}
                 />
-              )}
-            {(() => {
-              if (
-                token ||
-                contractAddress ||
-                isPageWithoutAddress(location.pathname)
-              ) {
-                return props.children;
-              } else if (isUnsupported) {
-                return <UnsupportedPage />;
-              } else if (!loading || isInInterval) {
-                if (isSuccessfullRequest) {
+                <Sidebar layoutType={layoutType} />
+              </>
+            )}
+            <div className="page-content">
+              {!isPageWithoutAddress(location.pathname) &&
+                !token &&
+                !contractAddress && (
+                  <AddressWithDropdown
+                    isUnsupported={isUnsupported}
+                    addressNickName={nickName}
+                    isOnlyAllNetwork={isOnlyAllNetwork}
+                    filteredNetworks={filteredNetworks}
+                    incompleteBlockchains={incompleteBlockchains}
+                    loading={loading && !isInInterval}
+                  />
+                )}
+              {(() => {
+                if (
+                  token ||
+                  contractAddress ||
+                  isPageWithoutAddress(location.pathname)
+                ) {
                   return props.children;
+                } else if (isUnsupported) {
+                  return <UnsupportedPage />;
+                } else if (!loading || isInInterval) {
+                  if (isSuccessfullRequest) {
+                    return props.children;
+                  } else {
+                    return null;
+                  }
                 } else {
                   return null;
                 }
-              } else {
-                return null;
-              }
-            })()}
+              })()}
+            </div>
           </div>
           <Footer />
         </div>

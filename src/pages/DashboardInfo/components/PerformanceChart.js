@@ -600,6 +600,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                       bottom: 0,
                       zIndex: 2,
                       height: '50vh',
+                      maxHeight: '340px',
                     }}
                   >
                     {/* <Spinner

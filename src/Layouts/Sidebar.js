@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import logo from '../assets/images/logos/coinstax_logos/logo-dark.png';
@@ -17,11 +17,25 @@ import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
 const Sidebar = ({ layoutType }) => {
   const { user } = useSelector((state) => state.auth);
 
+  const [windowSize, setWindowSize] = useState(window.innerWidth);
+
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
 
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowSize(window.innerWidth);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     var verticalOverlay = document.getElementsByClassName('vertical-overlay');
@@ -59,10 +73,15 @@ const Sidebar = ({ layoutType }) => {
       <div
         className="app-menu navbar-menu"
         style={{
+          left: windowSize < 1736 ? '0px' : 'unset',
+          // backgroundColor:
+          //   layoutModeType === layoutModeTypes['DARKMODE']
+          //     ? '#1d1d21'
+          //     : '#F1F2FA',
           backgroundColor:
             layoutModeType === layoutModeTypes['DARKMODE']
-              ? '#1d1d21'
-              : '#F1F2FA',
+              ? 'transaparent'
+              : 'transparent',
         }}
         // style={{
         //   background: '#23282C',
