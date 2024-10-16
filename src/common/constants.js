@@ -106,6 +106,7 @@ export const DASHBOARD_USER_ROLES = {
 
 export const pagesWithoutAddress = [
   '/login',
+  '/complete-profile',
   '/register',
   '/profile',
   '/forgot-password',

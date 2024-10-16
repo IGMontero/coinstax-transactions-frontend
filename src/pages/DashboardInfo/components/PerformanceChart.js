@@ -587,6 +587,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                   zIndex: 1,
                   height: '40vh',
                   width: '99%',
+                  maxHeight: '340px',
                 }}
               >
                 {loading ? (
