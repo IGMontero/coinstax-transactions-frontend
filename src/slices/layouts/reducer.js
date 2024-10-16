@@ -36,6 +36,22 @@ export const initialState = {
   sidebarVisibilitytype: sidebarVisibilitytypes.SHOW,
 };
 
+// export const initialState = {
+//   layoutType: layoutTypes.SEMIBOX,
+//   leftSidebarType: leftSidebarTypes.DARK,
+//   layoutModeType:
+//     getCurrentThemeCookie() === 'dark'
+//       ? layoutModeTypes.DARKMODE
+//       : layoutModeTypes.LIGHTMODE,
+//   layoutWidthType: layoutWidthTypes.FLUID,
+//   layoutPositionType: layoutPositionTypes.FIXED,
+//   topbarThemeType: topbarThemeTypes.LIGHT,
+//   leftsidbarSizeType: leftsidbarSizeTypes.DEFAULT,
+//   leftSidebarViewType: leftSidebarViewTypes.DETACHED,
+//   leftSidebarImageType: leftSidebarImageTypes.NONE,
+//   sidebarVisibilitytype: sidebarVisibilitytypes.SHOW,
+// };
+
 const LayoutSlice = createSlice({
   name: 'LayoutSlice',
   initialState,
