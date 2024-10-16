@@ -212,20 +212,29 @@ const Details = (props) => {
             {showChangeEmail ? 'Hide' : 'Change Email'}
           </Button>
           {showChangeEmail && (
-            <Col>
-              {loadingEmailConfirmed ? (
-                <div className="d-flex mt-4">
-                  <span className="spinner-border spinner-border-sm ms-2"></span>
-                </div>
+            <>
+              {authProvider === 'google' ? (
+                <Col lg={12} className="my-4">
+                  <p>Your account uses Google to authenticate.</p>
+                </Col>
               ) : (
-                <ChangeEmail
-                  onRefresh={handlePendingChangeEmail}
-                  pendingChangeEmail={pendingChangeEmail}
-                  pendingEmailChangeSent={pendingEmailChangeSent}
-                />
+                <Col>
+                  {loadingEmailConfirmed ? (
+                    <div className="d-flex mt-4">
+                      <span className="spinner-border spinner-border-sm ms-2"></span>
+                    </div>
+                  ) : (
+                    <ChangeEmail
+                      onRefresh={handlePendingChangeEmail}
+                      pendingChangeEmail={pendingChangeEmail}
+                      pendingEmailChangeSent={pendingEmailChangeSent}
+                    />
+                  )}
+                </Col>
               )}
-            </Col>
+            </>
           )}
+
           <hr />
           <h3 className="text-muted mb-3">Preferences</h3>
 
@@ -298,23 +307,7 @@ const Details = (props) => {
               </div>
             </Col>
           </Row>
-          <Col lg={12} className="mb-4">
-            <>
-              {authProvider === 'google' && (
-                <p>
-                  Please visit your Google account to manage{' '}
-                  <Link
-                    target="_blank"
-                    to="https://security.google.com/settings/security/permissions"
-                  >
-                    Account Permissions
-                  </Link>
-                  .
-                </p>
-              )}
-            </>
-            {/* )} */}
-          </Col>
+
           <Button
             type="submit"
             color="soft-primary"
