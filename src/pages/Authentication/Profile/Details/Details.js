@@ -21,6 +21,9 @@ const Details = (props) => {
   const authProvider = currentUser?.authProvider;
   const fixedData = useSelector((state) => state.Common.fixedData);
 
+  const isEmailAuth = authProvider === 'email';
+  const isGoogleAuth = authProvider === 'google';
+
   const [errorMessage, setErrorMessage] = React.useState('');
   const [errorMessageVerifyEmail, setErrorMessageVerifyEmail] =
     React.useState('');
@@ -179,6 +182,25 @@ const Details = (props) => {
               value={currentUser?.email}
               readOnly
             />
+
+            {isGoogleAuth && (
+              <p style={{
+                // color: 'green',
+                marginTop: '10px',
+              }}>
+                Your account is connected with Google.<br />Please visit your Google account to manage{' '}
+                <Link
+                  target="_blank"
+                  to="https://security.google.com/settings/security/permissions"
+                >
+                  Account Permissions
+                </Link>
+                .
+
+              </p>
+            )}
+
+
             {currentUser?.emailVerified ? null : ( // <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
               <div>
                 <span className="badge bg-soft-danger fs-8 mt-2">
@@ -203,14 +225,21 @@ const Details = (props) => {
           </Col>
           {/* <hr /> */}
 
-          <Button
-            color="soft-primary"
-            className={`btn btn-soft-primary  
-           }`}
-            onClick={toggleChangeEmail}
-          >
-            {showChangeEmail ? 'Hide' : 'Change Email'}
-          </Button>
+
+
+          {isEmailAuth && (
+            <Button
+              color="soft-primary"
+              className={`btn btn-soft-primary  
+ }`}
+              disabled={!isEmailAuth}
+              onClick={toggleChangeEmail}
+            >
+              {showChangeEmail ? 'Hide' : 'Change Email'}
+            </Button>
+          )}
+
+
           {showChangeEmail && (
             <Col>
               {loadingEmailConfirmed ? (
@@ -226,6 +255,7 @@ const Details = (props) => {
               )}
             </Col>
           )}
+
           <hr />
           <h3 className="text-muted mb-3">Preferences</h3>
 
@@ -298,33 +328,16 @@ const Details = (props) => {
               </div>
             </Col>
           </Row>
-          <Col lg={12} className="mb-4">
-            <>
-              {authProvider === 'google' && (
-                <p>
-                  Please visit your Google account to manage{' '}
-                  <Link
-                    target="_blank"
-                    to="https://security.google.com/settings/security/permissions"
-                  >
-                    Account Permissions
-                  </Link>
-                  .
-                </p>
-              )}
-            </>
-            {/* )} */}
-          </Col>
+
           <Button
             type="submit"
             color="soft-primary"
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${
-              loadingUpdateInfo
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
-            }`}
+            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
+              }`}
           >
             Update
           </Button>
@@ -410,11 +423,10 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${
-              loadingNotificationsPreference
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
-            }`}
+            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
+              }`}
           >
             Update
           </Button>

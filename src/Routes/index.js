@@ -18,6 +18,9 @@ const Index = () => {
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
 
+  const isProfileComplete =
+    user && user.currency && user.country && user.timezone;
+
   const [loading, setLoading] = useState(true);
 
   const [authCompleted, setAuthCompleted] = useState(false);
@@ -47,6 +50,14 @@ const Index = () => {
       navigate('/wallets');
     }
   }, [user, isLoginPage, navigate, isRegisterPage, isDashboardPage]);
+
+  console.log('isProfile complete', isProfileComplete);
+
+  useEffect(() => {
+    if (user && !isProfileComplete) {
+      navigate('/complete-profile');
+    }
+  }, [user, navigate, isProfileComplete]);
 
   useEffect(() => {
     const isRoot = location.pathname === '/';

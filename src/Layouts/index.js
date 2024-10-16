@@ -160,7 +160,8 @@ const Layout = (props) => {
     location.pathname.includes('/register') ||
     location.pathname.includes('/forgot-password') ||
     location.pathname.includes('/reset-password') ||
-    location.pathname.includes('/confirm-email');
+    location.pathname.includes('/confirm-email') ||
+    location.pathname.includes('/complete-profile');
 
   const isAdminPages =
     location.pathname.includes('blockchain-contracts') ||
