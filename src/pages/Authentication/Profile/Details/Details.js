@@ -12,6 +12,7 @@ import {
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 import ChangeEmail from './ChangeEmail';
+import { capitalizeFirstLetter } from '../../../../utils/utils';
 
 const Details = (props) => {
   const dispatch = useDispatch();
@@ -213,9 +214,12 @@ const Details = (props) => {
           </Button>
           {showChangeEmail && (
             <>
-              {authProvider === 'google' ? (
+              {authProvider !== 'email' ? (
                 <Col lg={12} className="my-4">
-                  <p>Your account uses Google to authenticate.</p>
+                  <p>
+                    Your account uses {capitalizeFirstLetter(authProvider)} to
+                    authenticate.
+                  </p>
                 </Col>
               ) : (
                 <Col>

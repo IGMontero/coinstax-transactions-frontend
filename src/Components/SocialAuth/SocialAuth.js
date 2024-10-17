@@ -21,7 +21,7 @@ const SocialAuth = () => {
       </Col>
       <Col className="col-4">
         <Button
-          onClick={handleGoogleLogin}
+          onClick={() => {}}
           color="primary"
           className="w-100 btn-icon d-flex align-items-center "
         >
