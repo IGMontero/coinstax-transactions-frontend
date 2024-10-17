@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button, Col, Row, Spinner } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import coinbaseLogo from '../../assets/images/wallets/coinbase.png';
 
 const SocialAuth = () => {
