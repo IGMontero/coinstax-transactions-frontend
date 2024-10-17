@@ -6,6 +6,7 @@ import * as Yup from 'yup';
 import { changePassword } from '../../../../slices/auth2/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
+import { capitalizeFirstLetter } from '../../../../utils/utils';
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
@@ -66,9 +67,11 @@ const ChangePassword = () => {
   return (
     <TabPane tabId="3">
       <h3 className="text-muted mb-3">Change Password</h3>
-      {isGoogleAuth ? (
+      {!isEmailAuth ? (
         <Col lg={12} className="my-4">
-          <p>Your account is connected with Google. You can't change your password.</p>
+          <p>Your account is connected with {
+            capitalizeFirstLetter(authProvider)
+          }. You cannot change your password.</p>
         </Col>
       ) : (
         <div className="mb-4">
