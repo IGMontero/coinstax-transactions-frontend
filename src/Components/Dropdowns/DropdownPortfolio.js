@@ -95,8 +95,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     }
   }, [addressParams, userPortfolioAddresses, selectedAddress]);
 
-  console.log('prev address: ', prevAddress);
-
   const handleSelectAddress = () => {
     setPrevAddress(selectedAddress);
     toggleDropdown();
