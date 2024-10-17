@@ -106,7 +106,7 @@ const DashboardCompleteInfo = () => {
     }
   };
 
-  const isProfileComplete = user.country && user.currency && user.timezone;
+  const isProfileComplete = user?.profileComplete;
 
   useEffect(() => {
     if (user) {
