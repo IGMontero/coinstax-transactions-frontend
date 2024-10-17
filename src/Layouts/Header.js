@@ -239,7 +239,10 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
         id="page-topbar"
         style={{
           width: '100%',
-          left: 0,
+          left: 'auto',
+          right: '0px',
+          maxWidth: '100%',
+
         }}
         className="mb-4 d-flex align-items-center justify-content-center"
       >
@@ -247,26 +250,28 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
           className="header-container"
           style={{
             width: '100%',
-            maxWidth: '1194px',
+            maxWidth: '1100px',
           }}
         >
-          <Row
+          <div
             className={`navbar-header `}
             style={{
               backgroundColor:
                 layoutModeType === layoutModeTypes['DARKMODE']
                   ? '#16161a'
                   : '#fff',
+              padding: `0 20px`
               // borderBottom:
               //   layoutModeType === layoutModeTypes['DARKMODE']
               //     ? ' rgba(255, 255, 255, 0.04)'
               //     : ' rgba(0, 0, 0, 0.04)',
             }}
           >
-            <Col
-              lg={12}
-              xs={12}
-              className="d-flex justify-content-between align-items-center"
+            <div
+              // lg={12}
+              // xs={12}
+              // style={{ borderBottom: '1px solid #e5e5e5' }}
+              className="d-flex justify-content-between align-items-center border-bottom border-2 w-100"
             >
               <Col className="col-1 d-md-none d-lg-none">
                 <button
@@ -288,7 +293,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   </span>
                 </button>
               </Col>
-              <Col className="d-flex align-items-center  ms-lg-4  ms-md-4  ms-1  col-8">
+              <Col className="d-flex align-items-center col-xs-4">
                 <div className="col-sm-12 col-md-12 col-lg-7 col-xs-12 col-12 ">
                   <ParentComponentSearchBar
                     trackWallets={false}
@@ -331,10 +336,9 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   )}
                 </div>
               </Col>
-            </Col>
-          </Row>
+            </div>
+          </div>
 
-          <div className="border-bottom border-2 mx-5 d-flex justify-content-center"></div>
         </div>
       </header>
     </React.Fragment>

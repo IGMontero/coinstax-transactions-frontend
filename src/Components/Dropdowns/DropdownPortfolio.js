@@ -38,21 +38,21 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
   const addresses = useSelector((state) => state.addressName.addresses);
 
-  const [windowSize, setWindowSize] = useState(window.innerWidth);
+  // const [windowSize, setWindowSize] = useState(window.innerWidth);
 
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize(window.innerWidth);
-    };
+  // useEffect(() => {
+  //   const handleResize = () => {
+  //     setWindowSize(window.innerWidth);
+  //   };
 
-    window.addEventListener('resize', handleResize);
+  //   window.addEventListener('resize', handleResize);
 
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  //   return () => {
+  //     window.removeEventListener('resize', handleResize);
+  //   };
+  // }, []);
 
-  const shouldShowAddress = windowSize < 901 && windowSize > 767;
+  // const shouldShowAddress = false
 
   const refreshUserPortfolio = useRefreshUserPortfolio();
 
@@ -77,7 +77,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const selectedAddress = isPortoflioPage
     ? 'portfolio'
     : userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-      addressParams;
+    addressParams;
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
@@ -177,9 +177,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${
-        address.name ? address.name : address.address
-      }?`,
+      text: `Are you sure to delete wallet ${address.name ? address.name : address.address
+        }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -384,36 +383,33 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   return (
     <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
       <DropdownToggle
-        className={`w-100 bg-transparent ${
-          shouldShowAddress ? 'justify-content-center ' : ''
-        } border-1 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent border-1 border-light rounded-4  d-flex align-items-center`}
         variant="transparent"
         id="dropdown-basic"
       >
         {!isInHeader && (
           <i className="ri-dashboard-fill pe-3 fs-2 text-dark"></i>
         )}
-        {shouldShowAddress ? null : (
-          <div className="d-flex flex-column align-items-start flex-grow-1">
-            <span
-              className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}
-            >
-              {getDisplayTextDropdown()}
-            </span>
+        <div className="d-flex flex-column align-items-start flex-grow-1">
+          <span
+            className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}
+          >
+            {getDisplayTextDropdown()}
+          </span>
 
-            <div className="text-start text-muted">
-              {!selectedAddress || userId ? null : loadingPortfolio ? (
-                <Skeleton
-                  width={80}
-                  baseColor={isDarkMode ? '#333' : '#f3f3f3'}
-                  highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
-                />
-              ) : selectedAddress === 'portfolio' ? (
-                parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
-              ) : (
-                parseValuesToLocale(addressToShow.value, CurrencyUSD)
-              )}
-              {/* {selectedAddress ? (
+          <div className="text-start text-muted">
+            {!selectedAddress || userId ? null : loadingPortfolio ? (
+              <Skeleton
+                width={80}
+                baseColor={isDarkMode ? '#333' : '#f3f3f3'}
+                highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
+              />
+            ) : selectedAddress === 'portfolio' ? (
+              parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
+            ) : (
+              parseValuesToLocale(addressToShow.value, CurrencyUSD)
+            )}
+            {/* {selectedAddress ? (
               parseValuesToLocale(selectedAddress.value, CurrencyUSD)
             ) : loadingPortfolio ? (
               <Skeleton
@@ -425,9 +421,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             : userId ? null : (
               parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
             )} */}
-            </div>
           </div>
-        )}
+        </div>
         <i className="ri-arrow-down-s-line fs-4 text-dark"></i>
       </DropdownToggle>
 
