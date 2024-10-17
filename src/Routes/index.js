@@ -18,8 +18,7 @@ const Index = () => {
   const location = useLocation();
   const { user } = useSelector((state) => state.auth);
 
-  const isProfileComplete =
-    user && user.currency && user.country && user.timezone;
+  const isProfileComplete = user && user?.profileComplete;
 
   const [loading, setLoading] = useState(true);
 
