@@ -12,6 +12,7 @@ import {
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 import ChangeEmail from './ChangeEmail';
+import { capitalizeFirstLetter } from '../../../../utils/utils';
 
 const Details = (props) => {
   const dispatch = useDispatch();
@@ -183,19 +184,22 @@ const Details = (props) => {
               readOnly
             />
 
-            {isGoogleAuth && (
+            {!isEmailAuth && (
               <p style={{
                 // color: 'green',
                 marginTop: '10px',
               }}>
-                Your account is connected with Google.<br />Please visit your Google account to manage{' '}
+                Your account is connected with {
+                  capitalizeFirstLetter(authProvider)
+                }.
+                {/* <br />Please visit your Google account to manage{' '}
                 <Link
                   target="_blank"
                   to="https://security.google.com/settings/security/permissions"
                 >
                   Account Permissions
                 </Link>
-                .
+                . */}
 
               </p>
             )}
@@ -246,13 +250,16 @@ const Details = (props) => {
                 <div className="d-flex mt-4">
                   <span className="spinner-border spinner-border-sm ms-2"></span>
                 </div>
-              ) : (
-                <ChangeEmail
-                  onRefresh={handlePendingChangeEmail}
-                  pendingChangeEmail={pendingChangeEmail}
-                  pendingEmailChangeSent={pendingEmailChangeSent}
-                />
-              )}
+              ) :
+                <>
+
+                  <ChangeEmail
+                    onRefresh={handlePendingChangeEmail}
+                    pendingChangeEmail={pendingChangeEmail}
+                    pendingEmailChangeSent={pendingEmailChangeSent}
+                  />
+                </>
+              }
             </Col>
           )}
 
