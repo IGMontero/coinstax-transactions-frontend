@@ -358,7 +358,7 @@ export const buildParamsForTransactions = ({
     query,
     filters: {
       blockchainAction: filters.selectedFilters,
-      includeSpam: filters.includeSpam,
+      excludeSpam: !filters.includeSpam,
     },
     assetsFilters: selectAsset,
     page: page || 0,
