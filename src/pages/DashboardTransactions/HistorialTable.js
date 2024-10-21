@@ -685,7 +685,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         blockchain: networkType,
         filters: {
           blockchainAction: selectedFilters,
-          includeSpam: includeSpam,
+          excludeSpam: !includeSpam,
         },
         address: address,
       };
@@ -813,7 +813,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         blockchain: networkType,
         filters: {
           blockchainAction: selectedFilters,
-          includeSpam: includeSpam,
+          excludeSpam: !includeSpam,
         },
       };
 
