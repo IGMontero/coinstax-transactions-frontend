@@ -73,19 +73,13 @@ const Sidebar = ({ layoutType }) => {
       <div
         className="app-menu navbar-menu"
         style={{
-          left: windowSize < 1736 ? '0px' : 'unset',
-          // backgroundColor:
-          //   layoutModeType === layoutModeTypes['DARKMODE']
-          //     ? '#1d1d21'
-          //     : '#F1F2FA',
+
           backgroundColor:
             layoutModeType === layoutModeTypes['DARKMODE']
               ? 'transaparent'
               : 'transparent',
         }}
-        // style={{
-        //   background: '#23282C',
-        // }}
+
       >
         <div className="navbar-brand-box ">
           <button
@@ -115,7 +109,7 @@ const Sidebar = ({ layoutType }) => {
           <React.Fragment>
             <SimpleBar
               id="scrollbar"
-              //  className="h-100 "
+            //  className="h-100 "
             >
               <Link
                 to={
@@ -123,6 +117,7 @@ const Sidebar = ({ layoutType }) => {
                     ? '/wallets'
                     : 'https://chainglance.com/wallets'
                 }
+                className='d-flex align-items-center justify-content-center'
               >
                 <span className="logo-lg d-flex align-items-center justify-content-center">
                   <img

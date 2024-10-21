@@ -203,11 +203,11 @@ const Layout = (props) => {
 
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
-            getCurrentUserPortfolioSummary({
-              userId: currentPortfolioUserId,
-              signal,
-            }),
-          ).unwrap()
+          getCurrentUserPortfolioSummary({
+            userId: currentPortfolioUserId,
+            signal,
+          }),
+        ).unwrap()
         : dispatch(getAddressesInfo({ address: address, signal }));
 
       const response = await request;
@@ -384,60 +384,73 @@ const Layout = (props) => {
       <div id="layout-wrapper">
         <div
           className={isAuthPage ? '' : 'main-content'}
-          style={{ height: '100vh' }}
+          style={{ height: '100vh', 'margin': '0 auto' }}
         >
+          {/* {!isAuthPage && (
+            <>
+              <Header
+                headerClass={headerClass}
+                layoutModeType={layoutModeType}
+                onChangeLayoutMode={onChangeLayoutMode}
+              />
+            </>
+          )} */}
           <div
-            className=""
-            style={{
-              maxWidth: '1920px',
-              // width: '1920px',
-              left: '0px',
-              margin: 'auto',
-            }}
+            className="container-xxl "
           >
-            {!isAuthPage && (
-              <>
+            <div className='row'>
+
+              {!isAuthPage && (
+                <div className="col-md-3 col-lg-2 col-0">
+                  <Sidebar layoutType={layoutType} />
+                </div>
+              )
+              }
+
+              <div
+                // className="page-content col-8"
+                className="col-md-8 mt-5 col-12"
+              >
                 <Header
                   headerClass={headerClass}
                   layoutModeType={layoutModeType}
                   onChangeLayoutMode={onChangeLayoutMode}
                 />
-                <Sidebar layoutType={layoutType} />
-              </>
-            )}
-            <div className="page-content">
-              {!isPageWithoutAddress(location.pathname) &&
-                !token &&
-                !contractAddress && (
-                  <AddressWithDropdown
-                    isUnsupported={isUnsupported}
-                    addressNickName={nickName}
-                    isOnlyAllNetwork={isOnlyAllNetwork}
-                    filteredNetworks={filteredNetworks}
-                    incompleteBlockchains={incompleteBlockchains}
-                    loading={loading && !isInInterval}
-                  />
-                )}
-              {(() => {
-                if (
-                  token ||
-                  contractAddress ||
-                  isPageWithoutAddress(location.pathname)
-                ) {
-                  return props.children;
-                } else if (isUnsupported) {
-                  return <UnsupportedPage />;
-                } else if (!loading || isInInterval) {
-                  if (isSuccessfullRequest) {
+                {!isPageWithoutAddress(location.pathname) &&
+                  !token &&
+                  !contractAddress && (
+                    <AddressWithDropdown
+                      isUnsupported={isUnsupported}
+                      addressNickName={nickName}
+                      isOnlyAllNetwork={isOnlyAllNetwork}
+                      filteredNetworks={filteredNetworks}
+                      incompleteBlockchains={incompleteBlockchains}
+                      loading={loading && !isInInterval}
+                    />
+                  )}
+                {(() => {
+                  if (
+                    token ||
+                    contractAddress ||
+                    isPageWithoutAddress(location.pathname)
+                  ) {
                     return props.children;
+                  } else if (isUnsupported) {
+                    return <UnsupportedPage />;
+                  } else if (!loading || isInInterval) {
+                    if (isSuccessfullRequest) {
+                      return props.children;
+                    } else {
+                      return null;
+                    }
                   } else {
                     return null;
                   }
-                } else {
-                  return null;
-                }
-              })()}
+                })()}
+              </div>
             </div>
+
+
           </div>
           <Footer />
         </div>

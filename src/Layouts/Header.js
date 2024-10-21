@@ -237,87 +237,82 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     <React.Fragment>
       <header
         id="page-topbar"
-        style={{
-          width: '100%',
-          left: 'auto',
-          right: '0px',
-          maxWidth: '100%',
-
-        }}
+        style={
+          {
+            left: '0',
+            right: '0'
+          }
+        }
         className="mb-4 d-flex align-items-center justify-content-center"
       >
-        <div
-          className="header-container"
-          style={{
-            width: '100%',
-            maxWidth: '1100px',
-          }}
-        >
-          <div
-            className={`navbar-header `}
-            style={{
-              backgroundColor:
-                layoutModeType === layoutModeTypes['DARKMODE']
-                  ? '#16161a'
-                  : '#fff',
-              padding: `0 20px`
-              // borderBottom:
-              //   layoutModeType === layoutModeTypes['DARKMODE']
-              //     ? ' rgba(255, 255, 255, 0.04)'
-              //     : ' rgba(0, 0, 0, 0.04)',
-            }}
-          >
-            <div
-              // lg={12}
-              // xs={12}
-              // style={{ borderBottom: '1px solid #e5e5e5' }}
-              className="d-flex justify-content-between align-items-center border-bottom border-2 w-100"
-            >
-              <Col className="col-1 d-md-none d-lg-none">
-                <button
-                  onClick={toogleMenuBtn}
-                  type="button"
-                  className="btn ms-n3 btn-sfs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
-                  id="topnav-hamburger-icon"
-                >
-                  <span className="hamburger-icon text-dark">
-                    <span
-                      style={{ background: isLightMode ? 'black' : '' }}
-                    ></span>
-                    <span
-                      style={{ background: isLightMode ? 'black' : '' }}
-                    ></span>
-                    <span
-                      style={{ background: isLightMode ? 'black' : '' }}
-                    ></span>
-                  </span>
-                </button>
-              </Col>
-              <Col className="d-flex align-items-center col-xs-4">
-                <div className="col-sm-12 col-md-12 col-lg-7 col-xs-12 col-12 ">
-                  <ParentComponentSearchBar
-                    trackWallets={false}
-                    searchInput={searchInput}
-                    setSearchInput={setSearchInput}
-                  />
-                </div>
-              </Col>
-              <Col lg={3}>
-                <div className="d-flex align-items-center justify-content-end">
-                  {currentUser && (
-                    <NotificationDropdown
-                      onRefresh={handleGetNotifications}
-                      handleLoadMoreNotifications={handleLoadMoreNotifications}
-                    />
-                  )}
-                  <WalletsConnectDropdown />
-                  <LightDark
-                    layoutMode={layoutModeType}
-                    onChangeLayoutMode={onChangeLayoutMode}
-                  />
-                  {/* {commentedCode()} */}
+        <div className="container-xxl">
+          <div className="row">
 
-                  {/* {currentUser &&
+            <div className="col-md-3 col-lg-2 col-0">
+
+            </div>
+
+            <div
+              className={` col-md-8 col-12`}
+              style={{
+                backgroundColor:
+                  layoutModeType === layoutModeTypes['DARKMODE']
+                    ? '#16161a'
+                    : '#fff',
+
+              }}
+            >
+              <div
+                // lg={12}
+                // xs={12}
+                // style={{ borderBottom: '1px solid #e5e5e5' }}
+                className="d-flex justify-content-between align-items-center border-bottom border-2 w-100"
+              >
+                <Col className="col-1 d-md-none d-lg-none">
+                  <button
+                    onClick={toogleMenuBtn}
+                    type="button"
+                    className="btn ms-n3 btn-sfs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
+                    id="topnav-hamburger-icon"
+                  >
+                    <span className="hamburger-icon text-dark">
+                      <span
+                        style={{ background: isLightMode ? 'black' : '' }}
+                      ></span>
+                      <span
+                        style={{ background: isLightMode ? 'black' : '' }}
+                      ></span>
+                      <span
+                        style={{ background: isLightMode ? 'black' : '' }}
+                      ></span>
+                    </span>
+                  </button>
+                </Col>
+                <Col className="d-flex align-items-center col-xs-4">
+                  <div className="col-sm-12 col-md-12 col-lg-7 col-xs-12 col-12 ">
+                    <ParentComponentSearchBar
+                      trackWallets={false}
+                      searchInput={searchInput}
+                      setSearchInput={setSearchInput}
+                    />
+                  </div>
+                </Col>
+                <Col lg={3}>
+                  <div className="d-flex align-items-center justify-content-end">
+                    {currentUser && (
+                      <NotificationDropdown
+                        onRefresh={handleGetNotifications}
+                        handleLoadMoreNotifications={handleLoadMoreNotifications}
+                      />
+                    )}
+                    <WalletsConnectDropdown />
+                    <LightDark
+                      layoutMode={layoutModeType}
+                      onChangeLayoutMode={onChangeLayoutMode}
+                    />
+                    {/* {commentedCode()} */}
+
+                    {/* {currentUser &&
                     currentUser?.role === DASHBOARD_USER_ROLES.USER && (
                       <div className="me-2">
                         <DropdownPortfolio
@@ -327,19 +322,23 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                         />
                       </div>
                     )} */}
-                  {currentUser ? (
-                    <ProfileDropdown currentUser={currentUser} />
-                  ) : (
-                    <Link to={'/login'}>
-                      <ProfileDropdown />
-                    </Link>
-                  )}
-                </div>
-              </Col>
+                    {currentUser ? (
+                      <ProfileDropdown currentUser={currentUser} />
+                    ) : (
+                      <Link to={'/login'}>
+                        <ProfileDropdown />
+                      </Link>
+                    )}
+                  </div>
+                </Col>
+              </div>
             </div>
           </div>
 
         </div>
+
+
+
       </header>
     </React.Fragment>
   );
