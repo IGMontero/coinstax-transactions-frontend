@@ -221,7 +221,7 @@ const Register = () => {
                 </Link>
               </div>
               <Col md={9} lg={7} xl={7}>
-                <Card className="mt-4">
+                <Card className="mt-4" style={{ maxWidth: 500 }}>
                   <CardBody className="p-4">
                     <div className="text-center my-3">
                       <h3 className="text-primary">Create a New Account</h3>

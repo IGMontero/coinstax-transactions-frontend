@@ -409,13 +409,19 @@ const Layout = (props) => {
 
               <div
                 // className="page-content col-8"
-                className="col-md-8 mt-5 col-12"
+                className={
+                  isAuthPage ? 'col-12 page-content' :
+                    "col-md-8 mt-5 col-12"}
               >
-                <Header
-                  headerClass={headerClass}
-                  layoutModeType={layoutModeType}
-                  onChangeLayoutMode={onChangeLayoutMode}
-                />
+                {!isAuthPage && (
+                  <Header
+                    headerClass={headerClass}
+                    layoutModeType={layoutModeType}
+                    onChangeLayoutMode={onChangeLayoutMode}
+                  />
+                )
+                }
+
                 {!isPageWithoutAddress(location.pathname) &&
                   !token &&
                   !contractAddress && (
