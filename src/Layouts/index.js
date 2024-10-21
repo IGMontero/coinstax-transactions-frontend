@@ -382,49 +382,29 @@ const Layout = (props) => {
   return (
     <React.Fragment>
       <div id="layout-wrapper">
-        <div
-          className={isAuthPage ? '' : 'main-content'}
-          style={{ height: '100vh', 'margin': '0 auto' }}
-        >
-          {/* {!isAuthPage && (
-            <>
-              <Header
-                headerClass={headerClass}
-                layoutModeType={layoutModeType}
-                onChangeLayoutMode={onChangeLayoutMode}
-              />
-            </>
-          )} */}
-          <div
-            className="container-xxl "
-          >
-            <div className='row'>
-
-              {!isAuthPage && (
+        {isAuthPage ? (
+          // Layout for Auth Pages (without grid system)
+          <div className="auth-page-content" style={{ height: '100vh', margin: '0 auto', marginTop: '2rem' }}>
+            {props.children}
+          </div>
+        ) : (
+          // Layout for Non-Auth Pages (with grid system)
+          <div className="main-content" style={{ height: '100vh', margin: '0 auto' }}>
+            <div className="container-xxl">
+              <div className="row">
                 <div className="col-md-3 col-lg-2 col-0">
                   <Sidebar layoutType={layoutType} />
                 </div>
-              )
-              }
 
-              <div
-                // className="page-content col-8"
-                className={
-                  isAuthPage ? 'col-12 page-content' :
-                    "col-md-8 mt-5 col-12"}
-              >
-                {!isAuthPage && (
+                <div className="col-md-8 mt-5 col-12">
                   <Header
                     headerClass={headerClass}
                     layoutModeType={layoutModeType}
                     onChangeLayoutMode={onChangeLayoutMode}
                   />
-                )
-                }
 
-                {!isPageWithoutAddress(location.pathname) &&
-                  !token &&
-                  !contractAddress && (
+                  {/* Conditionally render AddressWithDropdown based on conditions */}
+                  {!isPageWithoutAddress(location.pathname) && !token && !contractAddress && (
                     <AddressWithDropdown
                       isUnsupported={isUnsupported}
                       addressNickName={nickName}
@@ -434,32 +414,29 @@ const Layout = (props) => {
                       loading={loading && !isInInterval}
                     />
                   )}
-                {(() => {
-                  if (
-                    token ||
-                    contractAddress ||
-                    isPageWithoutAddress(location.pathname)
-                  ) {
-                    return props.children;
-                  } else if (isUnsupported) {
-                    return <UnsupportedPage />;
-                  } else if (!loading || isInInterval) {
-                    if (isSuccessfullRequest) {
+
+                  {/* Render children or handle unsupported or loading state */}
+                  {(() => {
+                    if (token || contractAddress || isPageWithoutAddress(location.pathname)) {
                       return props.children;
+                    } else if (isUnsupported) {
+                      return <UnsupportedPage />;
+                    } else if (!loading || isInInterval) {
+                      if (isSuccessfullRequest) {
+                        return props.children;
+                      } else {
+                        return null;
+                      }
                     } else {
                       return null;
                     }
-                  } else {
-                    return null;
-                  }
-                })()}
+                  })()}
+                </div>
               </div>
             </div>
-
-
+            <Footer />
           </div>
-          <Footer />
-        </div>
+        )}
       </div>
       {/* <RightSidebar /> */}
     </React.Fragment>
