@@ -8,6 +8,7 @@ import {
   resendVerificationEmail,
   changeEmail,
   changeEmailPending,
+  forgotPassword,
 } from '../../../../slices/auth2/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
@@ -21,6 +22,8 @@ const Details = (props) => {
 
   const authProvider = currentUser?.authProvider;
   const fixedData = useSelector((state) => state.Common.fixedData);
+
+  const hasPassword = currentUser?.hasPassword;
 
   const isEmailAuth = authProvider === 'email';
   const isGoogleAuth = authProvider === 'google';
@@ -135,6 +138,7 @@ const Details = (props) => {
       setLoadingResendVerificationEmail(false);
     }
   };
+
   const handlePendingChangeEmail = async () => {
     try {
       setLoadingPendingChangeEmail(true);
@@ -171,6 +175,52 @@ const Details = (props) => {
     setShowChangeEmail(!showChangeEmail);
   };
 
+  const handleSetUpPassword = async () => {
+    try {
+      Swal.fire({
+        title: 'Please wait...',
+        text: 'Sending reset link...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      const response = await dispatch(forgotPassword(currentUser.email));
+      const res = response.payload;
+
+      Swal.close();
+
+      if (res.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: res.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'An email was sent to you with details on how to set up your password',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    } catch (error) {
+      Swal.close();
+      console.log('error', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  };
+
   return (
     <TabPane tabId="1">
       <Row>
@@ -185,13 +235,14 @@ const Details = (props) => {
             />
 
             {!isEmailAuth && (
-              <p style={{
-                // color: 'green',
-                marginTop: '10px',
-              }}>
-                Your account is connected with {
-                  capitalizeFirstLetter(authProvider)
-                }.
+              <p
+                style={{
+                  // color: 'green',
+                  marginTop: '10px',
+                }}
+              >
+                Your account is connected with{' '}
+                {capitalizeFirstLetter(authProvider)}.
                 {/* <br />Please visit your Google account to manage{' '}
                 <Link
                   target="_blank"
@@ -200,10 +251,8 @@ const Details = (props) => {
                   Account Permissions
                 </Link>
                 . */}
-
               </p>
             )}
-
 
             {currentUser?.emailVerified ? null : ( // <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
               <div>
@@ -229,20 +278,17 @@ const Details = (props) => {
           </Col>
           {/* <hr /> */}
 
-
-
-          {isEmailAuth && (
-            <Button
-              color="soft-primary"
-              className={`btn btn-soft-primary  
+          {/* {isEmailAuth && ( */}
+          <Button
+            color="soft-primary"
+            className={`btn btn-soft-primary  
  }`}
-              disabled={!isEmailAuth}
-              onClick={toggleChangeEmail}
-            >
-              {showChangeEmail ? 'Hide' : 'Change Email'}
-            </Button>
-          )}
-
+            // disabled={}
+            onClick={toggleChangeEmail}
+          >
+            {showChangeEmail ? 'Hide' : 'Change Email'}
+          </Button>
+          {/* )} */}
 
           {showChangeEmail && (
             <Col>
@@ -250,16 +296,28 @@ const Details = (props) => {
                 <div className="d-flex mt-4">
                   <span className="spinner-border spinner-border-sm ms-2"></span>
                 </div>
-              ) :
+              ) : (
                 <>
-
-                  <ChangeEmail
-                    onRefresh={handlePendingChangeEmail}
-                    pendingChangeEmail={pendingChangeEmail}
-                    pendingEmailChangeSent={pendingEmailChangeSent}
-                  />
+                  {!hasPassword ? (
+                    <>
+                      <p className="mt-4">You don’t have a password.</p>
+                      <Button
+                        onClick={handleSetUpPassword}
+                        color="soft-primary"
+                        className="btn btn-soft-primary"
+                      >
+                        Set Up a new password
+                      </Button>
+                    </>
+                  ) : (
+                    <ChangeEmail
+                      onRefresh={handlePendingChangeEmail}
+                      pendingChangeEmail={pendingChangeEmail}
+                      pendingEmailChangeSent={pendingEmailChangeSent}
+                    />
+                  )}
                 </>
-              }
+              )}
             </Col>
           )}
 
@@ -341,10 +399,11 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-              : ''
-              }`}
+            className={`btn btn-soft-primary mb-3 ${
+              loadingUpdateInfo
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
           >
             Update
           </Button>
@@ -430,10 +489,11 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-              : ''
-              }`}
+            className={`btn btn-soft-primary mb-0 ${
+              loadingNotificationsPreference
+                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                : ''
+            }`}
           >
             Update
           </Button>
