@@ -3,7 +3,7 @@ import { TabPane, Row, Col, Label, Button } from 'reactstrap';
 import { useDispatch } from 'react-redux';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { changePassword } from '../../../../slices/auth2/thunk';
+import { changePassword, forgotPassword } from '../../../../slices/auth2/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 import { capitalizeFirstLetter } from '../../../../utils/utils';
@@ -11,6 +11,8 @@ import { capitalizeFirstLetter } from '../../../../utils/utils';
 const ChangePassword = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+
+  const hasPassword = user?.hasPassword;
 
   const authProvider = user?.authProvider;
   const isEmailAuth = authProvider === 'email';
@@ -64,15 +66,72 @@ const ChangePassword = () => {
     }
   };
 
+  const handleSetUpPassword = async () => {
+    try {
+      Swal.fire({
+        title: 'Please wait...',
+        text: 'Sending reset link...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      const response = await dispatch(forgotPassword(user.email));
+      const res = response.payload;
+
+      Swal.close();
+
+      if (res.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: res.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'An email was sent to you with details on how to set up your password',
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      }
+    } catch (error) {
+      Swal.close();
+      console.log('error', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  };
+
   return (
     <TabPane tabId="3">
       <h3 className="text-muted mb-3">Change Password</h3>
-      {!isEmailAuth ? (
+      {/* {!isEmailAuth ? (
         <Col lg={12} className="my-4">
           <p>Your account is connected with {
             capitalizeFirstLetter(authProvider)
           }. You cannot change your password.</p>
-        </Col>
+        </Col> */}
+      {!hasPassword ? (
+        <>
+          <p className="mt-4">You don’t have a password.</p>
+          <Button
+            onClick={handleSetUpPassword}
+            color="soft-primary"
+            className="btn btn-soft-primary"
+          >
+            Set Up a new password
+          </Button>
+        </>
       ) : (
         <div className="mb-4">
           <div className="">
@@ -137,10 +196,11 @@ const ChangePassword = () => {
                       type="submit"
                       color="soft-primary"
                       disabled={isSubmitting || !dirty || !isValid}
-                      className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
-                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                        : ''
-                        }`}
+                      className={`btn btn-soft-primary mb-0 ${
+                        isSubmitting || !dirty || !isValid
+                          ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                          : ''
+                      }`}
                     >
                       {isSubmitting ? 'Changing ...' : 'Change Password'}
                     </Button>

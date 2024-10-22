@@ -175,52 +175,6 @@ const Details = (props) => {
     setShowChangeEmail(!showChangeEmail);
   };
 
-  const handleSetUpPassword = async () => {
-    try {
-      Swal.fire({
-        title: 'Please wait...',
-        text: 'Sending reset link...',
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-
-      const response = await dispatch(forgotPassword(currentUser.email));
-      const res = response.payload;
-
-      Swal.close();
-
-      if (res.error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: res.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      } else {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'An email was sent to you with details on how to set up your password',
-          showConfirmButton: false,
-          timer: 1500,
-        });
-      }
-    } catch (error) {
-      Swal.close();
-      console.log('error', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Something went wrong',
-        showConfirmButton: false,
-        timer: 1500,
-      });
-    }
-  };
-
   return (
     <TabPane tabId="1">
       <Row>
@@ -300,14 +254,10 @@ const Details = (props) => {
                 <>
                   {!hasPassword ? (
                     <>
-                      <p className="mt-4">You don’t have a password.</p>
-                      <Button
-                        onClick={handleSetUpPassword}
-                        color="soft-primary"
-                        className="btn btn-soft-primary"
-                      >
-                        Set Up a new password
-                      </Button>
+                      <p className="my-4">
+                        You need to set up a password first. Navigate to
+                        Security tab to set up your password.
+                      </p>
                     </>
                   ) : (
                     <ChangeEmail
