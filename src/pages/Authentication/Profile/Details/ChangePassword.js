@@ -18,6 +18,8 @@ const ChangePassword = () => {
   const isEmailAuth = authProvider === 'email';
   const isGoogleAuth = authProvider === 'google';
 
+  const [resetPwEmailSent, setResetPwEmailSent] = React.useState(false);
+
   const initialValues = {
     currentPassword: '',
     newPassword: '',
@@ -91,12 +93,14 @@ const ChangePassword = () => {
           timer: 1500,
         });
       } else {
+        setResetPwEmailSent(true);
+
         Swal.fire({
           icon: 'success',
           title: 'Success',
-          text: 'An email was sent to you with details on how to set up your password',
+          text: 'An email was sent to you with details on how to set up your password.',
           showConfirmButton: false,
-          timer: 1500,
+          timer: 2500,
         });
       }
     } catch (error) {
@@ -123,14 +127,34 @@ const ChangePassword = () => {
         </Col> */}
       {!hasPassword ? (
         <>
-          <p className="mt-4">You don’t have a password.</p>
-          <Button
-            onClick={handleSetUpPassword}
-            color="soft-primary"
-            className="btn btn-soft-primary"
-          >
-            Set Up a new password
-          </Button>
+          {resetPwEmailSent ? (
+            <>
+              <p className="mt-4">
+                An email was sent to you with details on how to set up your
+                password.
+              </p>
+
+              <Button
+                onClick={handleSetUpPassword}
+                color="soft-primary"
+                className="btn btn-soft-primary"
+              >
+                Resend Email
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="mt-4">Your account does not have a password.</p>
+              <Button
+                onClick={handleSetUpPassword}
+                color="soft-primary"
+                className="btn btn-soft-primary"
+              >
+                Set Up a new password
+              </Button>
+            </>
+          )}
+
         </>
       ) : (
         <div className="mb-4">
@@ -196,11 +220,10 @@ const ChangePassword = () => {
                       type="submit"
                       color="soft-primary"
                       disabled={isSubmitting || !dirty || !isValid}
-                      className={`btn btn-soft-primary mb-0 ${
-                        isSubmitting || !dirty || !isValid
-                          ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                          : ''
-                      }`}
+                      className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
+                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                        : ''
+                        }`}
                     >
                       {isSubmitting ? 'Changing ...' : 'Change Password'}
                     </Button>

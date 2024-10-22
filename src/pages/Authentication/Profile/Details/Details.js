@@ -255,8 +255,17 @@ const Details = (props) => {
                   {!hasPassword ? (
                     <>
                       <p className="my-4">
-                        You need to set up a password first. Navigate to
-                        Security tab to set up your password.
+                        You need to set up a password in order to change your email. <br /> Navigate to Security
+                        tab to set up your password.
+                        {/* <Link
+                          style={{
+                            marginLeft: '5px',
+                          }}
+                          to="/profile/security"
+                        >
+                          Security
+                        </Link> */}
+
                       </p>
                     </>
                   ) : (
@@ -349,11 +358,10 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${
-              loadingUpdateInfo
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
-            }`}
+            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
+              }`}
           >
             Update
           </Button>
@@ -439,11 +447,10 @@ const Details = (props) => {
             color="soft-primary"
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${
-              loadingNotificationsPreference
-                ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
-                : ''
-            }`}
+            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
+              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+              : ''
+              }`}
           >
             Update
           </Button>
