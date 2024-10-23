@@ -67,19 +67,27 @@ const Sidebar = ({ layoutType }) => {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
+  const bgColorStyle = {
+    backgroundColor:
+      windowSize > 768
+        ? layoutModeType === layoutModeTypes['LIGHTMODE']
+          ? 'blue'
+          : 'transparent'
+        : '',
+  };
 
   return (
     <React.Fragment>
       <div
         className="app-menu navbar-menu"
         style={{
-
           backgroundColor:
-            layoutModeType === layoutModeTypes['DARKMODE']
-              ? 'transaparent'
+            windowSize < 768
+              ? layoutModeType === layoutModeTypes['DARKMODE']
+                ? '#16161a'
+                : 'white'
               : 'transparent',
         }}
-
       >
         <div className="navbar-brand-box ">
           <button
@@ -109,7 +117,7 @@ const Sidebar = ({ layoutType }) => {
           <React.Fragment>
             <SimpleBar
               id="scrollbar"
-            //  className="h-100 "
+              //  className="h-100 "
             >
               <Link
                 to={
@@ -117,7 +125,7 @@ const Sidebar = ({ layoutType }) => {
                     ? '/wallets'
                     : 'https://chainglance.com/wallets'
                 }
-                className='d-flex align-items-center justify-content-center'
+                className="d-flex align-items-center justify-content-center"
               >
                 <span className="logo-lg d-flex align-items-center justify-content-center">
                   <img
