@@ -248,12 +248,12 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
         <div className="container-xxl">
           <div className="row">
 
-            <div className="col-md-3 col-lg-2 col-0">
+            <div className="col-md-2 col-lg-3 col-0">
 
             </div>
 
             <div
-              className={` col-md-8 col-12`}
+              className={`col-md-10 col-lg-8 col-12`}
               style={{
                 backgroundColor:
                   layoutModeType === layoutModeTypes['DARKMODE']
