@@ -8,6 +8,7 @@ import {
   resendVerificationEmail,
   changeEmail,
   changeEmailPending,
+  forgotPassword,
 } from '../../../../slices/auth2/thunk';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
@@ -21,6 +22,8 @@ const Details = (props) => {
 
   const authProvider = currentUser?.authProvider;
   const fixedData = useSelector((state) => state.Common.fixedData);
+
+  const hasPassword = currentUser?.hasPassword;
 
   const isEmailAuth = authProvider === 'email';
   const isGoogleAuth = authProvider === 'google';
@@ -135,6 +138,7 @@ const Details = (props) => {
       setLoadingResendVerificationEmail(false);
     }
   };
+
   const handlePendingChangeEmail = async () => {
     try {
       setLoadingPendingChangeEmail(true);
@@ -185,13 +189,14 @@ const Details = (props) => {
             />
 
             {!isEmailAuth && (
-              <p style={{
-                // color: 'green',
-                marginTop: '10px',
-              }}>
-                Your account is connected with {
-                  capitalizeFirstLetter(authProvider)
-                }.
+              <p
+                style={{
+                  // color: 'green',
+                  marginTop: '10px',
+                }}
+              >
+                Your account is connected with{' '}
+                {capitalizeFirstLetter(authProvider)}.
                 {/* <br />Please visit your Google account to manage{' '}
                 <Link
                   target="_blank"
@@ -200,10 +205,8 @@ const Details = (props) => {
                   Account Permissions
                 </Link>
                 . */}
-
               </p>
             )}
-
 
             {currentUser?.emailVerified ? null : ( // <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
               <div>
@@ -229,20 +232,17 @@ const Details = (props) => {
           </Col>
           {/* <hr /> */}
 
-
-
-          {isEmailAuth && (
-            <Button
-              color="soft-primary"
-              className={`btn btn-soft-primary  
+          {/* {isEmailAuth && ( */}
+          <Button
+            color="soft-primary"
+            className={`btn btn-soft-primary  
  }`}
-              disabled={!isEmailAuth}
-              onClick={toggleChangeEmail}
-            >
-              {showChangeEmail ? 'Hide' : 'Change Email'}
-            </Button>
-          )}
-
+            // disabled={}
+            onClick={toggleChangeEmail}
+          >
+            {showChangeEmail ? 'Hide' : 'Change Email'}
+          </Button>
+          {/* )} */}
 
           {showChangeEmail && (
             <Col>
@@ -250,16 +250,33 @@ const Details = (props) => {
                 <div className="d-flex mt-4">
                   <span className="spinner-border spinner-border-sm ms-2"></span>
                 </div>
-              ) :
+              ) : (
                 <>
+                  {!hasPassword ? (
+                    <>
+                      <p className="my-4">
+                        You need to set up a password in order to change your email. <br /> Navigate to Security
+                        tab to set up your password.
+                        {/* <Link
+                          style={{
+                            marginLeft: '5px',
+                          }}
+                          to="/profile/security"
+                        >
+                          Security
+                        </Link> */}
 
-                  <ChangeEmail
-                    onRefresh={handlePendingChangeEmail}
-                    pendingChangeEmail={pendingChangeEmail}
-                    pendingEmailChangeSent={pendingEmailChangeSent}
-                  />
+                      </p>
+                    </>
+                  ) : (
+                    <ChangeEmail
+                      onRefresh={handlePendingChangeEmail}
+                      pendingChangeEmail={pendingChangeEmail}
+                      pendingEmailChangeSent={pendingEmailChangeSent}
+                    />
+                  )}
                 </>
-              }
+              )}
             </Col>
           )}
 

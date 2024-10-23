@@ -3,7 +3,7 @@ import { TabPane, Row, Col, Label, Button } from 'reactstrap';
 import { useDispatch } from 'react-redux';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { changePassword } from '../../../../slices/auth2/thunk';
+import { changePassword, forgotPassword } from '../../../../slices/auth2/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 import { capitalizeFirstLetter } from '../../../../utils/utils';
@@ -12,9 +12,13 @@ const ChangePassword = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
+  const hasPassword = user?.hasPassword;
+
   const authProvider = user?.authProvider;
   const isEmailAuth = authProvider === 'email';
   const isGoogleAuth = authProvider === 'google';
+
+  const [resetPwEmailSent, setResetPwEmailSent] = React.useState(false);
 
   const initialValues = {
     currentPassword: '',
@@ -64,15 +68,94 @@ const ChangePassword = () => {
     }
   };
 
+  const handleSetUpPassword = async () => {
+    try {
+      Swal.fire({
+        title: 'Please wait...',
+        text: 'Sending reset link...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      const response = await dispatch(forgotPassword(user.email));
+      const res = response.payload;
+
+      Swal.close();
+
+      if (res.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: res.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        setResetPwEmailSent(true);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'An email was sent to you with details on how to set up your password.',
+          showConfirmButton: false,
+          timer: 2500,
+        });
+      }
+    } catch (error) {
+      Swal.close();
+      console.log('error', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
+  };
+
   return (
     <TabPane tabId="3">
       <h3 className="text-muted mb-3">Change Password</h3>
-      {!isEmailAuth ? (
+      {/* {!isEmailAuth ? (
         <Col lg={12} className="my-4">
           <p>Your account is connected with {
             capitalizeFirstLetter(authProvider)
           }. You cannot change your password.</p>
-        </Col>
+        </Col> */}
+      {!hasPassword ? (
+        <>
+          {resetPwEmailSent ? (
+            <>
+              <p className="mt-4">
+                An email was sent to you with details on how to set up your
+                password.
+              </p>
+
+              <Button
+                onClick={handleSetUpPassword}
+                color="soft-primary"
+                className="btn btn-soft-primary"
+              >
+                Resend Email
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="mt-4">Your account does not have a password.</p>
+              <Button
+                onClick={handleSetUpPassword}
+                color="soft-primary"
+                className="btn btn-soft-primary"
+              >
+                Set Up a new password
+              </Button>
+            </>
+          )}
+
+        </>
       ) : (
         <div className="mb-4">
           <div className="">
