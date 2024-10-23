@@ -66,7 +66,7 @@
 // }
 
 .navbar-menu {
-  width: 207px;
+  width: 207px !important;
   z-index: $vertical-menu-z-index;
   // background: $vertical-menu-bg;
   // background: #16161a;
@@ -235,11 +235,17 @@
 }
 
 // media query
-// @media (min-width: 768px) and (max-width: 900px) {
-//   .navbar-menu {
-//     width: 175px !important;
-//   }
-// }
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .navbar-menu {
+    width: 115px !important;
+  }
+
+}
+@media (min-width: 991.99px)  {
+  .navbar-menu {
+    width: 207px !important;
+  }
+  }
 
 .navbar-brand-box {
   padding: 0 1.3rem;
@@ -402,7 +408,7 @@
 
     // Side menu
     .navbar-menu {
-      width: 107px !important;
+      // width: 107px !important;
 
       .btn-vertical-sm-hover {
         display: none;
@@ -742,7 +748,7 @@
 
     // Side menu
     .navbar-menu {
-      width: $vertical-menu-width-md !important;
+      // width: 107px !important;
 
       // Sidebar Menu
       .navbar-nav {
@@ -948,24 +954,24 @@
         }
       }
 
-      //   @media (max-width: 900px) {
-      //     .nav-link {
-      //       display: flex;
-      //       flex-direction: column;
-      //       justify-content: center;
-      //       align-items: center;
-      //       text-align: center;
-      //       // padding-left: 30px !important;
-      //       padding: 5px;
-      //     }
+        @media (max-width: 991px) {
+          .nav-link {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            // padding-left: 30px !important;
+            padding: 5px;
+          }
 
-      //     .navbar-menu {
-      //       width: 107px !important;
-      //     }
-      //     // [data-layout="vertical"], [data-layout="semibox"][data-sidebar="dark"] .navbar-menu {
-      //     //     width: 107px !important;
-      //     // }
-      //   }
+          .navbar-menu {
+            width: 107px !important;
+          }
+          [data-layout="vertical"], [data-layout="semibox"][data-sidebar="dark"] .navbar-menu {
+              width: 107px !important;
+          }
+        }
 
       .nav-sm {
         .nav-link {
