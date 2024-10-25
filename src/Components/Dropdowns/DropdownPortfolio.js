@@ -80,7 +80,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const selectedAddress = isPortoflioPage
     ? 'portfolio'
     : userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-      addressParams;
+    addressParams;
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
@@ -180,9 +180,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${
-        address.name ? address.name : address.address
-      }?`,
+      text: `Are you sure to delete wallet ${address.name ? address.name : address.address
+        }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -390,7 +389,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     <Dropdown
       className="mt-3"
       style={{
-        paddingLeft: '.7rem',
+        paddingLeft: '8px',
         maxWidth: shouldBeResponsive ? '' : '150px',
       }}
       isOpen={dropdownOpen}
@@ -410,7 +409,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
           <div className="d-flex flex-column align-items-start flex-grow-1">
             <span
-              className={`text-start fs-15 text-dark ${isInHeader ? 'me-2' : ''}`}
+              className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}
               style={{
                 whiteSpace: 'nowrap',
                 overflow: 'hidden',
