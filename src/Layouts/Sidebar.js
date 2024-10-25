@@ -79,7 +79,7 @@ const Sidebar = ({ layoutType }) => {
   return (
     <React.Fragment>
       <div
-        className="app-menu navbar-menu col-md-2"
+        className="app-menu navbar-menu col-md-2 col-4"
         style={{
           backgroundColor:
             windowSize < 768
@@ -117,7 +117,7 @@ const Sidebar = ({ layoutType }) => {
           <React.Fragment>
             <SimpleBar
               id="scrollbar"
-            //  className="h-100 "
+              //  className="h-100 "
             >
               <Link
                 to={
@@ -142,14 +142,13 @@ const Sidebar = ({ layoutType }) => {
                 {/* // dropdwpn  */}
               </Link>
 
-              <DropdownPortfolio
-                dropdownOpen={dropdownOpen}
-                toggleDropdown={toggleDropdown}
-              />
-
               <Container fluid>
                 <div id="two-column-menu"></div>
                 <ul className="navbar-nav" id="navbar-nav">
+                  <DropdownPortfolio
+                    dropdownOpen={dropdownOpen}
+                    toggleDropdown={toggleDropdown}
+                  />
                   <VerticalLayout layoutType={layoutType} />
                 </ul>
               </Container>

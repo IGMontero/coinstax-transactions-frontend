@@ -7,6 +7,8 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  Row,
+  Col,
 } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
@@ -18,6 +20,7 @@ import {
   CurrencyUSD,
   copyToClipboard,
   formatAddressToShortVersion,
+  formatIdTransaction,
   parseValuesToLocale,
 } from '../../utils/utils';
 import { layoutModeTypes } from '../constants/layout';
@@ -77,7 +80,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const selectedAddress = isPortoflioPage
     ? 'portfolio'
     : userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-    addressParams;
+      addressParams;
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
@@ -177,8 +180,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.name ? address.name : address.address
-        }?`,
+      text: `Are you sure to delete wallet ${
+        address.name ? address.name : address.address
+      }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -380,20 +384,39 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     return userId ? 'User Portfolio' : 'Select Wallet';
   };
 
+  const shouldBeResponsive = windowSize < 1126 && windowSize > 767;
+
   return (
-    <Dropdown className="ms-2" isOpen={dropdownOpen} toggle={toggleDropdown}>
+    <Dropdown
+      className="mt-3"
+      style={{
+        paddingLeft: '.7rem',
+        maxWidth: shouldBeResponsive ? '' : '150px',
+      }}
+      isOpen={dropdownOpen}
+      toggle={toggleDropdown}
+    >
       <DropdownToggle
-        className={`w-100 bg-transparent border-1 border-light rounded-4  d-flex align-items-center`}
+        className={`w-100 bg-transparent p-0  d-flex ${shouldBeResponsive ? 'ps-3' : 'ps-4'}  align-items-start justify-content-center border-0 rounded-4 `}
         variant="transparent"
         id="dropdown-basic"
       >
-        {!isInHeader && (
-          <i className="ri-dashboard-fill pe-3 fs-2 text-dark"></i>
-        )}
-        {windowSize < 992 && windowSize > 767 ? null : (
+        <div
+          className={`${shouldBeResponsive ? 'flex-column text-center' : ''}  d-flex align-items-center`}
+        >
+          <i
+            className={`ri-dashboard-fill ${shouldBeResponsive ? '' : 'pe-3'} fs-18 text-dark`}
+          ></i>
+
           <div className="d-flex flex-column align-items-start flex-grow-1">
             <span
-              className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}
+              className={`text-start fs-15 text-dark ${isInHeader ? 'me-2' : ''}`}
+              style={{
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                maxWidth: shouldBeResponsive ? '70px' : '120px',
+              }}
             >
               {getDisplayTextDropdown()}
               {/* {getDisplayTextDropdown()} */}
@@ -411,22 +434,10 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
               ) : (
                 parseValuesToLocale(addressToShow.value, CurrencyUSD)
               )}
-              {/* {selectedAddress ? (
-              parseValuesToLocale(selectedAddress.value, CurrencyUSD)
-            ) : loadingPortfolio ? (
-              <Skeleton
-                width={80}
-                baseColor={isDarkMode ? '#333' : '#f3f3f3'}
-                highlightColor={isDarkMode ? '#444' : '#e0e0e0'}
-              />
-            ) 
-            : userId ? null : (
-              parseValuesToLocale(totalPortfolioValue, CurrencyUSD)
-            )} */}
             </div>
           </div>
-        )}
-        <i className="ri-arrow-down-s-line fs-4 text-dark"></i>
+        </div>
+        <i className="ri-arrow-down-s-line  fs-4 text-dark"></i>
       </DropdownToggle>
 
       <DropdownMenuPortal>
