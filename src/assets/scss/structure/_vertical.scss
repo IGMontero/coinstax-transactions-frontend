@@ -235,11 +235,11 @@
 }
 
 // media query
-@media (min-width: 768px) and (max-width: 991.98px) {
-  .navbar-menu {
-    width: 115px !important;
-  }
-}
+// @media (min-width: 768px) and (max-width: 991.98px) {
+//   .navbar-menu {
+//     width: 115px !important;
+//   }
+// }
 // @media (min-width: 991.99px) {
 //   .navbar-menu {
 //     width: 207px !important;
@@ -953,25 +953,52 @@
         }
       }
 
-      @media (max-width: 991px) {
+      @media (min-width: 768px) and (max-width: 1125px) {
         .nav-link {
           display: flex;
           flex-direction: column;
-          justify-content: center;
+          justify-content: start;
           align-items: center;
           text-align: center;
           // padding-left: 30px !important;
+          padding-right: px !important;
           padding: 5px;
         }
 
-        .navbar-menu {
-          width: 107px !important;
-        }
-        [data-layout='vertical'],
-        [data-layout='semibox'][data-sidebar='dark'] .navbar-menu {
-          width: 107px !important;
-        }
+        // .navbar-menu {
+        //   width: 107px !important;
+        // }
+        // [data-layout='vertical'],
+        // [data-layout='semibox'][data-sidebar='dark'] .navbar-menu {
+        //   width: 107px !important;
+        // }
       }
+
+      // @media (min-width: 768px) {
+      // .navbar-menu {
+      //   width: 207px !important;
+      // }
+      // }
+      // @media (max-width: 768px) {
+      //   .nav-link {
+      //     display: flex;
+      //     flex-direction: column;
+      //     justify-content: start;
+      //     align-items: center;
+      //     text-align: center;
+      //     // padding-left: 30px !important;
+      //     padding-right: px !important;
+      //     padding: 5px;
+      //   }
+
+      //   .navbar-menu {
+      //     width: 107px !important;
+      //   }
+      //   [data-layout='vertical'],
+      //   [data-layout='semibox'][data-sidebar='dark'] .navbar-menu {
+      //     width: 107px !important;
+      //   }
+      // }
 
       .nav-sm {
         .nav-link {

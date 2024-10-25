@@ -203,11 +203,11 @@ const Layout = (props) => {
 
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
-          getCurrentUserPortfolioSummary({
-            userId: currentPortfolioUserId,
-            signal,
-          }),
-        ).unwrap()
+            getCurrentUserPortfolioSummary({
+              userId: currentPortfolioUserId,
+              signal,
+            }),
+          ).unwrap()
         : dispatch(getAddressesInfo({ address: address, signal }));
 
       const response = await request;
@@ -384,12 +384,18 @@ const Layout = (props) => {
       <div id="layout-wrapper">
         {isAuthPage ? (
           // Layout for Auth Pages (without grid system)
-          <div className="auth-page-content" style={{ height: '100vh', margin: '0 auto', marginTop: '2rem' }}>
+          <div
+            className="auth-page-content"
+            style={{ height: '100vh', margin: '0 auto', marginTop: '2rem' }}
+          >
             {props.children}
           </div>
         ) : (
           // Layout for Non-Auth Pages (with grid system)
-          <div className="main-content" style={{ height: '100vh', margin: '0 auto' }}>
+          <div
+            className="main-content"
+            style={{ height: '100vh', margin: '0 auto' }}
+          >
             <div className="container-xxl h-100">
               <div className="row">
                 <div className="col-md-2 col-lg-2 col-0">
@@ -404,20 +410,26 @@ const Layout = (props) => {
                   />
 
                   {/* Conditionally render AddressWithDropdown based on conditions */}
-                  {!isPageWithoutAddress(location.pathname) && !token && !contractAddress && (
-                    <AddressWithDropdown
-                      isUnsupported={isUnsupported}
-                      addressNickName={nickName}
-                      isOnlyAllNetwork={isOnlyAllNetwork}
-                      filteredNetworks={filteredNetworks}
-                      incompleteBlockchains={incompleteBlockchains}
-                      loading={loading && !isInInterval}
-                    />
-                  )}
+                  {!isPageWithoutAddress(location.pathname) &&
+                    !token &&
+                    !contractAddress && (
+                      <AddressWithDropdown
+                        isUnsupported={isUnsupported}
+                        addressNickName={nickName}
+                        isOnlyAllNetwork={isOnlyAllNetwork}
+                        filteredNetworks={filteredNetworks}
+                        incompleteBlockchains={incompleteBlockchains}
+                        loading={loading && !isInInterval}
+                      />
+                    )}
 
                   {/* Render children or handle unsupported or loading state */}
                   {(() => {
-                    if (token || contractAddress || isPageWithoutAddress(location.pathname)) {
+                    if (
+                      token ||
+                      contractAddress ||
+                      isPageWithoutAddress(location.pathname)
+                    ) {
                       return props.children;
                     } else if (isUnsupported) {
                       return <UnsupportedPage />;
@@ -433,8 +445,8 @@ const Layout = (props) => {
                   })()}
                 </div>
               </div>
+              <Footer />
             </div>
-            <Footer />
           </div>
         )}
       </div>
