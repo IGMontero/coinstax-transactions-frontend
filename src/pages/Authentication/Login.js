@@ -118,6 +118,21 @@ const Login = (props) => {
     }
   }, [dispatch, error]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const error = params.get('error');
+
+    if (error === 'auth-failed') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Authentication Failed',
+        text: 'Your login attempt was unsuccessful. Please try again.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      });
+    }
+  }, [location.search]);
+
   return (
     <React.Fragment>
       <Helmet title="Login" />
@@ -162,13 +177,13 @@ const Login = (props) => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                                validation.errors.email
+                              validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                            validation.errors.email ? (
+                          validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -202,13 +217,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                  validation.errors.password
+                                validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                              validation.errors.password ? (
+                            validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>
