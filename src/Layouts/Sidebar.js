@@ -79,7 +79,7 @@ const Sidebar = ({ layoutType }) => {
   return (
     <React.Fragment>
       <div
-        className="app-menu navbar-menu"
+        className="app-menu navbar-menu col-md-2"
         style={{
           backgroundColor:
             windowSize < 768
@@ -117,7 +117,7 @@ const Sidebar = ({ layoutType }) => {
           <React.Fragment>
             <SimpleBar
               id="scrollbar"
-              //  className="h-100 "
+            //  className="h-100 "
             >
               <Link
                 to={

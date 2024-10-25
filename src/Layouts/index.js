@@ -392,7 +392,7 @@ const Layout = (props) => {
           <div className="main-content" style={{ height: '100vh', margin: '0 auto' }}>
             <div className="container-xxl h-100">
               <div className="row">
-                <div className="col-md-2 col-lg-3 col-0">
+                <div className="col-md-2 col-lg-2 col-0">
                   <Sidebar layoutType={layoutType} />
                 </div>
 

@@ -1,31 +1,33 @@
 import React, { useEffect, useState } from 'react';
-import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
-import Helmet from '../../Components/Helmet/Helmet';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Card, CardBody, Col, Container, Input, Row } from 'reactstrap';
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
-import { confirmEmailChange } from '../../slices/auth2/thunk';
 import { useDispatch } from 'react-redux';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Card, CardBody, Col, Container, Row } from 'reactstrap';
+import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import Helmet from '../../Components/Helmet/Helmet';
 import { useLogOut } from '../../hooks/useAuth';
+import { confirmEmailChange } from '../../slices/auth2/thunk';
+import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 
 const ConfirmEmail = () => {
-  const logout = useLogOut();
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
 
   const tokenParams = new URLSearchParams(location.search);
   const token = tokenParams.get('token');
+  const logout = useLogOut();
+
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
       logout();
+
       setTimeout(() => {
-        window.location.href = '/';
+        navigate('/login');
       }, 3000);
     } catch (error) {
       console.log(error);

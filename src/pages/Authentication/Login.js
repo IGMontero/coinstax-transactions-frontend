@@ -25,6 +25,10 @@ import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import {
+  setAddressSearched,
+  setPrevAddress,
+} from '../../slices/layoutMenuData/reducer';
 //import images
 
 const Login = (props) => {
@@ -71,6 +75,8 @@ const Login = (props) => {
         //   showConfirmButton: false,
         // });
         const authMeRes = await dispatch(authMe());
+        dispatch(setPrevAddress(null));
+        dispatch(setAddressSearched(null));
 
         const { role } = authMeRes.payload;
 
@@ -118,6 +124,21 @@ const Login = (props) => {
     }
   }, [dispatch, error]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const error = params.get('error');
+
+    if (error === 'auth-failed') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Authentication Failed',
+        text: 'Your login attempt was unsuccessful. Please try again.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      });
+    }
+  }, [location.search]);
+
   return (
     <React.Fragment>
       <Helmet title="Login" />
@@ -136,7 +157,7 @@ const Login = (props) => {
                   />
                 </Link>
               </div>
-              <Col md={9} lg={7} xl={7}>
+              <Col md={9} lg={6} xl={4}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
                     <div className="text-center my-3">

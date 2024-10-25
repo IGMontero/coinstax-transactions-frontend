@@ -33,7 +33,9 @@ const DashboardConnectWallets = () => {
   const { loaders } = useSelector((state) => state.userWallets);
   const userId = user?.id;
   const userAddresses = userPortfolioSummary?.addresses;
+  const state = useSelector((state) => state);
 
+  console.log('state', state);
   const connections = useConnections();
 
   const accessTokenParams = new URLSearchParams(location.search);
