@@ -2,11 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { DASHBOARD_USER_ROLES } from '../common/constants';
+import { useDispatch } from 'react-redux';
+import {
+  setPrevAddress,
+  setAddressSearched,
+} from '../slices/layoutMenuData/reducer';
 
 const Navdata = () => {
   const location = useLocation();
   const { address, token, contractAddress, userId } = useParams();
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
@@ -24,18 +29,24 @@ const Navdata = () => {
   const { fetchData } = useSelector((state) => ({
     fetchData: state.fetchData,
   }));
+  const { prevAddress, addressSearched } = useSelector(
+    (state) => state.layoutMenuData,
+  );
 
-  const [prevAddress, setPrevAddress] = useState(null);
-  const [addressSearched, setAddressSearched] = useState(null);
+  const state = useSelector((state) => state);
+
+  console.log('state', state);
+
+  // const [addressSearched, setAddressSearched] = useState(null);
   const [isUnsupported, setIsUnsupported] = useState(false);
   const [iscurrentState, setIscurrentState] = useState('');
 
   useEffect(() => {
     if (isUserPortfolio) {
-      setPrevAddress(`/users/${userId}/portfolio`);
+      dispatch(setPrevAddress(`/users/${userId}/portfolio`));
     } else if (isCurrentUserPortfolioSelected) {
-      setPrevAddress('portfolio');
-      setAddressSearched('portfolio');
+      dispatch(setPrevAddress('portfolio'));
+      dispatch(setAddressSearched('portfolio'));
     } else if (
       !address &&
       !token &&
@@ -43,12 +54,12 @@ const Navdata = () => {
       !isUserPortfolio &&
       !prevAddress
     ) {
-      setAddressSearched('');
-      setPrevAddress('');
+      dispatch(setAddressSearched(''));
+      dispatch(setPrevAddress(''));
     } else if (address && address !== addressSearched) {
       // If an address is selected, update the values
-      setAddressSearched(address);
-      setPrevAddress(address);
+      dispatch(setAddressSearched(address));
+      dispatch(setPrevAddress(address));
     }
   }, [
     address,
@@ -62,13 +73,11 @@ const Navdata = () => {
     userId,
   ]);
 
-  useEffect(() => {
-    if (!user) {
-      setPrevAddress(null);
-      setAddressSearched(null);
-      setIscurrentState('');
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   dispatch(setPrevAddress(null));
+  //   dispatch(setAddressSearched(null));
+  //   setIscurrentState('');
+  // }, [user]);
 
   useEffect(() => {
     const { assets, transactions, performance } = fetchData;

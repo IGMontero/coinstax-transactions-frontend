@@ -25,6 +25,10 @@ import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import {
+  setAddressSearched,
+  setPrevAddress,
+} from '../../slices/layoutMenuData/reducer';
 //import images
 
 const Login = (props) => {
@@ -71,6 +75,8 @@ const Login = (props) => {
         //   showConfirmButton: false,
         // });
         const authMeRes = await dispatch(authMe());
+        dispatch(setPrevAddress(null));
+        dispatch(setAddressSearched(null));
 
         const { role } = authMeRes.payload;
 
