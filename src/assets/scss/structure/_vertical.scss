@@ -235,17 +235,24 @@
 }
 
 // media query
-@media (min-width: 768px) and (max-width: 991.98px) {
+@media (min-width: 768px) and (max-width: 1260px) {
   .navbar-menu {
     width: 115px !important;
   }
-
 }
-@media (min-width: 991.99px)  {
+
+@media (min-width: 1260px) {
   .navbar-menu {
     width: 207px !important;
   }
+}
+
+// From 1260 to 768, reduce the width of the vertical menu.
+@media (min-width: 768px) and (max-width: 1260px) {
+  .navbar-menu {
+    width: 115px !important;
   }
+}
 
 .navbar-brand-box {
   padding: 0 1.3rem;
@@ -954,24 +961,25 @@
         }
       }
 
-        @media (max-width: 991px) {
-          .nav-link {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            // padding-left: 30px !important;
-            padding: 5px;
-          }
-
-          .navbar-menu {
-            width: 107px !important;
-          }
-          [data-layout="vertical"], [data-layout="semibox"][data-sidebar="dark"] .navbar-menu {
-              width: 107px !important;
-          }
+      @media (max-width: 1260px) {
+        .nav-link {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          // padding-left: 30px !important;
+          padding: 5px;
         }
+
+        .navbar-menu {
+          width: 107px !important;
+        }
+        [data-layout='vertical'],
+        [data-layout='semibox'][data-sidebar='dark'] .navbar-menu {
+          width: 107px !important;
+        }
+      }
 
       .nav-sm {
         .nav-link {

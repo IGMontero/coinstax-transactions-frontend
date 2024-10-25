@@ -26,11 +26,15 @@ import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
+import { logoutUser } from '../../slices/thunks';
+import { useLogOut } from '../../hooks/useAuth';
 
 const ResetPaswword = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const logout = useLogOut();
+
   const [passwordShow, setPasswordShow] = useState(false);
   const [confrimPasswordShow, setConfrimPasswordShow] = useState(false);
   const [isError, setIsError] = useState(false);
@@ -133,6 +137,10 @@ const ResetPaswword = () => {
           showConfirmButton: false,
           timer: 1500,
         });
+
+        // Logout user.
+        logout();
+
 
         navigate('/login');
       } else {
