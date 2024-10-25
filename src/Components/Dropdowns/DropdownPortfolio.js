@@ -390,7 +390,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         {!isInHeader && (
           <i className="ri-dashboard-fill pe-3 fs-2 text-dark"></i>
         )}
-        {windowSize < 1260 && windowSize > 767 ? null : (
+        {windowSize < 992 && windowSize > 767 ? null : (
           <div className="d-flex flex-column align-items-start flex-grow-1">
             <span
               className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}
