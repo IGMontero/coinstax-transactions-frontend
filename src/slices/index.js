@@ -29,6 +29,8 @@ import NotificationsReducer from './notifications/reducer';
 
 import CommonReducer from './fixedData/reducer';
 
+import LayoutMenuDataReducer from './layoutMenuData/reducer';
+
 const rootReducer = combineReducers({
   Layout: LayoutReducer,
   Login: LoginReducer,
@@ -46,6 +48,7 @@ const rootReducer = combineReducers({
   jobs: JobsReducer,
   notifications: NotificationsReducer,
   Common: CommonReducer,
+  layoutMenuData: LayoutMenuDataReducer,
 });
 
 export default rootReducer;
