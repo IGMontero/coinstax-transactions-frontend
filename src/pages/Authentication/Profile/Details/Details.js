@@ -283,7 +283,54 @@ const Details = (props) => {
           <hr />
           <h3 className="text-muted mb-3">Preferences</h3>
 
-          <Row>
+
+          <Row className="mb-4 ">
+            <Col lg={6}>
+              <div className="mt-3">
+                <Label className="form-label">Country</Label>
+                <select
+                  name="country"
+                  id="countryInput"
+                  className="form-select"
+                  value={country || ''}
+                  onChange={(e) => {
+                    setCountry(e.target.value);
+                  }}
+                >
+                  <option value="">Select Country</option>
+                  {fixedData?.countries.map((item) => (
+                    <option key={item.code} value={item.code}>
+                      {item.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </Col>
+
+            <Col lg={6} className="mt-3">
+              <div>
+                <Label htmlFor="timezoneInput" className="form-label">
+                  Time Zone
+                </Label>
+                <select
+                  value={timezone}
+                  onChange={(e) => setTimezone(e.target.value)}
+                  className="form-select"
+                  id="timezoneInput"
+                  name="timeZone"
+                >
+                  <option value="">Auto</option>
+                  {fixedData?.timezones.map((item) => (
+                    <option key={item.id} value={item.id}>
+                      <span dangerouslySetInnerHTML={{ __html: item.name }} />
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </Col>
+          </Row>
+
+          {/* <Row>
             <Col lg={6}>
               <Label className="form-label">Your Currency</Label>
               <select
@@ -307,51 +354,7 @@ const Details = (props) => {
                 ))}
               </select>
             </Col>
-          </Row>
-          <Row className="mb-4 ">
-            <Col lg={6} className="mt-3">
-              <div>
-                <Label htmlFor="timezoneInput" className="form-label">
-                  Time Zone
-                </Label>
-                <select
-                  value={timezone}
-                  onChange={(e) => setTimezone(e.target.value)}
-                  className="form-select"
-                  id="timezoneInput"
-                  name="timeZone"
-                >
-                  <option value="">Auto</option>
-                  {fixedData?.timezones.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      <span dangerouslySetInnerHTML={{ __html: item.name }} />
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </Col>
-            <Col lg={6}>
-              <div className="mt-3">
-                <Label className="form-label">Country</Label>
-                <select
-                  name="country"
-                  id="countryInput"
-                  className="form-select"
-                  value={country || ''}
-                  onChange={(e) => {
-                    setCountry(e.target.value);
-                  }}
-                >
-                  <option value="">Select Country</option>
-                  {fixedData?.countries.map((item) => (
-                    <option key={item.code} value={item.code}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </Col>
-          </Row>
+          </Row> */}
 
           <Button
             type="submit"
