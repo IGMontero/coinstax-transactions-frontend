@@ -11,31 +11,30 @@ import Register from '../pages/Authentication/Register';
 
 // User Profile
 import { DASHBOARD_USER_ROLES } from '../common/constants';
+import ConfirmEmail from '../pages/Authentication/ConfirmEmail';
+import ResetPaswword from '../pages/Authentication/ResetPassword';
 import UserProfile from '../pages/Authentication/UserProfile';
+import VerifyEmail from '../pages/Authentication/VerifyEmail';
+import DashboardCompleteInfo from '../pages/CompleteInfo/DashboardCompleteInfo';
+import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWallets';
+import DashboardAccountantAgents from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantAgents';
+import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantUsers';
+import Clients from '../pages/DashboardAccountsWallets/Admin/Clients';
+import Users from '../pages/DashboardAccountsWallets/Admin/Users';
+import UsersProfile from '../pages/DashboardAccountsWallets/Admin/components/Profiles/UsersProfile';
+import DashboardClientsAgent from '../pages/DashboardAccountsWallets/Agent/DashboardClientsAgent';
+import DashboardClientProfile from '../pages/DashboardAccountsWallets/DashboardClientProfile';
 import DashboardAssets from '../pages/DashboardAssets/DashboardAssets';
 import DashboardBlockchainContracts from '../pages/DashboardBlockchainContracts/DashboardBlockchainContracts';
 import DashboardHome from '../pages/DashboardHome/DashboardHome';
 import DashboardInfo from '../pages/DashboardInfo/DashboardInfo';
+import DashboardInvite from '../pages/DashboardInvite/DashboardInvite';
 import DashboardNFT from '../pages/DashboardNFT/DashboardNFT';
 import NFTsPage from '../pages/DashboardNFT/NFTsPage';
 import DashboardTokens from '../pages/DashboardTokens/DashboardTokens';
 import DashboardTransactions from '../pages/DashboardTransactions/DashboardTransactions';
 import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUserAddresses';
 import AuthProtectedRoutes from './AuthProtectedRoutes';
-import ResetPaswword from '../pages/Authentication/ResetPassword';
-import DashboardUserWallets from '../pages/DashboardAccountsWallets/DashboardUserWallets';
-import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantUsers';
-import DashboardClientProfile from '../pages/DashboardAccountsWallets/DashboardClientProfile';
-import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWallets';
-import DashboardInvite from '../pages/DashboardInvite /DashboardInvite';
-import Clients from '../pages/DashboardAccountsWallets/Admin/Clients';
-import Users from '../pages/DashboardAccountsWallets/Admin/Users';
-import UsersProfile from '../pages/DashboardAccountsWallets/Admin/components/Profiles/UsersProfile';
-import DashboardAccountantAgents from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantAgents';
-import DashboardClientsAgent from '../pages/DashboardAccountsWallets/Agent/DashboardClientsAgent';
-import VerifyEmail from '../pages/Authentication/VerifyEmail';
-import ConfirmEmail from '../pages/Authentication/ConfirmEmail';
-import DashboardCompleteInfo from '../pages/CompleteInfo/DashboardCompleteInfo';
 
 // Auth protected routes
 const adminRoutes = [
