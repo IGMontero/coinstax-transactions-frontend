@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Row,
-  Col,
-  CardBody,
-  Card,
   Alert,
+  Button,
+  Card,
+  CardBody,
+  Col,
   Container,
-  Input,
-  Label,
   Form,
   FormFeedback,
-  Button,
+  Input,
+  Label,
+  Row,
   Spinner,
 } from 'reactstrap';
 
 // Formik Validation
-import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import * as Yup from 'yup';
 
 // action
 import { register } from '../../slices/auth2/thunk';
@@ -27,15 +27,13 @@ import { useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 //import images
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
-import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
-import SocialAuth from '../../Components/SocialAuth/SocialAuth';
-import Helmet from '../../Components/Helmet/Helmet';
-import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
-import { DASHBOARD_USER_ROLES } from '../../common/constants';
-import { timezonesArray } from '../../helpers/timeZones';
-import { fetchApiVersion, fetchUserCountry } from '../../slices/common/thunk';
+import Swal from 'sweetalert2';
+import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import Helmet from '../../Components/Helmet/Helmet';
+import SocialAuth from '../../Components/SocialAuth/SocialAuth';
+import { fetchUserCountry } from '../../slices/common/thunk';
+import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -319,7 +317,7 @@ const Register = () => {
                         </div>
 
 
-                        <div className="mb-2">
+                        {/* <div className="mb-2">
                           <Label htmlFor="currency" className="form-label">
                             Currency <span className="text-danger">*</span>
                           </Label>
@@ -340,7 +338,7 @@ const Register = () => {
                               </option>
                             ))}
                           </select>
-                        </div>
+                        </div> */}
 
 
 
