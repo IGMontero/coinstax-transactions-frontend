@@ -52,7 +52,6 @@ const Register = () => {
   const code = searchParams.get('code');
   const type = searchParams.get('type');
 
-
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
@@ -103,13 +102,13 @@ const Register = () => {
 
       if (response && !response.error) {
         // navigate('/wallets/connect');
-        Swal.fire({
-          // title: 'Success',
-          text: 'Welcome to ChainGlance!',
-          icon: 'success',
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // Swal.fire({
+        //   title: 'Success',
+        //   text: 'Welcome to ChainGlance!',
+        //   icon: 'success',
+        //   timer: 2000,
+        //   showConfirmButton: false,
+        // });
         if (code && type) {
           navigate(`/invite?code=${code}&type=${type}`);
         } else {
@@ -128,17 +127,14 @@ const Register = () => {
 
   useEffect(() => {
     const initialize = async () => {
-
       // Make a request to the server api version, just to get the headers of response.
       const response = await dispatch(fetchUserCountry());
 
       const userCountry = response.country || null;
 
-
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
       const countryCode = userCountry;
-
 
       if (countryCode === 'XX' || !countryCode) {
         validation.setFieldValue('country', '');
@@ -176,7 +172,7 @@ const Register = () => {
       } else {
         validation.setFieldValue('timezone', '');
       }
-    }
+    };
 
     initialize();
   }, []);
@@ -198,7 +194,6 @@ const Register = () => {
       if (currency) {
         validation.setFieldValue('currency', currency.id);
       }
-
     }
   }, [validation.values.country]);
 
@@ -260,19 +255,18 @@ const Register = () => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                                validation.errors.email
+                              validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                            validation.errors.email ? (
+                          validation.errors.email ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.email}</div>
                             </FormFeedback>
                           ) : null}
                         </div>
-
 
                         <div className="mb-2">
                           <Label htmlFor="timezone" className="form-label">
@@ -318,7 +312,6 @@ const Register = () => {
                           </select>
                         </div>
 
-
                         <div className="mb-2">
                           <Label htmlFor="currency" className="form-label">
                             Currency <span className="text-danger">*</span>
@@ -342,8 +335,6 @@ const Register = () => {
                           </select>
                         </div>
 
-
-
                         <div className="mb-2">
                           <Label htmlFor="userpassword" className="form-label">
                             Password <span className="text-danger">*</span>
@@ -357,13 +348,13 @@ const Register = () => {
                             value={validation.values.password || ''}
                             invalid={
                               validation.touched.password &&
-                                validation.errors.password
+                              validation.errors.password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.password &&
-                            validation.errors.password ? (
+                          validation.errors.password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.password}</div>
                             </FormFeedback>
@@ -387,13 +378,13 @@ const Register = () => {
                             value={validation.values.confirm_password || ''}
                             invalid={
                               validation.touched.confirm_password &&
-                                validation.errors.confirm_password
+                              validation.errors.confirm_password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.confirm_password &&
-                            validation.errors.confirm_password ? (
+                          validation.errors.confirm_password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.confirm_password}</div>
                             </FormFeedback>
@@ -404,11 +395,13 @@ const Register = () => {
                           <Button
                             type="submit"
                             disabled={isSubmitDisabled()}
-                            className="mt-3 d-flex btn-hover-light text-dark w-100 justify-content-center align-items-center"
-                            color="soft-light"
+                            // className="mt-3 d-flex btn-hover-light text-dark w-100 justify-content-center align-items-center"
+                            // color="soft-light"
+                            color="primary"
+                            className="mt-3 d-flex  w-100 text-dark justify-content-center align-items-center"
                             style={{
                               borderRadius: '10px',
-                              border: '.5px solid grey',
+                              // border: '.5px solid grey',
                             }}
                           >
                             {loading ? (
