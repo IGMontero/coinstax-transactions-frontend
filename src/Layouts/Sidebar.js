@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import logo from '../assets/images/logos/coinstax_logos/logo-dark.png';
 import logoLight from '../assets/images/logos/coinstax_logos/logo-light.png';
@@ -7,7 +7,7 @@ import logoLight from '../assets/images/logos/coinstax_logos/logo-light.png';
 //Import Components
 import VerticalLayout from './VerticalLayouts/index';
 import TwoColumnLayout from './TwoColumnLayout';
-import { Container } from 'reactstrap';
+import { Button, Container } from 'reactstrap';
 import HorizontalLayout from './HorizontalLayout';
 import { layoutModeTypes } from '../Components/constants/layout';
 import { useSelector } from 'react-redux';
@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
 
 const Sidebar = ({ layoutType }) => {
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -145,11 +146,40 @@ const Sidebar = ({ layoutType }) => {
               <Container fluid>
                 <div id="two-column-menu"></div>
                 <ul className="navbar-nav" id="navbar-nav">
-                  <DropdownPortfolio
-                    dropdownOpen={dropdownOpen}
-                    toggleDropdown={toggleDropdown}
-                  />
+                  {user && (
+                    <DropdownPortfolio
+                      dropdownOpen={dropdownOpen}
+                      toggleDropdown={toggleDropdown}
+                    />
+                  )}
                   <VerticalLayout layoutType={layoutType} />
+
+                  {!user && (
+                    <div className="mt-3">
+                      <hr className="hr-dashed" />
+                      <span>
+                        Create an account to save your address and view your
+                        portfolio.
+                      </span>
+                      <div className="mt-3 ">
+                        <Button
+                          onClick={() => {
+                            navigate('/register');
+                          }}
+                          className="btn p-2 btn-soft-primary active btn-md"
+                        >
+                          <span
+                            style={{
+                              whiteSpace: 'nowrap',
+                            }}
+                            className="fs-5 "
+                          >
+                            Sign Up
+                          </span>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </ul>
               </Container>
             </SimpleBar>

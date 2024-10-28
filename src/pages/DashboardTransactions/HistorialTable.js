@@ -1108,7 +1108,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                 ) : unsupportedAddress ? (
                   'Unsupported Address'
                 ) : (
-                  'More Transactions'
+                  'Show More'
                 )}
               </h6>
             )}
