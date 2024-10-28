@@ -1202,3 +1202,25 @@ html[data-bs-theme=dark] .field-wrapper {
       }
   }
 }
+
+// Search bar 
+.css-1u9des2-indicatorSeparator {
+  display: none;
+}
+
+.css-1hb7zxy-IndicatorsContainer {
+  background-color: #405189 !important;
+  background: #405189 !important;
+  border-top-right-radius: 3px !important;
+  border-bottom-right-radius: 3px !important;
+  border-bottom-left-radius: 0px !important;
+  border-top-left-radius: 0px !important;
+}
+.css-1xc3v61-indicatorContainer {
+  background-color: #405189 !important;
+  background: #405189 !important;
+  border-top-right-radius: 3px !important;
+  border-bottom-right-radius: 3px !important;
+  border-bottom-left-radius: 0px !important;
+  border-top-left-radius: 0px !important;
+}
