@@ -80,7 +80,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const selectedAddress = isPortoflioPage
     ? 'portfolio'
     : userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-    addressParams;
+      addressParams;
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
@@ -180,8 +180,9 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const handleDeleteUserAddress = (address) => {
     Swal.fire({
       title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.name ? address.name : address.address
-        }?`,
+      text: `Are you sure to delete wallet ${
+        address.name ? address.name : address.address
+      }?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
@@ -317,7 +318,15 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           <div className="d-flex align-items-center dropdown-item ps-0">
             <i className="ri-link text-muted fs-3 align-middle me-3"></i>
             <div className="d-flex flex-column">
-              <span className="align-middle">
+              <span
+                className="align-middle"
+                style={{
+                  maxWidth: '150px',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
                 {customName || formatAddressToShortVersion(address)}
               </span>
               {loadingAddressValue ? (
@@ -442,7 +451,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
       <DropdownMenuPortal>
         <DropdownMenu
-          className={isInHeader ? '' : 'ms-5'}
           style={{
             zIndex: 1004,
             width: '300px',
