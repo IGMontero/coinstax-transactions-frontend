@@ -24,11 +24,10 @@ const Sidebar = ({ layoutType }) => {
     layoutModeType: state.Layout.layoutModeType,
   }));
 
-  const { prevAddress, addressSearched } = useSelector(
+  const { prevAddress } = useSelector(
     (state) => state.layoutMenuData,
   );
 
-  console.log('prevAddress', prevAddress);
 
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 

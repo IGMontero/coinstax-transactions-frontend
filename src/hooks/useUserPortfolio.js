@@ -125,8 +125,16 @@ export const useRefreshUserPortfolio = () => {
 
   const currentUserId = user?.id;
 
+
+
   const refreshPortfolio = async () => {
     try {
+      if (!currentUserId) {
+        console.error('User not found');
+        return null;
+      }
+
+      console.log('Refreshing portfolio data');
       const response = await dispatch(
         getCurrentUserPortfolioSummary({ userId: currentUserId }),
       ).unwrap();

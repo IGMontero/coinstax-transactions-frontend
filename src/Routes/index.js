@@ -50,7 +50,6 @@ const Index = () => {
     }
   }, [user, isLoginPage, navigate, isRegisterPage, isDashboardPage]);
 
-  console.log('isProfile complete', isProfileComplete);
 
   useEffect(() => {
     if (user && !isProfileComplete) {
