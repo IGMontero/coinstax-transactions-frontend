@@ -4,8 +4,11 @@ import {
   DropdownItem,
   DropdownMenu,
   DropdownToggle,
+  PopoverBody,
   Spinner,
   UncontrolledDropdown,
+  UncontrolledPopover,
+  UncontrolledTooltip,
 } from 'reactstrap';
 import { useLocation, useParams } from 'react-router-dom';
 import QrModal from '../Modals/QrModal';
@@ -191,10 +194,11 @@ const AddressWithDropdown = ({
     if (isCurrentUserPortfolioSelected) {
       return userId ? 'User Portfolio' : 'Portfolio';
     }
+    return addressNickName || address;
 
-    return formattedAddressLabel !== formatIdTransaction(address, 6, 8)
-      ? formattedAddressLabel
-      : addressNickName || formattedAddressLabel;
+    // return formattedAddressLabel !== formatIdTransaction(address, 6, 8)
+    //   ? formattedAddressLabel
+    //   : addressNickName || formattedAddressLabel;
   };
 
   const isAddressInPortfolio = userPortfolioSummary?.addresses?.find(
@@ -208,64 +212,105 @@ const AddressWithDropdown = ({
           {getAddressLabel()}
         </h4>
         {!isCurrentUserPortfolioSelected && (
-          <UncontrolledDropdown className="card-header-dropdown">
-            <DropdownToggle tag="a" className="text-reset" role="button">
-              <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
-            </DropdownToggle>
-            <DropdownMenu className="dropdown-menu-end ms-3">
-              <DropdownItem
-                className="d-flex align-items-center"
-                onClick={toggleQrModal}
-              >
-                <i className="ri-qr-code-line fs-4 me-2"></i>
-                <span className="fw-normal">Show QR code</span>
-              </DropdownItem>
-              <DropdownItem
-                className="d-flex align-items-center"
+          <div className="d-flex align-items-center ms-3">
+            <i
+              onClick={toggleQrModal}
+              className="ri-qr-code-line fs-4 me-2 cursor-pointer"
+            ></i>
+
+            {isCopied ? (
+              <i className="ri-check-line fs-4 me-2"></i>
+            ) : (
+              <i
                 onClick={(e) => handleCopy(e, address)}
-              >
-                {isCopied ? (
-                  <i className="ri-check-line fs-4 me-2"></i>
-                ) : (
-                  <i className="ri-file-copy-line fs-4 me-2"></i>
-                )}
-                <span className="fw-normal">Copy Address</span>
-              </DropdownItem>
-              {isAddressInPortfolio && user && (
-                <DropdownItem
-                  className="d-flex align-items-center"
-                  onClick={(e) => {
-                    const addr = userPortfolioSummary.addresses.find(
-                      (addr) => addr.address === address,
-                    );
-                    if (user && addr) {
-                      handleUpdateAddress(e, addr);
-                    }
-                  }}
-                >
-                  <i className="ri-pencil-line fs-4 me-2"></i>
-                  <span className="fw-normal">Rename</span>
-                </DropdownItem>
-              )}
-              {!isAddressInPortfolio && user && (
-                <DropdownItem
-                  className="d-flex align-items-center"
-                  onClick={() => {
-                    if (loadingAddWallet) {
-                      return;
-                    } else {
-                      handleAddWallet(address);
-                    }
-                  }}
-                >
-                  <i className="bx bx-plus fs-4 me-2"></i>
-                  <span className="fw-normal">Add To Wallets</span>
-                </DropdownItem>
-              )}
-            </DropdownMenu>
-          </UncontrolledDropdown>
+                className="ri-file-copy-line fs-4 me-2 cursor-pointer"
+              ></i>
+            )}
+
+            {isAddressInPortfolio && user && (
+              <i
+                onClick={(e) =>
+                  handleUpdateAddress(e, { id: 1, address: address })
+                }
+                className="ri-pencil-line fs-4 me-2 cursor-pointer"
+              ></i>
+            )}
+
+            {!isAddressInPortfolio && user && (
+              <i
+                onClick={() => {
+                  if (loadingAddWallet) {
+                    return;
+                  } else {
+                    handleAddWallet(address);
+                  }
+                }}
+                className="bx bx-plus fs-4 me-2 cursor-pointer"
+              ></i>
+            )}
+          </div>
         )}
       </div>
+
+      //   {!isCurrentUserPortfolioSelected && (
+      //     <UncontrolledDropdown className="card-header-dropdown">
+      //       <DropdownToggle tag="a" className="text-reset" role="button">
+      //         <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
+      //       </DropdownToggle>
+      //       <DropdownMenu className="dropdown-menu-end ms-3">
+      //         <DropdownItem
+      //           className="d-flex align-items-center"
+      //           onClick={toggleQrModal}
+      //         >
+      //           <i className="ri-qr-code-line fs-4 me-2"></i>
+      //           <span className="fw-normal">Show QR code</span>
+      //         </DropdownItem>
+      //         <DropdownItem
+      //           className="d-flex align-items-center"
+      //           onClick={(e) => handleCopy(e, address)}
+      //         >
+      //           {isCopied ? (
+      //             <i className="ri-check-line fs-4 me-2"></i>
+      //           ) : (
+      //             <i className="ri-file-copy-line fs-4 me-2"></i>
+      //           )}
+      //           <span className="fw-normal">Copy Address</span>
+      //         </DropdownItem>
+      //         {isAddressInPortfolio && user && (
+      //           <DropdownItem
+      //             className="d-flex align-items-center"
+      //             onClick={(e) => {
+      //               const addr = userPortfolioSummary.addresses.find(
+      //                 (addr) => addr.address === address,
+      //               );
+      //               if (user && addr) {
+      //                 handleUpdateAddress(e, addr);
+      //               }
+      //             }}
+      //           >
+      //             <i className="ri-pencil-line fs-4 me-2"></i>
+      //             <span className="fw-normal">Rename</span>
+      //           </DropdownItem>
+      //         )}
+      //         {!isAddressInPortfolio && user && (
+      //           <DropdownItem
+      //             className="d-flex align-items-center"
+      //             onClick={() => {
+      //               if (loadingAddWallet) {
+      //                 return;
+      //               } else {
+      //                 handleAddWallet(address);
+      //               }
+      //             }}
+      //           >
+      //             <i className="bx bx-plus fs-4 me-2"></i>
+      //             <span className="fw-normal">Add To Wallets</span>
+      //           </DropdownItem>
+      //         )}
+      //       </DropdownMenu>
+      //     </UncontrolledDropdown>
+      //   )}
+      // </div>
     );
   };
 
@@ -281,7 +326,7 @@ const AddressWithDropdown = ({
           <Col className="col-7 d-flex justify-content-start align-items-center ">
             {renderAddressWithDropdown()}
           </Col>
-          <Col className="col-5 d-flex justify-content-end align-items-center ">
+          <Col className="col-3 d-flex justify-content-end align-items-center ">
             {loading && (
               <div className="d-flex align-items-center me-2">
                 <Spinner size="md" color="primary" />
