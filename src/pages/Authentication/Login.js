@@ -40,7 +40,8 @@ const Login = (props) => {
 
   const { error } = useSelector((state) => state.auth);
 
-  const [errorMsg, setErrorMsg] = useState(error?.toString());
+  // const [errorMsg, setErrorMsg] = useState(error?.toString());
+  const [errorMsg, setErrorMsg] = useState('');
 
   const [passwordShow, setPasswordShow] = useState(false);
 
@@ -56,17 +57,18 @@ const Login = (props) => {
       console.log(response);
 
       if (response.error) {
-        setErrorMsg('There was a problem with your login. Please try again.');
+        setErrorMsg('Invalid email or password');
         setLoading(false);
 
-        return Swal.fire({
-          title: 'Error',
-          text: 'Invalid email or password',
-          icon: 'error',
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // return Swal.fire({
+        //   title: 'Error',
+        //   text: 'Invalid email or password',
+        //   icon: 'error',
+        //   timer: 2000,
+        //   showConfirmButton: false,
+        // });
       } else {
+        setErrorMsg('');
         // Swal.fire({
         //   // title: 'Success',
         //   text: 'Welcome back!',
@@ -139,6 +141,15 @@ const Login = (props) => {
     }
   }, [location.search]);
 
+  // clear the error msg after 3 seconds
+  useEffect(() => {
+    if (errorMsg) {
+      setTimeout(() => {
+        setErrorMsg('');
+      }, 3000);
+    }
+  }, [errorMsg]);
+
   return (
     <React.Fragment>
       <Helmet title="Login" />
@@ -162,7 +173,7 @@ const Login = (props) => {
                   <CardBody className="p-4">
                     <div className="text-center my-3">
                       <h3 className="text-primary">Welcome to ChainGlance</h3>
-                      <h6 className="text-muted">Sign in to continue.</h6>
+                      {/* <h6 className="text-muted">Sign in to continue.</h6> */}
                     </div>
                     {/* {errorMsg && errorMsg ? (
                       <Alert color="danger"> {errorMsg} </Alert>
@@ -183,13 +194,13 @@ const Login = (props) => {
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                                validation.errors.email
+                              validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                            validation.errors.email ? (
+                          validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -223,13 +234,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                  validation.errors.password
+                                validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                              validation.errors.password ? (
+                            validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>
@@ -260,15 +271,19 @@ const Login = (props) => {
                           </Label>
                         </div> */}
 
+                        {errorMsg && errorMsg ? (
+                          <span className="text-danger">{errorMsg} </span>
+                        ) : null}
                         <div className="mt-4">
                           <Button
                             disabled={loading ? true : false}
                             type="submit"
-                            className="mt-3 d-flex btn-hover-light w-100 text-dark justify-content-center align-items-center"
-                            color="soft-light"
+                            // className="mt-3 d-flex btn-hover-light w-100 text-dark justify-content-center align-items-center"
+                            color="primary"
+                            className="mt-3 d-flex  w-100 text-dark justify-content-center align-items-center"
                             style={{
                               borderRadius: '10px',
-                              border: '.5px solid grey',
+                              // border: '.5px solid grey',
                             }}
                           >
                             {loading ? (
@@ -283,7 +298,7 @@ const Login = (props) => {
 
                         <div className="mt-4 text-center">
                           <div className="signin-other-title">
-                            <h5 className="fs-13 mb-4 title">Sign In with</h5>
+                            <h5 className="fs-13 mb-4 title">Or</h5>
                           </div>
                           <SocialAuth />
                         </div>

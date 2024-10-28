@@ -158,7 +158,7 @@ const CustomOptions = (props) => {
         color="transparent"
         className="p-0 m-0"
       >
-        <i className="ri-close-fill me-2 text-light"></i>
+        <i className="ri-close-fill text-dark me-2 text-light"></i>
       </Button>
     );
   };

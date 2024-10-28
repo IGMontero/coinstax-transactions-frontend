@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
 import logo from '../assets/images/logos/coinstax_logos/logo-dark.png';
 import logoLight from '../assets/images/logos/coinstax_logos/logo-light.png';
@@ -7,7 +7,7 @@ import logoLight from '../assets/images/logos/coinstax_logos/logo-light.png';
 //Import Components
 import VerticalLayout from './VerticalLayouts/index';
 import TwoColumnLayout from './TwoColumnLayout';
-import { Container } from 'reactstrap';
+import { Button, Container } from 'reactstrap';
 import HorizontalLayout from './HorizontalLayout';
 import { layoutModeTypes } from '../Components/constants/layout';
 import { useSelector } from 'react-redux';
@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux';
 import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
 
 const Sidebar = ({ layoutType }) => {
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
   const [windowSize, setWindowSize] = useState(window.innerWidth);
@@ -22,6 +23,12 @@ const Sidebar = ({ layoutType }) => {
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
+
+  const { prevAddress, addressSearched } = useSelector(
+    (state) => state.layoutMenuData,
+  );
+
+  console.log('prevAddress', prevAddress);
 
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
@@ -117,7 +124,7 @@ const Sidebar = ({ layoutType }) => {
           <React.Fragment>
             <SimpleBar
               id="scrollbar"
-              //  className="h-100 "
+            //  className="h-100 "
             >
               <Link
                 to={
@@ -125,13 +132,13 @@ const Sidebar = ({ layoutType }) => {
                     ? '/wallets'
                     : 'https://chainglance.com/wallets'
                 }
-                className="d-flex align-items-center justify-content-center"
+                className="d-flex align-items-center justify-content-start"
               >
                 <span className="logo-lg d-flex align-items-center justify-content-center">
                   <img
                     src={isLightMode ? logoLight : logo}
                     alt=""
-                    className="pt-2"
+                    className="pt-3"
                     style={{
                       marginBottom: '0.85rem',
                     }}
@@ -145,11 +152,41 @@ const Sidebar = ({ layoutType }) => {
               <Container fluid>
                 <div id="two-column-menu"></div>
                 <ul className="navbar-nav" id="navbar-nav">
-                  <DropdownPortfolio
-                    dropdownOpen={dropdownOpen}
-                    toggleDropdown={toggleDropdown}
-                  />
+                  {user && (
+                    <DropdownPortfolio
+                      dropdownOpen={dropdownOpen}
+                      toggleDropdown={toggleDropdown}
+                    />
+                  )}
                   <VerticalLayout layoutType={layoutType} />
+
+                  {!user && (
+                    <div className="mt-3">
+                      {prevAddress && (
+                        <hr className="hr-dashed" />
+                      )}
+                      <span>
+                        Create an account to save your address and view your
+                        portfolio.
+                      </span>
+                      <div className="mt-3 ">
+                        <Button
+                          onClick={() => {
+                            navigate('/register');
+                          }}
+                          className="btn p-2 btn-soft-primary active btn-md"
+                        >
+                          <span
+                            style={{
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            Sign Up
+                          </span>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </ul>
               </Container>
             </SimpleBar>

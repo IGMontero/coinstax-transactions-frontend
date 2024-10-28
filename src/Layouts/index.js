@@ -402,7 +402,12 @@ const Layout = (props) => {
                   <Sidebar layoutType={layoutType} />
                 </div>
 
-                <div className="col-md-10 mt-5 col-lg-8 col-12">
+                <div
+                  className="col-md-10 mt-5 col-lg-8 col-12"
+                  style={{
+                    minHeight: '85vh',
+                  }}
+                >
                   <Header
                     headerClass={headerClass}
                     layoutModeType={layoutModeType}

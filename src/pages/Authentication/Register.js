@@ -50,7 +50,6 @@ const Register = () => {
   const code = searchParams.get('code');
   const type = searchParams.get('type');
 
-
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
     enableReinitialize: true,
@@ -101,13 +100,13 @@ const Register = () => {
 
       if (response && !response.error) {
         // navigate('/wallets/connect');
-        Swal.fire({
-          // title: 'Success',
-          text: 'Welcome to ChainGlance!',
-          icon: 'success',
-          timer: 2000,
-          showConfirmButton: false,
-        });
+        // Swal.fire({
+        //   title: 'Success',
+        //   text: 'Welcome to ChainGlance!',
+        //   icon: 'success',
+        //   timer: 2000,
+        //   showConfirmButton: false,
+        // });
         if (code && type) {
           navigate(`/invite?code=${code}&type=${type}`);
         } else {
@@ -126,17 +125,14 @@ const Register = () => {
 
   useEffect(() => {
     const initialize = async () => {
-
       // Make a request to the server api version, just to get the headers of response.
       const response = await dispatch(fetchUserCountry());
 
       const userCountry = response.country || null;
 
-
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
       const countryCode = userCountry;
-
 
       if (countryCode === 'XX' || !countryCode) {
         validation.setFieldValue('country', '');
@@ -174,7 +170,7 @@ const Register = () => {
       } else {
         validation.setFieldValue('timezone', '');
       }
-    }
+    };
 
     initialize();
   }, []);
@@ -196,7 +192,6 @@ const Register = () => {
       if (currency) {
         validation.setFieldValue('currency', currency.id);
       }
-
     }
   }, [validation.values.country]);
 
@@ -219,13 +214,13 @@ const Register = () => {
                 </Link>
               </div>
               <Col md={9} lg={6} xl={4}>
-                <Card className="mt-4" style={{ maxWidth: 500 }}>
+                <Card className="mt-4" >
                   <CardBody className="p-4">
                     <div className="text-center my-3">
                       <h3 className="text-primary">Create a New Account</h3>
-                      <h6 className="text-muted">
+                      {/* <h6 className="text-muted">
                         Sign up to continue to ChainGlance
-                      </h6>
+                      </h6> */}
                     </div>
                     <div className="p-2 mt-4">
                       <Form
@@ -270,7 +265,6 @@ const Register = () => {
                             </FormFeedback>
                           ) : null}
                         </div>
-
 
                         <div className="mb-2">
                           <Label htmlFor="timezone" className="form-label">
@@ -340,8 +334,6 @@ const Register = () => {
                           </select>
                         </div> */}
 
-
-
                         <div className="mb-2">
                           <Label htmlFor="userpassword" className="form-label">
                             Password <span className="text-danger">*</span>
@@ -402,11 +394,13 @@ const Register = () => {
                           <Button
                             type="submit"
                             disabled={isSubmitDisabled()}
-                            className="mt-3 d-flex btn-hover-light text-dark w-100 justify-content-center align-items-center"
-                            color="soft-light"
+                            // className="mt-3 d-flex btn-hover-light text-dark w-100 justify-content-center align-items-center"
+                            // color="soft-light"
+                            color="primary"
+                            className="mt-3 d-flex  w-100 text-dark justify-content-center align-items-center"
                             style={{
                               borderRadius: '10px',
-                              border: '.5px solid grey',
+                              // border: '.5px solid grey',
                             }}
                           >
                             {loading ? (
@@ -427,7 +421,7 @@ const Register = () => {
                         <div className="mt-4 text-center">
                           <div className="signin-other-title">
                             <h5 className="fs-13 mb-4 title text-muted">
-                              Sign up with
+                              Or
                             </h5>
                           </div>
 

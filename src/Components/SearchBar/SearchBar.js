@@ -421,6 +421,82 @@ const SearchBar = ({
     }),
   };
 
+  const searchBarStyles = {
+    control: (provided) => ({
+      ...provided,
+      backgroundColor:
+        layoutModeType === layoutModeTypes['DARKMODE'] ? ' #1d1d21' : '#fff',
+      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
+      cursor: 'text',
+      textAlign: 'left',
+      border:
+        layoutModeType === layoutModeTypes['DARKMODE']
+          ? '1px solid #2a2f34'
+          : '1px solid #ced4da',
+      outline: 'none !important',
+      boxShadow: 'none !important',
+      '&:hover': {
+        border:
+          layoutModeType === layoutModeTypes['DARKMODE']
+            ? '1px solid #2a2f34'
+            : '1px solid #ced4da',
+      },
+    }),
+    input: (provided) => ({
+      ...provided,
+      fontWeight: '400',
+      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
+    }),
+    menu: (provided) => ({
+      ...provided,
+      marginTop: '0px',
+      zIndex: 9999,
+      backgroundColor:
+        layoutModeType === layoutModeTypes['DARKMODE'] ? '#1d1d21' : '#fff',
+      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      cursor: 'pointer',
+      borderRadius: '16px',
+
+      backgroundColor: state.isFocused
+        ? layoutModeType === layoutModeTypes['DARKMODE']
+          ? 'transparent'
+          : 'transparent'
+        : state.isSelected
+          ? layoutModeType === layoutModeTypes['DARKMODE']
+            ? '#212529'
+            : '#ddd'
+          : 'transparent',
+      color:
+        state.isFocused || state.isSelected
+          ? 'muted'
+          : layoutModeType === layoutModeTypes['DARKMODE']
+            ? '#fff'
+            : 'black',
+      ':active': {
+        ...provided[':active'],
+        backgroundColor: state.isFocused
+          ? layoutModeType === layoutModeTypes['DARKMODE']
+            ? 'transparent'
+            : 'transparent'
+          : state.isSelected
+            ? layoutModeType === layoutModeTypes['DARKMODE']
+              ? '#212529'
+              : '#ddd'
+            : 'transparent',
+      },
+      '&:hover': {
+        backgroundColor: 'transparent',
+        color:
+          layoutModeType === layoutModeTypes['DARKMODE']
+            ? '#4B8EE0'
+            : '#0759BC',
+      },
+    }),
+  };
+
   const DropdownIndicator = (props) => (
     <components.DropdownIndicator {...props}>
       <div
@@ -433,7 +509,8 @@ const SearchBar = ({
         }
       >
         <i
-          className={`ri-search-line align-middle text-${layoutModeType === layoutModeTypes['DARKMODE'] ? 'white' : 'dark'} ${searchInput ? 'cursor-pointer' : ''}`}
+          className={`ri-search-line  align-middle text-${layoutModeType === layoutModeTypes['DARKMODE'] ? 'white' : 'white'} 
+          ${searchInput ? 'cursor-pointer' : ''}`}
         ></i>
       </div>
     </components.DropdownIndicator>
@@ -441,12 +518,13 @@ const SearchBar = ({
 
   // #region RENDER
   return (
-    <div className="d-flex w-100 align-items-center">
+    <div className="d-flex w-100 align-items-center cursor-text">
       <Select
         name="address"
         placeholder="Assets, wallet, domain, or identity"
-        className="w-100"
-        classNamePrefix="select-custom-menu"
+        className="w-100 cursor-text"
+        classNamePrefix=" cursor-text"
+        // classNamePrefix="select-custom-menu"
         value={selectedOption}
         inputValue={searchInput}
         options={options}
@@ -457,7 +535,7 @@ const SearchBar = ({
         filterOption={() => true}
         onInputChange={handleInputChange}
         components={{ DropdownIndicator, Option: CustomOptions }}
-        styles={customStyles}
+        styles={searchBarStyles}
         menuIsOpen={isMenuOpen}
         noOptionsMessage={
           searchInput.length < 3
