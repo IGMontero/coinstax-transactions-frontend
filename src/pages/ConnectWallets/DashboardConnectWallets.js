@@ -389,7 +389,7 @@ const DashboardConnectWallets = () => {
       <div className="page-content d-flex justify-content-center align-items-end">
         <Helmet title="Connect Wallet" />
         <div className="d-flex justify-content-center flex-column align-items-center mt-5">
-          <div className="text-center mt-5">
+          <div className="text-center">
             <h1>Connect to ChainGlance</h1>
             {/* HTML   */}
 
