@@ -229,9 +229,14 @@ const AddressWithDropdown = ({
 
             {isAddressInPortfolio && user && (
               <i
-                onClick={(e) =>
-                  handleUpdateAddress(e, { id: 1, address: address })
-                }
+                onClick={(e) => {
+                  const addr = userPortfolioSummary.addresses.find(
+                    (addr) => addr.address === address,
+                  );
+                  if (user && addr) {
+                    handleUpdateAddress(e, addr);
+                  }
+                }}
                 className="ri-pencil-line fs-4 me-2 cursor-pointer"
               ></i>
             )}
