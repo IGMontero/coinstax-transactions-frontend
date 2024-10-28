@@ -33,10 +33,6 @@ const DashboardConnectWallets = () => {
   const { loaders } = useSelector((state) => state.userWallets);
   const userId = user?.id;
   const userAddresses = userPortfolioSummary?.addresses;
-  const state = useSelector((state) => state);
-
-  console.log('state', state);
-  const connections = useConnections();
 
   const accessTokenParams = new URLSearchParams(location.search);
 
@@ -97,46 +93,11 @@ const DashboardConnectWallets = () => {
 
     if (initialLoad) {
       setInitialLoad(false);
-      refreshUserPortfolio();
-    }
-  }, [initialLoad, refreshUserPortfolio, userAddresses, userPortfolioSummary]);
-
-  const handleSearchWallet = (value) => {
-    navigate(`/address/${value}`);
-  };
-
-  const handleSearch = (value) => {
-    setSearchValue(value);
-  };
-
-  const handleConnectWallet = async (address) => {
-    setLoading(true);
-    try {
-      const response = await dispatch(
-        addUserWallet({ address, userId }),
-      ).unwrap();
-
-      if (response && !response.error) {
-        navigate(`/address/${address}`);
+      if (user)
         refreshUserPortfolio();
-      } else {
-        Swal.fire({
-          title: 'Error',
-          text: response.message || 'Failed to connect wallet',
-          icon: 'error',
-        });
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error('Failed to connect wallet: ', error);
-      Swal.fire({
-        title: 'Error',
-        text: error || 'Failed to connect wallet',
-        icon: 'error',
-      });
-      setLoading(false);
     }
-  };
+  }, [initialLoad]);
+
 
   const handleConnect = (connector) => {
     if (connector.missing) {

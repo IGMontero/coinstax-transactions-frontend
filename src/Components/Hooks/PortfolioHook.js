@@ -17,6 +17,7 @@ const useRefreshPortfolio = (userId) => {
       fetchControllerRef.current = new AbortController();
       const signal = fetchControllerRef.current.signal;
 
+      console.log('Fetching portfolio data');
       const response = await dispatch(
         getCurrentUserPortfolioSummary({ userId, signal }),
       ).unwrap();

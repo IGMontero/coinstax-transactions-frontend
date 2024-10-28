@@ -201,13 +201,14 @@ const Layout = (props) => {
     try {
       setLoading(true);
 
+
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
-            getCurrentUserPortfolioSummary({
-              userId: currentPortfolioUserId,
-              signal,
-            }),
-          ).unwrap()
+          getCurrentUserPortfolioSummary({
+            userId: currentPortfolioUserId,
+            signal,
+          }),
+        ).unwrap()
         : dispatch(getAddressesInfo({ address: address, signal }));
 
       const response = await request;

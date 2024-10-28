@@ -17,7 +17,6 @@ const Navdata = () => {
 
   const isAdminRole = user?.role === DASHBOARD_USER_ROLES.ADMIN;
   const isAccountantRole = user?.role === DASHBOARD_USER_ROLES.ACCOUNTANT;
-  const isUserRole = user?.role === DASHBOARD_USER_ROLES.USER;
   const isAgentRole = user?.role === DASHBOARD_USER_ROLES.AGENT;
 
   const isCurrentUserPortfolioSelected =
@@ -33,9 +32,8 @@ const Navdata = () => {
     (state) => state.layoutMenuData,
   );
 
-  const state = useSelector((state) => state);
+  // const state = useSelector((state) => state);
 
-  console.log('state', state);
 
   // const [addressSearched, setAddressSearched] = useState(null);
   const [isUnsupported, setIsUnsupported] = useState(false);
@@ -83,9 +81,9 @@ const Navdata = () => {
     const { assets, transactions, performance } = fetchData;
     setIsUnsupported(
       assets?.unsupported ||
-        transactions?.unsupported ||
-        performance?.unsupported ||
-        !addressSearched,
+      transactions?.unsupported ||
+      performance?.unsupported ||
+      !addressSearched,
     );
   }, [fetchData, addressSearched, isCurrentUserPortfolioSelected]);
 
@@ -98,13 +96,12 @@ const Navdata = () => {
         : `/portfolio/${page}`
       : contractAddress && !address
         ? `/address/${prevAddress}/${page}`
-        : `${
-            token
-              ? `/tokens/${token}`
-              : prevAddressPortfolio
-                ? `/${addressSearched}/${page}`
-                : `/address/${addressSearched}/${page}`
-          }`;
+        : `${token
+          ? `/tokens/${token}`
+          : prevAddressPortfolio
+            ? `/${addressSearched}/${page}`
+            : `/address/${addressSearched}/${page}`
+        }`;
 
     return {
       id,
