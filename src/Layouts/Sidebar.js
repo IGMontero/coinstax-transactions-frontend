@@ -125,13 +125,13 @@ const Sidebar = ({ layoutType }) => {
                     ? '/wallets'
                     : 'https://chainglance.com/wallets'
                 }
-                className="d-flex align-items-center justify-content-center"
+                className="d-flex align-items-center justify-content-start"
               >
                 <span className="logo-lg d-flex align-items-center justify-content-center">
                   <img
                     src={isLightMode ? logoLight : logo}
                     alt=""
-                    className="pt-2"
+                    className="pt-3"
                     style={{
                       marginBottom: '0.85rem',
                     }}
