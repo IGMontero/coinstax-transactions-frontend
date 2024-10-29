@@ -85,7 +85,7 @@ const Sidebar = ({ layoutType }) => {
   return (
     <React.Fragment>
       <div
-        className="app-menu navbar-menu col-md-2 col-4"
+        className="app-menu navbar-menu"
         style={{
           backgroundColor:
             windowSize < 768
