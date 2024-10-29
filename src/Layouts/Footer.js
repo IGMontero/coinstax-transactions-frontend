@@ -28,9 +28,9 @@ const Footer = () => {
             {/* <Col sm={6}>{new Date().getFullYear()} © CoinsTax</Col> */}
             <Col sm={12}>
               <div className="text-lg-end d-none d-sm-block text-white">
-                <h6>
+                <small>
                   Version {appVersion} ({apiVersion})
-                </h6>
+                </small>
               </div>
             </Col>
           </Row>
