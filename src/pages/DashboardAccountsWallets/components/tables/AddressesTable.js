@@ -1,41 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Row,
-  Col,
-  Collapse,
-  CardBody,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from 'reactstrap';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import {
-  copyToClipboard,
-  CurrencyUSD,
-  formatAddressToShortVersion,
-  parseValuesToLocale,
-} from '../../../../utils/utils';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import React, { useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import Skeleton from 'react-loading-skeleton';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import {
+  Col,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Row
+} from 'reactstrap';
+import Swal from 'sweetalert2';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
+import {
+  setAddressName
+} from '../../../../slices/addressName/reducer';
 import {
   deleteUserAddressWallet,
   reorderUserWallets,
   updateUserWalletAddress,
 } from '../../../../slices/userWallets/thunk';
-import Swal from 'sweetalert2';
-import { useDispatch } from 'react-redux';
-import { setUserPortfolioSummary } from '../../../../slices/userWallets/reducer';
 import {
-  removeAddressName,
-  setAddressName,
-} from '../../../../slices/addressName/reducer';
-import {
-  removeAddressFromCookies,
-  setUserSavedAddresses,
-} from '../../../../helpers/cookies_helper';
+  copyToClipboard,
+  CurrencyUSD,
+  parseValuesToLocale
+} from '../../../../utils/utils';
 
 const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   const dispatch = useDispatch();
@@ -43,24 +33,12 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
 
   const [addresses, setAddresses] = useState(initialAddresses);
 
-  const addressesCookies = useSelector((state) => state.addressName.addresses);
-
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
-
-  const toggleCollapse = (collapseId) => {
-    const newSet = new Set(openCollapse);
-    if (newSet.has(collapseId)) {
-      newSet.delete(collapseId);
-    } else {
-      newSet.add(collapseId);
-    }
-    setOpenCollapse(newSet);
-  };
 
   const handleItemClick = (address) => {
     //toggleCollapse(collapseId);
@@ -161,14 +139,15 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   };
 
   const handleDeleteUserAddress = (address) => {
-    console.log('address:', address);
+    const addressDisplay = address.name ? address.name : address.address;
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.name ? address.name : address.address}?`,
+      // title: `Delete wallet ${addressDisplay}`,
+      text: `Delete wallet ${addressDisplay}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
       cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc3545',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -281,13 +260,12 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   };
 
   const getDisplayText = (address) => {
-    const addressCustomName = addressesCookies.find(
-      (addr) => addr.value?.toLowerCase() === address?.toLowerCase(),
-    )?.label;
+    console.log('address:', address);
+    const addressCustomName = address?.Name;
     if (addressCustomName) {
       return addressCustomName;
     } else {
-      return null;
+      return address;
     }
   };
 
@@ -315,6 +293,8 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                   const isLoading = !isCompleted;
 
                   const addressId = String(address.id || address.Id);
+                  console.log(addressName)
+
                   return (
                     <Draggable
                       key={addressId}
@@ -332,15 +312,16 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                             md={12}
                             sm={12}
                             xs={12}
+
                             className="mb-3 "
                           >
                             <div
+
                               onClick={() => handleItemClick(itemAddress)}
-                              className={`address-card p-2 bg-transparent cursor-grab ${
-                                openCollapse.has(collapseId)
-                                  ? 'px-2 mb-2'
-                                  : 'bg-light'
-                              }`}
+                              className={`address-card p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
+                                ? 'px-2 mb-2'
+                                : 'bg-light'
+                                }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
@@ -355,14 +336,44 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                   xs={12}
                                   className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-3"
                                 >
-                                  <div className="d-flex justify-content-between align-items-center w-100">
-                                    <div className="d-flex flex-column">
-                                      <h5>{getDisplayText(itemAddress)}</h5>
-                                      <span className="text-muted">
-                                        {formatAddressToShortVersion(
-                                          itemAddress,
-                                        )}
+                                  <div
+                                    style={{
+                                      maxWidth: '100%',
+                                      whiteSpace: 'nowrap',
+                                      // overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      flexWrap: 'wrap',
+                                    }}
+                                    className="d-flex justify-content-between align-items-center w-100">
+                                    <div
+                                      style={{
+                                        maxWidth: '100%'
+                                      }}
+                                      className="d-flex flex-column">
+                                      {addressName && (
+                                        <h5
+                                          style={{
+                                            maxWidth: '100%',
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            flexWrap: 'wrap',
+                                          }}
+                                        >{addressName}</h5>
+                                      )}
+
+                                      <span
+                                        className="text-muted"
+                                        style={{
+                                          // maxWidth: '100%',
+                                          whiteSpace: 'nowrap',
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          flexWrap: 'wrap',
+                                        }}>
+                                        {itemAddress}
                                       </span>
+
                                       <span className="text-muted">
                                         {isLoading ? (
                                           <Skeleton
