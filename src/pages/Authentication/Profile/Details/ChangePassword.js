@@ -7,6 +7,7 @@ import { changePassword, forgotPassword } from '../../../../slices/auth2/thunk';
 import Swal from 'sweetalert2';
 import { useSelector } from 'react-redux';
 import { capitalizeFirstLetter } from '../../../../utils/utils';
+import { layoutModeTypes } from '../../../../Components/constants/layout';
 
 const ChangePassword = () => {
   const dispatch = useDispatch();
@@ -19,6 +20,11 @@ const ChangePassword = () => {
   const isGoogleAuth = authProvider === 'google';
 
   const [resetPwEmailSent, setResetPwEmailSent] = React.useState(false);
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const initialValues = {
     currentPassword: '',
@@ -136,8 +142,7 @@ const ChangePassword = () => {
 
               <Button
                 onClick={handleSetUpPassword}
-                color="soft-primary"
-                className="btn btn-soft-primary"
+                color={isDarkMode ? "primary" : "soft-primary"}
               >
                 Resend Email
               </Button>
@@ -147,8 +152,7 @@ const ChangePassword = () => {
               <p className="mt-4">Your account does not have a password.</p>
               <Button
                 onClick={handleSetUpPassword}
-                color="soft-primary"
-                className="btn btn-soft-primary"
+                color={isDarkMode ? "primary" : "soft-primary"}
               >
                 Set Up a new password
               </Button>
@@ -218,10 +222,10 @@ const ChangePassword = () => {
                   <div className="d-flex justify-content-start mb-0 ">
                     <Button
                       type="submit"
-                      color="soft-primary"
+                      color={isDarkMode || !dirty || !isValid? "primary" : "soft-primary"}
                       disabled={isSubmitting || !dirty || !isValid}
-                      className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
-                        ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                      className={`mb-0 ${isSubmitting || !dirty || !isValid
+                        ? 'border border-0 cursor-not-allowed'
                         : ''
                         }`}
                     >

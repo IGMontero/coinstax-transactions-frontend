@@ -14,7 +14,7 @@ import {
   Button,
   Spinner,
 } from 'reactstrap';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
 import * as Yup from 'yup';
@@ -26,10 +26,16 @@ import Helmet from '../../Components/Helmet/Helmet';
 import { parseValuesToLocale } from '../../utils/utils';
 import Swal from 'sweetalert2';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import { layoutModeTypes } from '../../Components/constants/layout';
 
 const ForgetPasswordPage = (props) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -90,7 +96,7 @@ const ForgetPasswordPage = (props) => {
   return (
     <ParticlesAuth>
       <Helmet title={'Reset Password'} />
-      <div className="auth-page-content mt-5">
+      <div className="auth-page-content">
         <Container>
           <Row className="justify-content-center">
             <div className="d-flex justify-content-center align-items-center">
@@ -108,7 +114,7 @@ const ForgetPasswordPage = (props) => {
               <Card className="mt-4">
                 <CardBody className="p-4">
                   <div className="text-center my-3">
-                    <h3 className="text-primary">Forgot your password?</h3>
+                    <h3 className={isDarkMode ? "text-white" : "text-primary"}>Forgot your password?</h3>
                     {/* <p className="text-muted">
                       Enter your email and we'll send you instructions to reset it.
                     </p> */}
@@ -161,7 +167,7 @@ const ForgetPasswordPage = (props) => {
 
                       <div className="text-center mt-4">
                         <Button
-                          color="primary"
+                          color={isDarkMode ? "primary" : "primary"}
                           className="mt-3 d-flex w-100 justify-content-center align-items-center"
                           type="submit"
                         >
@@ -186,10 +192,10 @@ const ForgetPasswordPage = (props) => {
 
               <div className="mt-4 text-center">
                 <p className="mb-0">
-                  Remember your password? <br />
+                  Remember your password?{' '}
                   <Link
                     to="/login"
-                    className="fw-semibold text-primary text-decoration-underline"
+                    className="fw-semibold text-link text-decoration-underline"
                   >
                     {' '}
                     Sign In

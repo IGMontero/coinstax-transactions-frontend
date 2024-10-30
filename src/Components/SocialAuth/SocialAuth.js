@@ -1,10 +1,18 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Button, Col, Row } from 'reactstrap';
+import { layoutModeTypes } from '../../Components/constants/layout';
 import coinbaseLogo from '../../assets/images/wallets/coinbase.png';
 import googleLogo from '../../assets/images/brands/google.png';
 import config from '../../config';
 
 const SocialAuth = () => {
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
+  console.log('dark:', isDarkMode);
+
   const handleGoogleLogin = () => {
     window.location.href = `${config.api.API_URL}/auth/google`;
   };
@@ -17,6 +25,9 @@ const SocialAuth = () => {
     window.location.href = `${config.api.API_URL}/auth/apple`;
   };
 
+  var btnclasses = 'w-100 border btn-icon d-flex align-items-center btn-hover-light';
+  btnclasses += isDarkMode ? ' border-white text-white' : ' border-dark text-dark';
+
   return (
     <>
       <Row className="d-flex align-items-center">
@@ -24,7 +35,7 @@ const SocialAuth = () => {
           <Button
             color="white"
             onClick={handleGoogleLogin}
-            className="w-100 border border-dark btn-hover-light btn-icon d-flex align-items-center "
+            className={btnclasses}
           >
             <img
               src={googleLogo}
@@ -39,7 +50,7 @@ const SocialAuth = () => {
           <Button
             color="white"
             onClick={handleAppleLogin}
-            className="w-100 border border-dark btn-hover-light btn-icon d-flex align-items-center"
+            className={btnclasses}
           >
             <i className="ri-apple-fill fs-16 me-2"></i>
             Sign in with Apple
@@ -49,7 +60,7 @@ const SocialAuth = () => {
           <Button
             color="white"
             onClick={handleCoinbaseLogin}
-            className="w-100 border border-dark btn-hover-light btn-icon d-flex align-items-center "
+            className={btnclasses}
           >
             <img
               src={coinbaseLogo}

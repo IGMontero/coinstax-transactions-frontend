@@ -16,7 +16,7 @@ import {
 
 //formik
 import { useFormik } from 'formik';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
@@ -27,12 +27,18 @@ import {
   verifyResetPasswordToken,
 } from '../../slices/auth2/thunk';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
+import { layoutModeTypes } from '../../Components/constants/layout';
 
 const ResetPaswword = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const logout = useLogOut();
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const [passwordShow, setPasswordShow] = useState(false);
   const [confrimPasswordShow, setConfrimPasswordShow] = useState(false);
@@ -82,21 +88,6 @@ const ResetPaswword = () => {
         return setLoadingVerifyToken(false);
       } else {
         setIsError(true);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Invalid Token',
-          showConfirmButton: true,
-          confirmButtonText: 'OK',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // Redirect  after 3 seconds
-
-            setTimeout(() => {
-              navigate('/login');
-            }, 1500);
-          }
-        });
         setLoadingVerifyToken(false);
       }
     } catch (error) {
@@ -186,26 +177,25 @@ const ResetPaswword = () => {
               <Card className="mt-4">
                 {initializing ? (
                   <CardBody className="p-4 text-center">
-                    <div className="text-center mt-2">
-                      <h3 className="">
-                        {isError ? 'Invalid link. Please try again.' : 'Loading...'}
-                      </h3>
+                    <div className="text-center my-3">
+                      <h3 className={isDarkMode ? "text-white" : "text-primary"}>Create a new password</h3>
                     </div>
                     <div>
-                      {loadingVerifyToken && (
+                      {loadingVerifyToken ? (
                         <div className="text-center mt-3">
                           <Spinner color="primary" />
+                        </div>
+                      ) : (
+                        <div className="text-center mt-5 mb-5" style={{'min-height':100}}>
+                          <p className="text-danger pt-5">This is an invalid of expired link. Please try again.</p>
                         </div>
                       )}
                     </div>
                   </CardBody>
                 ) : (
                   <CardBody className="p-4">
-                    <div className="text-center mt-2">
-                      <h3 className="text-primary">Create a new password</h3>
-                      <h6 className="text-muted">
-                        Enter your new password below.
-                      </h6>
+                    <div className="text-center my-3">
+                      <h3 className={isDarkMode ? "text-white" : "text-primary"}>Create a new password</h3>
                     </div>
 
                     <div className="p-2">
@@ -310,8 +300,8 @@ const ResetPaswword = () => {
 
                         <div className="mt-4">
                           <Button
-                            color="primary"
-                            className="mt-3 d-flex w-100 text-light justify-content-center align-items-center"
+                            color={isDarkMode ? "primary" : "primary"}
+                            className="mt-3 d-flex w-100 justify-content-center align-items-center"
                             type="submit"
                           >
                             Reset Password
@@ -327,13 +317,13 @@ const ResetPaswword = () => {
               </Card>
               <div className="mt-4 text-center">
                 <p className="mb-0">
-                  Wait, I remember my password...{' '}
+                  Login to you account{' '}
                   <Link
                     to="/login"
-                    className="fw-semibold text-primary text-decoration-underline"
+                    className="fw-semibold text-link text-decoration-underline"
                   >
                     {' '}
-                    Click here{' '}
+                    Signin{' '}
                   </Link>{' '}
                 </p>
               </div>

@@ -5,7 +5,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button, Card, CardBody, Col, Container, Input, Row } from 'reactstrap';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { verifyEmail } from '../../slices/auth2/thunk';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { layoutModeTypes } from '../../Components/constants/layout';
 
 const VerifyEmail = () => {
   const dispatch = useDispatch();
@@ -16,6 +17,11 @@ const VerifyEmail = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
+
   const handleVerifyToken = async () => {
     setLoading(true);
     try {
@@ -23,11 +29,6 @@ const VerifyEmail = () => {
       console.log(response);
       if (response.error) {
         setErrorMessage('Please try again or request a new link in your profile.');
-      } else {
-        setSuccessMessage('Your email is now verified');
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 3000);
       }
     } catch (error) {
       setErrorMessage(error.message);
@@ -60,28 +61,18 @@ const VerifyEmail = () => {
             <Col md={8} lg={6} xl={5}>
               <Card className="mt-4">
                 <CardBody className="p-4 text-center">
-                  <div className="text-center mt-2">
-                    <h3 className="">
-                      {loading
-                        ? 'Verifying Email...'
-                        : errorMessage
-                          ? 'There was a problem'
-                          : successMessage}
-                    </h3>
+                  <div className="text-center my-3">
+                    <h3 className={isDarkMode ? "text-white" : "text-primary"}>Verify Email</h3>
                   </div>
-                  <div>
-                    {errorMessage && (
-                      <div className="text-danger text-center mt-3">
-                        {errorMessage}
+                  <div class="py-2">
+                    {errorMessage ? (
+                      <div className="text-danger text-center mt-3" style={{'min-height':100}}>
+                        This link is invalid. Please try again or request a new link in your profile.
                       </div>
-                    )}
-                    {successMessage && (
-                      <>
-                        <div className="text-center mt-3">
-                          Your email was verified. Redirecting to Chainglance...
+                    ) : (
+                      <div className="text-center mt-3" style={{'min-height':100}}>
+                        Your email was successfully verified. You can close this tab.
                         </div>
-
-                      </>
                     )}
                   </div>
                 </CardBody>

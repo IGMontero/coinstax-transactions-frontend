@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 import ChangeEmail from './ChangeEmail';
 import { capitalizeFirstLetter } from '../../../../utils/utils';
+import { layoutModeTypes } from '../../../../Components/constants/layout';
 
 const Details = (props) => {
   const dispatch = useDispatch();
@@ -27,6 +28,11 @@ const Details = (props) => {
 
   const isEmailAuth = authProvider === 'email';
   const isGoogleAuth = authProvider === 'google';
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const [errorMessage, setErrorMessage] = React.useState('');
   const [errorMessageVerifyEmail, setErrorMessageVerifyEmail] =
@@ -218,7 +224,7 @@ const Details = (props) => {
                 ) : (
                   <Button
                     color="link"
-                    className="text-primary text-decoration-none"
+                    className="text-decoration-none"
                     onClick={handleResendVerificationEmail}
                   >
                     Resend Verification Email
@@ -234,9 +240,7 @@ const Details = (props) => {
 
           {/* {isEmailAuth && ( */}
           <Button
-            color="soft-primary"
-            className={`btn btn-soft-primary  
- }`}
+            color={isDarkMode ? "primary" : "soft-primary"}
             // disabled={}
             onClick={toggleChangeEmail}
           >
@@ -358,11 +362,11 @@ const Details = (props) => {
 
           <Button
             type="submit"
-            color="soft-primary"
+            color={isDarkMode || loadingUpdateInfo ? "primary" : "soft-primary"}
             onClick={handleUpdate}
             disabled={loadingUpdateInfo}
-            className={`btn btn-soft-primary mb-3 ${loadingUpdateInfo
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+            className={`mb-3 ${loadingUpdateInfo
+              ? 'border border-0 cursor-not-allowed'
               : ''
               }`}
           >
@@ -447,11 +451,11 @@ const Details = (props) => {
         <Col lg={12} className="">
           <Button
             type="submit"
-            color="soft-primary"
+            color={isDarkMode || loadingNotificationsPreference ? "primary" : "soft-primary"}
             onClick={handleUpdateNotificationsPreference}
             disabled={loadingNotificationsPreference}
-            className={`btn btn-soft-primary mb-0 ${loadingNotificationsPreference
-              ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+            className={`mb-0 ${loadingNotificationsPreference
+              ? 'border border-0 cursor-not-allowed'
               : ''
               }`}
           >

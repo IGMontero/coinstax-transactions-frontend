@@ -22,18 +22,18 @@ import * as Yup from 'yup';
 import { register } from '../../slices/auth2/thunk';
 
 //redux
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 //import images
-import { useSelector } from 'react-redux';
-import Swal from 'sweetalert2';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import { fetchUserCountry } from '../../slices/common/thunk';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
+
+import { layoutModeTypes } from '../../Components/constants/layout';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -41,6 +41,11 @@ const Register = () => {
   const location = useLocation();
 
   const fixedData = useSelector((state) => state.Common.fixedData);
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const [error, setError] = useState();
 
@@ -218,7 +223,7 @@ const Register = () => {
                 <Card className="mt-4" >
                   <CardBody className="p-4">
                     <div className="text-center my-3">
-                      <h3 className="text-primary">Create a new Chain Glance account</h3>
+                    <h3 className={isDarkMode ? "text-white" : "text-primary"}>Create a new Chain Glance account</h3>
                       {/* <h6 className="text-muted">
                         Sign up to continue to ChainGlance
                       </h6> */}
@@ -395,8 +400,8 @@ const Register = () => {
                           <Button
                             type="submit"
                             disabled={isSubmitDisabled()}
-                            color="primary"
-                            className="mt-3 d-flex w-100 text-light justify-content-center align-items-center"
+                            color={isDarkMode ? "primary" : "primary"}
+                            className="mt-3 d-flex w-100 justify-content-center align-items-center"
                           >
                             {loading ? (
                               <>
@@ -429,14 +434,14 @@ const Register = () => {
 
                 <div className="mt-4 text-center">
                   <p className="mb-0">
-                    Already have an account ?{' '}
+                    Already have an account?{' '}
                     <Link
                       to={
                         code && type
                           ? `/login?code=${code}&type=${type}`
                           : '/login'
                       }
-                      className="fw-semibold text-primary text-decoration-underline"
+                      className="fw-semibold text-link text-decoration-underline"
                     >
                       {' '}
                       Signin{' '}

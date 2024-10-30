@@ -65,6 +65,29 @@
         }
     }
 }
+[data-layout-mode="dark"]{
+  .nav-tabs-custom {
+    .nav-item {
+        .nav-link {
+            &::after {
+                background: $white;
+            }
+
+            &.active {
+                color: $white;
+            }
+        }
+    }
+
+    &.card-header-tabs {
+        margin-top: -1rem;
+
+        .nav-link {
+            padding: $card-cap-padding-y $card-cap-padding-x;
+        }
+    }
+  }
+}
 
 // vertical nav
 

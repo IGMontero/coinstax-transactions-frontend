@@ -25,6 +25,7 @@ import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import { layoutModeTypes } from '../../Components/constants/layout';
 import {
   setAddressSearched,
   setPrevAddress,
@@ -35,6 +36,11 @@ const Login = (props) => {
   const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const [loading, setLoading] = useState(false);
 
@@ -172,7 +178,7 @@ const Login = (props) => {
                 <Card className="mt-4">
                   <CardBody className="p-4">
                     <div className="text-center my-3">
-                      <h3 className="text-primary">Sign in to Chain Glance</h3>
+                      <h3 className={isDarkMode ? "text-white" : "text-primary"}>Sign in to Chain Glance</h3>
                       {/* <h6 className="text-muted">Sign in to continue.</h6> */}
                     </div>
                     {/* {errorMsg && errorMsg ? (
@@ -277,9 +283,9 @@ const Login = (props) => {
                         <div className="mt-4">
                           <Button
                             disabled={loading ? true : false}
-                            color="primary"
+                            color={isDarkMode ? "primary" : "primary"}
                             type="submit"
-                            className="mt-3 d-flex w-100 text-light justify-content-center align-items-center"
+                            className="mt-3 d-flex w-100 justify-content-center align-items-center"
                           >
                             {loading ? (
                               <Spinner size="sm" className="me-2">
@@ -304,14 +310,14 @@ const Login = (props) => {
 
                 <div className="mt-4 text-center">
                   <p className="mb-0">
-                    Don't have an account ?{' '}
+                    Don't have an account?{' '}
                     <Link
                       to={
                         code && type
                           ? `/register?code=${code}&type=${type}`
                           : '/register'
                       }
-                      className="fw-semibold text-primary text-decoration-underline"
+                      className="fw-semibold text-link text-decoration-underline"
                     >
                       {' '}
                       Signup{' '}

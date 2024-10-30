@@ -13,7 +13,7 @@
 //     background-color: $footer-bg;
 .footer {
     padding: 20px calc(#{$grid-gutter-width} * 0.5);
-    // position: sticky;
+    position: absolute;
     margin-top: auto;
     bottom: 0;
     right: 0;
