@@ -25,6 +25,7 @@ import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import { parseValuesToLocale } from '../../utils/utils';
 import Swal from 'sweetalert2';
+import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 
 const ForgetPasswordPage = (props) => {
   const dispatch = useDispatch();
@@ -38,7 +39,7 @@ const ForgetPasswordPage = (props) => {
       email: '',
     },
     validationSchema: Yup.object({
-      email: Yup.string().required('Please Enter Your Email'),
+      email: Yup.string().required('Please enter your email address'),
     }),
     onSubmit: (values) => {
       handleForgotPassword(values.email);
@@ -92,31 +93,31 @@ const ForgetPasswordPage = (props) => {
       <div className="auth-page-content mt-5">
         <Container>
           <Row className="justify-content-center">
+            <div className="d-flex justify-content-center align-items-center">
+              <Link to={'/'}>
+                <img
+                  src={logo}
+                  className="card-logo "
+                  alt="Chain Glance"
+                  height="70"
+                  width="auto"
+                />
+              </Link>
+            </div>
             <Col md={8} lg={6} xl={5}>
               <Card className="mt-4">
                 <CardBody className="p-4">
-                  <div className="text-center mt-2">
-                    <h5 className="text-primary">Forgot your password?</h5>
+                  <div className="text-center my-3">
+                    <h3 className="text-primary">Forgot your password?</h3>
                     {/* <p className="text-muted">
                       Enter your email and we'll send you instructions to reset it.
                     </p> */}
-
-                    <lord-icon
-                      src="https://cdn.lordicon.com/rhvddzym.json"
-                      trigger="loop"
-                      colors="primary:#0ab39c"
-                      className="avatar-xl"
-                      style={{ width: '120px', height: '120px' }}
-                    ></lord-icon>
                   </div>
 
-                  <Alert
-                    className="alert-borderless alert-warning text-center mb-2 mx-2"
-                    role="alert"
-                  >
-                    Enter your email and we'll send you instructions to reset
-                    it.
-                  </Alert>
+                  <div class="p-2 my-4">
+                    If you have forgotten your password, please enter your email address and we will send instructions on how to reset
+                    it. If you have not received an email within a few minutes, please check your spam folder or contact us.
+                  </div>
                   <div className="p-2">
                     {/* {forgetError ? (
                       <Alert color="danger" style={{ marginTop: '13px' }}>
@@ -136,11 +137,11 @@ const ForgetPasswordPage = (props) => {
                       }}
                     >
                       <div className="mb-4">
-                        <Label className="form-label">Email</Label>
+                        <Label className="form-label">Enter you email address</Label>
                         <Input
                           name="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="Email address"
                           type="email"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
@@ -160,12 +161,8 @@ const ForgetPasswordPage = (props) => {
 
                       <div className="text-center mt-4">
                         <Button
-                          className="mt-3 d-flex btn-hover-light w-100 justify-content-center align-items-center"
-                          color="soft-light"
-                          style={{
-                            borderRadius: '10px',
-                            border: '.5px solid grey',
-                          }}
+                          color="primary"
+                          className="mt-3 d-flex w-100 justify-content-center align-items-center"
                           type="submit"
                         >
                           {loading ? (

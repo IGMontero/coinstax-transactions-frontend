@@ -57,7 +57,7 @@ const Login = (props) => {
       console.log(response);
 
       if (response.error) {
-        setErrorMsg('Invalid email or password');
+        setErrorMsg('Invalid email address or password');
         setLoading(false);
 
         // return Swal.fire({
@@ -158,11 +158,11 @@ const Login = (props) => {
           <Container>
             <Row className=" justify-content-center">
               <div className="d-flex justify-content-center align-items-center">
-                <Link to={'/wallets'}>
+                <Link to={'/'}>
                   <img
                     src={logo}
                     className="card-logo "
-                    alt="logo dark"
+                    alt="Chain Glance"
                     height="70"
                     width="auto"
                   />
@@ -172,7 +172,7 @@ const Login = (props) => {
                 <Card className="mt-4">
                   <CardBody className="p-4">
                     <div className="text-center my-3">
-                      <h3 className="text-primary">Welcome to ChainGlance</h3>
+                      <h3 className="text-primary">Sign in to Chain Glance</h3>
                       {/* <h6 className="text-muted">Sign in to continue.</h6> */}
                     </div>
                     {/* {errorMsg && errorMsg ? (
@@ -277,14 +277,9 @@ const Login = (props) => {
                         <div className="mt-4">
                           <Button
                             disabled={loading ? true : false}
-                            type="submit"
-                            // className="mt-3 d-flex btn-hover-light w-100 text-dark justify-content-center align-items-center"
                             color="primary"
-                            className="mt-3 d-flex  w-100 text-dark justify-content-center align-items-center"
-                            style={{
-                              borderRadius: '10px',
-                              // border: '.5px solid grey',
-                            }}
+                            type="submit"
+                            className="mt-3 d-flex w-100 text-light justify-content-center align-items-center"
                           >
                             {loading ? (
                               <Spinner size="sm" className="me-2">

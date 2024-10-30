@@ -311,13 +311,8 @@ const ResetPaswword = () => {
 
                         <div className="mt-4">
                           <Button
-                            className="mt-3 d-flex btn-hover-light w-100
-                 text-dark justify-content-center align-items-center"
-                            color="soft-light"
-                            style={{
-                              borderRadius: '10px',
-                              border: '.5px solid grey',
-                            }}
+                            color="primary"
+                            className="mt-3 d-flex w-100 text-light justify-content-center align-items-center"
                             type="submit"
                           >
                             Reset Password

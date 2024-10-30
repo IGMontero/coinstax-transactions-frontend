@@ -557,7 +557,7 @@ const SearchBar = ({
         //   })
         // }
       />
-      {trackWallets && user && (
+      {/*trackWallets && user && (
         <Button
           className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
           color="soft-light"
@@ -590,7 +590,7 @@ const SearchBar = ({
             <>Add</>
           )}
         </Button>
-      )}
+      )*/}
       {/* <DropdownAddresses
         optionDropdown={optionDropdown}
         isUnsupported={isUnsupported}

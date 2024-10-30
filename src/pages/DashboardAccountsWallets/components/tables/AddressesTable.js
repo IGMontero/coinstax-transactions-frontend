@@ -62,8 +62,9 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     setOpenCollapse(newSet);
   };
 
-  const handleItemClick = (collapseId) => {
-    toggleCollapse(collapseId);
+  const handleItemClick = (address) => {
+    //toggleCollapse(collapseId);
+    navigate(`/address/${address}`);
   };
 
   const handleVisitAddress = (address) => {
@@ -334,19 +335,17 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                             className="mb-3 "
                           >
                             <div
-                              onClick={() => handleItemClick(collapseId)}
-                              className={`address-card border rounded-4 p-2 bg-transparent cursor-grab ${
+                              onClick={() => handleItemClick(itemAddress)}
+                              className={`address-card p-2 bg-transparent cursor-grab ${
                                 openCollapse.has(collapseId)
-                                  ? 'border border-primary rounded px-2 mb-2'
+                                  ? 'px-2 mb-2'
                                   : 'bg-light'
                               }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
                                 style={{
-                                  cursor: 'grab',
-                                  padding: '.7rem',
-                                  paddingRight: '1rem',
+                                  cursor: 'pointer'
                                 }}
                               >
                                 <Col
@@ -442,6 +441,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                 </Col>
                               </Row>
 
+                              {/*}
                               <Collapse isOpen={openCollapse.has(collapseId)}>
                                 <CardBody
                                   className={`cursor-pointer px-3 ${
@@ -463,6 +463,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                   </div>
                                 </CardBody>
                               </Collapse>
+                              */}
                             </div>
                           </Col>
                         </div>

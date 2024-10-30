@@ -71,7 +71,7 @@ const DashboardUserWallets = ({
       /> */}
       <div style={{ maxWidth: '610px' }} className="w-100">
         <div className="d-flex justify-content-between text-center align-items-center mb-4 mt-5">
-          <h3>Manage Your Wallets </h3>
+          <h5>Manage Your Wallets </h5>
           <div className="d-flex align-items-center">
             {/* <Button
               onClick={toggleModalAddAccountManager}
@@ -104,7 +104,7 @@ const DashboardUserWallets = ({
             </div>
           </div>
         )} */}
-        {hasConnectedWallets && (
+        {/*hasConnectedWallets && (
           <div className="d-flex justify-content-between align-items-center mb-2">
             <h4>
               Portfolio Value:{' '}
@@ -119,7 +119,7 @@ const DashboardUserWallets = ({
               )}
             </h4>
           </div>
-        )}
+        )*/}
         {!loading && (
           <AddressesTable
             userId={userId}

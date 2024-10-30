@@ -350,18 +350,12 @@ const DashboardConnectWallets = () => {
       <div className="page-content">
         <Helmet title="Connect Wallet" />
         <div className="d-flex justify-content-center flex-column align-items-center mt-5">
-          <div className="text-center mt-5">
-            <h1>Connect to ChainGlance</h1>
-            {/* HTML   */}
-
-            {/* END HTML  */}
-          </div>
           <div
             style={{
               flexWrap: 'wrap',
               justifyContent: 'center',
             }}
-            className="connector-container mt-4 mb-5"
+            className="connector-container mt-5 pt-5 mb-5"
           >
             {renderConnectors()}
           </div>
@@ -372,7 +366,6 @@ const DashboardConnectWallets = () => {
             }}
             className="w-100 py-3"
           >
-            <span>Track any wallet</span>
             <div className="d-flex align-items-center justify-content-center">
               {/* <SearchBarWallets onSearch={handleSearch} /> */}
               <ParentComponentSearchBar

@@ -398,14 +398,13 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
     <Dropdown
       className="mt-3"
       style={{
-        paddingLeft: '8px',
         maxWidth: shouldBeResponsive ? '' : '150px',
       }}
       isOpen={dropdownOpen}
       toggle={toggleDropdown}
     >
       <DropdownToggle
-        className={` bg-transparent p-0  d-flex ${shouldBeResponsive ? 'ps-4 w-100' : 'ps-1'}  align-items-start justify-content-center border-0 rounded-4 `}
+        className={` bg-transparent p-0  d-flex ${shouldBeResponsive ? 'ps-4 w-100' : 'ps-0'}  align-items-start justify-content-center border-0 rounded-4 `}
         variant="transparent"
         id="dropdown-basic"
 
