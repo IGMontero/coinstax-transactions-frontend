@@ -139,14 +139,15 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   };
 
   const handleDeleteUserAddress = (address) => {
-    console.log('address:', address);
+    const addressDisplay = address.name ? address.name : address.address;
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${address.name ? address.name : address.address}?`,
+      // title: `Delete wallet ${addressDisplay}`,
+      text: `Delete wallet ${addressDisplay}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
       cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc3545',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {

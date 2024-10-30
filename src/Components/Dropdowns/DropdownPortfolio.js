@@ -80,7 +80,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const selectedAddress = isPortoflioPage
     ? 'portfolio'
     : userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-      addressParams;
+    addressParams;
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
@@ -178,15 +178,15 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   };
 
   const handleDeleteUserAddress = (address) => {
+    const addressDisplay = address.name ? address.name : address.address;
     Swal.fire({
-      title: 'Are you sure?',
-      text: `Are you sure to delete wallet ${
-        address.name ? address.name : address.address
-      }?`,
+      // title: `Delete wallet ${addressDisplay}`,
+      text: `Delete wallet ${addressDisplay}?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Delete',
       cancelButtonText: 'Cancel',
+      confirmButtonColor: '#dc3545',
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
