@@ -30,6 +30,7 @@ const SearchBar = ({
   const { fetchData } = useSelector((state) => state);
 
   const addresses = useSelector((state) => state.addressName.addresses);
+  const inputRef = React.createRef();
 
   // #region STATES
   const [isUnsupported, setIsUnsupported] = useState(false);
@@ -226,6 +227,16 @@ const SearchBar = ({
       setSearchInput(inputValue);
     }
   };
+
+  useEffect(() => {
+    if (inputRef.current) {
+      console.log('INPUT REF:', inputRef.current);
+      const input = inputRef.current.inputRef;
+      console.log('INPUT:', input);
+      input.addEventListener('keydown', handleKeyDown);
+      return () => input.removeEventListener('keydown', handleKeyDown);
+    }
+  }, [inputRef]);
 
   const handleTrackAddressSearchAnalytics = (address) => {
     // Track address search analytics
@@ -526,6 +537,22 @@ const SearchBar = ({
     }),
   };
 
+  const handleKeyDown = (e) => {
+    if (e.shiftKey && e.key === 'ArrowUp') {
+      // Access the input element and select all text
+      const input = e.target;
+      input.select();
+      e.preventDefault();
+    } else if (e.key === 'ArrowDown') {
+      // Access the input element and move the cursor to the end of the text
+      const input = e.target;
+      input.selectionStart = input.selectionEnd = input.value.length;
+
+      e.preventDefault();
+    }
+  };
+
+
   const DropdownIndicator = (props) => (
     <components.DropdownIndicator {...props}>
       <div
@@ -554,6 +581,7 @@ const SearchBar = ({
         className="w-100 cursor-text"
         classNamePrefix=" cursor-text"
         // classNamePrefix="select-custom-menu"
+        ref={inputRef}
         value={selectedOption}
         inputValue={searchInput}
         options={options}
@@ -578,53 +606,11 @@ const SearchBar = ({
             pressButtonAdd: false,
           })
         }
-      // onClick={(e) =>
-      //   handleSearch(e, {
-      //     pressEnter: true,
-      //     pressIcon: false,
-      //     pressButtonAdd: false,
-      //   })
-      // }
+
+      // onKeyDownCapture={handleKeyDown} // Detect Shift + Up here
+
       />
-      {/*trackWallets && user && (
-        <Button
-          className={`d-flex btn-hover-light ms-2 p-2  text-dark justify-content-center align-items-center`}
-          color="soft-light"
-          disabled={
-            userPortfolioSummary.addresses.some(
-              (addr) => addr.address === searchInput,
-            ) ||
-            loading ||
-            !searchInput
-          }
-          style={{
-            borderRadius: '10px',
-            border: '.5px solid grey',
-            cursor: `${!loading ? 'pointer' : 'not-allowed'}`,
-          }}
-          onClick={(e) =>
-            handleSearch(e, {
-              pressEnter: false,
-              pressIcon: false,
-              pressButtonAdd: true,
-            })
-          }
-        >
-          <i className="bx bx-plus me-2"></i>
-          {loading ? (
-            <div>
-              <Spinner size="sm" color="light" />
-            </div>
-          ) : (
-            <>Add</>
-          )}
-        </Button>
-      )*/}
-      {/* <DropdownAddresses
-        optionDropdown={optionDropdown}
-        isUnsupported={isUnsupported}
-        onSelect={handleDropdownSelect}
-      /> */}
+
     </div>
   );
 };
