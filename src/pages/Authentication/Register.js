@@ -105,8 +105,10 @@ const Register = () => {
       if (response && response.payload && response.payload.error) {
         setError(response.payload.error.message);
         setLoading(false);
-      }
-      else if (response && !response.error) {
+      } else if (response && response.error) {
+        setError(response.error.message === 'Rejected' ? 'There was a problem while registering your account' : response.error.message);
+        setLoading(false);
+      } else {
         // navigate('/wallets/connect');
         // Swal.fire({
         //   title: 'Success',
@@ -120,9 +122,6 @@ const Register = () => {
         } else {
           navigate('/wallets/connect');
         }
-      } else {
-        setError(response.error ? response.error.message : response.message);
-        setLoading(false);
       }
     } catch (error) {
       setError(error.message);
@@ -238,12 +237,6 @@ const Register = () => {
                         className="needs-validation"
                         action="#"
                       >
-                        {error && error ? (
-                          <Alert color="danger">
-                            <div>{error}</div>
-                          </Alert>
-                        ) : null}
-
                         <div className="mb-2">
                           <Label htmlFor="useremail" className="form-label">
                             Email address <span className="text-danger">*</span>
@@ -395,6 +388,12 @@ const Register = () => {
                             </FormFeedback>
                           ) : null}
                         </div>
+
+                        {error && error ? (
+                          <Alert class="alert alert-danger mt-3">
+                            <div>{error}</div>
+                          </Alert>
+                        ) : null}
 
                         <div className="mt-4">
                           <Button
