@@ -1,41 +1,32 @@
-import React, { useEffect, useState } from 'react';
-import {
-  Row,
-  Col,
-  Collapse,
-  CardBody,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-} from 'reactstrap';
+import React, { useState } from 'react';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import Skeleton from 'react-loading-skeleton';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import {
+  Col,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Row
+} from 'reactstrap';
+import Swal from 'sweetalert2';
+import { layoutModeTypes } from '../../../../Components/constants/layout';
+import {
+  setAddressName
+} from '../../../../slices/addressName/reducer';
+import {
+  deleteUserAddressWallet,
+  reorderUserWallets,
+  updateUserWalletAddress,
+} from '../../../../slices/userWallets/thunk';
 import {
   copyToClipboard,
   CurrencyUSD,
   formatAddressToShortVersion,
   parseValuesToLocale,
 } from '../../../../utils/utils';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import Skeleton from 'react-loading-skeleton';
-import { layoutModeTypes } from '../../../../Components/constants/layout';
-import {
-  deleteUserAddressWallet,
-  reorderUserWallets,
-  updateUserWalletAddress,
-} from '../../../../slices/userWallets/thunk';
-import Swal from 'sweetalert2';
-import { useDispatch } from 'react-redux';
-import { setUserPortfolioSummary } from '../../../../slices/userWallets/reducer';
-import {
-  removeAddressName,
-  setAddressName,
-} from '../../../../slices/addressName/reducer';
-import {
-  removeAddressFromCookies,
-  setUserSavedAddresses,
-} from '../../../../helpers/cookies_helper';
 
 const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   const dispatch = useDispatch();
@@ -336,11 +327,10 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                           >
                             <div
                               onClick={() => handleItemClick(itemAddress)}
-                              className={`address-card p-2 bg-transparent cursor-grab ${
-                                openCollapse.has(collapseId)
+                              className={`address-card p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
                                   ? 'px-2 mb-2'
                                   : 'bg-light'
-                              }`}
+                                }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"

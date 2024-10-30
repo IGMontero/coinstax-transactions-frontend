@@ -1,27 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Col,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  PopoverBody,
-  Spinner,
-  UncontrolledDropdown,
-  UncontrolledPopover,
-  UncontrolledTooltip,
-} from 'reactstrap';
-import { useLocation, useParams } from 'react-router-dom';
-import QrModal from '../Modals/QrModal';
-import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useParams } from 'react-router-dom';
+import {
+  Col
+} from 'reactstrap';
+import Swal from 'sweetalert2';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 import { setAddressName } from '../../slices/addressName/reducer';
-import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
-import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
 import {
   addUserWallet,
   updateUserWalletAddress,
 } from '../../slices/userWallets/thunk';
-import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
+import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
+import QrModal from '../Modals/QrModal';
+import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
 
 const AddressWithDropdown = ({
   filteredNetworks,
@@ -46,6 +38,10 @@ const AddressWithDropdown = ({
 
   const isCurrentUserPortfolioSelected =
     location.pathname.includes('portfolio');
+
+  const addressInPortfolio = userPortfolioSummary?.addresses?.find(
+    (addr) => addr.address?.toLowerCase() === address?.toLowerCase(),
+  );
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
@@ -94,8 +90,6 @@ const AddressWithDropdown = ({
   const handleUpdateAddress = (e, address) => {
     e.preventDefault();
     e.stopPropagation();
-
-    console.log('address update', address);
 
     Swal.fire({
       title: 'Rename Wallet',
@@ -202,7 +196,7 @@ const AddressWithDropdown = ({
   };
 
   const isAddressInPortfolio = userPortfolioSummary?.addresses?.find(
-    (addr) => addr.address === address,
+    (addr) => addr.address?.toLowerCase() === address?.toLowerCase(),
   );
 
   const renderAddressWithDropdown = () => {
@@ -232,12 +226,7 @@ const AddressWithDropdown = ({
             {isAddressInPortfolio && user && (
               <i
                 onClick={(e) => {
-                  const addr = userPortfolioSummary.addresses.find(
-                    (addr) => addr.address === address,
-                  );
-                  if (user && addr) {
-                    handleUpdateAddress(e, addr);
-                  }
+                  handleUpdateAddress(e, addressInPortfolio);
                 }}
                 title="Rename Wallet"
                 className="ri-pencil-line fs-4 me-2 cursor-pointer"
