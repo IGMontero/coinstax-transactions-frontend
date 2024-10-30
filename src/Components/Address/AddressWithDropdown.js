@@ -336,11 +336,11 @@ const AddressWithDropdown = ({
             {renderAddressWithDropdown()}
           </Col>
           <Col className="col-3 d-flex justify-content-end align-items-center ">
-            {loading && (
+            {/* {loading && (
               <div className="d-flex align-items-center me-2">
                 <Spinner size="md" color="primary" />
               </div>
-            )}
+            )} */}
             {!isOnlyAllNetwork && !isUnsupported && (
               <NetworkDropdown
                 isAdminPage={false}

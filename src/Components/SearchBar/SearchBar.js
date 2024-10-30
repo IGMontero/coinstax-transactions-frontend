@@ -38,6 +38,22 @@ const SearchBar = ({
   const [options, setOptions] = useState([]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const filteredAddressesBySearchInput = addresses.filter(
+    (addr) =>
+      addr.value?.toLowerCase().includes(searchInput.toLowerCase()) ||
+      addr.label?.toLowerCase().includes(searchInput.toLowerCase()),
+  );
+
+  const getFilteredAddresses = text => {
+    return addresses.filter(
+      (addr) =>
+        addr.value?.toLowerCase().includes(text.toLowerCase()) ||
+        addr.label?.toLowerCase().includes(text.toLowerCase()),
+    );
+  }
+
+
+
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
     if (
@@ -101,7 +117,7 @@ const SearchBar = ({
     };
   };
 
-  const fetchSuggestions = async () => {
+  const fetchSuggestions = async (searchInput) => {
     setLoading(true);
     try {
       const suggestions = [];
@@ -177,20 +193,33 @@ const SearchBar = ({
     }
   };
 
+  // const debouncedFetchSuggestions = useCallback(
+  //   debounce(fetchSuggestions, 600),
+  //   [searchInput],
+  // );
+
+  // useEffect(() => {
+  //   debouncedFetchSuggestions();
+  // }, [searchInput, debouncedFetchSuggestions]);
+
+  // useEffect(() => {
+  //   if (searchInput.length < 3) {
+  //     setOptions([]);
+  //   }
+  // }, [searchInput]);
   const debouncedFetchSuggestions = useCallback(
-    debounce(fetchSuggestions, 600),
-    [searchInput],
+    debounce((input) => fetchSuggestions(input), 600),
+    [] // Only recreate if `fetchSuggestions` itself changes
   );
 
   useEffect(() => {
-    debouncedFetchSuggestions();
-  }, [searchInput, debouncedFetchSuggestions]);
-
-  useEffect(() => {
-    if (searchInput.length < 3) {
-      setOptions([]);
+    if (searchInput.length >= 3) {
+      debouncedFetchSuggestions(searchInput);
+    } else {
+      const addresses = getFilteredAddresses(searchInput);
+      setOptions(addresses || []);
     }
-  }, [searchInput]);
+  }, [searchInput, debouncedFetchSuggestions]);
 
   const handleInputChange = (inputValue, actionMeta) => {
     if (actionMeta.action === 'input-change') {
@@ -318,108 +347,108 @@ const SearchBar = ({
   // );
 
   // #region STYLES
-  const customStyles = {
-    control: (provided) => ({
-      ...provided,
-      backgroundColor:
-        layoutModeType === layoutModeTypes['DARKMODE'] ? ' #1d1d21' : '#fff',
-      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-      cursor: 'text',
-      maxHeight: '58px',
-      textAlign: 'left',
-      // border:
-      //   layoutModeType === layoutModeTypes['DARKMODE']
-      //     ? '1px solid #32383e'
-      //     : '1px solid #ddd',
-      border: '1px solid #6b6464',
-      borderRadius: '16px',
-      // padding: '18px 146px 18px 20px',
-      fontSize: '16px',
-      outline: 'none !important',
-      boxShadow: 'none !important',
-      '&:hover': {
-        border:
-          layoutModeType === layoutModeTypes['DARKMODE']
-            ? '1px solid #555'
-            : '1px solid #ccc',
-      },
-    }),
-    menu: (provided) => ({
-      ...provided,
-      zIndex: 9999,
-      backgroundColor:
-        layoutModeType === layoutModeTypes['DARKMODE'] ? '#1d1d21' : '#fff',
-      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-      textAlign: 'left',
-      alignItems: 'left',
-      cursor: 'pointer',
-      borderRadius: '16px',
-      border: '1px solid #6b6464',
-      transition: '1s all ease-in-out',
-      transform: 'translateY(0px)',
-    }),
-    option: (provided, state) => ({
-      ...provided,
-      cursor: 'pointer',
-      borderRadius: '16px',
+  // const customStyles = {
+  //   control: (provided) => ({
+  //     ...provided,
+  //     backgroundColor:
+  //       layoutModeType === layoutModeTypes['DARKMODE'] ? ' #1d1d21' : '#fff',
+  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
+  //     cursor: 'text',
+  //     maxHeight: '58px',
+  //     textAlign: 'left',
+  //     // border:
+  //     //   layoutModeType === layoutModeTypes['DARKMODE']
+  //     //     ? '1px solid #32383e'
+  //     //     : '1px solid #ddd',
+  //     border: '1px solid #6b6464',
+  //     borderRadius: '16px',
+  //     // padding: '18px 146px 18px 20px',
+  //     fontSize: '16px',
+  //     outline: 'none !important',
+  //     boxShadow: 'none !important',
+  //     '&:hover': {
+  //       border:
+  //         layoutModeType === layoutModeTypes['DARKMODE']
+  //           ? '1px solid #555'
+  //           : '1px solid #ccc',
+  //     },
+  //   }),
+  //   menu: (provided) => ({
+  //     ...provided,
+  //     zIndex: 9999,
+  //     backgroundColor:
+  //       layoutModeType === layoutModeTypes['DARKMODE'] ? '#1d1d21' : '#fff',
+  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
+  //     textAlign: 'left',
+  //     alignItems: 'left',
+  //     cursor: 'pointer',
+  //     borderRadius: '16px',
+  //     border: '1px solid #6b6464',
+  //     transition: '1s all ease-in-out',
+  //     transform: 'translateY(0px)',
+  //   }),
+  //   option: (provided, state) => ({
+  //     ...provided,
+  //     cursor: 'pointer',
+  //     borderRadius: '16px',
 
-      backgroundColor: state.isFocused
-        ? layoutModeType === layoutModeTypes['DARKMODE']
-          ? 'transparent'
-          : // '#1d1d21'
-            'transparent'
-        : // '#e2e2e2'
-          state.isSelected
-          ? layoutModeType === layoutModeTypes['DARKMODE']
-            ? '#212529'
-            : '#ddd'
-          : 'transparent',
-      color:
-        state.isFocused || state.isSelected
-          ? 'muted'
-          : layoutModeType === layoutModeTypes['DARKMODE']
-            ? '#fff'
-            : 'black',
-      ':active': {
-        ...provided[':active'],
-        backgroundColor: state.isFocused
-          ? layoutModeType === layoutModeTypes['DARKMODE']
-            ? 'transparent'
-            : // '#2a2f34'
-              'transparent'
-          : // '#e2e2e2'
-            state.isSelected
-            ? layoutModeType === layoutModeTypes['DARKMODE']
-              ? '#212529'
-              : '#ddd'
-            : 'transparent',
-      },
-      '&:hover': {
-        // backgroundColor:
-        //   layoutModeType === layoutModeTypes['DARKMODE']
-        //     ? '#1f252b'
-        //     : '#e2e2e2',
-        backgroundColor: 'transparent',
-        color:
-          layoutModeType === layoutModeTypes['DARKMODE']
-            ? '#4B8EE0'
-            : '#0759BC',
-      },
-    }),
-    input: (provided) => ({
-      ...provided,
+  //     backgroundColor: state.isFocused
+  //       ? layoutModeType === layoutModeTypes['DARKMODE']
+  //         ? 'transparent'
+  //         : // '#1d1d21'
+  //         'transparent'
+  //       : // '#e2e2e2'
+  //       state.isSelected
+  //         ? layoutModeType === layoutModeTypes['DARKMODE']
+  //           ? '#212529'
+  //           : '#ddd'
+  //         : 'transparent',
+  //     color:
+  //       state.isFocused || state.isSelected
+  //         ? 'muted'
+  //         : layoutModeType === layoutModeTypes['DARKMODE']
+  //           ? '#fff'
+  //           : 'black',
+  //     ':active': {
+  //       ...provided[':active'],
+  //       backgroundColor: state.isFocused
+  //         ? layoutModeType === layoutModeTypes['DARKMODE']
+  //           ? 'transparent'
+  //           : // '#2a2f34'
+  //           'transparent'
+  //         : // '#e2e2e2'
+  //         state.isSelected
+  //           ? layoutModeType === layoutModeTypes['DARKMODE']
+  //             ? '#212529'
+  //             : '#ddd'
+  //           : 'transparent',
+  //     },
+  //     '&:hover': {
+  //       // backgroundColor:
+  //       //   layoutModeType === layoutModeTypes['DARKMODE']
+  //       //     ? '#1f252b'
+  //       //     : '#e2e2e2',
+  //       backgroundColor: 'transparent',
+  //       color:
+  //         layoutModeType === layoutModeTypes['DARKMODE']
+  //           ? '#4B8EE0'
+  //           : '#0759BC',
+  //     },
+  //   }),
+  //   input: (provided) => ({
+  //     ...provided,
 
-      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-    }),
-    loadingIndicator: (provided) => ({
-      ...provided,
-      color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-    }),
-  };
+  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
+  //   }),
+  //   singleValue: (provided) => ({
+  //     ...provided,
+  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
+  //   }),
+  //   loadingIndicator: (provided) => ({
+  //     ...provided,
+  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
+  //   }),
+  // };
 
   const searchBarStyles = {
     control: (provided) => ({
@@ -540,7 +569,7 @@ const SearchBar = ({
         noOptionsMessage={
           searchInput.length < 3
             ? () => 'Type at least 3 characters to search'
-            : () => 'We were unable to find any results for your search'
+            : () => null
         }
         onKeyDown={(e) =>
           handleSearch(e, {
@@ -549,13 +578,13 @@ const SearchBar = ({
             pressButtonAdd: false,
           })
         }
-        // onClick={(e) =>
-        //   handleSearch(e, {
-        //     pressEnter: true,
-        //     pressIcon: false,
-        //     pressButtonAdd: false,
-        //   })
-        // }
+      // onClick={(e) =>
+      //   handleSearch(e, {
+      //     pressEnter: true,
+      //     pressIcon: false,
+      //     pressButtonAdd: false,
+      //   })
+      // }
       />
       {/*trackWallets && user && (
         <Button

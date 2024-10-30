@@ -194,102 +194,220 @@ const Layout = (props) => {
 
   const currentPortfolioUserId = userId ? userId : user?.id;
 
+  // const fetchAddressInfo = async () => {
+  //   fetchControllerRef.current.abort();
+  //   fetchControllerRef.current = new AbortController();
+  //   const signal = fetchControllerRef.current.signal;
+
+  //   try {
+  //     setLoading(true);
+
+
+  //     const request = isCurrentUserPortfolioSelected
+  //       ? dispatch(
+  //         getCurrentUserPortfolioSummary({
+  //           userId: currentPortfolioUserId,
+  //           signal,
+  //         }),
+  //       ).unwrap()
+  //       : dispatch(getAddressesInfo({ address: address, signal }));
+
+  //     const response = await request;
+  //     const res = isCurrentUserPortfolioSelected ? response : response.payload;
+
+  //     if (res) {
+  //       if (res.blockchains) {
+  //         const incomplete = Object.entries(res?.blockchains)
+  //           .filter(([, blockchain]) => blockchain.complete === false)
+  //           .map(([key]) => key);
+  //         setIncompleteBlockchains(incomplete);
+  //       } else {
+  //         setIncompleteBlockchains([]);
+  //       }
+
+  //       if (res.complete) {
+  //         clearInterval(fetchInterval.current);
+  //         fetchInterval.current = null;
+  //         setIsInInterval(false);
+  //         setLoading(false);
+  //       } else if (!fetchInterval.current) {
+  //         setIsInInterval(true);
+  //         fetchInterval.current = setInterval(fetchAddressInfo, 5000);
+  //       }
+  //       if (res.unsupported) {
+  //         setIsUnsupported(true);
+  //       }
+
+  //       if (!res.blockchains) {
+  //         setIsInInterval(false);
+  //         return;
+  //       }
+
+  //       const availableNetworks = Object.keys(res.blockchains);
+  //       let filtered;
+  //       if (isAdminPages) {
+  //         filtered = networks;
+  //       } else {
+  //         filtered = networks
+  //           .filter(
+  //             (network) =>
+  //               network.key !== 'all' &&
+  //               availableNetworks.includes(network.blockchain),
+  //           )
+  //           .map((network) => ({
+  //             ...network,
+  //             totalValue: res.blockchains[network.blockchain]?.totalValue,
+  //             nftsValue: res.blockchains[network.blockchain]?.nftsValue,
+  //           }));
+
+  //         if (res.blockchains.all) {
+  //           const allNetwork = networks.find((n) => n.key === 'all');
+  //           allNetwork.totalValue = res.blockchains.all.totalValue;
+  //           allNetwork.nftsValue = res.blockchains.all.nftsValue;
+  //           filtered.unshift(allNetwork);
+  //         }
+
+  //         if (res.nickname) {
+  //           setNickName(res.nickname);
+  //         }
+
+  //         const newNetworkType =
+  //           filtered.find((n) => n.key === networkType)?.key || 'all';
+  //         if (newNetworkType !== networkType) {
+  //           dispatch(setNetworkType(newNetworkType));
+  //         }
+
+  //         setFilteredNetworks(filtered);
+
+  //         setIsOnlyAllNetwork(
+  //           availableNetworks.length === 1 && availableNetworks[0] === 'all',
+  //         );
+  //       }
+  //       setIsSuccessfullRequest(true);
+  //       dispatch(setAddressSummary(res.blockchains));
+  //     }
+  //   } catch (error) {
+  //     if (error.name === 'AbortError') {
+  //       setIsSuccessfullRequest(true);
+  //     } else if (error === 'Error: 401') {
+  //       if (config.isDevelopment) {
+  //         alert('You are not authorized to access this page');
+  //       }
+  //       window.location.href = '/wallets';
+  //       setIsSuccessfullRequest(false);
+  //       setIsUnsupported(true);
+  //     } else {
+  //       console.log('Error fetching address info: ', error);
+  //       setIsSuccessfullRequest(false);
+  //       setIsUnsupported(true);
+  //     }
+
+  //     console.log(error);
+  //     if (fetchInterval.current) {
+  //       clearInterval(fetchInterval.current);
+  //       fetchInterval.current = null;
+  //       setIsInInterval(false);
+  //     }
+  //     setLoading(false);
+  //   }
+  // };
+
   const fetchAddressInfo = async () => {
-    fetchControllerRef.current.abort();
+    fetchControllerRef.current.abort(); // Abort any ongoing fetch
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
 
     try {
       setLoading(true);
 
-
+      // Determine the request type based on portfolio selection
       const request = isCurrentUserPortfolioSelected
-        ? dispatch(
-          getCurrentUserPortfolioSummary({
-            userId: currentPortfolioUserId,
-            signal,
-          }),
-        ).unwrap()
-        : dispatch(getAddressesInfo({ address: address, signal }));
+        ? dispatch(getCurrentUserPortfolioSummary({ userId: currentPortfolioUserId, signal })).unwrap()
+        : dispatch(getAddressesInfo({ address, signal }));
 
       const response = await request;
       const res = isCurrentUserPortfolioSelected ? response : response.payload;
 
-      if (res) {
-        if (res.blockchains) {
-          const incomplete = Object.entries(res?.blockchains)
-            .filter(([, blockchain]) => blockchain.complete === false)
-            .map(([key]) => key);
-          setIncompleteBlockchains(incomplete);
-        } else {
-          setIncompleteBlockchains([]);
-        }
+      if (!res) return; // Exit if no response
 
-        if (res.complete) {
-          clearInterval(fetchInterval.current);
-          fetchInterval.current = null;
-          setIsInInterval(false);
-          setLoading(false);
-        } else if (!fetchInterval.current) {
-          setIsInInterval(true);
-          fetchInterval.current = setInterval(fetchAddressInfo, 5000);
-        }
-        if (res.unsupported) {
-          setIsUnsupported(true);
-        }
-
-        if (!res.blockchains) {
-          setIsInInterval(false);
-          return;
-        }
-
-        const availableNetworks = Object.keys(res.blockchains);
-        let filtered;
-        if (isAdminPages) {
-          filtered = networks;
-        } else {
-          filtered = networks
-            .filter(
-              (network) =>
-                network.key !== 'all' &&
-                availableNetworks.includes(network.blockchain),
-            )
-            .map((network) => ({
-              ...network,
-              totalValue: res.blockchains[network.blockchain]?.totalValue,
-              nftsValue: res.blockchains[network.blockchain]?.nftsValue,
-            }));
-
-          if (res.blockchains.all) {
-            const allNetwork = networks.find((n) => n.key === 'all');
-            allNetwork.totalValue = res.blockchains.all.totalValue;
-            allNetwork.nftsValue = res.blockchains.all.nftsValue;
-            filtered.unshift(allNetwork);
-          }
-
-          if (res.nickname) {
-            setNickName(res.nickname);
-          }
-
-          const newNetworkType =
-            filtered.find((n) => n.key === networkType)?.key || 'all';
-          if (newNetworkType !== networkType) {
-            dispatch(setNetworkType(newNetworkType));
-          }
-
-          setFilteredNetworks(filtered);
-
-          setIsOnlyAllNetwork(
-            availableNetworks.length === 1 && availableNetworks[0] === 'all',
-          );
-        }
-        setIsSuccessfullRequest(true);
-        dispatch(setAddressSummary(res.blockchains));
+      // Early exit if `unsupported` is true
+      if (res.unsupported) {
+        setIsUnsupported(true);
+        clearInterval(fetchInterval.current);
+        fetchInterval.current = null;
+        setIsInInterval(false);
+        setLoading(false);
+        return;
       }
+
+      if (res.blockchains) {
+        const incomplete = Object.entries(res.blockchains)
+          .filter(([, blockchain]) => blockchain.complete === false)
+          .map(([key]) => key);
+        setIncompleteBlockchains(incomplete);
+      } else {
+        setIncompleteBlockchains([]);
+      }
+
+      // If the data is complete, stop further polling
+      if (res.complete) {
+        clearInterval(fetchInterval.current);
+        fetchInterval.current = null;
+        setIsInInterval(false);
+        setLoading(false);
+      } else if (!fetchInterval.current) {
+        // Set up interval for polling
+        setIsInInterval(true);
+        fetchInterval.current = setInterval(fetchAddressInfo, 5000);
+      }
+
+      // Further response handling
+      const availableNetworks = Object.keys(res.blockchains);
+      let filtered;
+
+      if (isAdminPages) {
+        filtered = networks;
+      } else {
+        filtered = networks
+          .filter(
+            (network) =>
+              network.key !== 'all' &&
+              availableNetworks.includes(network.blockchain),
+          )
+          .map((network) => ({
+            ...network,
+            totalValue: res.blockchains[network.blockchain]?.totalValue,
+            nftsValue: res.blockchains[network.blockchain]?.nftsValue,
+          }));
+
+        if (res.blockchains.all) {
+          const allNetwork = networks.find((n) => n.key === 'all');
+          allNetwork.totalValue = res.blockchains.all.totalValue;
+          allNetwork.nftsValue = res.blockchains.all.nftsValue;
+          filtered.unshift(allNetwork);
+        }
+
+        if (res.nickname) setNickName(res.nickname);
+
+        const newNetworkType =
+          filtered.find((n) => n.key === networkType)?.key || 'all';
+        if (newNetworkType !== networkType) {
+          dispatch(setNetworkType(newNetworkType));
+        }
+
+        setFilteredNetworks(filtered);
+        setIsOnlyAllNetwork(
+          availableNetworks.length === 1 && availableNetworks[0] === 'all',
+        );
+      }
+
+      setIsSuccessfullRequest(true);
+      dispatch(setAddressSummary(res.blockchains));
+
     } catch (error) {
       if (error.name === 'AbortError') {
         setIsSuccessfullRequest(true);
-      } else if (error === 'Error: 401') {
+      } else if (error.message === 'Error: 401') {
         if (config.isDevelopment) {
           alert('You are not authorized to access this page');
         }
@@ -297,17 +415,17 @@ const Layout = (props) => {
         setIsSuccessfullRequest(false);
         setIsUnsupported(true);
       } else {
-        console.log('Error fetching address info: ', error);
+        console.error('Error fetching address info: ', error);
         setIsSuccessfullRequest(false);
         setIsUnsupported(true);
       }
 
-      console.log(error);
       if (fetchInterval.current) {
         clearInterval(fetchInterval.current);
         fetchInterval.current = null;
         setIsInInterval(false);
       }
+    } finally {
       setLoading(false);
     }
   };
