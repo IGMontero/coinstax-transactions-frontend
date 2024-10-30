@@ -35,12 +35,19 @@ import { authMe } from '../../slices/auth2/thunk';
 
 import { fetchUserCountry } from '../../slices/common/thunk';
 
+import { layoutModeTypes } from '../../Components/constants/layout';
+
 const DashboardCompleteInfo = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   const fixedData = useSelector((state) => state.Common.fixedData);
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const [error, setError] = useState();
 
@@ -91,11 +98,6 @@ const DashboardCompleteInfo = () => {
       if (res.error || response.error) {
         setError(res.error || response.error || 'Something went wrong');
       } else {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'User info updated successfully',
-        });
         authenticate();
       }
       navigate('/wallets');
@@ -127,32 +129,28 @@ const DashboardCompleteInfo = () => {
 
       const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-      const countryCode = userCountry;
+      let countryCode = userCountry;
 
       if (countryCode === 'XX' || !countryCode) {
-        validation.setFieldValue('country', '');
-      } else if (countryCode) {
-        const country = fixedData?.countries.find(
-          (item) => item.code == countryCode,
+        countryCode='US';
+      } 
+      const country = fixedData?.countries.find(
+        (item) => item.code == countryCode,
+      );
+      if (country) {
+        validation.setFieldValue('country', country.code);
+
+        const countryCurrency = country.currency;
+
+        // Find currency in fixed data
+        const currency = fixedData?.currencies.find(
+          (item) => item.symbol === countryCurrency,
         );
 
-        if (country) {
-          validation.setFieldValue('country', country.code);
-
-          const countryCurrency = country.currency;
-
-          // Find currency in fixed data
-          const currency = fixedData?.currencies.find(
-            (item) => item.symbol === countryCurrency,
-          );
-
-          if (currency) {
-            validation.setFieldValue('currency', currency.id);
-          } else {
-            validation.setFieldValue('currency', '');
-          }
+        if (currency) {
+          validation.setFieldValue('currency', currency.id);
         } else {
-          validation.setFieldValue('country', '');
+          validation.setFieldValue('currency', 'USD');
         }
       }
 
@@ -198,11 +196,11 @@ const DashboardCompleteInfo = () => {
           <Container>
             <Row className="justify-content-center">
               <div className="d-flex justify-content-center align-items-center">
-                <Link to={'/wallets'}>
+                <Link to={'/'}>
                   <img
                     src={logo}
                     className="card-logo"
-                    alt="logo dark"
+                    alt="Chain Glance"
                     height="70"
                     width="auto"
                   />
@@ -211,11 +209,8 @@ const DashboardCompleteInfo = () => {
               <Col md={9} lg={7} xl={7}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
-                    <div className="text-center my-3">
-                      <h3 className="text-primary">Welcome to ChainGlance!</h3>
-                      <h6 className="text-muted">
-                        Complete to continue to ChainGlance
-                      </h6>
+                  <div className="text-center my-3">
+                      <h3 className={isDarkMode ? "text-white" : "text-primary"}>Complete your Chain Glance account</h3>
                     </div>
                     <div className="p-2 mt-4">
                       <Form
@@ -227,12 +222,6 @@ const DashboardCompleteInfo = () => {
                         className="needs-validation"
                         action="#"
                       >
-                        {error && error ? (
-                          <Alert color="danger">
-                            <div>{error}</div>
-                          </Alert>
-                        ) : null}
-
                         <div className="mb-2">
                           <Label htmlFor="timezone" className="form-label">
                             Time Zone <span className="text-danger">*</span>
@@ -300,16 +289,18 @@ const DashboardCompleteInfo = () => {
                           </select>
                         </div>
 
+                        {error && error ? (
+                          <Alert color="danger">
+                            <div>{error}</div>
+                          </Alert>
+                        ) : null}
+
                         <div className="mt-4">
                           <Button
                             type="submit"
                             disabled={isSubmitDisabled()}
-                            className="mt-3 d-flex btn-hover-light text-dark w-100 justify-content-center align-items-center"
-                            color="soft-light"
-                            style={{
-                              borderRadius: '10px',
-                              border: '.5px solid grey',
-                            }}
+                            color={isDarkMode ? "primary" : "primary"}
+                            className="mt-3 d-flex w-100 justify-content-center align-items-center"
                           >
                             {loading ? (
                               <>

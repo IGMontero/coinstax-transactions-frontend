@@ -109,7 +109,7 @@ const Register = () => {
         setError(response.error.message === 'Rejected' ? 'There was a problem while registering your account' : response.error.message);
         setLoading(false);
       } else {
-        // navigate('/wallets/connect');
+        //navigate('/wallets/connect');
         // Swal.fire({
         //   title: 'Success',
         //   text: 'Welcome to ChainGlance!',
@@ -160,7 +160,7 @@ const Register = () => {
         if (currency) {
           validation.setFieldValue('currency', currency.id);
         } else {
-          validation.setFieldValue('currency', '');
+          validation.setFieldValue('currency', 'USD');
         }
       } else {
         validation.setFieldValue('country', '');
@@ -222,10 +222,7 @@ const Register = () => {
                 <Card className="mt-4" >
                   <CardBody className="p-4">
                     <div className="text-center my-3">
-                    <h3 className={isDarkMode ? "text-white" : "text-primary"}>Create a new Chain Glance account</h3>
-                      {/* <h6 className="text-muted">
-                        Sign up to continue to ChainGlance
-                      </h6> */}
+                      <h3 className={isDarkMode ? "text-white" : "text-primary"}>Create a new Chain Glance account</h3>
                     </div>
                     <div className="p-2 mt-4">
                       <Form
@@ -412,7 +409,7 @@ const Register = () => {
                                 Loading...
                               </>
                             ) : (
-                              'Submit'
+                              'Continue'
                             )}
                           </Button>
                         </div>
