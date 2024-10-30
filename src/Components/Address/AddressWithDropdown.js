@@ -207,11 +207,7 @@ const AddressWithDropdown = ({
         </h4>
         {!isCurrentUserPortfolioSelected && (
           <div className="d-flex align-items-center ms-3">
-            <i
-              onClick={toggleQrModal}
-              className="ri-qr-code-line fs-4 me-2 cursor-pointer"
-              title="Show QR code"
-            ></i>
+
 
             {isCopied ? (
               <i className="ri-check-line fs-4 me-2"></i>
@@ -222,6 +218,12 @@ const AddressWithDropdown = ({
                 className="ri-file-copy-line fs-4 me-2 cursor-pointer"
               ></i>
             )}
+
+            <i
+              onClick={toggleQrModal}
+              className="ri-qr-code-line fs-4 me-2 cursor-pointer"
+              title="Show QR code"
+            ></i>
 
             {isAddressInPortfolio && user && (
               <i

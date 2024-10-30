@@ -230,9 +230,7 @@ const SearchBar = ({
 
   useEffect(() => {
     if (inputRef.current) {
-      console.log('INPUT REF:', inputRef.current);
       const input = inputRef.current.inputRef;
-      console.log('INPUT:', input);
       input.addEventListener('keydown', handleKeyDown);
       return () => input.removeEventListener('keydown', handleKeyDown);
     }

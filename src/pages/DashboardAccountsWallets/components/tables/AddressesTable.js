@@ -24,8 +24,7 @@ import {
 import {
   copyToClipboard,
   CurrencyUSD,
-  formatAddressToShortVersion,
-  parseValuesToLocale,
+  parseValuesToLocale
 } from '../../../../utils/utils';
 
 const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
@@ -34,24 +33,12 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
 
   const [addresses, setAddresses] = useState(initialAddresses);
 
-  const addressesCookies = useSelector((state) => state.addressName.addresses);
-
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
   const [openCollapse, setOpenCollapse] = useState(new Set());
   const [dropdownOpen, setDropdownOpen] = useState(null);
-
-  const toggleCollapse = (collapseId) => {
-    const newSet = new Set(openCollapse);
-    if (newSet.has(collapseId)) {
-      newSet.delete(collapseId);
-    } else {
-      newSet.add(collapseId);
-    }
-    setOpenCollapse(newSet);
-  };
 
   const handleItemClick = (address) => {
     //toggleCollapse(collapseId);
@@ -272,13 +259,12 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   };
 
   const getDisplayText = (address) => {
-    const addressCustomName = addressesCookies.find(
-      (addr) => addr.value?.toLowerCase() === address?.toLowerCase(),
-    )?.label;
+    console.log('address:', address);
+    const addressCustomName = address?.Name;
     if (addressCustomName) {
       return addressCustomName;
     } else {
-      return null;
+      return address;
     }
   };
 
@@ -306,6 +292,8 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                   const isLoading = !isCompleted;
 
                   const addressId = String(address.id || address.Id);
+                  console.log(addressName)
+
                   return (
                     <Draggable
                       key={addressId}
@@ -323,13 +311,15 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                             md={12}
                             sm={12}
                             xs={12}
+
                             className="mb-3 "
                           >
                             <div
+
                               onClick={() => handleItemClick(itemAddress)}
                               className={`address-card p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
-                                  ? 'px-2 mb-2'
-                                  : 'bg-light'
+                                ? 'px-2 mb-2'
+                                : 'bg-light'
                                 }`}
                             >
                               <Row
@@ -345,14 +335,44 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                   xs={12}
                                   className="d-flex align-items-center me-lg-0 me-1 mb-lg-0 mb-3"
                                 >
-                                  <div className="d-flex justify-content-between align-items-center w-100">
-                                    <div className="d-flex flex-column">
-                                      <h5>{getDisplayText(itemAddress)}</h5>
-                                      <span className="text-muted">
-                                        {formatAddressToShortVersion(
-                                          itemAddress,
-                                        )}
+                                  <div
+                                    style={{
+                                      maxWidth: '100%',
+                                      whiteSpace: 'nowrap',
+                                      // overflow: 'hidden',
+                                      textOverflow: 'ellipsis',
+                                      flexWrap: 'wrap',
+                                    }}
+                                    className="d-flex justify-content-between align-items-center w-100">
+                                    <div
+                                      style={{
+                                        maxWidth: '100%'
+                                      }}
+                                      className="d-flex flex-column">
+                                      {addressName && (
+                                        <h5
+                                          style={{
+                                            maxWidth: '100%',
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            flexWrap: 'wrap',
+                                          }}
+                                        >{addressName}</h5>
+                                      )}
+
+                                      <span
+                                        className="text-muted"
+                                        style={{
+                                          // maxWidth: '100%',
+                                          whiteSpace: 'nowrap',
+                                          overflow: 'hidden',
+                                          textOverflow: 'ellipsis',
+                                          flexWrap: 'wrap',
+                                        }}>
+                                        {itemAddress}
                                       </span>
+
                                       <span className="text-muted">
                                         {isLoading ? (
                                           <Skeleton
