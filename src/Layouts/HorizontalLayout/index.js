@@ -44,7 +44,7 @@ const HorizontalLayout = (props) => {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
     const initMenu = () => {
-      const pathName = process.env.PUBLIC_URL + props.router.location.pathname;
+      const pathName = props.router.location.pathname;
       const ul = document.getElementById('navbar-nav');
       const items = ul.getElementsByTagName('a');
       let itemsArray = [...items]; // converts NodeList to Array

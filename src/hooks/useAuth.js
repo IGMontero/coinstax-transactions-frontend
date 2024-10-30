@@ -6,6 +6,7 @@ import {
   setPrevAddress,
   setAddressSearched,
 } from '../slices/layoutMenuData/reducer';
+import config from '../config';
 
 export const useCurrentUser = () => {
   const { user } = useSelector((state) => state.auth);
@@ -20,13 +21,13 @@ export const useLogOut = () => {
   // Dispatch logout and clean up necessary data.
   const handleLogout = async () => {
     try {
-      console.log('Logging out...');
       await dispatch(logout());
       dispatch(setPrevAddress(null));
       dispatch(setAddressSearched(null));
-
-      console.log('Cleaning user wallets...');
       await dispatch(cleanUserWallets());
+
+      // Navigate to base url of the site.
+      window.location.href = config.client.CLIENT_URL
     } catch (error) {
       console.log(error);
     }

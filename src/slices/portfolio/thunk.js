@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getTokenFromCookies } from '../../helpers/cookies_helper';
-const API_BASE = process.env.REACT_APP_API_URL_BASE;
+import { API_BASE } from '../../common/constants';
 
 export const fetchAssetsPortfolio = createAsyncThunk(
   'portfolio/getAssetsPortfolio',

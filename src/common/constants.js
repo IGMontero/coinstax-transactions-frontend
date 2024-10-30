@@ -1,8 +1,8 @@
 import React from 'react';
-export const isDevelopment = process.env.NODE_ENV === 'development';
-export const isProduction = process.env.NODE_ENV === 'production';
+export const isDevelopment = config.isDevelopment
+export const isProduction = config.isProduction
 
-export const API_BASE = process.env.REACT_APP_API_URL_BASE;
+export const API_BASE = config.api.API_URL
 
 import eth from '../assets/images/svg/crypto-icons/eth.svg';
 import pol from '../assets/images/svg/crypto-icons/polygon.webp';
@@ -14,6 +14,7 @@ import coinbaseLogo from '../assets/images/wallets/coinbase.png';
 import metamaskLogo from '../assets/images/wallets/metamask.png';
 import walletConnectLogo from '../assets/images/wallets/WalletConnect.png';
 import cronosLogo from '../assets/images/wallets/cronos.png';
+import config from '../config';
 
 export const networks = [
   {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { isDevelopment } from '../config';
 
 const AuthProtectedRoutes = ({ allowedRoles, children }) => {
   const user = useSelector((state) => state.auth.user);
@@ -7,8 +8,8 @@ const AuthProtectedRoutes = ({ allowedRoles, children }) => {
   const role = user?.role;
 
   if (!allowedRoles.includes(role)) {
-    if (process.env.NODE_ENV === 'development') {
-      alert('You are not authorized to access this page');
+    if (isDevelopment) {
+      alert('Development Message: You are not authorized to access this page');
     }
 
     window.history.back();

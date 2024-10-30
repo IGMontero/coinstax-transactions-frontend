@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-const API_BASE = process.env.REACT_APP_API_URL_BASE;
+import { API_BASE } from '../../common/constants';
 
 export const getAddressesSuggestions = createAsyncThunk(
   'addresses/getAddressesSuggestions',

@@ -1,9 +1,10 @@
 import Cookies from 'js-cookie';
 import { isDevelopment } from '../common/constants';
+import config from '../config';
 
 const cookiesDomain = isDevelopment
   ? 'localhost'
-  : `.${process.env.REACT_APP_ROOT_DOMAIN}`;
+  : `.${config.client.ROOT_DOMAIN}`;
 
 // Token functions
 export const saveTokenInCookies = (token) => {
@@ -69,10 +70,10 @@ export const getUserSavedAddresses = () => {
     domain: cookiesDomain,
   })
     ? JSON.parse(
-        Cookies.get('addresses', {
-          domain: cookiesDomain,
-        }),
-      )
+      Cookies.get('addresses', {
+        domain: cookiesDomain,
+      }),
+    )
     : [];
 };
 

@@ -1,6 +1,5 @@
 import axios from "axios";
 import { api } from "../config";
-import { dummyUser } from "../slices/auth/login/reducer";
 
 // default
 axios.defaults.baseURL = api.API_URL;
@@ -95,12 +94,7 @@ class APIClient {
   };
 }
 const getLoggedinUser = () => {
-  const user = dummyUser
-  if (!user) {
-    return null;
-  } else {
-    return dummyUser;
-  }
+  return null
 };
 
 export { APIClient, setAuthorization, getLoggedinUser };

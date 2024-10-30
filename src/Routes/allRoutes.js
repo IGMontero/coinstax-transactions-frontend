@@ -6,7 +6,6 @@ import { Navigate } from 'react-router-dom';
 //login
 import ForgetPasswordPage from '../pages/Authentication/ForgetPassword';
 import Login from '../pages/Authentication/Login';
-import Logout from '../pages/Authentication/Logout';
 import Register from '../pages/Authentication/Register';
 
 // User Profile
@@ -98,7 +97,6 @@ const adminRoutes = [
 
 // Public routes
 const publicRoutes = [
-  { path: '/logout', component: <Logout /> },
   { path: '/login', component: <Login /> },
 
   { path: '/reset-password', component: <ResetPaswword /> },

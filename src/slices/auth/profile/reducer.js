@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { dummyUser } from '../login/reducer';
 
 export const initialState = {
   error: '',

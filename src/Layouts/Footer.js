@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Col, Container, Row } from 'reactstrap';
 import { fetchApiVersion } from '../slices/common/thunk';
+import config from '../config';
 
 const Footer = () => {
   const [apiVersion, setApiVersion] = React.useState('');
-  const appVersion = process.env.REACT_APP_VERSION;
+  const appVersion = config.app.version;
   const dispatch = useDispatch();
 
   useEffect(() => {

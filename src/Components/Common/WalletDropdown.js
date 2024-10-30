@@ -49,7 +49,7 @@ const WalletDropdown = () => {
         <DropdownMenu className="dropdown-menu-end">
           <DropdownItem className="p-0 ">
             <Link
-              to={process.env.PUBLIC_URL + '/wallets/connect'}
+              to={'/wallets/connect'}
               className="dropdown-item ps-2"
             >
               <i className="ri-add-line text-muted fs-16 align-middle me-2"></i>
@@ -60,7 +60,7 @@ const WalletDropdown = () => {
             <DropdownItem className="p-0">
               <Link
                 to={
-                  process.env.PUBLIC_URL +
+
                   (isUserOrNoUser ? '/wallets' : '/clients')
                 }
                 className="dropdown-item ps-2"

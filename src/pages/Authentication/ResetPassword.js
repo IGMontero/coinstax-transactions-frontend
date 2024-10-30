@@ -6,28 +6,27 @@ import {
   CardBody,
   Col,
   Container,
-  Row,
   Form,
+  FormFeedback,
   Input,
   Label,
-  FormFeedback,
+  Row,
   Spinner,
 } from 'reactstrap';
 
 //formik
 import { useFormik } from 'formik';
-import {
-  verifyResetPasswordToken,
-  resetPassword,
-} from '../../slices/auth2/thunk';
-import * as Yup from 'yup';
-import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
-import Helmet from '../../Components/Helmet/Helmet';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
-import { logoutUser } from '../../slices/thunks';
+import * as Yup from 'yup';
+import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import Helmet from '../../Components/Helmet/Helmet';
 import { useLogOut } from '../../hooks/useAuth';
+import {
+  resetPassword,
+  verifyResetPasswordToken,
+} from '../../slices/auth2/thunk';
+import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 
 const ResetPaswword = () => {
   const location = useLocation();

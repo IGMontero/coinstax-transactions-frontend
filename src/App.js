@@ -7,15 +7,13 @@ import './assets/scss/themes.scss';
 //import Route
 import ReactGA from 'react-ga4';
 import { useLocation } from 'react-router-dom';
+import JobsManager from './Components/JobsManager/JobsManager';
+import config from './config';
+import { useGetFixedData } from './hooks/fixedData';
 import { ConnectWalletProvider } from './Providers/ConnectWalletProvider';
 import Route from './Routes';
-import JobsManager from './Components/JobsManager/JobsManager';
-import { useDispatch } from 'react-redux';
-import { getFixedData } from './slices/fixedData/thunk';
-import { setFixedData } from './slices/fixedData/reducer';
-import { useGetFixedData } from './hooks/fixedData';
 
-ReactGA.initialize(process.env.REACT_APP_GA_MEASUREMENT_ID || '');
+ReactGA.initialize(config.google.MEASUREMENT_ID || '');
 
 function App() {
   const location = useLocation();

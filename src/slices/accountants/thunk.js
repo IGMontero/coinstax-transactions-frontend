@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getTokenFromCookies } from '../../helpers/cookies_helper';
-const API_BASE = process.env.REACT_APP_API_URL_BASE;
+import config from '../../config';
+const API_BASE = config.api.API_URL
 
 export const getClientsByAccountantId = createAsyncThunk(
   'clients/getClientsByAccountantId',
@@ -156,9 +157,8 @@ export const getUsersByAdmin = createAsyncThunk(
   async ({ page, accountType }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const url = `${API_BASE}/admin/users?page=${page}${
-        accountType ? `&accountType=${accountType}` : ''
-      }`;
+      const url = `${API_BASE}/admin/users?page=${page}${accountType ? `&accountType=${accountType}` : ''
+        }`;
 
       const response = await fetch(url, {
         headers: {

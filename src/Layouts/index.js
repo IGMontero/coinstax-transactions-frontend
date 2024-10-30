@@ -39,6 +39,7 @@ import UnsupportedPage from '../Components/UnsupportedPage/UnsupportedPage';
 import { setAddressName } from '../slices/addressName/reducer';
 import { pagesWithoutAddress } from '../common/constants';
 import { getCurrentUserPortfolioSummary } from '../slices/userWallets/thunk';
+import config from '../config';
 const Layout = (props) => {
   const { token, contractAddress, address } = useParams();
   const location = useLocation();
@@ -289,7 +290,7 @@ const Layout = (props) => {
       if (error.name === 'AbortError') {
         setIsSuccessfullRequest(true);
       } else if (error === 'Error: 401') {
-        if (process.env.NODE_ENV === 'development') {
+        if (config.isDevelopment) {
           alert('You are not authorized to access this page');
         }
         window.location.href = '/wallets';

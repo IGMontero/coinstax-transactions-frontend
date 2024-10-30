@@ -13,6 +13,7 @@ import { layoutModeTypes } from '../Components/constants/layout';
 import { useSelector } from 'react-redux';
 
 import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
+import config from '../config';
 
 const Sidebar = ({ layoutType }) => {
   const navigate = useNavigate();
@@ -127,9 +128,7 @@ const Sidebar = ({ layoutType }) => {
             >
               <Link
                 to={
-                  process.env.NODE_ENV === 'development'
-                    ? '/wallets'
-                    : 'https://chainglance.com/wallets'
+                  '/wallets'
                 }
                 className="d-flex align-items-center justify-content-start"
               >

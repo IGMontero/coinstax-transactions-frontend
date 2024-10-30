@@ -11,6 +11,7 @@ import { authMe } from '../slices/auth2/thunk';
 import { allRoutes, noVerticalLayoutRoutes } from './allRoutes';
 import { getTokenFromCookies } from '../helpers/cookies_helper';
 import usePortfolioData from '../hooks/useUserPortfolio';
+import config from '../config';
 
 const Index = () => {
   const dispatch = useDispatch();
@@ -64,12 +65,12 @@ const Index = () => {
       // Redirect to app root url or base url
 
       const isOriginSameAsCurrent =
-        window.location.origin === process.env.REACT_APP_ROOT_URL;
+        window.location.origin === config.client.CLIENT_URL;
       const shouldRedirect =
-        !isOriginSameAsCurrent && process.env.REACT_APP_ROOT_URL;
+        !isOriginSameAsCurrent && config.client.CLIENT_URL;
 
       if (shouldRedirect) {
-        window.location.href = process.env.REACT_APP_ROOT_URL;
+        window.location.href = config.client.CLIENT_URL;
       }
     }
   }, [location.pathname]);

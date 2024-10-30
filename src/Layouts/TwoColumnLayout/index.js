@@ -52,7 +52,7 @@ const TwoColumnLayout = (props) => {
   }, []);
 
   const initMenu = useCallback(() => {
-    const pathName = process.env.PUBLIC_URL + props.router.location.pathname;
+    const pathName = props.router.location.pathname;
     const ul = document.getElementById('navbar-nav');
     const items = ul.getElementsByTagName('a');
     let itemsArray = [...items]; // converts NodeList to Array
@@ -82,8 +82,8 @@ const TwoColumnLayout = (props) => {
   function activateIconSidebarActive(id) {
     var menu = document.querySelector(
       "#two-column-menu .simplebar-content-wrapper a[subitems='" +
-        id +
-        "'].nav-icon",
+      id +
+      "'].nav-icon",
     );
     if (menu !== null) {
       menu?.classList?.add('active');

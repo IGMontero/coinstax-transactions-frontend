@@ -4,15 +4,13 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createConfig, http, WagmiProvider } from 'wagmi';
 import { mainnet } from 'wagmi/chains';
 import { coinbaseWallet, metaMask, walletConnect } from 'wagmi/connectors';
+import config from '../config';
 
 // 0. Setup queryClient
 const queryClient = new QueryClient();
 
 // 1. Get projectId from https://cloud.walletconnect.com
-const projectId =
-    process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID ||
-    'f3ec191ff1a02016249d76c9de7ad02b';
-
+const projectId = config.walletConnect.PROJECT_ID;
 const chains = [mainnet];
 
 export const wagmiConfig = createConfig({

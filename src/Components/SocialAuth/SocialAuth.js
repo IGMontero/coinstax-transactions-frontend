@@ -2,18 +2,19 @@ import React from 'react';
 import { Button, Col, Row } from 'reactstrap';
 import coinbaseLogo from '../../assets/images/wallets/coinbase.png';
 import googleLogo from '../../assets/images/brands/google.png';
+import config from '../../config';
 
 const SocialAuth = () => {
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL_BASE}/auth/google`;
+    window.location.href = `${config.api.API_URL}/auth/google`;
   };
 
   const handleCoinbaseLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL_BASE}/auth/coinbase`;
+    window.location.href = `${config.api.API_URL}/auth/coinbase`;
   };
 
   const handleAppleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_API_URL_BASE}/auth/apple`;
+    window.location.href = `${config.api.API_URL}/auth/apple`;
   };
 
   return (
