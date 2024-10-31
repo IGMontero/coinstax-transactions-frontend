@@ -45,6 +45,8 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     navigate(`/address/${address}`);
   };
 
+  console.log('addresses table:', addresses);
+
   const handleVisitAddress = (address) => {
     navigate(`/address/${address}`);
   };

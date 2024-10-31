@@ -20,7 +20,7 @@ const SocialAuth = () => {
   return (
     <>
       <Row className="d-flex align-items-center">
-        <Col className="col-4">
+        <Col className="col-12 col-sm-4">
           <Button
             color="white"
             onClick={handleGoogleLogin}
@@ -35,7 +35,7 @@ const SocialAuth = () => {
             Sign in with Google
           </Button>
         </Col>
-        <Col className="col-4">
+        <Col className="col-12 col-sm-4">
           <Button
             color="white"
             onClick={handleAppleLogin}
@@ -45,7 +45,7 @@ const SocialAuth = () => {
             Sign in with Apple
           </Button>
         </Col>
-        <Col className="col-4">
+        <Col className="col-12 col-sm-4">
           <Button
             color="white"
             onClick={handleCoinbaseLogin}

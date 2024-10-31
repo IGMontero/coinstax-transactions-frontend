@@ -138,8 +138,8 @@ const Register = () => {
       let countryCode = userCountry;
 
       if (countryCode === 'XX' || !countryCode) {
-        countryCode='US';
-      } 
+        countryCode = 'US';
+      }
       const country = fixedData?.countries.find(
         (item) => item.code == countryCode,
       );
@@ -214,7 +214,7 @@ const Register = () => {
                   />
                 </Link>
               </div>
-              <Col md={9} lg={6} xl={4}>
+              <Col md={9} lg={6} xl={6}>
                 <Card className="mt-4" >
                   <CardBody className="p-4">
                     <div className="text-center my-3">
