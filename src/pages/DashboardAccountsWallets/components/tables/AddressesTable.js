@@ -132,7 +132,9 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     });
   };
 
-  const handleDeleteUserAddress = (address) => {
+  const handleDeleteUserAddress = (e, address) => {
+    e.preventDefault();
+    e.stopPropagation();
     const addressDisplay = address.name ? address.name : address.address;
     Swal.fire({
       // title: `Delete wallet ${addressDisplay}`,
@@ -366,7 +368,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
         <button
           title={'Delete Address'}
           className="btn btn-transparent btn-hover-light btn-sm text-dark"
-          onClick={() => handleDeleteUserAddress(address)}
+          onClick={(e) => handleDeleteUserAddress(e, address)}
         >
           <i className="ri-delete-bin-line fs-6"></i>
         </button>
