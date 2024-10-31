@@ -14,35 +14,21 @@ import { useSelector } from 'react-redux';
 
 import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
 import config from '../config';
+import { useIsMobile } from '../slices/jobs/hooks';
 
 const Sidebar = ({ layoutType }) => {
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
 
-  const [windowSize, setWindowSize] = useState(window.innerWidth);
+  const isMobile = useIsMobile(767);
 
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
 
-  const { prevAddress } = useSelector(
-    (state) => state.layoutMenuData,
-  );
-
+  const { prevAddress } = useSelector((state) => state.layoutMenuData);
 
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
-
-  useEffect(() => {
-    const handleResize = () => {
-      setWindowSize(window.innerWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   useEffect(() => {
     var verticalOverlay = document.getElementsByClassName('vertical-overlay');
@@ -74,26 +60,17 @@ const Sidebar = ({ layoutType }) => {
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
   const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
-  const bgColorStyle = {
-    backgroundColor:
-      windowSize > 768
-        ? layoutModeType === layoutModeTypes['LIGHTMODE']
-          ? 'blue'
-          : 'transparent'
-        : '',
-  };
 
   return (
     <React.Fragment>
       <div
-        className="app-menu navbar-menu"
+        className={`app-menu navbar-menu  ${isMobile ? 'ps-2' : ''}`}
         style={{
-          backgroundColor:
-            windowSize < 768
-              ? layoutModeType === layoutModeTypes['DARKMODE']
-                ? '#16161a'
-                : 'white'
-              : 'transparent',
+          backgroundColor: isMobile
+            ? layoutModeType === layoutModeTypes['DARKMODE']
+              ? '#16161a'
+              : 'white'
+            : 'transparent',
         }}
       >
         <div className="navbar-brand-box ">
@@ -124,12 +101,10 @@ const Sidebar = ({ layoutType }) => {
           <React.Fragment>
             <SimpleBar
               id="scrollbar"
-            //  className="h-100 "
+              //  className="h-100 "
             >
               <Link
-                to={
-                  '/wallets'
-                }
+                to={'/wallets'}
                 className="d-flex align-items-center justify-content-start"
               >
                 <span className="logo-lg d-flex align-items-center justify-content-center">
@@ -160,9 +135,7 @@ const Sidebar = ({ layoutType }) => {
 
                   {!user && (
                     <div className="mt-3">
-                      {prevAddress && (
-                        <hr className="hr-dashed" />
-                      )}
+                      {prevAddress && <hr className="hr-dashed" />}
                       <span>
                         Create an account to save your address and view your
                         portfolio.
