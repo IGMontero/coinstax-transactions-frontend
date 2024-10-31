@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
-import {
-  Col
-} from 'reactstrap';
+import { Col } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 import { setAddressName } from '../../slices/addressName/reducer';
@@ -205,10 +203,8 @@ const AddressWithDropdown = ({
         <h4 className="mb-0 ms-3 text-custom-address-dropdown">
           {getAddressLabel()}
         </h4>
-        {!isCurrentUserPortfolioSelected && (
+        {!isCurrentUserPortfolioSelected && !isUnsupported && (
           <div className="d-flex align-items-center ms-3">
-
-
             {isCopied ? (
               <i className="ri-check-line fs-4 me-2"></i>
             ) : (
