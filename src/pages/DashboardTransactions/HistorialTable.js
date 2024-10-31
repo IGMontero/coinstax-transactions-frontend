@@ -692,15 +692,15 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const exportAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-          ...requestParams,
-          userId: currentPortfolioUserId,
-          assetsFilters,
-        })
+            ...requestParams,
+            userId: currentPortfolioUserId,
+            assetsFilters,
+          })
         : downloadTransactions({
-          ...requestParams,
-          query: debouncedSearchTerm,
-          assetsFilters,
-        });
+            ...requestParams,
+            query: debouncedSearchTerm,
+            assetsFilters,
+          });
 
       const response = await dispatch(exportAction).unwrap();
 
@@ -819,16 +819,16 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const downloadAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-          ...downloadParams,
-          userId: currentPortfolioUserId,
-          assetsFilters: selectAsset,
-        })
+            ...downloadParams,
+            userId: currentPortfolioUserId,
+            assetsFilters: selectAsset,
+          })
         : downloadTransactions({
-          ...downloadParams,
-          address: address,
-          query: debouncedSearchTerm,
-          assetsFilters: selectAsset,
-        });
+            ...downloadParams,
+            address: address,
+            query: debouncedSearchTerm,
+            assetsFilters: selectAsset,
+          });
 
       const response = await dispatch(downloadAction).unwrap();
 
@@ -987,7 +987,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const renderFiltersDropdown = () => {
     return (
       <Row>
-        <Col className="d-flex">
+        <Col className="d-flex mb-2">
           <Dropdown
             disabled={loading}
             isOpen={showTransactionFilterMenu}
@@ -996,8 +996,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
             <DropdownToggle
               disabled={isInitialLoad}
               tag="a"
-              className={`btn btn-sm p-1 d-flex align-items-center
-              ${!isInitialLoad ? ' btn-soft-primary mb-1' : 'btn-muted mb-1 border'}
+              className={`btn btn-sm p-1 d-flex align-items-center 
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-2 border'}
               ${showTransactionFilterMenu ? 'active' : ''} `}
               role="button"
             >
@@ -1018,7 +1018,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => { }}
+                      onChange={() => {}}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -1036,8 +1036,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
-                }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
+                showAssetsMenu ? 'active' : ''
+              }`}
               role="button"
             >
               <span className="fs-6">
@@ -1226,13 +1227,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const renderInfoTransactions = () => {
     return (
       <Row className="col-12 ">
-        <div className="d-flex justify-content-between w-100">
+        <div className="d-flex justify-content-start w-100">
           <div>Total transactions: {totalTransactions}</div>
-          <div>
+          <div className="ms-3">
             {hasPreview && (
               <div className="d-flex align-items-center">
                 <Spinner size="sm" />
-                <span className="ms-2">Loading transactions...</span>
               </div>
             )}
           </div>
@@ -1298,7 +1298,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
             </div>
           )}
         </div> */}
-        <div className="d-flex pt-2  justify-content-center align-items-center">
+        <div className="d-flex pt-3  justify-content-center align-items-center">
           <TransactionSkeleton />
         </div>
       </>
@@ -1364,7 +1364,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         </Col>
         <Row className="">
           <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
-            <div className="d-flex justify-content-start">
+            <div className="d-flex justify-content-start  ">
               <Input
                 disabled={isInitialLoad}
                 id="customCheck1"
@@ -1414,7 +1414,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-        // style={{ minHeight: '50vh' }}
+          // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions
