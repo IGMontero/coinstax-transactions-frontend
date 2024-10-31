@@ -30,6 +30,8 @@ import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 const ForgetPasswordPage = (props) => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -57,32 +59,35 @@ const ForgetPasswordPage = (props) => {
       console.log(response);
 
       if (res.error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: res.message,
-          showConfirmButton: false,
-          timer: 1500,
-        });
+        // Swal.fire({
+        //   icon: 'error',
+        //   title: 'Error',
+        //   text: res.message,
+        //   showConfirmButton: false,
+        //   timer: 1500,
+        // });
+        setErrorMsg(res.message);
       } else {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Reset link sent to your email',
-          showConfirmButton: false,
-          timer: 1500,
-        });
+        // Swal.fire({
+        //   icon: 'success',
+        //   title: 'Success',
+        //   text: 'Reset link sent to your email',
+        //   showConfirmButton: false,
+        //   timer: 1500,
+        // });
+        setSuccessMsg('Reset link sent to your email');
       }
       setLoading(false);
     } catch (error) {
       console.log('error', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Something went wrong',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'Error',
+      //   text: 'Something went wrong',
+      //   showConfirmButton: false,
+      //   timer: 1500,
+      // });
+      setErrorMsg('Something went wrong');
       setLoading(false);
     }
   };
@@ -115,8 +120,10 @@ const ForgetPasswordPage = (props) => {
                   </div>
 
                   <div class="p-2 my-4">
-                    If you have forgotten your password, please enter your email address and we will send instructions on how to reset
-                    it. If you have not received an email within a few minutes, please check your spam folder or contact us.
+                    If you have forgotten your password, please enter your email
+                    address and we will send instructions on how to reset it. If
+                    you have not received an email within a few minutes, please
+                    check your spam folder or contact us.
                   </div>
                   <div className="p-2">
                     {/* {forgetError ? (
@@ -137,7 +144,9 @@ const ForgetPasswordPage = (props) => {
                       }}
                     >
                       <div className="mb-4">
-                        <Label className="form-label">Enter you email address</Label>
+                        <Label className="form-label">
+                          Enter you email address
+                        </Label>
                         <Input
                           name="email"
                           className="form-control"
@@ -156,6 +165,16 @@ const ForgetPasswordPage = (props) => {
                           <FormFeedback type="invalid">
                             <div>{validation.errors.email}</div>
                           </FormFeedback>
+                        ) : null}
+                        {errorMsg ? (
+                          <div style={{ marginTop: '13px' }}>
+                            <span className="text-danger">{errorMsg}</span>
+                          </div>
+                        ) : null}
+                        {successMsg ? (
+                          <div style={{ marginTop: '13px' }}>
+                            <span className="text-success">{successMsg}</span>
+                          </div>
                         ) : null}
                       </div>
 
