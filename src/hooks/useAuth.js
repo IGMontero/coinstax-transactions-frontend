@@ -25,12 +25,12 @@ export const useLogOut = () => {
       dispatch(setPrevAddress(null));
       dispatch(setAddressSearched(null));
       await dispatch(cleanUserWallets());
-
-      // Navigate to base url of the site.
-      window.location.href = config.client.CLIENT_URL
     } catch (error) {
       console.log(error);
     }
+
+    // Navigate to base url of the site.
+    window.location.href = config.client.CLIENT_URL
   };
 
   return handleLogout;

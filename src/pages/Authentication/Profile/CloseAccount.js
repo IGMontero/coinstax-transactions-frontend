@@ -8,40 +8,27 @@ import { useNavigate } from 'react-router-dom';
 
 const CloseAccount = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [confirmationText, setConfirmationText] = useState('');
   const [isChecked, setIsChecked] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const logout = useLogOut();
 
-  const handleLogout = () => {
-    try {
-      logout();
-
-      navigate('/wallets');
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleDeleteAccount = async () => {
     if (confirmationText !== 'YES' || !isChecked) {
-      await Swal.fire(
-        'Error',
-        'You must type "YES" and check the confirmation box to proceed.',
-        'error',
-      );
       return;
     }
 
+    setErrorMsg('');
+
     const responseSwal = await Swal.fire({
-      title: 'Are you sure?',
-      text: 'You will not be able to recover your account!',
+      title: 'Close Account',
+      text: 'Closing an account cannot be undone and all data will be removed. Are you sure you want to close your account?',
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, keep it',
+      confirmButtonText: 'Close Account',
+      cancelButtonText: 'Cancel',
     });
 
     if (responseSwal.isConfirmed) {
@@ -51,27 +38,15 @@ const CloseAccount = () => {
         const result = await dispatch(closeAccount()).unwrap();
         setLoading(false);
 
-        if (result.message === 'User account closed') {
-          await Swal.fire(
-            'Success!',
-            'Your account has been successfully deleted.',
-            'success',
-          );
-          handleLogout();
-        } else {
-          await Swal.fire(
-            'Error',
-            'There was an issue deleting your account. Please try again.',
-            'error',
-          );
+        if (result.error) {
+          setErrorMsg(result.error.message);
+          return;
         }
+
+        logout();
       } catch (error) {
         setLoading(false);
-        await Swal.fire(
-          'Error',
-          'An unexpected error occurred. Please try again later.',
-          'error',
-        );
+        setErrorMsg('An error occured: ' + error.message);
       }
     }
   };
@@ -81,8 +56,7 @@ const CloseAccount = () => {
       <div>
         <h5 className="card-title mb-3">{'Close This Account'}:</h5>
         <p className="text-muted">
-          Closing your account will irreversibly remove all your trade data,
-          capital gains results and closing positions.
+          Closing your account will remove all your data and cannot be undone.
         </p>
         <div className="form-check mb-3">
           <input
@@ -93,7 +67,7 @@ const CloseAccount = () => {
           />
           <label htmlFor="confirmCheckbox" className="form-check-label">
             I understand by closing my account, I will lose access to all my
-            information.
+            data.
           </label>
         </div>
         <div>
@@ -106,15 +80,20 @@ const CloseAccount = () => {
             className="form-control"
             placeholder="Enter the word YES"
             value={confirmationText}
-            onChange={(e) => setConfirmationText(e.target.value)}
+            onChange={(e) => setConfirmationText(e.target.value.toLocaleUpperCase())}
             style={{ maxWidth: '265px' }}
           />
         </div>
+
+        {errorMsg && errorMsg ? (
+          <div className="alert alert-danger">{errorMsg} </div>
+        ) : null}
+
         <div className="hstack gap-2 mt-3">
           <Button
             onClick={handleDeleteAccount}
             className="btn btn-danger"
-            disabled={loading || !isChecked}
+            disabled={loading || !isChecked || confirmationText!=='YES'}
           >
             {loading ? <Spinner size="sm" color="dark" /> : 'Close Account'}
           </Button>

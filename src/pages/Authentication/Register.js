@@ -163,7 +163,8 @@ const Register = () => {
           validation.setFieldValue('currency', 'USD');
         }
       } else {
-        validation.setFieldValue('country', '');
+        validation.setFieldValue('country', 'US');
+        validation.setFieldValue('currency', 'USD');
       }
 
       const timezone = fixedData?.timezones.find(
@@ -173,7 +174,7 @@ const Register = () => {
       if (timezone) {
         validation.setFieldValue('timezone', timezone.id);
       } else {
-        validation.setFieldValue('timezone', '');
+        validation.setFieldValue('timezone', userTimezone);
       }
     };
 
