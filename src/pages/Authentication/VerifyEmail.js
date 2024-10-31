@@ -15,7 +15,6 @@ const VerifyEmail = () => {
   const token = tokenParams.get('token');
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
 
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
@@ -52,7 +51,7 @@ const VerifyEmail = () => {
                 <img
                   src={logo}
                   className="card-logo "
-                  alt="logo dark"
+                  alt="Chain Glance"
                   height="70"
                   width="auto"
                 />

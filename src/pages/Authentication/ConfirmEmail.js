@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
 import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import Helmet from '../../Components/Helmet/Helmet';
-import { useLogOut } from '../../hooks/useAuth';
 import { confirmEmailChange } from '../../slices/auth2/thunk';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
+import { layoutModeTypes } from '../../Components/constants/layout';
 
 const ConfirmEmail = () => {
   const dispatch = useDispatch();
@@ -15,39 +15,28 @@ const ConfirmEmail = () => {
 
   const tokenParams = new URLSearchParams(location.search);
   const token = tokenParams.get('token');
-  const logout = useLogOut();
 
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleLogout = async () => {
-    try {
-      logout();
-
-      setTimeout(() => {
-        navigate('/login');
-      }, 3000);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleConfirmEmailChange = async () => {
     setLoading(true);
+    setErrorMessage('');
     try {
       const response = await dispatch(confirmEmailChange(token));
-      console.log(response);
       if (response.error) {
         setErrorMessage(
           'Please try again or request a new email change link in your profile.',
         );
-      } else {
-        // logout
-        setSuccessMessage('Email changed successfully');
-        handleLogout();
+        return;
       }
+
     } catch (error) {
       setErrorMessage(error.message);
     } finally {
@@ -70,7 +59,7 @@ const ConfirmEmail = () => {
                 <img
                   src={logo}
                   className="card-logo "
-                  alt="logo dark"
+                  alt="Chain Glance"
                   height="70"
                   width="auto"
                 />
@@ -79,26 +68,23 @@ const ConfirmEmail = () => {
             <Col md={8} lg={6} xl={5}>
               <Card className="mt-4">
                 <CardBody className="p-4">
-                  <div className="text-center mt-2">
-                    <h3 className="">
-                      {loading
-                        ? 'Changing Email...'
-                        : errorMessage
-                          ? 'There was a problem'
-                          : successMessage}
-                    </h3>
+                  <div className="text-center my-3">
+                    <h3 className={isDarkMode ? "text-white" : "text-primary"}>Confirm Email</h3>
                   </div>
-                  <div>
-                    {errorMessage && (
-                      <div className="text-danger text-center mt-3">
+                  <div class="p-2 my-4">
+                    {errorMessage ? (
+                      <div className="text-danger text-center mt-3" style={{'min-height':100}}>
                         {errorMessage}
                       </div>
-                    )}
-                    {successMessage && (
+                    ) : loading ? (
                       <>
-                        <div className="text-center mt-3">
-                          Your email has been changed successfully. Redirecting
-                          to Chainglance...
+                        <div className="text-center mt-3" style={{'min-height':100}}>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="text-center mt-3" style={{'min-height':100}}>
+                          Your email has been changed successfully. You can close this tab.
                         </div>
                       </>
                     )}

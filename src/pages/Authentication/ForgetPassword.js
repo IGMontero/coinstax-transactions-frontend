@@ -115,9 +115,6 @@ const ForgetPasswordPage = (props) => {
                 <CardBody className="p-4">
                   <div className="text-center my-3">
                     <h3 className={isDarkMode ? "text-white" : "text-primary"}>Forgot your password?</h3>
-                    {/* <p className="text-muted">
-                      Enter your email and we'll send you instructions to reset it.
-                    </p> */}
                   </div>
 
                   <div class="p-2 my-4">
@@ -125,16 +122,6 @@ const ForgetPasswordPage = (props) => {
                     it. If you have not received an email within a few minutes, please check your spam folder or contact us.
                   </div>
                   <div className="p-2">
-                    {/* {forgetError ? (
-                      <Alert color="danger" style={{ marginTop: '13px' }}>
-                        {forgetError}
-                      </Alert>
-                    ) : null}
-                    {forgetSuccessMsg ? (
-                      <Alert color="success" style={{ marginTop: '13px' }}>
-                        {forgetSuccessMsg}
-                      </Alert>
-                    ) : null} */}
                     <Form
                       onSubmit={(e) => {
                         e.preventDefault();

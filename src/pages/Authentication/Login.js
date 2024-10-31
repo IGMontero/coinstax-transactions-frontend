@@ -60,8 +60,6 @@ const Login = (props) => {
     try {
       const response = await dispatch(login(values));
 
-      console.log(response);
-
       if (response.error) {
         setErrorMsg('Invalid email address or password');
         setLoading(false);
