@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 // Import Images
 // import logodark from "../../../assets/images/logo-dark.png";
 // import logolight from "../../../assets/images/logo-light.png";
-import logo from '../../../assets/images/logos/coinstax_logos/logo-dark.png';
+import logo from '../../../assets/images/logos/chainglance/logo-dark.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { logout } from '../../../slices/auth2/reducer';
 import Swal from 'sweetalert2';

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Route, Routes, useLocation, useNavigate } from 'react-router-dom';
-import appLogo from '../assets/images/logos/logo-light.png';
+import appLogo from '../assets/images/logos/chainglance/logo-dark.png';
+import appLogoLight from '../assets/images/logos/chainglance/logo-light.png';
 //Layouts
 import NonAuthLayout from '../Layouts/NonAuthLayout';
 import VerticalLayout from '../Layouts/index';
@@ -12,6 +13,7 @@ import { allRoutes, noVerticalLayoutRoutes } from './allRoutes';
 import { getTokenFromCookies } from '../helpers/cookies_helper';
 import usePortfolioData from '../hooks/useUserPortfolio';
 import config from '../config';
+import { isDarkMode } from '../utils/utils';
 
 const Index = () => {
   const dispatch = useDispatch();
@@ -84,18 +86,27 @@ const Index = () => {
           alignItems: 'center',
           height: '100vh',
           width: '100vw',
-          backgroundColor: '#23282C',
+          // backgroundColor: '#23282C',
           flexDirection: 'column',
         }}
       >
-        <img
-          src={appLogo}
-          alt="ChainGlance-logo"
-          border="0"
-          style={{ width: '50vw', maxWidth: '320px' }}
-        />
 
-        <h3 className="text-white mt-2"> Loading...</h3>
+        {isDarkMode() ?
+          <img
+            src={appLogo}
+            alt="ChainGlance-logo"
+            border="0"
+            style={{ width: '180px' }}
+          />
+          : <img
+            src={appLogoLight}
+            alt="ChainGlance-logo"
+            border="0"
+            style={{ width: '180px' }}
+          />
+
+        }
+
       </div>
     );
   }

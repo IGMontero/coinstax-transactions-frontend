@@ -23,7 +23,7 @@ import { authMe, login } from '../../slices/auth2/thunk';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import Swal from 'sweetalert2';
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 import { DASHBOARD_USER_ROLES } from '../../common/constants';
 import {
   setAddressSearched,

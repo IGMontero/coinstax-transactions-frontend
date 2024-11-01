@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Card, CardBody, Col, Row, TabContent } from 'reactstrap';
 import Access from './Profile/Access';
@@ -8,15 +8,29 @@ import LoginDetails from './Profile/LoginDetails';
 import NavProfile from './Profile/NavProfile';
 import Plan from './Profile/Plan';
 import Helmet from '../../Components/Helmet/Helmet';
+import { useDispatch } from 'react-redux';
+import { authMe } from '../../slices/auth2/thunk';
 
 const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('1');
   const { user } = useSelector((state) => state.auth);
   const currentUser = user;
+  const dispatch = useDispatch();
 
   const tabChange = (tab) => {
     if (activeTab !== tab) setActiveTab(tab);
   };
+
+  // Refresh user when profile loads and when it unmounts
+  useEffect(() => {
+    dispatch(authMe());
+
+    return () => {
+      dispatch(authMe());
+    }
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <React.Fragment>
       <Helmet title="Profile" />

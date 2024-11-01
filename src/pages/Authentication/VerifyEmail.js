@@ -3,7 +3,7 @@ import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import { Link, useLocation } from 'react-router-dom';
 import { Button, Card, CardBody, Col, Container, Input, Row } from 'reactstrap';
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 import { verifyEmail } from '../../slices/auth2/thunk';
 import { useDispatch } from 'react-redux';
 

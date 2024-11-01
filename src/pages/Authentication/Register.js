@@ -29,7 +29,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 //import images
 import { useSelector } from 'react-redux';
 import Swal from 'sweetalert2';
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import { fetchUserCountry } from '../../slices/common/thunk';

@@ -19,7 +19,7 @@ import { useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
 import Swal from 'sweetalert2';
 import * as Yup from 'yup';
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import { useLogOut } from '../../hooks/useAuth';
 import {

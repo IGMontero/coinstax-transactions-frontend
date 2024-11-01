@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
-import logo from '../assets/images/logos/coinstax_logos/logo-dark.png';
-import logoLight from '../assets/images/logos/coinstax_logos/logo-light.png';
+import logo from '../assets/images/logos/chainglance/logo-dark.png';
+import logoLight from '../assets/images/logos/chainglance/logo-light.png';
 
 //Import Components
 import VerticalLayout from './VerticalLayouts/index';
