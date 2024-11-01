@@ -46,7 +46,6 @@ const Login = (props) => {
 
   const { error } = useSelector((state) => state.auth);
 
-  // const [errorMsg, setErrorMsg] = useState(error?.toString());
   const [errorMsg, setErrorMsg] = useState('');
 
   const [passwordShow, setPasswordShow] = useState(false);
@@ -59,27 +58,11 @@ const Login = (props) => {
     setLoading(true);
     try {
       const response = await dispatch(login(values));
-
+      
       if (response.error) {
         setErrorMsg('Invalid email address or password');
         setLoading(false);
-
-        // return Swal.fire({
-        //   title: 'Error',
-        //   text: 'Invalid email or password',
-        //   icon: 'error',
-        //   timer: 2000,
-        //   showConfirmButton: false,
-        // });
       } else {
-        setErrorMsg('');
-        // Swal.fire({
-        //   // title: 'Success',
-        //   text: 'Welcome back!',
-        //   icon: 'success',
-        //   timer: 2000,
-        //   showConfirmButton: false,
-        // });
         const authMeRes = await dispatch(authMe());
         dispatch(setPrevAddress(null));
         dispatch(setAddressSearched(null));
@@ -99,7 +82,6 @@ const Login = (props) => {
         }
       }
     } catch (error) {
-      console.log(error);
       setErrorMsg('Error in login. Please try again');
       setLoading(false);
     } finally {
@@ -123,14 +105,6 @@ const Login = (props) => {
   });
 
   useEffect(() => {
-    if (errorMsg) {
-      setTimeout(() => {
-        setErrorMsg('');
-      }, 3000);
-    }
-  }, [dispatch, error]);
-
-  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const error = params.get('error');
 
@@ -144,15 +118,6 @@ const Login = (props) => {
       });
     }
   }, [location.search]);
-
-  // clear the error msg after 3 seconds
-  useEffect(() => {
-    if (errorMsg) {
-      setTimeout(() => {
-        setErrorMsg('');
-      }, 3000);
-    }
-  }, [errorMsg]);
 
   return (
     <React.Fragment>
@@ -177,11 +142,7 @@ const Login = (props) => {
                   <CardBody className="p-4">
                     <div className="text-center my-3">
                       <h3 className={isDarkMode ? "text-white" : "text-primary"}>Sign in to Chain Glance</h3>
-                      {/* <h6 className="text-muted">Sign in to continue.</h6> */}
                     </div>
-                    {/* {errorMsg && errorMsg ? (
-                      <Alert color="danger"> {errorMsg} </Alert>
-                    ) : null} */}
                     <div className="p-2 mt-4">
                       <Form onSubmit={validation.handleSubmit} action="#">
                         <div className="mb-3">
@@ -275,9 +236,10 @@ const Login = (props) => {
                           </Label>
                         </div> */}
 
-                        {errorMsg && errorMsg ? (
-                          <span className="text-danger">{errorMsg} </span>
+                        {errorMsg ? (
+                          <div className="alert alert-danger">{errorMsg} </div>
                         ) : null}
+
                         <div className="mt-4">
                           <Button
                             disabled={loading ? true : false}
