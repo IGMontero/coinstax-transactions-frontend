@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { getTokenFromCookies } from '../../helpers/cookies_helper';
-import { API_BASE } from '../../common/constants';
+import apiClient from '../../core/apiClient';
 
 // GET /users/notifications No need userId
 export const fetchNotifications = createAsyncThunk(
@@ -8,21 +8,14 @@ export const fetchNotifications = createAsyncThunk(
   async ({ page }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await fetch(
-        `${API_BASE}/users/notifications?page=${page}`,
-        {
-          headers: {
-            Authorization: `${token}`,
-          },
+      const response = await apiClient.get(`/users/notifications?page=${page}`, {
+        headers: {
+          Authorization: `${token}`,
         },
-      );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      return data;
+      });
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
@@ -35,22 +28,14 @@ export const markNotificationAsRead = createAsyncThunk(
   async ({ notificationId }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await fetch(
-        `${API_BASE}/users/notifications/${notificationId}/read`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `${token}`,
-          },
+      const response = await apiClient.put(`/users/notifications/${notificationId}/read`, {}, {
+        headers: {
+          Authorization: `${token}`,
         },
-      );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      return data;
+      });
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );

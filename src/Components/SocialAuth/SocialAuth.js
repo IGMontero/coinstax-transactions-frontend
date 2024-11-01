@@ -30,32 +30,34 @@ const SocialAuth = () => {
   return (
     <>
       <Row className="d-flex align-items-center">
-        <Col className="col-4">
+        <Col className="col-12 col-sm-4">
           <Button
             color="white"
             onClick={handleGoogleLogin}
-            className={btnclasses}
+            className="w-100  mb-lg-0 mb-1 border border-dark btn-hover-light btn-icon d-flex align-items-center "
           >
             <img
               src={googleLogo}
               alt="Sign in with Google"
-              className="me-2"
+              className="me-2 "
               style={{ height: '18px' }}
             />
-            Sign in with Google
+            <span className="text-dark">Sign in with Google</span>
           </Button>
         </Col>
-        <Col className="col-4">
+        <Col className="col-12 col-sm-4">
           <Button
             color="white"
             onClick={handleAppleLogin}
-            className={btnclasses}
+            className="w-100
+            mb-lg-0 mb-1
+            border border-dark btn-hover-light btn-icon d-flex align-items-center"
           >
-            <i className="ri-apple-fill fs-16 me-2"></i>
-            Sign in with Apple
+            <i className="ri-apple-fill text-dark fs-16 me-2"></i>
+            <span className="text-dark">Sign in with Apple</span>
           </Button>
         </Col>
-        <Col className="col-4">
+        <Col className="col-12 col-sm-4">
           <Button
             color="white"
             onClick={handleCoinbaseLogin}
@@ -67,7 +69,7 @@ const SocialAuth = () => {
               className="me-2"
               style={{ height: '18px' }}
             />
-            Coinbase
+            <span className="text-dark">Coinbase</span>
           </Button>
         </Col>
       </Row>

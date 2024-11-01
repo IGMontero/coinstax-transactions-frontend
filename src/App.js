@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 //import Scss
 import 'react-loading-skeleton/dist/skeleton.css';
 import './assets/scss/themes.scss';
+import 'react-toastify/dist/ReactToastify.css';
 
 //import Route
 import ReactGA from 'react-ga4';
@@ -13,7 +14,8 @@ import { useGetFixedData } from './hooks/fixedData';
 import { ConnectWalletProvider } from './Providers/ConnectWalletProvider';
 import Route from './Routes';
 
-ReactGA.initialize(config.google.MEASUREMENT_ID || '');
+if (config.google.MEASUREMENT_ID)
+  ReactGA.initialize(config.google.MEASUREMENT_ID || '')
 
 function App() {
   const location = useLocation();

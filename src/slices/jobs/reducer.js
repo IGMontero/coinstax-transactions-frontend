@@ -1,8 +1,5 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios'; // Assuming you'll use axios for API calls
-import { API_BASE } from '../../common/constants';
-import { downloadFileByURL } from '../../utils/utils';
-import { JOB_NAMES } from './constants';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import apiClient from '../../core/apiClient';
 
 // Initial state
 export const initialState = {
@@ -12,15 +9,14 @@ export const initialState = {
     loading: false,
 };
 
-// Async thunk to fetch job by ID
 export const fetchJobById = createAsyncThunk(
     'jobs/fetchJobById',
     async (jobId, { rejectWithValue }) => {
         try {
-            const response = await axios.get(`${API_BASE}/queues/jobs/${jobId}`);
-            return response;
+            const response = await apiClient.get(`/queues/jobs/${jobId}`);
+            return response.data;
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            return rejectWithValue(error.response?.data || error.message);
         }
     },
 );

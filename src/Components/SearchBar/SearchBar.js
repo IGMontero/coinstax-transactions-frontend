@@ -45,15 +45,13 @@ const SearchBar = ({
       addr.label?.toLowerCase().includes(searchInput.toLowerCase()),
   );
 
-  const getFilteredAddresses = text => {
+  const getFilteredAddresses = (text) => {
     return addresses.filter(
       (addr) =>
         addr.value?.toLowerCase().includes(text.toLowerCase()) ||
         addr.label?.toLowerCase().includes(text.toLowerCase()),
     );
-  }
-
-
+  };
 
   // #region USEEFFECTS / API CALLS
   useEffect(() => {
@@ -210,7 +208,7 @@ const SearchBar = ({
   // }, [searchInput]);
   const debouncedFetchSuggestions = useCallback(
     debounce((input) => fetchSuggestions(input), 600),
-    [] // Only recreate if `fetchSuggestions` itself changes
+    [], // Only recreate if `fetchSuggestions` itself changes
   );
 
   useEffect(() => {
@@ -262,6 +260,20 @@ const SearchBar = ({
         navigate(`/tokens/${selectedOption.coingeckoId}`);
       } else {
         navigate(`/address/${selectedOption.value}`);
+        // if address is not in the list of addresses, add it
+
+        const isAddressInList = userPortfolioSummary?.addresses?.some(
+          (addr) => addr.value === selectedOption.value,
+        );
+
+        if (
+          !isAddressInList &&
+          trackWallets &&
+          user
+        ) {
+          console.log("f3")
+          handleAddWallet(selectedOption.value);
+        }
         dispatch(
           setAddressName({
             value: selectedOption.value,
@@ -279,6 +291,7 @@ const SearchBar = ({
   const handleAddWallet = async (address) => {
     setLoading(true);
     try {
+      console.log('Adding wallet:', address);
       const response = await dispatch(
         addUserWallet({ address, userId }),
       ).unwrap();
@@ -288,11 +301,11 @@ const SearchBar = ({
         dispatch(setAddressName({ value: address, label: null }));
         refreshUserPortfolio();
       } else {
-        Swal.fire({
-          title: 'Error',
-          text: response.message || 'Failed to connect wallet',
-          icon: 'error',
-        });
+        // Swal.fire({
+        //   title: 'Error',
+        //   text: response.message || 'Failed to connect wallet',
+        //   icon: 'error',
+        // });
       }
       setLoading(false);
     } catch (error) {
@@ -317,6 +330,7 @@ const SearchBar = ({
         e.key === 'Enter' &&
         searchInput.length >= 3
       ) {
+        console.log("f1")
         handleAddWallet(searchInput);
       } else {
         if (e.key === 'Enter' && searchInput.length >= 3) {
@@ -341,6 +355,7 @@ const SearchBar = ({
       if (!user) {
         navigate(`/address/${searchInput}`);
       } else {
+        console.log("f2")
         handleAddWallet(searchInput);
       }
     }
@@ -550,7 +565,6 @@ const SearchBar = ({
     }
   };
 
-
   const DropdownIndicator = (props) => (
     <components.DropdownIndicator {...props}>
       <div
@@ -606,9 +620,7 @@ const SearchBar = ({
         }
 
       // onKeyDownCapture={handleKeyDown} // Detect Shift + Up here
-
       />
-
     </div>
   );
 };

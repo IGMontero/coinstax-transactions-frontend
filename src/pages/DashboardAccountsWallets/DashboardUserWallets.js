@@ -32,6 +32,7 @@ const DashboardUserWallets = ({
     CurrencyUSD,
   );
 
+
   const hasConnectedWallets = userAddresses?.length > 0;
 
   // const toggleModalConnectWallet = () =>
@@ -120,14 +121,12 @@ const DashboardUserWallets = ({
             </h4>
           </div>
         )*/}
-        {!loading && (
-          <AddressesTable
-            userId={userId}
-            initialAddresses={userPortfolioSummary?.addresses}
-            loading={loaders.userPortfolioSummary}
-            onRefresh={handleRefreshPortfolio}
-          />
-        )}
+        <AddressesTable
+          userId={userId}
+          initialAddresses={userPortfolioSummary?.addresses}
+          loading={loaders.userPortfolioSummary}
+          onRefresh={handleRefreshPortfolio}
+        />
 
         {/* <div className="mt-4">
             <h2>Watchlist</h2>

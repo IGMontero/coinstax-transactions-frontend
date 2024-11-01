@@ -1,220 +1,106 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { getTokenFromCookies } from '../../helpers/cookies_helper';
-import { API_BASE } from '../../common/constants';
+import apiClient from '../../core/apiClient';
 
 export const fetchNFTS = createAsyncThunk(
   'transactions/fetchNFTS',
-  async (
-    { address, spam, networkType, signal, page, refresh },
-    { rejectWithValue },
-  ) => {
+  async ({ address, spam, networkType, page, refresh }, { rejectWithValue }) => {
     try {
-      let url = `${API_BASE}/transactions/${networkType}/${address}/nfts?allowSpam=${spam}&page=${page}`;
-      if (refresh) {
-        url += '&refresh=true';
-      }
-      const response = await fetch(url, { signal });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
+      const url = `/transactions/${networkType}/${address}/nfts?allowSpam=${spam}&page=${page}${refresh ? '&refresh=true' : ''}`;
+      const { data } = await apiClient.get(url);
       return data;
     } catch (error) {
-      if (error.name === 'AbortError') {
-        console.log('Fetch aborted');
-      } else {
-        return rejectWithValue(error.message);
-      }
+      if (error.message === 'AbortError') console.log('Fetch aborted');
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
 export const fetchPerformance = createAsyncThunk(
   'transactions/fetchPerformance',
-  async ({ address, days, networkType, signal }, { rejectWithValue }) => {
-    let url = `${API_BASE}/transactions/${networkType}/${address}/balances/historical`;
-    if (days) {
-      url += `?days=${days}`;
-    }
+  async ({ address, days, networkType }, { rejectWithValue }) => {
     try {
-      const response = await fetch(url, { signal });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
+      const url = `/transactions/${networkType}/${address}/balances/historical${days ? `?days=${days}` : ''}`;
+      const { data } = await apiClient.get(url);
       return data;
     } catch (error) {
-      if (error.name === 'AbortError') {
-        console.log('Fetch aborted');
-      } else {
-        return rejectWithValue(error.message);
-      }
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
 export const fetchPerformanceToken = createAsyncThunk(
   'transactions/fetchPerformanceToken',
-  async ({ address, days, signal }, { rejectWithValue }) => {
-    let url = `${API_BASE}/contracts/coin/historical/${address}`;
-    if (days) {
-      url += `?days=${days}`;
-    }
+  async ({ address, days }, { rejectWithValue }) => {
     try {
-      const response = await fetch(url, { signal });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
+      const url = `/contracts/coin/historical/${address}${days ? `?days=${days}` : ''}`;
+      const { data } = await apiClient.get(url);
       return data;
     } catch (error) {
-      if (error.name === 'AbortError') {
-        console.log('Fetch aborted');
-      } else {
-        return rejectWithValue(error.message);
-      }
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
 export const fetchAssets = createAsyncThunk(
   'transactions/fetchAssets',
-  async ({ address, networkType, signal }, { rejectWithValue }) => {
+  async ({ address, networkType }, { rejectWithValue }) => {
     try {
-      const url = `${API_BASE}/transactions/${networkType}/${address}/balances/current?allowSpam=false`;
-      const response = await fetch(url, { signal });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
+      const url = `/transactions/${networkType}/${address}/balances/current?allowSpam=false`;
+      const { data } = await apiClient.get(url);
       return data;
     } catch (error) {
-      if (error.name === 'AbortError') {
-        console.log('Fetch aborted');
-      } else {
-        return rejectWithValue(error.message);
-      }
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
 export const fetchHistory = createAsyncThunk(
   'transactions/fetchTransactions',
-  async (
-    {
-      address,
-      query = '',
-      filters = {},
-      page = 0,
-      assetsFilters,
-      networkType,
-      signal,
-    },
-    { rejectWithValue },
-  ) => {
+  async ({ address, query = '', filters = {}, page = 0, assetsFilters, networkType }, { rejectWithValue }) => {
     try {
       let queryString = `page=${page}`;
-      if (query) {
-        queryString += `&query=${encodeURIComponent(query)}`;
-      }
+      if (query) queryString += `&query=${encodeURIComponent(query)}`;
+      if (assetsFilters) queryString += `&${assetsFilters}`;
 
-      if (assetsFilters) {
-        `${assetsFilters}`;
-      } else {
-        assetsFilters = '';
-      }
-
-      for (const [key, value] of Object.entries(filters)) {
+      Object.entries(filters).forEach(([key, value]) => {
         if (Array.isArray(value)) {
-          value.forEach((val) => {
-            queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
-          });
+          value.forEach(val => queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
         } else if (value) {
           queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
         }
-      }
+      });
 
-      const response = await fetch(
-        `${API_BASE}/transactions/${networkType}/${address}/new?${queryString}${assetsFilters}`,
-        { signal },
-      );
-      if (!response.ok) {
-        const errorBody = await response.json();
-        throw new Error(errorBody.message || `Error: ${response.status}`);
-      }
-      const data = await response.json();
+      const url = `/transactions/${networkType}/${address}/new?${queryString}`;
+      const { data } = await apiClient.get(url);
       return data;
     } catch (error) {
-      if (error.name === 'AbortError') {
-        console.log('Fetch aborted');
-        return { error: 'Fetch aborted' };
-      } else {
-        return rejectWithValue(error.message);
-      }
+      if (error.message === 'AbortError') console.log('Fetch aborted');
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
 export const downloadTransactions = createAsyncThunk(
   'transactions/downloadTransactions',
-  async (
-    { blockchain, address, query = '', filters = {}, assetsFilters },
-    { rejectWithValue },
-  ) => {
-    const token = getTokenFromCookies();
+  async ({ blockchain, address, query = '', filters = {}, assetsFilters }, { rejectWithValue }) => {
     try {
-      let queryString = '';
-      if (query) {
-        queryString += `query=${encodeURIComponent(query)}`;
-      }
+      let queryString = query ? `query=${encodeURIComponent(query)}` : '';
+      if (assetsFilters) queryString += `&${assetsFilters}`;
 
-      if (assetsFilters) {
-        queryString += `&${assetsFilters}`;
-      }
-
-      for (const [key, value] of Object.entries(filters)) {
+      Object.entries(filters).forEach(([key, value]) => {
         if (Array.isArray(value)) {
-          value.forEach((val) => {
-            queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(val)}`;
-          });
+          value.forEach(val => queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(val)}`);
         } else if (value) {
           queryString += `&${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
         }
-      }
-
-      let url = `${API_BASE}/transactions/${blockchain}/${address}/export-csv?${queryString}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${token}`,
-        },
       });
 
-      // Check if response is a readable stream
+      const url = `/transactions/${blockchain}/${address}/export-csv?${queryString}`;
+      const response = await apiClient.get(url);
 
-      if (!response.ok) {
-        return response.json();
-      }
-
-      // Check the Content-Type header to determine the type of response
-      const contentType = response.headers.get('Content-Type');
-
-      if (contentType.includes('application/json')) {
-        // Response is JSON
-        const data = await response.json();
-        return data;
-      } else if (contentType.includes('text/csv')) {
-        // Response is a blob
-        const blob = await response.blob();
-        // Do something with the blob
-        return blob;
-      }
-
-      const data = await response.json();
-      return data;
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
@@ -223,43 +109,28 @@ export const getNftsByContractAddress = createAsyncThunk(
   'transactions/getNftsByContractAddress',
   async ({ blockchain, contractAddress, tokenId }, { rejectWithValue }) => {
     try {
-      const response = await fetch(
-        `${API_BASE}/transactions/${blockchain}/${contractAddress}/nft?tokenId=${tokenId}`,
-      );
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
+      const url = `/transactions/${blockchain}/${contractAddress}/nft?tokenId=${tokenId}`;
+      const { data } = await apiClient.get(url);
       return data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );
 
 export const updateNftsSpamStatus = createAsyncThunk(
   'transactions/updateNftsSpamStatus',
-  async (
-    { blockchain, contractAddress, tokenId, spam },
-    { rejectWithValue },
-  ) => {
-    const token = getTokenFromCookies();
+  async ({ blockchain, contractAddress, tokenId, spam }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/nfts/spam`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${token}`,
-        },
-        body: JSON.stringify({ blockchain, contractAddress, tokenId, spam }),
+      await apiClient.put('/nfts/spam', {
+        blockchain,
+        contractAddress,
+        tokenId,
+        spam,
       });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `Error: ${response.status}`);
-      }
       return { tokenId, spam };
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );

@@ -704,6 +704,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const response = await dispatch(exportAction).unwrap();
 
+      console.log('Response:', response);
+
       if (response.completed && response.fileUrl) {
         // Show swal downloading for 2 seconds
         // Swal.fire({
@@ -754,6 +756,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         // Get job id.
 
         const { job } = response;
+
+        console.log('Response:', response);
 
         if (!job) {
           // No job id. Consider showing an error message.
@@ -987,7 +991,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const renderFiltersDropdown = () => {
     return (
       <Row>
-        <Col className="d-flex">
+        <Col className="d-flex mb-2">
           <Dropdown
             disabled={loading}
             isOpen={showTransactionFilterMenu}
@@ -996,8 +1000,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
             <DropdownToggle
               disabled={isInitialLoad}
               tag="a"
-              className={`btn btn-sm p-1 d-flex align-items-center
-              ${!isInitialLoad ? ' btn-soft-primary mb-1' : 'btn-muted mb-1 border'}
+              className={`btn btn-sm p-1 d-flex align-items-center 
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-2 border'}
               ${showTransactionFilterMenu ? 'active' : ''} `}
               role="button"
             >
@@ -1227,13 +1231,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const renderInfoTransactions = () => {
     return (
       <Row className="col-12 ">
-        <div className="d-flex justify-content-between w-100">
+        <div className="d-flex justify-content-start w-100">
           <div>Total transactions: {totalTransactions}</div>
-          <div>
+          <div className="ms-3">
             {hasPreview && (
               <div className="d-flex align-items-center">
                 <Spinner size="sm" />
-                <span className="ms-2">Loading transactions...</span>
               </div>
             )}
           </div>
@@ -1299,7 +1302,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
             </div>
           )}
         </div> */}
-        <div className="d-flex pt-2  justify-content-center align-items-center">
+        <div className="d-flex pt-3  justify-content-center align-items-center">
           <TransactionSkeleton />
         </div>
       </>
@@ -1365,7 +1368,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         </Col>
         <Row className="">
           <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
-            <div className="d-flex justify-content-start">
+            <div className="d-flex justify-content-start  ">
               <Input
                 disabled={isInitialLoad}
                 id="customCheck1"

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Card, CardBody, Col, Container, Row } from 'reactstrap';
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import { confirmEmailChange } from '../../slices/auth2/thunk';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';

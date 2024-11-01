@@ -1,55 +1,39 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { saveCountryInCookies, saveTokenInCookies } from "../../helpers/cookies_helper";
-import { API_BASE } from "../../common/constants";
+import { saveCountryInCookies } from "../../helpers/cookies_helper";
+import apiClient from "../../core/apiClient";
 
 export const fetchApiVersion = createAsyncThunk(
     "common/version",
-    async (address, { rejectWithValue }) => {
+    async (_, { rejectWithValue }) => {
         try {
-            const response = await fetch(
-                `${API_BASE}/common/version`
-            );
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-            const data = await response.json();
+            const response = await apiClient.get("/common/version");
 
-            const headers = response.headers;
-
-
-            // Handle CF-IPCountry header and save int ocookies if present.
-            if (headers.has("CF-IPCountry")) {
-                const ipCountry = headers.get("CF-IPCountry");
-
+            // Check for CF-IPCountry header and save in cookies if present
+            const ipCountry = response.headers["cf-ipcountry"];
+            if (ipCountry) {
                 saveCountryInCookies(ipCountry);
             }
 
-            return { ...data, headers };
+            return { ...response.data, headers: response.headers };
         } catch (error) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
 
 export const fetchUserCountry = createAsyncThunk(
     "common/userCountry",
-    async (address, { rejectWithValue }) => {
+    async (_, { rejectWithValue }) => {
         try {
-            const response = await fetch(
-                `${API_BASE}/common/country`
-            );
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-            const data = await response.json();
+            const response = await apiClient.get("/common/country");
 
-            if (data.country) {
-                saveCountryInCookies(data.country);
+            if (response.data.country) {
+                saveCountryInCookies(response.data.country);
             }
 
-            return data;
+            return response.data;
         } catch (error) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );

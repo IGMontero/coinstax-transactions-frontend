@@ -13,7 +13,7 @@ import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Helmet from '../../Components/Helmet/Helmet';
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 import {
   acceptInviteCodeAU,
   acceptInviteCodeUA,

@@ -25,7 +25,7 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 //import images
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 
 import Helmet from '../../Components/Helmet/Helmet';

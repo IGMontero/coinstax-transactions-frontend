@@ -5,14 +5,9 @@ import LayoutReducer from './layouts/reducer';
 
 // Authentication
 import AddressesReducer from './addresses/reducer';
-import ForgetPasswordReducer from './auth/forgetpwd/reducer';
-import ProfileReducer from './auth/profile/reducer';
-import AccountReducer from './auth/register/reducer';
 import Auth2Reducer from './auth2/reducer';
 import BlockchainReducer from './blockchainContracts/reducer';
 import DataReducer from './transactions/reducer';
-// API Key
-import APIKeyReducer from './apiKey/reducer';
 // Address Name
 import AddressNameReducer from './addressName/reducer';
 
@@ -32,11 +27,7 @@ import LayoutMenuDataReducer from './layoutMenuData/reducer';
 
 const rootReducer = combineReducers({
   Layout: LayoutReducer,
-  Account: AccountReducer,
-  ForgetPassword: ForgetPasswordReducer,
-  Profile: ProfileReducer,
   blockchainContracts: BlockchainReducer,
-  APIKey: APIKeyReducer,
   auth: Auth2Reducer,
   fetchData: DataReducer,
   addresses: AddressesReducer,
