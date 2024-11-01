@@ -6,6 +6,7 @@ const API_BASE = config.api.API_URL || 'http://localhost:5000';
 
 const apiClient = axios.create({
     baseURL: API_BASE,
+    crossDomain: true,
     withCredentials: true, // Always include credentials (cookies)
     headers: {
         'Content-Type': 'application/json',
