@@ -1,18 +1,14 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { API_BASE } from '../../common/constants';
+import apiClient from '../../core/apiClient';
 
 export const fetchCoingeckoId = createAsyncThunk(
   'tokens/fetchCoingeckoId',
   async ({ coingeckoId }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE}/contracts/coin/${coingeckoId}`);
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      return data;
+      const response = await apiClient.get(`/contracts/coin/${coingeckoId}`);
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data || error.message);
     }
   },
 );

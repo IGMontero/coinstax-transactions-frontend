@@ -1,7 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { fetchJobById } from '../../slices/jobs/reducer';
-
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { toast, ToastContainer } from 'react-toastify';
@@ -9,7 +5,6 @@ import { useGetJob } from '../../slices/jobs/hooks';
 
 function JobsManager() {
     const { jobsList } = useSelector((state) => state.jobs);
-
 
     const getJob = useGetJob();
 
