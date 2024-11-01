@@ -1,12 +1,12 @@
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { cleanUserWallets } from '../slices/userWallets/reducer';
-import { logout } from '../slices/auth2/reducer';
 import {
   setPrevAddress,
   setAddressSearched,
 } from '../slices/layoutMenuData/reducer';
 import config from '../config';
+import { logout } from '../slices/auth2/thunk';
 
 export const useCurrentUser = () => {
   const { user } = useSelector((state) => state.auth);
@@ -14,20 +14,20 @@ export const useCurrentUser = () => {
 };
 
 export const useLogOut = () => {
-  // const { logout } = useSelector((state) => state.auth);
-
   const dispatch = useDispatch();
 
-  // Dispatch logout and clean up necessary data.
   const handleLogout = async () => {
     try {
+      // Call the logout endpoint to invalidate the token on the server
       await dispatch(logout());
+
+      // Clear client-side data
       dispatch(setPrevAddress(null));
       dispatch(setAddressSearched(null));
       await dispatch(cleanUserWallets());
 
-      // Navigate to base url of the site.
-      window.location.href = config.client.CLIENT_URL
+      // Redirect to base URL
+      window.location.href = config.client.CLIENT_URL;
     } catch (error) {
       console.log(error);
     }

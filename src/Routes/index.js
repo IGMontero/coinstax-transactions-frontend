@@ -37,15 +37,16 @@ const Index = () => {
 
   useEffect(() => {
     const authenticate = async () => {
-      if (token) {
-        await dispatch(authMe());
-      }
+      console.log('authenticating');
+      await dispatch(authMe());
+
+
       setAuthCompleted(true);
       setLoading(false);
     };
 
     authenticate();
-  }, [dispatch]);
+  }, []);
 
   useEffect(() => {
     if (user && (isLoginPage || isRegisterPage || isDashboardPage)) {

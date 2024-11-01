@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 //import Scss
 import 'react-loading-skeleton/dist/skeleton.css';
 import './assets/scss/themes.scss';
+import 'react-toastify/dist/ReactToastify.css';
 
 //import Route
 import ReactGA from 'react-ga4';

@@ -704,6 +704,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const response = await dispatch(exportAction).unwrap();
 
+      console.log('Response:', response);
+
       if (response.completed && response.fileUrl) {
         // Show swal downloading for 2 seconds
         // Swal.fire({
@@ -754,6 +756,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         // Get job id.
 
         const { job } = response;
+
+        console.log('Response:', response);
 
         if (!job) {
           // No job id. Consider showing an error message.
