@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
-import {
-  Col
-} from 'reactstrap';
+import { Col, Row } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 import { setAddressName } from '../../slices/addressName/reducer';
@@ -205,10 +203,8 @@ const AddressWithDropdown = ({
         <h4 className="mb-0 ms-3 text-custom-address-dropdown">
           {getAddressLabel()}
         </h4>
-        {!isCurrentUserPortfolioSelected && (
+        {!isCurrentUserPortfolioSelected && !isUnsupported && (
           <div className="d-flex align-items-center ms-3">
-
-
             {isCopied ? (
               <i className="ri-check-line fs-4 me-2"></i>
             ) : (
@@ -322,11 +318,12 @@ const AddressWithDropdown = ({
         addressTitle={address}
       />
       <div className="mt-5">
-        <Col className="col-12 d-flex justify-content-between align-items-center">
-          <Col className="col-7 d-flex justify-content-start align-items-center ">
+        <Row className="d-flex justify-content-between align-items-center">
+          <Col
+            className="col-12 col-sm-7 d-flex justify-content-start align-items-center ">
             {renderAddressWithDropdown()}
           </Col>
-          <Col className="col-3 d-flex justify-content-end align-items-center ">
+          <Col className="col-12 col-sm-3 d-flex justify-content-end align-items-center ">
             {/* {loading && (
               <div className="d-flex align-items-center me-2">
                 <Spinner size="md" color="primary" />
@@ -341,7 +338,7 @@ const AddressWithDropdown = ({
               />
             )}
           </Col>
-        </Col>
+        </Row>
       </div>
     </div>
   );

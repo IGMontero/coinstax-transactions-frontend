@@ -5,17 +5,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Col,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
   Row
 } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
-import {
-  setAddressName
-} from '../../../../slices/addressName/reducer';
+import { setAddressName } from '../../../../slices/addressName/reducer';
 import {
   deleteUserAddressWallet,
   reorderUserWallets,
@@ -24,7 +18,7 @@ import {
 import {
   copyToClipboard,
   CurrencyUSD,
-  parseValuesToLocale
+  parseValuesToLocale,
 } from '../../../../utils/utils';
 
 const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
@@ -61,12 +55,6 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     }
   };
 
-  const handleCopy = (e, text) => {
-    e.preventDefault();
-    e.stopPropagation();
-    copyToClipboard(text);
-  };
-
   // const handleSetAddresses = (updatedAddresses) => {
   //   dispatch(setUserPortfolioSummary(updatedAddresses));
   // };
@@ -76,7 +64,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     e.stopPropagation();
 
     Swal.fire({
-      title: 'Update Wallet Address',
+      title: 'Rename wallet',
       input: 'text',
       inputValue: address.name,
       showCancelButton: true,
@@ -140,7 +128,9 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     });
   };
 
-  const handleDeleteUserAddress = (address) => {
+  const handleDeleteUserAddress = (e, address) => {
+    e.preventDefault();
+    e.stopPropagation();
     const addressDisplay = address.name ? address.name : address.address;
     Swal.fire({
       // title: `Delete wallet ${addressDisplay}`,
@@ -158,11 +148,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
           ).unwrap();
 
           if (response && !response.error) {
-            Swal.fire({
-              title: 'Success',
-              text: 'Wallet address deleted successfully',
-              icon: 'success',
-            });
+
             setAddresses(addresses.filter((addr) => addr.id !== address.id));
 
             // const addressToDeleteFromCookies = addressesCookies.find(
@@ -270,6 +256,117 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
       return address;
     }
   };
+  const [showOptions, setShowOptions] = useState(null);
+
+  // const renderOptions = (address, index, itemAddress) => {
+  //   return (
+  //     <Dropdown
+  //       isOpen={dropdownOpen === index}
+  //       toggle={(e) => toggleDropdown(e, index)}
+  //       direction="down"
+  //     >
+  //       <DropdownToggle
+  //         caret={false}
+  //         className="btn btn-light btn-sm text-muted"
+  //         onClick={(e) => {
+  //           e.preventDefault();
+  //           e.stopPropagation();
+  //           toggleDropdown(e, index);
+  //         }}
+  //       >
+  //         <i className="ri-more-2-fill"></i>
+  //       </DropdownToggle>
+  //       <DropdownMenu>
+  //         <DropdownItem
+  //           className="d-flex aling-items-center"
+  //           onClick={() => {
+  //             handleVisitAddress(itemAddress);
+  //           }}
+  //         >
+  //           <i className="ri-eye-fill me-2"></i> View
+  //         </DropdownItem>
+
+  //         <DropdownItem
+  //           className="d-flex aling-items-center"
+  //           onClick={(e) => handleCopy(e, itemAddress)}
+  //         >
+  //           <i className="ri-file-copy-line me-2"></i> Copy Address
+  //         </DropdownItem>
+  //         <DropdownItem
+  //           className="d-flex aling-items-center"
+  //           onClick={(e) => {
+  //             handleUpdateAddress(e, address);
+  //           }}
+  //         >
+  //           <i className="ri-edit-line me-2"></i> Rename
+  //         </DropdownItem>
+  //         <DropdownItem
+  //           className="d-flex aling-items-center"
+  //           onClick={() => {
+  //             handleDeleteUserAddress(address);
+  //           }}
+  //         >
+  //           <i className="ri-delete-bin-line me-2"></i> Delete
+  //         </DropdownItem>
+  //       </DropdownMenu>
+  //     </Dropdown>
+  //   );
+  // };
+  const [isCopied, setIsCopied] = useState(null);
+
+  const handleCopy = async (e, text) => {
+    e.stopPropagation();
+    e.preventDefault();
+    try {
+      copyToClipboard(text);
+      setIsCopied(true);
+      setTimeout(() => {
+        setIsCopied(null);
+      }, 2000);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
+
+  const renderOptions = (address, index, itemAddress) => {
+    return (
+      <div
+        style={{
+          // animation: 'fadeIn 0.5s',
+          animationFillMode: 'forwards',
+        }}
+        className="d-flex align-items-center"
+      >
+        <div>
+          <button
+            title={'Copy Address'}
+            className="btn btn-transparent btn-hover-light  btn-sm text-dark me-1"
+            onClick={(e) => handleCopy(e, itemAddress)}
+          >
+            {isCopied ? (
+              <i className="ri-check-line fs-6"></i>
+            ) : (
+              <i className="ri-file-copy-line fs-6"></i>
+            )}
+          </button>
+        </div>
+        <button
+          title={'Edit Address'}
+          className="btn btn-transparent btn-hover-light  btn-sm text-dark me-1"
+          onClick={(e) => handleUpdateAddress(e, address)}
+        >
+          <i className="ri-edit-line fs-6"></i>
+        </button>
+        <button
+          title={'Delete Address'}
+          className="btn btn-transparent btn-hover-light btn-sm text-dark"
+          onClick={(e) => handleDeleteUserAddress(e, address)}
+        >
+          <i className="ri-close-line fs-6"></i>
+        </button>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -295,7 +392,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                   const isLoading = !isCompleted;
 
                   const addressId = String(address.id || address.Id);
-                  console.log(addressName)
+                  console.log(addressName);
 
                   return (
                     <Draggable
@@ -305,6 +402,8 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                     >
                       {(provided) => (
                         <div
+                          onMouseEnter={() => setShowOptions(index)}
+                          onMouseLeave={() => setShowOptions(null)}
                           ref={provided.innerRef}
                           {...provided.draggableProps}
                           {...provided.dragHandleProps}
@@ -314,11 +413,9 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                             md={12}
                             sm={12}
                             xs={12}
-
                             className="mb-3 "
                           >
                             <div
-
                               onClick={() => handleItemClick(itemAddress)}
                               className={`address-card p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
                                 ? 'px-2 mb-2'
@@ -328,7 +425,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                               <Row
                                 className="align-items-center justify-content-between"
                                 style={{
-                                  cursor: 'pointer'
+                                  cursor: 'pointer',
                                 }}
                               >
                                 <Col
@@ -346,12 +443,14 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                       textOverflow: 'ellipsis',
                                       flexWrap: 'wrap',
                                     }}
-                                    className="d-flex justify-content-between align-items-center w-100">
+                                    className="d-flex justify-content-between align-items-center w-100"
+                                  >
                                     <div
                                       style={{
-                                        maxWidth: '100%'
+                                        maxWidth: '100%',
                                       }}
-                                      className="d-flex flex-column">
+                                      className="d-flex flex-column"
+                                    >
                                       {addressName && (
                                         <h5
                                           style={{
@@ -361,7 +460,9 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                             textOverflow: 'ellipsis',
                                             flexWrap: 'wrap',
                                           }}
-                                        >{addressName}</h5>
+                                        >
+                                          {addressName}
+                                        </h5>
                                       )}
 
                                       <span
@@ -372,7 +473,8 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                           overflow: 'hidden',
                                           textOverflow: 'ellipsis',
                                           flexWrap: 'wrap',
-                                        }}>
+                                        }}
+                                      >
                                         {itemAddress}
                                       </span>
 
@@ -393,62 +495,12 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                       </span>
                                     </div>
                                     <div className="d-flex justify-content-end">
-                                      <Dropdown
-                                        isOpen={dropdownOpen === index}
-                                        toggle={(e) => toggleDropdown(e, index)}
-                                        direction="down"
-                                      >
-                                        <DropdownToggle
-                                          caret={false}
-                                          className="btn btn-light btn-sm text-muted"
-                                          onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            toggleDropdown(e, index);
-                                          }}
-                                        >
-                                          <i className="ri-more-2-fill"></i>
-                                        </DropdownToggle>
-                                        <DropdownMenu>
-                                          <DropdownItem
-                                            className="d-flex aling-items-center"
-                                            onClick={() => {
-                                              handleVisitAddress(itemAddress);
-                                            }}
-                                          >
-                                            <i className="ri-eye-fill me-2"></i>{' '}
-                                            View
-                                          </DropdownItem>
-
-                                          <DropdownItem
-                                            className="d-flex aling-items-center"
-                                            onClick={(e) =>
-                                              handleCopy(e, itemAddress)
-                                            }
-                                          >
-                                            <i className="ri-file-copy-line me-2"></i>{' '}
-                                            Copy Address
-                                          </DropdownItem>
-                                          <DropdownItem
-                                            className="d-flex aling-items-center"
-                                            onClick={(e) => {
-                                              handleUpdateAddress(e, address);
-                                            }}
-                                          >
-                                            <i className="ri-edit-line me-2"></i>{' '}
-                                            Rename
-                                          </DropdownItem>
-                                          <DropdownItem
-                                            className="d-flex aling-items-center"
-                                            onClick={() => {
-                                              handleDeleteUserAddress(address);
-                                            }}
-                                          >
-                                            <i className="ri-delete-bin-line me-2"></i>{' '}
-                                            Delete
-                                          </DropdownItem>
-                                        </DropdownMenu>
-                                      </Dropdown>
+                                      {showOptions === index &&
+                                        renderOptions(
+                                          address,
+                                          index,
+                                          itemAddress,
+                                        )}
                                     </div>
                                   </div>
                                 </Col>
