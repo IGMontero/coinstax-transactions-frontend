@@ -11,7 +11,6 @@ const SocialAuth = () => {
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
-  console.log('dark:', isDarkMode);
 
   const handleGoogleLogin = () => {
     window.location.href = `${config.api.API_URL}/auth/google`;
