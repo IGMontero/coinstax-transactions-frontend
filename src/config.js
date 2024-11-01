@@ -9,6 +9,7 @@ module.exports = {
   client: {
     CLIENT_URL: process.env.REACT_APP_CLIENT_URL,
     ROOT_DOMAIN: process.env.REACT_APP_ROOT_DOMAIN,
+    HOME_URL: process.env.REACT_APP_HOME_URL,
   },
   google: {
     MEASUREMENT_ID: process.env.REACT_APP_GA_MEASUREMENT_ID,

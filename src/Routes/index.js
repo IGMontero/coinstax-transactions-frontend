@@ -63,17 +63,14 @@ const Index = () => {
 
   useEffect(() => {
     const isRoot = location.pathname === '/';
-
     if (isRoot) {
       // Redirect to app root url or base url
 
-      const isOriginSameAsCurrent =
-        window.location.origin === config.client.CLIENT_URL;
       const shouldRedirect =
-        !isOriginSameAsCurrent && config.client.CLIENT_URL;
+        window.location.origin !== (config.client.HOME_URL || config.client.CLIENT_URL);
 
       if (shouldRedirect) {
-        window.location.href = config.client.CLIENT_URL;
+        window.location.replace(config.client.HOME_URL || config.client.CLIENT_URL);
       }
     }
   }, [location.pathname]);
