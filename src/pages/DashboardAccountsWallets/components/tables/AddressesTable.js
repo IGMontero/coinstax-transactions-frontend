@@ -5,11 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
   Col,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Row,
+  Row
 } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
@@ -68,7 +64,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     e.stopPropagation();
 
     Swal.fire({
-      title: 'Update Wallet Address',
+      title: 'Rename wallet',
       input: 'text',
       inputValue: address.name,
       showCancelButton: true,
@@ -152,11 +148,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
           ).unwrap();
 
           if (response && !response.error) {
-            Swal.fire({
-              title: 'Success',
-              text: 'Wallet address deleted successfully',
-              icon: 'success',
-            });
+
             setAddresses(addresses.filter((addr) => addr.id !== address.id));
 
             // const addressToDeleteFromCookies = addressesCookies.find(
@@ -340,7 +332,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     return (
       <div
         style={{
-          animation: 'fadeIn 0.5s',
+          // animation: 'fadeIn 0.5s',
           animationFillMode: 'forwards',
         }}
         className="d-flex align-items-center"
@@ -348,7 +340,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
         <div>
           <button
             title={'Copy Address'}
-            className="btn btn-transparent btn-hover-light  btn-sm text-dark me-2"
+            className="btn btn-transparent btn-hover-light  btn-sm text-dark me-1"
             onClick={(e) => handleCopy(e, itemAddress)}
           >
             {isCopied ? (
@@ -360,7 +352,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
         </div>
         <button
           title={'Edit Address'}
-          className="btn btn-transparent btn-hover-light  btn-sm text-dark me-2"
+          className="btn btn-transparent btn-hover-light  btn-sm text-dark me-1"
           onClick={(e) => handleUpdateAddress(e, address)}
         >
           <i className="ri-edit-line fs-6"></i>
@@ -370,7 +362,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
           className="btn btn-transparent btn-hover-light btn-sm text-dark"
           onClick={(e) => handleDeleteUserAddress(e, address)}
         >
-          <i className="ri-delete-bin-line fs-6"></i>
+          <i className="ri-close-line fs-6"></i>
         </button>
       </div>
     );
@@ -425,11 +417,10 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                           >
                             <div
                               onClick={() => handleItemClick(itemAddress)}
-                              className={`address-card p-2 bg-transparent cursor-grab ${
-                                openCollapse.has(collapseId)
-                                  ? 'px-2 mb-2'
-                                  : 'bg-light'
-                              }`}
+                              className={`address-card p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
+                                ? 'px-2 mb-2'
+                                : 'bg-light'
+                                }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"

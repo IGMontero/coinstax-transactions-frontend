@@ -261,11 +261,17 @@ const SearchBar = ({
       } else {
         navigate(`/address/${selectedOption.value}`);
         // if address is not in the list of addresses, add it
+
+        const isAddressInList = userPortfolioSummary?.addresses?.some(
+          (addr) => addr.value === selectedOption.value,
+        );
+
         if (
-          userPortfolioSummary.addresses.findIndex(
-            (addr) => addr.address === selectedOption.value,
-          ) === -1
+          !isAddressInList &&
+          trackWallets &&
+          user
         ) {
+          console.log("f3")
           handleAddWallet(selectedOption.value);
         }
         dispatch(
@@ -285,6 +291,7 @@ const SearchBar = ({
   const handleAddWallet = async (address) => {
     setLoading(true);
     try {
+      console.log('Adding wallet:', address);
       const response = await dispatch(
         addUserWallet({ address, userId }),
       ).unwrap();
@@ -294,11 +301,11 @@ const SearchBar = ({
         dispatch(setAddressName({ value: address, label: null }));
         refreshUserPortfolio();
       } else {
-        Swal.fire({
-          title: 'Error',
-          text: response.message || 'Failed to connect wallet',
-          icon: 'error',
-        });
+        // Swal.fire({
+        //   title: 'Error',
+        //   text: response.message || 'Failed to connect wallet',
+        //   icon: 'error',
+        // });
       }
       setLoading(false);
     } catch (error) {
@@ -323,6 +330,7 @@ const SearchBar = ({
         e.key === 'Enter' &&
         searchInput.length >= 3
       ) {
+        console.log("f1")
         handleAddWallet(searchInput);
       } else {
         if (e.key === 'Enter' && searchInput.length >= 3) {
@@ -347,6 +355,7 @@ const SearchBar = ({
       if (!user) {
         navigate(`/address/${searchInput}`);
       } else {
+        console.log("f2")
         handleAddWallet(searchInput);
       }
     }
@@ -610,7 +619,7 @@ const SearchBar = ({
           })
         }
 
-        // onKeyDownCapture={handleKeyDown} // Detect Shift + Up here
+      // onKeyDownCapture={handleKeyDown} // Detect Shift + Up here
       />
     </div>
   );

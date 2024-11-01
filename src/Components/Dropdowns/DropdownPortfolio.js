@@ -198,11 +198,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           ).unwrap();
 
           if (response && !response.error) {
-            Swal.fire({
-              title: 'Success',
-              text: 'Wallet address deleted successfully',
-              icon: 'success',
-            });
+
             refreshUserPortfolio();
           } else {
             Swal.fire({
