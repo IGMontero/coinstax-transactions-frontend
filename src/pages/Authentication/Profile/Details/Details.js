@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { Alert, Button, Col, Input, Label, Row, TabPane } from 'reactstrap';
+import { Alert, Form, Button, Col, Input, Label, Row, TabPane } from 'reactstrap';
 import {
   updateUserInfo,
   updateNotificationsPreferences,
@@ -184,8 +184,8 @@ const Details = (props) => {
   return (
     <TabPane tabId="1">
       <Row>
-        <Col lg={12}>
-          <Col lg={6} className="mb-4">
+        <Col className='col-xl-6 col-12'>
+          <div className="mb-2">
             <Label className="form-label">Email</Label>
             <Input
               className="form-control cursor-not-allowed text-muted"
@@ -193,63 +193,61 @@ const Details = (props) => {
               value={currentUser?.email}
               readOnly
             />
+          </div>
 
-            {!isEmailAuth && (
-              <p
-                style={{
-                  // color: 'green',
-                  marginTop: '10px',
-                }}
+          {!isEmailAuth && (
+            <p
+              style={{
+                // color: 'green',
+                marginTop: '10px',
+              }}
+            >
+              Your account is connected with{' '}
+              {capitalizeFirstLetter(authProvider)}.
+              {/* <br />Please visit your Google account to manage{' '}
+              <Link
+                target="_blank"
+                to="https://security.google.com/settings/security/permissions"
               >
-                Your account is connected with{' '}
-                {capitalizeFirstLetter(authProvider)}.
-                {/* <br />Please visit your Google account to manage{' '}
-                <Link
-                  target="_blank"
-                  to="https://security.google.com/settings/security/permissions"
-                >
-                  Account Permissions
-                </Link>
-                . */}
-              </p>
-            )}
+                Account Permissions
+              </Link>
+              . */}
+            </p>
+          )}
 
-            {currentUser?.emailVerified ? null : ( // <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
-              <div>
-                <span className="badge bg-soft-danger fs-8 mt-2">
-                  Not Verified
-                </span>
-                {loadingResendVerificationEmail ? (
-                  <span className="spinner-border spinner-border-sm ms-2"></span>
-                ) : (
-                  <Button
-                    color="link"
-                    className="text-decoration-none"
-                    onClick={handleResendVerificationEmail}
-                  >
-                    Resend Verification Email
-                  </Button>
-                )}{' '}
-                {errorMessageVerifyEmail ? (
-                  <Alert color="danger"> {errorMessageVerifyEmail}</Alert>
-                ) : null}
-              </div>
-            )}
-          </Col>
-          {/* <hr /> */}
+          {currentUser?.emailVerified ? null : ( // <span className="badge bg-soft-success fs-8 mt-2">Verified</span>
+            <div className='mb-3'>
+              <span className="badge bg-danger fs-8 mt-2">
+                Not Verified
+              </span>
+              {loadingResendVerificationEmail ? (
+                <span className="spinner-border spinner-border-sm ms-2"></span>
+              ) : (
+                <Button
+                  color="link"
+                  className="text-decoration-none"
+                  onClick={handleResendVerificationEmail}
+                >
+                  [Resend Verification Email]
+                </Button>
+              )}{' '}
+              {errorMessageVerifyEmail ? (
+                <Alert color="danger"> {errorMessageVerifyEmail}</Alert>
+              ) : null}
+            </div>
+          )}
 
           {/* {isEmailAuth && ( */}
           <Button
             color={isDarkMode ? "primary" : "soft-primary"}
-            // disabled={}
+            className='mt-2'
             onClick={toggleChangeEmail}
           >
             {showChangeEmail ? 'Hide' : 'Change Email'}
           </Button>
-          {/* )} */}
 
           {showChangeEmail && (
-            <Col>
+            <>
               {loadingEmailConfirmed ? (
                 <div className="d-flex mt-4">
                   <span className="spinner-border spinner-border-sm ms-2"></span>
@@ -281,58 +279,51 @@ const Details = (props) => {
                   )}
                 </>
               )}
-            </Col>
+            </>
           )}
 
           <hr />
           <h3 className="text-muted mb-3">Preferences</h3>
 
+          <div className="mb-3">
+            <Label className="form-label">Country</Label>
+            <select
+              name="country"
+              id="countryInput"
+              className="form-select"
+              value={country || ''}
+              onChange={(e) => {
+                setCountry(e.target.value);
+              }}
+            >
+              <option value="">Select Country</option>
+              {fixedData?.countries.map((item) => (
+                <option key={item.code} value={item.code}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </div>
 
-          <Row className="mb-4 ">
-            <Col lg={6}>
-              <div className="mt-3">
-                <Label className="form-label">Country</Label>
-                <select
-                  name="country"
-                  id="countryInput"
-                  className="form-select"
-                  value={country || ''}
-                  onChange={(e) => {
-                    setCountry(e.target.value);
-                  }}
-                >
-                  <option value="">Select Country</option>
-                  {fixedData?.countries.map((item) => (
-                    <option key={item.code} value={item.code}>
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </Col>
-
-            <Col lg={6} className="mt-3">
-              <div>
-                <Label htmlFor="timezoneInput" className="form-label">
-                  Time Zone
-                </Label>
-                <select
-                  value={timezone}
-                  onChange={(e) => setTimezone(e.target.value)}
-                  className="form-select"
-                  id="timezoneInput"
-                  name="timeZone"
-                >
-                  <option value="">Auto</option>
-                  {fixedData?.timezones.map((item) => (
-                    <option key={item.id} value={item.id}>
-                      <span dangerouslySetInnerHTML={{ __html: item.name }} />
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </Col>
-          </Row>
+          <div class="mb-3">
+            <Label htmlFor="timezoneInput" className="form-label">
+              Time Zone
+            </Label>
+            <select
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+              className="form-select"
+              id="timezoneInput"
+              name="timeZone"
+            >
+              <option value="">Auto</option>
+              {fixedData?.timezones.map((item) => (
+                <option key={item.id} value={item.id}>
+                  <span dangerouslySetInnerHTML={{ __html: item.name }} />
+                </option>
+              ))}
+            </select>
+          </div>
 
           {/* <Row>
             <Col lg={6}>
@@ -372,64 +363,63 @@ const Details = (props) => {
           >
             Update
           </Button>
-        </Col>
-        {/* <h3 className="text-muted">Crypto Pricing</h3>
-        <Col lg={12} className="mx-1">
-          <div className="form-check mb-3">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="formCheck1"
-            />
-            <label className="form-check-label" htmlFor="formCheck1">
-              Use daily pricing (2019 and earlier)
-            </label>
-          </div>
-          <div className="form-check mb-3">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="formCheck2"
-            />
-            <label className="form-check-label" htmlFor="formCheck2">
-              USDC always equals 1 USD
-            </label>
-          </div>
+          
+          {/* <h3 className="text-muted">Crypto Pricing</h3>
+          <Col lg={12} className="mx-1">
+            <div className="form-check mb-3">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="formCheck1"
+              />
+              <label className="form-check-label" htmlFor="formCheck1">
+                Use daily pricing (2019 and earlier)
+              </label>
+            </div>
+            <div className="form-check mb-3">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="formCheck2"
+              />
+              <label className="form-check-label" htmlFor="formCheck2">
+                USDC always equals 1 USD
+              </label>
+            </div>
 
-          <div className="form-check mb-3">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="formCheck3"
-            />
-            <label className="form-check-label" htmlFor="formCheck3">
-              USDT always equals 1 USD
-            </label>
-          </div>
-          <div className="form-check mb-3">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="formCheck4"
-            />
-            <label className="form-check-label" htmlFor="formCheck4">
-              1 GUSD always equals 1 USD
-            </label>
-          </div>
-          <div className=" form-check mb-4">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              id="formCheck5"
-            />
-            <label className="form-check-label" htmlFor="formCheck5">
-              1 BUSD always equals 1 USD
-            </label>
-          </div>
-        </Col> */}
-        <hr />
-        <h3 className="text-muted mb-3">Communication</h3>
-        <Col lg={12} className="mx-1">
+            <div className="form-check mb-3">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="formCheck3"
+              />
+              <label className="form-check-label" htmlFor="formCheck3">
+                USDT always equals 1 USD
+              </label>
+            </div>
+            <div className="form-check mb-3">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="formCheck4"
+              />
+              <label className="form-check-label" htmlFor="formCheck4">
+                1 GUSD always equals 1 USD
+              </label>
+            </div>
+            <div className=" form-check mb-4">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                id="formCheck5"
+              />
+              <label className="form-check-label" htmlFor="formCheck5">
+                1 BUSD always equals 1 USD
+              </label>
+            </div>
+          </Col> */}
+          <hr />
+          <h3 className="text-muted mb-3">Communication</h3>
           <div className="form-check mb-4">
             <input
               className="form-check-input"
@@ -447,8 +437,13 @@ const Details = (props) => {
               Keep me up to date about this website
             </label>
           </div>
-        </Col>
-        <Col lg={12} className="">
+
+          <div class="mt-4">
+            {errorMessage ? (
+              <Alert color="danger"> {errorMessage} </Alert>
+            ) : null}
+          </div>
+
           <Button
             type="submit"
             color={isDarkMode || loadingNotificationsPreference ? "primary" : "soft-primary"}
@@ -461,11 +456,6 @@ const Details = (props) => {
           >
             Update
           </Button>
-          <Col lg={3} className="mt-4">
-            {errorMessage ? (
-              <Alert color="danger"> {errorMessage} </Alert>
-            ) : null}
-          </Col>
         </Col>
       </Row>
     </TabPane>

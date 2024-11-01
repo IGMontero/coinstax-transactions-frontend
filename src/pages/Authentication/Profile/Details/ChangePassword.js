@@ -170,53 +170,53 @@ const ChangePassword = () => {
             >
               {({ isSubmitting, dirty, isValid }) => (
                 <Form>
-                  <Row className="col-12 mb-4">
-                    <div className="col-6">
-                      <Label htmlFor="currentPassword" className="form-label">
-                        Current Password
-                      </Label>
-                      <Field
-                        name="currentPassword"
-                        type="password"
-                        className="form-control"
-                      />
-                      <ErrorMessage
-                        name="currentPassword"
-                        component="div"
-                        className="text-danger"
-                      />
-                    </div>
-                    <div className="col-6">
-                      <Label htmlFor="newPassword" className="form-label">
-                        New Password
-                      </Label>
-                      <Field
-                        name="newPassword"
-                        type="password"
-                        className="form-control"
-                      />
-                      <ErrorMessage
-                        name="newPassword"
-                        component="div"
-                        className="text-danger"
-                      />
-                    </div>
-                  </Row>
-                  <Row className="col-12 mb-4">
-                    <div className="col-6">
-                      <Label htmlFor="confirmPassword" className="form-label">
-                        Confirm New Password
-                      </Label>
-                      <Field
-                        name="confirmPassword"
-                        type="password"
-                        className="form-control"
-                      />
-                      <ErrorMessage
-                        name="confirmPassword"
-                        component="div"
-                        className="text-danger"
-                      />
+                  <Row>
+                    <div className="col-xl-6 col-12">
+                      <div className="mb-4">
+                        <Label htmlFor="currentPassword" className="form-label">
+                          Enter your current password
+                        </Label>
+                        <Field
+                          name="currentPassword"
+                          type="password"
+                          className="form-control"
+                        />
+                        <ErrorMessage
+                          name="currentPassword"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <Label htmlFor="newPassword" className="form-label">
+                          New password
+                        </Label>
+                        <Field
+                          name="newPassword"
+                          type="password"
+                          className="form-control"
+                        />
+                        <ErrorMessage
+                          name="newPassword"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <Label htmlFor="confirmPassword" className="form-label">
+                          Confirm new password
+                        </Label>
+                        <Field
+                          name="confirmPassword"
+                          type="password"
+                          className="form-control"
+                        />
+                        <ErrorMessage
+                          name="confirmPassword"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
                     </div>
                   </Row>
                   <div className="d-flex justify-content-start mb-0 ">

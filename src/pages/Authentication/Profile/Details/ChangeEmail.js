@@ -2,8 +2,9 @@ import React from 'react';
 import { TabPane, Col, Label, Button, Row } from 'reactstrap';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import { useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { changeEmail, resendChangeEmail } from '../../../../slices/auth2/thunk';
+import { layoutModeTypes } from '../../../../Components/constants/layout';
 import Swal from 'sweetalert2';
 
 const ChangeEmail = ({
@@ -14,6 +15,13 @@ const ChangeEmail = ({
   const dispatch = useDispatch();
   const [loadingUpdate, setLoadingUpdate] = React.useState(false);
   const [loadingResend, setLoadingResend] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
+  const [successMessage, setSuccessMessage] = React.useState('');
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const initialValues = {
     email: '',
@@ -23,39 +31,33 @@ const ChangeEmail = ({
   const validationSchema = Yup.object({
     email: Yup.string()
       .email('Invalid email address')
-      .required('Email is Required'),
-    password: Yup.string().required('Password is Required'),
+      .required('Email is required'),
+    password: Yup.string().required('Password is required'),
   });
 
   const handleChangeEmail = async (values, { resetForm }) => {
     const { email: newEmail, password } = values;
     try {
       setLoadingUpdate(true);
-      const res = await dispatch(changeEmail({ newEmail, password }));
-      const response = res.payload;
-      if (res.error || response.error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: response || 'An error occurred',
-        });
-      } else {
-        Swal.fire({
-          icon: 'info',
-          title: 'Verification Needed',
-          text: 'An email has been sent to your new email address. Please verify your email.',
-        });
-        onRefresh();
-        resetForm();
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: error.message || 'An error occurred',
-      });
 
+      const response = await dispatch(changeEmail({ newEmail, password }));
+      const data = response.payload;
+      if (response.error) {
+        setErrorMessage(response.error.message);
+        return;
+      }
+      if (data.error) {
+        setErrorMessage(data.error.message);
+        return;
+      }
+      
+      setErrorMessage('');
+      setSuccessMessage('An email has been sent to your new email address. Please verify your email.');
+      //onRefresh();
+      //resetForm();
+  } catch (error) {
       console.log(error);
+      setErrorMessage(error.message || error);
     } finally {
       setLoadingUpdate(false);
     }
@@ -95,8 +97,8 @@ const ChangeEmail = ({
 
   return (
     <TabPane tabId="2">
-      <Col lg={12} className="mb-4">
-        <div className="">
+      <Col className="col-12 mt-4">
+        <div>
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
@@ -104,46 +106,55 @@ const ChangeEmail = ({
           >
             {({ isSubmitting, dirty, isValid }) => (
               <Form>
-                <Row>
-                  <div className="col-6 mt-4 mb-4">
-                    <Label htmlFor="email" className="form-label">
-                      New Email
-                    </Label>
-                    <Field type="text" name="email" className="form-control" />
-                    <ErrorMessage
-                      name="email"
-                      component="div"
-                      className="text-danger"
-                    />
+                <div className="mb-4">
+                  <Label htmlFor="email" className="form-label">
+                    Enter the new email address
+                  </Label>
+                  <Field type="text" name="email" className="form-control" />
+                  <ErrorMessage
+                    name="email"
+                    component="div"
+                    className="text-danger"
+                  />
+                </div>
+                <div className="mb-4">
+                  <Label htmlFor="password" className="form-label">
+                    Verify with your current password
+                  </Label>
+                  <Field
+                    type="password"
+                    name="password"
+                    className="form-control"
+                  />
+                  <ErrorMessage
+                    name="password"
+                    component="div"
+                    className="text-danger"
+                  />
+                </div>
+
+                {errorMessage && (
+                  <div className="alert alert-danger" role="alert">
+                    {errorMessage}
                   </div>
-                  <div className="col-6 mt-4 mb-4">
-                    <Label htmlFor="password" className="form-label">
-                      Password
-                    </Label>
-                    <Field
-                      type="password"
-                      name="password"
-                      className="form-control"
-                    />
-                    <ErrorMessage
-                      name="password"
-                      component="div"
-                      className="text-danger"
-                    />
+                )}
+                {successMessage && (
+                  <div className="alert alert-success" role="alert">
+                    {successMessage}
                   </div>
-                </Row>
+                )}
 
                 <div className="d-flex justify-content-start mt-1">
                   <Button
                     type="submit"
-                    color="soft-primary"
+                    color={isDarkMode ? "primary" : "soft-primary"}
                     disabled={isSubmitting || !dirty || !isValid}
-                    className={`btn btn-soft-primary mb-0 ${isSubmitting || !dirty || !isValid
-                      ? 'bg bg-soft-primary border border-0 text-primary cursor-not-allowed'
+                    className={`mb-0 ${isSubmitting || !dirty || !isValid
+                      ? 'border border-0 cursor-not-allowed'
                       : ''
-                      }`}
+                    }`}
                   >
-                    {isSubmitting ? 'Changing ...' : 'Submit'}
+                    Change Email
                   </Button>
                 </div>
               </Form>
