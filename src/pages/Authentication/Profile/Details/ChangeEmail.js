@@ -147,7 +147,7 @@ const ChangeEmail = ({
                 <div className="d-flex justify-content-start mt-1">
                   <Button
                     type="submit"
-                    color={isDarkMode ? "primary" : "soft-primary"}
+                    color={isDarkMode || isSubmitting || !dirty || !isValid ? "primary" : "soft-primary"}
                     disabled={isSubmitting || !dirty || !isValid}
                     className={`mb-0 ${isSubmitting || !dirty || !isValid
                       ? 'border border-0 cursor-not-allowed'
