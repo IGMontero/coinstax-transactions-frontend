@@ -105,15 +105,9 @@ export const downloadTransactionsPortfolio = createAsyncThunk(
           Authorization: `${token}`,
         },
         params: filters,
-        responseType: 'blob',
       });
 
-      const contentType = response.headers['content-type'];
-      if (contentType.includes('application/json')) {
-        return await response.data.text();
-      } else if (contentType.includes('text/csv')) {
-        return response.data;
-      }
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
     }
