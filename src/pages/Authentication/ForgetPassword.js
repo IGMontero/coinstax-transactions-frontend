@@ -25,8 +25,8 @@ import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 import Helmet from '../../Components/Helmet/Helmet';
 import { parseValuesToLocale } from '../../utils/utils';
 import Swal from 'sweetalert2';
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
 import { layoutModeTypes } from '../../Components/constants/layout';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 
 const ForgetPasswordPage = (props) => {
   const dispatch = useDispatch();

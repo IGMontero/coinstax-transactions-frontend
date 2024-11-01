@@ -27,7 +27,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 //import images
-import logo from '../../assets/images/logos/coinstax_logos/logo-dark.png';
+import { useSelector } from 'react-redux';
+import Swal from 'sweetalert2';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 import Helmet from '../../Components/Helmet/Helmet';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
 import { fetchUserCountry } from '../../slices/common/thunk';
@@ -142,8 +144,8 @@ const Register = () => {
       let countryCode = userCountry;
 
       if (countryCode === 'XX' || !countryCode) {
-        countryCode='US';
-      } 
+        countryCode = 'US';
+      }
       const country = fixedData?.countries.find(
         (item) => item.code == countryCode,
       );
@@ -219,7 +221,7 @@ const Register = () => {
                   />
                 </Link>
               </div>
-              <Col md={9} lg={6} xl={4}>
+              <Col md={9} lg={6} xl={6}>
                 <Card className="mt-4" >
                   <CardBody className="p-4">
                     <div className="text-center my-3">
