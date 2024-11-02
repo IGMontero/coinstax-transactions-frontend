@@ -260,8 +260,8 @@ const Register = () => {
                             className="form-control"
                             placeholder="Enter email address"
                             type="email"
+                            autoFocus
                             onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&

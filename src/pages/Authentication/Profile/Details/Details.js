@@ -257,8 +257,8 @@ const Details = (props) => {
                   {!hasPassword ? (
                     <>
                       <p className="my-4">
-                        You need to set up a password in order to change your email. <br /> Navigate to Security
-                        tab to set up your password.
+                        You need to create a password to change your email. <br /> Click the <em>Security</em>
+                        tab to set up a new password.
                         {/* <Link
                           style={{
                             marginLeft: '5px',

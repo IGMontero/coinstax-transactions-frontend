@@ -154,8 +154,8 @@ const Login = (props) => {
                             className="form-control"
                             placeholder="Enter email"
                             type="email"
+                            autoFocus
                             onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&

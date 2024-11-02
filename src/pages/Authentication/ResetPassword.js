@@ -11,6 +11,7 @@ import {
   Input,
   Label,
   Row,
+  Alert,
   Spinner,
 } from 'reactstrap';
 
@@ -33,20 +34,16 @@ const ResetPaswword = () => {
   const location = useLocation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const logout = useLogOut();
 
   const { layoutModeType } = useSelector((state) => ({
     layoutModeType: state.Layout.layoutModeType,
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
+  const [verifiedToken, setVerifiedToken] = useState('');
   const [passwordShow, setPasswordShow] = useState(false);
   const [confrimPasswordShow, setConfrimPasswordShow] = useState(false);
-  const [isError, setIsError] = useState(false);
-
-  const [initializing, setInitializing] = useState(true);
-
-  const [loadingVerifyToken, setLoadingVerifyToken] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const tokenParams = new URLSearchParams(location.search);
   const token = tokenParams.get('token');
@@ -60,18 +57,16 @@ const ResetPaswword = () => {
     },
     validationSchema: Yup.object({
       password: Yup.string()
-        .min(6, 'Password must be at least 6 characters long')
-
         .required('This field is required'),
       confrim_password: Yup.string()
         .when('password', {
           is: (val) => (val && val.length > 0 ? true : false),
           then: Yup.string().oneOf(
             [Yup.ref('password')],
-            'Both password need to be the same',
+            'Passwords do not match',
           ),
         })
-        .required('Confirm Password Required'),
+        .required('Confirm password required'),
     }),
     onSubmit: (values) => {
       handleResetPassword(values.password);
@@ -79,18 +74,24 @@ const ResetPaswword = () => {
   });
 
   const handleVerifyToken = async () => {
-    setLoadingVerifyToken(true);
+    setVerifiedToken('');
     try {
       const response = await dispatch(verifyResetPasswordToken(token));
-      const res = response.payload;
-      if (response && !response.error) {
-        setInitializing(false);
-        return setLoadingVerifyToken(false);
-      } else {
-        setIsError(true);
-        setLoadingVerifyToken(false);
+      if (response && response.error) {
+        setVerifiedToken(false);
+        setErrorMessage(response.error.message ? response.error.message : response.error);
+        return;
       }
-    } catch (error) {
+
+      const data = response.payload;
+      if (data && data.error) {
+        setVerifiedToken(false);
+        setErrorMessage(data.error.message);
+        return;
+      }
+
+      setVerifiedToken(true);
+  } catch (error) {
       console.log(error);
     }
   };
@@ -99,18 +100,8 @@ const ResetPaswword = () => {
     handleVerifyToken();
   }, []);
 
-  if (loadingVerifyToken) {
-    return (
-      <div className="d-flex mt-5 align-items-center justify-content-center flex-column">
-        <Spinner color="primary" />
-        <div className="mt-5">
-          <h1>Verifying Token...</h1>
-        </div>
-      </div>
-    );
-  }
-
   const handleResetPassword = async (newPassword) => {
+    setErrorMessage('');
     try {
       const response = await dispatch(
         resetPassword({
@@ -118,40 +109,20 @@ const ResetPaswword = () => {
           newPassword,
         }),
       );
-
-      if (response && !response.error) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Success',
-          text: 'Password reset successfully',
-          showConfirmButton: false,
-          timer: 1500,
-        });
-
-        // Logout user.
-        logout();
-
-
-        navigate('/login');
-      } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Error while resetting password',
-          showConfirmButton: false,
-          timer: 1500,
-        });
+      if (response && response.error) {
+        setErrorMessage(response.error.message ? response.error.message : response.error);
+        return;
       }
-      console.log(response);
+      var data = response.payload;
+      if (!data || data.error) {
+        setErrorMessage(data && data.error.message ? data.error.message : 'An error occured setting your password');
+        return;
+      }
+
+      navigate('/wallets');
+      
     } catch (error) {
-      console.log(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Something went wrong',
-        showConfirmButton: false,
-        timer: 1500,
-      });
+      setErrorMessage(error.message ? error.message : error);
     }
   };
 
@@ -175,30 +146,24 @@ const ResetPaswword = () => {
             </div>
             <Col md={8} lg={6} xl={5}>
               <Card className="mt-4">
-                {initializing ? (
-                  <CardBody className="p-4 text-center">
-                    <div className="text-center my-3">
-                      <h3 className={isDarkMode ? "text-white" : "text-primary"}>Create a new password</h3>
-                    </div>
-                    <div>
-                      {loadingVerifyToken ? (
-                        <div className="text-center mt-3">
-                          <Spinner color="primary" />
-                        </div>
-                      ) : (
+                <CardBody className="p-4">
+                  <div className="text-center my-3">
+                    <h3 className={isDarkMode ? "text-white" : "text-primary"}>Create a new password</h3>
+                  </div>
+                  {!verifiedToken ? (
+                    <div className="p-2 mt-4">
+                      {verifiedToken === false ? (
                         <div className="text-center mt-5 mb-5" style={{'min-height':100}}>
-                          <p className="text-danger pt-5">This is an invalid of expired link. Please try again.</p>
-                        </div>
-                      )}
+                        <p className="text-danger pt-5">This is an invalid of expired link. Please try again.</p>
+                      </div>
+                      ) : (
+                        <div className="text-center mt-3">
+                        <Spinner color="primary" />
+                      </div>
+                    )}
                     </div>
-                  </CardBody>
-                ) : (
-                  <CardBody className="p-4">
-                    <div className="text-center my-3">
-                      <h3 className={isDarkMode ? "text-white" : "text-primary"}>Create a new password</h3>
-                    </div>
-
-                    <div className="p-2">
+                  ) : (
+                    <div className="p-2 mt-4">
                       <Form
                         onSubmit={validation.handleSubmit}
                         action="/auth-signin-basic"
@@ -214,8 +179,8 @@ const ResetPaswword = () => {
                               placeholder="Enter password"
                               id="password-input"
                               name="password"
+                              autoFocus
                               value={validation.values.password}
-                              onBlur={validation.handleBlur}
                               onChange={validation.handleChange}
                               invalid={
                                 validation.errors.password &&
@@ -240,9 +205,6 @@ const ResetPaswword = () => {
                               <i className="ri-eye-fill align-middle"></i>
                             </Button>
                           </div>
-                          <div id="passwordInput" className="form-text">
-                            Must be at least 6 characters.
-                          </div>
                         </div>
 
                         <div className="mb-3">
@@ -250,7 +212,7 @@ const ResetPaswword = () => {
                             className="form-label"
                             htmlFor="confirm-password-input"
                           >
-                            Confirm Password
+                            Confirm password
                           </Label>
                           <div className="position-relative auth-pass-inputgroup mb-3">
                             <Input
@@ -260,7 +222,6 @@ const ResetPaswword = () => {
                               id="confirm-password-input"
                               name="confrim_password"
                               value={validation.values.confrim_password}
-                              onBlur={validation.handleBlur}
                               onChange={validation.handleChange}
                               invalid={
                                 validation.errors.confrim_password &&
@@ -288,15 +249,9 @@ const ResetPaswword = () => {
                           </div>
                         </div>
 
-                        <div
-                          id="password-contain"
-                          className="p-3 bg-light mb-2 rounded"
-                        >
-                          <h5 className="fs-13">Password must contain:</h5>
-                          <p id="pass-length" className="invalid fs-12 mb-2">
-                            Minimum <b>8 characters</b>
-                          </p>
-                        </div>
+                        {errorMessage && (
+                          <Alert color="danger">{errorMessage}</Alert>
+                        )}
 
                         <div className="mt-4">
                           <Button
@@ -309,11 +264,8 @@ const ResetPaswword = () => {
                         </div>
                       </Form>
                     </div>
-                  </CardBody>
-                )
-                }
-
-
+                  )}
+                </CardBody>
               </Card>
               <div className="mt-4 text-center">
                 <p className="mb-0">
