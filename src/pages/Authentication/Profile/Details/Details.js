@@ -228,7 +228,7 @@ const Details = (props) => {
                   className="text-decoration-none"
                   onClick={handleResendVerificationEmail}
                 >
-                  [Resend Verification Email]
+                  Resend Verification Email
                 </Button>
               )}{' '}
               {errorMessageVerifyEmail ? (

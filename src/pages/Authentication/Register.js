@@ -19,7 +19,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
 // action
-import { register } from '../../slices/auth2/thunk';
+import { register, authMe } from '../../slices/auth2/thunk';
 
 //redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -121,7 +121,21 @@ const Register = () => {
         if (code && type) {
           navigate(`/invite?code=${code}&type=${type}`);
         } else {
-          navigate('/wallets/connect');
+          const authMeRes = await dispatch(authMe());
+          dispatch(setPrevAddress(null));
+          dispatch(setAddressSearched(null));
+
+          const { role } = authMeRes.payload;
+
+          if (role === DASHBOARD_USER_ROLES.USER) {
+            if (code && type) {
+              navigate(`/invite?code=${code}&type=${type}`);
+            } else {
+              navigate('/wallets');
+            }
+          } else {
+            navigate('/clients');
+          }
         }
       }
     } catch (error) {
@@ -411,7 +425,7 @@ const Register = () => {
                                 Loading...
                               </>
                             ) : (
-                              'Continue'
+                              'Sign Up'
                             )}
                           </Button>
                         </div>
