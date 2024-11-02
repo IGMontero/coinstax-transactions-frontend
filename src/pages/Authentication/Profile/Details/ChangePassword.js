@@ -154,7 +154,7 @@ const ChangePassword = () => {
                 onClick={handleSetUpPassword}
                 color={isDarkMode ? "primary" : "soft-primary"}
               >
-                Set Up a new password
+                Set up a new password
               </Button>
             </>
           )}
