@@ -37,6 +37,8 @@ import {
   fetchTransactionsPortfolio,
 } from '../../slices/portfolio/thunk';
 import { addJobToList } from '../../slices/jobs/reducer';
+import { useGetTimezone } from '../../hooks/useUtils';
+import { formatTimeForClient } from '../../utils/date.utils';
 
 const internalPaginationPageSize = 10;
 
@@ -44,12 +46,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   // #region HOOKS
   const inputRef = useRef(null);
   const pagesCheckedRef = useRef(new Set());
-  const fetchControllerRef = useRef(new AbortController());
 
   const location = useLocation();
   const { address } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const timezone = useGetTimezone();
 
   const { userId } = useParams();
   const currentPortfolioUserId = userId ? userId : user?.id;
@@ -58,7 +60,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
   const isCurrentUserPortfolioSelected =
     location.pathname.includes('portfolio');
-  const isAdmin = user?.role === DASHBOARD_USER_ROLES.ADMIN;
 
   // #region STATES
   const [hasPreview, setHasPreview] = useState(false);
@@ -403,7 +404,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       return {};
     }
     return transactions.reduce((acc, transaction) => {
-      const date = formatDateToLocale(transaction.date);
+      const date = formatTimeForClient(transaction.date, timezone,
+        // I want format to be i.e September 1, 2024
+        'MMMM DD, YYYY');
       if (!acc[date]) {
         acc[date] = [];
       }
@@ -692,15 +695,15 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const exportAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-            ...requestParams,
-            userId: currentPortfolioUserId,
-            assetsFilters,
-          })
+          ...requestParams,
+          userId: currentPortfolioUserId,
+          assetsFilters,
+        })
         : downloadTransactions({
-            ...requestParams,
-            query: debouncedSearchTerm,
-            assetsFilters,
-          });
+          ...requestParams,
+          query: debouncedSearchTerm,
+          assetsFilters,
+        });
 
       const response = await dispatch(exportAction).unwrap();
 
@@ -823,16 +826,16 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const downloadAction = isCurrentUserPortfolioSelected
         ? downloadTransactionsPortfolio({
-            ...downloadParams,
-            userId: currentPortfolioUserId,
-            assetsFilters: selectAsset,
-          })
+          ...downloadParams,
+          userId: currentPortfolioUserId,
+          assetsFilters: selectAsset,
+        })
         : downloadTransactions({
-            ...downloadParams,
-            address: address,
-            query: debouncedSearchTerm,
-            assetsFilters: selectAsset,
-          });
+          ...downloadParams,
+          address: address,
+          query: debouncedSearchTerm,
+          assetsFilters: selectAsset,
+        });
 
       const response = await dispatch(downloadAction).unwrap();
 
@@ -1022,7 +1025,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                       type="checkbox"
                       className="form-check-input me-3"
                       checked={selectedFilters.includes(filter)}
-                      onChange={() => {}}
+                      onChange={() => { }}
                     />
                     {capitalizeFirstLetter(filter)}
                   </label>
@@ -1040,9 +1043,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               disabled={isInitialLoad}
               tag="a"
               className={`btn btn-sm p-1  d-flex align-items-center ms-2 
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${
-                showAssetsMenu ? 'active' : ''
-              }`}
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'} ${showAssetsMenu ? 'active' : ''
+                }`}
               role="button"
             >
               <span className="fs-6">
@@ -1418,7 +1420,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative "
-          // style={{ minHeight: '50vh' }}
+        // style={{ minHeight: '50vh' }}
         >
           {Object.keys(groupedTransactions).map((date, index) => (
             <RenderTransactions

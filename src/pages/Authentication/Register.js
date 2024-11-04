@@ -127,17 +127,19 @@ const Register = () => {
           dispatch(setPrevAddress(null));
           dispatch(setAddressSearched(null));
 
-          const { role } = authMeRes.payload;
+          // const { role } = authMeRes.payload;
 
-          if (role === DASHBOARD_USER_ROLES.USER) {
-            if (code && type) {
-              navigate(`/invite?code=${code}&type=${type}`);
-            } else {
-              navigate('/wallets');
-            }
-          } else {
-            navigate('/clients');
-          }
+          navigate('/wallets');
+
+          // if (role === DASHBOARD_USER_ROLES.USER) {
+          //   if (code && type) {
+          //     navigate(`/invite?code=${code}&type=${type}`);
+          //   } else {
+          //     navigate('/wallets');
+          //   }
+          // } else {
+          //   navigate('/clients');
+          // }
         }
       }
     } catch (error) {

@@ -53,6 +53,7 @@
 		"lord-icon-element": "^4.0.1",
 		"lottie-web": "^5.10.1",
 		"moment": "^2.29.4",
+		"moment-timezone": "^0.5.46",
 		"node-sass": "^8.0.0",
 		"nouislider-react": "^3.4.1",
 		"papaparse": "^5.4.1",
