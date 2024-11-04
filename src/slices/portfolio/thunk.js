@@ -44,14 +44,19 @@ export const fetchNFTSPortfolio = createAsyncThunk(
 // Get balances portfolio
 export const getBalancesPortfolio = createAsyncThunk(
   'portfolio/getBalancesPortfolio',
-  async ({ userId, blockchain, days, signal }, { rejectWithValue }) => {
+  async ({ userId, blockchain, days, signal, tz }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await apiClient.get(`/users/${userId}/portfolio/${blockchain}/balances`, {
+      const url = `/users/${userId}/portfolio/${blockchain}/balances`;
+
+      const response = await apiClient.get(url, {
         headers: {
           Authorization: `${token}`,
         },
-        params: { days },
+        params: {
+          days,
+          tz,
+        },
         signal,
       });
       return response.data;

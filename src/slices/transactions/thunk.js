@@ -17,10 +17,17 @@ export const fetchNFTS = createAsyncThunk(
 
 export const fetchPerformance = createAsyncThunk(
   'transactions/fetchPerformance',
-  async ({ address, days, networkType }, { rejectWithValue }) => {
+  async ({ address, days, networkType, tz }, { rejectWithValue }) => {
+
     try {
-      const url = `/transactions/${networkType}/${address}/balances/historical${days ? `?days=${days}` : ''}`;
-      const { data } = await apiClient.get(url);
+      const url = `/transactions/${networkType}/${address}/balances/historical`;
+
+      const { data } = await apiClient.get(url, {
+        params: {
+          days,
+          tz,
+        },
+      });
       return data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);

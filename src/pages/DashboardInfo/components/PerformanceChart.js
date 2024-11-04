@@ -22,6 +22,7 @@ import {
   parseValuesToLocale,
 } from '../../../utils/utils';
 import { getBalancesPortfolio } from '../../../slices/portfolio/thunk';
+import { useGetTimezone } from '../../../hooks/useUtils';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
@@ -40,6 +41,8 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const networkType = useSelector(selectNetworkType);
 
   const [loadingChart, setLoadingChart] = useState({});
+
+  const timezone = useGetTimezone();
 
   const loading =
     (isInitialLoad && !token) || Object.values(loadingChart).some((l) => l);
@@ -206,6 +209,11 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
       const params = days
         ? { address, days, networkType, signal }
         : { address, networkType, signal };
+
+      if (timezone) {
+        params.tz = timezone;
+      }
+
       if (applyDelay) {
         timer = setTimeout(() => {
           setLoadingChart((prev) => ({
@@ -222,11 +230,11 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
       const request = isCurrentUserPortfolioSelected
         ? getBalancesPortfolio({
-            userId: currentPortfolioUserId,
-            blockchain: networkType,
-            days,
-            signal,
-          })
+          userId: currentPortfolioUserId,
+          blockchain: networkType,
+          days,
+          signal,
+        })
         : fetchPerformance(params);
 
       dispatch(request)
