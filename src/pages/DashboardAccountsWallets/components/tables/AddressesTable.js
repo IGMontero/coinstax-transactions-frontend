@@ -3,10 +3,7 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import Skeleton from 'react-loading-skeleton';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import {
-  Col,
-  Row
-} from 'reactstrap';
+import { Col, Row } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { layoutModeTypes } from '../../../../Components/constants/layout';
 import { setAddressName } from '../../../../slices/addressName/reducer';
@@ -148,7 +145,6 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
           ).unwrap();
 
           if (response && !response.error) {
-
             setAddresses(addresses.filter((addr) => addr.id !== address.id));
 
             // const addressToDeleteFromCookies = addressesCookies.find(
@@ -413,14 +409,15 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                             md={12}
                             sm={12}
                             xs={12}
-                            className="mb-3 "
+                            className={`mb-3 `}
                           >
                             <div
                               onClick={() => handleItemClick(itemAddress)}
-                              className={`address-card p-2 bg-transparent cursor-grab ${openCollapse.has(collapseId)
-                                ? 'px-2 mb-2'
-                                : 'bg-light'
-                                }`}
+                              className={`address-card p-2 rounded bg-transparent cursor-grab ${
+                                openCollapse.has(collapseId)
+                                  ? 'px-2 mb-2'
+                                  : 'bg-light'
+                              }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
