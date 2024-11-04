@@ -93,11 +93,9 @@ const DashboardConnectWallets = () => {
 
     if (initialLoad) {
       setInitialLoad(false);
-      if (user)
-        refreshUserPortfolio();
+      if (user) refreshUserPortfolio();
     }
   }, [initialLoad]);
-
 
   const handleConnect = (connector) => {
     if (connector.missing) {
@@ -407,6 +405,7 @@ const DashboardConnectWallets = () => {
 
 function ConnectorButton({ id, name, logo, handleConnect }) {
   const [ready, setReady] = React.useState(false);
+  const [isHovered, setIsHovered] = React.useState(false);
   const location = useLocation();
   const { connectors } = useConnect();
   const connections = useConnections();
@@ -646,14 +645,38 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
 
         {name}
       </div> */}
-      <div className="connector-item cursor-pointer">
-        <div
-          onClick={() => {
-            handleClick();
-          }}
-          className="connector-item-inner"
-        >
-          <div className="more-card">
+      <div
+        className="connector-item cursor-pointer"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <div className="connector-item-inner">
+          {isHovered && connectorConnected && (
+            <div
+              className="close-button rounded bg bg-soft-danger p-0"
+              onClick={(e) =>
+                connectorConnected
+                  .disconnect(connectorConnected)
+                  .then(() => {
+                    // Reload page
+                    window.location.reload();
+                  })
+                  .catch((error) => {
+                    console.error('Failed to disconnect wallet: ', error);
+                  })
+              }
+            >
+              <span className="pb-0">
+                <i className="bx bx-x text-danger "></i>
+              </span>
+            </div>
+          )}
+          <div
+            className="more-card"
+            onClick={() => {
+              handleClick();
+            }}
+          >
             <div className="icon-wrapper">
               <img src={logo} alt="binnace" className="card-image" />
             </div>

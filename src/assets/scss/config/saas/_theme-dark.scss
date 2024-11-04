@@ -942,8 +942,21 @@
   gap: 26px;
 
   .connector-item {
+    position: relative;
       transition: transform 0.4s;
       z-index: 2;
+
+      .close-button {
+        background-color: red;
+        // border-radius: 5%;
+        position: absolute;
+        top: 3px;
+        z-index: 3;
+        left: 4px;
+        cursor: pointer;
+    
+        font-size: 16px; 
+      }
 
       .connector-item-inner {
           width: 126px;
