@@ -234,6 +234,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
           blockchain: networkType,
           days,
           signal,
+          tz: timezone,
         })
         : fetchPerformance(params);
 
