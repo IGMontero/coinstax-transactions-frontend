@@ -35,6 +35,8 @@ import { fetchUserCountry } from '../../slices/common/thunk';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
 
 import { layoutModeTypes } from '../../Components/constants/layout';
+import { setAddressSearched, setPrevAddress } from '../../slices/layoutMenuData/reducer';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
 
 const Register = () => {
   const navigate = useNavigate();
