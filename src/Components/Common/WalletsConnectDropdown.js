@@ -30,6 +30,7 @@ const WalletsConnectDropdown = () => {
 
   const hasConnections = connections.length > 0;
 
+
   const populateAccountsByConnector = async () => {
     const accountsByConnector = {};
 
@@ -47,24 +48,27 @@ const WalletsConnectDropdown = () => {
 
   //Tab
   const [activeTab, setActiveTab] = useState('1');
-  const toggleTab = (tab) => {
-    if (activeTab !== tab) {
-      setActiveTab(tab);
-    }
-  };
+
 
 
   const renderConnectors = () =>
     walletConnectConnectorsData.map((connector) => {
+      console.log('connector', connector);
+
       const isConnected = connections.find(
         (connection) => connection.connector.id === connector.id,
       );
+
       const connectorConnected = isConnected?.connector;
+
+      console.log('connectorConnected', connectorConnected);
 
 
       if (!connectorConnected) return;
 
       const accounts = accountsByConnector[connectorConnected.id];
+
+      console.log('accounts', accounts);
 
       // TODO: Implement logo, and disconnect button functionality.
 

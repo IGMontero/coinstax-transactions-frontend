@@ -80,7 +80,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   const selectedAddress = isPortoflioPage
     ? 'portfolio'
     : userPortfolioAddresses.find((addr) => addr.address === addressParams) ||
-      addressParams;
+    addressParams;
 
   const [subDropdownOpen, setSubDropdownOpen] = useState(null);
 
@@ -414,7 +414,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
           <div className="d-flex flex-column align-items-start flex-grow-1">
             <span
-              className={`text-${labelToDisplay === 'Select Wallet' ? 'center' : 'start'} text-dark `}
+              className={`text-${labelToDisplay === 'Select Wallet' ? 'center' : 'start'} text-dark align-self-center`}
               style={{
                 whiteSpace:
                   labelToDisplay === 'Select Wallet' ? 'normal' : 'nowrap',

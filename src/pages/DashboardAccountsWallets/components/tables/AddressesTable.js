@@ -29,32 +29,12 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
   }));
   const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
   const [openCollapse, setOpenCollapse] = useState(new Set());
-  const [dropdownOpen, setDropdownOpen] = useState(null);
 
   const handleItemClick = (address) => {
     //toggleCollapse(collapseId);
     navigate(`/address/${address}`);
   };
 
-  console.log('addresses table:', addresses);
-
-  const handleVisitAddress = (address) => {
-    navigate(`/address/${address}`);
-  };
-
-  const toggleDropdown = (e, index) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (dropdownOpen === index) {
-      setDropdownOpen(null);
-    } else {
-      setDropdownOpen(index);
-    }
-  };
-
-  // const handleSetAddresses = (updatedAddresses) => {
-  //   dispatch(setUserPortfolioSummary(updatedAddresses));
-  // };
 
   const handleUpdateAddress = (e, address) => {
     e.preventDefault();
@@ -243,71 +223,8 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     return parseValuesToLocale(addressData.value, CurrencyUSD);
   };
 
-  const getDisplayText = (address) => {
-    console.log('address:', address);
-    const addressCustomName = address?.Name;
-    if (addressCustomName) {
-      return addressCustomName;
-    } else {
-      return address;
-    }
-  };
   const [showOptions, setShowOptions] = useState(null);
 
-  // const renderOptions = (address, index, itemAddress) => {
-  //   return (
-  //     <Dropdown
-  //       isOpen={dropdownOpen === index}
-  //       toggle={(e) => toggleDropdown(e, index)}
-  //       direction="down"
-  //     >
-  //       <DropdownToggle
-  //         caret={false}
-  //         className="btn btn-light btn-sm text-muted"
-  //         onClick={(e) => {
-  //           e.preventDefault();
-  //           e.stopPropagation();
-  //           toggleDropdown(e, index);
-  //         }}
-  //       >
-  //         <i className="ri-more-2-fill"></i>
-  //       </DropdownToggle>
-  //       <DropdownMenu>
-  //         <DropdownItem
-  //           className="d-flex aling-items-center"
-  //           onClick={() => {
-  //             handleVisitAddress(itemAddress);
-  //           }}
-  //         >
-  //           <i className="ri-eye-fill me-2"></i> View
-  //         </DropdownItem>
-
-  //         <DropdownItem
-  //           className="d-flex aling-items-center"
-  //           onClick={(e) => handleCopy(e, itemAddress)}
-  //         >
-  //           <i className="ri-file-copy-line me-2"></i> Copy Address
-  //         </DropdownItem>
-  //         <DropdownItem
-  //           className="d-flex aling-items-center"
-  //           onClick={(e) => {
-  //             handleUpdateAddress(e, address);
-  //           }}
-  //         >
-  //           <i className="ri-edit-line me-2"></i> Rename
-  //         </DropdownItem>
-  //         <DropdownItem
-  //           className="d-flex aling-items-center"
-  //           onClick={() => {
-  //             handleDeleteUserAddress(address);
-  //           }}
-  //         >
-  //           <i className="ri-delete-bin-line me-2"></i> Delete
-  //         </DropdownItem>
-  //       </DropdownMenu>
-  //     </Dropdown>
-  //   );
-  // };
   const [isCopied, setIsCopied] = useState(null);
 
   const handleCopy = async (e, text) => {
@@ -366,13 +283,6 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
 
   return (
     <>
-      {/* <ConnectWalletModal
-        isOpen={modalConnectWallet}
-        setIsOpen={setModalConnectWallet}
-        userId={userId}
-        onRefresh={onRefresh}
-      /> */}
-
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="addresses">
           {(provided) => (
@@ -413,11 +323,10 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                           >
                             <div
                               onClick={() => handleItemClick(itemAddress)}
-                              className={`address-card p-2 rounded bg-transparent cursor-grab ${
-                                openCollapse.has(collapseId)
-                                  ? 'px-2 mb-2'
-                                  : 'bg-light'
-                              }`}
+                              className={`address-card p-2 rounded bg-transparent cursor-grab ${openCollapse.has(collapseId)
+                                ? 'px-2 mb-2'
+                                : 'bg-light'
+                                }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"

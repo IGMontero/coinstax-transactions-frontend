@@ -124,3 +124,14 @@ File: Custom Css File
 .vertical-sidebar-enable .app-menu {
   left: 0;
 }
+
+// Wallet cards
+.address-card {
+  // transition: all 0.3s ease-in-out;
+  border: dashed 1px transparent;
+}
+
+.address-card:hover {
+  border: dashed 1px transparent;
+  border-color: $text-muted !important;
+}
