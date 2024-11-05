@@ -379,25 +379,28 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 <Col>
                   <Collapse
                     isOpen={isOpenCollapseMenuHeader}
-                    className="pb-0 px-3 border-bottom border-2 d-flex align-items-center"
+                    className="pb-3 px-3 border-bottom border-2 d-flex align-items-center"
                     style={{
                       backgroundColor: backgroundColor,
                     }}
                   >
                     <Nav horizontal className="d-flex align-items-center">
                       {currentUser && (
-                        <NavItem>
-                          <NotificationDropdown
-                            onRefresh={handleGetNotifications}
-                            handleLoadMoreNotifications={
-                              handleLoadMoreNotifications
-                            }
-                          />
-                        </NavItem>
+                        <>
+                          <NavItem>
+                            <NotificationDropdown
+                              onRefresh={handleGetNotifications}
+                              handleLoadMoreNotifications={
+                                handleLoadMoreNotifications
+                              }
+                            />
+                          </NavItem>
+
+                          <NavItem>
+                            <WalletsConnectDropdown />
+                          </NavItem>
+                        </>
                       )}
-                      <NavItem>
-                        <WalletsConnectDropdown />
-                      </NavItem>
                       <NavItem>
                         <LightDark
                           layoutMode={layoutModeType}
