@@ -27,11 +27,13 @@ import { setNotificationsInfo } from '../slices/notifications/reducer';
 import { fetchNotifications } from '../slices/notifications/thunk';
 import { changeSidebarVisibility } from '../slices/thunks';
 import CollapseMenuHeader from '../Components/Dropdowns/CollapseMenuHeader';
+import { useLogOut } from '../hooks/useAuth';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const logout = useLogOut();
   const notifications = useSelector(
     (state) => state.notifications.notifications,
   );
@@ -41,11 +43,17 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const [searchInput, setSearchInput] = useState('');
   const { user } = useSelector((state) => state.auth);
 
+  const [isOpenCollapseMenuHeader, setIsOpenCollapseMenuHeader] =
+    useState(false);
+
   const [windowSize, setWindowSize] = useState(window.innerWidth);
   const [initializedNotifications, setInitializedNotifications] =
     useState(false);
 
   const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
+
+  const backgroundColor =
+    layoutModeType === layoutModeTypes['DARKMODE'] ? '#16161a' : '#fff';
 
   const currentUser = user;
   const { sidebarVisibilitytype } = useSelector((state) => ({
@@ -53,6 +61,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   }));
 
   const [search, setSearch] = useState(false);
+
   const toogleSearch = () => {
     setSearch(!search);
   };
@@ -232,6 +241,15 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     }
   };
 
+  const handleLogout = () => {
+    try {
+      logout();
+      navigate('/wallets');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     if (currentUser && !initializedNotifications) {
       setInitializedNotifications(true);
@@ -239,7 +257,15 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     }
   }, [currentUser]);
 
-  const isResponsive = windowSize < 769;
+  const isMobile = windowSize < 769;
+
+  useEffect(() => {
+    if (!isMobile) {
+      setIsOpenCollapseMenuHeader(false);
+    }
+  }, [isMobile]);
+
+  console.log('isOpem', isOpenCollapseMenuHeader);
 
   return (
     <React.Fragment>
@@ -258,13 +284,12 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
             <div
               className={`col-md-10 col-lg-8 col-12`}
               style={{
-                backgroundColor:
-                  layoutModeType === layoutModeTypes['DARKMODE']
-                    ? '#16161a'
-                    : '#fff',
+                backgroundColor: backgroundColor,
               }}
             >
-              <div className="d-flex justify-content-between align-items-center border-bottom border-2 w-100">
+              <div
+                className={`d-flex justify-content-between align-items-center ${isOpenCollapseMenuHeader ? '' : 'border-bottom border-2'} w-100`}
+              >
                 <Col className="col-1 d-md-none d-lg-none">
                   <button
                     onClick={toogleMenuBtn}
@@ -294,18 +319,16 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                     />
                   </div>
                 </Col>
+
                 <Col lg={3}>
                   <div className="d-flex align-items-center justify-content-end">
-                    {isResponsive ? (
-                      <CollapseMenuHeader
-                        currentUser={currentUser}
-                        layoutMode={layoutModeType}
-                        onChangeLayoutMode={onChangeLayoutMode}
-                        onRefresh={handleGetNotifications}
-                        handleLoadMoreNotifications={
-                          handleLoadMoreNotifications
-                        }
-                      />
+                    {isMobile ? (
+                      <>
+                        <CollapseMenuHeader
+                          isOpen={isOpenCollapseMenuHeader}
+                          setIsOpen={setIsOpenCollapseMenuHeader}
+                        />
+                      </>
                     ) : (
                       <>
                         {currentUser && (
@@ -351,6 +374,76 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   </div>
                 </Col>
               </div>
+              {/* CollapseMenuHeader */}
+              {isOpenCollapseMenuHeader && (
+                <Col>
+                  <Collapse
+                    isOpen={isOpenCollapseMenuHeader}
+                    className="pb-3 px-3 border-bottom border-2 d-flex align-items-center"
+                    style={{
+                      backgroundColor: backgroundColor,
+                    }}
+                  >
+                    <Nav horizontal className="d-flex align-items-center">
+                      {currentUser && (
+                        <>
+                          <NavItem>
+                            <NotificationDropdown
+                              onRefresh={handleGetNotifications}
+                              handleLoadMoreNotifications={
+                                handleLoadMoreNotifications
+                              }
+                            />
+                          </NavItem>
+
+                          <NavItem>
+                            <WalletsConnectDropdown />
+                          </NavItem>
+                        </>
+                      )}
+                      <NavItem>
+                        <LightDark
+                          layoutMode={layoutModeType}
+                          onChangeLayoutMode={onChangeLayoutMode}
+                        />
+                      </NavItem>
+                      {currentUser ? (
+                        <>
+                          <NavItem className="btn btn-icon btn-ghost-dark ms-2  rounded-circle light-dark-mode">
+                            <i className="ri-user-line fs-20 text-dark"></i>
+                          </NavItem>
+                          <NavItem
+                            className="btn btn-icon btn-ghost-dark rounded-circle light-dark-mode ms-2"
+                            onClick={() => handleLogout()}
+                          >
+                            <i className="ri-logout-box-r-line fs-20 text-dark"></i>
+                          </NavItem>
+                        </>
+                      ) : (
+                        <div className="d-flex align-items-center ">
+                          <Button
+                            color="transparent"
+                            size="md"
+                            className="text-dark"
+                            onClick={() => navigate('/login')}
+                          >
+                            Sign in
+                          </Button>
+                          <Button
+                            color="primary"
+                            size="md"
+                            className="ms-2 btn btn-primary"
+                            onClick={() => navigate('/register')}
+                          >
+                            Sing Up
+                          </Button>
+                        </div>
+                      )}
+                    </Nav>
+                  </Collapse>
+                </Col>
+              )}
+              {/* End CollapseMenuHeader */}
             </div>
           </div>
         </div>
