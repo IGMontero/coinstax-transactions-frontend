@@ -265,7 +265,34 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     }
   }, [isMobile]);
 
-  console.log('isOpem', isOpenCollapseMenuHeader);
+  const renderButtonsAuth = () => {
+    return (
+      <div className="d-flex align-items-center ">
+        <Button
+          color="transparent"
+          size="md"
+          className="text-dark "
+          style={{
+            whiteSpace: 'nowrap',
+          }}
+          onClick={() => navigate('/login')}
+        >
+          Sign in
+        </Button>
+        <Button
+          color="primary"
+          size="md"
+          className="ms-2 btn btn-primary"
+          style={{
+            whiteSpace: 'nowrap',
+          }}
+          onClick={() => navigate('/register')}
+        >
+          Sign Up
+        </Button>
+      </div>
+    );
+  };
 
   return (
     <React.Fragment>
@@ -350,24 +377,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                           // <Link to={'/login'}>
                           //   <ProfileDropdown />
                           // </Link>
-                          <div className="d-flex align-items-center">
-                            <Button
-                              color="primary"
-                              size="sm"
-                              className="btn"
-                              onClick={() => navigate('/login')}
-                            >
-                              Login
-                            </Button>
-                            <Button
-                              size="sm"
-                              color="primary"
-                              className="btn ms-2 "
-                              onClick={() => navigate('/register')}
-                            >
-                              Register
-                            </Button>
-                          </div>
+                          renderButtonsAuth()
                         )}
                       </>
                     )}
@@ -406,41 +416,20 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                       </NavItem>
                       {currentUser ? (
                         <>
-                          <NavItem
-                            onClick={() => {
-                              navigate('/profile');
-                              setIsOpenCollapseMenuHeader(false);
-                            }}
-                            className="btn btn-icon btn-ghost-dark ms-2  rounded-circle light-dark-mode"
-                          >
-                            <i className="ri-user-line fs-20 text-dark"></i>
-                          </NavItem>
-                          <NavItem
-                            className="btn btn-icon btn-ghost-dark rounded-circle light-dark-mode ms-2"
-                            onClick={() => handleLogout()}
-                          >
-                            <i className="ri-logout-box-r-line fs-20 text-dark"></i>
+                          <NavItem>
+                            <ProfileDropdown
+                              currentUser={currentUser}
+                              setIsOpenCollapseMenuHeader={
+                                setIsOpenCollapseMenuHeader
+                              }
+                              isOpenCollapseMenuHeader={
+                                isOpenCollapseMenuHeader
+                              }
+                            />
                           </NavItem>
                         </>
                       ) : (
-                        <div className="d-flex align-items-center ">
-                          <Button
-                            color="transparent"
-                            size="md"
-                            className="text-dark"
-                            onClick={() => navigate('/login')}
-                          >
-                            Sign in
-                          </Button>
-                          <Button
-                            color="primary"
-                            size="md"
-                            className="ms-2 btn btn-primary"
-                            onClick={() => navigate('/register')}
-                          >
-                            Sing Up
-                          </Button>
-                        </div>
+                        renderButtonsAuth()
                       )}
                     </Nav>
                   </Collapse>
