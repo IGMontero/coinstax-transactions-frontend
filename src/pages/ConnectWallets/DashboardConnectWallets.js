@@ -275,73 +275,10 @@ const DashboardConnectWallets = () => {
             logo={connector.logo}
             handleConnect={handleConnect}
           />
-
-          {/* {isConnected && connectorConnected && (
-            <>
-              <DisconnectButton
-                connector={connectorConnected}
-                onDisconnect={() => {
-                  // Disconnect the connector
-                  connectorConnected
-                    .disconnect(connectorConnected)
-                    .then(() => {
-                      // Reload page
-                      window.location.reload();
-
-                      // Remove the connector from the list of connections
-                      // setConnections((prev) =>
-                      //   prev.filter(
-                      //     (connection) =>
-                      //       connection.connector.id !== connectorConnected.id,
-                      //   ),
-                      // );
-                    })
-                    .catch((error) => {
-                      console.error('Failed to disconnect wallet: ', error);
-                      Swal.fire({
-                        title: 'Error',
-                        text: error.message || 'Failed to disconnect wallet',
-                        icon: 'error',
-                      });
-                    });
-                }}
-              />
-            </>
-          )} */}
         </div>
       );
     });
 
-  const renderConnectorsItems = () => {
-    return (
-      <>
-        <ConnectorButton
-          id="metamask"
-          name="Metamask"
-          logo={metamaskLogo}
-          handleConnect={handleConnect}
-        />
-        <ConnectorButton
-          id="binance"
-          name="Binance"
-          logo={binannceLogo}
-          handleConnect={handleConnect}
-        />
-        <ConnectorButton
-          id="coinbase"
-          name="Coinbase"
-          logo={coinbaseLogo}
-          handleConnect={handleConnect}
-        />
-        <ConnectorButton
-          id="other"
-          name="Other"
-          logo={otherLogo}
-          handleConnect={handleConnect}
-        />
-      </>
-    );
-  };
 
   return (
     <>
@@ -451,15 +388,6 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
   }, [location.search, connector]);
 
   const handleClick = () => {
-    // Get connector from the list of connectors
-
-    // if (!connector) {
-    //   return Swal.fire({
-    //     // title: 'Error',
-    //     text: `${name} extension not found. Please install the extension and try again.`,
-    //     icon: 'error',
-    //   });
-    // }
 
     if (handleConnect) {
       if (connector) {

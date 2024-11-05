@@ -518,7 +518,9 @@ const Layout = (props) => {
           >
             <div className="container-xxl h-100">
               <div className="row">
-                <div className="col-md-2 col-lg-2 col-0">
+                <div
+                  style={{ zIndex: 1004 }}
+                  className="col-md-2 col-lg-2 col-0">
                   <Sidebar layoutType={layoutType} />
                 </div>
 
