@@ -208,29 +208,39 @@ export const parseValuesToLocale = (
   valueForChart,
   networkValue,
 ) => {
-  // Get the location from the browser
   const localUbication = navigator.language || 'en-US';
 
   if (value === undefined || value === null) {
     return '';
   }
 
+  const getFormattedValue = (val, options) => {
+    let formattedValue = new Intl.NumberFormat(localUbication, options).format(val);
+
+    // Standardize USD symbol as "$" if the currency is USD
+    if (currency === 'USD') {
+      let currencySymbol = formattedValue.match(/[^\d.,\s]/g)?.join('') || '';
+      if (currencySymbol.includes('US$')) {
+        formattedValue = formattedValue.replace('US$', '$');
+      }
+    }
+
+    return formattedValue;
+  };
+
   if (networkValue) {
     const suffixes = { B: 1e9, M: 1e6, K: 1e3 };
     let suffixKey = Object.keys(suffixes).find((key) => value >= suffixes[key]);
     if (suffixKey) {
       let scaledValue = value / suffixes[suffixKey];
-      let formattedValue = new Intl.NumberFormat(localUbication, {
+      let formattedValue = getFormattedValue(scaledValue, {
         style: 'currency',
         currency: currency,
         minimumFractionDigits: 1,
         maximumFractionDigits: 1,
-      }).format(scaledValue);
+      });
 
-      let currencySymbol = formattedValue.match(/[^\d.,\s]/g).join('');
-      formattedValue = formattedValue.replace(currencySymbol, '').trim();
-
-      return `${currencySymbol}${formattedValue} ${suffixKey}`;
+      return `${formattedValue} ${suffixKey}`;
     }
   }
 
@@ -240,11 +250,8 @@ export const parseValuesToLocale = (
     : Math.abs(value) < 0.01;
 
   const findSignificantDigits = (val) => {
-    // Early return if value is 0
     if (val === 0) return 0;
-    // Match the first significant digit and the first 3 significant digits
     const match = val.toString().match(/(?:\.(\d*?)0*?)?(?:[1-9](\d{0,2}))/);
-    // Return the number of significant digits
     return match
       ? (match[1] ? match[1].length : 0) + (match[2] ? match[2].length : 0)
       : 0;
@@ -276,31 +283,20 @@ export const parseValuesToLocale = (
     }
 
     if (isValueHuge) {
-      // return Number(value).toExponential(2) + ' ' + currency;
-
-      // Do above but using tolocalestring
-      return parseFloat(value).toLocaleString(localUbication, {
+      return getFormattedValue(value, {
         ...options,
         notation: 'scientific',
       });
     }
 
     if (isValueSmall) {
-      const significantDigits = findSignificantDigits(Math.abs(value));
-      // return parseFloat(value).toFixed(significantDigits + 1) + ' ' + currency;
-
-      // Above but tolocale string
-      return parseFloat(value).toLocaleString(localUbication, {
-        ...options,
-        // maximumFractionDigits: significantDigits + 1,
-      });
+      return getFormattedValue(value, options);
     }
 
-    return parseFloat(value).toLocaleString(localUbication, options);
+    return getFormattedValue(value, options);
   } catch (error) {
     console.error('Error', error);
     if (isValueSmall) {
-      // For errors on small values, fallback to exponential notation
       return Number(value).toExponential(2) + ' ' + currency;
     }
     return parseFloat(value).toFixed(2) + ' ' + currency;

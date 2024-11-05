@@ -17,10 +17,17 @@ export const wagmiConfig = createConfig({
     chains,
     connectors: [
         walletConnect({ projectId }),
-        metaMask(),
+        metaMask({
+            dappMetadata: {
+                name: 'ChainGlance',
+                description: 'View and track your crypto and blockchain portfolios and transactions',
+                url: 'https://chainglance.com',
+                icons: ['https://chainglance.com/images/logo-light.08f157a2.png'],
+            },
+        }),
         coinbaseWallet({
             appName: 'ChainGlance',
-            headlessMode: false
+            headlessMode: false,
             // appLogoUrl: 'https://coin.tax/logo.png',
         }),
     ],

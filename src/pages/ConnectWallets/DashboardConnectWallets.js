@@ -5,23 +5,17 @@ import { Tooltip } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useConnect, useConnections } from 'wagmi';
 import { walletConnectConnectorsData } from '../../common/constants';
+import { layoutModeTypes } from '../../Components/constants/layout';
 import Helmet from '../../Components/Helmet/Helmet';
 import ConnectWalletModal from '../../Components/Modals/ConnectWalletModal';
 import ParentComponentSearchBar from '../../Components/SearchBar/ParentComponent';
+import { saveTokenInCookies } from '../../helpers/cookies_helper';
 import {
   useRefreshUserPortfolio,
   useUserPortfolioSummary,
 } from '../../hooks/useUserPortfolio';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import DashboardUserWallets from '../DashboardAccountsWallets/DashboardUserWallets';
-import moment from 'moment';
-import binannceLogo from '../../assets/images/connctor/binance_light.png';
-import metamaskLogo from '../../assets/images/connctor/metamask_light.png';
-import coinbaseLogo from '../../assets/images/connctor/coinbase_light.png';
-import otherLogo from '../../assets/images/connctor/connect-other-portfolio.svg';
-import { layoutModeTypes } from '../../Components/constants/layout';
-import { isDarkMode } from '../../utils/utils';
-import { saveTokenInCookies } from '../../helpers/cookies_helper';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -35,9 +29,7 @@ const DashboardConnectWallets = () => {
   const userAddresses = userPortfolioSummary?.addresses;
 
   const accessTokenParams = new URLSearchParams(location.search);
-
   const accessToken = accessTokenParams.get('access_token');
-
   const errorParam = accessTokenParams.get('error');
 
   useEffect(() => {
@@ -347,6 +339,8 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
   const { connectors } = useConnect();
   const connections = useConnections();
 
+  console.log('Connectors: ', connectors);
+
   const [connector, setConnector] = React.useState(null);
   useEffect(() => {
     const connector = connectors.find((c) => c.id === id);
@@ -413,12 +407,16 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
         className="connector-item cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onClick={handleClick}
       >
         <div className="connector-item-inner">
           {(isHovered) && connectorConnected && (
             <div
               className="close-button rounded bg bg-soft-danger p-0 d-flex"
-              onClick={(e) =>
+              onClick={(e) => {
+                e.stopPropagation();
+
+
                 connectorConnected
                   .disconnect(connectorConnected)
                   .then(() => {
@@ -429,6 +427,8 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
                     console.error('Failed to disconnect wallet: ', error);
                   })
               }
+
+              }
             >
               <i className="bx bx-x text-danger "></i>
 
@@ -436,9 +436,9 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
           )}
           <div
             className="more-card"
-            onClick={() => {
-              handleClick();
-            }}
+          // onClick={() => {
+          //   handleClick();
+          // }}
           >
             <div className="icon-wrapper">
               <img src={logo} alt="binnace" className="card-image" />

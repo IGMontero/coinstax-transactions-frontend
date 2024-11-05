@@ -135,11 +135,18 @@ export const userInviteTypes = {
 };
 
 export const walletConnectConnectorsData = [
+  // {
+  //   name: 'MetaMask',
+  //   id: 'io.metamask',
+  //   urlId: 'metamask',
+  //   uid: 'metamask',
+  //   logo: metamaskLogo,
+  // },
   {
-    name: 'Metamask',
-    id: 'io.metamask',
+    name: 'MetaMask',
+    id: "metaMaskSDK",
     urlId: 'metamask',
-    uid: 'metamask',
+    // uid: 'metamask',
     logo: metamaskLogo,
   },
   {
