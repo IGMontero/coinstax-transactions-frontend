@@ -31,7 +31,8 @@ const LightDark = ({ layoutMode, onChangeLayoutMode }) => {
         className="btn btn-icon 
          btn-ghost-dark me-1  rounded-circle light-dark-mode"
       >
-        <i className="bx bx-moon fs-22"></i>
+        {/* <i className="bx bx-moon fs-22"></i> */}
+        <i className="ri-contrast-2-fill fs-22"></i>
       </button>
     </div>
   );
