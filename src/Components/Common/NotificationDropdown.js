@@ -74,7 +74,9 @@ const NotificationDropdown = ({ handleLoadMoreNotifications }) => {
           )}
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-lg dropdown-menu-end p-0">
-          <div className="dropdown-head bg-primary bg-pattern rounded-top">
+          <div
+            style={{ minWidth: '300px' }}
+            className="dropdown-head bg-primary bg-pattern rounded-top">
             <div className="p-3">
               <Row className="align-items-center">
                 <Col>
