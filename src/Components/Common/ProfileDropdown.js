@@ -11,7 +11,12 @@ import {
 import avatar1 from '../../assets/images/users/avatar-1.jpg';
 
 import { useLogOut } from '../../hooks/useAuth';
-const ProfileDropdown = ({ currentUser }) => {
+const ProfileDropdown = ({
+  currentUser,
+  setIsOpenCollapseMenuHeader,
+
+  isOpenCollapseMenuHeader,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
@@ -63,15 +68,21 @@ const ProfileDropdown = ({ currentUser }) => {
         <DropdownMenu className="dropdown-menu-end">
           {/* <h6 className="dropdown-header">Welcome {userName}!</h6> */}
           <DropdownItem className="p-0">
-            <Link to="/profile" className="dropdown-item">
+            <Link
+              to="/profile"
+              className="dropdown-item"
+              onClick={() => {
+                if (isOpenCollapseMenuHeader) {
+                  setIsOpenCollapseMenuHeader(false);
+                }
+              }}
+            >
               <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
               <span className="align-middle">Profile</span>
             </Link>
           </DropdownItem>
 
-
           <div className="dropdown-divider"></div>
-
 
           <DropdownItem onClick={handleLogout} className="p-0">
             <div className="dropdown-item">
