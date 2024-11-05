@@ -386,21 +386,18 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   >
                     <Nav horizontal className="d-flex align-items-center">
                       {currentUser && (
-                        <>
-                          <NavItem>
-                            <NotificationDropdown
-                              onRefresh={handleGetNotifications}
-                              handleLoadMoreNotifications={
-                                handleLoadMoreNotifications
-                              }
-                            />
-                          </NavItem>
-
-                          <NavItem>
-                            <WalletsConnectDropdown />
-                          </NavItem>
-                        </>
+                        <NavItem>
+                          <NotificationDropdown
+                            onRefresh={handleGetNotifications}
+                            handleLoadMoreNotifications={
+                              handleLoadMoreNotifications
+                            }
+                          />
+                        </NavItem>
                       )}
+                      <NavItem>
+                        <WalletsConnectDropdown />
+                      </NavItem>
                       <NavItem>
                         <LightDark
                           layoutMode={layoutModeType}
@@ -409,7 +406,13 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                       </NavItem>
                       {currentUser ? (
                         <>
-                          <NavItem className="btn btn-icon btn-ghost-dark ms-2  rounded-circle light-dark-mode">
+                          <NavItem
+                            onClick={() => {
+                              navigate('/profile');
+                              setIsOpenCollapseMenuHeader(false);
+                            }}
+                            className="btn btn-icon btn-ghost-dark ms-2  rounded-circle light-dark-mode"
+                          >
                             <i className="ri-user-line fs-20 text-dark"></i>
                           </NavItem>
                           <NavItem
