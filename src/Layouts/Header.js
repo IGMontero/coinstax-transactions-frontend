@@ -288,7 +288,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
           }}
           onClick={() => navigate('/register')}
         >
-          Sing Up
+          Sign Up
         </Button>
       </div>
     );
