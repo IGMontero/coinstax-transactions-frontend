@@ -32,7 +32,6 @@ const DashboardUserWallets = ({
     CurrencyUSD,
   );
 
-
   const hasConnectedWallets = userAddresses?.length > 0;
 
   // const toggleModalConnectWallet = () =>

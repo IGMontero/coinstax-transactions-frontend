@@ -911,17 +911,6 @@
   transition : transform 0.2s;
 }
 
-
-
-// Wallet cards
-.address-card {
-  transition: all 0.3s ease-in-out;
-}
-
-.address-card:hover {
-  border-color: #007bff !important;
-}
-
 // Modal connect wallet
 .wcm-overlay.wcm-active {
   z-index: 2000; 
@@ -941,8 +930,21 @@
   gap: 26px;
 
   .connector-item {
+    position: relative;
       transition: transform 0.4s;
       z-index: 2;
+
+      .close-button {
+        background-color: red;
+        // border-radius: 5%;
+        position: absolute;
+        top: 6px;
+        z-index: 3;
+        right: 6px;
+        cursor: pointer;
+    
+        font-size: 16px; 
+      }
 
       .connector-item-inner {
           width: 126px;

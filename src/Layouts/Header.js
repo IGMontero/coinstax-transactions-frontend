@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
+  Button,
   Col,
+  Collapse,
   Dropdown,
   DropdownMenu,
   DropdownToggle,
   Form,
+  Nav,
+  NavItem,
   Row,
 } from 'reactstrap';
 
@@ -22,9 +26,11 @@ import ParentComponentSearchBar from '../Components/SearchBar/ParentComponent';
 import { setNotificationsInfo } from '../slices/notifications/reducer';
 import { fetchNotifications } from '../slices/notifications/thunk';
 import { changeSidebarVisibility } from '../slices/thunks';
+import CollapseMenuHeader from '../Components/Dropdowns/CollapseMenuHeader';
 
 const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const location = useLocation();
   const notifications = useSelector(
     (state) => state.notifications.notifications,
@@ -233,24 +239,21 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     }
   }, [currentUser]);
 
+  const isResponsive = windowSize < 769;
+
   return (
     <React.Fragment>
       <header
         id="page-topbar"
-        style={
-          {
-            left: '0',
-            right: '0'
-          }
-        }
+        style={{
+          left: '0',
+          right: '0',
+        }}
         className="mb-4 d-flex align-items-center justify-content-center"
       >
         <div className="container-xxl">
           <div className="row">
-
-            <div className="col-md-2 col-lg-2 col-0">
-
-            </div>
+            <div className="col-md-2 col-lg-2 col-0"></div>
 
             <div
               className={`col-md-10 col-lg-8 col-12`}
@@ -259,15 +262,9 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                   layoutModeType === layoutModeTypes['DARKMODE']
                     ? '#16161a'
                     : '#fff',
-
               }}
             >
-              <div
-                // lg={12}
-                // xs={12}
-                // style={{ borderBottom: '1px solid #e5e5e5' }}
-                className="d-flex justify-content-between align-items-center border-bottom border-2 w-100"
-              >
+              <div className="d-flex justify-content-between align-items-center border-bottom border-2 w-100">
                 <Col className="col-1 d-md-none d-lg-none">
                   <button
                     onClick={toogleMenuBtn}
@@ -299,46 +296,64 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                 </Col>
                 <Col lg={3}>
                   <div className="d-flex align-items-center justify-content-end">
-                    {currentUser && (
-                      <NotificationDropdown
+                    {isResponsive ? (
+                      <CollapseMenuHeader
+                        currentUser={currentUser}
+                        layoutMode={layoutModeType}
+                        onChangeLayoutMode={onChangeLayoutMode}
                         onRefresh={handleGetNotifications}
-                        handleLoadMoreNotifications={handleLoadMoreNotifications}
+                        handleLoadMoreNotifications={
+                          handleLoadMoreNotifications
+                        }
                       />
-                    )}
-                    <WalletsConnectDropdown />
-                    <LightDark
-                      layoutMode={layoutModeType}
-                      onChangeLayoutMode={onChangeLayoutMode}
-                    />
-                    {/* {commentedCode()} */}
-
-                    {/* {currentUser &&
-                    currentUser?.role === DASHBOARD_USER_ROLES.USER && (
-                      <div className="me-2">
-                        <DropdownPortfolio
-                          dropdownOpen={dropdownOpen}
-                          toggleDropdown={toggleDropdown}
-                          isInHeader={true}
-                        />
-                      </div>
-                    )} */}
-                    {currentUser ? (
-                      <ProfileDropdown currentUser={currentUser} />
                     ) : (
-                      <Link to={'/login'}>
-                        <ProfileDropdown />
-                      </Link>
+                      <>
+                        {currentUser && (
+                          <NotificationDropdown
+                            onRefresh={handleGetNotifications}
+                            handleLoadMoreNotifications={
+                              handleLoadMoreNotifications
+                            }
+                          />
+                        )}
+                        <WalletsConnectDropdown />
+                        <LightDark
+                          layoutMode={layoutModeType}
+                          onChangeLayoutMode={onChangeLayoutMode}
+                        />
+                        {currentUser ? (
+                          <ProfileDropdown currentUser={currentUser} />
+                        ) : (
+                          // <Link to={'/login'}>
+                          //   <ProfileDropdown />
+                          // </Link>
+                          <div className="d-flex align-items-center">
+                            <Button
+                              color="primary"
+                              size="sm"
+                              className="btn"
+                              onClick={() => navigate('/login')}
+                            >
+                              Login
+                            </Button>
+                            <Button
+                              size="sm"
+                              color="primary"
+                              className="btn ms-2 "
+                              onClick={() => navigate('/register')}
+                            >
+                              Register
+                            </Button>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </Col>
               </div>
             </div>
           </div>
-
         </div>
-
-
-
       </header>
     </React.Fragment>
   );

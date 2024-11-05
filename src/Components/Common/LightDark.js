@@ -2,13 +2,20 @@ import React from 'react';
 
 //constants
 import { layoutModeTypes } from '../../Components/constants/layout';
+import { getCurrentThemeCookie } from '../../helpers/cookies_helper';
 
 const LightDark = ({ layoutMode, onChangeLayoutMode }) => {
+  console.log('current theme cookie', getCurrentThemeCookie());
+
+  // const mode =
+  //   layoutMode === layoutModeTypes['DARKMODE']
+  //     ? layoutModeTypes['LIGHTMODE']
+  //     : layoutModeTypes['DARKMODE'];
+
   const mode =
-    layoutMode === layoutModeTypes['DARKMODE']
+    getCurrentThemeCookie() === 'dark'
       ? layoutModeTypes['LIGHTMODE']
       : layoutModeTypes['DARKMODE'];
-
   return (
     <div className="ms-2   d-sm-flex">
       <button

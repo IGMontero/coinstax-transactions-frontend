@@ -198,7 +198,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           ).unwrap();
 
           if (response && !response.error) {
-
             refreshUserPortfolio();
           } else {
             Swal.fire({
@@ -390,6 +389,8 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
   const shouldBeResponsive = windowSize < 1126 && windowSize > 767;
 
+  const labelToDisplay = getDisplayTextDropdown();
+
   return (
     <Dropdown
       className="mt-3"
@@ -403,7 +404,6 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
         className={` bg-transparent p-0  d-flex ${shouldBeResponsive ? 'ps-4 w-100' : 'ps-0'}  align-items-start justify-content-center border-0 rounded-4 `}
         variant="transparent"
         id="dropdown-basic"
-
       >
         <div
           className={`${shouldBeResponsive ? 'flex-column text-center' : ''}  d-flex align-items-center`}
@@ -414,15 +414,18 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
           <div className="d-flex flex-column align-items-start flex-grow-1">
             <span
-              className={`text-start text-dark ${isInHeader ? 'me-2' : ''}`}
+              className={`text-${labelToDisplay === 'Select Wallet' ? 'center' : 'start'} text-dark align-self-center`}
               style={{
-                whiteSpace: 'nowrap',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
+                whiteSpace:
+                  labelToDisplay === 'Select Wallet' ? 'normal' : 'nowrap',
+                overflow:
+                  labelToDisplay === 'Select Wallet' ? 'visible' : 'hidden',
+                textOverflow:
+                  labelToDisplay === 'Select Wallet' ? 'unset' : 'ellipsis',
                 maxWidth: shouldBeResponsive ? '70px' : '120px',
               }}
             >
-              {getDisplayTextDropdown()}
+              {labelToDisplay}
               {/* {getDisplayTextDropdown()} */}
             </span>
 
