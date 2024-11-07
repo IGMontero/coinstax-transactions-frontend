@@ -1,4 +1,7 @@
+import moment from 'moment';
 import { fetchHistory } from '../slices/transactions/thunk';
+import { getCurrentThemeCookie } from '../helpers/cookies_helper';
+import { fetchTransactionsPortfolio } from '../slices/portfolio/thunk';
 
 // #region Constants
 export const filtersChart = [
@@ -49,6 +52,10 @@ export const formatIdTransaction = (address, prefixLength, suffixLength) => {
   }
 };
 
+export const formatAddressToShortVersion = (address) => {
+  return formatIdTransaction(address, 6, 6);
+};
+
 export const formatNumber = (number) => {
   if (typeof number !== 'number' || isNaN(number)) {
     return 'Invalid Number';
@@ -81,8 +88,18 @@ export const formatNumber = (number) => {
 export const formatCalendarDateToLocale = (date, showTime) => {
   const dateObj = new Date(date);
 
-  const dateOptions = { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' };
-  const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true, timeZone: 'UTC' };
+  const dateOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    timeZone: 'UTC',
+  };
+  const timeOptions = {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'UTC',
+  };
 
   const dateString = dateObj.toLocaleDateString(undefined, dateOptions);
   const timeString = showTime
@@ -92,7 +109,7 @@ export const formatCalendarDateToLocale = (date, showTime) => {
   return `${dateString}${showTime ? ', ' + timeString : ''}`;
 };
 export const formatDateToLocale = (date, showTime) => {
-  const dateObj = new Date(date);
+  const dateObj = moment(date).utc().toDate();
 
   const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
   const timeOptions = { hour: 'numeric', minute: '2-digit', hour12: true };
@@ -191,29 +208,39 @@ export const parseValuesToLocale = (
   valueForChart,
   networkValue,
 ) => {
-  // Get the location from the browser
   const localUbication = navigator.language || 'en-US';
 
   if (value === undefined || value === null) {
     return '';
   }
 
+  const getFormattedValue = (val, options) => {
+    let formattedValue = new Intl.NumberFormat(localUbication, options).format(val);
+
+    // Standardize USD symbol as "$" if the currency is USD
+    if (currency === 'USD') {
+      let currencySymbol = formattedValue.match(/[^\d.,\s]/g)?.join('') || '';
+      if (currencySymbol.includes('US$')) {
+        formattedValue = formattedValue.replace('US$', '$');
+      }
+    }
+
+    return formattedValue;
+  };
+
   if (networkValue) {
     const suffixes = { B: 1e9, M: 1e6, K: 1e3 };
     let suffixKey = Object.keys(suffixes).find((key) => value >= suffixes[key]);
     if (suffixKey) {
       let scaledValue = value / suffixes[suffixKey];
-      let formattedValue = new Intl.NumberFormat(localUbication, {
+      let formattedValue = getFormattedValue(scaledValue, {
         style: 'currency',
         currency: currency,
         minimumFractionDigits: 1,
         maximumFractionDigits: 1,
-      }).format(scaledValue);
+      });
 
-      let currencySymbol = formattedValue.match(/[^\d.,\s]/g).join('');
-      formattedValue = formattedValue.replace(currencySymbol, '').trim();
-
-      return `${currencySymbol}${formattedValue} ${suffixKey}`;
+      return `${formattedValue} ${suffixKey}`;
     }
   }
 
@@ -223,11 +250,8 @@ export const parseValuesToLocale = (
     : Math.abs(value) < 0.01;
 
   const findSignificantDigits = (val) => {
-    // Early return if value is 0
     if (val === 0) return 0;
-    // Match the first significant digit and the first 3 significant digits
     const match = val.toString().match(/(?:\.(\d*?)0*?)?(?:[1-9](\d{0,2}))/);
-    // Return the number of significant digits
     return match
       ? (match[1] ? match[1].length : 0) + (match[2] ? match[2].length : 0)
       : 0;
@@ -259,31 +283,20 @@ export const parseValuesToLocale = (
     }
 
     if (isValueHuge) {
-      // return Number(value).toExponential(2) + ' ' + currency;
-
-      // Do above but using tolocalestring
-      return parseFloat(value).toLocaleString(localUbication, {
+      return getFormattedValue(value, {
         ...options,
         notation: 'scientific',
       });
     }
 
     if (isValueSmall) {
-      const significantDigits = findSignificantDigits(Math.abs(value));
-      // return parseFloat(value).toFixed(significantDigits + 1) + ' ' + currency;
-
-      // Above but tolocale string
-      return parseFloat(value).toLocaleString(localUbication, {
-        ...options,
-        // maximumFractionDigits: significantDigits + 1,
-      });
+      return getFormattedValue(value, options);
     }
 
-    return parseFloat(value).toLocaleString(localUbication, options);
+    return getFormattedValue(value, options);
   } catch (error) {
     console.error('Error', error);
     if (isValueSmall) {
-      // For errors on small values, fallback to exponential notation
       return Number(value).toExponential(2) + ' ' + currency;
     }
     return parseFloat(value).toFixed(2) + ' ' + currency;
@@ -326,38 +339,90 @@ export const formatDate = (dateString) => {
   return new Date(dateString).toLocaleDateString(undefined, options);
 };
 
+export const buildParamsForTransactions = ({
+  address,
+  query,
+  filters,
+  selectAsset,
+  page,
+  networkType,
+  abortSignal,
+  userId,
+}) => {
+  const params = {
+    address,
+    query,
+    filters: {
+      blockchainAction: filters.selectedFilters,
+      excludeSpam: !filters.includeSpam,
+    },
+    assetsFilters: selectAsset,
+    page: page || 0,
+    networkType,
+    signal: abortSignal,
+  };
+
+  if (filters.isCurrentUserPortfolioSelected) {
+    params.userId = userId;
+  }
+
+  return params;
+};
+
 export const updateTransactionsPreview = async ({
   address,
   debouncedSearchTerm,
   selectedFilters,
   includeSpam,
-  selectedAssets,
+  selectAsset,
   currentPage,
   setData,
   dispatch,
   networkType,
   onEnd,
-  signal,
+  abortSignal,
   onError,
+  isCurrentUserPortfolioSelected,
+  currentPortfolioUserId,
 }) => {
   // Pges checked
   try {
     const updatePage = async (page) => {
       try {
-        const response = await dispatch(
-          fetchHistory({
-            address,
-            query: debouncedSearchTerm,
-            filters: {
-              blockchainAction: selectedFilters,
-              includeSpam: includeSpam,
-            },
-            assetsFilters: getSelectedAssetFilters(selectedAssets),
-            page: page,
-            networkType,
-            signal,
-          }),
-        ).unwrap();
+        const request = isCurrentUserPortfolioSelected
+          ? fetchTransactionsPortfolio
+          : fetchHistory;
+        const params = buildParamsForTransactions({
+          address,
+          query: debouncedSearchTerm,
+          filters: {
+            selectedFilters,
+            includeSpam,
+            isCurrentUserPortfolioSelected,
+          },
+          selectAsset,
+          page,
+          networkType,
+          abortSignal,
+          userId: currentPortfolioUserId,
+        });
+
+        const response = await dispatch(request(params)).unwrap();
+
+        // const response = await dispatch(
+        //   fetchHistory({
+        //     address,
+        //     query: debouncedSearchTerm,
+        //     filters: {
+        //       blockchainAction: selectedFilters,
+        //       includeSpam: includeSpam,
+        //     },
+        //     assetsFilters: getSelectedAssetFilters(selectedAssets),
+        //     page: page,
+        //     networkType,
+        //     signal,
+        //   }),
+        // ).unwrap();
 
         const parsed = response?.parsed;
 
@@ -366,7 +431,7 @@ export const updateTransactionsPreview = async ({
           if (onEnd) {
             onEnd();
           }
-          return
+          return;
         }
 
         // Verify if all transactions are not in preview mode
@@ -525,3 +590,24 @@ export const removeOptionsFromLocalStorage = (setOptions, value) => {
     currentOptions.filter((o) => o.value !== value),
   );
 };
+
+export const isDarkMode = () => {
+  const currentTheme = getCurrentThemeCookie();
+  return currentTheme === 'dark';
+};
+
+
+export const downloadFileByURL = async (url, fileName) => {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    const urlBlob = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = urlBlob;
+    a.download = fileName;
+    a.click();
+    window.URL.revokeObjectURL(urlBlob);
+  } catch (error) {
+    console.error('Error downloading file:', error);
+  }
+}

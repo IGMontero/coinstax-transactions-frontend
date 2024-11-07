@@ -1,41 +1,62 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  Row,
-  Col,
-  CardBody,
-  Card,
   Alert,
+  Button,
+  Card,
+  CardBody,
+  Col,
   Container,
-  Input,
-  Label,
   Form,
   FormFeedback,
-  Button,
+  Input,
+  Label,
+  Row,
+  Spinner,
 } from 'reactstrap';
 
 // Formik Validation
-import * as Yup from 'yup';
 import { useFormik } from 'formik';
-
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import * as Yup from 'yup';
 
 // action
-import { registerUser, apiError, resetRegisterFlag } from '../../slices/thunks';
+import { register, authMe } from '../../slices/auth2/thunk';
 
 //redux
 import { useSelector, useDispatch } from 'react-redux';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 //import images
-import logoLight from '../../assets/images/logo-light.png';
-import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
+import Swal from 'sweetalert2';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
+import Helmet from '../../Components/Helmet/Helmet';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
+import { fetchUserCountry } from '../../slices/common/thunk';
+import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
+
+import { layoutModeTypes } from '../../Components/constants/layout';
+import { setAddressSearched, setPrevAddress } from '../../slices/layoutMenuData/reducer';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
 
 const Register = () => {
-  const history = useNavigate();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+
+  const fixedData = useSelector((state) => state.Common.fixedData);
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
+
+  const [error, setError] = useState();
+
+  const [loading, setLoading] = useState(false);
+
+  const searchParams = new URLSearchParams(location.search);
+  const code = searchParams.get('code');
+  const type = searchParams.get('type');
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -43,67 +64,185 @@ const Register = () => {
 
     initialValues: {
       email: '',
-
-      full_name: '',
-
-      // username: '',
       password: '',
       confirm_password: '',
-      account_type: '',
+      currency: '',
+      country: '',
+      role: 'user',
+      timezone: '',
     },
     validationSchema: Yup.object({
-      email: Yup.string().required('Please Enter Your Email'),
-      full_name: Yup.string().required('Please Enter Your Full Name'),
-      password: Yup.string().required('Please Enter Your Password'),
-      account_type: Yup.string().required('Please Select Your Account Type'),
+      email: Yup.string().required('Please enter your email'),
+      password: Yup.string().required('Please enter your password'),
+      role: Yup.string().required('Please select your account yype'),
       confirm_password: Yup.string().when('password', {
         is: (val) => (val && val.length > 0 ? true : false),
         then: Yup.string().oneOf(
           [Yup.ref('password')],
-          "Confirm Password Isn't Match",
+          'Password and confirm password do not match',
         ),
       }),
     }),
     onSubmit: (values) => {
-      return dispatch(registerUser(values, dispatch));
+      handleSubmit(values);
     },
   });
 
-  const { error, success } = useSelector((state) => ({
-    success: state.Account.success,
-    error: state.Account.error,
-  }));
+  const isSubmitDisabled = () => {
+    const { email, password, confirm_password } = validation.values;
+    return (
+      !email ||
+      !password ||
+      // !role ||
+      password !== confirm_password ||
+      validation.errors.confirm_password ||
+      loading
+    );
+  };
 
-  useEffect(() => {
-    dispatch(apiError(''));
-  }, [dispatch]);
+  const handleSubmit = async (values) => {
+    try {
+      setLoading(true);
+      const response = await dispatch(register(values));
 
-  useEffect(() => {
-    if (success) {
-      setTimeout(() => history('/login'), 3000);
+      if (response && response.payload && response.payload.error) {
+        setError(response.payload.error.message);
+        setLoading(false);
+      } else if (response && response.error) {
+        setError(response.error.message === 'Rejected' ? 'There was a problem while registering your account' : response.error.message);
+        setLoading(false);
+      } else {
+        //navigate('/wallets/connect');
+        // Swal.fire({
+        //   title: 'Success',
+        //   text: 'Welcome to ChainGlance!',
+        //   icon: 'success',
+        //   timer: 2000,
+        //   showConfirmButton: false,
+        // });
+        if (code && type) {
+          navigate(`/invite?code=${code}&type=${type}`);
+        } else {
+          const authMeRes = await dispatch(authMe());
+          dispatch(setPrevAddress(null));
+          dispatch(setAddressSearched(null));
+
+          // const { role } = authMeRes.payload;
+
+          navigate('/wallets');
+
+          // if (role === DASHBOARD_USER_ROLES.USER) {
+          //   if (code && type) {
+          //     navigate(`/invite?code=${code}&type=${type}`);
+          //   } else {
+          //     navigate('/wallets');
+          //   }
+          // } else {
+          //   navigate('/clients');
+          // }
+        }
+      }
+    } catch (error) {
+      setError(error.message);
+      console.log(error);
+      setLoading(false);
     }
+  };
 
-    setTimeout(() => {
-      dispatch(resetRegisterFlag());
-    }, 3000);
-  }, [dispatch, success, error, history]);
+  useEffect(() => {
+    const initialize = async () => {
+      // Make a request to the server api version, just to get the headers of response.
+      const response = await dispatch(fetchUserCountry());
 
-  document.title = 'Register | Chain Glance';
+      const userCountry = response.country || null;
+
+      const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+      let countryCode = userCountry;
+
+      if (countryCode === 'XX' || !countryCode) {
+        countryCode = 'US';
+      }
+      const country = fixedData?.countries.find(
+        (item) => item.code == countryCode,
+      );
+      if (country) {
+        validation.setFieldValue('country', country.code);
+
+        const countryCurrency = country.currency;
+
+        // Find currency in fixed data
+        const currency = fixedData?.currencies.find(
+          (item) => item.symbol === countryCurrency,
+        );
+
+        if (currency) {
+          validation.setFieldValue('currency', currency.id);
+        } else {
+          validation.setFieldValue('currency', 'USD');
+        }
+      } else {
+        validation.setFieldValue('country', 'US');
+        validation.setFieldValue('currency', 'USD');
+      }
+
+      const timezone = fixedData?.timezones.find(
+        (item) => item.id === userTimezone,
+      );
+
+      if (timezone) {
+        validation.setFieldValue('timezone', timezone.id);
+      } else {
+        validation.setFieldValue('timezone', userTimezone);
+      }
+    };
+
+    initialize();
+  }, []);
+
+  // Effect when country is changed
+  useEffect(() => {
+    if (validation.values.country) {
+      const country = fixedData?.countries.find(
+        (item) => item.code === validation.values.country,
+      );
+
+      const countryCurrency = country?.currency;
+
+      // Find currency in fixed data
+      const currency = fixedData?.currencies.find(
+        (item) => item.symbol === countryCurrency,
+      );
+
+      if (currency) {
+        validation.setFieldValue('currency', currency.id);
+      }
+    }
+  }, [validation.values.country]);
 
   return (
     <React.Fragment>
+      <Helmet title="Register" />
       <ParticlesAuth>
         <div className="auth-page-content mt-n3">
           <Container>
             <Row className="justify-content-center">
-              <Col md={8} lg={6} xl={5}>
-                <Card className="mt-4">
+              <div className="d-flex justify-content-center align-items-center">
+                <Link to={'/'}>
+                  <img
+                    src={logo}
+                    className="card-logo"
+                    alt="Chain Glance"
+                    height="70"
+                    width="auto"
+                  />
+                </Link>
+              </div>
+              <Col md={9} lg={6} xl={6}>
+                <Card className="mt-4" >
                   <CardBody className="p-4">
                     <div className="text-center my-3">
-                      <h4 className="text-primary">Create New Account</h4>
-                      <h6 className="text-muted">
-                        Get your free Chain Glance account now
-                      </h6>
+                      <h3 className={isDarkMode ? "text-white" : "text-primary"}>Create a new Chain Glance account</h3>
                     </div>
                     <div className="p-2 mt-4">
                       <Form
@@ -115,35 +254,9 @@ const Register = () => {
                         className="needs-validation"
                         action="#"
                       >
-                        {success && success ? (
-                          <>
-                            {toast('Your Redirect To Login Page...', {
-                              position: 'top-right',
-                              hideProgressBar: false,
-                              className: 'bg-success text-white',
-                              progress: undefined,
-                              toastId: '',
-                            })}
-                            <ToastContainer autoClose={2000} limit={1} />
-                            <Alert color="success">
-                              Register User Successfully and Your Redirect To
-                              Login Page...
-                            </Alert>
-                          </>
-                        ) : null}
-
-                        {error && error ? (
-                          <Alert color="danger">
-                            <div>
-                              Email has been Register Before, Please Use Another
-                              Email Address...{' '}
-                            </div>
-                          </Alert>
-                        ) : null}
-
-                        <div className="mb-3">
+                        <div className="mb-2">
                           <Label htmlFor="useremail" className="form-label">
-                            Email <span className="text-danger">*</span>
+                            Email address <span className="text-danger">*</span>
                           </Label>
                           <Input
                             id="email"
@@ -151,102 +264,91 @@ const Register = () => {
                             className="form-control"
                             placeholder="Enter email address"
                             type="email"
+                            autoFocus
                             onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                              validation.errors.email
+                                validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                          validation.errors.email ? (
+                            validation.errors.email ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.email}</div>
                             </FormFeedback>
                           ) : null}
                         </div>
-                        <div className="mb-3">
-                          <Label htmlFor="full_name" className="form-label">
-                            Full Name <span className="text-danger">*</span>
+
+                        <div className="mb-2">
+                          <Label htmlFor="timezone" className="form-label">
+                            Timezone <span className="text-danger">*</span>
                           </Label>
-                          <Input
-                            name="full_name"
-                            type="text"
-                            placeholder="Enter full name"
+                          <select
+                            name="timezone"
+                            value={validation.values.timezone || ''}
                             onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.full_name || ''}
-                            invalid={
-                              validation.touched.full_name &&
-                              validation.errors.full_name
-                                ? true
-                                : false
-                            }
-                          />
-                          {validation.touched.full_name &&
-                          validation.errors.full_name ? (
-                            <FormFeedback type="invalid">
-                              <div>{validation.errors.full_name}</div>
-                            </FormFeedback>
-                          ) : null}
+                            className="form-control"
+                          >
+                            <option value="">Select a Timezone</option>{' '}
+                            {fixedData?.timezones.map((item) => (
+                              <option key={item.id} value={item.id}>
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html: item.name,
+                                  }}
+                                />
+                              </option>
+                            ))}
+                          </select>
                         </div>
 
-                        {/* <div className="mb-3">
-                          <Label htmlFor="last_name" className="form-label">
-                            Last Name <span className="text-danger">*</span>
+                        <div className="mb-2 mt-3 ">
+                          <Label className="form-label">
+                            Country <span className="text-danger">*</span>
                           </Label>
-                          <Input
-                            name="last_name"
-                            type="text"
-                            placeholder="Enter last name"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.last_name || ''}
-                            invalid={
-                              validation.touched.last_name &&
-                              validation.errors.last_name
-                                ? true
-                                : false
-                            }
-                          />
-                          {validation.touched.last_name &&
-                          validation.errors.last_name ? (
-                            <FormFeedback type="invalid">
-                              <div>{validation.errors.last_name}</div>
-                            </FormFeedback>
-                          ) : null}
-                        </div> */}
-                        <div className="mb-3">
-                          <Label htmlFor="account_type" className="form-label">
-                            Account Type <span className="text-danger">*</span>
-                          </Label>
-                          <Input
-                            type="select"
-                            name="account_type"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.account_type || ''}
-                            invalid={
-                              validation.touched.account_type &&
-                              validation.errors.account_type
-                                ? true
-                                : false
-                            }
+                          <select
+                            name="country"
+                            value={validation.values.country}
+                            onChange={(e) => {
+                              validation.handleChange(e);
+                            }}
+                            className="form-control"
                           >
-                            <option value="">Select Account Type</option>
-                            <option value="type1">Type 1</option>
-                            <option value="type2">Type 2</option>
-                          </Input>
-                          {validation.touched.account_type &&
-                          validation.errors.account_type ? (
-                            <FormFeedback type="invalid">
-                              <div>{validation.errors.account_type}</div>
-                            </FormFeedback>
-                          ) : null}
+                            <option value="">Select...</option>
+                            {fixedData?.countries.map((item) => (
+                              <option key={item.code} value={item.code}>
+                                {item.name}
+                              </option>
+                            ))}
+                          </select>
                         </div>
+
+
+                        {/* <div className="mb-2">
+                          <Label htmlFor="currency" className="form-label">
+                            Currency <span className="text-danger">*</span>
+                          </Label>
+                          <select
+                            name="currency"
+                            value={validation.values.currency || ''}
+                            onChange={validation.handleChange}
+                            className="form-control"
+                          >
+                            <option value="">Select a Currency</option>{' '}
+                            {fixedData?.currencies.map((item) => (
+                              <option key={item.id} value={item.id}>
+                                <span
+                                  dangerouslySetInnerHTML={{
+                                    __html: `${item.symbol} - ${item.name}`,
+                                  }}
+                                />
+                              </option>
+                            ))}
+                          </select>
+                        </div> */}
 
                         <div className="mb-2">
                           <Label htmlFor="userpassword" className="form-label">
@@ -261,13 +363,13 @@ const Register = () => {
                             value={validation.values.password || ''}
                             invalid={
                               validation.touched.password &&
-                              validation.errors.password
+                                validation.errors.password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.password &&
-                          validation.errors.password ? (
+                            validation.errors.password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.password}</div>
                             </FormFeedback>
@@ -279,7 +381,7 @@ const Register = () => {
                             htmlFor="confirmPassword"
                             className="form-label"
                           >
-                            Confirm Password{' '}
+                            Confirm password{' '}
                             <span className="text-danger">*</span>
                           </Label>
                           <Input
@@ -291,37 +393,51 @@ const Register = () => {
                             value={validation.values.confirm_password || ''}
                             invalid={
                               validation.touched.confirm_password &&
-                              validation.errors.confirm_password
+                                validation.errors.confirm_password
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.confirm_password &&
-                          validation.errors.confirm_password ? (
+                            validation.errors.confirm_password ? (
                             <FormFeedback type="invalid">
                               <div>{validation.errors.confirm_password}</div>
                             </FormFeedback>
                           ) : null}
                         </div>
 
+                        {error && error ? (
+                          <Alert class="alert alert-danger mt-3">
+                            <div>{error}</div>
+                          </Alert>
+                        ) : null}
+
                         <div className="mt-4">
                           <Button
                             type="submit"
-                            className="mt-3 d-flex btn-hover-light w-100 justify-content-center align-items-center"
-                            color="soft-light"
-                            style={{
-                              borderRadius: '10px',
-                              border: '.5px solid grey',
-                            }}
+                            disabled={isSubmitDisabled()}
+                            color={isDarkMode ? "primary" : "primary"}
+                            className="mt-3 d-flex w-100 justify-content-center align-items-center"
                           >
-                            Sign Up
+                            {loading ? (
+                              <>
+                                <Spinner
+                                  color="primary"
+                                  size="sm"
+                                  className="me-2"
+                                />{' '}
+                                Loading...
+                              </>
+                            ) : (
+                              'Sign Up'
+                            )}
                           </Button>
                         </div>
 
                         <div className="mt-4 text-center">
                           <div className="signin-other-title">
                             <h5 className="fs-13 mb-4 title text-muted">
-                              Create account with
+                              Or
                             </h5>
                           </div>
 
@@ -334,10 +450,14 @@ const Register = () => {
 
                 <div className="mt-4 text-center">
                   <p className="mb-0">
-                    Already have an account ?{' '}
+                    Already have an account?{' '}
                     <Link
-                      to="/login"
-                      className="fw-semibold text-primary text-decoration-underline"
+                      to={
+                        code && type
+                          ? `/login?code=${code}&type=${type}`
+                          : '/login'
+                      }
+                      className="fw-semibold text-link text-decoration-underline"
                     >
                       {' '}
                       Signin{' '}

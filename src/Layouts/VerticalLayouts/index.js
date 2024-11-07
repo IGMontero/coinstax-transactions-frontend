@@ -189,6 +189,9 @@ const VerticalLayout = (props) => {
       ? itemLink.slice(0, -1)
       : itemLink;
 
+    if (normalizedItemLink === '/clients') {
+      return currentPath.startsWith('/clients');
+    }
     return currentPath === normalizedItemLink;
   };
 
@@ -333,16 +336,16 @@ const VerticalLayout = (props) => {
                 </Collapse>
               </li>
             ) : (
-              <li className="nav-item mt-2" style={{ marginLeft: '-.5rem' }}>
+              <li className="nav-item mt-2">
                 <Link
                   id={item.id}
-                  className={`menu-link nav-link
-                  ${isActive && !isLightMode ? 'nav-link-active-dark' : ''}
-                   ${isActive && isLightMode ? 'nav-link-active text-light' : 'text-dark'} 
-                   d-flex  ps-3 `}
+                  className={`menu-link nav-link 
+                  ${isActive && !isLightMode ? 'nav-link-active-dark ' : ''}
+                   ${isActive && isLightMode ? 'nav-link-active ' : ''} 
+                   d-flex  ps-0 `}
                   to={item.link ? item.link : '/'}
                 >
-                  <i className={item.icon}></i>{' '}
+                  <i className={`${item.icon}`}></i>{' '}
                   <span className="ms-1" style={{ whiteSpace: 'nowrap' }}>
                     {props.t(item.label)}
                   </span>

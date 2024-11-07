@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -9,30 +9,29 @@ import {
 } from 'reactstrap';
 //import images
 import avatar1 from '../../assets/images/users/avatar-1.jpg';
-import { logoutUser } from '../../slices/thunks';
 
-import { logout } from '../../slices/auth2/reducer';
-import Swal from 'sweetalert2';
-const ProfileDropdown = () => {
+import { useLogOut } from '../../hooks/useAuth';
+const ProfileDropdown = ({
+  currentUser,
+  setIsOpenCollapseMenuHeader,
+
+  isOpenCollapseMenuHeader,
+}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
+  const logout = useLogOut();
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
     try {
-      await dispatch(logout());
-      Swal.fire({
-        title: 'Logged Out!',
-        text: 'You have been logged out successfully!',
-        icon: 'success',
-        timer: 2000,
-        showConfirmButton: false,
-      });
+      logout();
+
+      navigate('/wallets');
     } catch (error) {
       console.log(error);
     }
   };
-  const [userName, setUserName] = useState(user?.email || 'Admin');
+  const [userName, setUserName] = useState(user?.email || '');
   const [userAvatar, setUserAvatar] = useState(user?.photoURL || avatar1);
 
   //Dropdown Toggle
@@ -46,15 +45,16 @@ const ProfileDropdown = () => {
       <Dropdown
         isOpen={isProfileDropdown}
         toggle={toggleProfileDropdown}
-        className="ms-sm-3 h bg bg-transparent"
+        className={`ms-1 bg bg-transparent`}
       >
-        <DropdownToggle tag="button" type="button" className="btn">
+        <DropdownToggle
+          tag="button"
+          type="button"
+          className="btn btn-icon 
+         btn-ghost-dark me-1  rounded-circle light-dark-mode"
+        >
           <span className="d-flex align-items-center">
-            <img
-              className="rounded-circle header-profile-user"
-              src={userAvatar || avatar1}
-              alt="Header Avatar"
-            />
+            <i className="bx bx-user-circle fs-2"></i>
             {/* <span className="text-start ms-xl-2">
               <span className="d-none d-xl-inline-block ms-1 fw-medium user-name-text">
                 {userName}
@@ -66,29 +66,23 @@ const ProfileDropdown = () => {
           </span>
         </DropdownToggle>
         <DropdownMenu className="dropdown-menu-end">
-          <h6 className="dropdown-header">Welcome {userName}!</h6>
+          {/* <h6 className="dropdown-header">Welcome {userName}!</h6> */}
           <DropdownItem className="p-0">
-            <Link className="dropdown-item">
+            <Link
+              to="/profile"
+              className="dropdown-item"
+              onClick={() => {
+                if (isOpenCollapseMenuHeader) {
+                  setIsOpenCollapseMenuHeader(false);
+                }
+              }}
+            >
               <i className="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
               <span className="align-middle">Profile</span>
             </Link>
           </DropdownItem>
 
-          <DropdownItem className="p-0">
-            <Link to={process.env.PUBLIC_URL + '#'} className="dropdown-item">
-              <i className="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>{' '}
-              <span className="align-middle">Help</span>
-            </Link>
-          </DropdownItem>
           <div className="dropdown-divider"></div>
-          <DropdownItem className="p-0">
-            <Link to={process.env.PUBLIC_URL + '#'} className="dropdown-item">
-              {/* <span
-                                className="badge bg-soft-success text-success mt-1 float-end">New</span> */}
-              <i className="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>{' '}
-              <span className="align-middle">Settings</span>
-            </Link>
-          </DropdownItem>
 
           <DropdownItem onClick={handleLogout} className="p-0">
             <div className="dropdown-item">

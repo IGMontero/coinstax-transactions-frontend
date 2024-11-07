@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import {
-  Col,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Row,
-  Spinner,
-  UncontrolledDropdown,
-} from 'reactstrap';
-import { useParams } from 'react-router-dom';
-import QrModal from '../Modals/QrModal';
-import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useParams } from 'react-router-dom';
+import { Col, Row } from 'reactstrap';
+import Swal from 'sweetalert2';
+import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
 import { setAddressName } from '../../slices/addressName/reducer';
+import {
+  addUserWallet,
+  updateUserWalletAddress,
+} from '../../slices/userWallets/thunk';
 import { copyToClipboard, formatIdTransaction } from '../../utils/utils';
+import QrModal from '../Modals/QrModal';
 import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
 
 const AddressWithDropdown = ({
@@ -22,28 +19,53 @@ const AddressWithDropdown = ({
   incompleteBlockchains,
   loading,
   addressNickName,
+  isUnsupported,
 }) => {
-  const { address } = useParams();
+  const { address, userId } = useParams();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+  const currentUserId = user?.id;
+
+  const [loadingAddWallet, setLoadingAddWallet] = useState(false);
+
+  const refreshUserPortfolio = useRefreshUserPortfolio();
+
+  const addresses = useSelector((state) => state.addressName.addresses);
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
+
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
+
+  const addressInPortfolio = userPortfolioSummary?.addresses?.find(
+    (addr) => addr.address?.toLowerCase() === address?.toLowerCase(),
+  );
 
   const [showQrModal, setShowQrModal] = useState(false);
   const [isCopied, setIsCopied] = useState(null);
   const [formattedAddressLabel, setFormattedAddressLabel] = useState('');
   const [formattedValue, setFormattedValue] = useState('');
 
-  const addresses = useSelector((state) => state.addressName.addresses);
-
   useEffect(() => {
-    const matchingAddress = addresses.find((addr) => addr.value === address);
+    if (!userPortfolioSummary?.addresses) return;
+
     const currentFormattedValue = formatIdTransaction(address, 6, 8);
     setFormattedValue(currentFormattedValue);
 
-    if (matchingAddress) {
-      setFormattedAddressLabel(matchingAddress.label || currentFormattedValue);
-    } else {
-      setFormattedAddressLabel(currentFormattedValue);
+    let matchingAddress;
+
+    if (user) {
+      matchingAddress = userPortfolioSummary?.addresses?.find(
+        (addr) => addr.address === address,
+      );
     }
-  }, [address, addresses]);
+
+    if (!matchingAddress) {
+      matchingAddress = addresses?.find((addr) => addr.value === address);
+    }
+
+    setFormattedAddressLabel(currentFormattedValue);
+  }, [address, user, userPortfolioSummary, addresses, userId]);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
@@ -63,92 +85,228 @@ const AddressWithDropdown = ({
     }
   };
 
-  const handleOpenModalRename = (e, option) => {
+  const handleUpdateAddress = (e, address) => {
     e.preventDefault();
     e.stopPropagation();
-
-    const optionLabel = addresses.find(
-      (addr) => addr.value === option.value,
-    )?.label;
 
     Swal.fire({
       title: 'Rename Wallet',
       input: 'text',
-      inputValue: optionLabel,
+      html: `
+      <span class="fs-6 align-items-start border rounded bg-light" >${address.address}</span>
+    `,
+      inputValue: address.name,
       showCancelButton: true,
       confirmButtonText: 'Save',
-      inputValidator: (value) => {
-        // if (!value) {
-        //   return 'You need to write something!';
-        // }
-        if (
-          addresses.some(
-            (addr) => addr.label === value && addr.value !== option.value,
-          )
-        ) {
-          return 'This name already exists!';
-        }
-      },
-    }).then((result) => {
+      // inputValidator: (value) => {
+      //   if (
+      //     userPortfolioSummary.addresses.some(
+      //       (addr) => addr.name === value && addr.address !== address.address,
+      //     )
+      //   ) {
+      //     return 'This name already exists!';
+      //   }
+      // },
+    }).then(async (result) => {
       if (result.isConfirmed) {
-        const newName = result.value.trim() ? result.value : null;
-        handleRenameAddress(option.value, newName);
+        const newName = result.value.trim() ? result.value : '';
+
+        try {
+          const response = await dispatch(
+            updateUserWalletAddress({
+              userId: currentUserId,
+              name: newName,
+              addressId: address.id,
+            }),
+          ).unwrap();
+
+          if (response && !response.error) {
+            setFormattedAddressLabel(newName || address.address);
+            dispatch(
+              setAddressName({ value: address.address, label: newName }),
+            );
+            refreshUserPortfolio();
+          } else {
+            Swal.fire({
+              title: 'Error',
+              text: 'Failed to update address',
+              icon: 'error',
+            });
+          }
+        } catch (error) {
+          Swal.fire({
+            title: 'Error',
+            text: 'Failed to update address',
+            icon: 'error',
+          });
+
+          console.log(error);
+        }
       }
     });
   };
 
-  const handleRenameAddress = (value, newName) => {
-    dispatch(setAddressName({ value, label: newName || null }));
+  const handleAddWallet = async (address) => {
+    try {
+      setLoadingAddWallet(true);
+      const response = await dispatch(
+        addUserWallet({ address, userId: currentUserId }),
+      ).unwrap();
+
+      if (response && !response.error) {
+        dispatch(setAddressName({ value: address, label: null }));
+        refreshUserPortfolio();
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: response.message || 'Failed to connect wallet',
+          icon: 'error',
+        });
+      }
+      setLoadingAddWallet(false);
+    } catch (error) {
+      console.error('Failed to connect wallet: ', error);
+      Swal.fire({
+        title: 'Error',
+        text: error || 'Failed to connect wallet',
+        icon: 'error',
+      });
+      setLoadingAddWallet(false);
+    }
   };
+
+  const getAddressLabel = () => {
+    const addressCustomName = userPortfolioSummary?.addresses?.find(
+      (addr) => addr.address?.toLowerCase() === address?.toLowerCase(),
+    )?.name;
+
+    if (user && addressCustomName) {
+      return addressCustomName;
+    }
+    if (isCurrentUserPortfolioSelected) {
+      return userId ? 'User Portfolio' : 'Portfolio';
+    }
+    return addressNickName || address;
+
+    // return formattedAddressLabel !== formatIdTransaction(address, 6, 8)
+    //   ? formattedAddressLabel
+    //   : addressNickName || formattedAddressLabel;
+  };
+
+  const isAddressInPortfolio = userPortfolioSummary?.addresses?.find(
+    (addr) => addr.address?.toLowerCase() === address?.toLowerCase(),
+  );
 
   const renderAddressWithDropdown = () => {
     return (
       <div className="d-flex align-items-center ms-n3">
-        <h4 className="mb-0 ms-3  text-custom-address-dropdown ">
-          {formattedAddressLabel !== formatIdTransaction(address, 6, 8)
-            ? formattedAddressLabel
-            : addressNickName
-              ? addressNickName
-              : formattedAddressLabel}
+        <h4 className="mb-0 ms-3 text-custom-address-dropdown">
+          {getAddressLabel()}
         </h4>
-        <UncontrolledDropdown className="card-header-dropdown">
-          <DropdownToggle tag="a" className="text-reset" role="button">
-            <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
-          </DropdownToggle>
-          <DropdownMenu className="dropdown-menu-end ms-3">
-            <DropdownItem
-              className="d-flex align-items-center"
+        {!isCurrentUserPortfolioSelected && !isUnsupported && (
+          <div className="d-flex align-items-center ms-3">
+            {isCopied ? (
+              <i className="ri-check-line fs-4 me-2"></i>
+            ) : (
+              <i
+                onClick={(e) => handleCopy(e, address)}
+                title="Copy Address"
+                className="ri-file-copy-line fs-4 me-2 cursor-pointer"
+              ></i>
+            )}
+
+            <i
               onClick={toggleQrModal}
-            >
-              <i className="ri-qr-code-line fs-4 me-2"></i>
-              <span className="fw-normal">Show QR code</span>
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={(e) => handleCopy(e, address)}
-            >
-              {isCopied ? (
-                <i className="ri-check-line fs-4 me-2"></i>
-              ) : (
-                <i className="ri-file-copy-line fs-4 me-2"></i>
-              )}
-              <span className="fw-normal">Copy Address</span>
-            </DropdownItem>
-            <DropdownItem
-              className="d-flex align-items-center"
-              onClick={(e) =>
-                handleOpenModalRename(e, {
-                  label: formattedAddressLabel,
-                  value: address,
-                })
-              }
-            >
-              <i className="ri-pencil-line fs-4 me-2"></i>
-              <span className="fw-normal">Rename</span>
-            </DropdownItem>
-          </DropdownMenu>
-        </UncontrolledDropdown>
+              className="ri-qr-code-line fs-4 me-2 cursor-pointer"
+              title="Show QR code"
+            ></i>
+
+            {isAddressInPortfolio && user && (
+              <i
+                onClick={(e) => {
+                  handleUpdateAddress(e, addressInPortfolio);
+                }}
+                title="Rename Wallet"
+                className="ri-pencil-line fs-4 me-2 cursor-pointer"
+              ></i>
+            )}
+
+            {!isAddressInPortfolio && user && (
+              <i
+                onClick={() => {
+                  if (loadingAddWallet) {
+                    return;
+                  } else {
+                    handleAddWallet(address);
+                  }
+                }}
+                title="Add To Wallets"
+                className="bx bx-plus fs-4 me-2 cursor-pointer"
+              ></i>
+            )}
+          </div>
+        )}
       </div>
+
+      //   {!isCurrentUserPortfolioSelected && (
+      //     <UncontrolledDropdown className="card-header-dropdown">
+      //       <DropdownToggle tag="a" className="text-reset" role="button">
+      //         <i className="mdi mdi-chevron-down ms-2 fs-5"></i>
+      //       </DropdownToggle>
+      //       <DropdownMenu className="dropdown-menu-end ms-3">
+      //         <DropdownItem
+      //           className="d-flex align-items-center"
+      //           onClick={toggleQrModal}
+      //         >
+      //           <i className="ri-qr-code-line fs-4 me-2"></i>
+      //           <span className="fw-normal">Show QR code</span>
+      //         </DropdownItem>
+      //         <DropdownItem
+      //           className="d-flex align-items-center"
+      //           onClick={(e) => handleCopy(e, address)}
+      //         >
+      //           {isCopied ? (
+      //             <i className="ri-check-line fs-4 me-2"></i>
+      //           ) : (
+      //             <i className="ri-file-copy-line fs-4 me-2"></i>
+      //           )}
+      //           <span className="fw-normal">Copy Address</span>
+      //         </DropdownItem>
+      //         {isAddressInPortfolio && user && (
+      //           <DropdownItem
+      //             className="d-flex align-items-center"
+      //             onClick={(e) => {
+      //               const addr = userPortfolioSummary.addresses.find(
+      //                 (addr) => addr.address === address,
+      //               );
+      //               if (user && addr) {
+      //                 handleUpdateAddress(e, addr);
+      //               }
+      //             }}
+      //           >
+      //             <i className="ri-pencil-line fs-4 me-2"></i>
+      //             <span className="fw-normal">Rename</span>
+      //           </DropdownItem>
+      //         )}
+      //         {!isAddressInPortfolio && user && (
+      //           <DropdownItem
+      //             className="d-flex align-items-center"
+      //             onClick={() => {
+      //               if (loadingAddWallet) {
+      //                 return;
+      //               } else {
+      //                 handleAddWallet(address);
+      //               }
+      //             }}
+      //           >
+      //             <i className="bx bx-plus fs-4 me-2"></i>
+      //             <span className="fw-normal">Add To Wallets</span>
+      //           </DropdownItem>
+      //         )}
+      //       </DropdownMenu>
+      //     </UncontrolledDropdown>
+      //   )}
+      // </div>
     );
   };
 
@@ -160,17 +318,18 @@ const AddressWithDropdown = ({
         addressTitle={address}
       />
       <div className="mt-5">
-        <Col className="col-12 d-flex justify-content-between align-items-center">
-          <Col className="col-8 d-flex justify-content-start align-items-center ">
+        <Row className="d-flex justify-content-between align-items-center">
+          <Col
+            className="col-12 col-sm-7 d-flex justify-content-start align-items-center ">
             {renderAddressWithDropdown()}
           </Col>
-          <Col className="col-4 d-flex justify-content-end align-items-center ">
-            {loading && (
+          <Col className="col-12 col-sm-3 d-flex justify-content-end align-items-center ">
+            {/* {loading && (
               <div className="d-flex align-items-center me-2">
                 <Spinner size="md" color="primary" />
               </div>
-            )}
-            {!isOnlyAllNetwork && (
+            )} */}
+            {!isOnlyAllNetwork && !isUnsupported && (
               <NetworkDropdown
                 isAdminPage={false}
                 filteredNetworks={filteredNetworks}
@@ -179,7 +338,7 @@ const AddressWithDropdown = ({
               />
             )}
           </Col>
-        </Col>
+        </Row>
       </div>
     </div>
   );

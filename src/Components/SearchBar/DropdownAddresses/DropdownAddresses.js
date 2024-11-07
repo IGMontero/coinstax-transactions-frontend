@@ -15,6 +15,7 @@ import {
   removeOptionsFromLocalStorage,
 } from '../../../utils/utils';
 import QrModal from '../../Modals/QrModal';
+import config from '../../../config';
 // import RenameAddressModal from '../../Modals/RenameAddress';
 
 const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
@@ -41,7 +42,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
 
     // Create an iframe poitning to root url
     const iframe = document.createElement('iframe');
-    iframe.src = process.env.REACT_APP_ROOT_URL || 'https://chainglance.com';
+    iframe.src = config.client.CLIENT_URL;
     iframe.style.display = 'none';
 
     // Set iframe on load function
@@ -49,7 +50,7 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
       // Use postmessage to send the options to the iframe
       iframe.contentWindow.postMessage(
         JSON.stringify(options),
-        process.env.REACT_APP_ROOT_URL,
+        config.client.CLIENT_URL,
       );
 
       // Remove the iframe
@@ -264,9 +265,8 @@ const DropdownAddresses = ({ onSelect, optionDropdown, isUnsupported }) => {
               option ? (
                 <>
                   <DropdownItem
-                    className={`d-flex justify-content-between align-items-center pe-2 ${
-                      option.value === address ? 'active' : ''
-                    }`}
+                    className={`d-flex justify-content-between align-items-center pe-2 ${option.value === address ? 'active' : ''
+                      }`}
                     key={index}
                     onClick={() => handleSelect(option)}
                   >

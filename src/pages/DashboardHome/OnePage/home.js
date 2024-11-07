@@ -25,6 +25,7 @@ import interactiveDemo from '../../../assets/images/demos/interactive.png';
 import ParentComponentSearchBar from '../../../Components/SearchBar/ParentComponent';
 
 const Home = () => {
+  const [searchInput, setSearchInput] = React.useState('');
   return (
     <React.Fragment>
       <section className="section pb-0 hero-section" id="hero">
@@ -40,7 +41,11 @@ const Home = () => {
                 {/* <p className="lead text-muted lh-base">Velzon is a fully responsive, multipurpose and premium Bootstrap 5 Admin & Dashboard Template built in multiple frameworks.</p> */}
                 <div className="d-flex align-items-center justify-content-center">
                   <Col className="col-7 mt-2 ">
-                    <ParentComponentSearchBar />
+                    <ParentComponentSearchBar
+                      trackWallets={false}
+                      searchInput={searchInput}
+                      setSearchInput={setSearchInput}
+                    />
                   </Col>
                 </div>
                 <div className="d-flex gap-2 justify-content-center mt-4">

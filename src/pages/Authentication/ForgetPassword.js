@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Row,
   Col,
@@ -12,28 +12,32 @@ import {
   Label,
   Form,
   Button,
+  Spinner,
 } from 'reactstrap';
-
-//redux
 import { useSelector, useDispatch } from 'react-redux';
-
 import { Link } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
-
-// Formik Validation
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
+import { forgotPassword } from '../../slices/auth2/thunk';
 
-// action
-import { userForgetPassword } from '../../slices/thunks';
-
-// import images
-// import profile from "../../assets/images/bg.png";
-import logoLight from '../../assets/images/logo-light.png';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
+import Helmet from '../../Components/Helmet/Helmet';
+import { parseValuesToLocale } from '../../utils/utils';
+import Swal from 'sweetalert2';
+import { layoutModeTypes } from '../../Components/constants/layout';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
 
 const ForgetPasswordPage = (props) => {
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const validation = useFormik({
     // enableReinitialize : use this flag when initial values needs to be changed
@@ -43,60 +47,88 @@ const ForgetPasswordPage = (props) => {
       email: '',
     },
     validationSchema: Yup.object({
-      email: Yup.string().required('Please Enter Your Email'),
+      email: Yup.string().required('Please enter your email address'),
     }),
     onSubmit: (values) => {
-      dispatch(userForgetPassword(values, props.router.navigate));
+      handleForgotPassword(values.email);
     },
   });
 
-  const { forgetError, forgetSuccessMsg } = useSelector((state) => ({
-    forgetError: state.ForgetPassword.forgetError,
-    forgetSuccessMsg: state.ForgetPassword.forgetSuccessMsg,
-  }));
+  const handleForgotPassword = async (email) => {
+    setLoading(true);
+    try {
+      const response = await dispatch(forgotPassword(email));
 
-  document.title = 'Reset Password | Chain Glance';
+      const res = response.payload;
+
+      console.log(res);
+      console.log(response);
+
+      if (res.error) {
+        // Swal.fire({
+        //   icon: 'error',
+        //   title: 'Error',
+        //   text: res.message,
+        //   showConfirmButton: false,
+        //   timer: 1500,
+        // });
+        setErrorMsg(res.message);
+      } else {
+        // Swal.fire({
+        //   icon: 'success',
+        //   title: 'Success',
+        //   text: 'Reset link sent to your email',
+        //   showConfirmButton: false,
+        //   timer: 1500,
+        // });
+        setSuccessMsg('Reset link sent to your email');
+      }
+      setLoading(false);
+    } catch (error) {
+      console.log('error', error);
+      // Swal.fire({
+      //   icon: 'error',
+      //   title: 'Error',
+      //   text: 'Something went wrong',
+      //   showConfirmButton: false,
+      //   timer: 1500,
+      // });
+      setErrorMsg('Something went wrong');
+      setLoading(false);
+    }
+  };
 
   return (
     <ParticlesAuth>
-      <div className="auth-page-content mt-5">
+      <Helmet title={'Reset Password'} />
+      <div className="auth-page-content">
         <Container>
           <Row className="justify-content-center">
+            <div className="d-flex justify-content-center align-items-center">
+              <Link to={'/'}>
+                <img
+                  src={logo}
+                  className="card-logo "
+                  alt="Chain Glance"
+                  height="70"
+                  width="auto"
+                />
+              </Link>
+            </div>
             <Col md={8} lg={6} xl={5}>
               <Card className="mt-4">
                 <CardBody className="p-4">
-                  <div className="text-center mt-2">
-                    <h5 className="text-primary">Forgot Password?</h5>
-                    <p className="text-muted">
-                      Reset password with Chain Glance
-                    </p>
-
-                    <lord-icon
-                      src="https://cdn.lordicon.com/rhvddzym.json"
-                      trigger="loop"
-                      colors="primary:#0ab39c"
-                      className="avatar-xl"
-                      style={{ width: '120px', height: '120px' }}
-                    ></lord-icon>
+                  <div className="text-center my-3">
+                    <h3 className={isDarkMode ? "text-white" : "text-primary"}>Forgot your password?</h3>
                   </div>
 
-                  <Alert
-                    className="alert-borderless alert-warning text-center mb-2 mx-2"
-                    role="alert"
-                  >
-                    Enter your email and instructions will be sent to you!
-                  </Alert>
+                  <div class="p-2 my-4">
+                    If you have forgotten your password, please enter your email
+                    address and we will send instructions on how to reset it. If
+                    you have not received an email within a few minutes, please
+                    check your spam folder or contact us.
+                  </div>
                   <div className="p-2">
-                    {forgetError && forgetError ? (
-                      <Alert color="danger" style={{ marginTop: '13px' }}>
-                        {forgetError}
-                      </Alert>
-                    ) : null}
-                    {forgetSuccessMsg ? (
-                      <Alert color="success" style={{ marginTop: '13px' }}>
-                        {forgetSuccessMsg}
-                      </Alert>
-                    ) : null}
                     <Form
                       onSubmit={(e) => {
                         e.preventDefault();
@@ -105,11 +137,13 @@ const ForgetPasswordPage = (props) => {
                       }}
                     >
                       <div className="mb-4">
-                        <Label className="form-label">Email</Label>
+                        <Label className="form-label">
+                          Enter you email address
+                        </Label>
                         <Input
                           name="email"
                           className="form-control"
-                          placeholder="Enter email"
+                          placeholder="Email address"
                           type="email"
                           onChange={validation.handleChange}
                           onBlur={validation.handleBlur}
@@ -125,19 +159,36 @@ const ForgetPasswordPage = (props) => {
                             <div>{validation.errors.email}</div>
                           </FormFeedback>
                         ) : null}
+                        {errorMsg ? (
+                          <div style={{ marginTop: '13px' }}>
+                            <span className="text-danger">{errorMsg}</span>
+                          </div>
+                        ) : null}
+                        {successMsg ? (
+                          <div style={{ marginTop: '13px' }}>
+                            <span className="text-success">{successMsg}</span>
+                          </div>
+                        ) : null}
                       </div>
 
                       <div className="text-center mt-4">
                         <Button
-                          className="mt-3 d-flex btn-hover-light w-100 justify-content-center align-items-center"
-                          color="soft-light"
-                          style={{
-                            borderRadius: '10px',
-                            border: '.5px solid grey',
-                          }}
+                          color={isDarkMode ? "primary" : "primary"}
+                          className="mt-3 d-flex w-100 justify-content-center align-items-center"
                           type="submit"
                         >
-                          Send Reset Link
+                          {loading ? (
+                            <>
+                              <Spinner
+                                size="sm"
+                                color="primary"
+                                className="me-2"
+                              />
+                              {'Sending Reset Link'}
+                            </>
+                          ) : (
+                            'Send Reset Link'
+                          )}
                         </Button>
                       </div>
                     </Form>
@@ -147,13 +198,13 @@ const ForgetPasswordPage = (props) => {
 
               <div className="mt-4 text-center">
                 <p className="mb-0">
-                  Wait, I remember my password...{' '}
+                  Remember your password?{' '}
                   <Link
                     to="/login"
-                    className="fw-semibold text-primary text-decoration-underline"
+                    className="fw-semibold text-link text-decoration-underline"
                   >
                     {' '}
-                    Click here{' '}
+                    Sign In
                   </Link>{' '}
                 </p>
               </div>

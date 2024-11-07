@@ -12,16 +12,25 @@ import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper'
 import { setAddressName } from '../../slices/addressName/reducer';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import { fetchAssets } from '../../slices/transactions/thunk';
+import { formatAddressToShortVersion } from '../../utils/utils';
+import Helmet from '../../Components/Helmet/Helmet';
+import { fetchAssetsPortfolio } from '../../slices/portfolio/thunk';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+  const { userId } = useParams();
+  const currentPortfolioUserId = userId ? userId : user?.id;
   const fetchControllerRef = useRef(new AbortController());
   const { fetchData } = useSelector((state) => state.fetchData);
   const networkType = useSelector(selectNetworkType);
   const { address, type } = useParams();
   const previousAddress = usePrevious(address);
+
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
 
   const [customActiveTab, setCustomActiveTab] = useState('1');
 
@@ -41,6 +50,7 @@ const DashboardInfo = () => {
 
   const [assetsLoaders, setAssetsLoaders] = useState({});
   const loadingAssets = Object.values(assetsLoaders).some((loader) => loader);
+  const formattedAddress = address ? formatAddressToShortVersion(address) : '';
 
   function usePrevious(value) {
     const ref = useRef();
@@ -51,102 +61,96 @@ const DashboardInfo = () => {
   }
 
   useEffect(() => {
-    if (fetchData && fetchData?.performance?.unsupported) {
-      setIsUnsupported(true);
-    } else {
-      setIsUnsupported(false);
+    if (!isCurrentUserPortfolioSelected) {
+      if (fetchData && fetchData?.performance?.unsupported) {
+        setIsUnsupported(true);
+      } else {
+        setIsUnsupported(false);
+      }
     }
   }, [fetchData, networkType]);
 
   useEffect(() => {
-    if (address && previousAddress !== address && !type) {
-      navigate(`/address/${address}`);
+    if (!isCurrentUserPortfolioSelected) {
+      if (address && previousAddress !== address && !type) {
+        navigate(`/address/${address}`);
+      }
     }
   }, [address, previousAddress, navigate, type]);
-
-  console.log(address);
 
   const toggleQrModal = () => {
     setShowQrModal(!showQrModal);
   };
 
-  const fetchDataAssets = () => {
-    // setLoadingAssets(true);
+  const fetchDataAssets = async () => {
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
 
-    const fetchId = Date.now();
+    const fecthId = Date.now();
+    const params = {
+      address,
+      networkType,
+      signal,
+    };
 
-    // Start loading for this fetch
-    setAssetsLoaders((prev) => ({
-      ...prev,
-      [fetchId]: true,
-    }));
+    try {
+      setAssetsLoaders((prev) => ({
+        ...prev,
+        [fecthId]: true,
+      }));
 
-    dispatch(fetchAssets({ address, networkType, signal }))
-      .unwrap()
-      .then((response) => {
-        if (response.unsupported == true) {
-          setIsUnsupported(true);
-          // setLoadingAssets(false);
-          // stop loading
-          setAssetsLoaders((prev) => ({
-            ...prev,
-            [fetchId]: false,
-          }));
-        } else {
-          setIsUnsupported(false);
-          handleSaveInCookiesAndGlobalState(
-            addressForSearch,
-            dispatch,
-            setAddressName,
-          );
-        }
-        setAssetsData(response);
-        // setLoadingAssets(false);
-        // stop loading
-        setAssetsLoaders((prev) => ({
-          ...prev,
-          [fetchId]: false,
-        }));
-      })
-      .catch((error) => {
-        if (error.name === 'AbortError') {
-          console.log('Fetch aborted');
-          // setLoadingAssets(false);
+      const request = isCurrentUserPortfolioSelected
+        ? dispatch(
+            fetchAssetsPortfolio({
+              userId: currentPortfolioUserId,
+              blockchain: networkType,
+              signal,
+            }),
+          )
+        : dispatch(fetchAssets(params)).unwrap();
 
-          // stop loading
-          setAssetsLoaders((prev) => ({
-            ...prev,
-            [fetchId]: false,
-          }));
-        } else {
-          console.error('Error fetching performance data:', error);
-          // setLoadingAssets(false);
-          // stop loading
-          setAssetsLoaders((prev) => ({
-            ...prev,
-            [fetchId]: false,
-          }));
-        }
-      });
+      const response = await request;
+
+      const res = isCurrentUserPortfolioSelected ? response.payload : response;
+
+      if (res?.unsupported === true) {
+        setIsUnsupported(true);
+      } else {
+        setIsUnsupported(false);
+      }
+      setAssetsData(res || {});
+
+      setAssetsLoaders((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        console.log('Error fetching performance data:', error);
+      }
+      setAssetsLoaders((prev) => ({
+        ...prev,
+        [fecthId]: false,
+      }));
+    }
   };
 
   useEffect(() => {
-    if (addressForSearch) {
-      fetchDataAssets();
-    }
+    fetchDataAssets();
+
     return () => {
       fetchControllerRef.current.abort();
     };
   }, [addressForSearch, type, dispatch, isUnsupported, networkType]);
 
   useEffect(() => {
-    if (address) {
-      setIsUnsupported(false);
-      setAddressForSearch(address);
-      setAddressTitle(address);
+    if (!isCurrentUserPortfolioSelected) {
+      if (address) {
+        setIsUnsupported(false);
+        setAddressForSearch(address);
+        setAddressTitle(address);
+      }
     }
   }, [address, location, networkType]);
 
@@ -168,7 +172,13 @@ const DashboardInfo = () => {
             borderRadius: '10px',
             border: '.5px solid grey',
           }}
-          onClick={() => navigate(`/address/${address}/${type}`)}
+          onClick={() => {
+            if (isCurrentUserPortfolioSelected) {
+              navigate(`/portfolio/${type}`);
+            } else {
+              navigate(`/address/${address}/${type}`);
+            }
+          }}
         >
           <h6 className="text-dark  fw-semibold my-2">See more {typeName}</h6>
         </Button>
@@ -176,9 +186,9 @@ const DashboardInfo = () => {
     );
   };
 
-  document.title = ` Dashboard ${address} | Chain Glance`;
   return (
     <React.Fragment>
+      <Helmet title="Dashboard" />
       <div>
         <QrModal
           showQrModal={showQrModal}

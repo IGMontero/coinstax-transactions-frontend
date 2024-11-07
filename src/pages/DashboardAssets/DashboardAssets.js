@@ -1,14 +1,23 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchAssets } from '../../slices/transactions/thunk';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import ActivesTable from '../DashboardInfo/components/ActivesTable';
+import Helmet from '../../Components/Helmet/Helmet';
+import { fetchAssetsPortfolio } from '../../slices/portfolio/thunk';
 
 const DashboardAssets = () => {
-  const { address } = useParams();
+  const { address, userId } = useParams();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const { user } = useSelector((state) => state.auth);
+
+  const currentPortfolioUserId = userId ? userId : user?.id;
+
   const networkType = useSelector(selectNetworkType);
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
   const fetchControllerRef = useRef(new AbortController());
 
   const [assetsData, setAssetsData] = useState({});
@@ -37,13 +46,27 @@ const DashboardAssets = () => {
         [fecthId]: true,
       }));
 
-      const response = await dispatch(fetchAssets(params)).unwrap();
-      if (response?.unsupported === true) {
+      const request = isCurrentUserPortfolioSelected
+        ? dispatch(
+            fetchAssetsPortfolio({
+              userId: currentPortfolioUserId,
+              blockchain: networkType,
+              signal,
+            }),
+          )
+        : dispatch(fetchAssets(params)).unwrap();
+
+      const response = await request;
+
+      const res = isCurrentUserPortfolioSelected ? response.payload : response;
+
+      console.log('response assets ', response);
+      if (res?.unsupported === true) {
         setIsUnsupported(true);
       } else {
         setIsUnsupported(false);
       }
-      setAssetsData(response || {});
+      setAssetsData(res || {});
 
       setLoaderassets((prev) => ({
         ...prev,
@@ -67,9 +90,9 @@ const DashboardAssets = () => {
     };
   }, [networkType, address]);
 
-  document.title = 'Assets | Chain Glance';
   return (
     <div>
+      <Helmet title="Assets" />
       <ActivesTable
         isDashboardPage={false}
         loading={loadingAssets}

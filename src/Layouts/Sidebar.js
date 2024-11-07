@@ -1,23 +1,35 @@
-import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import SimpleBar from 'simplebar-react';
-//import logo
-import logoSm from '../assets/images/logo-sm.png';
-import logoDark from '../assets/images/logo-dark.png';
-// import logoLight from '../assets/images/logo-light.png';
-
-import logo from '../assets/images/logos/coinstax_logos/logo-dark.png';
-import logoLight from '../assets/images/logos/coinstax_logos/logo-light.png';
+import logo from '../assets/images/logos/chainglance/logo-dark.png';
+import logoLight from '../assets/images/logos/chainglance/logo-light.png';
 
 //Import Components
 import VerticalLayout from './VerticalLayouts/index';
 import TwoColumnLayout from './TwoColumnLayout';
-import { Container } from 'reactstrap';
+import { Button, Container } from 'reactstrap';
 import HorizontalLayout from './HorizontalLayout';
 import { layoutModeTypes } from '../Components/constants/layout';
 import { useSelector } from 'react-redux';
 
+import DropdownPortfolio from '../Components/Dropdowns/DropdownPortfolio';
+import config from '../config';
+import { useIsMobile } from '../slices/jobs/hooks';
+
 const Sidebar = ({ layoutType }) => {
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
+
+  const isMobile = useIsMobile(767);
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+
+  const { prevAddress } = useSelector((state) => state.layoutMenuData);
+
+  const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
+
   useEffect(() => {
     var verticalOverlay = document.getElementsByClassName('vertical-overlay');
     if (verticalOverlay) {
@@ -26,12 +38,6 @@ const Sidebar = ({ layoutType }) => {
       });
     }
   });
-
-  const { layoutModeType } = useSelector((state) => ({
-    layoutModeType: state.Layout.layoutModeType,
-  }));
-
-  const isLightMode = layoutModeType === layoutModeTypes['LIGHTMODE'];
 
   const addEventListenerOnSmHoverMenu = () => {
     if (
@@ -51,19 +57,21 @@ const Sidebar = ({ layoutType }) => {
     }
   };
 
+  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+
+  const toggleDropdown = () => setDropdownOpen((prevState) => !prevState);
+
   return (
     <React.Fragment>
       <div
-        className="app-menu navbar-menu"
+        className={`app-menu navbar-menu  ${isMobile ? 'ps-2' : ''}`}
         style={{
-          backgroundColor:
-            layoutModeType === layoutModeTypes['DARKMODE']
-              ? '#1d1d21'
-              : '#F1F2FA',
+          backgroundColor: isMobile
+            ? layoutModeType === layoutModeTypes['DARKMODE']
+              ? '#16161a'
+              : 'white'
+            : 'transparent',
         }}
-        // style={{
-        //   background: '#23282C',
-        // }}
       >
         <div className="navbar-brand-box ">
           <button
@@ -91,19 +99,19 @@ const Sidebar = ({ layoutType }) => {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            <SimpleBar id="scrollbar" className="h-100 ">
+            <SimpleBar
+              id="scrollbar"
+              //  className="h-100 "
+            >
               <Link
-                to={
-                  process.env.NODE_ENV === 'development'
-                    ? '/'
-                    : 'https://chainglance.com/'
-                }
+                to={'/wallets'}
+                className="d-flex align-items-center justify-content-start"
               >
                 <span className="logo-lg d-flex align-items-center justify-content-center">
                   <img
                     src={isLightMode ? logoLight : logo}
                     alt=""
-                    className="pt-2"
+                    className="pt-3"
                     style={{
                       marginBottom: '0.85rem',
                     }}
@@ -111,11 +119,45 @@ const Sidebar = ({ layoutType }) => {
                     width="100"
                   />
                 </span>
+                {/* // dropdwpn  */}
               </Link>
+
               <Container fluid>
                 <div id="two-column-menu"></div>
                 <ul className="navbar-nav" id="navbar-nav">
+                  {user && (
+                    <DropdownPortfolio
+                      dropdownOpen={dropdownOpen}
+                      toggleDropdown={toggleDropdown}
+                    />
+                  )}
                   <VerticalLayout layoutType={layoutType} />
+
+                  {!user && (
+                    <div className="mt-3">
+                      {prevAddress && <hr className="hr-dashed" />}
+                      <span>
+                        Create an account to save your address and view your
+                        portfolio.
+                      </span>
+                      <div className="mt-3 ">
+                        <Button
+                          onClick={() => {
+                            navigate('/register');
+                          }}
+                          className="btn p-2 btn-soft-primary active btn-md"
+                        >
+                          <span
+                            style={{
+                              whiteSpace: 'nowrap',
+                            }}
+                          >
+                            Sign Up
+                          </span>
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </ul>
               </Container>
             </SimpleBar>

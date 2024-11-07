@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { Col, Container, Row } from 'reactstrap';
 import { fetchApiVersion } from '../slices/common/thunk';
+import config from '../config';
 
 const Footer = () => {
   const [apiVersion, setApiVersion] = React.useState('');
-  const appVersion = process.env.REACT_APP_VERSION;
+  const appVersion = config.app.version;
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -27,10 +28,10 @@ const Footer = () => {
           <Row>
             {/* <Col sm={6}>{new Date().getFullYear()} © CoinsTax</Col> */}
             <Col sm={12}>
-              <div className="text-lg-end d-none d-sm-block text-white">
-                <h6>
+              <div className="text-lg-end d-none d-sm-block text-muted">
+                <small>
                   Version {appVersion} ({apiVersion})
-                </h6>
+                </small>
               </div>
             </Col>
           </Row>

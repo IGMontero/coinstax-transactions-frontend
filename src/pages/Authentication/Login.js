@@ -14,46 +14,78 @@ import {
   Spinner,
 } from 'reactstrap';
 import ParticlesAuth from '../AuthenticationInner/ParticlesAuth';
-
-//redux
 import { useSelector, useDispatch } from 'react-redux';
-
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import withRouter from '../../Components/Common/withRouter';
-// Formik validation
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
-
-// actions
-
-import { login } from '../../slices/auth2/thunk';
-
-import logoLight from '../../assets/images/logo-light.png';
+import { authMe, login } from '../../slices/auth2/thunk';
 import SocialAuth from '../../Components/SocialAuth/SocialAuth';
+import Helmet from '../../Components/Helmet/Helmet';
+import Swal from 'sweetalert2';
+import logo from '../../assets/images/logos/chainglance/logo-dark.png';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import { layoutModeTypes } from '../../Components/constants/layout';
+import {
+  setAddressSearched,
+  setPrevAddress,
+} from '../../slices/layoutMenuData/reducer';
 //import images
 
 const Login = (props) => {
   const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const [loading, setLoading] = useState(false);
 
-  const { error, status, user } = useSelector((state) => state.auth);
+  const { error } = useSelector((state) => state.auth);
 
-  const [errorMsg, setErrorMsg] = useState(error?.toString());
+  const [errorMsg, setErrorMsg] = useState('');
 
   const [passwordShow, setPasswordShow] = useState(false);
+
+  const searchParams = new URLSearchParams(location.search);
+  const code = searchParams.get('code');
+  const type = searchParams.get('type');
 
   const handleLogin = async (values) => {
     setLoading(true);
     try {
       const response = await dispatch(login(values));
-      if (response.payload.error) {
-        setErrorMsg(response.payload.error);
+      
+      if (response.error) {
+        setErrorMsg('Invalid email address or password');
+        setLoading(false);
+      } else {
+        const authMeRes = await dispatch(authMe());
+        dispatch(setPrevAddress(null));
+        dispatch(setAddressSearched(null));
+
+        const { role } = authMeRes.payload;
+
+        if (role === DASHBOARD_USER_ROLES.USER) {
+          if (code && type) {
+            navigate(`/invite?code=${code}&type=${type}`);
+          } else {
+            navigate('/wallets');
+          }
+        } else if (role === DASHBOARD_USER_ROLES.ADMIN) {
+          navigate('/admin/clients');
+        } else {
+          navigate('/clients');
+        }
       }
-      setLoading(false);
     } catch (error) {
-      console.log(error);
+      setErrorMsg('Error in login. Please try again');
+      setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -72,33 +104,45 @@ const Login = (props) => {
     },
   });
 
-  document.title = 'Login | Chain Glance';
   useEffect(() => {
-    if (errorMsg) {
-      setTimeout(() => {
-        setErrorMsg('');
-      }, 3000);
+    const params = new URLSearchParams(location.search);
+    const error = params.get('error');
+
+    if (error === 'auth-failed') {
+      Swal.fire({
+        icon: 'error',
+        title: 'Authentication Failed',
+        text: 'Your login attempt was unsuccessful. Please try again.',
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+      });
     }
-  }, [dispatch, error]);
+  }, [location.search]);
 
   return (
     <React.Fragment>
+      <Helmet title="Login" />
       <ParticlesAuth>
         <div className="auth-page-content ">
           <Container>
             <Row className=" justify-content-center">
-              <Col md={8} lg={6} xl={5}>
+              <div className="d-flex justify-content-center align-items-center">
+                <Link to={'/'}>
+                  <img
+                    src={logo}
+                    className="card-logo "
+                    alt="Chain Glance"
+                    height="70"
+                    width="auto"
+                  />
+                </Link>
+              </div>
+              <Col md={9} lg={6} xl={6}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
                     <div className="text-center my-3">
-                      <h3 className="text-primary">Welcome Back !</h3>
-                      <h6 className="text-muted">
-                        Sign in to continue to Chain Glance.
-                      </h6>
+                      <h3 className={isDarkMode ? "text-white" : "text-primary"}>Sign in to Chain Glance</h3>
                     </div>
-                    {errorMsg && errorMsg ? (
-                      <Alert color="danger"> {errorMsg} </Alert>
-                    ) : null}
                     <div className="p-2 mt-4">
                       <Form onSubmit={validation.handleSubmit} action="#">
                         <div className="mb-3">
@@ -110,18 +154,18 @@ const Login = (props) => {
                             className="form-control"
                             placeholder="Enter email"
                             type="email"
+                            autoFocus
                             onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
                             value={validation.values.email || ''}
                             invalid={
                               validation.touched.email &&
-                              validation.errors.email
+                                validation.errors.email
                                 ? true
                                 : false
                             }
                           />
                           {validation.touched.email &&
-                          validation.errors.email ? (
+                            validation.errors.email ? (
                             <FormFeedback type="invalid">
                               {validation.errors.email}
                             </FormFeedback>
@@ -130,7 +174,11 @@ const Login = (props) => {
 
                         <div className="mb-3">
                           <div className="float-end">
-                            <Link to="/forgot-password" className="text-muted">
+                            <Link
+                              tabIndex={5}
+                              to="/forgot-password"
+                              className="text-muted"
+                            >
                               Forgot password?
                             </Link>
                           </div>
@@ -151,13 +199,13 @@ const Login = (props) => {
                               onBlur={validation.handleBlur}
                               invalid={
                                 validation.touched.password &&
-                                validation.errors.password
+                                  validation.errors.password
                                   ? true
                                   : false
                               }
                             />
                             {validation.touched.password &&
-                            validation.errors.password ? (
+                              validation.errors.password ? (
                               <FormFeedback type="invalid">
                                 {validation.errors.password}
                               </FormFeedback>
@@ -173,7 +221,7 @@ const Login = (props) => {
                           </div>
                         </div>
 
-                        <div className="form-check">
+                        {/* <div className="form-check">
                           <Input
                             className="form-check-input"
                             type="checkbox"
@@ -186,18 +234,18 @@ const Login = (props) => {
                           >
                             Remember me
                           </Label>
-                        </div>
+                        </div> */}
+
+                        {errorMsg ? (
+                          <div className="alert alert-danger">{errorMsg} </div>
+                        ) : null}
 
                         <div className="mt-4">
                           <Button
                             disabled={loading ? true : false}
+                            color={isDarkMode ? "primary" : "primary"}
                             type="submit"
-                            className="mt-3 d-flex btn-hover-light w-100 justify-content-center align-items-center"
-                            color="soft-light"
-                            style={{
-                              borderRadius: '10px',
-                              border: '.5px solid grey',
-                            }}
+                            className="mt-3 d-flex w-100 justify-content-center align-items-center"
                           >
                             {loading ? (
                               <Spinner size="sm" className="me-2">
@@ -211,7 +259,7 @@ const Login = (props) => {
 
                         <div className="mt-4 text-center">
                           <div className="signin-other-title">
-                            <h5 className="fs-13 mb-4 title">Sign In with</h5>
+                            <h5 className="fs-13 mb-4 title">Or</h5>
                           </div>
                           <SocialAuth />
                         </div>
@@ -222,10 +270,14 @@ const Login = (props) => {
 
                 <div className="mt-4 text-center">
                   <p className="mb-0">
-                    Don't have an account ?{' '}
+                    Don't have an account?{' '}
                     <Link
-                      to="/register"
-                      className="fw-semibold text-primary text-decoration-underline"
+                      to={
+                        code && type
+                          ? `/register?code=${code}&type=${type}`
+                          : '/register'
+                      }
+                      className="fw-semibold text-link text-decoration-underline"
                     >
                       {' '}
                       Signup{' '}

@@ -2,87 +2,360 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 //Dashboard
-import DashboardEcommerce from '../pages/DashboardEcommerce';
 
 //login
 import ForgetPasswordPage from '../pages/Authentication/ForgetPassword';
 import Login from '../pages/Authentication/Login';
-import Logout from '../pages/Authentication/Logout';
 import Register from '../pages/Authentication/Register';
 
 // User Profile
-import UserProfile from '../pages/Authentication/user-profile';
-import DashboardInfo from '../pages/DashboardInfo/DashboardInfo';
-import DashboardNFT from '../pages/DashboardNFT/DashboardNFT';
-import DashboardBlockchainContracts from '../pages/DashboardBlockchainContracts/DashboardBlockchainContracts';
-import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUserAddresses';
+import { DASHBOARD_USER_ROLES } from '../common/constants';
+import ConfirmEmail from '../pages/Authentication/ConfirmEmail';
+import ResetPaswword from '../pages/Authentication/ResetPassword';
+import UserProfile from '../pages/Authentication/UserProfile';
+import VerifyEmail from '../pages/Authentication/VerifyEmail';
+import DashboardCompleteInfo from '../pages/CompleteInfo/DashboardCompleteInfo';
+import DashboardConnectWallets from '../pages/ConnectWallets/DashboardConnectWallets';
+import DashboardAccountantAgents from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantAgents';
+import DashboardAccountantUsers from '../pages/DashboardAccountsWallets/Accountants/DashboardAccountantUsers';
+import Clients from '../pages/DashboardAccountsWallets/Admin/Clients';
+import Users from '../pages/DashboardAccountsWallets/Admin/Users';
+import UsersProfile from '../pages/DashboardAccountsWallets/Admin/components/Profiles/UsersProfile';
+import DashboardClientsAgent from '../pages/DashboardAccountsWallets/Agent/DashboardClientsAgent';
+import DashboardClientProfile from '../pages/DashboardAccountsWallets/DashboardClientProfile';
 import DashboardAssets from '../pages/DashboardAssets/DashboardAssets';
-import DashboardTransactions from '../pages/DashboardTransactions/DashboardTransactions';
-import NFTsPage from '../pages/DashboardNFT/NFTsPage';
+import DashboardBlockchainContracts from '../pages/DashboardBlockchainContracts/DashboardBlockchainContracts';
 import DashboardHome from '../pages/DashboardHome/DashboardHome';
+import DashboardInfo from '../pages/DashboardInfo/DashboardInfo';
+import DashboardInvite from '../pages/DashboardInvite/DashboardInvite';
+import DashboardNFT from '../pages/DashboardNFT/DashboardNFT';
+import NFTsPage from '../pages/DashboardNFT/NFTsPage';
 import DashboardTokens from '../pages/DashboardTokens/DashboardTokens';
+import DashboardTransactions from '../pages/DashboardTransactions/DashboardTransactions';
+import DashboardUserAddresses from '../pages/DashboardUserAddresses/DashboardUserAddresses';
+import AuthProtectedRoutes from './AuthProtectedRoutes';
 
-const authProtectedRoutes = [
-  { path: '/', component: <DashboardInfo /> },
-  { path: '/address/:address', component: <DashboardInfo /> },
-  { path: '/index', component: <DashboardEcommerce /> },
-
-  //User Profile
-  // { path: '/profile', component: <UserProfile /> },
-
-  // this route should be at the end of all other routes
-  // eslint-disable-next-line react/display-name
+// Auth protected routes
+const adminRoutes = [
   {
-    path: '/',
-    exact: true,
-    component: <Navigate to="/" />,
+    path: '/blockchain-contracts',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardBlockchainContracts />
+      </AuthProtectedRoutes>
+    ),
   },
-  { path: '*', component: <Navigate to="/" /> },
+  {
+    path: '/user-addresses',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardUserAddresses />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/clients',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <Clients />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/clients/:clientId',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <DashboardClientProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/users',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <Users />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/users/:userId',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <UsersProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/admin/accountants/:userId',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ADMIN]}>
+        <UsersProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
 ];
 
+// Public routes
 const publicRoutes = [
-  // Authentication Page
-  { path: '/', component: <DashboardHome /> },
-  { path: '/logout', component: <Logout /> },
   { path: '/login', component: <Login /> },
+
+  { path: '/reset-password', component: <ResetPaswword /> },
+  { path: '/invite', component: <DashboardInvite /> },
   { path: '/forgot-password', component: <ForgetPasswordPage /> },
   { path: '/register', component: <Register /> },
-];
-
-const homePage = [{ path: '/', component: <DashboardHome /> }];
-
-const allRoutes = [
-  { path: '/logout', component: <Logout /> },
-  { path: '/login', component: <Login /> },
-  { path: '/forgot-password', component: <ForgetPasswordPage /> },
-  { path: '/register', component: <Register /> },
-  { path: '/tokens/:token', component: <DashboardTokens /> },
-
-  { path: '/contract/:contractAddress', component: <DashboardNFT /> },
   { path: '/address/:address', component: <DashboardInfo /> },
+  { path: '/confirm-email', component: <VerifyEmail /> },
+  { path: '/confirm-email-change', component: <ConfirmEmail /> },
+
+  { path: '/tokens/:token', component: <DashboardTokens /> },
+  { path: '/contract/:contractAddress', component: <DashboardNFT /> },
+
   { path: '/address/:address/assets', component: <DashboardAssets /> },
   { path: '/address/:address/nfts', component: <NFTsPage /> },
   { path: '/address/:address/history', component: <DashboardTransactions /> },
   {
-    path: '/blockchain-contracts',
-    component: <DashboardBlockchainContracts />,
+    path: '/complete-profile',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardCompleteInfo />
+      </AuthProtectedRoutes>
+    ),
   },
+  // Default to wallets page
   {
-    path: '/user-addresses',
-    component: <DashboardUserAddresses />,
+    path: '/wallets',
+    component: <DashboardConnectWallets />,
   },
-
-  //User Profile
-  // { path: '/profile', component: <UserProfile /> },
-
-  // this route should be at the end of all other routes
-  // eslint-disable-next-line react/display-name
-  {
-    path: '/',
-    exact: true,
-    component: <Navigate to="/" />,
-  },
-  { path: '*', component: <Navigate to="/" /> },
 ];
 
-export { allRoutes, authProtectedRoutes, publicRoutes, homePage };
+// Home page
+const noVerticalLayoutRoutes = [
+  { path: '/', component: <DashboardHome /> },
+  { path: '/invite', component: <DashboardInvite /> },
+];
+
+const authProtectedRoutes = [
+  {
+    path: '/profile',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+        ]}
+      >
+        <UserProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
+
+  {
+    path: '/clients',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ACCOUNTANT]}>
+        <DashboardAccountantUsers />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/agent/clients',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.AGENT]}>
+        <DashboardClientsAgent />
+      </AuthProtectedRoutes>
+    ),
+  },
+
+  // {
+  //   path: '/wallets',
+  //   component: (
+  //     <AuthProtectedRoutes
+  //       allowedRoles={[
+  //         DASHBOARD_USER_ROLES.ADMIN,
+  //         DASHBOARD_USER_ROLES.USER,
+  //         DASHBOARD_USER_ROLES.ACCOUNTANT,
+  //         DASHBOARD_USER_ROLES.AGENT,
+  //       ]}
+  //     >
+  //       <DashboardUserWallets />
+  //     </AuthProtectedRoutes>
+  //   ),
+  // },
+
+  {
+    path: '/wallets',
+    component: (
+      // <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.USER]}>
+      <DashboardConnectWallets />
+      // </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/clients/:clientId',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardClientProfile />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/agents',
+    component: (
+      <AuthProtectedRoutes allowedRoles={[DASHBOARD_USER_ROLES.ACCOUNTANT]}>
+        <DashboardAccountantAgents />
+      </AuthProtectedRoutes>
+    ),
+  },
+  // PORTFOLIO
+  {
+    path: '/portfolio',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardInfo />
+      </AuthProtectedRoutes>
+    ),
+  },
+
+  {
+    path: '/portfolio/assets',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        {' '}
+        <DashboardAssets />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/portfolio/nfts',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <NFTsPage />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/portfolio/history',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardTransactions />
+      </AuthProtectedRoutes>
+    ),
+  },
+
+  // PORTFOLIO USERS
+  {
+    path: '/users/:userId/portfolio',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardInfo />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/users/:userId/portfolio/assets',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardAssets />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/users/:userId/nfts',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <NFTsPage />
+      </AuthProtectedRoutes>
+    ),
+  },
+  {
+    path: '/users/:userId/history',
+    component: (
+      <AuthProtectedRoutes
+        allowedRoles={[
+          DASHBOARD_USER_ROLES.ADMIN,
+          DASHBOARD_USER_ROLES.USER,
+          DASHBOARD_USER_ROLES.ACCOUNTANT,
+          DASHBOARD_USER_ROLES.AGENT,
+        ]}
+      >
+        <DashboardTransactions />
+      </AuthProtectedRoutes>
+    ),
+  },
+];
+
+// Combine all routes
+const allRoutes = [
+  ...publicRoutes,
+  ...adminRoutes,
+  ...authProtectedRoutes,
+  // ...homePage,
+
+  // this route should be at the end of all other routes
+  { path: '*', component: <Navigate to="/wallets" /> },
+];
+
+export { allRoutes, authProtectedRoutes, noVerticalLayoutRoutes, publicRoutes };

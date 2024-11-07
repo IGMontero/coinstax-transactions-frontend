@@ -1,10 +1,12 @@
 import React from 'react';
-import { Badge, Col, Row } from 'reactstrap';
-import eth from '../../../../../assets/images/svg/crypto-icons/eth.svg';
+import { Badge, Col } from 'reactstrap';
 
-import ValueColumn from './ValueColumn';
-import { getActionMapping } from '../../../../../utils/utils';
 import BlockchainImage from '../../../../../Components/BlockchainImage/BlockchainImage';
+import { getActionMapping } from '../../../../../utils/utils';
+import ValueColumn from './ValueColumn';
+import { useCurrentUser } from '../../../../../hooks/useAuth';
+import { formatTimeForClient } from '../../../../../utils/date.utils';
+import { useGetTimezone } from '../../../../../hooks/useUtils';
 
 function capitalizeFirstLetter(text) {
   if (!text) return text;
@@ -12,24 +14,26 @@ function capitalizeFirstLetter(text) {
 }
 
 const BlockChainActionColumn = ({ transaction }) => {
+  const timezone = useGetTimezone();
+
   const formatTime = (dateString) => {
-    const options = { hour: 'numeric', minute: 'numeric' };
-    return new Date(dateString).toLocaleTimeString('en-US', options);
+    return formatTimeForClient(dateString, timezone, 'hh:mm A');
+
   };
+
+
   return (
     <>
       <Col
-        className={`d-flex justify-content-start ${
-          transaction.successful && !transaction.successful
-            ? 'col-12'
-            : 'col-lg-6 col-xl-6   col-8 '
-        }`}
+        className={`d-flex justify-content-start ${transaction.successful && !transaction.successful
+          ? 'col-12'
+          : 'col-lg-6 col-xl-6   col-8 '
+          }`}
       >
         {transaction.blockchainAction && (
           <span
-            className={`rounded-circle position-relative  align-items-center border me-3 d-flex justify-content-center border-${
-              getActionMapping(transaction.blockchainAction).color
-            } text-${getActionMapping(transaction.blockchainAction).color}`}
+            className={`rounded-circle position-relative  align-items-center border me-3 d-flex justify-content-center border-${getActionMapping(transaction.blockchainAction).color
+              } text-${getActionMapping(transaction.blockchainAction).color}`}
             style={{
               width: '35px',
               minWidth: '35px',
@@ -38,9 +42,8 @@ const BlockChainActionColumn = ({ transaction }) => {
             }}
           >
             <i
-              className={`${
-                getActionMapping(transaction.blockchainAction).icon
-              } fs-2`}
+              className={`${getActionMapping(transaction.blockchainAction).icon
+                } fs-2`}
             ></i>
 
             <BlockchainImage

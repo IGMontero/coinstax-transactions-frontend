@@ -13,6 +13,8 @@ import {
   Badge,
 } from 'reactstrap';
 import {
+  buildParamsForTransactions,
+  downloadFileByURL,
   formatDateToLocale,
   formatTransactionNotFoundMessage,
   getSelectedAssetFilters,
@@ -26,9 +28,17 @@ import {
 import { capitalizeFirstLetter, FILTER_NAMES } from '../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
 import Swal from 'sweetalert2';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
+import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import {
+  downloadTransactionsPortfolio,
+  fetchTransactionsPortfolio,
+} from '../../slices/portfolio/thunk';
+import { addJobToList } from '../../slices/jobs/reducer';
+import { useGetTimezone } from '../../hooks/useUtils';
+import { formatTimeForClient } from '../../utils/date.utils';
 
 const internalPaginationPageSize = 10;
 
@@ -36,14 +46,20 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   // #region HOOKS
   const inputRef = useRef(null);
   const pagesCheckedRef = useRef(new Set());
-  const fetchControllerRef = useRef(new AbortController());
 
+  const location = useLocation();
   const { address } = useParams();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const networkType = useSelector(selectNetworkType);
+  const timezone = useGetTimezone();
 
-  const currentUser = user;
+  const { userId } = useParams();
+  const currentPortfolioUserId = userId ? userId : user?.id;
+  const networkType = useSelector(selectNetworkType);
+  const navigate = useNavigate();
+
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
 
   // #region STATES
   const [hasPreview, setHasPreview] = useState(false);
@@ -71,7 +87,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [currentEndIndex, setCurrentEndIndex] = useState(15);
 
-  const [allTransactionsProcessed, setAllTransactionsProcessed] = useState(false);
+  const [allTransactionsProcessed, setAllTransactionsProcessed] =
+    useState(false);
 
   const [refreshPreviewIntervals, setRefreshPreviewIntervals] = useState({});
 
@@ -99,7 +116,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   }, [isProcessing]);
 
   useEffect(() => {
-    console.log('refresh intervals changed!', refreshPreviewIntervals);
+    // console.log('refresh intervals changed!', refreshPreviewIntervals);
 
     // Check if any interval is running.
     const hasAnyIntervalRunning = Object.values(refreshPreviewIntervals).some(
@@ -116,10 +133,10 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         (transaction) => transaction.preview === true,
       );
 
-      console.log(
-        'Preview txs:',
-        data?.filter((tx) => tx.preview === true).length,
-      );
+      // console.log(
+      //   'Preview txs:',
+      //   data?.filter((tx) => tx.preview === true).length,
+      // );
 
       setHasPreview(hasPreview);
     } else {
@@ -130,7 +147,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       setHasPreview(false);
     };
   }, [data]);
-
 
   // #region FETCH DATA
   const fetchData = async ({ abortSignal }) => {
@@ -152,29 +168,38 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         setShowDownloadMessage(true);
       }, 3000);
 
-      console.log('currentPage fetch data', currentPage);
-      const response = await dispatch(
-        fetchHistory({
-          address,
-          query: debouncedSearchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
-          assetsFilters: selectAsset,
-          page: 0,
-          networkType,
-          signal: abortSignal,
-        }),
-      ).unwrap();
+      const request = isCurrentUserPortfolioSelected
+        ? fetchTransactionsPortfolio
+        : fetchHistory;
+
+      const params = buildParamsForTransactions({
+        address,
+        query: debouncedSearchTerm,
+        filters: {
+          selectedFilters,
+          includeSpam,
+          isCurrentUserPortfolioSelected,
+        },
+        selectAsset,
+        networkType,
+        abortSignal,
+        userId: currentPortfolioUserId,
+      });
+
+      const response = await dispatch(request(params)).unwrap();
 
       clearTimeout(timerId);
 
-      const { parsed, unsupported, isProcessing, transactionsCount, allTransactionsProcessed } = response;
+      const {
+        parsed,
+        unsupported,
+        isProcessing,
+        transactionsCount,
+        allTransactionsProcessed,
+      } = response;
 
       // Save that all transactions are processed
       setAllTransactionsProcessed(allTransactionsProcessed);
-
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -228,7 +253,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     let isRequestInProgress = false;
 
     const interval = setInterval(async () => {
-
       // Wait 5 seconds before making the next request
       await new Promise((resolve) => setTimeout(resolve, 5000));
 
@@ -249,12 +273,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           debouncedSearchTerm,
           selectedFilters,
           includeSpam,
-          selectedAssets,
+          selectAsset: getSelectedAssetFilters(selectedAssets),
           currentPage: pageIndex,
           setData,
           networkType,
           data,
-          signal,
+          abortSignal: signal,
           dispatch,
           pagesChecked: pagesCheckedRef.current,
           onEnd: () => {
@@ -272,8 +296,14 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               ...prevIntervals,
               [pageIndex]: null,
             }));
-            console.log('Clearing interval for page because of an error', pageIndex, err);
+            console.log(
+              'Clearing interval for page because of an error',
+              pageIndex,
+              err,
+            );
           },
+          isCurrentUserPortfolioSelected,
+          currentPortfolioUserId,
         });
       } catch (error) {
         console.error('Error during updateTransactionsPreview call:', error);
@@ -374,7 +404,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       return {};
     }
     return transactions.reduce((acc, transaction) => {
-      const date = formatDateToLocale(transaction.date);
+      const date = formatTimeForClient(transaction.date, timezone,
+        'MMMM DD, YYYY');
       if (!acc[date]) {
         acc[date] = [];
       }
@@ -390,8 +421,14 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
     let filteredTxs = txs;
 
-    if (selectedFilters.length > 0) {
-      filteredTxs = txs.filter((tx) => selectedFilters.includes(tx.blockchainAction));
+    // Only applky if selected filters is not 'OTHERS'
+    const filterSelectedFilters = selectedFilters.filter(
+      (filter) => filter !== 'OTHERS',
+    );
+    if (filterSelectedFilters.length > 0) {
+      filteredTxs = txs.filter((tx) =>
+        filterSelectedFilters.includes(tx.blockchainAction),
+      );
     }
 
     if (selectedAssets !== 'All Assets') {
@@ -401,7 +438,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           const hasNftLedger = tx.ledgers.some((ledger) => ledger.isNft);
           const isNft = tx.isNft;
           return !hasNftLedger && !isNft;
-        })
+        });
       } else if (selectedAssets === 'NFTs') {
         // Txs where isNft is true
         filteredTxs = txs.filter((tx) => {
@@ -420,20 +457,17 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     return filteredTxs;
   };
 
-
-
   // const filteredTransactions = getFilteredTransactions(data)
 
   // const groupedTransactions = filteredTransactions ? groupTxsByDate(filteredTransactions) : {};
 
-
   const filteredTransactions = getFilteredTransactions(data);
   const paginatedTransactions = filteredTransactions.slice(0, currentEndIndex);
-  const groupedTransactions = paginatedTransactions ? groupTxsByDate(paginatedTransactions) : {};
+  const groupedTransactions = paginatedTransactions
+    ? groupTxsByDate(paginatedTransactions)
+    : {};
 
-  const getMoreTransactions = async (
-    page,
-  ) => {
+  const getMoreTransactions = async (page) => {
     // fetchControllerRef.current.abort();
     // fetchControllerRef.current = new AbortController();
     const signal = abortControllersByBlockchain.current[networkType].signal;
@@ -447,41 +481,42 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         [fecthId]: true,
       }));
 
-      const nextPage =
-        page ||
-        currentPage + 1;
+      const nextPage = page || currentPage + 1;
 
       console.log('Next page:', nextPage);
 
       timerId = setTimeout(() => {
         setShowDownloadMessageInButton(true);
       }, 3000);
+      const request = isCurrentUserPortfolioSelected
+        ? fetchTransactionsPortfolio
+        : fetchHistory;
 
-      const response = await dispatch(
-        fetchHistory({
-          address,
-          query: searchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
-          assetsFilters: selectAsset,
-          page: nextPage,
-          networkType,
-          signal,
-        }),
-      ).unwrap();
+      const params = buildParamsForTransactions({
+        address,
+        query: searchTerm,
+        filters: {
+          selectedFilters,
+          includeSpam,
+          isCurrentUserPortfolioSelected,
+        },
+        selectAsset,
+        page: nextPage,
+        networkType,
+        abortSignal: signal,
+        userId: currentPortfolioUserId,
+      });
+
+      const response = await dispatch(request(params)).unwrap();
 
       console.log('Fetching more transactions:', response);
 
-
       clearTimeout(timerId);
-      const { parsed, unsupported, isProcessing, allTransactionsProcessed } = response || {};
-
+      const { parsed, unsupported, isProcessing, allTransactionsProcessed } =
+        response || {};
 
       // Save that all transactions are processed
       setAllTransactionsProcessed(allTransactionsProcessed);
-
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -504,7 +539,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       } else {
         setData((prevData) => [...prevData, ...transactions]);
         setCurrentPage(nextPage);
-        setCurrentEndIndex((prevEndIndex) => prevEndIndex + internalPaginationPageSize); // Update internal pagination index
+        setCurrentEndIndex(
+          (prevEndIndex) => prevEndIndex + internalPaginationPageSize,
+        ); // Update internal pagination index
       }
 
       // Edge case: if there is a filter applied and no transactions with that filter are found,
@@ -593,6 +630,178 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     setHasAppliedFilters(true);
   };
 
+  const handleDownloadTransactionsNew = async () => {
+    // Do the same but now the response will not be something to download.
+    // Instead, it will be a response with a fileUrl or a pending state.
+
+    // If user is not authenticated, show a message to login and send to login page.
+    if (!user) {
+      Swal.fire({
+        icon: 'info',
+        title: 'Login Required',
+        text: 'Please login to download transactions.',
+        confirmButtonText: 'Login',
+        showCancelButton: true,
+        cancelButtonText: 'Cancel',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // Navigate to login page
+          navigate('/login');
+        }
+      });
+      return;
+    } else {
+      if (!user.emailVerified) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Email Verification Required',
+          text: 'Please verify your email to download your transactions.',
+          confirmButtonText: 'Ok',
+          showCancelButton: true,
+          cancelButtonText: 'Cancel',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            navigate('/profile');
+          }
+        });
+        return;
+      }
+    }
+
+    try {
+      setLoadingDownload(true);
+
+      const assetsFilters = getSelectedAssetFilters(selectedAssets);
+
+      // Show processing
+      // Swal.fire({
+      //   title: 'Processing',
+      //   html: 'Your file is being prepared for download.',
+      //   timerProgressBar: true,
+      //   didOpen: () => {
+      //     Swal.showLoading();
+      //   },
+      // });
+
+      const requestParams = {
+        blockchain: networkType,
+        filters: {
+          blockchainAction: selectedFilters,
+          excludeSpam: !includeSpam,
+        },
+        address: address,
+      };
+
+      const exportAction = isCurrentUserPortfolioSelected
+        ? downloadTransactionsPortfolio({
+          ...requestParams,
+          userId: currentPortfolioUserId,
+          assetsFilters,
+        })
+        : downloadTransactions({
+          ...requestParams,
+          query: debouncedSearchTerm,
+          assetsFilters,
+        });
+
+      const response = await dispatch(exportAction).unwrap();
+
+      console.log('Response:', response);
+
+      if (response.completed && response.fileUrl) {
+        // Show swal downloading for 2 seconds
+        // Swal.fire({
+        //   title: 'Downloading',
+        //   html: 'Your file is being prepared for download.',
+        //   // timerProgressBar: true,
+        //   timer: 2500,
+        //   didOpen: () => {
+        //     Swal.showLoading();
+        //   },
+        // });
+
+        // Handle file url here. Open in new tab or trigger download.
+        // const link = document.createElement('a');
+        // link.href = response.fileUrl;
+        // link.setAttribute('download', 'transactions.csv');
+        // document.body.appendChild(link);
+        // link.click();
+
+        downloadFileByURL(response.fileUrl, 'transactions.csv');
+
+        // Close the modal and reset loading state
+        // Swal.close();
+
+        return;
+      } else if (response.completed && response.files) {
+        // Download all
+        // Show swal downloading for 2 seconds
+
+        Swal.fire({
+          title: 'Downloading',
+          html: 'Your files are being prepared for download.',
+          // timerProgressBar: true,
+          timer: 2500,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+
+        response.files.forEach((file) => {
+          downloadFileByURL(file.fileUrl, file.fileName);
+        });
+        // Close the modal and reset loading state
+        // Swal.close();
+        return;
+      } else if (response.isProcessing) {
+        // Check if it's processing.
+        // Get job id.
+
+        const { job } = response;
+
+        console.log('Response:', response);
+
+        if (!job) {
+          // No job id. Consider showing an error message.
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Something went wrong. Please try again later.',
+          });
+          setLoadingDownload(false);
+          return;
+        }
+
+        // Add job to jobs list and start polling
+        dispatch(addJobToList(job));
+
+        // Swal.fire({
+        //   title: 'Processing',
+        //   html: 'Your file is being prepared for download. Please wait until it is ready.',
+        //   timer: 2000,
+        // });
+      } else {
+        // No response or error. Consideer showing an error message.
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Something went wrong. Please try again later.',
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      console.log(error.response);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Something went wrong. Please try again later.',
+      });
+      setLoadingDownload(false);
+    } finally {
+      setLoadingDownload(false);
+    }
+  };
+
   const handleDownloadTransactions = async () => {
     try {
       setLoadingDownload(true);
@@ -606,18 +815,28 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           Swal.showLoading();
         },
       });
-      const response = await dispatch(
-        downloadTransactions({
-          blockchain: networkType,
+      const downloadParams = {
+        blockchain: networkType,
+        filters: {
+          blockchainAction: selectedFilters,
+          excludeSpam: !includeSpam,
+        },
+      };
+
+      const downloadAction = isCurrentUserPortfolioSelected
+        ? downloadTransactionsPortfolio({
+          ...downloadParams,
+          userId: currentPortfolioUserId,
+          assetsFilters: selectAsset,
+        })
+        : downloadTransactions({
+          ...downloadParams,
           address: address,
           query: debouncedSearchTerm,
-          filters: {
-            blockchainAction: selectedFilters,
-            includeSpam: includeSpam,
-          },
           assetsFilters: selectAsset,
-        }),
-      ).unwrap();
+        });
+
+      const response = await dispatch(downloadAction).unwrap();
 
       console.log(response, response.data, response.size);
       const isResponseBlob = response instanceof Blob;
@@ -644,7 +863,17 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         const url = window.URL.createObjectURL(response);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `txs_${networkType}_${address}.csv`);
+
+        // For portfolio downloads, name will reflect user id, portfolio, network type and date in unix.
+        let filename;
+
+        if (isCurrentUserPortfolioSelected) {
+          filename = `portfolio_${currentPortfolioUserId}_${networkType}_${Date.now()}.csv`;
+        } else {
+          filename = `txs_${networkType}_${address}.csv`;
+        }
+
+        link.setAttribute('download', filename);
         document.body.appendChild(link);
         link.click();
         link.parentNode.removeChild(link);
@@ -689,8 +918,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         ...prev,
         [fecthId]: true,
       }));
+      const request = isCurrentUserPortfolioSelected
+        ? fetchTransactionsPortfolio
+        : fetchHistory;
       const response = await dispatch(
-        fetchHistory({
+        request({
           address,
           filters: { blockchainAction: updatedFilters },
           page: 0,
@@ -761,7 +993,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const renderFiltersDropdown = () => {
     return (
       <Row>
-        <Col className="d-flex">
+        <Col className="d-flex mb-2">
           <Dropdown
             disabled={loading}
             isOpen={showTransactionFilterMenu}
@@ -770,8 +1002,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
             <DropdownToggle
               disabled={isInitialLoad}
               tag="a"
-              className={`btn btn-sm p-1 d-flex align-items-center
-              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-1 border'}
+              className={`btn btn-sm p-1 d-flex align-items-center 
+              ${!isInitialLoad ? ' btn-soft-primary' : 'btn-muted mb-2 border'}
               ${showTransactionFilterMenu ? 'active' : ''} `}
               role="button"
             >
@@ -881,7 +1113,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                 ) : unsupportedAddress ? (
                   'Unsupported Address'
                 ) : (
-                  'More Transactions'
+                  'Show More'
                 )}
               </h6>
             )}
@@ -959,10 +1191,15 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     );
   };
 
-
   const renderMessageNoResults = () => {
-    const hasFilters = selectedFilters.length > 0 || selectedAssets !== 'All Assets' || includeSpam || searchTerm;
-    const finalMessage = hasFilters ? 'No transactions found with the selected filters' : 'No transactions found';
+    const hasFilters =
+      selectedFilters.length > 0 ||
+      selectedAssets !== 'All Assets' ||
+      includeSpam ||
+      searchTerm;
+    const finalMessage = hasFilters
+      ? 'No transactions found with the selected filters'
+      : 'No transactions found';
 
     return (
       <Col
@@ -995,13 +1232,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const renderInfoTransactions = () => {
     return (
       <Row className="col-12 ">
-        <div className="d-flex justify-content-between w-100">
+        <div className="d-flex justify-content-start w-100">
           <div>Total transactions: {totalTransactions}</div>
-          <div>
+          <div className="ms-3">
             {hasPreview && (
               <div className="d-flex align-items-center">
                 <Spinner size="sm" />
-                <span className="ms-2">Loading transactions...</span>
               </div>
             )}
           </div>
@@ -1067,7 +1303,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
             </div>
           )}
         </div> */}
-        <div className="d-flex pt-4  justify-content-center align-items-center">
+        <div className="d-flex pt-3  justify-content-center align-items-center">
           <TransactionSkeleton />
         </div>
       </>
@@ -1080,7 +1316,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         <Col
           lg={12}
           className="position-relative d-flex justify-content-center align-items-center"
-        // style={{ minHeight: '50vh' }}
+          style={{ minHeight: '50vh' }}
         >
           <h1>No data found</h1>
         </Col>
@@ -1133,7 +1369,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         </Col>
         <Row className="">
           <div className="d-flex mb-0 py-3 justify-content-between align-items-center">
-            <div className="d-flex justify-content-start">
+            <div className="d-flex justify-content-start  ">
               <Input
                 disabled={isInitialLoad}
                 id="customCheck1"
@@ -1146,23 +1382,33 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                 Include Spam Transactions
               </label>
             </div>
-            {currentUser && (
-              <Button
-                className="d-flex btn-hover-light  justify-content-center align-items-center "
-                color="soft-light"
-                style={{
-                  borderRadius: '10px',
-                  border: '.5px solid grey',
-                }}
-                onClick={handleDownloadTransactions}
-                size="sm"
-                disabled={isInitialLoad}
-              >
-                {' '}
-                <i className="ri-file-download-line fs-5 me-2 text-dark"></i>
-                <span className="text-dark"> Download CSV</span>
-              </Button>
-            )}
+            <Button
+              className="d-flex justify-content-center align-items-center "
+              color="primary"
+              style={{
+                borderRadius: '10px',
+                border: '.5px solid grey',
+                height: 35,
+              }}
+              onClick={handleDownloadTransactionsNew}
+              size="sm"
+              disabled={isInitialLoad || loadingDownload}
+            >
+              {' '}
+              {loadingDownload ? (
+                <>
+                  {/* // SHOW spinner and Building CSV... */}
+                  <Spinner size="sm" />
+
+                  <span className="ms-2">Building CSV...</span>
+                </>
+              ) : (
+                <>
+                  <i className="ri-file-download-line fs-5 me-2"></i>
+                  <span>Download CSV</span>
+                </>
+              )}
+            </Button>
           </div>
         </Row>
       </div>

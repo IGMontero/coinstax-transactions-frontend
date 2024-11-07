@@ -1,35 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import Select, { components } from 'react-select';
+import { components } from 'react-select';
 import ReactDOM from 'react-dom';
-import { copyToClipboard, formatIdTransaction } from '../../../utils/utils';
+import { formatIdTransaction } from '../../../utils/utils';
 import {
   setUserSavedAddresses,
-  renameAddressInCookies,
   removeAddressFromCookies,
 } from '../../../helpers/cookies_helper';
-import {
-  Col,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Row,
-} from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  removeAddressName,
-  setAddressName,
-} from '../../../slices/addressName/reducer';
+import { removeAddressName } from '../../../slices/addressName/reducer';
 import { useParams } from 'react-router-dom';
 
 const CustomOptions = (props) => {
   const dispatch = useDispatch();
   const { address } = useParams();
   const addresses = useSelector((state) => state.addressName.addresses);
+  const addressesCookies = useSelector((state) => state.addressName.addresses);
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isCopied, setIsCopied] = useState(null);
+  const { userPortfolioSummary } = useSelector((state) => state.userWallets);
+
   const [displayLabel, setDisplayLabel] = useState('');
   // Window size states
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1221);
@@ -58,18 +48,23 @@ const CustomOptions = (props) => {
     };
   }, []);
 
+  const addressWithNames = userPortfolioSummary.addresses?.find(
+    (addr) => addr.address === props.data.value,
+  );
+  const addressName = addressWithNames?.name;
+
   useEffect(() => {
-    const { label, value } = props.data;
-    let formattedLabel = label || value;
+    const { value } = props.data;
+    let formattedLabel = addressName || value;
 
     if (isVerySmallScreen) {
-      formattedLabel = label || formatIdTransaction(value, 8, 6);
+      formattedLabel = addressName || formatIdTransaction(value, 8, 6);
     } else if (isMediumScreen) {
-      formattedLabel = label || formatIdTransaction(value, 8, 12);
+      formattedLabel = addressName || formatIdTransaction(value, 8, 12);
     } else if (isSmallScreen) {
-      formattedLabel = label || formatIdTransaction(value, 8, 15);
+      formattedLabel = addressName || formatIdTransaction(value, 8, 15);
     } else {
-      formattedLabel = label || formatIdTransaction(value, 15, 25);
+      formattedLabel = addressName || formatIdTransaction(value, 12, 20);
     }
 
     setDisplayLabel(formattedLabel);
@@ -79,157 +74,97 @@ const CustomOptions = (props) => {
     isMediumScreen,
     isMoreSmallScreen,
     isVerySmallScreen,
+    addressName,
   ]);
-
-  const toggleDropdown = (e) => {
-    e.stopPropagation();
-    setIsMenuOpen(!isMenuOpen);
-  };
-
-  const handleOpenModalRename = (e, option) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    console.log('Option:', option);
-
-    const optionLabel = addresses.find(
-      (addr) => addr.value === option.value,
-    )?.label;
-
-    Swal.fire({
-      title: 'Rename Wallet',
-      input: 'text',
-      inputValue: optionLabel,
-      showCancelButton: true,
-      confirmButtonText: 'Save',
-      inputValidator: (value) => {
-        // if (!value) {
-        //   return 'You need to write something!';
-        // }
-        if (
-          addresses.some(
-            (addr) => addr.label === value && addr.value !== option.value,
-          )
-        ) {
-          return 'This name already exists!';
-        }
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const newName = result.value.trim() ? result.value : null;
-        handleRenameAddress(option.value, newName);
-      }
-    });
-  };
-
-  const handleCopy = async (e, text) => {
-    e.stopPropagation();
-    e.preventDefault();
-    try {
-      copyToClipboard(text);
-      setIsCopied(true);
-      setTimeout(() => {
-        setIsCopied(null);
-      }, 2000);
-    } catch (err) {
-      console.error('Failed to copy: ', err);
-    }
-  };
 
   const handleDelete = (e, option) => {
     e.preventDefault();
     e.stopPropagation();
 
-    Swal.fire({
-      title: `Are you sure you want to remove ${option.label}?`,
-      // text: 'You cannot undo this action!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Delete',
-      cancelButtonText: 'Close',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // Remove from cookies
-        const updatedOptions = removeAddressFromCookies(option.value);
-        setUserSavedAddresses(updatedOptions);
-        dispatch(removeAddressName({ value: option.value }));
-
-        Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
-      }
-    });
-  };
-
-  const handleRenameAddress = (valueToFind, newName) => {
-    dispatch(setAddressName({ value: valueToFind, label: newName }));
-    const updatedAddresses = renameAddressInCookies(valueToFind, newName);
-    setUserSavedAddresses(updatedAddresses);
-    setDisplayLabel(newName);
-    // Swal.fire('Updated!', 'Your address has been renamed.', 'success');
-  };
-
-  const DropdownMenuPortal = ({ children }) => {
-    return ReactDOM.createPortal(
-      children,
-      document.getElementById('portal-root'),
+    // Find the address to delete from cookies
+    const addressToDeleteFromCookies = addressesCookies.find(
+      (addr) => addr.value === option.value,
     );
+
+    if (addressToDeleteFromCookies) {
+      // Remove address from Redux state
+      dispatch(removeAddressName(addressToDeleteFromCookies));
+
+      // Remove address from cookies
+      const updatedOptions = removeAddressFromCookies(
+        addressToDeleteFromCookies.value,
+      );
+      setUserSavedAddresses(updatedOptions);
+      // Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
+    }
+
+    // Swal.fire({
+    //   title: `Are you sure you want to remove ${option.label}?`,
+    //   icon: 'warning',
+    //   showCancelButton: true,
+    //   confirmButtonText: 'Delete',
+    //   cancelButtonText: 'Close',
+    // }).then(async (result) => {
+    //   if (result.isConfirmed) {
+    //     try {
+    //       // Find the address to delete from cookies
+    //       const addressToDeleteFromCookies = addressesCookies.find(
+    //         (addr) => addr.value === option.value,
+    //       );
+
+    //       if (addressToDeleteFromCookies) {
+    //         // Remove address from Redux state
+    //         dispatch(removeAddressName(addressToDeleteFromCookies));
+
+    //         // Remove address from cookies
+    //         const updatedOptions = removeAddressFromCookies(
+    //           addressToDeleteFromCookies.value,
+    //         );
+    //         setUserSavedAddresses(updatedOptions);
+    //         Swal.fire('Deleted!', 'Your address has been deleted.', 'success');
+    //       } else {
+    //         Swal.fire('Error!', 'Address not found in cookies.', 'error');
+    //       }
+    //     } catch (err) {
+    //       console.error('Failed to delete address:', err);
+    //       Swal.fire('Error!', 'Failed to delete address.', 'error');
+    //     }
+    //   }
+    // });
+  };
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
   };
 
-  const renderDropdownMenu = () => {
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
+  const renderDeleteAddress = () => {
     return (
-      <Dropdown isOpen={isMenuOpen} toggle={toggleDropdown}>
-        <DropdownToggle
-          style={{ zIndex: 10000 }}
-          tag="span"
-          className="dropdown-toggle"
-        ></DropdownToggle>
-        <DropdownMenuPortal>
-          <DropdownMenu
-            style={{
-              zIndex: 10000,
-            }}
-          >
-            <DropdownItem
-              onClick={(e) => handleCopy(e, props.data.value)}
-              className="d-flex align-items-center"
-            >
-              {isCopied ? (
-                <i className="ri-check-line me-2 "></i>
-              ) : (
-                <i className="ri-file-copy-line me-2"></i>
-              )}
-              Copy Address
-            </DropdownItem>
-
-            <DropdownItem
-              onClick={(e) =>
-                handleOpenModalRename(e, {
-                  label: displayLabel,
-                  value: props.data.value,
-                })
-              }
-            >
-              <i className="ri-edit-line me-2"></i> Rename
-            </DropdownItem>
-
-            <DropdownItem
-              onClick={(e) =>
-                handleDelete(e, {
-                  label: displayLabel,
-                  value: props.data.value,
-                })
-              }
-            >
-              <i className="ri-delete-bin-line me-2"></i>
-              Delete
-            </DropdownItem>
-          </DropdownMenu>
-        </DropdownMenuPortal>
-      </Dropdown>
+      <Button
+        onClick={(e) =>
+          handleDelete(e, {
+            label: displayLabel,
+            value: props.data.value,
+          })
+        }
+        style={{
+          height: 12,
+          width: 12,
+        }}
+        color="transparent"
+        className="p-0 m-0"
+      >
+        <i className="ri-close-fill text-dark me-2 text-light"></i>
+      </Button>
     );
   };
 
   return (
-    <>
+    <div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
       <components.Option {...props}>
         <div>
           <Row className="d-flex justify-content-between align-items-center">
@@ -257,18 +192,14 @@ const CustomOptions = (props) => {
                 )}
                 <div className="d-flex flex-column">
                   <div className="d-flex align-items-center">
-                    {!props.data.label ? (
-                      displayLabel
-                    ) : (
-                      <span className="text-custom-menu-suggestions">
-                        {displayLabel}
-                      </span>
-                    )}
+                    <span className="text-custom-menu-suggestions">
+                      {displayLabel}
+                    </span>
                     {address === props.data.value && (
                       <i className="ri-checkbox-blank-circle-fill fs-10 text-success ms-2"></i>
                     )}{' '}
                   </div>
-                  {props.data.label && (
+                  {addressName && (
                     <span className="text-muted">
                       {formatIdTransaction(props.data.value, 6, 8)}
                     </span>
@@ -276,15 +207,16 @@ const CustomOptions = (props) => {
                 </div>
               </div>
             </Col>
-            <Col className="col-2 d-flex justify-content-end align-items-center">
-              {addresses.some((addr) => addr.value === props.data.value) && (
-                <>{renderDropdownMenu()}</>
-              )}
+            <Col className="col-2 d-flex justify-content-center pb-2 align-items-center">
+              {isHovered &&
+                addresses.some((addr) => addr.value === props.data.value) && (
+                  <>{renderDeleteAddress()}</>
+                )}
             </Col>
           </Row>
         </div>
       </components.Option>
-    </>
+    </div>
   );
 };
 

@@ -1,146 +1,243 @@
-import React from "react";
-import { TabPane, Row, Col, Label, Button } from "reactstrap";
-import { useDispatch } from "react-redux";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import React from 'react';
+import { TabPane, Row, Col, Label, Button } from 'reactstrap';
+import { useDispatch } from 'react-redux';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import { changePassword, forgotPassword } from '../../../../slices/auth2/thunk';
+import Swal from 'sweetalert2';
+import { useSelector } from 'react-redux';
+import { capitalizeFirstLetter } from '../../../../utils/utils';
+import { layoutModeTypes } from '../../../../Components/constants/layout';
 
-const ChangePassword = ({ currentUser }) => {
+const ChangePassword = () => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
+  const hasPassword = user?.hasPassword;
+
+  const authProvider = user?.authProvider;
+  const isEmailAuth = authProvider === 'email';
+  const isGoogleAuth = authProvider === 'google';
+
+  const [resetPwEmailSent, setResetPwEmailSent] = React.useState(false);
+
+  const { layoutModeType } = useSelector((state) => ({
+    layoutModeType: state.Layout.layoutModeType,
+  }));
+  const isDarkMode = layoutModeType === layoutModeTypes['DARKMODE'];
 
   const initialValues = {
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
   };
 
   const validationSchema = Yup.object({
-    currentPassword: Yup.string().required("Current Password is required"),
-    newPassword: Yup.string().required("New Password is required"),
+    currentPassword: Yup.string().required('Current Password is required'),
+    newPassword: Yup.string().required('New Password is required'),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
-      .required("Confirm Password is required"),
+      .oneOf([Yup.ref('newPassword'), null], 'Passwords must match')
+      .required('Confirm Password is required'),
   });
 
-  const onSubmit = async (values, { setSubmitting, resetForm }) => {
-    // try {
-    //   const success = await dispatch(
-    //     changePassword(values.newPassword, values.currentPassword)
-    //   );
-    //   if (success) {
-    //     Swal.fire({
-    //       title: "Success!",
-    //       text: "Password changed successfully",
-    //       icon: "success",
-    //       confirmButtonText: "Ok",
-    //     });
-    //     resetForm();
-    //   } else {
-    //     Swal.fire({
-    //       title: "Error!",
-    //       text: "Failed to change password. Please try again",
-    //       icon: "error",
-    //       confirmButtonText: "Ok",
-    //     });
-    //   }
-    // } catch (error) {
-    //   console.error(error);
-    //   Swal.fire({
-    //     title: "Error!",
-    //     text: "An error occurred",
-    //     icon: "error",
-    //     confirmButtonText: "Ok",
-    //   });
-    // } finally {
-    //   setSubmitting(false);
-    // }
+  const handleChangePassword = async (values, { setSubmitting, resetForm }) => {
+    try {
+      const { currentPassword, newPassword } = values;
+      const resultAction = await dispatch(
+        changePassword({ oldPassword: currentPassword, newPassword }),
+      );
+
+      if (changePassword.fulfilled.match(resultAction)) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Password Changed',
+          text: 'Your password has been successfully changed.',
+        });
+        resetForm();
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text:
+            resultAction.payload ||
+            'An error occurred while changing password.',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An error occurred while changing password.',
+      });
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleSetUpPassword = async () => {
+    try {
+      Swal.fire({
+        title: 'Please wait...',
+        text: 'Sending reset link...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      const response = await dispatch(forgotPassword(user.email));
+      const res = response.payload;
+
+      Swal.close();
+
+      if (res.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: res.message,
+          showConfirmButton: false,
+          timer: 1500,
+        });
+      } else {
+        setResetPwEmailSent(true);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Success',
+          text: 'An email was sent to you with details on how to set up your password.',
+          showConfirmButton: false,
+          timer: 2500,
+        });
+      }
+    } catch (error) {
+      Swal.close();
+      console.log('error', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong',
+        showConfirmButton: false,
+        timer: 1500,
+      });
+    }
   };
 
   return (
     <TabPane tabId="3">
-      <div className="mb-4">
-        <div className="">
-          <div className="mb-2">
-            <div className="d-flex justify-content-between align-items-center mb-n2">
-              <h3 className="text-muted">Change Password</h3>
-            </div>
-            <hr />
-          </div>
+      <h3 className="text-muted mb-3">Change Password</h3>
+      {/* {!isEmailAuth ? (
+        <Col lg={12} className="my-4">
+          <p>Your account is connected with {
+            capitalizeFirstLetter(authProvider)
+          }. You cannot change your password.</p>
+        </Col> */}
+      {!hasPassword ? (
+        <>
+          {resetPwEmailSent ? (
+            <>
+              <p className="mt-4">
+                An email was sent to you with details on how to set up your
+                password.
+              </p>
 
-          <Formik
-            initialValues={initialValues}
-            validationSchema={validationSchema}
-            onSubmit={onSubmit}
-          >
-            {({ isSubmitting, dirty, isValid }) => (
-              <Form>
-                <Row className="col-12 mb-4 mt-4">
-                  <div className="col-6">
-                    <Label htmlFor="currentPassword" className="form-label">
-                      Current Password
-                    </Label>
-                    <Field
-                      name="currentPassword"
-                      type="password"
-                      className="form-control"
-                    />
-                    <ErrorMessage
-                      name="currentPassword"
-                      component="div"
-                      className="text-danger"
-                    />
+              <Button
+                onClick={handleSetUpPassword}
+                color={isDarkMode ? "primary" : "soft-primary"}
+              >
+                Resend Email
+              </Button>
+            </>
+          ) : (
+            <>
+              <p className="mt-4">Your account does not have a password.</p>
+              <Button
+                onClick={handleSetUpPassword}
+                color={isDarkMode ? "primary" : "soft-primary"}
+              >
+                Set up a new password
+              </Button>
+            </>
+          )}
+
+        </>
+      ) : (
+        <div className="mb-4">
+          <div className="">
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={handleChangePassword}
+            >
+              {({ isSubmitting, dirty, isValid }) => (
+                <Form>
+                  <Row>
+                    <div className="col-xl-6 col-12">
+                      <div className="mb-4">
+                        <Label htmlFor="currentPassword" className="form-label">
+                          Enter your current password
+                        </Label>
+                        <Field
+                          name="currentPassword"
+                          type="password"
+                          className="form-control"
+                        />
+                        <ErrorMessage
+                          name="currentPassword"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <Label htmlFor="newPassword" className="form-label">
+                          New password
+                        </Label>
+                        <Field
+                          name="newPassword"
+                          type="password"
+                          className="form-control"
+                        />
+                        <ErrorMessage
+                          name="newPassword"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
+                      <div className="mb-4">
+                        <Label htmlFor="confirmPassword" className="form-label">
+                          Confirm new password
+                        </Label>
+                        <Field
+                          name="confirmPassword"
+                          type="password"
+                          className="form-control"
+                        />
+                        <ErrorMessage
+                          name="confirmPassword"
+                          component="div"
+                          className="text-danger"
+                        />
+                      </div>
+                    </div>
+                  </Row>
+                  <div className="d-flex justify-content-start mb-0 ">
+                    <Button
+                      type="submit"
+                      color={isDarkMode || !dirty || !isValid? "primary" : "soft-primary"}
+                      disabled={isSubmitting || !dirty || !isValid}
+                      className={`mb-0 ${isSubmitting || !dirty || !isValid
+                        ? 'border border-0 cursor-not-allowed'
+                        : ''
+                        }`}
+                    >
+                      {isSubmitting ? 'Changing ...' : 'Change Password'}
+                    </Button>
                   </div>
-                  <div className="col-6">
-                    <Label htmlFor="newPassword" className="form-label">
-                      New Password
-                    </Label>
-                    <Field
-                      name="newPassword"
-                      type="password"
-                      className="form-control"
-                    />
-                    <ErrorMessage
-                      name="newPassword"
-                      component="div"
-                      className="text-danger"
-                    />
-                  </div>
-                </Row>
-                <Row className="col-12 mb-4">
-                  <div className="col-6">
-                    <Label htmlFor="confirmPassword" className="form-label">
-                      Confirm New Password
-                    </Label>
-                    <Field
-                      name="confirmPassword"
-                      type="password"
-                      className="form-control"
-                    />
-                    <ErrorMessage
-                      name="confirmPassword"
-                      component="div"
-                      className="text-danger"
-                    />
-                  </div>
-                </Row>
-                <div className="d-flex justify-content-start mb-0 ">
-                  <Button
-                    type="submit"
-                    color="soft-primary"
-                    disabled={isSubmitting || !dirty || !isValid}
-                    className={`btn btn-soft-primary mb-0 ${
-                      isSubmitting || !dirty || !isValid
-                        ? "bg bg-soft-primary border border-0 text-primary cursor-not-allowed"
-                        : ""
-                    }`}
-                  >
-                    {isSubmitting ? "Changing ..." : "Change Password"}
-                  </Button>
-                </div>
-              </Form>
-            )}
-          </Formik>
+                </Form>
+              )}
+            </Formik>
+          </div>
         </div>
-      </div>
+      )}
     </TabPane>
   );
 };

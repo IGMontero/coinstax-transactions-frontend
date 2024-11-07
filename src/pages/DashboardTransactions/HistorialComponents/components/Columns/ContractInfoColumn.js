@@ -11,6 +11,7 @@ import { editBlockChainContract } from '../../../../../slices/blockchainContract
 
 import { useDispatch, useSelector } from 'react-redux';
 import { handleActionResult } from '../../../../../utils/useHandleAction';
+import { DASHBOARD_USER_ROLES } from '../../../../../common/constants';
 
 const ContractInfoColumn = ({ transaction, setTransactions }) => {
   const dispatch = useDispatch();
@@ -18,6 +19,8 @@ const ContractInfoColumn = ({ transaction, setTransactions }) => {
   const [transactionToEdit, setTransactionToEdit] = useState(null);
 
   const { user } = useSelector((state) => state.auth);
+
+  const isAdmin = DASHBOARD_USER_ROLES.ADMIN === user?.role;
 
   const errorMessageEdit = useSelector(
     (state) => state.blockchainContracts.error,
@@ -233,7 +236,7 @@ const ContractInfoColumn = ({ transaction, setTransactions }) => {
               <PopoverBody className="p-1">Copied</PopoverBody>
             </Popover>
           </h6>
-          {user && (
+          {isAdmin && (
             <i
               onClick={(e) =>
                 handleOpenModalEdit(transaction, e.stopPropagation())

@@ -1,53 +1,37 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-const API_BASE = process.env.REACT_APP_API_URL_BASE;
+import apiClient from '../../core/apiClient';
+import axios from 'axios';
 
 export const getAddressesSuggestions = createAsyncThunk(
   'addresses/getAddressesSuggestions',
   async ({ blockchain, query }, { rejectWithValue }) => {
     try {
-      let url = `${API_BASE}/addresses/${blockchain}/search?query=${query}`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      return data;
+      const url = `/addresses/${blockchain}/search?query=${query}`;
+      const response = await apiClient.get(url);
+      return response.data;
     } catch (error) {
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
-  },
+  }
 );
 
 export const getAddressesInfo = createAsyncThunk(
   'addresses/getAddressesInfo',
   async ({ address, signal }, { rejectWithValue }) => {
     try {
-      let url = `${API_BASE}/addresses/${address}/summary`;
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        signal: signal,
+      const url = `/addresses/${address}/summary`;
+      const response = await apiClient.get(url, {
+        signal,
       });
-      if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
-      }
-      const data = await response.json();
-      return data;
+      return response.data;
     } catch (error) {
-      if (error.name === 'AbortError') {
+      if (axios.isCancel(error)) {
         return rejectWithValue({
           name: 'AbortError',
           message: 'Request was aborted',
         });
       }
-      return rejectWithValue(error.message);
+      return rejectWithValue(error.response?.data?.message || error.message);
     }
-  },
+  }
 );

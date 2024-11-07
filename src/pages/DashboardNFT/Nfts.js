@@ -16,10 +16,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchNFTS } from '../../slices/transactions/thunk';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
-import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
+import {
+  CurrencyUSD,
+  formatAddressToShortVersion,
+  parseValuesToLocale,
+} from '../../utils/utils';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import NftsCards from './components/NftsCards';
 import NftsSkeleton from '../../Components/Skeletons/NftsSkeleton';
+import Helmet from '../../Components/Helmet/Helmet';
+import { fetchNFTSPortfolio } from '../../slices/portfolio/thunk';
 
 const ethIcon = (
   <svg
@@ -43,7 +49,15 @@ const ethIcon = (
 
 const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
   const dispatch = useDispatch();
-  const { address } = useParams();
+  const { address, userId } = useParams();
+  const { user } = useSelector((state) => state.auth);
+
+  const currentPortfolioUserId = userId ? userId : user?.id;
+
+  const location = useLocation();
+
+  const isCurrentUserPortfolioSelected =
+    location.pathname.includes('portfolio');
 
   const networkType = useSelector(selectNetworkType);
   const fetchControllerRef = useRef(new AbortController());
@@ -76,6 +90,8 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
   const [showFiatValues, setShowFiatValues] = useState(true);
   const [updatedAt, setUpdatedAt] = useState();
 
+  const formattedAddress = address ? formatAddressToShortVersion(address) : '';
+
   const handleChangeSymbol = () => {
     setShowFiatValues((prev) => !prev);
   };
@@ -102,18 +118,30 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
       }));
     }
 
-    return dispatch(
-      fetchNFTS({
-        address: address,
-        spam: includeSpam,
-        page: page,
-        networkType,
-        signal,
-        refresh: refresh,
-      }),
-    )
-      .unwrap()
-      .then((response = {}) => {
+    const request = isCurrentUserPortfolioSelected
+      ? dispatch(
+          fetchNFTSPortfolio({
+            userId: currentPortfolioUserId,
+            blockchain: networkType,
+            page: page,
+            signal,
+          }),
+        )
+      : dispatch(
+          fetchNFTS({
+            address: address,
+            spam: includeSpam,
+            page: page,
+            networkType,
+            signal,
+            refresh: refresh,
+          }),
+        ).unwrap();
+
+    return request
+
+      .then((res = {}) => {
+        const response = isCurrentUserPortfolioSelected ? res.payload : res;
         setData((prevData) => ({
           ...response,
           items: [...(prevData.items || []), ...(response.items || [])],
@@ -369,10 +397,9 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
     );
   }
 
-  document.title = 'NFTs | Chain Glance';
-
   return (
     <React.Fragment>
+      {!isDashboardPage && <Helmet title={`NFTs`} />}
       {renderTitle()}
       {loading && !loadingIncludeSpam && currentPage === 0 ? (
         <NftsSkeleton isDashboardPage={isDashboardPage} />
@@ -381,9 +408,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
           {totalItems > 0 && !isDashboardPage ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
-                <h6>
-                  As of Date: {moment(updatedAt).format('MM/DD/YYYY')}
-                </h6>
+                <h6>As of Date: {moment(updatedAt).format('MM/DD/YYYY')}</h6>
                 <span className="text-dark">Total value by floor price</span>
                 <div className="d-flex align-items-center">
                   <h1>{totalFiatValue}</h1>

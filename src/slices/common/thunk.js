@@ -1,20 +1,39 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-const API_BASE = process.env.REACT_APP_API_URL_BASE;
+import { saveCountryInCookies } from "../../helpers/cookies_helper";
+import apiClient from "../../core/apiClient";
 
 export const fetchApiVersion = createAsyncThunk(
     "common/version",
-    async (address, { rejectWithValue }) => {
+    async (_, { rejectWithValue }) => {
         try {
-            const response = await fetch(
-                `${API_BASE}/common/version`
-            );
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
+            const response = await apiClient.get("/common/version");
+
+            // Check for CF-IPCountry header and save in cookies if present
+            const ipCountry = response.headers["cf-ipcountry"];
+            if (ipCountry) {
+                saveCountryInCookies(ipCountry);
             }
-            const data = await response.json();
-            return data;
+
+            return { ...response.data, headers: response.headers };
         } catch (error) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response?.data?.message || error.message);
+        }
+    }
+);
+
+export const fetchUserCountry = createAsyncThunk(
+    "common/userCountry",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await apiClient.get("/common/country");
+
+            if (response.data.country) {
+                saveCountryInCookies(response.data.country);
+            }
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );
