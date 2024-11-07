@@ -90,7 +90,7 @@ const DashboardCompleteInfo = () => {
       const res = await dispatch(
         updateUserInfo({
           country: values.country,
-          currency: values.currency,
+          // currency: values.currency,
           timezone: values.timezone,
         }),
       );
@@ -132,8 +132,8 @@ const DashboardCompleteInfo = () => {
       let countryCode = userCountry;
 
       if (countryCode === 'XX' || !countryCode) {
-        countryCode='US';
-      } 
+        countryCode = 'US';
+      }
       const country = fixedData?.countries.find(
         (item) => item.code == countryCode,
       );
@@ -143,15 +143,15 @@ const DashboardCompleteInfo = () => {
         const countryCurrency = country.currency;
 
         // Find currency in fixed data
-        const currency = fixedData?.currencies.find(
-          (item) => item.symbol === countryCurrency,
-        );
+        // const currency = fixedData?.currencies.find(
+        //   (item) => item.symbol === countryCurrency,
+        // );
 
-        if (currency) {
-          validation.setFieldValue('currency', currency.id);
-        } else {
-          validation.setFieldValue('currency', 'USD');
-        }
+        // if (currency) {
+        //   validation.setFieldValue('currency', currency.id);
+        // } else {
+        //   validation.setFieldValue('currency', 'USD');
+        // }
       }
 
       const timezone = fixedData?.timezones.find(
@@ -209,7 +209,7 @@ const DashboardCompleteInfo = () => {
               <Col md={9} lg={7} xl={7}>
                 <Card className="mt-4">
                   <CardBody className="p-4">
-                  <div className="text-center my-3">
+                    <div className="text-center my-3">
                       <h3 className={isDarkMode ? "text-white" : "text-primary"}>Complete your Chain Glance account</h3>
                     </div>
                     <div className="p-2 mt-4">
@@ -266,7 +266,7 @@ const DashboardCompleteInfo = () => {
                           </select>
                         </div>
 
-                        <div className="mb-2">
+                        {/* <div className="mb-2">
                           <Label htmlFor="currency" className="form-label">
                             Currency <span className="text-danger">*</span>
                           </Label>
@@ -287,7 +287,7 @@ const DashboardCompleteInfo = () => {
                               </option>
                             ))}
                           </select>
-                        </div>
+                        </div> */}
 
                         {error && error ? (
                           <Alert color="danger">
