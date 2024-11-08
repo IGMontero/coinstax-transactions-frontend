@@ -405,7 +405,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     }
     return transactions.reduce((acc, transaction) => {
       const date = formatTimeForClient(transaction.date, timezone,
-        'MMMM DD, YYYY');
+        'date');
       if (!acc[date]) {
         acc[date] = [];
       }
