@@ -17,7 +17,7 @@ const BlockChainActionColumn = ({ transaction }) => {
   const timezone = useGetTimezone();
 
   const formatTime = (dateString) => {
-    return formatTimeForClient(dateString, timezone, 'hh:mm A');
+    return formatTimeForClient(dateString, timezone, 'time');
 
   };
 

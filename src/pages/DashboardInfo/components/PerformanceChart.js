@@ -23,6 +23,7 @@ import {
 } from '../../../utils/utils';
 import { getBalancesPortfolio } from '../../../slices/portfolio/thunk';
 import { useGetTimezone } from '../../../hooks/useUtils';
+import { formatTimeForClient } from '../../../utils/date.utils';
 
 const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const dispatch = useDispatch();
@@ -89,10 +90,14 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
       xAxes: [
         {
           type: 'time',
+          legend: {
+            display: false,
+          },
           time: {
             parser: 'YYYY-MM-DD',
             tooltipFormat: 'll',
             unit: 'day',
+            timezone: timezone,
             displayFormats: {
               day: 'MMM DD',
             },
@@ -134,8 +139,9 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
 
             setSubtitle(percentageChangeFormatted);
 
-            const date = moment(data.labels[index]).format('YYYY-MM-DD');
-            setActiveDate(formatCalendarDateToLocale(date));
+            const date =
+              formatTimeForClient(data.labels[index], timezone, 'calendar');
+            setActiveDate(date);
           }
           return '';
         },
@@ -148,16 +154,11 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
           const dataLabel = data.labels[tooltipItems[0].index];
 
           const date = moment(dataLabel).format('YYYY-MM-DD');
+          const dateObj = moment(date).toDate();
 
-          return formatCalendarDateToLocale(date, false);
+          return formatTimeForClient(dateObj, timezone, 'date');
         },
-        // label: function (tooltipItem, data) {
-        //   // Your label callback logic
-        //   const value = tooltipItem.yLabel;
-        //   const formattedValue = parseValuesToLocale(value, CurrencyUSD);
-        //   const labelHTML = `<div>${formattedValue}</div>`; // HTML markup for the tooltip label
-        //   return labelHTML;
-        // },
+
       },
     },
     hover: {
@@ -189,6 +190,14 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
       },
     },
 
+    options: {
+      plugins: {
+        legend: {
+          display: false,
+        }
+      }
+
+    }
     // layout: {
     //   padding: {
     //     left: -10,
