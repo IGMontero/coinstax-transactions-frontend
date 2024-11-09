@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import apiClient from '../../core/apiClient';
+import { toast } from 'react-toastify';
 
 // Initial state
 export const initialState = {
@@ -27,6 +28,21 @@ const jobsSlice = createSlice({
     reducers: {
         // Optionally, add reducers if needed for local state management
         addJobToList: (state, action) => {
+            // Before adding it to the list, check if it already exists
+            const jobExists = state.jobsList.some(
+                (job) => job.id === action.payload.id,
+            );
+
+            if (jobExists) {
+                // Show a toast
+                toast.info('Job already exists in the list', {
+                    autoClose: 2000,
+                    closeOnClick: true,
+                    position: 'bottom-right',
+                });
+                return;
+            }
+
             state.jobsList.push(action.payload);
         },
 

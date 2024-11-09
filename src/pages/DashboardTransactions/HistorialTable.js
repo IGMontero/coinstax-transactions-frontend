@@ -39,6 +39,7 @@ import {
 import { addJobToList } from '../../slices/jobs/reducer';
 import { useGetTimezone } from '../../hooks/useUtils';
 import { formatTimeForClient } from '../../utils/date.utils';
+import { toast } from 'react-toastify';
 
 const internalPaginationPageSize = 10;
 
@@ -96,6 +97,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const loading = Object.values(loadingTransacions).some((loading) => loading);
 
   const abortControllersByBlockchain = useRef({});
+
+  const { jobsList } = useSelector((state) => state.jobs);
 
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
@@ -772,6 +775,20 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           return;
         }
 
+
+        // CHeck existing jobs and show a toast if the job already exists.
+        const existingJob = jobsList.find((j) => j.id === job.id);
+
+        if (existingJob) {
+          toast.warn('Export is already in progress.', {
+            autoClose: 2000,
+            closeOnClick: true,
+            position: 'bottom-right',
+          });
+          setLoadingDownload(false);
+          return;
+        }
+
         // Add job to jobs list and start polling
         dispatch(addJobToList(job));
 
@@ -796,9 +813,14 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         title: 'Oops...',
         text: 'Something went wrong. Please try again later.',
       });
-      setLoadingDownload(false);
+
+
     } finally {
-      setLoadingDownload(false);
+      // Set loading to false after 1.5 seconds
+      setTimeout(() => {
+        setLoadingDownload(false);
+      }, 1500);
+
     }
   };
 
@@ -1394,7 +1416,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
               size="sm"
               disabled={isInitialLoad || loadingDownload}
             >
-              {' '}
               {loadingDownload ? (
                 <>
                   {/* // SHOW spinner and Building CSV... */}
