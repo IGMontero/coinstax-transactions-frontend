@@ -11,8 +11,9 @@ import {
   Input,
   Label,
   Row,
-  Spinner,
+  Spinner
 } from 'reactstrap';
+import config from '../../config';
 
 // Formik Validation
 import { useFormik } from 'formik';
@@ -70,6 +71,8 @@ const Register = () => {
       country: '',
       role: 'user',
       timezone: '',
+      terms: false,
+      marketing: false
     },
     validationSchema: Yup.object({
       email: Yup.string().required('Please enter your email'),
@@ -82,6 +85,7 @@ const Register = () => {
           'Password and confirm password do not match',
         ),
       }),
+      terms: Yup.boolean().oneOf([true], 'Please agree to the terms and conditions'),
     }),
     onSubmit: (values) => {
       handleSubmit(values);
@@ -89,7 +93,7 @@ const Register = () => {
   });
 
   const isSubmitDisabled = () => {
-    const { email, password, confirm_password } = validation.values;
+    const { email, password, confirm_password, terms } = validation.values;
     return (
       !email ||
       !password ||
@@ -406,8 +410,37 @@ const Register = () => {
                           ) : null}
                         </div>
 
+                        <div className="form-check mt-4">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            name="marketing"
+                            id="marketingCheck"
+                            onChange={validation.handleChange}
+                          />
+                          <Label className-="form-check-label" htmlFor="marketingCheck">
+                            Keep me up to date about this website
+                          </Label>
+                        </div>
+
+                        <div className="form-check mt-3 mb-4">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            name="terms"
+                            id="termsCheck"
+                            onChange={validation.handleChange}
+                          />
+                          <Label className-="form-check-label" htmlFor="termsCheck">
+                            I agree to the <a href={`//${config.client.ROOT_DOMAIN}/terms`} rel="noreferrer noopener" target="_blank" class="text-link">Terms and Conditions</a> and <a href={`//${config.client.ROOT_DOMAIN}/privacy`} rel="noreferrer noopener" target="_blank" class="text-link">Privacy Policy</a>
+                          </Label>
+                          {validation.errors.terms && validation.touched.terms ? (
+                            <div className="text-danger">{validation.errors.terms}</div>
+                          ) : null}
+                        </div>
+
                         {error && error ? (
-                          <Alert class="alert alert-danger mt-3">
+                          <Alert className="alert alert-danger mt-3">
                             <div>{error}</div>
                           </Alert>
                         ) : null}

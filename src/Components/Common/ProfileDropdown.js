@@ -26,7 +26,7 @@ const ProfileDropdown = ({
     try {
       logout();
 
-      navigate('/wallets');
+      navigate('/');
     } catch (error) {
       console.log(error);
     }

@@ -48,12 +48,11 @@ const Index = () => {
     authenticate();
   }, []);
 
-  useEffect(() => {
-    if (user && (isLoginPage || isRegisterPage || isDashboardPage)) {
-      navigate('/wallets');
-    }
-  }, [user, isLoginPage, navigate, isRegisterPage, isDashboardPage]);
-
+  // useEffect(() => {
+  //   if (user && (isLoginPage || isRegisterPage || isDashboardPage)) {
+  //     navigate('/wallets');
+  //   }
+  // }, [user, isLoginPage, navigate, isRegisterPage, isDashboardPage]);
 
   useEffect(() => {
     if (user && !isProfileComplete) {

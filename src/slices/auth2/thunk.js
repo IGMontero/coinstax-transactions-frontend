@@ -46,7 +46,7 @@ export const logout = createAsyncThunk(
 
 export const register = createAsyncThunk(
   'auth2/register',
-  async ({ email, password, role, country, timezone, currency }, { rejectWithValue }) => {
+  async ({ email, password, role, country, timezone, currency, marketing }, { rejectWithValue }) => {
     try {
       const response = await apiClient.post('/auth/register', {
         email,
@@ -55,6 +55,7 @@ export const register = createAsyncThunk(
         country,
         timezone,
         currency,
+        marketing
       });
 
       const { token } = response.data;
