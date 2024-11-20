@@ -8,12 +8,15 @@ export const fetchAssetsPortfolio = createAsyncThunk(
   async ({ userId, blockchain, signal }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await apiClient.get(`/users/${userId}/portfolio/${blockchain}/assets`, {
-        headers: {
-          Authorization: `${token}`,
+      const response = await apiClient.get(
+        `/users/${userId}/portfolio/${blockchain}/assets`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          signal,
         },
-        signal,
-      });
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -27,13 +30,16 @@ export const fetchNFTSPortfolio = createAsyncThunk(
   async ({ userId, blockchain, page, signal }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await apiClient.get(`/users/${userId}/portfolio/${blockchain}/nfts`, {
-        headers: {
-          Authorization: `${token}`,
+      const response = await apiClient.get(
+        `/users/${userId}/portfolio/${blockchain}/nfts`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          params: { page },
+          signal,
         },
-        params: { page },
-        signal,
-      });
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
@@ -73,21 +79,35 @@ export const getBalancesPortfolio = createAsyncThunk(
 // Fetch transactions portfolio
 export const fetchTransactionsPortfolio = createAsyncThunk(
   'portfolio/fetchTransactionsPortfolio',
-  async ({ userId, networkType, query = '', filters = {}, page = 0, assetsFilters, signal }, { rejectWithValue }) => {
+  async (
+    {
+      userId,
+      networkType,
+      query = '',
+      filters = {},
+      page = 0,
+      assetsFilters,
+      signal,
+    },
+    { rejectWithValue },
+  ) => {
     const token = getTokenFromCookies();
     try {
-      const response = await apiClient.get(`/users/${userId}/portfolio/${networkType}/transactions`, {
-        headers: {
-          Authorization: `${token}`,
+      const response = await apiClient.get(
+        `/users/${userId}/portfolio/${networkType}/transactions`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          params: {
+            page,
+            query,
+            ...filters,
+            assetsFilters,
+          },
+          signal,
         },
-        params: {
-          page,
-          query,
-          ...filters,
-          assetsFilters,
-        },
-        signal,
-      });
+      );
       return response.data;
     } catch (error) {
       if (apiClient.isCancel(error)) {
@@ -105,12 +125,15 @@ export const downloadTransactionsPortfolio = createAsyncThunk(
   async ({ userId, blockchain, filters = {} }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await apiClient.get(`/users/${userId}/portfolio/${blockchain}/transactions/export`, {
-        headers: {
-          Authorization: `${token}`,
+      const response = await apiClient.get(
+        `/users/${userId}/portfolio/${blockchain}/transactions/export`,
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          params: filters,
         },
-        params: filters,
-      });
+      );
 
       return response.data;
     } catch (error) {
@@ -124,12 +147,38 @@ export const getMultipleTransactions = createAsyncThunk(
   async ({ items, signal }, { rejectWithValue }) => {
     const token = getTokenFromCookies();
     try {
-      const response = await apiClient.post(`/transactions/multiple`, { items }, {
-        headers: {
-          Authorization: `${token}`,
+      const response = await apiClient.post(
+        `/transactions/multiple`,
+        { items },
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          signal,
         },
-        signal,
-      });
+      );
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
+
+export const getMultipleNFTs = createAsyncThunk(
+  'portfolio/getMultipleNFTs',
+  async ({ items, signal }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await apiClient.post(
+        `/nfts/multiple`,
+        { items },
+        {
+          headers: {
+            Authorization: `${token}`,
+          },
+          signal,
+        },
+      );
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || error.message);
