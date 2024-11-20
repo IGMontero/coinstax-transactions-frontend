@@ -113,10 +113,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           address: address,
         }));
 
-        console.log('Refreshing preview transactions:', previewTxs);
         const result = await dispatch(getMultipleTransactions({ items: allPreviewTxs })).unwrap();
-
-        console.log('Result:', result);
 
         if (!result) {
           return;
