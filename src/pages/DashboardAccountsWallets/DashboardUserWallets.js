@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useSelector } from 'react-redux';
 import Helmet from '../../Components/Helmet/Helmet';
@@ -32,6 +32,8 @@ const DashboardUserWallets = ({
     CurrencyUSD,
   );
 
+  console.log('userPortfolioSummary', userPortfolioSummary);
+
   const hasConnectedWallets = userAddresses?.length > 0;
 
   // const toggleModalConnectWallet = () =>
@@ -43,6 +45,21 @@ const DashboardUserWallets = ({
   const handleRefreshPortfolio = () => {
     refreshUserPortfolio(userId);
   };
+
+  useEffect(() => {
+    let intervalId;
+
+    if (userPortfolioSummary?.complete === false) {
+      intervalId = setInterval(() => {
+        refreshUserPortfolio(userId);
+      }, 5000);
+    }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [userPortfolioSummary, userId, refreshUserPortfolio]);
 
   if (initialLoad) {
     return (
