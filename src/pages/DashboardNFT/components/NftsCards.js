@@ -45,27 +45,35 @@ const NftsCards = ({
 
   const handleUpdateNftSpamStatus = async (nft, spam) => {
     try {
-      const { contractAddress, tokenId, blockchain } = nft;
-      const response = await dispatch(
+      const { contractAddress, tokenId } = nft;
+
+      // Optimistically update the state
+      setNfts((prevNfts) =>
+        prevNfts.map((item) =>
+          item.tokenId === tokenId && item.contractAddress === contractAddress
+            ? { ...item, isSpam: !item.isSpam }
+            : item,
+        ),
+      );
+      await dispatch(
         updateNftsSpamStatus({
-          blockchain: blockchain,
+          blockchain: nft.blockchain,
           contractAddress,
           tokenId,
-          spam,
+          spam: !nft.isSpam,
         }),
       ).unwrap();
-
-      if (response.spam !== undefined) {
-        setNfts((prevNfts) =>
-          prevNfts.map((nft) =>
-            nft.tokenId === tokenId && nft.contractAddress === contractAddress
-              ? { ...nft, isSpam: response.spam }
-              : nft,
-          ),
-        );
-      }
     } catch (error) {
       console.error(error);
+
+      setNfts((prevNfts) =>
+        prevNfts.map((item) =>
+          item.tokenId === item.tokenId &&
+          item.contractAddress === item.contractAddress
+            ? { ...item, isSpam: nft.isSpam }
+            : item,
+        ),
+      );
     }
   };
 
