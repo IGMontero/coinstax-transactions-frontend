@@ -1,45 +1,44 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  Input,
-  Row,
-  Col,
-  InputGroup,
-  Spinner,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Badge,
-} from 'reactstrap';
-import {
-  buildParamsForTransactions,
-  downloadFileByURL,
-  formatDateToLocale,
-  formatTransactionNotFoundMessage,
-  getSelectedAssetFilters,
-  updateTransactionsPreview,
-} from '../../utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  fetchHistory,
-  downloadTransactions,
-} from '../../slices/transactions/thunk';
-import { capitalizeFirstLetter, FILTER_NAMES } from '../../utils/utils';
-import RenderTransactions from './HistorialComponents/RenderTransactions';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { selectNetworkType } from '../../slices/networkType/reducer';
+import { toast } from 'react-toastify';
+import {
+  Badge,
+  Button,
+  Col,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Input,
+  InputGroup,
+  Row,
+  Spinner,
+} from 'reactstrap';
+import Swal from 'sweetalert2';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
-import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import { useGetTimezone } from '../../hooks/useUtils';
+import { addJobToList } from '../../slices/jobs/reducer';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 import {
   downloadTransactionsPortfolio,
   fetchTransactionsPortfolio,
+  getMultipleTransactions,
 } from '../../slices/portfolio/thunk';
-import { addJobToList } from '../../slices/jobs/reducer';
-import { useGetTimezone } from '../../hooks/useUtils';
+import {
+  downloadTransactions,
+  fetchHistory,
+} from '../../slices/transactions/thunk';
 import { formatTimeForClient } from '../../utils/date.utils';
-import { toast } from 'react-toastify';
+import {
+  buildParamsForTransactions,
+  capitalizeFirstLetter,
+  downloadFileByURL,
+  FILTER_NAMES,
+  getSelectedAssetFilters,
+  updateTransactionsPreview
+} from '../../utils/utils';
+import RenderTransactions from './HistorialComponents/RenderTransactions';
 
 const internalPaginationPageSize = 10;
 
@@ -88,10 +87,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [currentEndIndex, setCurrentEndIndex] = useState(15);
 
-  const [allTransactionsProcessed, setAllTransactionsProcessed] =
-    useState(false);
-
-  const [refreshPreviewIntervals, setRefreshPreviewIntervals] = useState({});
 
   const [loadingTransacions, setLoadingTransactions] = useState({});
   const loading = Object.values(loadingTransacions).some((loading) => loading);
@@ -99,6 +94,56 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const abortControllersByBlockchain = useRef({});
 
   const { jobsList } = useSelector((state) => state.jobs);
+
+  console.log("Data: ", data)
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+    // When data changes, if there is any tx where preview is true, start pulling for that tx. 
+    // Do an interval. Clear previous interval if it exists.
+    const previewTxs = data.filter((tx) => tx.preview === true);
+
+    if (previewTxs.length > 0) {
+      const interval = setInterval(async () => {
+        const allPreviewTxs = previewTxs.map((tx) => ({
+          txHash: tx.txHash,
+          blockchain: tx.blockchain,
+          address: address,
+        }));
+
+        console.log('Refreshing preview transactions:', previewTxs);
+        const result = await dispatch(getMultipleTransactions({ items: allPreviewTxs })).unwrap();
+
+        console.log('Result:', result);
+
+        if (!result) {
+          return;
+        }
+
+        // For all txs that are not in preview anymore, update the data.
+        const updatedTxs = data.map((tx) => {
+          const updatedTx = result.find((r) => r.txHash === tx.txHash);
+          if (updatedTx) {
+            return updatedTx;
+          }
+          return tx;
+        });
+
+        setData(updatedTxs);
+
+
+      }, 10 * 1000);
+
+
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [data]);
+
 
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
@@ -118,17 +163,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     };
   }, [isProcessing]);
 
-  useEffect(() => {
-    // console.log('refresh intervals changed!', refreshPreviewIntervals);
-
-    // Check if any interval is running.
-    const hasAnyIntervalRunning = Object.values(refreshPreviewIntervals).some(
-      (interval) => interval,
-    );
-
-    // Set has preview state
-    setHasPreview(hasAnyIntervalRunning);
-  }, [refreshPreviewIntervals]);
 
   useEffect(() => {
     if (Array.isArray(data)) {
@@ -198,11 +232,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         unsupported,
         isProcessing,
         transactionsCount,
-        allTransactionsProcessed,
       } = response;
 
-      // Save that all transactions are processed
-      setAllTransactionsProcessed(allTransactionsProcessed);
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -224,17 +255,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       setHasMoreData(transactions.length > 0 || isProcessing);
       setCurrentEndIndex(internalPaginationPageSize);
 
-      const hasPreview = transactions.some(
-        (transaction) => transaction.preview === true,
-      );
-
-      const isIntervalRunning = refreshPreviewIntervals[currentPage];
-
-      if (hasPreview && !isIntervalRunning) {
-        startRefreshPreviewPageInterval(currentPage);
-      }
-
-      // TODO: IF HAS PREVIEW, TRIGGER FETCHING UNTIL ALL TRANSACTIONS ARE PARSED
     } catch (error) {
       setErrorData(error);
       console.log(error);
@@ -249,112 +269,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     }
   };
 
-  const startRefreshPreviewPageInterval = async (pageIndex) => {
-    const signal = abortControllersByBlockchain.current[networkType].signal;
-
-    // Add a flag to track the request status
-    let isRequestInProgress = false;
-
-    const interval = setInterval(async () => {
-      // Wait 5 seconds before making the next request
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-
-      console.log('Running interval for page', pageIndex);
-
-      // Check if a request is already in progress
-      if (isRequestInProgress) {
-        console.log('Previous request still in progress for page', pageIndex);
-        return;
-      }
-
-      // Set the flag to indicate that a request is in progress
-      isRequestInProgress = true;
-
-      try {
-        await updateTransactionsPreview({
-          address,
-          debouncedSearchTerm,
-          selectedFilters,
-          includeSpam,
-          selectAsset: getSelectedAssetFilters(selectedAssets),
-          currentPage: pageIndex,
-          setData,
-          networkType,
-          data,
-          abortSignal: signal,
-          dispatch,
-          pagesChecked: pagesCheckedRef.current,
-          onEnd: () => {
-            clearInterval(interval);
-            setRefreshPreviewIntervals((prevIntervals) => ({
-              ...prevIntervals,
-              [pageIndex]: null,
-            }));
-            console.log('Clearing interval for page', pageIndex);
-          },
-          onError: (err) => {
-            console.error('Error updating preview:', err);
-            clearInterval(interval);
-            setRefreshPreviewIntervals((prevIntervals) => ({
-              ...prevIntervals,
-              [pageIndex]: null,
-            }));
-            console.log(
-              'Clearing interval for page because of an error',
-              pageIndex,
-              err,
-            );
-          },
-          isCurrentUserPortfolioSelected,
-          currentPortfolioUserId,
-        });
-      } catch (error) {
-        console.error('Error during updateTransactionsPreview call:', error);
-      } finally {
-        // Reset the flag to indicate that the request has completed
-        isRequestInProgress = false;
-      }
-    }, 5000);
-
-    setRefreshPreviewIntervals((prevIntervals) => ({
-      ...prevIntervals,
-      [pageIndex]: interval,
-    }));
-  };
-
-  useEffect(() => {
-    const hasRunningIntervals = Object.values(refreshPreviewIntervals).some(
-      (interval) => interval,
-    );
-
-    if (!hasRunningIntervals) {
-      console.log('No running intervals');
-
-      // Clear all intervals
-      Object.values(refreshPreviewIntervals).forEach((interval) => {
-        clearInterval(interval);
-      });
-
-      setRefreshPreviewIntervals({});
-    }
-
-    return () => {
-      Object.values(refreshPreviewIntervals).forEach((interval) => {
-        clearInterval(interval);
-
-        console.log('Clearing interval');
-      });
-
-      setRefreshPreviewIntervals({});
-    };
-  }, [
-    // If any filter changes, clear all intervals
-    selectedFilters,
-    includeSpam,
-    selectedAssets,
-    // refreshPreviewIntervals,
-    networkType,
-  ]);
 
   useEffect(
     () => {
@@ -515,11 +429,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       console.log('Fetching more transactions:', response);
 
       clearTimeout(timerId);
-      const { parsed, unsupported, isProcessing, allTransactionsProcessed } =
+      const { parsed, unsupported, isProcessing } =
         response || {};
 
-      // Save that all transactions are processed
-      setAllTransactionsProcessed(allTransactionsProcessed);
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -547,33 +459,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         ); // Update internal pagination index
       }
 
-      // Edge case: if there is a filter applied and no transactions with that filter are found,
-      // trigger a fetch for next page.
 
-      // if (selectedFilters?.length > 0) {
-      //   // If no transactions are found with the selected filters, trigger a fetch for the next page.
-      //   const hasTransactionsWithSelectedFilters = transactions.some(
-      //     (transaction) => selectedFilters.includes(transaction.blockchainAction),
-      //   );
-
-      //   if (!hasTransactionsWithSelectedFilters) {
-      //     // setShowDownloadMessageInButton(true);
-      //     setCurrentPage(page ? page + 1 : currentPage + 1);
-      //     console.log('No transactions found with selected filters, fetching next page');
-      //     return getMoreTransactions(nextPage);
-      //   }
-      // }
-
-      // TODO: ADD INTERVAL TO REFRESH PREVIEW TRANSACTIONS
-
-      const hasPreview = transactions.some(
-        (transaction) => transaction.preview === true,
-      );
-
-      if (hasPreview) {
-        console.log('Starting interval for page', nextPage);
-        startRefreshPreviewPageInterval(nextPage);
-      }
     } catch (error) {
       console.error('Error fetching more transactions:', error);
     } finally {

@@ -1,12 +1,17 @@
+import moment from "moment";
+
 export const formatTimeForClient = (dateString, timezone = null, format = 'time') => {
+    if (!dateString) {
+        return '';
+    }
     const resolvedTimezone = timezone || Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     // Determine the user's locale
     const userLocale = navigator?.languages?.length ? navigator.languages[0] : (navigator.language || 'en-US');
-    console.log('userLocale: ', userLocale);
 
     // Convert the date string to a Date object
-    const date = new Date(dateString);
+    const date = moment(dateString).toDate();
+
 
     // Define options based on the desired output format
     let options;

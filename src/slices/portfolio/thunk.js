@@ -118,3 +118,21 @@ export const downloadTransactionsPortfolio = createAsyncThunk(
     }
   },
 );
+
+export const getMultipleTransactions = createAsyncThunk(
+  'portfolio/getMultipleTransactions',
+  async ({ items, signal }, { rejectWithValue }) => {
+    const token = getTokenFromCookies();
+    try {
+      const response = await apiClient.post(`/transactions/multiple`, { items }, {
+        headers: {
+          Authorization: `${token}`,
+        },
+        signal,
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  },
+);
