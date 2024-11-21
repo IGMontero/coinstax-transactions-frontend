@@ -103,7 +103,6 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
   const fetchDataNFTS = (page, refresh) => {
     // if (isFetching) return;
     setIsFetching(true);
-    console.log('FETCH DATA RUNNING');
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
@@ -124,23 +123,23 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
 
     const request = isCurrentUserPortfolioSelected
       ? dispatch(
-          fetchNFTSPortfolio({
-            userId: currentPortfolioUserId,
-            blockchain: networkType,
-            page: page,
-            signal,
-          }),
-        )
+        fetchNFTSPortfolio({
+          userId: currentPortfolioUserId,
+          blockchain: networkType,
+          page: page,
+          signal,
+        }),
+      )
       : dispatch(
-          fetchNFTS({
-            address: address,
-            spam: includeSpam,
-            page: page,
-            networkType,
-            signal,
-            refresh: refresh,
-          }),
-        ).unwrap();
+        fetchNFTS({
+          address: address,
+          spam: includeSpam,
+          page: page,
+          networkType,
+          signal,
+          refresh: refresh,
+        }),
+      ).unwrap();
 
     return request
 
@@ -192,39 +191,46 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
       const previewNft = data?.items?.filter((nft) => nft.preview === true);
 
       if (!previewNft || previewNft.length === 0) {
-        console.log('No preview NFTs to refresh.');
         clearInterval(interval);
         return;
       }
 
-      console.log('Refreshing preview nfts:', previewNft);
-
       const allPreviewTxs = previewNft.map((nft) => ({
         tokenId: nft.tokenId,
         blockchain: nft.blockchain,
-        contractAddress: address,
+        contractAddress: nft.contractAddress,
       }));
 
-      const result = await dispatch(
-        getMultipleNFTs({ items: allPreviewTxs }),
-      ).unwrap();
+      let result;
+      try {
+        result = await dispatch(
+          getMultipleNFTs({ items: allPreviewTxs }),
+        ).unwrap();
 
-      console.log('Result:', result);
+        if (!result) {
+          console.log('No result from fetching preview NFTs');
+          return;
+        }
+      } catch (error) {
+        console.log('Error fetching preview NFTs:', error);
+        return;
+      }
 
       if (result) {
-        const updateNfts = data?.items?.map((nft) => {
-          const updateNft = result.find(
+        const updatedNfts = data?.items?.map((nft) => {
+          const updatedNft = result.find(
             (updatedNft) =>
               updatedNft.contractAddress === nft.contractAddress &&
               updatedNft.tokenId === nft.tokenId &&
               updatedNft.blockchain === nft.blockchain,
           );
-          return updateNft || nft;
+
+          return updatedNft || nft;
         });
 
         setData((prevData) => ({
           ...prevData,
-          items: updateNfts,
+          items: updatedNfts,
         }));
       }
     }, 10 * 1000);
@@ -242,7 +248,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
       setIncludeSpam(false);
       setData({ items: [] });
       setInitialTotalFiatValue(null);
-      fetchDataNFTS(0, false);
+      fetchDataNFTS(0, true);
     }
   }, []);
 
@@ -252,7 +258,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
       setData({ items: [] });
       // setIncludeSpam(false);
       setInitialTotalFiatValue(null);
-      fetchDataNFTS(0, false);
+      fetchDataNFTS(0, true);
     }
   }, [address, networkType]);
 
@@ -260,7 +266,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
     if (initialized) {
       setData({ items: [] });
       setCurrentPage(0);
-      fetchDataNFTS(0, false);
+      fetchDataNFTS(0, true);
     }
   }, [includeSpam]);
 

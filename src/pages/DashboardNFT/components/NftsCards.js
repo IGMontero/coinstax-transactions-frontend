@@ -69,7 +69,7 @@ const NftsCards = ({
       setNfts((prevNfts) =>
         prevNfts.map((item) =>
           item.tokenId === item.tokenId &&
-          item.contractAddress === item.contractAddress
+            item.contractAddress === item.contractAddress
             ? { ...item, isSpam: nft.isSpam }
             : item,
         ),
@@ -106,13 +106,14 @@ const NftsCards = ({
         const floorPrice = showFiatValues
           ? parseValuesToLocale(floorPriceFiat, CurrencyUSD)
           : parseValuesToLocale(floorPriceNativeToken) +
-            `${nft?.nativeSymbol || ''}`;
+          `${nft?.nativeSymbol || ''}`;
         const shouldShowUnsupported =
-          (!nft.logo || imageErrors[nft.contractAddress + nft.tokenId]) &&
-          preview;
+          (!nft.logo || imageErrors[nft.contractAddress + nft.tokenId]);
         const iconId = isSpam
           ? `spam-icon-spam-${index}`
           : `spam-icon-not-spam-${index}`;
+
+
 
         return (
           <div
