@@ -592,7 +592,16 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const response = await dispatch(exportAction).unwrap();
 
-      console.log('Response:', response);
+
+      if (response.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: response.message || 'Something went wrong. Please try again later.',
+        });
+        setLoadingDownload(false);
+        return;
+      }
 
       if (response.completed && response.fileUrl) {
         // Show swal downloading for 2 seconds
@@ -646,6 +655,17 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         const { job } = response;
 
         console.log('Response:', response);
+
+        if (response.error) {
+          console.log("here! ", response.error);
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: response.message || 'Something went wrong. Please try again later.',
+          });
+          setLoadingDownload(false);
+          return;
+        }
 
         if (!job) {
           // No job id. Consider showing an error message.
