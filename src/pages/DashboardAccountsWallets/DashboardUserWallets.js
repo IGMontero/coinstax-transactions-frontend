@@ -1,14 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { useSelector } from 'react-redux';
 import Helmet from '../../Components/Helmet/Helmet';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
-import {
-  CurrencyUSD,
-  isDarkMode,
-  parseValuesToLocale,
-} from '../../utils/utils';
+import { CurrencyUSD, parseValuesToLocale } from '../../utils/utils';
 import AddressesTable from './components/tables/AddressesTable';
+import { Spinner } from 'reactstrap';
 
 const DashboardUserWallets = ({
   userAddresses,
@@ -32,8 +29,6 @@ const DashboardUserWallets = ({
     CurrencyUSD,
   );
 
-  console.log('userPortfolioSummary', userPortfolioSummary);
-
   const hasConnectedWallets = userAddresses?.length > 0;
 
   // const toggleModalConnectWallet = () =>
@@ -46,27 +41,10 @@ const DashboardUserWallets = ({
     refreshUserPortfolio(userId);
   };
 
-  useEffect(() => {
-    let intervalId;
-
-    if (userPortfolioSummary?.complete === false) {
-      intervalId = setInterval(() => {
-        refreshUserPortfolio(userId);
-      }, 5000);
-    }
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
-  }, [userPortfolioSummary, userId, refreshUserPortfolio]);
-
   if (initialLoad) {
     return (
-      <div className="d-flex justify-content-center my-3">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
+      <div className="d-flex justify-content-center mt-5">
+        <Spinner color="primary" size={'md'} />
       </div>
     );
   }
@@ -139,8 +117,8 @@ const DashboardUserWallets = ({
         )*/}
         <AddressesTable
           userId={userId}
-          initialAddresses={userPortfolioSummary?.addresses}
-          loading={loaders.userPortfolioSummary}
+          initialAddresses={userAddresses}
+          loading={loading}
           onRefresh={handleRefreshPortfolio}
         />
 

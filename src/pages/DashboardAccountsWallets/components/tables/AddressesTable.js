@@ -35,7 +35,6 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
     navigate(`/address/${address}`);
   };
 
-
   const handleUpdateAddress = (e, address) => {
     e.preventDefault();
     e.stopPropagation();
@@ -207,7 +206,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
 
   const getValueForAddress = (addressData) => {
     const isCompleted = addressData.complete;
-    if (!isCompleted) {
+    if (loading) {
       return (
         <Skeleton
           width={60}
@@ -298,7 +297,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                   const isLoading = !isCompleted;
 
                   const addressId = String(address.id || address.Id);
-                  console.log(addressName);
+                  console.log('loading', loading);
 
                   return (
                     <Draggable
@@ -323,10 +322,11 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                           >
                             <div
                               onClick={() => handleItemClick(itemAddress)}
-                              className={`address-card p-2 rounded bg-transparent cursor-grab ${openCollapse.has(collapseId)
-                                ? 'px-2 mb-2'
-                                : 'bg-light'
-                                }`}
+                              className={`address-card p-2 rounded bg-transparent cursor-grab ${
+                                openCollapse.has(collapseId)
+                                  ? 'px-2 mb-2'
+                                  : 'bg-light'
+                              }`}
                             >
                               <Row
                                 className="align-items-center justify-content-between"
@@ -385,19 +385,7 @@ const AddressesTable = ({ userId, initialAddresses, loading, onRefresh }) => {
                                       </span>
 
                                       <span className="text-muted">
-                                        {isLoading ? (
-                                          <Skeleton
-                                            width={60}
-                                            baseColor={
-                                              isDarkMode ? '#333' : '#f3f3f3'
-                                            }
-                                            highlightColor={
-                                              isDarkMode ? '#444' : '#e0e0e0'
-                                            }
-                                          />
-                                        ) : (
-                                          getValueForAddress(address)
-                                        )}
+                                        {getValueForAddress(address)}
                                       </span>
                                     </div>
                                     <div className="d-flex justify-content-end">
