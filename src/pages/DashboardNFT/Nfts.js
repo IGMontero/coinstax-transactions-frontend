@@ -25,7 +25,10 @@ import { selectNetworkType } from '../../slices/networkType/reducer';
 import NftsCards from './components/NftsCards';
 import NftsSkeleton from '../../Components/Skeletons/NftsSkeleton';
 import Helmet from '../../Components/Helmet/Helmet';
-import { fetchNFTSPortfolio } from '../../slices/portfolio/thunk';
+import {
+  fetchNFTSPortfolio,
+  getMultipleNFTs,
+} from '../../slices/portfolio/thunk';
 import { formatTimeForClient } from '../../utils/date.utils';
 
 const ethIcon = (
@@ -121,23 +124,23 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
 
     const request = isCurrentUserPortfolioSelected
       ? dispatch(
-        fetchNFTSPortfolio({
-          userId: currentPortfolioUserId,
-          blockchain: networkType,
-          page: page,
-          signal,
-        }),
-      )
+          fetchNFTSPortfolio({
+            userId: currentPortfolioUserId,
+            blockchain: networkType,
+            page: page,
+            signal,
+          }),
+        )
       : dispatch(
-        fetchNFTS({
-          address: address,
-          spam: includeSpam,
-          page: page,
-          networkType,
-          signal,
-          refresh: refresh,
-        }),
-      ).unwrap();
+          fetchNFTS({
+            address: address,
+            spam: includeSpam,
+            page: page,
+            networkType,
+            signal,
+            refresh: refresh,
+          }),
+        ).unwrap();
 
     return request
 
@@ -179,6 +182,57 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
         setIsFetching(false);
       });
   };
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      const previewNft = data?.items?.filter((nft) => nft.preview === true);
+
+      if (!previewNft || previewNft.length === 0) {
+        console.log('No preview NFTs to refresh.');
+        clearInterval(interval);
+        return;
+      }
+
+      console.log('Refreshing preview nfts:', previewNft);
+
+      const allPreviewTxs = previewNft.map((nft) => ({
+        tokenId: nft.tokenId,
+        blockchain: nft.blockchain,
+        contractAddress: address,
+      }));
+
+      const result = await dispatch(
+        getMultipleNFTs({ items: allPreviewTxs }),
+      ).unwrap();
+
+      console.log('Result:', result);
+
+      if (result) {
+        const updateNfts = data?.items?.map((nft) => {
+          const updateNft = result.find(
+            (updatedNft) =>
+              updatedNft.contractAddress === nft.contractAddress &&
+              updatedNft.tokenId === nft.tokenId &&
+              updatedNft.blockchain === nft.blockchain,
+          );
+          return updateNft || nft;
+        });
+
+        setData((prevData) => ({
+          ...prevData,
+          items: updateNfts,
+        }));
+      }
+    }, 10 * 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [data]);
 
   useEffect(() => {
     // Initialize on first load
@@ -409,7 +463,9 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
           {totalItems > 0 && !isDashboardPage ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
-                <h6>As of Date: {formatTimeForClient(updatedAt, null, 'calendar')}</h6>
+                <h6>
+                  As of Date: {formatTimeForClient(updatedAt, null, 'calendar')}
+                </h6>
                 <span className="text-dark">Total value by floor price</span>
                 <div className="d-flex align-items-center">
                   <h1>{totalFiatValue}</h1>

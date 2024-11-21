@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'reactstrap';
@@ -26,7 +26,12 @@ const DashboardConnectWallets = () => {
   const { user } = useSelector((state) => state.auth);
   const { loaders } = useSelector((state) => state.userWallets);
   const userId = user?.id;
-  const userAddresses = userPortfolioSummary?.addresses;
+  // const userAddresses = userPortfolioSummary?.addresses;
+
+  const userAddresses = useMemo(
+    () => userPortfolioSummary?.addresses || [],
+    [userPortfolioSummary],
+  );
 
   const accessTokenParams = new URLSearchParams(location.search);
   const accessToken = accessTokenParams.get('access_token');
@@ -271,7 +276,6 @@ const DashboardConnectWallets = () => {
       );
     });
 
-
   return (
     <>
       <div className="page-content">
@@ -382,7 +386,6 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
   }, [location.search, connector]);
 
   const handleClick = () => {
-
     if (handleConnect) {
       if (connector) {
         handleConnect(connector);
@@ -399,10 +402,8 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
   );
   const connectorConnected = isConnected?.connector;
 
-
   return (
     <>
-
       <div
         className="connector-item cursor-pointer"
         onMouseEnter={() => setIsHovered(true)}
@@ -410,12 +411,11 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
         onClick={handleClick}
       >
         <div className="connector-item-inner">
-          {(isHovered) && connectorConnected && (
+          {isHovered && connectorConnected && (
             <div
               className="close-button rounded bg bg-soft-danger p-0 d-flex"
               onClick={(e) => {
                 e.stopPropagation();
-
 
                 connectorConnected
                   .disconnect(connectorConnected)
@@ -425,20 +425,17 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
                   })
                   .catch((error) => {
                     console.error('Failed to disconnect wallet: ', error);
-                  })
-              }
-
-              }
+                  });
+              }}
             >
               <i className="bx bx-x text-danger "></i>
-
             </div>
           )}
           <div
             className="more-card"
-          // onClick={() => {
-          //   handleClick();
-          // }}
+            // onClick={() => {
+            //   handleClick();
+            // }}
           >
             <div className="icon-wrapper">
               <img src={logo} alt="binnace" className="card-image" />
@@ -470,8 +467,6 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
                   </svg>
                 </i>
               )}
-
-
             </span>
           </div>
         </div>

@@ -26,7 +26,7 @@ const BlockchainImage = ({
     cronos: cronos,
   };
 
-  const imageSrc = images[blockchainType.toLowerCase()];
+  const imageSrc = images[blockchainType?.toLowerCase()];
 
   if (!imageSrc) {
     return null;
