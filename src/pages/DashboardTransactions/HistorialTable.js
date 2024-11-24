@@ -35,8 +35,7 @@ import {
   capitalizeFirstLetter,
   downloadFileByURL,
   FILTER_NAMES,
-  getSelectedAssetFilters,
-  updateTransactionsPreview
+  getSelectedAssetFilters
 } from '../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
 
@@ -88,14 +87,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [currentEndIndex, setCurrentEndIndex] = useState(15);
 
 
-  const [loadingTransacions, setLoadingTransactions] = useState({});
-  const loading = Object.values(loadingTransacions).some((loading) => loading);
+  const [loadingTransacions, setLoadingTransactions] = useState(false);
+  const loading = loadingTransacions
 
   const abortControllersByBlockchain = useRef({});
 
   const { jobsList } = useSelector((state) => state.jobs);
-
-  console.log("Data: ", data)
 
   useEffect(() => {
     if (!data) {
@@ -113,11 +110,19 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
           address: address,
         }));
 
-        const result = await dispatch(getMultipleTransactions({ items: allPreviewTxs })).unwrap();
+        let result;
+        try {
+          result = await dispatch(getMultipleTransactions({ items: allPreviewTxs })).unwrap();
 
-        if (!result) {
+          if (!result) {
+            return;
+          }
+        } catch (err) {
+          console.error('Error fetching preview txs:', err);
           return;
         }
+
+
 
         // For all txs that are not in preview anymore, update the data.
         const updatedTxs = data.map((tx) => {
@@ -193,10 +198,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       setIsInitialLoad(true);
 
       // start loader for this fetch
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: true,
-      }));
+      setLoadingTransactions(true);
 
       timerId = setTimeout(() => {
         setShowDownloadMessage(true);
@@ -238,11 +240,27 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         setUnsupportedAddress(false);
       }
 
-      if (isProcessing) {
-        setIsProcessing(true);
-      } else {
-        setIsProcessing(false);
+      // if (isProcessing) {
+      //   setIsProcessing(true);
+      // } else {
+      //   setIsProcessing(false);
+      // }
+
+
+      // If it's processing and page is 0, set is processing to true, we must put a loader and get the same page
+      // again after 5 seconds.
+      if (isProcessing && currentPage === 0) {
+        // Stop loader
+        setLoadingTransactions(true);
+
+        setTimeout(() => {
+          fetchData({
+            abortSignal,
+          });
+        }, 2500);
+        return;
       }
+
 
       const transactions = parsed || [];
       // If some transaction is preview ...
@@ -252,15 +270,17 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       setHasMoreData(transactions.length > 0 || isProcessing);
       setCurrentEndIndex(internalPaginationPageSize);
 
+      // Stop loader
+      setLoadingTransactions(false);
+      setIsInitialLoad(false);
+      setShowDownloadMessage(false);
+
     } catch (error) {
       setErrorData(error);
       console.log(error);
-    } finally {
+
       // Stop loader
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: false,
-      }));
+      setLoadingTransactions(false);
       setIsInitialLoad(false);
       setShowDownloadMessage(false);
     }
@@ -283,8 +303,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const blockchainAbortSignal =
         abortControllersByBlockchain.current[networkType].signal;
-
-      console.log('Reset should happen now.:', selectedFilters);
 
       fetchData({
         abortSignal: blockchainAbortSignal,
@@ -388,12 +406,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
 
-    const fecthId = Date.now();
     try {
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: true,
-      }));
+      setLoadingTransactions(true);
 
       const nextPage = page || currentPage + 1;
 
@@ -423,7 +437,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const response = await dispatch(request(params)).unwrap();
 
-      console.log('Fetching more transactions:', response);
 
       clearTimeout(timerId);
       const { parsed, unsupported, isProcessing } =
@@ -436,11 +449,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         setUnsupportedAddress(false);
       }
 
-      if (isProcessing) {
-        setIsProcessing(true);
-      } else {
-        setIsProcessing(false);
-      }
+      // if (isProcessing) {
+      //   setIsProcessing(true);
+      // } else {
+      //   setIsProcessing(false);
+      // }
 
       const transactions = parsed || [];
 
@@ -448,24 +461,30 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       if (transactions.length === 0 && !isProcessing) {
         setHasMoreData(false);
-      } else {
+      } else if (!isProcessing) {
         setData((prevData) => [...prevData, ...transactions]);
         setCurrentPage(nextPage);
         setCurrentEndIndex(
           (prevEndIndex) => prevEndIndex + internalPaginationPageSize,
         ); // Update internal pagination index
+      } else {
+        setShowDownloadMessageInButton(true);
+        // If it's processing, we must wait 5 seconds and try again.
+        setTimeout(() => {
+          getMoreTransactions(nextPage);
+        }, 5000);
+
+        return;
       }
 
+      setLoadingTransactions(false);
+      setShowDownloadMessageInButton(false);
 
     } catch (error) {
       console.error('Error fetching more transactions:', error);
-    } finally {
-      // stop loader
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: false,
-      }));
+      setLoadingTransactions(false);
       setShowDownloadMessageInButton(false);
+
     }
   };
 
@@ -727,106 +746,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     }
   };
 
-  const handleDownloadTransactions = async () => {
-    try {
-      setLoadingDownload(true);
-
-      const selectAsset = getSelectedAssetFilters(selectedAssets);
-      Swal.fire({
-        title: 'Downloading',
-        html: 'Your file is being prepared for download.',
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-      const downloadParams = {
-        blockchain: networkType,
-        filters: {
-          blockchainAction: selectedFilters,
-          excludeSpam: !includeSpam,
-        },
-      };
-
-      const downloadAction = isCurrentUserPortfolioSelected
-        ? downloadTransactionsPortfolio({
-          ...downloadParams,
-          userId: currentPortfolioUserId,
-          assetsFilters: selectAsset,
-        })
-        : downloadTransactions({
-          ...downloadParams,
-          address: address,
-          query: debouncedSearchTerm,
-          assetsFilters: selectAsset,
-        });
-
-      const response = await dispatch(downloadAction).unwrap();
-
-      console.log(response, response.data, response.size);
-      const isResponseBlob = response instanceof Blob;
-
-      if (response.error && response.error.code !== 'PROCESSING') {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong. Please try again later.',
-        });
-        setLoadingDownload(false);
-      } else if (response.isProcessing) {
-        Swal.fire({
-          title: 'Processing...',
-          text: 'Address transactions are processing. Please try again in a few minutes.',
-          icon: 'info',
-          confirmButtonText: 'Ok',
-        });
-
-        setTimeout(() => {
-          setLoadingDownload(false);
-        }, 5000);
-      } else if ((response.data && response.data.size > 0) || isResponseBlob) {
-        const url = window.URL.createObjectURL(response);
-        const link = document.createElement('a');
-        link.href = url;
-
-        // For portfolio downloads, name will reflect user id, portfolio, network type and date in unix.
-        let filename;
-
-        if (isCurrentUserPortfolioSelected) {
-          filename = `portfolio_${currentPortfolioUserId}_${networkType}_${Date.now()}.csv`;
-        } else {
-          filename = `txs_${networkType}_${address}.csv`;
-        }
-
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-
-        setTimeout(() => {
-          Swal.close();
-          setLoadingDownload(false);
-        }, 500);
-      } else {
-        Swal.fire({
-          icon: 'info',
-          title: 'No Data',
-          text: 'No transactions to download.',
-        });
-        setLoadingDownload(false);
-      }
-    } catch (error) {
-      console.error(error);
-      console.log(error.response);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong. Please try again later.',
-      });
-      setLoadingDownload(false);
-    }
-  };
-
   const hasActiveFilters = Object.values(selectedFilters).some(
     (value) => value,
   );
@@ -836,13 +755,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     setSelectedFilters(updatedFilters);
     setCurrentEndIndex(internalPaginationPageSize); // Reset internal pagination
 
-    const fecthId = Date.now();
 
     try {
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: true,
-      }));
+      setLoadingTransactions(true);
       const request = isCurrentUserPortfolioSelected
         ? fetchTransactionsPortfolio
         : fetchHistory;
@@ -857,10 +772,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     } catch (error) {
       console.error('Error applying filters:', error);
     } finally {
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: false,
-      }));
+      setLoadingTransactions(false);
     }
   };
 
