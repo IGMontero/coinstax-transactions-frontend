@@ -86,6 +86,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [currentEndIndex, setCurrentEndIndex] = useState(15);
 
+  const [exportError, setExportError] = useState(null);
+
 
   const [loadingTransacions, setLoadingTransactions] = useState(false);
   const loading = loadingTransacions
@@ -539,6 +541,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     // Do the same but now the response will not be something to download.
     // Instead, it will be a response with a fileUrl or a pending state.
 
+    setExportError(null);
+
     // If user is not authenticated, show a message to login and send to login page.
     if (!user) {
       Swal.fire({
@@ -613,11 +617,12 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
 
       if (response.error) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: response.message || 'Something went wrong. Please try again later.',
-        });
+        // Swal.fire({
+        //   icon: 'error',
+        //   title: 'Oops...',
+        //   text: response.message || 'Something went wrong. Please try again later.',
+        // });
+        setExportError(response.message || 'Something went wrong. Please try again later.');
         setLoadingDownload(false);
         return;
       }
@@ -673,26 +678,26 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
         const { job } = response;
 
-        console.log('Response:', response);
-
         if (response.error) {
-          console.log("here! ", response.error);
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: response.message || 'Something went wrong. Please try again later.',
-          });
+          // Swal.fire({
+          //   icon: 'error',
+          //   title: 'Oops...',
+          //   text: response.message || 'Something went wrong. Please try again later.',
+          // });
+          setExportError(response.message || 'Something went wrong. Please try again later.');
+
           setLoadingDownload(false);
           return;
         }
 
         if (!job) {
           // No job id. Consider showing an error message.
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Something went wrong. Please try again later.',
-          });
+          // Swal.fire({
+          //   icon: 'error',
+          //   title: 'Oops...',
+          //   text: 'Something went wrong. Please try again later.',
+          // });
+          setExportError('Something went wrong. Please try again later.');
           setLoadingDownload(false);
           return;
         }
@@ -721,11 +726,13 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         // });
       } else {
         // No response or error. Consideer showing an error message.
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong. Please try again later.',
-        });
+        // Swal.fire({
+        //   icon: 'error',
+        //   title: 'Oops...',
+        //   text: 'Something went wrong. Please try again later.',
+        // });
+
+        setExportError('Something went wrong. Please try again later.');
       }
     } catch (error) {
       console.error(error);
@@ -1219,32 +1226,40 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                 Include Spam Transactions
               </label>
             </div>
-            <Button
-              className="d-flex justify-content-center align-items-center "
-              color="primary"
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-                height: 35,
-              }}
-              onClick={handleDownloadTransactionsNew}
-              size="sm"
-              disabled={isInitialLoad || loadingDownload}
-            >
-              {loadingDownload ? (
-                <>
-                  {/* // SHOW spinner and Building CSV... */}
-                  <Spinner size="sm" />
+            <div className="d-flex flex-column align-items-end">
+              <Button
+                className="d-flex justify-content-center align-items-center"
+                color="primary"
+                style={{
+                  borderRadius: '10px',
+                  border: '.5px solid grey',
+                  height: 35,
+                  width: 'max-content',
+                }}
+                onClick={handleDownloadTransactionsNew}
+                size="sm"
+                disabled={isInitialLoad || loadingDownload}
+              >
+                {loadingDownload ? (
+                  <>
+                    {/* // SHOW spinner and Building CSV... */}
+                    <Spinner size="sm" />
 
-                  <span className="ms-2">Building CSV...</span>
-                </>
-              ) : (
-                <>
-                  <i className="ri-file-download-line fs-5 me-2"></i>
-                  <span>Download CSV</span>
-                </>
-              )}
-            </Button>
+                    <span className="ms-2">Building CSV...</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="ri-file-download-line fs-5 me-2"></i>
+                    <span>Download CSV</span>
+                  </>
+                )}
+              </Button>
+
+              {exportError ? (
+                <span className="text-danger ms-2">{exportError}</span>
+              ) : <span className="text-muted ms-2">&nbsp;</span>
+              }
+            </div>
           </div>
         </Row>
       </div>
