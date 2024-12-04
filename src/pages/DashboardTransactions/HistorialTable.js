@@ -35,6 +35,7 @@ import {
   capitalizeFirstLetter,
   downloadFileByURL,
   FILTER_NAMES,
+  formatNumberToLocale,
   getSelectedAssetFilters
 } from '../../utils/utils';
 import RenderTransactions from './HistorialComponents/RenderTransactions';
@@ -1077,7 +1078,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     return (
       <Row className="col-12 ">
         <div className="d-flex justify-content-start w-100">
-          <div>Total transactions: {totalTransactions}</div>
+          <div>Total transactions: {formatNumberToLocale(totalTransactions)}</div>
           <div className="ms-3">
             {hasPreview && (
               <div className="d-flex align-items-center">
