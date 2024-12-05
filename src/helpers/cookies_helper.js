@@ -14,7 +14,7 @@ export const saveTokenInCookies = (token) => {
   });
 
   // Save also in lcal storage for now.
-  localStorage.setItem('accessToken', token);
+  // localStorage.setItem('accessToken', token);
 };
 
 export const saveCountryInCookies = (country) => {
@@ -34,7 +34,7 @@ export const getTokenFromCookies = () => {
   }
 
   // Fallback to local storage
-  return localStorage.getItem('accessToken');
+  // return localStorage.getItem('accessToken');
 };
 
 export const removeTokenFromCookies = () => {

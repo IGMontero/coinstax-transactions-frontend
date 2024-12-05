@@ -20,7 +20,6 @@ const CustomOptions = (props) => {
 
   const { userPortfolioSummary } = useSelector((state) => state.userWallets);
 
-  const [displayLabel, setDisplayLabel] = useState('');
   // Window size states
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 1221);
   const [isMediumScreen, setIsMediumScreen] = useState(
@@ -51,31 +50,32 @@ const CustomOptions = (props) => {
   const addressWithNames = userPortfolioSummary.addresses?.find(
     (addr) => addr.address === props.data.value,
   );
-  const addressName = addressWithNames?.name;
+  const addressCustomName = addressWithNames?.name || props.data.label;
 
-  useEffect(() => {
+  const resolveDisplayLabel = () => {
     const { value } = props.data;
-    let formattedLabel = addressName || value;
+    let formattedLabel = addressCustomName || value;
 
-    if (isVerySmallScreen) {
-      formattedLabel = addressName || formatIdTransaction(value, 8, 6);
-    } else if (isMediumScreen) {
-      formattedLabel = addressName || formatIdTransaction(value, 8, 12);
-    } else if (isSmallScreen) {
-      formattedLabel = addressName || formatIdTransaction(value, 8, 15);
-    } else {
-      formattedLabel = addressName || formatIdTransaction(value, 12, 20);
+    if (addressCustomName) {
+      return addressCustomName;
     }
 
-    setDisplayLabel(formattedLabel);
-  }, [
-    props.data,
-    isSmallScreen,
-    isMediumScreen,
-    isMoreSmallScreen,
-    isVerySmallScreen,
-    addressName,
-  ]);
+    if (isVerySmallScreen) {
+      formattedLabel = addressCustomName || formatIdTransaction(value, 8, 6);
+    } else if (isMediumScreen) {
+      formattedLabel = addressCustomName || formatIdTransaction(value, 8, 12);
+    } else if (isSmallScreen) {
+      formattedLabel = addressCustomName || formatIdTransaction(value, 8, 15);
+    } else {
+      formattedLabel = addressCustomName || formatIdTransaction(value, 12, 20);
+    }
+
+    return formattedLabel;
+  };
+
+  const displayLabel = resolveDisplayLabel();
+
+
 
   const handleDelete = (e, option) => {
     e.preventDefault();
@@ -199,7 +199,7 @@ const CustomOptions = (props) => {
                       <i className="ri-checkbox-blank-circle-fill fs-10 text-success ms-2"></i>
                     )}{' '}
                   </div>
-                  {addressName && (
+                  {addressCustomName && (
                     <span className="text-muted">
                       {formatIdTransaction(props.data.value, 6, 8)}
                     </span>

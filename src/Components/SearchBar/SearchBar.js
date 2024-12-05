@@ -2,15 +2,13 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Select, { components } from 'react-select';
-import { Button, Col, Spinner } from 'reactstrap';
-import { getAddressesSuggestions } from '../../slices/addresses/thunk';
-import { layoutModeTypes } from '../constants/layout';
-import CustomOptions from './components/CustomOptions';
-import { setAddressName } from '../../slices/addressName/reducer';
 import { trackGAEvent } from '../../helpers/GAHelper';
 import { useRefreshUserPortfolio } from '../../hooks/useUserPortfolio';
+import { getAddressesSuggestions } from '../../slices/addresses/thunk';
+import { setAddressName } from '../../slices/addressName/reducer';
 import { addUserWallet } from '../../slices/userWallets/thunk';
-import Swal from 'sweetalert2';
+import { layoutModeTypes } from '../constants/layout';
+import CustomOptions from './components/CustomOptions';
 
 const SearchBar = ({
   selectedOption,
@@ -310,11 +308,11 @@ const SearchBar = ({
       setLoading(false);
     } catch (error) {
       console.error('Failed to connect wallet: ', error);
-      Swal.fire({
-        title: 'Error',
-        text: error || 'Failed to connect wallet',
-        icon: 'error',
-      });
+      // Swal.fire({
+      //   title: 'Error',
+      //   text: error || 'Failed to connect wallet',
+      //   icon: 'error',
+      // });
       setLoading(false);
     }
   };
@@ -361,118 +359,6 @@ const SearchBar = ({
     }
   };
 
-  // const handleDropdownSelect = useCallback(
-  //   (option) => {
-  //     setSearchInput(option.label);
-  //     setOptions([option]);
-  //     navigate(`/address/${option.value}`);
-  //   },
-  //   [navigate],
-  // );
-
-  // #region STYLES
-  // const customStyles = {
-  //   control: (provided) => ({
-  //     ...provided,
-  //     backgroundColor:
-  //       layoutModeType === layoutModeTypes['DARKMODE'] ? ' #1d1d21' : '#fff',
-  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-  //     cursor: 'text',
-  //     maxHeight: '58px',
-  //     textAlign: 'left',
-  //     // border:
-  //     //   layoutModeType === layoutModeTypes['DARKMODE']
-  //     //     ? '1px solid #32383e'
-  //     //     : '1px solid #ddd',
-  //     border: '1px solid #6b6464',
-  //     borderRadius: '16px',
-  //     // padding: '18px 146px 18px 20px',
-  //     fontSize: '16px',
-  //     outline: 'none !important',
-  //     boxShadow: 'none !important',
-  //     '&:hover': {
-  //       border:
-  //         layoutModeType === layoutModeTypes['DARKMODE']
-  //           ? '1px solid #555'
-  //           : '1px solid #ccc',
-  //     },
-  //   }),
-  //   menu: (provided) => ({
-  //     ...provided,
-  //     zIndex: 9999,
-  //     backgroundColor:
-  //       layoutModeType === layoutModeTypes['DARKMODE'] ? '#1d1d21' : '#fff',
-  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-  //     textAlign: 'left',
-  //     alignItems: 'left',
-  //     cursor: 'pointer',
-  //     borderRadius: '16px',
-  //     border: '1px solid #6b6464',
-  //     transition: '1s all ease-in-out',
-  //     transform: 'translateY(0px)',
-  //   }),
-  //   option: (provided, state) => ({
-  //     ...provided,
-  //     cursor: 'pointer',
-  //     borderRadius: '16px',
-
-  //     backgroundColor: state.isFocused
-  //       ? layoutModeType === layoutModeTypes['DARKMODE']
-  //         ? 'transparent'
-  //         : // '#1d1d21'
-  //         'transparent'
-  //       : // '#e2e2e2'
-  //       state.isSelected
-  //         ? layoutModeType === layoutModeTypes['DARKMODE']
-  //           ? '#212529'
-  //           : '#ddd'
-  //         : 'transparent',
-  //     color:
-  //       state.isFocused || state.isSelected
-  //         ? 'muted'
-  //         : layoutModeType === layoutModeTypes['DARKMODE']
-  //           ? '#fff'
-  //           : 'black',
-  //     ':active': {
-  //       ...provided[':active'],
-  //       backgroundColor: state.isFocused
-  //         ? layoutModeType === layoutModeTypes['DARKMODE']
-  //           ? 'transparent'
-  //           : // '#2a2f34'
-  //           'transparent'
-  //         : // '#e2e2e2'
-  //         state.isSelected
-  //           ? layoutModeType === layoutModeTypes['DARKMODE']
-  //             ? '#212529'
-  //             : '#ddd'
-  //           : 'transparent',
-  //     },
-  //     '&:hover': {
-  //       // backgroundColor:
-  //       //   layoutModeType === layoutModeTypes['DARKMODE']
-  //       //     ? '#1f252b'
-  //       //     : '#e2e2e2',
-  //       backgroundColor: 'transparent',
-  //       color:
-  //         layoutModeType === layoutModeTypes['DARKMODE']
-  //           ? '#4B8EE0'
-  //           : '#0759BC',
-  //     },
-  //   }),
-  //   input: (provided) => ({
-  //     ...provided,
-
-  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-  //   }),
-  //   singleValue: (provided) => ({
-  //     ...provided,
-  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-  //   }),
-  //   loadingIndicator: (provided) => ({
-  //     ...provided,
-  //     color: layoutModeType === layoutModeTypes['DARKMODE'] ? '#fff' : 'black',
-  //   }),
-  // };
 
   const searchBarStyles = {
     control: (provided) => ({

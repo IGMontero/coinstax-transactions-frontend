@@ -1,44 +1,44 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Button,
-  Input,
-  Row,
-  Col,
-  InputGroup,
-  Spinner,
-  Dropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  Badge,
-} from 'reactstrap';
-import {
-  buildParamsForTransactions,
-  downloadFileByURL,
-  formatDateToLocale,
-  formatTransactionNotFoundMessage,
-  getSelectedAssetFilters,
-  updateTransactionsPreview,
-} from '../../utils/utils';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  fetchHistory,
-  downloadTransactions,
-} from '../../slices/transactions/thunk';
-import { capitalizeFirstLetter, FILTER_NAMES } from '../../utils/utils';
-import RenderTransactions from './HistorialComponents/RenderTransactions';
-import Swal from 'sweetalert2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { selectNetworkType } from '../../slices/networkType/reducer';
+import { toast } from 'react-toastify';
+import {
+  Badge,
+  Button,
+  Col,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle,
+  Input,
+  InputGroup,
+  Row,
+  Spinner,
+} from 'reactstrap';
+import Swal from 'sweetalert2';
 import TransactionSkeleton from '../../Components/Skeletons/TransactionSekeleton';
-import { DASHBOARD_USER_ROLES } from '../../common/constants';
+import { useGetTimezone } from '../../hooks/useUtils';
+import { addJobToList } from '../../slices/jobs/reducer';
+import { selectNetworkType } from '../../slices/networkType/reducer';
 import {
   downloadTransactionsPortfolio,
   fetchTransactionsPortfolio,
+  getMultipleTransactions,
 } from '../../slices/portfolio/thunk';
-import { addJobToList } from '../../slices/jobs/reducer';
-import { useGetTimezone } from '../../hooks/useUtils';
+import {
+  downloadTransactions,
+  fetchHistory,
+} from '../../slices/transactions/thunk';
 import { formatTimeForClient } from '../../utils/date.utils';
+import {
+  buildParamsForTransactions,
+  capitalizeFirstLetter,
+  downloadFileByURL,
+  FILTER_NAMES,
+  formatNumberToLocale,
+  getSelectedAssetFilters
+} from '../../utils/utils';
+import RenderTransactions from './HistorialComponents/RenderTransactions';
 
 const internalPaginationPageSize = 10;
 
@@ -87,15 +87,68 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [currentEndIndex, setCurrentEndIndex] = useState(15);
 
-  const [allTransactionsProcessed, setAllTransactionsProcessed] =
-    useState(false);
+  const [exportError, setExportError] = useState(null);
 
-  const [refreshPreviewIntervals, setRefreshPreviewIntervals] = useState({});
 
-  const [loadingTransacions, setLoadingTransactions] = useState({});
-  const loading = Object.values(loadingTransacions).some((loading) => loading);
+  const [loadingTransacions, setLoadingTransactions] = useState(false);
+  const loading = loadingTransacions
 
   const abortControllersByBlockchain = useRef({});
+
+  const { jobsList } = useSelector((state) => state.jobs);
+
+  useEffect(() => {
+    if (!data) {
+      return;
+    }
+    // When data changes, if there is any tx where preview is true, start pulling for that tx. 
+    // Do an interval. Clear previous interval if it exists.
+    const previewTxs = data.filter((tx) => tx.preview === true);
+
+    if (previewTxs.length > 0) {
+      const interval = setInterval(async () => {
+        const allPreviewTxs = previewTxs.map((tx) => ({
+          txHash: tx.txHash,
+          blockchain: tx.blockchain,
+          address: address,
+        }));
+
+        let result;
+        try {
+          result = await dispatch(getMultipleTransactions({ items: allPreviewTxs })).unwrap();
+
+          if (!result) {
+            return;
+          }
+        } catch (err) {
+          console.error('Error fetching preview txs:', err);
+          return;
+        }
+
+
+
+        // For all txs that are not in preview anymore, update the data.
+        const updatedTxs = data.map((tx) => {
+          const updatedTx = result.find((r) => r.txHash === tx.txHash);
+          if (updatedTx) {
+            return updatedTx;
+          }
+          return tx;
+        });
+
+        setData(updatedTxs);
+
+
+      }, 10 * 1000);
+
+
+
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [data]);
+
 
   // Debounced disable get more: if is processing is set to true , it will disable the get more button for 5 seconds and show
   // custom text in the button "Downloading more transactions..."
@@ -115,17 +168,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     };
   }, [isProcessing]);
 
-  useEffect(() => {
-    // console.log('refresh intervals changed!', refreshPreviewIntervals);
-
-    // Check if any interval is running.
-    const hasAnyIntervalRunning = Object.values(refreshPreviewIntervals).some(
-      (interval) => interval,
-    );
-
-    // Set has preview state
-    setHasPreview(hasAnyIntervalRunning);
-  }, [refreshPreviewIntervals]);
 
   useEffect(() => {
     if (Array.isArray(data)) {
@@ -159,10 +201,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       setIsInitialLoad(true);
 
       // start loader for this fetch
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: true,
-      }));
+      setLoadingTransactions(true);
 
       timerId = setTimeout(() => {
         setShowDownloadMessage(true);
@@ -195,11 +234,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         unsupported,
         isProcessing,
         transactionsCount,
-        allTransactionsProcessed,
       } = response;
 
-      // Save that all transactions are processed
-      setAllTransactionsProcessed(allTransactionsProcessed);
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -207,11 +243,27 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         setUnsupportedAddress(false);
       }
 
-      if (isProcessing) {
-        setIsProcessing(true);
-      } else {
-        setIsProcessing(false);
+      // if (isProcessing) {
+      //   setIsProcessing(true);
+      // } else {
+      //   setIsProcessing(false);
+      // }
+
+
+      // If it's processing and page is 0, set is processing to true, we must put a loader and get the same page
+      // again after 5 seconds.
+      if (isProcessing && currentPage === 0) {
+        // Stop loader
+        setLoadingTransactions(true);
+
+        setTimeout(() => {
+          fetchData({
+            abortSignal,
+          });
+        }, 2500);
+        return;
       }
+
 
       const transactions = parsed || [];
       // If some transaction is preview ...
@@ -221,137 +273,22 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       setHasMoreData(transactions.length > 0 || isProcessing);
       setCurrentEndIndex(internalPaginationPageSize);
 
-      const hasPreview = transactions.some(
-        (transaction) => transaction.preview === true,
-      );
+      // Stop loader
+      setLoadingTransactions(false);
+      setIsInitialLoad(false);
+      setShowDownloadMessage(false);
 
-      const isIntervalRunning = refreshPreviewIntervals[currentPage];
-
-      if (hasPreview && !isIntervalRunning) {
-        startRefreshPreviewPageInterval(currentPage);
-      }
-
-      // TODO: IF HAS PREVIEW, TRIGGER FETCHING UNTIL ALL TRANSACTIONS ARE PARSED
     } catch (error) {
       setErrorData(error);
       console.log(error);
-    } finally {
+
       // Stop loader
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: false,
-      }));
+      setLoadingTransactions(false);
       setIsInitialLoad(false);
       setShowDownloadMessage(false);
     }
   };
 
-  const startRefreshPreviewPageInterval = async (pageIndex) => {
-    const signal = abortControllersByBlockchain.current[networkType].signal;
-
-    // Add a flag to track the request status
-    let isRequestInProgress = false;
-
-    const interval = setInterval(async () => {
-      // Wait 5 seconds before making the next request
-      await new Promise((resolve) => setTimeout(resolve, 5000));
-
-      console.log('Running interval for page', pageIndex);
-
-      // Check if a request is already in progress
-      if (isRequestInProgress) {
-        console.log('Previous request still in progress for page', pageIndex);
-        return;
-      }
-
-      // Set the flag to indicate that a request is in progress
-      isRequestInProgress = true;
-
-      try {
-        await updateTransactionsPreview({
-          address,
-          debouncedSearchTerm,
-          selectedFilters,
-          includeSpam,
-          selectAsset: getSelectedAssetFilters(selectedAssets),
-          currentPage: pageIndex,
-          setData,
-          networkType,
-          data,
-          abortSignal: signal,
-          dispatch,
-          pagesChecked: pagesCheckedRef.current,
-          onEnd: () => {
-            clearInterval(interval);
-            setRefreshPreviewIntervals((prevIntervals) => ({
-              ...prevIntervals,
-              [pageIndex]: null,
-            }));
-            console.log('Clearing interval for page', pageIndex);
-          },
-          onError: (err) => {
-            console.error('Error updating preview:', err);
-            clearInterval(interval);
-            setRefreshPreviewIntervals((prevIntervals) => ({
-              ...prevIntervals,
-              [pageIndex]: null,
-            }));
-            console.log(
-              'Clearing interval for page because of an error',
-              pageIndex,
-              err,
-            );
-          },
-          isCurrentUserPortfolioSelected,
-          currentPortfolioUserId,
-        });
-      } catch (error) {
-        console.error('Error during updateTransactionsPreview call:', error);
-      } finally {
-        // Reset the flag to indicate that the request has completed
-        isRequestInProgress = false;
-      }
-    }, 5000);
-
-    setRefreshPreviewIntervals((prevIntervals) => ({
-      ...prevIntervals,
-      [pageIndex]: interval,
-    }));
-  };
-
-  useEffect(() => {
-    const hasRunningIntervals = Object.values(refreshPreviewIntervals).some(
-      (interval) => interval,
-    );
-
-    if (!hasRunningIntervals) {
-      console.log('No running intervals');
-
-      // Clear all intervals
-      Object.values(refreshPreviewIntervals).forEach((interval) => {
-        clearInterval(interval);
-      });
-
-      setRefreshPreviewIntervals({});
-    }
-
-    return () => {
-      Object.values(refreshPreviewIntervals).forEach((interval) => {
-        clearInterval(interval);
-
-        console.log('Clearing interval');
-      });
-
-      setRefreshPreviewIntervals({});
-    };
-  }, [
-    // If any filter changes, clear all intervals
-    selectedFilters,
-    includeSpam,
-    selectedAssets,
-    // refreshPreviewIntervals,
-    networkType,
-  ]);
 
   useEffect(
     () => {
@@ -369,8 +306,6 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const blockchainAbortSignal =
         abortControllersByBlockchain.current[networkType].signal;
-
-      console.log('Reset should happen now.:', selectedFilters);
 
       fetchData({
         abortSignal: blockchainAbortSignal,
@@ -474,12 +409,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
 
-    const fecthId = Date.now();
     try {
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: true,
-      }));
+      setLoadingTransactions(true);
 
       const nextPage = page || currentPage + 1;
 
@@ -509,14 +440,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const response = await dispatch(request(params)).unwrap();
 
-      console.log('Fetching more transactions:', response);
 
       clearTimeout(timerId);
-      const { parsed, unsupported, isProcessing, allTransactionsProcessed } =
+      const { parsed, unsupported, isProcessing } =
         response || {};
 
-      // Save that all transactions are processed
-      setAllTransactionsProcessed(allTransactionsProcessed);
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -524,11 +452,11 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         setUnsupportedAddress(false);
       }
 
-      if (isProcessing) {
-        setIsProcessing(true);
-      } else {
-        setIsProcessing(false);
-      }
+      // if (isProcessing) {
+      //   setIsProcessing(true);
+      // } else {
+      //   setIsProcessing(false);
+      // }
 
       const transactions = parsed || [];
 
@@ -536,50 +464,30 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       if (transactions.length === 0 && !isProcessing) {
         setHasMoreData(false);
-      } else {
+      } else if (!isProcessing) {
         setData((prevData) => [...prevData, ...transactions]);
         setCurrentPage(nextPage);
         setCurrentEndIndex(
           (prevEndIndex) => prevEndIndex + internalPaginationPageSize,
         ); // Update internal pagination index
+      } else {
+        setShowDownloadMessageInButton(true);
+        // If it's processing, we must wait 5 seconds and try again.
+        setTimeout(() => {
+          getMoreTransactions(nextPage);
+        }, 5000);
+
+        return;
       }
 
-      // Edge case: if there is a filter applied and no transactions with that filter are found,
-      // trigger a fetch for next page.
+      setLoadingTransactions(false);
+      setShowDownloadMessageInButton(false);
 
-      // if (selectedFilters?.length > 0) {
-      //   // If no transactions are found with the selected filters, trigger a fetch for the next page.
-      //   const hasTransactionsWithSelectedFilters = transactions.some(
-      //     (transaction) => selectedFilters.includes(transaction.blockchainAction),
-      //   );
-
-      //   if (!hasTransactionsWithSelectedFilters) {
-      //     // setShowDownloadMessageInButton(true);
-      //     setCurrentPage(page ? page + 1 : currentPage + 1);
-      //     console.log('No transactions found with selected filters, fetching next page');
-      //     return getMoreTransactions(nextPage);
-      //   }
-      // }
-
-      // TODO: ADD INTERVAL TO REFRESH PREVIEW TRANSACTIONS
-
-      const hasPreview = transactions.some(
-        (transaction) => transaction.preview === true,
-      );
-
-      if (hasPreview) {
-        console.log('Starting interval for page', nextPage);
-        startRefreshPreviewPageInterval(nextPage);
-      }
     } catch (error) {
       console.error('Error fetching more transactions:', error);
-    } finally {
-      // stop loader
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: false,
-      }));
+      setLoadingTransactions(false);
       setShowDownloadMessageInButton(false);
+
     }
   };
 
@@ -633,6 +541,8 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const handleDownloadTransactionsNew = async () => {
     // Do the same but now the response will not be something to download.
     // Instead, it will be a response with a fileUrl or a pending state.
+
+    setExportError(null);
 
     // If user is not authenticated, show a message to login and send to login page.
     if (!user) {
@@ -706,7 +616,17 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
       const response = await dispatch(exportAction).unwrap();
 
-      console.log('Response:', response);
+
+      if (response.error) {
+        // Swal.fire({
+        //   icon: 'error',
+        //   title: 'Oops...',
+        //   text: response.message || 'Something went wrong. Please try again later.',
+        // });
+        setExportError(response.message || 'Something went wrong. Please try again later.');
+        setLoadingDownload(false);
+        return;
+      }
 
       if (response.completed && response.fileUrl) {
         // Show swal downloading for 2 seconds
@@ -759,14 +679,39 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
         const { job } = response;
 
-        console.log('Response:', response);
+        if (response.error) {
+          // Swal.fire({
+          //   icon: 'error',
+          //   title: 'Oops...',
+          //   text: response.message || 'Something went wrong. Please try again later.',
+          // });
+          setExportError(response.message || 'Something went wrong. Please try again later.');
+
+          setLoadingDownload(false);
+          return;
+        }
 
         if (!job) {
           // No job id. Consider showing an error message.
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: 'Something went wrong. Please try again later.',
+          // Swal.fire({
+          //   icon: 'error',
+          //   title: 'Oops...',
+          //   text: 'Something went wrong. Please try again later.',
+          // });
+          setExportError('Something went wrong. Please try again later.');
+          setLoadingDownload(false);
+          return;
+        }
+
+
+        // CHeck existing jobs and show a toast if the job already exists.
+        const existingJob = jobsList.find((j) => j.id === job.id);
+
+        if (existingJob) {
+          toast.warn('Export is already in progress.', {
+            autoClose: 2000,
+            closeOnClick: true,
+            position: 'bottom-right',
           });
           setLoadingDownload(false);
           return;
@@ -782,11 +727,13 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         // });
       } else {
         // No response or error. Consideer showing an error message.
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong. Please try again later.',
-        });
+        // Swal.fire({
+        //   icon: 'error',
+        //   title: 'Oops...',
+        //   text: 'Something went wrong. Please try again later.',
+        // });
+
+        setExportError('Something went wrong. Please try again later.');
       }
     } catch (error) {
       console.error(error);
@@ -796,109 +743,14 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         title: 'Oops...',
         text: 'Something went wrong. Please try again later.',
       });
-      setLoadingDownload(false);
+
+
     } finally {
-      setLoadingDownload(false);
-    }
-  };
-
-  const handleDownloadTransactions = async () => {
-    try {
-      setLoadingDownload(true);
-
-      const selectAsset = getSelectedAssetFilters(selectedAssets);
-      Swal.fire({
-        title: 'Downloading',
-        html: 'Your file is being prepared for download.',
-        timerProgressBar: true,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
-      const downloadParams = {
-        blockchain: networkType,
-        filters: {
-          blockchainAction: selectedFilters,
-          excludeSpam: !includeSpam,
-        },
-      };
-
-      const downloadAction = isCurrentUserPortfolioSelected
-        ? downloadTransactionsPortfolio({
-          ...downloadParams,
-          userId: currentPortfolioUserId,
-          assetsFilters: selectAsset,
-        })
-        : downloadTransactions({
-          ...downloadParams,
-          address: address,
-          query: debouncedSearchTerm,
-          assetsFilters: selectAsset,
-        });
-
-      const response = await dispatch(downloadAction).unwrap();
-
-      console.log(response, response.data, response.size);
-      const isResponseBlob = response instanceof Blob;
-
-      if (response.error && response.error.code !== 'PROCESSING') {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong. Please try again later.',
-        });
+      // Set loading to false after 1.5 seconds
+      setTimeout(() => {
         setLoadingDownload(false);
-      } else if (response.isProcessing) {
-        Swal.fire({
-          title: 'Processing...',
-          text: 'Address transactions are processing. Please try again in a few minutes.',
-          icon: 'info',
-          confirmButtonText: 'Ok',
-        });
+      }, 1500);
 
-        setTimeout(() => {
-          setLoadingDownload(false);
-        }, 5000);
-      } else if ((response.data && response.data.size > 0) || isResponseBlob) {
-        const url = window.URL.createObjectURL(response);
-        const link = document.createElement('a');
-        link.href = url;
-
-        // For portfolio downloads, name will reflect user id, portfolio, network type and date in unix.
-        let filename;
-
-        if (isCurrentUserPortfolioSelected) {
-          filename = `portfolio_${currentPortfolioUserId}_${networkType}_${Date.now()}.csv`;
-        } else {
-          filename = `txs_${networkType}_${address}.csv`;
-        }
-
-        link.setAttribute('download', filename);
-        document.body.appendChild(link);
-        link.click();
-        link.parentNode.removeChild(link);
-
-        setTimeout(() => {
-          Swal.close();
-          setLoadingDownload(false);
-        }, 500);
-      } else {
-        Swal.fire({
-          icon: 'info',
-          title: 'No Data',
-          text: 'No transactions to download.',
-        });
-        setLoadingDownload(false);
-      }
-    } catch (error) {
-      console.error(error);
-      console.log(error.response);
-      Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
-        text: 'Something went wrong. Please try again later.',
-      });
-      setLoadingDownload(false);
     }
   };
 
@@ -911,13 +763,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     setSelectedFilters(updatedFilters);
     setCurrentEndIndex(internalPaginationPageSize); // Reset internal pagination
 
-    const fecthId = Date.now();
 
     try {
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: true,
-      }));
+      setLoadingTransactions(true);
       const request = isCurrentUserPortfolioSelected
         ? fetchTransactionsPortfolio
         : fetchHistory;
@@ -932,10 +780,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     } catch (error) {
       console.error('Error applying filters:', error);
     } finally {
-      setLoadingTransactions((prev) => ({
-        ...prev,
-        [fecthId]: false,
-      }));
+      setLoadingTransactions(false);
     }
   };
 
@@ -1233,7 +1078,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     return (
       <Row className="col-12 ">
         <div className="d-flex justify-content-start w-100">
-          <div>Total transactions: {totalTransactions}</div>
+          <div>Total transactions: {formatNumberToLocale(totalTransactions)}</div>
           <div className="ms-3">
             {hasPreview && (
               <div className="d-flex align-items-center">
@@ -1382,33 +1227,40 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
                 Include Spam Transactions
               </label>
             </div>
-            <Button
-              className="d-flex justify-content-center align-items-center "
-              color="primary"
-              style={{
-                borderRadius: '10px',
-                border: '.5px solid grey',
-                height: 35,
-              }}
-              onClick={handleDownloadTransactionsNew}
-              size="sm"
-              disabled={isInitialLoad || loadingDownload}
-            >
-              {' '}
-              {loadingDownload ? (
-                <>
-                  {/* // SHOW spinner and Building CSV... */}
-                  <Spinner size="sm" />
+            <div className="d-flex flex-column align-items-end">
+              <Button
+                className="d-flex justify-content-center align-items-center"
+                color="primary"
+                style={{
+                  borderRadius: '10px',
+                  border: '.5px solid grey',
+                  height: 35,
+                  width: 'max-content',
+                }}
+                onClick={handleDownloadTransactionsNew}
+                size="sm"
+                disabled={isInitialLoad || loadingDownload}
+              >
+                {loadingDownload ? (
+                  <>
+                    {/* // SHOW spinner and Building CSV... */}
+                    <Spinner size="sm" />
 
-                  <span className="ms-2">Building CSV...</span>
-                </>
-              ) : (
-                <>
-                  <i className="ri-file-download-line fs-5 me-2"></i>
-                  <span>Download CSV</span>
-                </>
-              )}
-            </Button>
+                    <span className="ms-2">Building CSV...</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="ri-file-download-line fs-5 me-2"></i>
+                    <span>Download CSV</span>
+                  </>
+                )}
+              </Button>
+
+              {exportError ? (
+                <span className="text-danger ms-2">{exportError}</span>
+              ) : <span className="text-muted ms-2">&nbsp;</span>
+              }
+            </div>
           </div>
         </Row>
       </div>
