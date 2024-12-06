@@ -86,6 +86,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
   const [debouncedDisableGetMore, setDebouncedDisableGetMore] = useState(false);
   const [loadingDownload, setLoadingDownload] = useState(false);
   const [currentEndIndex, setCurrentEndIndex] = useState(15);
+  const [fetchError, setFetchError] = useState(null);
 
   const [exportError, setExportError] = useState(null);
 
@@ -192,6 +193,7 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
 
   // #region FETCH DATA
   const fetchData = async ({ abortSignal }) => {
+    setFetchError(null);
     const selectAsset = getSelectedAssetFilters(selectedAssets);
     let timerId;
 
@@ -234,8 +236,19 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
         unsupported,
         isProcessing,
         transactionsCount,
+        error
       } = response;
 
+
+      if (error) {
+        setTotalTransactions(transactionsCount || 0);
+        setFetchError(error);
+        setLoadingTransactions(false);
+        setData([]);
+        setIsInitialLoad(false);
+        console.error('Error fetching transactions.', error);
+        return;
+      }
 
       if (unsupported) {
         setUnsupportedAddress(true);
@@ -1042,35 +1055,34 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
       selectedAssets !== 'All Assets' ||
       includeSpam ||
       searchTerm;
-    const finalMessage = hasFilters
-      ? 'No transactions found with the selected filters'
-      : 'No transactions found';
+    const finalMessage =
+      fetchError ? fetchError :
+        hasFilters
+          ? 'No transactions found with the selected filters'
+          : 'No transactions found';
 
     return (
-      <Col
-        lg={12}
-        className="position-relative d-flex justify-content-center align-items-center"
-        style={{ minHeight: isDashboardPage ? '10vh' : '50vh' }}
+      <div
+        className="mt-2"
+        style={{
+          width: 'max-content'
+        }}
       >
         <div>
           {isDashboardPage ? (
             <>
-              <h4>{finalMessage}</h4>
+              <div className="alert alert-danger" role="alert">
+                <span className="mb-0">{finalMessage}</span>
+              </div>
               {totalTransactions > 0 && buttonSeeMore('history', '')}
             </>
           ) : (
-            <h1>{finalMessage}</h1>
-            // <h1>
-            //   {selectedFilters
-            //     ? formatTransactionNotFoundMessage(
-            //         selectedFilters.toString().toLowerCase().split(','),
-            //         selectedAssets,
-            //       )
-            //     : `No Transactions Found`}
-            // </h1>
+            <div className="alert alert-danger" role="alert">
+              <span className="mb-0">{finalMessage}</span>
+            </div>
           )}
         </div>
-      </Col>
+      </div>
     );
   };
 
@@ -1078,7 +1090,9 @@ const HistorialTable = ({ data, setData, isDashboardPage, buttonSeeMore }) => {
     return (
       <Row className="col-12 ">
         <div className="d-flex justify-content-start w-100">
-          <div>Total transactions: {formatNumberToLocale(totalTransactions)}</div>
+          {totalTransactions && (
+            <div>Total transactions: {formatNumberToLocale(totalTransactions)}</div>
+          )}
           <div className="ms-3">
             {hasPreview && (
               <div className="d-flex align-items-center">
