@@ -414,7 +414,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
 
           <div className="d-flex flex-column align-items-start flex-grow-1">
             <span
-              className={`text-${labelToDisplay === 'Select Wallet' ? 'center' : 'start'} text-dark align-self-center`}
+              className={`text-${labelToDisplay === 'Select Wallet' ? 'center' : 'start'} text-dark align-self-start`}
               style={{
                 whiteSpace:
                   labelToDisplay === 'Select Wallet' ? 'normal' : 'nowrap',
