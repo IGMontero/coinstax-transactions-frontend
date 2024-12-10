@@ -89,6 +89,8 @@ const InformationLedger = ({
       bnb: 'https://bscscan.com/tx',
       polygon: 'https://polygonscan.com/tx',
       optimism: 'https://optimistic.etherscan.io/tx',
+      base: 'https://basescan.org/tx',
+      cronos: 'https://cronoscan.com/tx',
     };
 
     const blockchain = transaction.blockchain;
