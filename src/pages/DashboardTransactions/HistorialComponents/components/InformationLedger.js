@@ -7,6 +7,7 @@ import {
   removeNegativeSign,
 } from '../../../../utils/utils';
 import { Link } from 'react-router-dom';
+import { BlockchainMetadata } from '../../../../common/constants';
 
 const InformationLedger = ({
   transaction,
@@ -84,17 +85,8 @@ const InformationLedger = ({
   };
 
   const renderTransactionHash = (transaction) => {
-    const blockchainLinks = {
-      ethereum: 'https://etherscan.io/tx',
-      bnb: 'https://bscscan.com/tx',
-      polygon: 'https://polygonscan.com/tx',
-      optimism: 'https://optimistic.etherscan.io/tx',
-      base: 'https://basescan.org/tx',
-      cronos: 'https://cronoscan.com/tx',
-    };
 
-    const blockchain = transaction.blockchain;
-    const baseLink = blockchainLinks[blockchain];
+    const baseLink = BlockchainMetadata[transaction.blockchain]?.blockchainLink;
 
     return (
       <div className="align-items-center d-flex">

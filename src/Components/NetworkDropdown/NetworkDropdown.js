@@ -45,6 +45,9 @@ const NetworkDropdown = ({
             alt={network.iconAlt}
             width={network.width}
             height={network.height}
+            style={{
+              borderRadius: '3px',
+            }}
             className="ms-n1 me-2"
           />
         )}
