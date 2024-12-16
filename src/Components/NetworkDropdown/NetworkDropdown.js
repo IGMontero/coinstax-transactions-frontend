@@ -111,6 +111,10 @@ const NetworkDropdown = ({
     </svg>
   );
 
+  if (!selectedNetwork) {
+    return null;
+  }
+
   return (
     <Col xxl={6} className="d-flex justify-content-end align-items-center">
       <div className="d-flex justify-content-end align-items-center">
