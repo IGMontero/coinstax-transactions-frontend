@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Button, Col, Row, Spinner } from 'reactstrap';
+import { Button, Col, Row } from 'reactstrap';
 import Nfts from '../DashboardNFT/Nfts';
 import HistorialTable from '../DashboardTransactions/HistorialTable';
 import ActivesTable from './components/ActivesTable';
@@ -7,14 +7,13 @@ import PerformanceChart from './components/PerformanceChart';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import Helmet from '../../Components/Helmet/Helmet';
 import QrModal from '../../Components/Modals/QrModal';
-import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
-import { setAddressName } from '../../slices/addressName/reducer';
 import { selectNetworkType } from '../../slices/networkType/reducer';
+import { fetchAssetsPortfolio } from '../../slices/portfolio/thunk';
 import { fetchAssets } from '../../slices/transactions/thunk';
 import { formatAddressToShortVersion } from '../../utils/utils';
-import Helmet from '../../Components/Helmet/Helmet';
-import { fetchAssetsPortfolio } from '../../slices/portfolio/thunk';
+import OnboardingTour from '../../Components/OnboardingTour/OnboardingTour';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -102,12 +101,12 @@ const DashboardInfo = () => {
 
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
-            fetchAssetsPortfolio({
-              userId: currentPortfolioUserId,
-              blockchain: networkType,
-              signal,
-            }),
-          )
+          fetchAssetsPortfolio({
+            userId: currentPortfolioUserId,
+            blockchain: networkType,
+            signal,
+          }),
+        )
         : dispatch(fetchAssets(params)).unwrap();
 
       const response = await request;
@@ -189,7 +188,7 @@ const DashboardInfo = () => {
   return (
     <React.Fragment>
       <Helmet title="Dashboard" />
-      <div>
+      <div id="page-dashboard-info">
         <QrModal
           showQrModal={showQrModal}
           toggleQrModal={toggleQrModal}
@@ -289,6 +288,8 @@ const DashboardInfo = () => {
           </Row>
         </div>
       </div>
+
+      <OnboardingTour />
     </React.Fragment>
   );
 };

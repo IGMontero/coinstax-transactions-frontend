@@ -2335,6 +2335,16 @@
   resolved "https://registry.npmjs.org/@gar/promisify/-/promisify-1.1.3.tgz"
   integrity sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==
 
+"@gilbarbara/deep-equal@^0.1.1":
+  version "0.1.2"
+  resolved "https://registry.npmjs.org/@gilbarbara/deep-equal/-/deep-equal-0.1.2.tgz"
+  integrity sha512-jk+qzItoEb0D0xSSmrKDDzf9sheQj/BAPxlgNxgmOaA3mxpUa6ndJLYGZKsJnIVEQSD8zcTbyILz7I0HcnBCRA==
+
+"@gilbarbara/deep-equal@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.npmjs.org/@gilbarbara/deep-equal/-/deep-equal-0.3.1.tgz"
+  integrity sha512-I7xWjLs2YSVMc5gGx1Z3ZG1lgFpITPndpi8Ku55GeEIKpACCPQNS/OTqQbxgTCfq0Ncvcc+CrFov96itVh6Qvw==
+
 "@grpc/grpc-js@~1.7.0":
   version "1.7.3"
   resolved "https://registry.npmjs.org/@grpc/grpc-js/-/grpc-js-1.7.3.tgz"
@@ -6864,6 +6874,11 @@ dedent@^0.7.0:
   resolved "https://registry.npmjs.org/dedent/-/dedent-0.7.0.tgz"
   integrity sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA==
 
+deep-diff@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.npmjs.org/deep-diff/-/deep-diff-1.0.2.tgz"
+  integrity sha512-aWS3UIVH+NPGCD1kki+DCU9Dua032iSsO43LqQpcs4R3+dVv7tX0qBGjiVHJHjplsoUM2XRO/KB92glqc68awg==
+
 deep-equal@^1.0.1:
   version "1.1.2"
   resolved "https://registry.npmjs.org/deep-equal/-/deep-equal-1.1.2.tgz"
@@ -9363,6 +9378,16 @@ is-lambda@^1.0.1:
   resolved "https://registry.npmjs.org/is-lambda/-/is-lambda-1.0.1.tgz"
   integrity sha512-z7CMFGNrENq5iFB9Bqo64Xk6Y9sg+epq1myIcdHaGnbMTYOxvzsEtdYqQUylB7LxfkvgrrjP32T6Ywciio9UIQ==
 
+is-lite@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.npmjs.org/is-lite/-/is-lite-0.8.2.tgz"
+  integrity sha512-JZfH47qTsslwaAsqbMI3Q6HNNjUuq6Cmzzww50TdP5Esb6e1y2sK2UAaZZuzfAzpoI2AkxoPQapZdlDuP6Vlsw==
+
+is-lite@^1.2.0, is-lite@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.npmjs.org/is-lite/-/is-lite-1.2.1.tgz"
+  integrity sha512-pgF+L5bxC+10hLBgf6R2P4ZZUBOQIIacbdo8YvuCP8/JvsWxG7aZ9p10DYuLtifFci4l3VITphhMlMV4Y+urPw==
+
 is-map@^2.0.1, is-map@^2.0.2:
   version "2.0.2"
   resolved "https://registry.npmjs.org/is-map/-/is-map-2.0.2.tgz"
@@ -11840,6 +11865,11 @@ pony-cause@^2.1.10:
   resolved "https://registry.npmjs.org/pony-cause/-/pony-cause-2.1.11.tgz"
   integrity sha512-M7LhCsdNbNgiLYiP4WjsfLUuFmCfnjdF6jKe2R9NKl4WFN+HZPGHJZ9lnLP7f9ZnKe3U9nuWD0szirmj+migUg==
 
+popper.js@^1.16.0:
+  version "1.16.1"
+  resolved "https://registry.npmjs.org/popper.js/-/popper.js-1.16.1.tgz"
+  integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
+
 postcss-attribute-case-insensitive@^5.0.2:
   version "5.0.2"
   resolved "https://registry.npmjs.org/postcss-attribute-case-insensitive/-/postcss-attribute-case-insensitive-5.0.2.tgz"
@@ -12942,6 +12972,17 @@ react-flatpickr@^3.10.7:
     flatpickr "^4.6.2"
     prop-types "^15.5.10"
 
+react-floater@^0.7.9:
+  version "0.7.9"
+  resolved "https://registry.npmjs.org/react-floater/-/react-floater-0.7.9.tgz"
+  integrity sha512-NXqyp9o8FAXOATOEo0ZpyaQ2KPb4cmPMXGWkx377QtJkIXHlHRAGer7ai0r0C1kG5gf+KJ6Gy+gdNIiosvSicg==
+  dependencies:
+    deepmerge "^4.3.1"
+    is-lite "^0.8.2"
+    popper.js "^1.16.0"
+    prop-types "^15.8.1"
+    tree-changes "^0.9.1"
+
 react-ga4@^2.1.0:
   version "2.1.0"
   resolved "https://registry.npmjs.org/react-ga4/-/react-ga4-2.1.0.tgz"
@@ -12973,6 +13014,11 @@ react-image-lightbox@^5.1.4:
     prop-types "^15.7.2"
     react-modal "^3.11.1"
 
+react-innertext@^1.1.5:
+  version "1.1.5"
+  resolved "https://registry.npmjs.org/react-innertext/-/react-innertext-1.1.5.tgz"
+  integrity sha512-PWAqdqhxhHIv80dT9znP2KvS+hfkbRovFp4zFYHFFlOoQLRiawIic81gKb3U1wEyJZgMwgs3JoLtwryASRWP3Q==
+
 react-is@^16.13.1, react-is@^16.7.0:
   version "16.13.1"
   resolved "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz"
@@ -12992,6 +13038,23 @@ react-is@^18.0.0:
   version "18.2.0"
   resolved "https://registry.npmjs.org/react-is/-/react-is-18.2.0.tgz"
   integrity sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==
+
+react-joyride@^2.9.3:
+  version "2.9.3"
+  resolved "https://registry.npmjs.org/react-joyride/-/react-joyride-2.9.3.tgz"
+  integrity sha512-1+Mg34XK5zaqJ63eeBhqdbk7dlGCFp36FXwsEvgpjqrtyywX2C6h9vr3jgxP0bGHCw8Ilsp/nRDzNVq6HJ3rNw==
+  dependencies:
+    "@gilbarbara/deep-equal" "^0.3.1"
+    deep-diff "^1.0.2"
+    deepmerge "^4.3.1"
+    is-lite "^1.2.1"
+    react-floater "^0.7.9"
+    react-innertext "^1.1.5"
+    react-is "^16.13.1"
+    scroll "^3.0.1"
+    scrollparent "^2.1.0"
+    tree-changes "^0.11.2"
+    type-fest "^4.27.0"
 
 react-jvectormap@^0.0.16:
   version "0.0.16"
@@ -13768,6 +13831,16 @@ schema-utils@2.7.0:
     "@types/json-schema" "^7.0.4"
     ajv "^6.12.2"
     ajv-keywords "^3.4.1"
+
+scroll@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.npmjs.org/scroll/-/scroll-3.0.1.tgz"
+  integrity sha512-pz7y517OVls1maEzlirKO5nPYle9AXsFzTMNJrRGmT951mzpIBy7sNHOg5o/0MQd/NqliCiWnAi0kZneMPFLcg==
+
+scrollparent@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.npmjs.org/scrollparent/-/scrollparent-2.1.0.tgz"
+  integrity sha512-bnnvJL28/Rtz/kz2+4wpBjHzWoEzXhVg/TE8BeVGJHUqE8THNIRnDxDWMktwM+qahvlRdvlLdsQfYe+cuqfZeA==
 
 scss-tokenizer@^0.4.3:
   version "0.4.3"
@@ -14888,6 +14961,22 @@ tr46@~0.0.3:
   resolved "https://registry.npmjs.org/tr46/-/tr46-0.0.3.tgz"
   integrity sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw==
 
+tree-changes@^0.11.2:
+  version "0.11.2"
+  resolved "https://registry.npmjs.org/tree-changes/-/tree-changes-0.11.2.tgz"
+  integrity sha512-4gXlUthrl+RabZw6lLvcCDl6KfJOCmrC16BC5CRdut1EAH509Omgg0BfKLY+ViRlzrvYOTWR0FMS2SQTwzumrw==
+  dependencies:
+    "@gilbarbara/deep-equal" "^0.3.1"
+    is-lite "^1.2.0"
+
+tree-changes@^0.9.1:
+  version "0.9.3"
+  resolved "https://registry.npmjs.org/tree-changes/-/tree-changes-0.9.3.tgz"
+  integrity sha512-vvvS+O6kEeGRzMglTKbc19ltLWNtmNt1cpBoSYLj/iEcPVvpJasemKOlxBrmZaCtDJoF+4bwv3m01UKYi8mukQ==
+  dependencies:
+    "@gilbarbara/deep-equal" "^0.1.1"
+    is-lite "^0.8.2"
+
 trim-newlines@^3.0.0:
   version "3.0.1"
   resolved "https://registry.npmjs.org/trim-newlines/-/trim-newlines-3.0.1.tgz"
@@ -15008,6 +15097,11 @@ type-fest@^0.8.1:
   version "0.8.1"
   resolved "https://registry.npmjs.org/type-fest/-/type-fest-0.8.1.tgz"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
+
+type-fest@^4.27.0:
+  version "4.30.1"
+  resolved "https://registry.npmjs.org/type-fest/-/type-fest-4.30.1.tgz"
+  integrity sha512-ojFL7eDMX2NF0xMbDwPZJ8sb7ckqtlAi1GsmgsFXvErT9kFTk1r0DuQKvrCh73M6D4nngeHJmvogF9OluXs7Hw==
 
 type-is@~1.6.18:
   version "1.6.18"

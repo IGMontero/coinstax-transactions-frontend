@@ -339,7 +339,7 @@ const VerticalLayout = (props) => {
               <li className="nav-item mt-2">
                 <Link
                   id={item.id}
-                  className={`menu-link nav-link 
+                  className={`sidebar-item menu-link nav-link 
                   ${isActive && !isLightMode ? 'nav-link-active-dark ' : ''}
                    ${isActive && isLightMode ? 'nav-link-active ' : ''} 
                    d-flex  ps-0 `}
