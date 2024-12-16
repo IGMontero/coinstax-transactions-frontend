@@ -1,13 +1,13 @@
 import React from 'react';
-import { Col, Row, PopoverBody, UncontrolledPopover } from 'reactstrap';
+import { Link } from 'react-router-dom';
+import { Col, PopoverBody, Row, UncontrolledPopover } from 'reactstrap';
+import { BlockchainMetadata } from '../../../../common/constants';
 import {
-  formatIdTransaction,
   blockchainActions,
+  formatIdTransaction,
   parseValuesToLocale,
   removeNegativeSign,
 } from '../../../../utils/utils';
-import { Link } from 'react-router-dom';
-import { BlockchainMetadata } from '../../../../common/constants';
 
 const InformationLedger = ({
   transaction,
@@ -18,6 +18,7 @@ const InformationLedger = ({
   const handleCopy = (e) => {
     onCopy(e, transaction.txHash, collapseId);
   };
+
 
   const renderCollectionName = (collectionName) => {
     if (collectionName) {
@@ -63,7 +64,6 @@ const InformationLedger = ({
   };
 
   const renderFee = (fee) => {
-    const prettyAmount = fee?.prettyAmount;
     const amount = parseValuesToLocale(fee?.amount, '');
     const amountUsd = parseValuesToLocale(
       fee?.nativeAmount,
@@ -86,7 +86,9 @@ const InformationLedger = ({
 
   const renderTransactionHash = (transaction) => {
 
-    const baseLink = BlockchainMetadata[transaction.blockchain]?.blockchainLink;
+    const txLink =
+      transaction.txLink ||
+      `${BlockchainMetadata[transaction.blockchain]?.blockchainLink}/${transaction.txHash}`;
 
     return (
       <div className="align-items-center d-flex">
@@ -99,7 +101,7 @@ const InformationLedger = ({
             >
               {transaction.txHash ? (
                 <Link
-                  to={`${baseLink}/${transaction.txHash}`}
+                  to={txLink}
                   target="_blank"
                   onClick={(e) => e.stopPropagation()}
                   className="text-decoration-none text-muted  "

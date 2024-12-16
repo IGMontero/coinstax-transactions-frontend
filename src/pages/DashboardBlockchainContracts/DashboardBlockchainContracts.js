@@ -12,7 +12,6 @@ import BlockChainContractTable from '../../Components/Tables/BlockChainContractT
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import NetworkDropdown from '../../Components/NetworkDropdown/NetworkDropdown';
 import { networks } from '../../common/constants';
-import AddressWithDropdown from '../../Components/Address/AddressWithDropdown';
 import Helmet from '../../Components/Helmet/Helmet';
 
 const DashboardBlockchainContracts = () => {

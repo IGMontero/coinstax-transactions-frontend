@@ -14,7 +14,7 @@ import QrModal from '../Modals/QrModal';
 import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
 
 const AddressWithDropdown = ({
-  filteredNetworks,
+  addressBlockchains,
   isOnlyAllNetwork,
   incompleteBlockchains,
   loading,
@@ -324,7 +324,7 @@ const AddressWithDropdown = ({
             {!isOnlyAllNetwork && !isUnsupported && (
               <NetworkDropdown
                 isAdminPage={false}
-                filteredNetworks={filteredNetworks}
+                addressBlockchains={addressBlockchains}
                 incompleteBlockchains={incompleteBlockchains}
                 loading={loading}
               />
