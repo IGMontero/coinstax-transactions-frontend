@@ -519,7 +519,7 @@ const Layout = (props) => {
             <div className="container-xxl h-100">
               <div className="row">
                 <div
-                  style={{ zIndex: 1004 }}
+                  style={{ zIndex: 1004, borderRight: '1px solid #e9ebec', boxShadow: '0px 0px 1px 1px #0000001A' }}
                   className="col-md-2 col-lg-2 col-0">
                   <Sidebar layoutType={layoutType} />
                 </div>
@@ -528,6 +528,7 @@ const Layout = (props) => {
                   className="col-md-10 mt-5 col-lg-8 col-12"
                   style={{
                     minHeight: '85vh',
+                    margin: 'auto'
                   }}
                 >
                   <Header

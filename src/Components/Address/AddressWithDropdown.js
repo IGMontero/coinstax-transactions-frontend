@@ -199,6 +199,7 @@ const AddressWithDropdown = ({
 
   const renderAddressWithDropdown = () => {
     return (
+      <>
       <div className="d-flex align-items-center ms-n3">
         <h4 className="mb-0 ms-3 text-custom-address-dropdown">
           {getAddressLabel()}
@@ -247,6 +248,7 @@ const AddressWithDropdown = ({
           </div>
         )}
       </div>
+        </>
 
       //   {!isCurrentUserPortfolioSelected && (
       //     <UncontrolledDropdown className="card-header-dropdown">

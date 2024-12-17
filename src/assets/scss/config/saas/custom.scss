@@ -769,11 +769,8 @@ File: Custom Css File
 // Connectors Cards 
 .connector-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
+  flex-direction: column;
   width: 100%;
-  gap: 26px;
 
   .connector-item {
     position: relative;
@@ -793,21 +790,20 @@ File: Custom Css File
       }
 
       .connector-item-inner {
-          width: 126px;
-          height: 168px;
-          display: flex;
+        display: flex;
+          width: 100%;
           position: relative;
-          flex-direction: column;
           align-items: center;
           text-align: center;
-          justify-content: flex-start;
-          padding: 18px 6px;
+          padding: 10px 10px;
           background: #f9fafc;
           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.25);
           border-radius: 16px;
           border: 1px solid transparent;
 
           .more-card {
+            display: flex;
+             align-items: center;
               width: 108px;
               height: 108px;
               position: relative;
@@ -822,37 +818,31 @@ File: Custom Css File
               .icon-wrapper {
                   display: flex;
                   flex: 0 0 auto;
-                  width: 72px;
-                  height: 72px;
+                  width: 30px;
+                  height: 30px;
               }
 
               .card-image {
                   object-fit: contain;
                   width: 100% !important;
                   position: relative !important;
-                  height: unset !important;
+                  height: 100%;
               }
           }
 
           .description-wrapper {
-              flex: 1;
               display: flex;
-              flex-direction: column;
               justify-content: space-between;
 
               .name {
-                  overflow: hidden;
-                  display: -webkit-box;
-                  -webkit-line-clamp: 1;
-                  -webkit-box-orient: vertical;
-                  word-break: break-all;
-                  white-space: normal;
+                  
+                  display: flex;
+                  align-items: center;
                   font-size: 13px;
                   font-family: 'Poppins', sans-serif;
                   line-height: 18px;
                   letter-spacing: 0;
                   font-weight: 400;
-                  margin-top: 16px;
                   text-transform: capitalize;
                   color: #464343;
               }

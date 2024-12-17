@@ -87,7 +87,6 @@ const Navbar = () => {
           >
             <i className="mdi mdi-menu"></i>
           </NavbarToggler>
-
           <Collapse
             isOpen={isOpenMenu}
             className="navbar-collapse"

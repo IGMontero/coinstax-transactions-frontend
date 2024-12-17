@@ -233,6 +233,7 @@ const DashboardInfo = () => {
 
                 <div className="d-flex flex-column">
                   <div className="">
+                    
                     <PerformanceChart
                       setIsUnsupported={setIsUnsupported}
                       address={addressForSearch}

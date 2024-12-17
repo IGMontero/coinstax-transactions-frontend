@@ -60,16 +60,16 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
     return (
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Button
-          className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
-            }`}
+          className={`btn btn-sm btn-soft-primary`}
           onClick={() => handleViewModeChange('byPlatform')}
+          style={{background: `${viewMode === 'byPlatform' ? '#FFFFFF' : 'transparent'}`, color: `${viewMode === 'byPlatform' ? '#414068' : '#414068'}`, borderRadius: '16px', boxShadow: `${viewMode === 'byPlatform' ? '0px 0px 1px 1px #0000001a' : ""}`}}
         >
           By Platform
         </Button>
         <Button
-          className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
-            }`}
+          className={`mx-2 btn btn-sm btn-soft-primary`}
           onClick={() => handleViewModeChange('perPosition')}
+          style={{background: `${viewMode === 'perPosition' ? '#FFFFFF' : 'transparent'}`, color: `${viewMode === 'perPosition' ? '#414068' : '#414068'}`, borderRadius: '16px', boxShadow: `${viewMode === 'perPosition' ? '0px 0px 1px 1px #0000001a' : ""}`}}
         >
           Per Position
         </Button>
