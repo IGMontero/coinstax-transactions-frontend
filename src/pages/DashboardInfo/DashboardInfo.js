@@ -8,13 +8,14 @@ import PerformanceChart from './components/PerformanceChart';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import QrModal from '../../Components/Modals/QrModal';
-import { handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
+import { getCurrentThemeCookie, handleSaveInCookiesAndGlobalState } from '../../helpers/cookies_helper';
 import { setAddressName } from '../../slices/addressName/reducer';
 import { selectNetworkType } from '../../slices/networkType/reducer';
 import { fetchAssets } from '../../slices/transactions/thunk';
-import { formatAddressToShortVersion } from '../../utils/utils';
+import { formatAddressToShortVersion, isDarkMode } from '../../utils/utils';
 import Helmet from '../../Components/Helmet/Helmet';
 import { fetchAssetsPortfolio } from '../../slices/portfolio/thunk';
+import { layoutModeTypes } from '../../Components/constants/layout';
 
 const DashboardInfo = () => {
   const dispatch = useDispatch();
@@ -51,7 +52,6 @@ const DashboardInfo = () => {
   const [assetsLoaders, setAssetsLoaders] = useState({});
   const loadingAssets = Object.values(assetsLoaders).some((loader) => loader);
   const formattedAddress = address ? formatAddressToShortVersion(address) : '';
-
   function usePrevious(value) {
     const ref = useRef();
     useEffect(() => {
@@ -102,12 +102,12 @@ const DashboardInfo = () => {
 
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
-            fetchAssetsPortfolio({
-              userId: currentPortfolioUserId,
-              blockchain: networkType,
-              signal,
-            }),
-          )
+          fetchAssetsPortfolio({
+            userId: currentPortfolioUserId,
+            blockchain: networkType,
+            signal,
+          }),
+        )
         : dispatch(fetchAssets(params)).unwrap();
 
       const response = await request;
@@ -233,6 +233,7 @@ const DashboardInfo = () => {
 
                 <div className="d-flex flex-column">
                   <div className="">
+
                     <PerformanceChart
                       setIsUnsupported={setIsUnsupported}
                       address={addressForSearch}
@@ -242,7 +243,7 @@ const DashboardInfo = () => {
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">Assets</h2>
                       </div>
-                      <div className="border border-2 rounded p-3 ">
+                      <div className="border border-2 p-3" style={{ borderRadius: '16px' }}>
                         <ActivesTable
                           isDashboardPage={true}
                           loading={loadingAssets}
@@ -255,7 +256,7 @@ const DashboardInfo = () => {
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">NFTs</h2>
                       </div>
-                      <div className="border border-2 rounded px-5 p-3">
+                      <div className="border border-2 px-5 p-3" style={{ borderRadius: '16px' }}>
                         <div className="">
                           <Nfts
                             isDashboardPage={true}
@@ -269,7 +270,7 @@ const DashboardInfo = () => {
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">Transactions</h2>
                       </div>
-                      <div className="border border-2 rounded p-3 ">
+                      <div className="border border-2 p-3" style={{ borderRadius: '16px' }}>
                         <HistorialTable
                           isDashboardPage={true}
                           data={historyData}

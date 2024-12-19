@@ -5,8 +5,8 @@ import { capitalizeFirstLetter } from '../../utils/utils';
 
 const BlockchainImage = ({
   blockchainType,
-  width,
-  height,
+  width = 30,
+  height = 30,
   className,
   style,
 }) => {
@@ -35,8 +35,8 @@ const BlockchainImage = ({
     borderRadius: '50%', // Circle for 'all', square otherwise
     backgroundColor: colorTheme?.hex || colorTheme?.css_rgb || '#ccc', // Fallback to a default color
     padding: '5px',
-    ...style,
     position: 'relative',
+    ...style,
   };
 
   return (

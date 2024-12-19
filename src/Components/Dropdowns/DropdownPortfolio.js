@@ -394,24 +394,19 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
   return (
     <Dropdown
       className="mt-3"
-      style={{
-        maxWidth: shouldBeResponsive ? '' : '150px',
-      }}
+      // style={{
+      //   maxWidth: shouldBeResponsive ? '' : '150px',
+      // }}
       isOpen={dropdownOpen}
       toggle={toggleDropdown}
     >
       <DropdownToggle
-        className={` bg-transparent p-0  d-flex ${shouldBeResponsive ? 'ps-4 w-100' : 'ps-0'}  align-items-start justify-content-center border-0 rounded-4 `}
+        className={` bg-transparent p-0  d-flex ${shouldBeResponsive ? 'ps-4 w-100' : 'ps-0'}  align-items-start justify-content-center border-0 rounded-4 w-100 justify-content-between `}
         variant="transparent"
         id="dropdown-basic"
       >
-        <div
-          className={`${shouldBeResponsive ? 'flex-column text-center' : ''}  d-flex align-items-center`}
-        >
-          <i
-            className={`ri-dashboard-fill ${shouldBeResponsive ? '' : 'pe-3'} fs-18 text-dark`}
-          ></i>
-
+        <div className={`${shouldBeResponsive ? 'flex-column text-center' : ''}  d-flex align-items-center`}>
+          <i className={`ri-dashboard-fill ${shouldBeResponsive ? '' : 'pe-3'} fs-18 text-dark`}></i>
           <div className="d-flex flex-column align-items-start flex-grow-1">
             <span
               className={`text-${labelToDisplay === 'Select Wallet' ? 'center' : 'start'} text-dark align-self-start`}
@@ -444,7 +439,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
             </div>
           </div>
         </div>
-        <i className="ri-arrow-down-s-line  fs-4 text-dark"></i>
+        <i className="ri-arrow-down-s-line  fs-4" style={{color: "#909ACA"}}></i>
       </DropdownToggle>
 
       <DropdownMenuPortal>
@@ -452,6 +447,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           style={{
             zIndex: 1004,
             width: '300px',
+            borderRadius: '16px'
           }}
         >
           {!userPortfolioAddresses.length ? null : (

@@ -44,7 +44,7 @@ const AssetsTable = ({
 
   const columns = [
     {
-      name: 'ASSETS',
+      name: 'Assets',
       selector: (row) => {
         // Calculate per position percent based on address total value. If it's laoding, show like it's loading the percent, or show the item percent.
         const perPositionPercent =
@@ -122,7 +122,7 @@ const AssetsTable = ({
       grow: 2,
     },
     {
-      name: 'PRICE',
+      name: 'Balance',
       selector: (row) =>
         row.price ? parseValuesToLocale(row.price, CurrencyUSD) : '$0.00',
       sortable: false,
@@ -134,7 +134,7 @@ const AssetsTable = ({
       ),
     },
     {
-      name: 'BALANCE',
+      name: 'Price',
       selector: (row) =>
         row.balance ? (
           <span>{parseValuesToLocale(row.balance, '') + ' ' + row.symbol}</span>
@@ -156,7 +156,7 @@ const AssetsTable = ({
       ),
     },
     {
-      name: 'VALUE',
+      name: 'Value',
       selector: (row) =>
         row.value
           ? parseValuesToLocale(row.value, CurrencyUSD)

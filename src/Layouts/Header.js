@@ -298,24 +298,23 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
     <React.Fragment>
       <header
         id="page-topbar"
-        style={{
-          left: '0',
-          right: '0',
-        }}
+        style={{left: '0', right: '0',}}
         className="mb-4 d-flex align-items-center justify-content-center"
       >
         <div className="container-xxl">
           <div className="row">
             <div className="col-md-2 col-lg-2 col-0"></div>
-
             <div
-              className={`col-md-10 col-lg-8 col-12`}
+              className={`col-md-10 col-12`}
               style={{
                 backgroundColor: backgroundColor,
+                paddingRight: '0px',
+                paddingLeft: '0px'
               }}
             >
               <div
                 className={`d-flex justify-content-between align-items-center ${isOpenCollapseMenuHeader ? '' : 'border-bottom border-2'} w-100`}
+                style={{padding: '0px 10px'}}
               >
                 <Col className="col-1 d-md-none d-lg-none">
                   <button

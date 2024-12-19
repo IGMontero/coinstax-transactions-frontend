@@ -29,8 +29,8 @@ import UnsupportedPage from '../Components/UnsupportedPage/UnsupportedPage';
 import { layoutModeTypes } from '../Components/constants/layout';
 import { pagesWithoutAddress } from '../common/constants';
 import config from '../config';
-import { setCurrentThemeCookie } from '../helpers/cookies_helper';
 import { setAddressSummary } from '../slices/addresses/reducer';
+import { getCurrentThemeCookie, setCurrentThemeCookie } from '../helpers/cookies_helper';
 import { getAddressesInfo } from '../slices/addresses/thunk';
 import {
   selectNetworkType,
@@ -372,7 +372,6 @@ const Layout = (props) => {
     pagesNotToDisplayAddress,
     isCurrentUserPortfolioSelected,
   ]);
-
   return (
     <React.Fragment>
       <div id="layout-wrapper">
@@ -393,8 +392,8 @@ const Layout = (props) => {
             <div className="container-xxl h-100">
               <div className="row">
                 <div
-                  style={{ zIndex: 1004 }}
-                  className="col-md-2 col-lg-2 col-0">
+                  style={{ zIndex: 1004, borderRight: getCurrentThemeCookie() === 'dark' ? '1px solid #32383e' : '1px solid #e9ebec', background: getCurrentThemeCookie() === 'dark' ? '#16161a' : '#FFFFFF' }}
+                  className={`col-md-2 col-lg-2 col-0`}>
                   <Sidebar layoutType={layoutType} />
                 </div>
 
@@ -402,6 +401,7 @@ const Layout = (props) => {
                   className="col-md-10 mt-5 col-lg-8 col-12"
                   style={{
                     minHeight: '85vh',
+                    margin: 'auto'
                   }}
                 >
                   <Header

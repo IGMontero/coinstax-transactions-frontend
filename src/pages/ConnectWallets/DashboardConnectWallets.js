@@ -16,6 +16,7 @@ import {
 } from '../../hooks/useUserPortfolio';
 import { addUserWallet } from '../../slices/userWallets/thunk';
 import DashboardUserWallets from '../DashboardAccountsWallets/DashboardUserWallets';
+import walletIcon from '../../assets/images/svg/wallet.svg';
 
 const DashboardConnectWallets = () => {
   const navigate = useNavigate();
@@ -264,7 +265,9 @@ const DashboardConnectWallets = () => {
 
       // Get connector from the list of connectors
       return (
-        <div key={connector.uid} className="d-flex flex-column">
+        <div
+          key={connector.uid}
+          className="d-flex flex-column" style={{ flex: '1', width: '100%', minWidth: '40%', border: '2px solid #EAECF0', borderRadius: '12px' }}>
           <ConnectorButton
             key={connector.uid}
             id={connector.id}
@@ -280,32 +283,112 @@ const DashboardConnectWallets = () => {
     <>
       <div className="page-content">
         <Helmet title="Connect Wallet" />
-        <div className="d-flex justify-content-center flex-column align-items-center mt-5">
+        <div
+          className="d-flex justify-content-center flex-column align-items-center mt-5"
+          style={{
+            width: '100%',
+            maxWidth: '532px',
+            display: 'flex',
+            justifyContent: 'center',
+            border: '1px solid #E2E4E9',
+            borderRadius: '16px',
+            padding: '40px',
+            margin: 'auto'
+          }}
+        >
           <div
             style={{
-              flexWrap: 'wrap',
-              justifyContent: 'center',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
+              justifyContent: 'center'
             }}
-            className="connector-container mt-5 pt-5 mb-5"
           >
-            {renderConnectors()}
+            <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'center', width: '100%', gap: '20px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: 'auto',
+                  width: '50px',
+                  minWidth: '50px',
+                  height: '50px',
+                  minHeight: '50px',
+                  borderRadius: '50%',
+                  backgroundColor: '#A0A7DE',
+                }}
+              >
+                <img src={walletIcon} alt="" />
+              </div>
+              <h2 style={{ margin: '0' }}>Connect Your Wallet</h2>
+              <span style={{ fontSize: '14px' }}>
+                Add your wallets to see all your assets in one place.
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '20px' }} className="connector-container">
+              <label style={{ fontWeight: '600' }}>Currently supported</label>
+              <ul
+                style={{
+                  display: 'flex',
+                  gap: '10px',
+                  flexWrap: 'wrap',
+                  width: '100%',
+                  margin: '0px',
+                  padding: '0px',
+                }}
+              >
+                {renderConnectors()}
+              </ul>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  flexDirection: 'column',
+                  gap: '20px',
+                  marginLeft: 'auto',
+                  marginRight: 'auto',
+                  marginTop: '30px',
+                  width: '100%',
+                }}
+              >
+                <button
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    textAlign: 'center',
+                    width: '100%',
+                    maxWidth: '250px',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
+                    border: 'none',
+                    backgroundColor: '#405189',
+                    color: '#fff',
+                  }}
+                >
+                  Add wallet
+                </button>
+                <a style={{ textDecoration: 'none' }} href="">
+                  Skip for now
+                </a>
+              </div>
+            </div>
           </div>
-
-          <div
+          {/* <div
             style={{
               maxWidth: 450,
             }}
             className="w-100 py-3"
           >
-            <div className="d-flex align-items-center justify-content-center">
-              {/* <SearchBarWallets onSearch={handleSearch} /> */}
-              <ParentComponentSearchBar
+            <div className="d-flex align-items-center justify-content-center"> */}
+          {/* <SearchBarWallets onSearch={handleSearch} /> */}
+          {/* <ParentComponentSearchBar
                 trackWallets={true}
                 searchInput={searchValue}
                 setSearchInput={setSearchValue}
               />
             </div>
-          </div>
+          </div> */}
 
           {userAddresses?.length > 0 && (
             <DashboardUserWallets
@@ -406,17 +489,28 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
     <>
       <div
         className="connector-item cursor-pointer"
+        style={{ display: 'flex' }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         onClick={handleClick}
       >
-        <div className="connector-item-inner">
+        <div
+          className="connector-item-inner"
+          style={{
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            height: 'auto',
+            justifyContent: 'center',
+            flexGrow: '1',
+            boxShadow: '0px 0px 2px 1px #EAECF0'
+          }}
+        >
           {isHovered && connectorConnected && (
             <div
               className="close-button rounded bg bg-soft-danger p-0 d-flex"
               onClick={(e) => {
                 e.stopPropagation();
-
                 connectorConnected
                   .disconnect(connectorConnected)
                   .then(() => {
@@ -431,43 +525,21 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
               <i className="bx bx-x text-danger "></i>
             </div>
           )}
-          <div
-            className="more-card"
+          <div style={{ display: 'flex', gap: '5px' }}>
+            <div
+              className="more-card"
+              style={{ width: '40px', height: '40px' }}
             // onClick={() => {
             //   handleClick();
             // }}
-          >
-            <div className="icon-wrapper">
-              <img src={logo} alt="binnace" className="card-image" />
+            >
+              <div className="icon-wrapper">
+                <img src={logo} alt="binnace" className="card-image" />
+              </div>
             </div>
-          </div>
-          <div className="description-wrapper">
-            <span className="name">{name}</span>
-            <span className="button-with-arrow">
-              {connectorConnected ? 'Connected' : 'Connect'}
-
-              {connectorConnected ? (
-                <i className="bx bx-check-circle text-success"></i>
-              ) : (
-                <i className="icon-Arrow-More">
-                  <svg
-                    width="100%"
-                    height="100%"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M4 12H20M20 12L14 6M20 12L14 18"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </i>
-              )}
-            </span>
+            <div className="description-wrapper">
+              <span className="name">{name}</span>
+            </div>
           </div>
         </div>
       </div>

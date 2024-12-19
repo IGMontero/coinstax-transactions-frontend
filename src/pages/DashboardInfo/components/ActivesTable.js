@@ -60,16 +60,16 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
     return (
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Button
-          className={`btn btn-sm btn-soft-primary rounded ${viewMode === 'byPlatform' ? 'active' : ''
-            }`}
+          className={`btn btn-sm btn-soft-primary`}
           onClick={() => handleViewModeChange('byPlatform')}
+          style={{ background: `${viewMode === 'byPlatform' ? '#FFFFFF' : 'transparent'}`, color: `${viewMode === 'byPlatform' ? '#414068' : '#414068'}`, borderRadius: '16px', boxShadow: `${viewMode === 'byPlatform' ? 'rgb(0 0 0 / 5%) 0px 2px 1px 1px' : ""}` }}
         >
           By Platform
         </Button>
         <Button
-          className={`mx-2 btn btn-sm btn-soft-primary rounded ${viewMode === 'perPosition' ? 'active' : ''
-            }`}
+          className={`mx-2 btn btn-sm btn-soft-primary`}
           onClick={() => handleViewModeChange('perPosition')}
+          style={{ background: `${viewMode === 'perPosition' ? '#FFFFFF' : 'transparent'}`, color: `${viewMode === 'perPosition' ? '#414068' : '#414068'}`, borderRadius: '16px', boxShadow: `${viewMode === 'perPosition' ? 'rgb(0 0 0 / 5%) 0px 2px 1px 1px' : ""}` }}
         >
           Per Position
         </Button>
@@ -84,7 +84,7 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
           className="card-header-dropdown"
         >
           <DropdownToggle tag="a" className="text-reset" role="button">
-            <i className="ri-arrow-down-s-line p-1 py-0 btn btn-soft-primary rounded"></i>
+            <i className="ri-arrow-down-s-line p-1 py-0 btn rounded"></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-start mt-2">
             <DropdownItem
@@ -215,202 +215,7 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
                   />
                 )}
               </div>
-              {/* <div className="table-container">
-                <div className="live-preview">
-                  <div
-                    // style={{
-                    //   overflowX: 'hidden',
-                    // }}
-                    className="table-responsive"
-                  >
-                    <Table className="table table-borderless table-centered align-middle table-nowrap mb-0">
-                      <thead>
-                        <tr className="text-muted">
-                          <th
-                            scope="col"
-                            // style={{ width: '40%' }}
-                          >
-                            ASSETS
-                          </th>
-                          <th
-                            className="hide-on-small"
-                            // style={{ width: '20%' }}
-                            scope="col"
-                          >
-                            PRICE
-                          </th>
-                          <th
-                            className="hide-on-small"
-                            scope="col"
-                            // style={{ width: '20%' }}
-                          >
-                            BALANCE
-                          </th>
-                          <th
-                            scope="col"
-                            // style={{ width: '20%' }}
-                          >
-                            VALUE
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {!loading ? (
-                          <tr>
-                            <td colSpan="4" className="text-center">
-                              <AssetsSkeleton />
-                            </td>
-                          </tr>
-                        ) : displayItems.length === 0 ? (
-                          <tr>
-                            <td colSpan="4" className="text-center pb-2 pt-5">
-                              <h4>No Assets Yet</h4>
-                            </td>
-                          </tr>
-                        ) : (
-                          displayItems.map((asset, index) => (
-                            <tr key={index}>
-                              <td>
-                                <div className="d-flex align-items-center fw-high">
-                                  <img
-                                    src={asset.logo}
-                                    alt={asset.name}
-                                    className="rounded-circle avatar-xs me-2"
-                                    onError={(e) => {
-                                      e.target.onerror = null;
-                                      if (
-                                        !e.target.parentNode.querySelector(
-                                          '.img-assets-placeholder',
-                                        )
-                                      ) {
-                                        e.target.style.display = 'none';
 
-                                        const textNode =
-                                          document.createElement('div');
-                                        textNode.textContent = asset.name
-                                          ?.substring(0, 3)
-                                          .toUpperCase();
-                                        textNode.className =
-                                          'img-assets-placeholder avatar-xs me-2';
-
-                                        const container = e.target.parentNode;
-                                        container.insertBefore(
-                                          textNode,
-                                          container.firstChild,
-                                        );
-                                      }
-                                    }}
-                                  />
-
-                                  <div className="d-flex flex-column">
-                                    <div className="d-flex flex-row align-items-center">
-                                      {asset.name}{' '}
-                                      {viewMode === 'perPosition' && (
-                                        <Badge
-                                          color="soft-dark"
-                                          style={{ fontWeight: 'inherit' }}
-                                          className="mx-2 p-1 fs-7"
-                                        >
-                                          <span className="text-dark">
-                                            {asset.percentage < 1
-                                              ? '<0.01'
-                                              : asset.percentage}
-                                            {'%'}
-                                          </span>
-                                        </Badge>
-                                      )}
-                                    </div>
-                                    <div className="d-flex align-items-center text-muted">
-                                      <BlockchainImage
-                                        width={15}
-                                        height={15}
-                                        className={'me-1'}
-                                        blockchainType={asset.blockchain}
-                                      />
-                                      {asset.blockchain === 'bnb'
-                                        ? 'BNB Chain'
-                                        : capitalizeFirstLetter(
-                                            asset.blockchain,
-                                          )}{' '}
-                                      · Wallet
-                                    </div>
-                                  </div>
-                                </div>
-                              </td>
-                              <td className="hide-on-small">
-                                {asset.price
-                                  ? parseValuesToLocale(
-                                      asset.price,
-                                      CurrencyUSD,
-                                    )
-                                  : '$0.00'}
-                              </td>
-                              <td className="hide-on-small">
-                                {asset.balance ? (
-                                  <span>
-                                    {parseValuesToLocale(asset.balance, '') +
-                                      ' ' +
-                                      asset.symbol}
-                                  </span>
-                                ) : (
-                                  '0.00'
-                                )}
-                              </td>
-                              <td>
-                                <div className="d-flex flex-column align-items-start">
-                                  <span>
-                                    {asset.value
-                                      ? parseValuesToLocale(
-                                          asset.value,
-                                          CurrencyUSD,
-                                        )
-                                      : parseValuesToLocale(0, CurrencyUSD)}
-                                  </span>
-                                  <small
-                                    className={`${
-                                      asset.prettyDeltaValuePercent === '0.00%'
-                                        ? 'text-primary'
-                                        : asset.prettyDeltaValuePercent[0] ===
-                                            '-'
-                                          ? 'text-danger'
-                                          : 'text-success'
-                                    }`}
-                                  >
-                                    {asset.prettyDeltaValuePercent === '0.00%'
-                                      ? parseValuesToLocale(
-                                          asset.deltaValuePercent,
-                                          '',
-                                        )
-                                      : (asset.prettyDeltaValuePercent[0] ===
-                                        '-'
-                                          ? ''
-                                          : '+') +
-                                        parseValuesToLocale(
-                                          asset.deltaValuePercent,
-                                          '',
-                                        )}
-                                    {asset.deltaValue
-                                      ? ' (' +
-                                        parseValuesToLocale(
-                                          asset.deltaValue,
-                                          CurrencyUSD,
-                                        ) +
-                                        ')'
-                                      : null}
-                                  </small>
-                                </div>
-                              </td>
-                            </tr>
-                          ))
-                        )}
-                      </tbody>
-                    </Table>
-                  </div>
-                </div>
-                {isDashboardPage &&
-                  data?.items?.length > 0 &&
-                  buttonSeeMore('assets', 'Assets')}
-              </div> */}
             </div>
           )}
         </div>

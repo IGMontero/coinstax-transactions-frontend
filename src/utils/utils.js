@@ -604,7 +604,6 @@ export const isDarkMode = () => {
   return currentTheme === 'dark';
 };
 
-
 export const downloadFileByURL = async (url, fileName) => {
   try {
     const response = await fetch(url);

@@ -177,7 +177,8 @@ const NftsCards = ({
                 <div
                   style={{
                     position: 'relative',
-                    minHeight: '200px',
+                    // minHeight: '200px',
+                    height: 'max-content'
                   }}
                 >
                   {preview && !nft.logo ? (
@@ -226,19 +227,21 @@ const NftsCards = ({
                     />
                   )}
 
-                  <div className="">
-                    <BlockchainImage
-                      blockchainType={nft.blockchain}
-                      style={{
-                        position: 'absolute',
-                        bottom: `${isDashboardPage ? '11%' : '7%'}`,
-                        left: '2%',
-                        width: 'auto',
-                        height: '10%',
-                      }}
-                      className="img-fluid border-dark border border-rounded border-1 d-flex justify-content-start shadow-md rounded-circle"
-                    />
-                  </div>
+                  <BlockchainImage
+                    blockchainType={nft.blockchain}
+                    style={{
+                      position: 'absolute',
+                      bottom: 4,
+                      left: 4
+                      // bottom: `${isDashboardPage ? '11%' : '7%'}`,
+                      // left: '2%',
+                      // width: 'auto',
+                      // height: '10%',
+                    }}
+                    width={20}
+                    height={20}
+                    className="border-dark border border-rounded border-1 rounded-circle"
+                  />
                 </div>
               </CardHeader>
               <CardBody className="pt-1">
