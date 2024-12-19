@@ -303,7 +303,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
       >
         <div className="container-xxl">
           <div className="row">
-            <div className="col-md-2 col-lg-2 col-0" style={{}}></div>
+            <div className="col-md-2 col-lg-2 col-0"></div>
             <div
               className={`col-md-10 col-12`}
               style={{

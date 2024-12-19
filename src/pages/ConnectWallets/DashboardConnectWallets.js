@@ -262,7 +262,7 @@ const DashboardConnectWallets = () => {
       return (
         <div
           key={connector.uid}
-          className="d-flex flex-column" style={{flex: '1', width: '100%', minWidth: '40%'}}>
+          className="d-flex flex-column" style={{flex: '1', width: '100%', minWidth: '40%', border: '2px solid #EAECF0', borderRadius: '12px'}}>
           <ConnectorButton
             key={connector.uid}
             id={connector.id}

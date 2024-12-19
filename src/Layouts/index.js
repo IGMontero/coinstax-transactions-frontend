@@ -28,7 +28,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import AddressWithDropdown from '../Components/Address/AddressWithDropdown';
 import { layoutModeTypes } from '../Components/constants/layout';
-import { setCurrentThemeCookie } from '../helpers/cookies_helper';
+import { getCurrentThemeCookie, setCurrentThemeCookie } from '../helpers/cookies_helper';
 import { getAddressesInfo } from '../slices/addresses/thunk';
 import {
   selectNetworkType,
@@ -498,7 +498,6 @@ const Layout = (props) => {
     pagesNotToDisplayAddress,
     isCurrentUserPortfolioSelected,
   ]);
-
   return (
     <React.Fragment>
       <div id="layout-wrapper">
@@ -519,8 +518,8 @@ const Layout = (props) => {
             <div className="container-xxl h-100">
               <div className="row">
                 <div
-                  style={{ zIndex: 1004, borderRight: '1px solid #e9ebec', boxShadow: '0px 0px 1px 1px #0000001A' }}
-                  className="col-md-2 col-lg-2 col-0">
+                  style={{ zIndex: 1004, borderRight: getCurrentThemeCookie() === 'dark' ? '1px solid #32383e' : '1px solid #e9ebec', background: getCurrentThemeCookie() === 'dark' ? '#16161a' : '#FFFFFF'}}
+                  className={`col-md-2 col-lg-2 col-0`}>
                   <Sidebar layoutType={layoutType} />
                 </div>
 

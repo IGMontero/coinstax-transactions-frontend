@@ -589,7 +589,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
         <div className="d-flex justify-content-start">
           <Col className="col-12" style={{ marginTop: '-2rem' }}>
             <div className={loading ? (token ? ' mt-0 mb-4' : '') : ''}></div>
-            <div className="border border-2 p-2 mt-4 rounded">
+            <div className="border border-2 p-2 mt-4" style={{borderRadius: '16px'}}>
               <div
                 className="chart-container position-relative"
                 style={{

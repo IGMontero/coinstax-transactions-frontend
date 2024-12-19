@@ -31,7 +31,7 @@ $vertical-menu-border: $white;
 $vertical-menu-z-index: 1002;
 $vertical-menu-item-font-size: 0.925rem;
 $vertical-menu-item-font-family: $font-family-primary;
-$vertical-menu-item-color: var(--#{$prefix}vertical-menu-item-color);
+$vertical-menu-item-color: #2B2A41;
 $vertical-menu-item-hover-color: var(
   --#{$prefix}vertical-menu-item-hover-color
 );
@@ -257,7 +257,7 @@ $info:          #416384;
 $warning:       #D99423;
 $danger:        $red;
 $light:         $gray-100;
-$dark:          $gray-900;
+$dark:          #2B2A41;
 // scss-docs-end theme-color-variables
 
 // scss-docs-start theme-colors-map
@@ -270,6 +270,7 @@ $theme-colors: (
   'danger': $danger,
   'light': $light,
   'dark': $dark,
+  'active-dark': #405189
 );
 // scss-docs-end theme-colors-map
 

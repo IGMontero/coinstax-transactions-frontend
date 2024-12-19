@@ -339,10 +339,12 @@ const VerticalLayout = (props) => {
               <li className="nav-item mt-2">
                 <Link
                   id={item.id}
-                  className={`menu-link nav-link 
-                  ${isActive && !isLightMode ? 'nav-link-active-dark ' : ''}
-                   ${isActive && isLightMode ? 'nav-link-active ' : ''} 
-                   d-flex  ps-0 `}
+                  className={`menu-link nav-link
+                  ${isActive && !isLightMode ? 'nav-link-active-dark' : ''}
+                   ${isActive && isLightMode ? 'nav-link-active' : ''} 
+                   ${!isActive && isLightMode ? 'text-dark' : ""}
+                   ${!isActive && !isLightMode ? 'text-dark' : ""}
+                   d-flex ps-0 fw-medium `}
                   to={item.link ? item.link : '/'}
                 >
                   <i className={`${item.icon}`}></i>{' '}
