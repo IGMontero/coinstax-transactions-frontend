@@ -243,7 +243,7 @@ const DashboardInfo = () => {
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">Assets</h2>
                       </div>
-                      <div className="border border-2 p-3 " style={{borderRadius: '16px', backgroundColor: getCurrentThemeCookie() == 'dark' ? "rgb(22, 22, 26)" : "#fff"}}>
+                      <div className="border border-2 p-3 " style={{borderRadius: '16px'}}>
                         <ActivesTable
                           isDashboardPage={true}
                           loading={loadingAssets}
