@@ -1,46 +1,54 @@
-import React from 'react';
-import eth from '../../assets/images/svg/crypto-icons/eth.svg';
-import polygon from '../../assets/images/svg/crypto-icons/polygon.webp';
-import bnb from '../../assets/images/svg/crypto-icons/bnb.svg';
-import optimism from '../../assets/images/svg/crypto-icons/optimism-seeklogo.png';
-import btcMainnet from '../../assets/images/svg/crypto-icons/btc-mainnet.svg';
-import cronos from '../../assets/images/svg/crypto-icons/cronos.svg';
+import React, { useMemo } from 'react';
 
-import baseMiannet from '../../assets/images/svg/crypto-icons/base-mainnet.png';
+import { useSelector } from 'react-redux';
 import { capitalizeFirstLetter } from '../../utils/utils';
 
 const BlockchainImage = ({
   blockchainType,
-  width,
-  height,
+  width = 30,
+  height = 30,
   className,
   style,
 }) => {
-  const images = {
-    ethereum: eth,
-    polygon: polygon,
-    bnb: bnb,
-    optimism: optimism,
-    btc: btcMainnet,
-    base: baseMiannet,
-    cronos: cronos,
-  };
+  const { chains } = useSelector((state) => state.Common.fixedData);
 
-  const imageSrc = images[blockchainType.toLowerCase()];
+  const chain = chains?.find((chain) => chain.name === blockchainType);
 
-  if (!imageSrc) {
+  const image = useMemo(() => {
+    const image = chain?.logoUrl;
+
+    return [image];
+  }, [chain]);
+
+  if (!image) {
     return null;
   }
 
+  const colorTheme = chain?.colorTheme;
+
+  const wrapperStyle = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: width || '20px', // Adjust size as needed
+    height: height || '20px', // Adjust size as needed
+    borderRadius: '50%', // Circle for 'all', square otherwise
+    backgroundColor: colorTheme?.hex || colorTheme?.css_rgb || '#ccc', // Fallback to a default color
+    padding: '5px',
+    position: 'relative',
+    ...style,
+  };
+
   return (
-    <img
-      src={imageSrc}
-      width={width}
-      height={height}
-      className={className}
-      style={style}
-      alt={capitalizeFirstLetter(blockchainType)}
-    />
+    <div style={wrapperStyle} className={className}>
+      <img
+        src={image}
+        width={width * 0.8}
+        height={height * 0.8}
+        style={{ borderRadius: '3px' }}
+        alt={capitalizeFirstLetter(blockchainType)}
+      />
+    </div>
   );
 };
 

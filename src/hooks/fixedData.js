@@ -9,7 +9,7 @@ export const useGetFixedData = () => {
   return useCallback(async () => {
     try {
       // Intentar obtener datos del cache
-      const cachedData = JSON.parse(localStorage.getItem('ct_fixed_data'));
+      const cachedData = JSON.parse(localStorage.getItem('chainglance_fixed_data'));
 
       if (cachedData && cachedData.expires > Date.now()) {
         dispatch(setFixedData(cachedData.data));
@@ -26,10 +26,10 @@ export const useGetFixedData = () => {
 
         // Almacenar datos en localStorage
         localStorage.setItem(
-          'ct_fixed_data',
+          'chainglance_fixed_data',
           JSON.stringify({
             data: data,
-            expires: Date.now() + 1000 * 60 * 60 * 24 * 1, // 1 día
+            expires: Date.now() + 1000 * 60 * 60 * 24 * 1, // 1 day
           }),
         );
 

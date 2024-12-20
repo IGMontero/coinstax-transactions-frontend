@@ -409,7 +409,7 @@ const DropdownPortfolio = ({ dropdownOpen, toggleDropdown, isInHeader }) => {
           <i className={`ri-dashboard-fill ${shouldBeResponsive ? '' : 'pe-3'} fs-18 text-dark`}></i>
           <div className="d-flex flex-column align-items-start flex-grow-1">
             <span
-              className={`text-${labelToDisplay === 'Select Wallet' ? 'center' : 'start'} text-dark align-self-center`}
+              className={`text-${labelToDisplay === 'Select Wallet' ? 'center' : 'start'} text-dark align-self-start`}
               style={{
                 whiteSpace:
                   labelToDisplay === 'Select Wallet' ? 'normal' : 'nowrap',

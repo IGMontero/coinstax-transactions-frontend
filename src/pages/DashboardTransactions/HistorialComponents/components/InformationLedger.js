@@ -1,12 +1,13 @@
 import React from 'react';
-import { Col, Row, PopoverBody, UncontrolledPopover } from 'reactstrap';
+import { Link } from 'react-router-dom';
+import { Col, PopoverBody, Row, UncontrolledPopover } from 'reactstrap';
+import { BlockchainMetadata } from '../../../../common/constants';
 import {
-  formatIdTransaction,
   blockchainActions,
+  formatIdTransaction,
   parseValuesToLocale,
   removeNegativeSign,
 } from '../../../../utils/utils';
-import { Link } from 'react-router-dom';
 
 const InformationLedger = ({
   transaction,
@@ -17,6 +18,7 @@ const InformationLedger = ({
   const handleCopy = (e) => {
     onCopy(e, transaction.txHash, collapseId);
   };
+
 
   const renderCollectionName = (collectionName) => {
     if (collectionName) {
@@ -62,7 +64,6 @@ const InformationLedger = ({
   };
 
   const renderFee = (fee) => {
-    const prettyAmount = fee?.prettyAmount;
     const amount = parseValuesToLocale(fee?.amount, '');
     const amountUsd = parseValuesToLocale(
       fee?.nativeAmount,
@@ -84,15 +85,10 @@ const InformationLedger = ({
   };
 
   const renderTransactionHash = (transaction) => {
-    const blockchainLinks = {
-      ethereum: 'https://etherscan.io/tx',
-      bnb: 'https://bscscan.com/tx',
-      polygon: 'https://polygonscan.com/tx',
-      optimism: 'https://optimistic.etherscan.io/tx',
-    };
 
-    const blockchain = transaction.blockchain;
-    const baseLink = blockchainLinks[blockchain];
+    const txLink =
+      transaction.txLink ||
+      `${BlockchainMetadata[transaction.blockchain]?.blockchainLink}/${transaction.txHash}`;
 
     return (
       <div className="align-items-center d-flex">
@@ -105,7 +101,7 @@ const InformationLedger = ({
             >
               {transaction.txHash ? (
                 <Link
-                  to={`${baseLink}/${transaction.txHash}`}
+                  to={txLink}
                   target="_blank"
                   onClick={(e) => e.stopPropagation()}
                   className="text-decoration-none text-muted  "

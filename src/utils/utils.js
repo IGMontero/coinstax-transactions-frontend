@@ -122,6 +122,14 @@ export const formatDateToLocale = (date, showTime) => {
   return `${dateString}${showTime ? ', ' + timeString : ''}`;
 };
 
+export const formatNumberToLocale = (number) => {
+  if (typeof number !== 'number' || isNaN(number)) {
+    return 'Invalid Number';
+  }
+
+  return number.toLocaleString();
+}
+
 export const formatPercentageChange = (percentage) => {
   if (
     isNaN(percentage) ||

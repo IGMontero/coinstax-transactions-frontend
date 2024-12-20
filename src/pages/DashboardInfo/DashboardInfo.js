@@ -96,12 +96,12 @@ const DashboardInfo = () => {
       }));
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
-            fetchAssetsPortfolio({
-              userId: currentPortfolioUserId,
-              blockchain: networkType,
-              signal,
-            }),
-          )
+          fetchAssetsPortfolio({
+            userId: currentPortfolioUserId,
+            blockchain: networkType,
+            signal,
+          }),
+        )
         : dispatch(fetchAssets(params)).unwrap();
       const response = await request;
       const res = isCurrentUserPortfolioSelected ? response.payload : response;

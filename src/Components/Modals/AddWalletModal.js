@@ -41,20 +41,16 @@ const ConnectWalletModal = ({ isOpen, setIsOpen, onRefresh, userId }) => {
         setAddress('');
         toggleModal();
       } else {
-        Swal.fire({
-          title: 'Error',
-          text: response.message || 'Failed to connect wallet',
-          icon: 'error',
-        });
+
       }
       setLoading(false);
     } catch (error) {
       console.error('Failed to connect wallet: ', error);
-      Swal.fire({
-        title: 'Error',
-        text: error || 'Failed to connect wallet',
-        icon: 'error',
-      });
+      // Swal.fire({
+      //   title: 'Error',
+      //   text: error || 'Failed to connect wallet',
+      //   icon: 'error',
+      // });
       setLoading(false);
     }
   };

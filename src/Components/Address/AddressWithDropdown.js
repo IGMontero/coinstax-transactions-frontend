@@ -14,7 +14,7 @@ import QrModal from '../Modals/QrModal';
 import NetworkDropdown from '../NetworkDropdown/NetworkDropdown';
 
 const AddressWithDropdown = ({
-  filteredNetworks,
+  addressBlockchains,
   isOnlyAllNetwork,
   incompleteBlockchains,
   loading,
@@ -157,20 +157,12 @@ const AddressWithDropdown = ({
         dispatch(setAddressName({ value: address, label: null }));
         refreshUserPortfolio();
       } else {
-        Swal.fire({
-          title: 'Error',
-          text: response.message || 'Failed to connect wallet',
-          icon: 'error',
-        });
+        console.error('Failed to connect wallet: ', response.error);
       }
       setLoadingAddWallet(false);
     } catch (error) {
       console.error('Failed to connect wallet: ', error);
-      Swal.fire({
-        title: 'Error',
-        text: error || 'Failed to connect wallet',
-        icon: 'error',
-      });
+
       setLoadingAddWallet(false);
     }
   };
@@ -334,7 +326,7 @@ const AddressWithDropdown = ({
             {!isOnlyAllNetwork && !isUnsupported && (
               <NetworkDropdown
                 isAdminPage={false}
-                filteredNetworks={filteredNetworks}
+                addressBlockchains={addressBlockchains}
                 incompleteBlockchains={incompleteBlockchains}
                 loading={loading}
               />

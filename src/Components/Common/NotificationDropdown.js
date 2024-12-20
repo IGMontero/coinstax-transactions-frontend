@@ -20,29 +20,36 @@ import { markNotificationAsReadAction } from '../../slices/notifications/reducer
 const NotificationDropdown = ({ handleLoadMoreNotifications }) => {
   const dispatch = useDispatch();
   const [isNotificationDropdown, setIsNotificationDropdown] = useState(false);
-  const { notificationsInfo } = useSelector((state) => state.notifications);
+  const { notificationsInfo, setNotifications } = useSelector(
+    (state) => state.notifications,
+  );
   const { notifications, total, hasMore, unreadCount } = notificationsInfo;
 
-  const markAllAsRead = async () => {
-    try {
-      const unreadNotifications = notifications.filter(
-        (notification) => !notification.seen,
-      );
-      for (const notification of unreadNotifications) {
+  const markAllAsRead = () => {
+    const unreadNotifications = notifications.filter(
+      (notification) => !notification.seen,
+    );
+    unreadNotifications.forEach((notification) => {
+      dispatch(markNotificationAsReadAction({ id: notification.id }));
+    });
+
+    unreadNotifications.forEach(async (notification) => {
+      try {
         await dispatch(
           markNotificationAsRead({ notificationId: notification.id }),
         );
-
-        await dispatch(markNotificationAsReadAction({ id: notification.id }));
+      } catch (error) {
+        console.error(
+          `Failed to mark notification ${notification.id} as read:`,
+          error,
+        );
       }
-      // onRefresh();
-    } catch (error) {
-      console.log(error);
-    }
+    });
   };
 
   const toggleNotificationDropdown = () => {
-    setIsNotificationDropdown(!isNotificationDropdown);
+    setIsNotificationDropdown((prevState) => !prevState);
+
     if (!isNotificationDropdown) {
       markAllAsRead();
     }
@@ -76,7 +83,8 @@ const NotificationDropdown = ({ handleLoadMoreNotifications }) => {
         <DropdownMenu className="dropdown-menu-lg dropdown-menu-end p-0">
           <div
             style={{ minWidth: '300px' }}
-            className="dropdown-head bg-primary bg-pattern rounded-top">
+            className="dropdown-head bg-primary bg-pattern rounded-top"
+          >
             <div className="p-3">
               <Row className="align-items-center">
                 <Col>
@@ -96,7 +104,12 @@ const NotificationDropdown = ({ handleLoadMoreNotifications }) => {
           <div className="p-0">
             {total < 1 ? (
               <div className="w-50 text-center w-sm-50 pt-3 mx-auto">
-                <img style={{ maxWidth: 80 }} src={bell} className="img-fluid" alt="no-notifications" />
+                <img
+                  style={{ maxWidth: 80 }}
+                  src={bell}
+                  className="img-fluid"
+                  alt="no-notifications"
+                />
                 <div className="text-center pb-5 mt-2">
                   <h6 className="fs-18 fw-semibold lh-base">
                     You have no new notifications
@@ -128,11 +141,9 @@ const NotificationDropdown = ({ handleLoadMoreNotifications }) => {
                         <h6
                           className="mt-0 mb-2 lh-base"
                           style={{ wordBreak: 'break-word' }}
-                          dangerouslySetInnerHTML={
-                            {
-                              __html: notification.html,
-                            }
-                          }
+                          dangerouslySetInnerHTML={{
+                            __html: notification.html,
+                          }}
                         >
                           {/* {notification.text} */}
                         </h6>

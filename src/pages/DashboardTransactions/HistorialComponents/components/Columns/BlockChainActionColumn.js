@@ -2,11 +2,10 @@ import React from 'react';
 import { Badge, Col } from 'reactstrap';
 
 import BlockchainImage from '../../../../../Components/BlockchainImage/BlockchainImage';
+import { useGetTimezone } from '../../../../../hooks/useUtils';
+import { formatTimeForClient } from '../../../../../utils/date.utils';
 import { getActionMapping } from '../../../../../utils/utils';
 import ValueColumn from './ValueColumn';
-import { useCurrentUser } from '../../../../../hooks/useAuth';
-import { formatTimeForClient } from '../../../../../utils/date.utils';
-import { useGetTimezone } from '../../../../../hooks/useUtils';
 
 function capitalizeFirstLetter(text) {
   if (!text) return text;
@@ -17,9 +16,11 @@ const BlockChainActionColumn = ({ transaction }) => {
   const timezone = useGetTimezone();
 
   const formatTime = (dateString) => {
-    return formatTimeForClient(dateString, timezone, 'hh:mm A');
+    return formatTimeForClient(dateString, timezone, 'time');
 
   };
+
+
 
 
   return (
@@ -50,9 +51,9 @@ const BlockChainActionColumn = ({ transaction }) => {
               style={{
                 bottom: '-3px',
                 right: '-2px',
-                width: '15px',
-                height: '15px',
               }}
+              width={15}
+              height={15}
               className="position-absolute"
               blockchainType={transaction.blockchain}
             />

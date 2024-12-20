@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Tooltip } from 'reactstrap';
@@ -27,7 +27,12 @@ const DashboardConnectWallets = () => {
   const { user } = useSelector((state) => state.auth);
   const { loaders } = useSelector((state) => state.userWallets);
   const userId = user?.id;
-  const userAddresses = userPortfolioSummary?.addresses;
+  // const userAddresses = userPortfolioSummary?.addresses;
+
+  const userAddresses = useMemo(
+    () => userPortfolioSummary?.addresses || [],
+    [userPortfolioSummary],
+  );
 
   const accessTokenParams = new URLSearchParams(location.search);
   const accessToken = accessTokenParams.get('access_token');
@@ -262,7 +267,7 @@ const DashboardConnectWallets = () => {
       return (
         <div
           key={connector.uid}
-          className="d-flex flex-column" style={{flex: '1', width: '100%', minWidth: '40%', border: '2px solid #EAECF0', borderRadius: '12px'}}>
+          className="d-flex flex-column" style={{ flex: '1', width: '100%', minWidth: '40%', border: '2px solid #EAECF0', borderRadius: '12px' }}>
           <ConnectorButton
             key={connector.uid}
             id={connector.id}
@@ -299,29 +304,29 @@ const DashboardConnectWallets = () => {
               justifyContent: 'center'
             }}
           >
-            <div style={{display: 'flex', flexDirection: 'column', textAlign: 'center', width: '100%', gap: '20px'}}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                margin: 'auto',
-                width: '50px',
-                minWidth: '50px',
-                height: '50px',
-                minHeight: '50px',
-                borderRadius: '50%',
-                backgroundColor: '#A0A7DE',
-              }}
-            >
-              <img src={walletIcon} alt="" />
+            <div style={{ display: 'flex', flexDirection: 'column', textAlign: 'center', width: '100%', gap: '20px' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: 'auto',
+                  width: '50px',
+                  minWidth: '50px',
+                  height: '50px',
+                  minHeight: '50px',
+                  borderRadius: '50%',
+                  backgroundColor: '#A0A7DE',
+                }}
+              >
+                <img src={walletIcon} alt="" />
+              </div>
+              <h2 style={{ margin: '0' }}>Connect Your Wallet</h2>
+              <span style={{ fontSize: '14px' }}>
+                Add your wallets to see all your assets in one place.
+              </span>
             </div>
-            <h2 style={{margin: '0'}}>Connect Your Wallet</h2>
-            <span style={{ fontSize: '14px' }}>
-              Add your wallets to see all your assets in one place.
-            </span>
-          </div>
-          <div style={{ display: 'flex', gap: '20px' }} className="connector-container">
+            <div style={{ display: 'flex', gap: '20px' }} className="connector-container">
               <label style={{ fontWeight: '600' }}>Currently supported</label>
               <ul
                 style={{
@@ -524,9 +529,9 @@ function ConnectorButton({ id, name, logo, handleConnect }) {
             <div
               className="more-card"
               style={{ width: '40px', height: '40px' }}
-              // onClick={() => {
-              //   handleClick();
-              // }}
+            // onClick={() => {
+            //   handleClick();
+            // }}
             >
               <div className="icon-wrapper">
                 <img src={logo} alt="binnace" className="card-image" />

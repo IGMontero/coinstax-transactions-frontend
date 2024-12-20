@@ -25,7 +25,11 @@ import { selectNetworkType } from '../../slices/networkType/reducer';
 import NftsCards from './components/NftsCards';
 import NftsSkeleton from '../../Components/Skeletons/NftsSkeleton';
 import Helmet from '../../Components/Helmet/Helmet';
-import { fetchNFTSPortfolio } from '../../slices/portfolio/thunk';
+import {
+  fetchNFTSPortfolio,
+  getMultipleNFTs,
+} from '../../slices/portfolio/thunk';
+import { formatTimeForClient } from '../../utils/date.utils';
 
 const ethIcon = (
   <svg
@@ -99,7 +103,6 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
   const fetchDataNFTS = (page, refresh) => {
     // if (isFetching) return;
     setIsFetching(true);
-    console.log('FETCH DATA RUNNING');
     fetchControllerRef.current.abort();
     fetchControllerRef.current = new AbortController();
     const signal = fetchControllerRef.current.signal;
@@ -120,23 +123,23 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
 
     const request = isCurrentUserPortfolioSelected
       ? dispatch(
-          fetchNFTSPortfolio({
-            userId: currentPortfolioUserId,
-            blockchain: networkType,
-            page: page,
-            signal,
-          }),
-        )
+        fetchNFTSPortfolio({
+          userId: currentPortfolioUserId,
+          blockchain: networkType,
+          page: page,
+          signal,
+        }),
+      )
       : dispatch(
-          fetchNFTS({
-            address: address,
-            spam: includeSpam,
-            page: page,
-            networkType,
-            signal,
-            refresh: refresh,
-          }),
-        ).unwrap();
+        fetchNFTS({
+          address: address,
+          spam: includeSpam,
+          page: page,
+          networkType,
+          signal,
+          refresh: refresh,
+        }),
+      ).unwrap();
 
     return request
 
@@ -180,6 +183,64 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
   };
 
   useEffect(() => {
+    if (!data) {
+      return;
+    }
+
+    const interval = setInterval(async () => {
+      const previewNft = data?.items?.filter((nft) => nft.preview === true);
+
+      if (!previewNft || previewNft.length === 0) {
+        clearInterval(interval);
+        return;
+      }
+
+      const allPreviewTxs = previewNft.map((nft) => ({
+        tokenId: nft.tokenId,
+        blockchain: nft.blockchain,
+        contractAddress: nft.contractAddress,
+      }));
+
+      let result;
+      try {
+        result = await dispatch(
+          getMultipleNFTs({ items: allPreviewTxs }),
+        ).unwrap();
+
+        if (!result) {
+          console.log('No result from fetching preview NFTs');
+          return;
+        }
+      } catch (error) {
+        console.log('Error fetching preview NFTs:', error);
+        return;
+      }
+
+      if (result) {
+        const updatedNfts = data?.items?.map((nft) => {
+          const updatedNft = result.find(
+            (updatedNft) =>
+              updatedNft.contractAddress === nft.contractAddress &&
+              updatedNft.tokenId === nft.tokenId &&
+              updatedNft.blockchain === nft.blockchain,
+          );
+
+          return updatedNft || nft;
+        });
+
+        setData((prevData) => ({
+          ...prevData,
+          items: updatedNfts,
+        }));
+      }
+    }, 10 * 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [data]);
+
+  useEffect(() => {
     // Initialize on first load
     if (!initialized) {
       setInitialized(true);
@@ -187,7 +248,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
       setIncludeSpam(false);
       setData({ items: [] });
       setInitialTotalFiatValue(null);
-      fetchDataNFTS(0, false);
+      fetchDataNFTS(0, true);
     }
   }, []);
 
@@ -197,7 +258,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
       setData({ items: [] });
       // setIncludeSpam(false);
       setInitialTotalFiatValue(null);
-      fetchDataNFTS(0, false);
+      fetchDataNFTS(0, true);
     }
   }, [address, networkType]);
 
@@ -205,7 +266,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
     if (initialized) {
       setData({ items: [] });
       setCurrentPage(0);
-      fetchDataNFTS(0, false);
+      fetchDataNFTS(0, true);
     }
   }, [includeSpam]);
 
@@ -408,7 +469,9 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
           {totalItems > 0 && !isDashboardPage ? (
             <Col xxl={12} className="d-flex align-items-center">
               <div className="d-flex flex-column">
-                <h6>As of Date: {moment(updatedAt).format('MM/DD/YYYY')}</h6>
+                <h6>
+                  As of Date: {formatTimeForClient(updatedAt, null, 'calendar')}
+                </h6>
                 <span className="text-dark">Total value by floor price</span>
                 <div className="d-flex align-items-center">
                   <h1>{totalFiatValue}</h1>
@@ -428,7 +491,7 @@ const Nfts = ({ isDashboardPage, buttonSeeMore }) => {
                       >
                         <path d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"></path>
                         <path
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
                         ></path>
                       </svg>

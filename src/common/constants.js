@@ -9,6 +9,9 @@ import pol from '../assets/images/svg/crypto-icons/polygon.webp';
 import bnb from '../assets/images/svg/crypto-icons/binanceLogo.png';
 import optimism from '../assets/images/svg/crypto-icons/optimism-seeklogo.png';
 import baseMainnet from '../assets/images/svg/crypto-icons/base-mainnet.png';
+import gnosisMainnet from '../assets/images/svg/crypto-icons/gnosis-mainnet.svg';
+import avaxMainnet from '../assets/images/svg/crypto-icons/avalanche.png';
+import celoIcon from '../assets/images/svg/crypto-icons/celo.png';
 
 import coinbaseLogo from '../assets/images/wallets/coinbase.png';
 import metamaskLogo from '../assets/images/wallets/metamask.png';
@@ -16,11 +19,34 @@ import walletConnectLogo from '../assets/images/wallets/WalletConnect.png';
 import cronosLogo from '../assets/images/wallets/cronos.png';
 import config from '../config';
 
-export const networks = [
-  {
-    key: 'all',
+const SupportedBlockchains = {
+  ALL: 'all',
+  ETHEREUM: 'ethereum',
+  POLYGON: 'polygon',
+  BNB: 'bnb',
+  OPTIMISM: 'optimism',
+  BASE: 'base',
+  CRONOS: 'cronos',
+  GNOSIS: 'gnosis',
+  AVALANCHE: 'avax',
+  CELO: 'celo',
+};
+
+const blockchainLinks = {
+  ethereum: 'https://etherscan.io/tx',
+  bnb: 'https://bscscan.com/tx',
+  polygon: 'https://polygonscan.com/tx',
+  optimism: 'https://optimistic.etherscan.io/tx',
+  base: 'https://basescan.org/tx',
+  cronos: 'https://cronoscan.com/tx',
+  gnosis: 'https://gnosisscan.io/tx',
+  avalanche: 'https://snowscan.xyz/tx',
+  celo: 'https://celoscan.io/tx',
+};
+
+export const BlockchainMetadata = {
+  [SupportedBlockchains.ALL]: {
     label: 'All Networks',
-    blockchain: 'all',
     icon: (
       <i
         style={{
@@ -33,64 +59,105 @@ export const networks = [
         className="ri-function-line text-primary"
       ></i>
     ),
-
     withDivider: true,
+    key: 'all',
+    blockchain: 'all',
   },
-  {
-    key: 'ethereum',
+  [SupportedBlockchains.ETHEREUM]: {
     label: 'Ethereum',
-    blockchain: 'ethereum',
     icon: eth,
     iconAlt: 'eth',
+    key: 'eth-mainnet',
     width: 30,
     height: 30,
+    blockchainLink: blockchainLinks.ethereum,
+    blockchain: 'ethereum',
   },
-  {
-    key: 'polygon',
+  [SupportedBlockchains.POLYGON]: {
     label: 'Polygon',
-    blockchain: 'polygon',
     icon: pol,
     iconAlt: 'polygon',
+    key: 'polygon',
     width: 30,
     height: 30,
+    blockchainLink: blockchainLinks.polygon,
+    blockchain: 'polygon',
   },
-  {
-    key: 'bsc-mainnet',
-    blockchain: 'bnb',
+  [SupportedBlockchains.BNB]: {
     label: 'BNB Chain',
     icon: bnb,
     iconAlt: 'bnb',
+    key: 'bsc-mainnet',
     width: 29,
     height: 29,
+    blockchainLink: blockchainLinks.bnb,
+    blockchain: 'bnb',
   },
-  {
-    key: 'optimism',
+  [SupportedBlockchains.OPTIMISM]: {
     label: 'Optimism',
-    blockchain: 'optimism',
     icon: optimism,
     iconAlt: 'optimism',
+    key: 'optimism',
     width: 29,
     height: 29,
+    blockchainLink: blockchainLinks.optimism,
+    blockchain: 'optimism',
   },
-  {
-    key: 'base-mainnet',
+  [SupportedBlockchains.BASE]: {
     label: 'Base',
     icon: baseMainnet,
-    blockchain: 'base',
     iconAlt: 'base-mainnet',
+    key: 'base-mainnet',
     width: 30,
     height: 30,
+    blockchainLink: blockchainLinks.base,
+    blockchain: 'base',
   },
-  {
-    key: 'cronos',
+  [SupportedBlockchains.CRONOS]: {
     label: 'Cronos',
-    blockchain: 'cronos',
     icon: cronosLogo,
     iconAlt: 'cronos',
+    key: 'cronos',
     width: 30,
     height: 30,
+    blockchainLink: blockchainLinks.cronos,
+    blockchain: 'cronos',
   },
-];
+  [SupportedBlockchains.GNOSIS]: {
+    label: 'Gnosis',
+    icon: gnosisMainnet,
+    iconAlt: 'gnosis-mainnet',
+    key: 'gnosis-mainnet',
+    width: 30,
+    height: 30,
+    blockchainLink: blockchainLinks.gnosis,
+    blockchain: 'gnosis',
+  },
+
+  [SupportedBlockchains.CELO]: {
+    label: 'Celo',
+    icon: celoIcon,
+    iconAlt: 'celo',
+    key: 'celo-mainnet',
+    width: 30,
+    height: 30,
+    blockchainLink: blockchainLinks.celo,
+    blockchain: 'celo',
+  },
+
+  [SupportedBlockchains.AVALANCHE]: {
+    label: 'Avalanche',
+    icon: avaxMainnet,
+    iconAlt: '',
+    key: 'avalanche-mainnet',
+    width: 30,
+    height: 30,
+    blockchainLink: blockchainLinks.avalanche,
+    blockchain: 'avalanche',
+  },
+};
+
+export const networks = Object.values(BlockchainMetadata);
 
 export const INVITECODETYPE = {
   USER_TO_ACCOUNTANT: 'ua',
