@@ -88,18 +88,12 @@ const DashboardInfo = () => {
     const signal = fetchControllerRef.current.signal;
 
     const fecthId = Date.now();
-    const params = {
-      address,
-      networkType,
-      signal,
-    };
-
+    const params = {address, networkType, signal,};
     try {
       setAssetsLoaders((prev) => ({
         ...prev,
         [fecthId]: true,
       }));
-
       const request = isCurrentUserPortfolioSelected
         ? dispatch(
             fetchAssetsPortfolio({
@@ -109,18 +103,14 @@ const DashboardInfo = () => {
             }),
           )
         : dispatch(fetchAssets(params)).unwrap();
-
       const response = await request;
-
       const res = isCurrentUserPortfolioSelected ? response.payload : response;
-
       if (res?.unsupported === true) {
         setIsUnsupported(true);
       } else {
         setIsUnsupported(false);
       }
       setAssetsData(res || {});
-
       setAssetsLoaders((prev) => ({
         ...prev,
         [fecthId]: false,
@@ -146,7 +136,7 @@ const DashboardInfo = () => {
 
   useEffect(() => {
     if (!isCurrentUserPortfolioSelected) {
-      if (address) {
+      if(address) {
         setIsUnsupported(false);
         setAddressForSearch(address);
         setAddressTitle(address);
@@ -155,7 +145,7 @@ const DashboardInfo = () => {
   }, [address, location, networkType]);
 
   useEffect(() => {
-    if (type) {
+    if(type) {
       setCustomActiveTab(
         type === 'nfts' ? '2' : type === 'history' ? '3' : '1',
       );
@@ -165,15 +155,11 @@ const DashboardInfo = () => {
   const renderButtonSeeMore = (type, typeName) => {
     return (
       <div className="d-flex align-items-center justify-content-center">
-        <Button
-          className="mt-3 d-flex btn-hover-light  justify-content-center align-items-center "
+        <Button className="mt-3 d-flex btn-hover-light  justify-content-center align-items-center "
           color="soft-light"
-          style={{
-            borderRadius: '10px',
-            border: '.5px solid grey',
-          }}
+          style={{borderRadius: '10px', border: '.5px solid grey'}}
           onClick={() => {
-            if (isCurrentUserPortfolioSelected) {
+            if(isCurrentUserPortfolioSelected) {
               navigate(`/portfolio/${type}`);
             } else {
               navigate(`/address/${address}/${type}`);
@@ -190,95 +176,54 @@ const DashboardInfo = () => {
     <React.Fragment>
       <Helmet title="Dashboard" />
       <div>
-        <QrModal
-          showQrModal={showQrModal}
-          toggleQrModal={toggleQrModal}
-          addressTitle={addressTitle}
-        />
-
+        <QrModal showQrModal={showQrModal} toggleQrModal={toggleQrModal} addressTitle={addressTitle}/>
         <div className="d-flex flex-column">
           <Row className="d-flex justify-content-center jusitfy-content-between align-items-center border-2">
-            <Col
-              xxl={9}
-              lg={9}
-              md={9}
-              sm={9}
-              xs={9}
-              className="d-flex flex-column"
-              order="1"
-            >
+            <Col xxl={9} lg={9} md={9} sm={9} xs={9} className="d-flex flex-column" order="1">
               <div className="d-flex flex-row mt-3">
                 {isUnsupported && (
                   <div className="mt-5  ">
-                    <h1 className="fw-semibold text-danger">
-                      Unsupported Address
-                    </h1>
+                    <h1 className="fw-semibold text-danger">Unsupported Address</h1>
                     <h5 className="text-primary">Contact our support team </h5>
                   </div>
                 )}
               </div>
             </Col>
           </Row>
-
           <Row className="d-flex justify-content-center align-items-center mb-3 mt-3">
             {!isUnsupported ? (
               <Col className="col-12 ">
                 <div
-                  className=" w-100 top-0 d-flex justify-content-between position-sticky align-items-center  "
-                  style={{
-                    zIndex: 5,
-                    backgroundColor: '#16161a',
-                  }}
+                  className=" w-100 top-0 d-flex justify-content-between position-sticky align-items-center"
+                  style={{zIndex: 5, backgroundColor: '#16161a'}}
                 ></div>
-
                 <div className="d-flex flex-column">
-                  <div className="">
-                    
-                    <PerformanceChart
-                      setIsUnsupported={setIsUnsupported}
-                      address={addressForSearch}
-                    />
-
+                  <div>
+                    <PerformanceChart setIsUnsupported={setIsUnsupported} address={addressForSearch}/>
                     <Col xxl={12}>
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">Assets</h2>
                       </div>
-                      <div className="border border-2 p-3 " style={{borderRadius: '16px'}}>
-                        <ActivesTable
-                          isDashboardPage={true}
-                          loading={loadingAssets}
-                          data={assetsData}
-                          buttonSeeMore={renderButtonSeeMore}
-                        />
+                      <div className="border border-1 p-3 containerAsset" style={{borderRadius: '16px'}}>
+                        <ActivesTable isDashboardPage={true} loading={loadingAssets} data={assetsData} buttonSeeMore={renderButtonSeeMore}/>
                       </div>
                     </Col>
                     <Col xxl={12} className="mt-3 d-flex flex-column">
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">NFTs</h2>
                       </div>
-                      <div className="border border-2 px-5 p-3" style={{borderRadius: '16px'}}>
+                      <div className="border border-1 px-5 p-3 containerAsset" style={{borderRadius: '16px'}}>
                         <div className="">
-                          <Nfts
-                            isDashboardPage={true}
-                            buttonSeeMore={renderButtonSeeMore}
-                          />
+                          <Nfts isDashboardPage={true} buttonSeeMore={renderButtonSeeMore}/>
                         </div>
                       </div>
                     </Col>
-
                     <Col xxl={12} className="mt-3">
                       <div className="d-flex justify-content-between align-items-center mb-2">
                         <h2 className="ms-1 mt-2">Transactions</h2>
                       </div>
-                      <div className="border border-2 p-3" style={{borderRadius: '16px'}}>
-                        <HistorialTable
-                          isDashboardPage={true}
-                          data={historyData}
-                          setData={setHistoryData}
-                          activeTab={customActiveTab}
-                          address={addressForSearch}
-                          buttonSeeMore={renderButtonSeeMore}
-                        />
+                      <div className="border border-1 p-3 containerAsset" style={{borderRadius: '16px'}}>
+                        <HistorialTable isDashboardPage={true} data={historyData} setData={setHistoryData} activeTab={customActiveTab} address={addressForSearch}buttonSeeMore={renderButtonSeeMore}/>
                       </div>
                     </Col>
                   </div>

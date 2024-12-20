@@ -256,8 +256,9 @@ $success:       $green;
 $info:          #416384;
 $warning:       #D99423;
 $danger:        $red;
-$light:         $gray-100;
+$light:         #FFFFFF;
 $dark:          #2B2A41;
+$blueActive:          #405189;
 // scss-docs-end theme-color-variables
 
 // scss-docs-start theme-colors-map
@@ -270,7 +271,7 @@ $theme-colors: (
   'danger': $danger,
   'light': $light,
   'dark': $dark,
-  'active-dark': #405189
+  'active': $blueActive,
 );
 // scss-docs-end theme-colors-map
 
@@ -560,6 +561,7 @@ $spacers: (
   3: $spacer,
   4: $spacer * 1.5,
   5: $spacer * 3,
+  6: 0px 10px,
 );
 
 $negative-spacers: if($enable-negative-margins, negativify-map($spacers), null);
@@ -886,6 +888,7 @@ $table-variants: (
   'danger': shift-color($danger, $table-bg-scale),
   'light': $light,
   'dark': $dark,
+  'active': $blueActive
 );
 // scss-docs-end table-loop
 

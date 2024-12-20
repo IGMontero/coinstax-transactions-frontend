@@ -559,7 +559,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
   const renderFiltersButtons = () => {
     return (
       <>
-        <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 mt-5 p-2">
+        <div className="toolbar d-flex align-items-start justify-content-start flex-wrap gap-2 p-2">
           {filtersChart.map((filter) => (
             <FilterButtonsChart
               key={filter.id}
@@ -589,7 +589,7 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
         <div className="d-flex justify-content-start">
           <Col className="col-12" style={{ marginTop: '-2rem' }}>
             <div className={loading ? (token ? ' mt-0 mb-4' : '') : ''}></div>
-            <div className="border border-2 p-2 mt-4" style={{borderRadius: '16px'}}>
+            <div className="border border-1 p-3 mt-4" style={{borderRadius: '16px', maxHeight: '260px'}}>
               <div
                 className="chart-container position-relative"
                 style={{
@@ -620,27 +620,34 @@ const PerformanceChart = ({ address, setIsUnsupported, isUnsupported }) => {
                   </div>
                 ) : (
                   <>
-                    <div className="d-flex flex-column align-items-start ">
-                      <h1 className="d-flex align-items-center">{title}</h1>
-                      <h5
-                        className={`mb-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
-                      >
-                        {subtitle}%{' '}
-                        {!token && (
-                          <span>
-                            ({parseValuesToLocale(diferenceValue, CurrencyUSD)})
-                          </span>
-                        )}
-                      </h5>
+                    <div className="d-flex align-items-center w-100 mb-3">
+                      <div className='d-flex align-items-start flex-column w-100'>
+                        <div className='d-flex align-items-center w-100 justify-content-between'>
+                          <h1 className="d-flex align-items-center">{title}</h1>
+                          <div className={`d-flex`}>{renderFiltersButtons()}</div>{' '}
+                        </div>
+                        <h5
+                          className={`mb-2 text-${subtitle >= 0 ? 'success' : 'danger'}`}
+                        >
+                          {subtitle}%{' '}
+                          {!token && (
+                            <span>
+                              ({parseValuesToLocale(diferenceValue, CurrencyUSD)})
+                            </span>
+                          )}
+                        </h5>
+                      </div>
                     </div>
                     {token && (
                       <span className="text-muted mb-3">{activeDate}</span>
                     )}
+                    <div>
                     <canvas ref={chartContainerRef} />
+                    </div>
                   </>
                 )}
               </div>
-              <div className={`mb-1 pt-4 mt-4`}>{renderFiltersButtons()}</div>{' '}
+              
             </div>
           </Col>
         </div>

@@ -125,28 +125,15 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const commentedCode = () => {
     return (
       <>
-        <Dropdown
-          isOpen={search}
-          toggle={toogleSearch}
-          className="d-md-none topbar-head-dropdown header-item"
-        >
-          <DropdownToggle
-            type="button"
-            tag="button"
-            className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle"
-          >
+        <Dropdown isOpen={search} toggle={toogleSearch} className="d-md-none topbar-head-dropdown header-item">
+          <DropdownToggle type="button" tag="button" className="btn btn-icon btn-topbar btn-ghost-secondary rounded-circle">
             <i className="bx bx-search fs-22"></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-lg dropdown-menu-end p-0">
             <Form className="p-3">
               <div className="form-group m-0">
                 <div className="input-group">
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Search ..."
-                    aria-label="Recipient's username"
-                  />
+                  <input type="text" className="form-control" placeholder="Search ..." aria-label="Recipient's username"/>
                   <button className="btn btn-primary" type="submit">
                     <i className="mdi mdi-magnify"></i>
                   </button>
@@ -155,11 +142,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
             </Form>
           </DropdownMenu>
         </Dropdown>
-
-        <LightDark
-          layoutMode={layoutModeType}
-          onChangeLayoutMode={onChangeLayoutMode}
-        />
+        <LightDark layoutMode={layoutModeType} onChangeLayoutMode={onChangeLayoutMode}/>
 
         {/* <div>
                 <Button
@@ -268,27 +251,9 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
   const renderButtonsAuth = () => {
     return (
       <div className="d-flex align-items-center ">
-        <Button
-          color="transparent"
-          size="md"
-          className="text-dark "
-          style={{
-            whiteSpace: 'nowrap',
-          }}
-          onClick={() => navigate('/login')}
-        >
-          Sign in
+        <Button color="transparent" size="md" className="text-dark " style={{whiteSpace: 'nowrap'}} onClick={() => navigate('/login')}>Sign in
         </Button>
-        <Button
-          color="primary"
-          size="md"
-          className="ms-2 btn btn-primary"
-          style={{
-            whiteSpace: 'nowrap',
-          }}
-          onClick={() => navigate('/register')}
-        >
-          Sign Up
+        <Button color="primary" size="md" className="ms-2 btn btn-primary" style={{whiteSpace: 'nowrap'}} onClick={() => navigate('/register')}>Sign Up
         </Button>
       </div>
     );
@@ -296,80 +261,43 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
 
   return (
     <React.Fragment>
-      <header
-        id="page-topbar"
-        style={{left: '0', right: '0',}}
-        className="mb-4 d-flex align-items-center justify-content-center"
-      >
+      <header id="page-topbar" style={{left: '0', right: '0',}} className="mb-4 d-flex align-items-center justify-content-center">
         <div className="container-xxl">
           <div className="row">
             <div className="col-md-2 col-lg-2 col-0"></div>
-            <div
-              className={`col-md-10 col-12`}
-              style={{
-                backgroundColor: backgroundColor,
-                paddingRight: '0px',
-                paddingLeft: '0px'
-              }}
-            >
-              <div
-                className={`d-flex justify-content-between align-items-center ${isOpenCollapseMenuHeader ? '' : 'border-bottom border-2'} w-100`}
-                style={{padding: '0px 10px'}}
-              >
+            <div className={`col-md-10 col-12 px-0`} style={{backgroundColor: backgroundColor}}>
+              <div className={`d-flex justify-content-between align-items-center ${isOpenCollapseMenuHeader ? '' : 'border-bottom border-1'} w-100 p-6`}>
                 <Col className="col-1 d-md-none d-lg-none">
-                  <button
-                    onClick={toogleMenuBtn}
-                    type="button"
-                    className="btn ms-n3 btn-sfs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none"
-                    id="topnav-hamburger-icon"
-                  >
+                  <button onClick={toogleMenuBtn} type="button" className="btn ms-n3 btn-sfs-16 header-item vertical-menu-btn topnav-hamburger d-block d-md-none" id="topnav-hamburger-icon">
                     <span className="hamburger-icon text-dark">
-                      <span
-                        style={{ background: isLightMode ? 'black' : '' }}
-                      ></span>
-                      <span
-                        style={{ background: isLightMode ? 'black' : '' }}
-                      ></span>
-                      <span
-                        style={{ background: isLightMode ? 'black' : '' }}
-                      ></span>
+                      <span className={`${isLightMode ? 'bg-black' : ''}`}></span>
+                      <span className={`${isLightMode ? 'bg-black' : ''}`}></span>
+                      <span className={`${isLightMode ? 'bg-black' : ''}`}></span>
                     </span>
                   </button>
                 </Col>
                 <Col className="d-flex align-items-center col-xs-4">
                   <div className="col-sm-12 col-md-12 col-lg-7 col-xs-12 col-12 ">
-                    <ParentComponentSearchBar
-                      trackWallets={false}
-                      searchInput={searchInput}
-                      setSearchInput={setSearchInput}
-                    />
+                    <ParentComponentSearchBar trackWallets={false} searchInput={searchInput} setSearchInput={setSearchInput}/>
                   </div>
                 </Col>
-
                 <Col lg={3}>
                   <div className="d-flex align-items-center justify-content-end">
                     {isMobile ? (
                       <>
-                        <CollapseMenuHeader
-                          isOpen={isOpenCollapseMenuHeader}
-                          setIsOpen={setIsOpenCollapseMenuHeader}
-                        />
+                        <CollapseMenuHeader isOpen={isOpenCollapseMenuHeader} setIsOpen={setIsOpenCollapseMenuHeader}/>
                       </>
                     ) : (
                       <>
                         {currentUser && (
-                          <NotificationDropdown
-                            onRefresh={handleGetNotifications}
+                          <NotificationDropdown onRefresh={handleGetNotifications}
                             handleLoadMoreNotifications={
                               handleLoadMoreNotifications
                             }
                           />
                         )}
                         <WalletsConnectDropdown />
-                        <LightDark
-                          layoutMode={layoutModeType}
-                          onChangeLayoutMode={onChangeLayoutMode}
-                        />
+                        <LightDark layoutMode={layoutModeType} onChangeLayoutMode={onChangeLayoutMode}/>
                         {currentUser ? (
                           <ProfileDropdown currentUser={currentUser} />
                         ) : (
@@ -386,9 +314,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
               {/* CollapseMenuHeader */}
               {isOpenCollapseMenuHeader && (
                 <Col>
-                  <Collapse
-                    isOpen={isOpenCollapseMenuHeader}
-                    className="pb-3 px-3 border-bottom border-2 d-flex align-items-center"
+                  <Collapse isOpen={isOpenCollapseMenuHeader} className="pb-3 px-3 border-bottom border-2 d-flex align-items-center"
                     style={{
                       backgroundColor: backgroundColor,
                     }}
@@ -396,8 +322,7 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                     <Nav horizontal className="d-flex align-items-center">
                       {currentUser && (
                         <NavItem>
-                          <NotificationDropdown
-                            onRefresh={handleGetNotifications}
+                          <NotificationDropdown onRefresh={handleGetNotifications}
                             handleLoadMoreNotifications={
                               handleLoadMoreNotifications
                             }
@@ -408,16 +333,12 @@ const Header = ({ onChangeLayoutMode, layoutModeType, headerClass }) => {
                         <WalletsConnectDropdown />
                       </NavItem>
                       <NavItem>
-                        <LightDark
-                          layoutMode={layoutModeType}
-                          onChangeLayoutMode={onChangeLayoutMode}
-                        />
+                        <LightDark layoutMode={layoutModeType} onChangeLayoutMode={onChangeLayoutMode}/>
                       </NavItem>
                       {currentUser ? (
                         <>
                           <NavItem>
-                            <ProfileDropdown
-                              currentUser={currentUser}
+                            <ProfileDropdown currentUser={currentUser}
                               setIsOpenCollapseMenuHeader={
                                 setIsOpenCollapseMenuHeader
                               }

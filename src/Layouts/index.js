@@ -523,17 +523,8 @@ const Layout = (props) => {
                   <Sidebar layoutType={layoutType} />
                 </div>
 
-                <div
-                  className="col-md-10 mt-5 col-lg-8 col-12"
-                  style={{
-                    minHeight: '85vh',
-                    margin: 'auto'
-                  }}
-                >
-                  <Header
-                    headerClass={headerClass}
-                    layoutModeType={layoutModeType}
-                    onChangeLayoutMode={onChangeLayoutMode}
+                <div className="col-md-10 mt-5 col-lg-8 col-12 m-auto" style={{minHeight: '85vh',}}>
+                  <Header headerClass={headerClass} layoutModeType={layoutModeType} onChangeLayoutMode={onChangeLayoutMode}
                   />
 
                   {/* Conditionally render AddressWithDropdown based on conditions */}

@@ -881,7 +881,41 @@ File: Custom Css File
 
 
 }
-
+.containerAsset {
+  background: #ffffff;
+}
+.btnAsset {
+  background: #ffffff;
+}
+.btnAsset:hover {
+  background-color: #fff;
+}
+.btnAsset:active {
+  background-color: transparent;
+}
+.navLinkActive {
+  justify-content: start;
+  font-weight: bold;
+  color: #405189;
+  font-size: 0.925rem;
+  font-family: "Poppins", sans-serif;
+}
+.navLinkA {
+  justify-content: start;
+  font-size: 0.925rem;
+  font-family: "Poppins", sans-serif;
+}
+[data-layout-mode='dark'] {
+  .containerAsset {
+    background: #16161a;
+  }
+  .btnAsset {
+    background: transparent;
+  }
+  .navLinkActive {
+    color: #909ACA;
+  }
+}
 [data-layout-mode='dark'] .connector-container {
   .connector-item {
       .connector-item-inner {

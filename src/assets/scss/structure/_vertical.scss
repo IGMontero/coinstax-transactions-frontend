@@ -82,7 +82,7 @@
       display: flex;
       align-items: center;
       padding: $vertical-menu-item-padding-y $vertical-menu-item-padding-x;
-      color: $vertical-menu-item-color;
+      // color: $vertical-menu-item-color;
       font-weight: 500;
       font-size: $vertical-menu-item-font-size;
       font-family: $vertical-menu-item-font-family;
@@ -817,7 +817,9 @@
           background-color: $vertical-menu-item-color-dark;
         }
       }
-
+      .sidebar-li-link {
+        color: #eff2f7;
+      }
       .btn-vertical-sm-hover {
         color: $vertical-menu-item-color-dark;
       }
@@ -830,9 +832,9 @@
         // display: flex;
         // flex-direction: column;
 
-        &.active {
-          color: $vertical-menu-item-active-color-dark;
-        }
+        // &.active {
+        //   color: $vertical-menu-item-active-color-dark;
+        // }
 
         &[data-bs-toggle='collapse'] {
           &:after {
@@ -921,7 +923,7 @@
         .nav-link-active {
           // border: .5px solid rgba(74, 73, 73, 0.517);
           border-radius: 12px;
-          background-color: #F1F2FA;
+          background-color: transparent;
           // box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
           // background: linear-gradient(145deg, #032754a3, #032754a3);
           // background: #f79e20;
@@ -932,10 +934,10 @@
           color: #405189;
           // color: #032754a3;
 
-          .icon-dual {
-            color: $vertical-menu-item-hover-color-dark;
-            fill: rgba($white, 0.16);
-          }
+        }
+        .icon-dual {
+          color: $vertical-menu-item-hover-color-dark;
+          fill: rgba($white, 0.16);
         }
         // dark mode
         .nav-link-active-dark {
@@ -1117,6 +1119,23 @@
 
     .logo-light {
       display: none;
+    }
+    .sidebar-li-link{
+      color: #2B2A41;
+    }
+    .nav-link-active{
+      // border: .5px solid rgba(74, 73, 73, 0.517);
+      border-radius: 12px;
+      background-color: #F1F2FA;
+      // box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+      // background: linear-gradient(145deg, #032754a3, #032754a3);
+      // background: #f79e20;
+      transition: all 0.7s ease;
+      font-weight: bold;
+      // display: flex;
+      // flex-direction: column;
+      color: #405189;
+      // color: #032754a3;
     }
   }
 

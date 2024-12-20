@@ -15,8 +15,9 @@ const FilterButtonsChart = ({
         disabled={loading || activeFilter === id}
         onClick={() => handleFilterForDays(days, id)}
         type="button"
-        className={`btn btn-soft-primary rounded-pill timeline-btn btn-sm ${activeFilter === id ? 'active' : ''}`}
+        className={`btn border-0 rounded-pill text-dark timeline-btn btn-sm`}
         id={id}
+        style={{fontWeight: activeFilter === id ? 'bold' : '', opacity: activeFilter === id ? '1' : '0.7'}}
       >
         {label}
       </button>

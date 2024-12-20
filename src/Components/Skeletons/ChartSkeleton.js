@@ -7,7 +7,7 @@ const ChartSkeleton = () => {
     145, 165, 185, 205, 225, 245, 265, 285, 305, 325, 345, 365, 385, 405, 425,
     445,
   ];
-  const height = 300;
+  const height = 200;
   const points = data.map((value, index) => `${index * 30},${value}`).join(' ');
 
   const polygonPoints =
@@ -22,7 +22,7 @@ const ChartSkeleton = () => {
           animation: 'fadeInOut 1s ease-in-out infinite',
           maxWidth: 1250,
           width: '100%',
-          marginTop: '40px',
+          marginBottom: '40px',
         }}
       >
         <polygon

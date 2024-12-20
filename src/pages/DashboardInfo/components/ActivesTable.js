@@ -60,16 +60,16 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
     return (
       <div className="d-flex justify-content-between align-items-center mb-3">
         <Button
-          className={`btn btn-sm btn-soft-primary`}
+          className={`btnAsset btn btn-sm btn-soft-primary text-dark border-0`}
           onClick={() => handleViewModeChange('byPlatform')}
-          style={{background: `${viewMode === 'byPlatform' ? '#FFFFFF' : 'transparent'}`, color: `${viewMode === 'byPlatform' ? '#414068' : '#414068'}`, borderRadius: '16px', boxShadow: `${viewMode === 'byPlatform' ? 'rgb(0 0 0 / 5%) 0px 2px 1px 1px' : ""}`}}
+          style={{borderRadius: '16px', boxShadow: `${viewMode === 'byPlatform' ? 'rgb(0 0 0 / 5%) 0px 2px 1px 1px' : ""}`}}
         >
           By Platform
         </Button>
         <Button
-          className={`mx-2 btn btn-sm btn-soft-primary`}
+          className={`btnAsset btn mx-2 btn-sm btn-soft-primary text-dark border-0`}
           onClick={() => handleViewModeChange('perPosition')}
-          style={{background: `${viewMode === 'perPosition' ? '#FFFFFF' : 'transparent'}`, color: `${viewMode === 'perPosition' ? '#414068' : '#414068'}`, borderRadius: '16px', boxShadow: `${viewMode === 'perPosition' ? 'rgb(0 0 0 / 5%) 0px 2px 1px 1px' : ""}`}}
+          style={{borderRadius: '16px', boxShadow: `${viewMode === 'perPosition' ? 'rgb(0 0 0 / 5%) 0px 2px 1px 1px' : ""}`}}
         >
           Per Position
         </Button>
@@ -84,7 +84,7 @@ const ActivesTable = ({ data, loading, isDashboardPage, buttonSeeMore }) => {
           className="card-header-dropdown"
         >
           <DropdownToggle tag="a" className="text-reset" role="button">
-            <i className="ri-arrow-down-s-line p-1 py-0 btn rounded"></i>
+            <i className="ri-arrow-down-s-line p-1 py-0 btn rounded" style={{color: "#909ACA"}}></i>
           </DropdownToggle>
           <DropdownMenu className="dropdown-menu-start mt-2">
             <DropdownItem
